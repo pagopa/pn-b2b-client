@@ -3,7 +3,7 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
   Tutti gli utenti autorizzati di enti erogatori possono cancellare un'analisi del rischio di un e-service se è in mode RECEIVE
 
   @eservice_risk_analysis_delete1
-  Scenario Outline: Per un e-service creato in modalità "RECEIVE", con un descrittore in DRAFT, è possibile cancellare un'analisi del rischio precedentemente creata. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine se effettuata da un utente autorizzato
+  Scenario Outline: [ESERVICE_RISK_ANALYSIS_DELETE_01] Per un e-service creato in modalità "RECEIVE", con un descrittore in DRAFT, è possibile cancellare un'analisi del rischio precedentemente creata. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine se effettuata da un utente autorizzato
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in DRAFT
     Given "<ente>" ha già aggiunto un'analisi del rischio a quell'e-service
@@ -24,7 +24,7 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
       | PA1  | support      |       403 |
 
   @eservice_risk_analysis_delete2
-  Scenario: Per un e-service creato in modalità "RECEIVE", il quale ha un solo descrittore in stato DRAFT, è possibile cancellare un'analisi del rischio precedentemente creata. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine se effettuata da un utente autorizzato
+  Scenario: [ESERVICE_RISK_ANALYSIS_DELETE_02] Per un e-service creato in modalità "RECEIVE", il quale ha un solo descrittore in stato DRAFT, è possibile cancellare un'analisi del rischio precedentemente creata. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine se effettuata da un utente autorizzato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     Given "PA1" ha già aggiunto un'analisi del rischio a quell'e-service

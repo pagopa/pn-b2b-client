@@ -3,7 +3,7 @@ Feature: Listing attributi dichiarati posseduti da uno specifico ente
   Tutti gli utenti autenticati possono leggere la lista degli attributi dichiarati posseduti da uno specifico ente
 
   @tenant_declared_attributes_listing1 @no-parallel
-  Scenario Outline: Per un attributo precedentemente dichiarato dall’aderente stesso, alla richiesta di lettura, va a buon fine
+  Scenario Outline: [TENANT_DECLARED_ATTRIBUTES_LISTING_1] Per un attributo precedentemente dichiarato dall’aderente stesso, alla richiesta di lettura, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "GSP" ha già dichiarato un attributo
     When l'utente richiede una operazione di listing degli attributi dichiarati posseduti da "GSP"

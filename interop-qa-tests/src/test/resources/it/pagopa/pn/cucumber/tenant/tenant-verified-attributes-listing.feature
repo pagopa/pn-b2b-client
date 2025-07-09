@@ -3,7 +3,7 @@ Feature: Listing attributi verificati posseduti da uno specifico ente
   Tutti gli utenti autenticati possono leggere la lista degli attributi verificati posseduti da uno specifico ente
 
   @tenant_verified_attributes_listing1a
-  Scenario Outline: Per un attributo precedentemente verificato da un altro aderente, alla richiesta di lettura, va a buon fine
+  Scenario Outline: [TENANT_VERIFIED_ATTRIBUTES_LISTING_1A] Per un attributo precedentemente verificato da un altro aderente, alla richiesta di lettura, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede una operazione di listing degli attributi verificati posseduti da "GSP"
     Then si ottiene status code 200 
@@ -27,7 +27,7 @@ Feature: Listing attributi verificati posseduti da uno specifico ente
       | Privato | api,security |
     
   @tenant_verified_attributes_listing1b
-  Scenario: Per un attributo precedentemente verificato da un altro aderente, alla richiesta di lettura, va a buon fine
+  Scenario: [TENANT_VERIFIED_ATTRIBUTES_LISTING_1B] Per un attributo precedentemente verificato da un altro aderente, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un attributo verificato
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
