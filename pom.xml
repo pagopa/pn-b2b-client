@@ -811,7 +811,37 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model</modelPackage>
                         </configuration>
                     </execution>
-
+                    <!-- WebhookV20 PROVVISORIO, FAR SISTEMARE IL ProgressResponseElement della V20 nelle versioni future e rimuovere questa execution -->
+                    <execution>
+                        <id>generate-external-client-b2b-webhookV20</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/v2.3.2/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model</modelPackage>
+                        </configuration>
+                    </execution>
                     <!-- Webhook (ALL VERSIONS) -->
                     <execution>
                         <id>generate-external-client-b2b-webhook-allVersions</id>

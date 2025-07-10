@@ -7,7 +7,7 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -170,12 +170,12 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
 //                        && progressResponseElement.getTimelineEventCategory().equals(
 //                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV23())
                         //TODO: con questo ci mettiamo una toppa, ma non è del tutto corretto
-                        && pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20() != null
-                        && progressResponseElement.getTimelineEventCategory().getValue().equals(
-                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20().getValue())
+//                        && pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20() != null
+//                        && progressResponseElement.getTimelineEventCategory().getValue().equals(
+//                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20().getValue())
                         //TODO: questo è come dovrebbe essere (una volta sistemato il pom, scommentare e rimuovere quelli sopra)
-//                        && progressResponseElement.getTimelineEventCategory().equals(
-//                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20())
+                        && progressResponseElement.getTimelineEventCategory().equals(
+                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20())
                         || progressResponseElement.getIun() != null
                         && progressResponseElement.getIun().equals(iun)
                         && (progressResponseElement.getNewStatus() != null

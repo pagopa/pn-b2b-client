@@ -10,19 +10,19 @@ import java.util.UUID;
 
 
 public interface IPnWebhookB2bClient extends SettableApiKey {
-    StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest);
+    it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamMetadataResponse createEventStream(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamCreationRequest streamCreationRequest);
 
     void deleteEventStream(UUID streamId);
 
-    StreamMetadataResponse retrieveEventStream(UUID streamId);
+    it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamMetadataResponse retrieveEventStream(UUID streamId);
 
-    List<StreamListElement> listEventStreams();
+    List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamListElement> listEventStreams();
 
-    StreamMetadataResponse updateEventStream(UUID streamId, StreamCreationRequest streamCreationRequest);
+    it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamMetadataResponse updateEventStream(UUID streamId, it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamCreationRequest streamCreationRequest);
 
-    List<ProgressResponseElement> consumeEventStream(UUID streamId, String lastEventId);
+    List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement> consumeEventStream(UUID streamId, String lastEventId);
 
-    ResponseEntity<List<ProgressResponseElement>> consumeEventStreamHttp(UUID streamId, String lastEventId);
+    ResponseEntity<List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement>> consumeEventStreamHttp(UUID streamId, String lastEventId);
 
     //V23
     StreamMetadataResponseV23 createEventStreamV23(StreamCreationRequestV23 streamCreationRequest);
