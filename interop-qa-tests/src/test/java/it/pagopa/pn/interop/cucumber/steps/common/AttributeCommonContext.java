@@ -1,10 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
+import it.pagopa.interop.attribute.service.IM2MDeclaredAttributeClient.DeclaredAttribute;
+import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -23,6 +24,12 @@ public class AttributeCommonContext {
     String attributeConsumerTenant;
 
     //--M2M--
-    List<CertifiedAttribute> published = new ArrayList<>();
-    List<CertifiedAttribute> actual = new ArrayList<>();
+    List<CertifiedAttribute> certifiedPublished = new ArrayList<>();
+    List<CertifiedAttribute> certifiedActual = new ArrayList<>();
+
+    List<DeclaredAttribute> declaredPublished = new ArrayList<>();
+    List<DeclaredAttribute> declaredActual = new ArrayList<>();
+
+    List<VerifiedAttribute> verifiedPublished = new ArrayList<>();
+    List<VerifiedAttribute> verifiedActual = new ArrayList<>();
 }

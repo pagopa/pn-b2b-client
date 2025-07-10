@@ -1,14 +1,12 @@
 package it.pagopa.interop.attribute.service.impl;
 
-import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
+import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributeSeed;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -22,13 +20,13 @@ import org.springframework.web.client.RestTemplate;
 @EqualsAndHashCode(callSuper = true)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MCertifiedAttributeClientImpl extends AbstractClient implements
-    IM2MCertifiedAttributeClient {
+public class M2MVerifiedAttributeClientImpl extends AbstractClient implements
+    IM2MVerifiedAttributeClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MCertifiedAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public M2MVerifiedAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.attributesApi = new AttributesApi(createApiClient("dummyBearer"));
@@ -47,20 +45,21 @@ public class M2MCertifiedAttributeClientImpl extends AbstractClient implements
     }
 
     @Override
-    public CertifiedAttribute get(UUID id) {
+    public VerifiedAttribute get(UUID id) {
        return this.performOperation(SimpleOperation.of(
-               () -> this.attributesApi.getCertifiedAttribute(id),
+               //() -> this.attributesApi.getVerifiedAttribute(id), <-- TODO 09/07/2025 DECOMMENTARE una volta rilasciare in QA le apis in oggetto
+                VerifiedAttribute::new, // TODO 09/07/2025 placeholder, rimuovere una volta rilasciate le API in QA
                res -> res
        )).orElse(null);
     }
 
     @Override
-    public List<CertifiedAttribute> getAll() {
+    public List<VerifiedAttribute> getAll() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public UUID getId(CertifiedAttribute entity) {
+    public UUID getId(VerifiedAttribute entity) {
         return entity == null ? null : entity.getId();
     }
 
@@ -74,16 +73,11 @@ public class M2MCertifiedAttributeClientImpl extends AbstractClient implements
     }
 
     @Override
-    public CertifiedAttribute create(CertifiedAttributeSeed agreementPayload) {
+    public VerifiedAttribute create(VerifiedAttributeSeed agreementPayload) {
         return this.performOperation(SimpleOperation.of(
-                () -> this.attributesApi.createCertifiedAttribute(agreementPayload),
+                //() -> this.attributesApi.createVerifiedAttribute(agreementPayload), <-- TODO 09/07/2025 DECOMMENTARE una volta rilasciare in QA le apis in oggetto
+                VerifiedAttribute::new, // TODO 09/07/2025 placeholder, rimuovere una volta rilasciate le API in QA
                 res -> res
         )).orElse(null);
-    }
-
-    @Override
-    public List<CertifiedAttribute> getFilteredBy(List<String> attributeName) {
-        // TODO 10/07/2025 API non ancora rilasciata
-        return List.of();
     }
 }

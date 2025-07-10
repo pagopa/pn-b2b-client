@@ -36,7 +36,7 @@ public class M2MDataPreparationService {
                                   SharedStepsContext sharedStepsContext,
                                   CommonUtils commonUtils) {
         this.agreementClient = clientTokenConfigurator.getM2mAgreementClient();
-        this.attributeClient = clientTokenConfigurator.getM2mAttributeClient();
+        this.attributeClient = clientTokenConfigurator.getM2mCertifiedAttributeClient();
         this.eserviceClient = clientTokenConfigurator.getM2meServiceClient();
         this.eserviceTemplateClient = clientTokenConfigurator.getM2mEServiceTemplateClient();
         this.templateService = new DataPreparationServiceTemplate(

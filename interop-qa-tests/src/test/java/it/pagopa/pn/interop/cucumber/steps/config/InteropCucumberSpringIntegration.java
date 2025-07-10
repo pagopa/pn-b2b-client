@@ -9,6 +9,8 @@ import it.pagopa.interop.agreement.service.impl.M2MAgreementClientImpl;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.impl.AttributeApiClientImpl;
 import it.pagopa.interop.attribute.service.impl.M2MCertifiedAttributeClientImpl;
+import it.pagopa.interop.attribute.service.impl.M2MDeclaredAttributeClientImpl;
+import it.pagopa.interop.attribute.service.impl.M2MVerifiedAttributeClientImpl;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
@@ -86,7 +88,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MDataPreparationService.class,
         M2MEserviceDescriptorClientImpl.class,
         CucumberScopedBeans.class,
-        M2MDelegationClient.class
+        M2MDelegationClient.class,
+        M2MDeclaredAttributeClientImpl.class,
+        M2MVerifiedAttributeClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
