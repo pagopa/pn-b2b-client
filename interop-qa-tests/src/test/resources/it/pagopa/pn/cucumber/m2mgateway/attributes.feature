@@ -17,22 +17,14 @@ Feature: Gestione degli attributes
       | m2m-admin |
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene effettuata la creazione dell'attributo certificato
-      | name | description | code |
-      |      |             |      |
-    And viene impostato per l'utente un token m2m non valido
-    When l'utente tenta di recuperare il record di certifiedAttribute creato
+    Given viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 401
     And certifiedAttribute non restituito
 
   Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo certificato con attributeId inesistente (Scenario 64)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
-    And viene effettuata la creazione dell'attributo certificato
-      | name | description | code |
-      |      |             |      |
     When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 404
     And certifiedAttribute non restituito
@@ -100,22 +92,14 @@ Feature: Gestione degli attributes
       | m2m-admin |
 
   Scenario: [M2MG_DECLAREDATTRIBUTES_3] Accesso negato al dettaglio di un attributo dichiarato con token non valido (Parte2#Scenario 3)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene effettuata la creazione dell'attributo dichiarato
-      | name | description | code |
-      |      |             |      |
-    And viene impostato per l'utente un token m2m non valido
-    When l'utente tenta di recuperare il record di declaredAttribute creato
+    Given viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare declaredAttribute con un id inesistente
     Then si ottiene lo status code 401
     And declaredAttribute non restituito
 
   Scenario Outline: [M2MG_DECLAREDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo dichiarato con attributeId inesistente (Parte2#Scenario 4)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
-    And viene effettuata la creazione dell'attributo dichiarato
-      | name | description | code |
-      |      |             |      |
     When l'utente tenta di recuperare declaredAttribute con un id inesistente
     Then si ottiene lo status code 404
     And declaredAttribute non restituito
@@ -159,22 +143,14 @@ Feature: Gestione degli attributes
       | m2m-admin |
 
   Scenario: [M2MG_VERIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo verificato con token non valido (Parte2#Scenario 7)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene effettuata la creazione dell'attributo verificato
-      | name | description | code |
-      |      |             |      |
-    And viene impostato per l'utente un token m2m non valido
-    When l'utente tenta di recuperare il record di verifiedAttribute creato
+    Given viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare verifiedAttribute con un id inesistente
     Then si ottiene lo status code 401
     And verifiedAttribute non restituito
 
   Scenario Outline: [M2MG_VERIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo verificato con attributeId inesistente (Parte2#Scenario 8)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
-    And viene effettuata la creazione dell'attributo verificato
-      | name | description | code |
-      |      |             |      |
     When l'utente tenta di recuperare verifiedAttribute con un id inesistente
     Then si ottiene lo status code 404
     And verifiedAttribute non restituito
