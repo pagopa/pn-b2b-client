@@ -266,5 +266,4 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
 
     Examples:
       | SEQUENCE                          |
-      | via @FAIL_CompiutaGiacenza_AR_ERR |
       | via @FAIL-CompiutaGiacenza_AR     |
