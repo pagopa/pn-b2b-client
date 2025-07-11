@@ -19,7 +19,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegatedProducer;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
@@ -196,7 +195,7 @@ public class DelegationCreateStep {
     public void delegationIsPresent() {
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId())),
                 res -> res != HttpStatus.NOT_FOUND,
                 "There was an error while creating the delegation!"
         );
@@ -219,7 +218,7 @@ public class DelegationCreateStep {
             delegationProxy.setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(
-                            String.valueOf(delegationProxy.getDelegationId()))),
+                            delegationProxy.getDelegationId())),
                     res -> res != HttpStatus.NOT_FOUND,
                     "There was an error while creating the delegation!"
             );

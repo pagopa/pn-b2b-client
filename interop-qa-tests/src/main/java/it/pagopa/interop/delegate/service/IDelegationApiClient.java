@@ -12,6 +12,6 @@ import java.util.UUID;
 
 public interface IDelegationApiClient extends SettableBearerToken {
     CompactDelegations getDelegation(Integer offset, Integer limit, List<DelegationState> states, List<UUID> delegatorIds, List<UUID> delegateIds, DelegationKind kind, List<UUID> eserviceIds);
-    Delegation getDelegation(String delegationId);
+    Delegation getDelegation(UUID delegationId);
     File getDelegationContract(UUID delegationId, UUID contractId);
 }

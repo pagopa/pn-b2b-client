@@ -102,7 +102,7 @@ public class DelegationDenyStep {
         // wait until delegation is correctly rejected
         pollingService.makePolling(
                 () -> delegationApiClient.getDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()),
                 res ->  res.getState().equals(delegationState),
                 "There was an error while revoking the delegation!"
         );

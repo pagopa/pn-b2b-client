@@ -8,7 +8,6 @@ import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.springframework.http.HttpStatus;
@@ -74,7 +73,7 @@ public class DelegationAcceptStep {
         // wait until delegation is correctly approved
         pollingService.makePolling(
                 () -> delegationApiClient.getDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()),
                 res ->  res.getState().equals(DelegationState.ACTIVE),
                 "There was an error while accepting the delegation!"
         );

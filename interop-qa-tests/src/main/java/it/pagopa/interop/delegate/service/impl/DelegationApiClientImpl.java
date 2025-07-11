@@ -47,7 +47,7 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     }
 
     @Override
-    public Delegation getDelegation(String delegationId) {
+    public Delegation getDelegation(UUID delegationId) {
         return delegationsApi.getDelegation(delegationId);
     }
 
