@@ -848,14 +848,14 @@ Feature: annullamento notifiche b2b
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
+      | senderDenomination | Comune di milano            |
     And destinatario Mario Gherkin
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
-    #And si crea il nuovo stream per il "Comune_Multi" con versione "V23" e filtro di timeline "NOTIFICATION_CANCELLATION_REQUEST"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
+    #And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLATION_REQUEST"
+    And si crea il nuovo stream per il "Comune_1" con versione "V10"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST" con la versione "V23"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST" con la versione "V10"
 
   @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_24_1]Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLED stream v2_scenario positivo

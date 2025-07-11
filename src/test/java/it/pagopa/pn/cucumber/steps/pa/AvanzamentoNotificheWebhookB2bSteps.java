@@ -10,6 +10,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -18,7 +19,9 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -562,11 +565,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V10);
 
         StatusElementSearchResult<NotificationStatus> searchElementResult = webhookStepsInterface.getStatusEventForStream(status, timingForPolling.getTimingForElement(status));
-
         NotificationStatus notificationStatus = searchElementResult.getNotificationStatus();
-
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(searchElementResult.getNotificationStatus().name());
 
         Object progressResponseElement = null;
         int wait = 48;
@@ -578,7 +577,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification
                     .getNotificationStatusHistory().stream()
-                    .filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue()))
+                    .filter(elem -> elem.getStatus().getValue().equals(notificationStatus.getValue()))
                     .findAny()
                     .orElse(null);
 
@@ -605,7 +604,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
         NotificationStatus notificationStatus = NotificationStatus.REFUSED;
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement progressResponseElement = null;
+        ProgressResponseElement progressResponseElement = null;
         for (int i = 0; i < 4; i++) {
             progressResponseElement = searchInWebhookFileNotFound(notificationStatus, null, 0);
 
@@ -624,16 +623,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //V10 only
-    private <T> it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement searchInWebhookFileNotFound(T timeLineOrStatus, String lastEventId, int deepCount) {
+    private <T> ProgressResponseElement searchInWebhookFileNotFound(T timeLineOrStatus, String lastEventId, int deepCount) {
         if (!(timeLineOrStatus instanceof TimelineElementCategoryV23) && !(timeLineOrStatus instanceof NotificationStatus)) {
             throw new IllegalArgumentException();
         }
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V10);
         UUID streamId = webhookStepsInterface.getStreamId();
 
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement progressResponseElement = null;
-        ResponseEntity<List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(streamId, lastEventId);
-        List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
+        ProgressResponseElement progressResponseElement = null;
+        ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(streamId, lastEventId);
+        List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
         if (deepCount >= 200) {
             throw new IllegalStateException(
                     "LOP: PROGRESS-ELEMENTS: " + progressResponseElements
@@ -641,7 +640,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                             + " IUN: " + sharedSteps.getNotificationIun()
                             + " DEEP: " + deepCount);
         }
-        for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.ProgressResponseElement elem : progressResponseElements) {
+        for (ProgressResponseElement elem : progressResponseElements) {
             if ("REFUSED".equalsIgnoreCase(elem.getNewStatus().getValue())
                     && elem.getValidationErrors() != null
                     && elem.getValidationErrors().size() > 0) {
@@ -857,7 +856,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     //V10 only
     @Then("l'ultima creazione ha prodotto un errore con status code {string}")
     public void lastCreationProducedAnErrorWithStatusCode(String statusCode) {
-        List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook_v20.model.StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+        List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
         WebhookStepsV10 webhookStepsV10 = (WebhookStepsV10) getWebhookStep(StreamVersion.V10);
         System.out.println("streamListElements: " + streamListElements.size());
         System.out.println("eventStreamList: " + webhookStepsV10.getEventStreamList().size());
