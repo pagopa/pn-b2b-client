@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
+import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,4 +24,9 @@ public class AgreementCommonContext {
     private UUID responseAgreementId;
     private UUID eserviceSubscribedId;
     private UUID descriptorSubscribedId;
+    private List<DocumentMetadata> documentMetadata = new ArrayList<>();
+
+    public void addDocumentMetadata(DocumentMetadata documentMetadata) {
+        this.documentMetadata.add(documentMetadata);
+    }
 }

@@ -80,6 +80,17 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
     }
 
     @Override
+    public Documents getConsumerDocuments(UUID agreementId) {
+        return this.getConsumerDocuments(agreementId, 30, 0);
+    }
+
+    //TODO 11/07/2025 valorizzare una volta rilasciate le APIs in oggetto
+    @Override
+    public Documents getConsumerDocuments(UUID agreementId, int limit, int offset) {
+        return null;
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.agreementsApi.setApiClient(createApiClient(bearerToken));
     }

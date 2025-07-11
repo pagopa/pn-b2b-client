@@ -4,6 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import java.time.LocalDateTime;
 import org.springframework.core.io.Resource;
 
 public class AgreementDocumentUploadSteps {
@@ -21,10 +22,21 @@ public class AgreementDocumentUploadSteps {
     @When("l'utente carica un documento allegato a quella richiesta di fruizione")
     public void uploadAgreementAttachment() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
+        String name = "documento-test-qa.pdf";
+        String prettyName = "documento-test-qa";
+        LocalDateTime now = LocalDateTime.now();
+        Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", name);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
-                        "documento-test-qa.pdf", "documento-test-qa", doc)
+                    name, prettyName, doc)
         );
+        if (sharedStepsContext.getHttpCallExecutor().getClientResponse().is2xxSuccessful()) {
+            sharedStepsContext.getAgreementCommonContext().addDocumentMetadata(
+                DocumentMetadata.builder()
+                    .name(name)
+                    .prettyName(prettyName)
+                    .createdAt(now)
+                    .build());
+        }
     }
 }

@@ -11,6 +11,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient.AgreementsListRequest;
+import it.pagopa.interop.agreement.service.IM2MAgreementClient.Document;
+import it.pagopa.interop.agreement.service.IM2MAgreementClient.Documents;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -22,6 +24,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import java.util.List;
 import java.util.Objects;
@@ -150,13 +153,13 @@ public class AgreementSteps {
     public void agreementPurposedVisualized() {
         List<Purpose> returnedPurposes = ((Purposes) httpCallExecutor.getResponse()).getResults();
         List<PurposeSeed> createdPurposes = sharedStepsContext.getPurposeCommonContext().getCreatedPurposes();
-        Predicate<Purpose> oneOfCreated = purpose -> createdPurposes.stream().anyMatch(created -> areEquals(created, purpose));
+        Predicate<Purpose> oneOfCreated = purpose -> createdPurposes.stream().anyMatch(created -> areConsistent(created, purpose));
         assertThat(returnedPurposes)
             .isNotEmpty()
             .allMatch(oneOfCreated, "each returned purpose match at least one created purpose");
     }
 
-    private boolean areEquals(PurposeSeed createdPurpose, Purpose returnedPurpose) {
+    private boolean areConsistent(PurposeSeed createdPurpose, Purpose returnedPurpose) {
         return  allNull(createdPurpose, returnedPurpose) ||
                 Objects.equals(createdPurpose.getIsFreeOfCharge(), returnedPurpose.getIsFreeOfCharge()) &&
                 Objects.equals(createdPurpose.getConsumerId(),returnedPurpose.getConsumerId()) &&
@@ -164,6 +167,38 @@ public class AgreementSteps {
                 Objects.equals(createdPurpose.getTitle(),returnedPurpose.getTitle()) &&
                 Objects.equals(createdPurpose.getEserviceId(),returnedPurpose.getEserviceId()) &&
                 Objects.equals(createdPurpose.getFreeOfChargeReason(),returnedPurpose.getFreeOfChargeReason());
+    }
+
+    @When("l'utente tenta di ottenere la lista dei documenti correlati alla richiesta di fruizione")
+    public void agreementDocuments() {
+        UUID agreementId = sharedStepsContext.getAgreementId();
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(() -> agreementClient.getConsumerDocuments(agreementId)),
+            status -> status.is2xxSuccessful() && !((Documents) httpCallExecutor.getResponse()).getResults().isEmpty(),
+            "GET consumer documents related to agreements gone wrong: error response OR empty result");
+    }
+
+    @When("l'utente tenta di ottenere la lista dei documenti correlati a una richiesta di fruizione inesistente")
+    public void nonExistentAgreementDocuments() {
+        UUID agreementId = UUID.randomUUID();
+        httpCallExecutor.performCall(() -> agreementClient.getConsumerDocuments(agreementId));
+    }
+
+    @Then("i documenti vengono correttamente visualizzati")
+    public void agreementDocumentsVisualized() {
+        List<Document> returnedDocuments = ((Documents) httpCallExecutor.getResponse()).getResults();
+        List<DocumentMetadata> createdDocuments = sharedStepsContext.getAgreementCommonContext().getDocumentMetadata();
+        Predicate<Document> oneOfCreated = document -> createdDocuments.stream().anyMatch(created -> areConsistent(created, document));
+        assertThat(returnedDocuments)
+            .isNotEmpty()
+            .allMatch(oneOfCreated, "each returned document match at least one created document");
+    }
+
+    private boolean areConsistent(DocumentMetadata createdDocument, Document returnedDocument) {
+        return  allNull(createdDocument, returnedDocument) ||
+                Objects.equals(createdDocument.getName(), returnedDocument.getName()) &&
+                Objects.equals(createdDocument.getPrettyName(), returnedDocument.getPrettyName()) &&
+                Objects.equals(createdDocument.getCreatedAt(), returnedDocument.getCreatedAt());
     }
 
 

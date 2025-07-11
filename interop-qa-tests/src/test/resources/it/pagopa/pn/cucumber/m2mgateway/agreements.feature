@@ -45,3 +45,28 @@ Feature: Gestione degli agreements
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere la lista delle finalità correlate a una richiesta di fruizione inesistente
     Then si ottiene status code 404
+
+  Scenario Outline: [M2M_AGREEMENTS_DOCUMENTS_1] La lista dei documenti correlati a un agreement può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 16)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente carica un documento allegato a quella richiesta di fruizione
+    When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo-m2m>
+    And l'utente tenta di ottenere la lista dei documenti correlati alla richiesta di fruizione
+    Then si ottiene status code 200
+    And i documenti vengono correttamente visualizzati
+    Examples:
+      | ruolo-m2m  |
+      | m2m-admin  |
+      | m2m        |
+
+  Scenario: [M2M_AGREEMENTS_DOCUMENTS_2] La lista dei documenti correlati a un agreement non può essere visualizzata specificando un token non valido (Parte2#Scenario 18)
+    Given viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di ottenere la lista dei documenti correlati a una richiesta di fruizione inesistente
+    Then si ottiene status code 401
+
+  Scenario: [M2M_AGREEMENTS_DOCUMENTS_3] La lista dei documenti correlati a un agreement non può essere visualizzata specificando un id inesistente (Parte2#Scenario 19)
+    Given viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di ottenere la lista dei documenti correlati a una richiesta di fruizione inesistente
+    Then si ottiene status code 404
