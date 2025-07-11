@@ -36,17 +36,16 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
 
   @workflowAnalogico @mockNR
   Scenario: [B2B_TIMELINE_ANALOG_76]  Invio notifica mono destinatario a PF analogica con restituzione indirizzo fisico italiano da ANPR - Mock (successo al secondo tentativo)
-#    Given viene generata una nuova notifica
-#      | subject               | notifica analogica con cucumber |
-#      | senderDenomination    | Comune di palermo               |
-#      | physicalCommunication | AR_REGISTERED_LETTER            |
-#    And destinatario
-#      | denomination            | Test AR Fail 2           |
-#      | taxId                   | FRMTTR76M06B715E         |
-#      | digitalDomicile         | NULL                     |
-#      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Given imposto lo iun di SharedSteps a "NEVZ-HMJQ-PWXY-202507-E-1" e la pa a "Comune_Multi"
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | FRMTTR76M06B715E         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | loadTimeline            | true     |
       | details                 | NOT_NULL |
