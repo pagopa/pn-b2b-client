@@ -164,7 +164,7 @@ public class DataTestV24 extends AbstractDataTest {
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getPhysicalAddress() != null) {
-                        if (B2bUtils.expectedIsSimplyNotNullValue(expected.getPhysicalAddress())) {
+                        if (B2bUtils.objectHasAllFieldsNull(expected.getPhysicalAddress())) {
                             assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isNotNull();
                         } else {
                             B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());

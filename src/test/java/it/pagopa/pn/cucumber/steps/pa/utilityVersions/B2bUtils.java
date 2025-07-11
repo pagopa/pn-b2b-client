@@ -400,11 +400,12 @@ public abstract class B2bUtils {
     }
 
     /**
-     * Verifica se un oggetto "expected" ha tutti i campi null, nel qual caso verifica semplicemente che "actual" != null
+     * Verifica se un oggetto "expected" ha tutti i campi null.
+     * Usato in fase di confronto expected/actual: quando expected ha tutti i campi null si procede a verificare che actual != null
      *
-     * @return true se tutti i campi sono null
+     * @return true se tutti i campi dell'oggetto sono null
      */
-    public static boolean expectedIsSimplyNotNullValue(Object expected) {
+    public static boolean objectHasAllFieldsNull(Object expected) {
         Class<?> clazz = expected.getClass();
         List<Field> nonStaticFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).toList();
         try {
