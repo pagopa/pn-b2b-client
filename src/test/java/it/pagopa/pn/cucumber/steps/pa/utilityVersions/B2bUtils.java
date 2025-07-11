@@ -400,6 +400,30 @@ public abstract class B2bUtils {
     }
 
     /**
+     * Verifica se un oggetto "expected" ha tutti i campi null, nel qual caso verifica semplicemente che "actual" != null
+     *
+     * @return true se tutti i campi sono null
+     */
+    public static boolean expectedIsSimplyNotNullValue(Object expected) {
+        Class<?> clazz = expected.getClass();
+        List<Field> nonStaticFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).toList();
+        try {
+            for (Field expectedField : nonStaticFields) {
+                expectedField.setAccessible(true);
+                Object expectedValue = expectedField.get(expected);
+                if (expectedValue != null) {
+                    return false;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            assertThat(true)
+                    .as("Eccezione imprevista in fase di verifica se l'expected è NOT NULL tramite reflection " + e.getMessage())
+                    .isFalse();
+        }
+        return true;
+    }
+
+    /**
      * Confronta due oggetti qualsiasi, valutando l'uguaglianza solo per i field != null specificati nell'expected
      * (NOTA: eventuali campi statici sono esclusi da questa verifica)
      */
