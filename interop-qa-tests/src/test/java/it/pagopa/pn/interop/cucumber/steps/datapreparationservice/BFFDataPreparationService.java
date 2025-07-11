@@ -63,7 +63,6 @@ import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
@@ -634,6 +633,9 @@ public class BFFDataPreparationService {
             purposeSeed.setConsumerId(teServiceMode.getConsumerId());
             purposeSeed.setRiskAnalysisForm(teServiceMode.getRiskAnalysisFormSeed());
             httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(purposeSeed));
+            if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+                sharedStepsContext.getPurposeCommonContext().addCreatedPurpose(purposeSeed);
+            }
         }
         assertValidResponse();
         UUID purposeId = ((CreatedResource) httpCallExecutor.getResponse()).getId();

@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.common;
 
 import static java.util.stream.Collectors.toList;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,12 @@ public class PurposeCommonContext {
 
     private String versionId;
     private String waitingForApprovalVersionId;
+
+    private List<PurposeSeed> createdPurposes = new ArrayList<>();
+
+    public void addCreatedPurpose(PurposeSeed purposeSeed) {
+        this.createdPurposes.add(purposeSeed);
+    }
 
     /* TODO 23/04/2025: sarebbe il caso di cambiare il tipo String -> UUID e uniformare quindi
     *   questo metodo con getPurposeId */

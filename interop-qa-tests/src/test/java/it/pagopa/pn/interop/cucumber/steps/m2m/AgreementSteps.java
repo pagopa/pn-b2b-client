@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.ObjectUtils.allNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -13,16 +14,20 @@ import it.pagopa.interop.agreement.service.IM2MAgreementClient.AgreementsListReq
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
@@ -125,6 +130,44 @@ public class AgreementSteps {
 
         sharedStepsContext.setAgreementId(agreementId);
     }
+
+    @When("l'utente tenta di ottenere la lista delle finalità correlate alla richiesta di fruizione")
+    public void agreementPurposes() {
+        UUID agreementId = sharedStepsContext.getAgreementId();
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementPurposes(agreementId)),
+            status -> status.is2xxSuccessful() && !((Purposes) httpCallExecutor.getResponse()).getResults().isEmpty(),
+            "GET Purposes related to agreements gone wrong: error response OR empty result");
+    }
+
+    @When("l'utente tenta di ottenere la lista delle finalità correlate a una richiesta di fruizione inesistente")
+    public void nonExistentAgreementPurposes() {
+        UUID agreementId = UUID.randomUUID();
+        httpCallExecutor.performCall(() -> agreementClient.getAgreementPurposes(agreementId));
+    }
+
+    @Then("le finalità vengono correttamente visualizzate")
+    public void agreementPurposedVisualized() {
+        List<Purpose> returnedPurposes = ((Purposes) httpCallExecutor.getResponse()).getResults();
+        List<PurposeSeed> createdPurposes = sharedStepsContext.getPurposeCommonContext().getCreatedPurposes();
+        Predicate<Purpose> oneOfCreated = purpose -> createdPurposes.stream().anyMatch(created -> areEquals(created, purpose));
+        assertThat(returnedPurposes)
+            .isNotEmpty()
+            .allMatch(oneOfCreated, "each returned purpose match at least one created purpose");
+    }
+
+    private boolean areEquals(PurposeSeed createdPurpose, Purpose returnedPurpose) {
+        return  allNull(createdPurpose, returnedPurpose) ||
+                Objects.equals(createdPurpose.getIsFreeOfCharge(), returnedPurpose.getIsFreeOfCharge()) &&
+                Objects.equals(createdPurpose.getConsumerId(),returnedPurpose.getConsumerId()) &&
+                Objects.equals(createdPurpose.getDescription(),returnedPurpose.getDescription()) &&
+                Objects.equals(createdPurpose.getTitle(),returnedPurpose.getTitle()) &&
+                Objects.equals(createdPurpose.getEserviceId(),returnedPurpose.getEserviceId()) &&
+                Objects.equals(createdPurpose.getFreeOfChargeReason(),returnedPurpose.getFreeOfChargeReason());
+    }
+
+
+
         // FIXME
 /*
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
