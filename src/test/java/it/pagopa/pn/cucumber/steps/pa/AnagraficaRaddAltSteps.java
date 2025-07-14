@@ -6,9 +6,12 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
@@ -38,6 +41,7 @@ public class AnagraficaRaddAltSteps {
     private static final int WAITING_ACCEPTED_STATE = 20000;
     private static final String ACCEPTED = "accepted";
     private final PnRaddAlternativeClientImpl raddAltClient;
+    private final PnRaddAlternativeV2ClientImpl raddAltClientV2;
     private final SharedSteps sharedSteps;
     private final DataTableTypeRaddAlt dataTableTypeRaddAlt;
 
@@ -46,6 +50,7 @@ public class AnagraficaRaddAltSteps {
     private String requestid;
     private String registryId;
     private CreateRegistryRequest sportelloRaddCrud;
+    private CreateRegistryRequestV2 sportelloRaddCrudV2;
     private RegistriesResponse sportelliRaddista;
     private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportelliCsvRaddista;
     private final String uid = getDefaultValue(RADD_UID.key);
@@ -55,11 +60,14 @@ public class AnagraficaRaddAltSteps {
     private final List<Address> addresses = new ArrayList<>();
 
     @Autowired
-    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt) {
+    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient,PnRaddAlternativeV2ClientImpl raddAltClientV2, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt) {
         this.raddAltClient = raddAltClient;
+        this.raddAltClientV2 = raddAltClientV2;
         this.sharedSteps = sharedSteps;
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
     }
+
+
 
     @When("viene caricato il csv con dati:")
     public void vieneGeneratoIlCsv(List<Map<String, String>> dataCsv) throws IOException {
@@ -387,6 +395,26 @@ public class AnagraficaRaddAltSteps {
             Assertions.assertNotNull(creationResponse.getRequestId());
 
             this.requestid = creationResponse.getRequestId();
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Response Upload CSV: " + (creationResponse == null ? "NULL" : creationResponse) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene generato uno sportello Radd V2 con dati:")
+    public void vieneGeneratoSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportello) {
+
+        this.sportelloRaddCrudV2 = dataSportello;
+
+        log.info("Request inserimento: {}", dataSportello);
+        RegistryV2 creationResponse = raddAltClientV2.addRegistry(null, null,this.uid, null, dataSportello);
+
+        try {
+            Assertions.assertNotNull(creationResponse);
+         //   Assertions.assertNotNull(creationResponse.getRequestId());
+
+          //  this.requestid = creationResponse.getRequestId();
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{Response Upload CSV: " + (creationResponse == null ? "NULL" : creationResponse) + " }";

@@ -16,6 +16,7 @@ public enum RaddAltValue {
 
     RADD_DESCRIPTION("radd_description","sportello RADD",false),
     RADD_PHONE_NUMBER("radd_phoneNumber",null,false),
+    RADD_PHONE_NUMBERS("radd_phoneNumbers",null,false),
     RADD_GEO_LOCATION("radd_geoLocation","SI",false),
     RADD_GEO_LOCATION_LATITUDINE("radd_geoLocation_latitudine","40.0000",false),
     RADD_GEO_LOCATION_LONGITUDINE("radd_geoLocation_longitudine","20.0221",false),
@@ -28,6 +29,7 @@ public enum RaddAltValue {
     RADD_FILTER_LIMIT("radd_filter_limit","5",false),
     RADD_FILTER_LASTKEY("radd_filter_lastKey",null,false),
     RADD_EXTERNAL_CODE("radd_externalCode","testRadd",false),
+    RADD_EXTERNAL_CODES("radd_externalCodes","testRadd",false),
 
     RADD_REQUESTID("radd_requestId","corretto",false),
     RADD_REGISTRYID("radd_registryId","corretto",false),
