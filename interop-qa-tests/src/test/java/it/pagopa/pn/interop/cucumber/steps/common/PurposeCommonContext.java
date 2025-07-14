@@ -65,6 +65,10 @@ public class PurposeCommonContext {
         return currentVersionIds.get(currentVersionIds.size() - 1);
     }
 
+    public UUID getLastPurposeId() {
+        return this.getPurposesIdsAsUUID().get(this.getPurposesIdsAsUUID().size() - 1);
+    }
+
     public void addCurrentVersionId(UUID id) {
         currentVersionIds.add(id.toString());
     }

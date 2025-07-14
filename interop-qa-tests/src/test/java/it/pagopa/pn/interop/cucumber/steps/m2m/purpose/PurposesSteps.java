@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.cucumber.java.ParameterType;
@@ -10,6 +11,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -20,7 +22,6 @@ import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
@@ -306,6 +307,52 @@ public class PurposesSteps {
     @When("l'utente tenta di archiviare purpose con un id {entityIdType}")
     public void archivePurposeByIdType(EntityIdType entityIdType) {
         performPurposeAction(PurposeOperation.APPROVE, entityIdType);
+    }
+
+    @When("l'utente tenta di ottenere la richiesta di fruizione correlata alla finalità")
+    public void getAgreementPurpose() {
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId();
+        httpCallExecutor.performCall(() -> purposeClient.getPurposeAgreement(purposeId));
+    }
+
+    @When("l'utente tenta di ottenere la richiesta di fruizione correlata a una finalità inesistente")
+    public void getNonExistentAgreementPurpose() {
+        UUID purposeId = UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeClient.getPurposeAgreement(purposeId));
+    }
+
+    @Then("la richiesta di fruizione è stata correttamente visualizzata")
+    public void agreementPurposeVisualized() {
+        if (httpCallExecutor.getClientResponse().isError()) {
+            fail("Il GET dell'agreement correlato alla purpose ha generato il "
+                + "seguente errore: %s. Consultare i log per maggiori dettagli.",
+                httpCallExecutor.getClientResponse());
+        }
+
+        Agreement returnedAgreement = (Agreement) httpCallExecutor.getResponse();
+        Agreement createdAgreement = sharedStepsContext.getAgreementCommonContext().getCreatedAgreement();
+
+        // DEV. NOTE pre-rilascio in qa 14/07/2025: alcuni campi, come ID e STATE, potrebbero differire
+        // visto il monento in cui viene salvato "createdAgreement": eventualmente si potranno
+        // "neutralizzare" suddetti campi impostandoli a NULL in entrambi i lati
+
+        assertThat(returnedAgreement)
+            .as("Check created and visualized purpose-related agreement consistency")
+            .isEqualTo(createdAgreement);
+    }
+
+    @When("l'utente tenta di ottenere il documento dell'analisi del rischio correlato alla finalità")
+    public void downloadPurposeDocument() {
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId();
+        UUID versionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID();
+        httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId));
+    }
+
+    @When("l'utente tenta di ottenere il documento dell'analisi del rischio correlato a una finalità inesistente")
+    public void downloadNonExistentPurposeDocument() {
+        UUID purposeId = UUID.randomUUID();
+        UUID versionId = UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId));
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {

@@ -177,4 +177,3 @@ Feature: Gestione degli attributes
       |      |             |      |
     Then si ottiene lo status code 403
     And verifiedAttribute non restituito
-

@@ -2,6 +2,8 @@ package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -12,13 +14,8 @@ import java.util.UUID;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
-import org.springframework.http.ResponseEntity;
 
 public interface IM2MPurposeClient extends SettableBearerToken {
-
-    PurposeVersion getVersion(UUID purposeId, UUID purposeVersionId);
-
-    PurposeVersions getVersions(PurposeVersionsListRequest request);
 
     @Data
     @EqualsAndHashCode(callSuper = true)
@@ -33,6 +30,14 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     class PurposeVersionsListRequest extends ListRequest {
         private UUID purposeId;
     }
+
+    PurposeVersion getVersion(UUID purposeId, UUID purposeVersionId);
+
+    PurposeVersions getVersions(PurposeVersionsListRequest request);
+
+    Agreement getPurposeAgreement(UUID agreementId);
+
+    FileDownloadMultipart downloadPurposeVersionDocument(UUID purposeId, UUID versionId);
 
     Purpose activatePurpose(UUID purposeId);
 

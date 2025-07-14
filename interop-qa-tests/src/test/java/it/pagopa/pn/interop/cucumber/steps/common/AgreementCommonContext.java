@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class AgreementCommonContext {
     private UUID eserviceSubscribedId;
     private UUID descriptorSubscribedId;
     private List<DocumentMetadata> documentMetadata = new ArrayList<>();
+    private Agreement createdAgreement;
 
     public void addDocumentMetadata(DocumentMetadata documentMetadata) {
         this.documentMetadata.add(documentMetadata);

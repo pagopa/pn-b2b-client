@@ -3,6 +3,8 @@ package it.pagopa.interop.purpose.service.impl;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -94,6 +96,16 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
             request.getOffset(),
             request.getLimit(),
             null);
+    }
+
+    @Override
+    public Agreement getPurposeAgreement(UUID purposeId) {
+        return purposesApi.getPurposeAgreement(purposeId);
+    }
+
+    @Override
+    public FileDownloadMultipart downloadPurposeVersionDocument(UUID purposeId, UUID versionId) {
+        return purposesApi.downloadPurposeVersionDocument(purposeId, versionId);
     }
 
     @Override
