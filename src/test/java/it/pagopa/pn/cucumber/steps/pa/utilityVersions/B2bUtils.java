@@ -48,9 +48,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -141,6 +139,11 @@ public abstract class B2bUtils {
         OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(date, zoneId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         return offsetDateTime.truncatedTo(java.time.temporal.ChronoUnit.SECONDS).format(formatter);
+    }
+
+    public static OffsetDateTime convertStringToOffsetDateTime(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return LocalDate.parse(dateString, formatter).atStartOfDay().atOffset(ZoneOffset.UTC);
     }
 
     public static int convertToSeconds(String timeStr) {

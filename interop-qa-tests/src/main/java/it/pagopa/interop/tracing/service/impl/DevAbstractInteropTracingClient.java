@@ -1,10 +1,6 @@
 package it.pagopa.interop.tracing.service.impl;
 
-import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.HealthApi;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.TracingsApi;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;

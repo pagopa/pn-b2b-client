@@ -2,7 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -17,7 +18,7 @@ public class EServiceProducerListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public EServiceProducerListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                SharedStepsContext sharedStepsContext) {
@@ -75,7 +76,7 @@ public class EServiceProducerListingSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} e-service(s) come erogatore")
     public void verifyReceivedResponse(int statusCode, int eServiceNumber) {
-        HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getClientResponse());
         Assertions.assertEquals(eServiceNumber,
                 ((ProducerEServices) httpCallExecutor.getResponse()).getResults().size());

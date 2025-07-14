@@ -50,7 +50,7 @@ import static org.awaitility.Awaitility.await;
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClient.class,
-        PnWebPaClientImpl.class,
+        PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,

@@ -1,10 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.recipient.NotificationSentApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.ApiClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.api.SenderReadWebApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -12,10 +12,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 
-
 @Component
-public class PnWebPaClientImpl implements IPnWebPaClient {
-    private final SenderReadWebApi senderReadWebApi;
+public class PnBffPaClientImpl implements IPnWebPaClient {
+
+    private final NotificationSentApi notificationSentApi;
     private final RestTemplate restTemplate;
     private final String basePath;
     private final String userAgent;
@@ -27,7 +27,8 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
     private final String bearerTokenGA;
     private BearerTokenType bearerTokenSetted;
 
-    public PnWebPaClientImpl(RestTemplate restTemplate,
+
+    public PnBffPaClientImpl(RestTemplate restTemplate,
                              @Value("${pn.webapi.external.base-url}") String basePath,
                              @Value("${pn.external.bearer-token-pa-1}") String bearerTokenCom1,
                              @Value("${pn.external.bearer-token-pa-2}") String bearerTokenCom2,
@@ -43,7 +44,7 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.senderReadWebApi = new SenderReadWebApi(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
+        this.notificationSentApi = new NotificationSentApi(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
@@ -55,38 +56,21 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
     }
 
     @Override
-    public NotificationSearchResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        return senderReadWebApi.searchSentNotification(startDate, endDate, recipientId, status, subjectRegExp, iunMatch, size, nextPagesKey);
-    }
-
-
-    @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean beenSet = false;
         switch (bearerToken) {
-            case MVP_1 -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
-                beenSet = true;
-            }
-            case MVP_2 -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
-                beenSet = true;
-            }
-            case GA -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
-                beenSet = true;
-            }
-            case SON -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
-                beenSet = true;
-            }
-            case ROOT -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
-                beenSet = true;
-            }
+            case MVP_1 ->
+                    this.notificationSentApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
+            case MVP_2 ->
+                    this.notificationSentApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
+            case GA ->
+                    this.notificationSentApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
+            case SON ->
+                    this.notificationSentApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
+            case ROOT ->
+                    this.notificationSentApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return beenSet;
+        return true;
     }
 
     @Override
@@ -94,4 +78,9 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
         return this.bearerTokenSetted;
     }
 
+    @Override
+    public BffNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+        BffNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, status, subjectRegExp, iunMatch, size, nextPagesKey);
+        return response;
+    }
 }

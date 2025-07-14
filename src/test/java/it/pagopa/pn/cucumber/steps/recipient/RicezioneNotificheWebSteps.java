@@ -1,5 +1,9 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
@@ -7,16 +11,17 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
@@ -549,12 +554,12 @@ public class RicezioneNotificheWebSteps {
     private boolean searchNotification(NotificationSearchParam searchParam) {
         boolean beenFound;
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
-        NotificationSearchResponse notificationSearchResponse = webRecipientClient
+        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse notificationSearchResponse = webRecipientClient
                 .searchReceivedNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                         searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
-        List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
@@ -577,12 +582,14 @@ public class RicezioneNotificheWebSteps {
 
     private boolean searchNotificationWebPA(NotificationSearchParamWebPA searchParam) {
         boolean beenFound;
-        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse notificationSearchResponse = webPaClient
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26 convertedStatus;
+        convertedStatus = deepCopy(searchParam.status, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.class);
+        BffNotificationsResponse notificationSearchResponse = webPaClient
                 .searchSentNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                        searchParam.status, searchParam.subjectRegExp,
+                        convertedStatus, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
-        List<it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
@@ -591,7 +598,7 @@ public class RicezioneNotificheWebSteps {
                     notificationSearchResponse = webPaClient
                             .searchSentNotification(
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                                    searchParam.status, searchParam.subjectRegExp,
+                                    convertedStatus, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
                     beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
@@ -775,7 +782,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;
-        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26 status;
+        NotificationStatusV26 status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;
@@ -1101,6 +1108,18 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
+    }
+
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
+        ObjectMapper objMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
+        try {
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
+        }
     }
 
 }

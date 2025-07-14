@@ -22,7 +22,6 @@ Feature: Creazione di una delega in erogazione
       | api,security |        403 |
       | support      |        403 |
 
-
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_PENDING] Il rifiuto di una delega in stato di pending possa essere compiuto solo da un utente con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"

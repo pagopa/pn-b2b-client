@@ -6,6 +6,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions.ClientType;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequestParam;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public class VoucherGenerationParamsValidationSteps {
 
     private final SharedStepsContext sharedStepsContext;
     private final VoucherService voucherService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public VoucherGenerationParamsValidationSteps(
         SharedStepsContext sharedStepsContext,
