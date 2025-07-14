@@ -62,23 +62,24 @@
     </properties>
 
     <dependencies>
-        <!-- AWS SDK Lambda -->
+        <!-- AWS SDK v2 -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>lambda</artifactId>
-            <version>2.31.77</version>
         </dependency>
-
-        <!-- Region and credentials provider -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sdk-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>regions</artifactId>
         </dependency>
-
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>auth</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -186,15 +187,6 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sdk-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sdk-core</artifactId>
-        </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -202,7 +194,7 @@
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
-                <version>2.25.10</version>
+                <version>2.31.78</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
