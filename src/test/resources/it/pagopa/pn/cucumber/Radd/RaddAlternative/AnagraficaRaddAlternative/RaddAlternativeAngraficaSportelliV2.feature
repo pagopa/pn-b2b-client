@@ -4,7 +4,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli
 
   @raddAnagraficaV2
   Scenario: [RADD_ANAGRAFICA_CRUD_1] inserimento sportello RADD con dati corretti
-    When viene generato uno sportello Radd con dati:
+    When viene generato uno sportello Radd V2 con dati:
       | address_radd_row             | via posto       |
       | address_radd_cap             | 75010           |
       | address_radd_province        | MT              |
@@ -23,7 +23,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli
 
   @raddAnagraficaV2
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_2] inserimento sportello RADD senza campi obbligatori
-    When viene generato uno sportello Radd con restituzione errore con dati:
+    When viene generato uno sportello Radd V2 con restituzione errore con dati:
       | address_radd_row      | <via>         |
       | address_radd_cap      | <cap>         |
       | address_radd_province | <provincia>   |
@@ -42,7 +42,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli
 
   @raddAnagraficaV2
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_3] inserimento sportello RADD con formato campi errato
-    When viene generato uno sportello Radd con restituzione errore con dati:
+    When viene generato uno sportello Radd V2 con restituzione errore con dati:
       | address_radd_row             | <via>               |
       | address_radd_cap             | <cap>               |
       | address_radd_province        | <provincia>         |
@@ -69,3 +69,17 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli
       | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL              | NULL              | ĄŁĽŚŠGAfŞŤŹŽŻą˛łľ | NULL             | NULL         |
       | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL              | NULL              | NULL              | ĄŁĽŚAFŠŞŤŹŽŻą˛łľ | NULL         |
 
+  @raddAnagraficaV2
+  Scenario: [RADD_ANAGRAFICA_CRUD_15] cancellazione sportello RADD con dati corretti
+    When viene generato uno sportello Radd con dati:
+      | address_radd_row      | via posto        |
+      | address_radd_cap      | 80017            |
+      | address_radd_province | NA               |
+      | address_radd_city     | MELITO DI NAPOLI |
+      | address_radd_country  | ITALY            |
+      | radd_start_validity   | now              |
+      | radd_description      | descrizione      |
+      | radd_phoneNumber      | +39 0126437425   |
+    Then si controlla che il sportello sia in stato "ACCEPTED"
+    Then viene cancellato uno sportello Radd con dati:
+      | radd_end_validity | now |

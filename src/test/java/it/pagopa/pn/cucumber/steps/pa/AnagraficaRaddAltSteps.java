@@ -431,6 +431,15 @@ public class AnagraficaRaddAltSteps {
         }
     }
 
+    @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
+    public void vieneGeneratoConErroreSportelloRaddv2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
+        try {
+            raddAltClientV2.addRegistry(null, null, this.uid, null, dataSportelloV2);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
     @When("viene modificato uno sportello Radd con dati:")
     public void vieneModificatoSportelloRadd(@Transpose UpdateRegistryRequest dataSportello) {
         log.info("Upload Request: {}", dataSportello);
@@ -477,6 +486,30 @@ public class AnagraficaRaddAltSteps {
         try {
             String finalEndDate = endDate;
             Assertions.assertDoesNotThrow(() -> raddAltClient.deleteRegistry(this.uid, this.registryId, finalEndDate));
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{endDate: " + (endDate == null ? "NULL" : endDate) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene cancellato uno sportello Radd V2 con dati:")
+    public void vieneCancellatoSportelloRaddV2(Map<String, String> richiestaCancellazione) {
+        String endDate = getValue(richiestaCancellazione, RADD_END_VALIDITY.key);
+
+//        if (endDate != null) {
+//            if (endDate.toLowerCase().contains("corretto")) {
+//                endDate = this.sportelloRaddCrudV2.getStartValidity();
+//            } else {
+//                endDate = dataTableTypeRaddAlt.setData(endDate);
+//            }
+//        } // todo t radd serve?
+
+        log.info("data cancellazione sportello: {}", endDate);
+
+        try {
+            String finalEndDate = endDate;
+            Assertions.assertDoesNotThrow(() -> raddAltClientV2.deleteRegistry(null, null, this.uid, null, null));
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{endDate: " + (endDate == null ? "NULL" : endDate) + " }";
