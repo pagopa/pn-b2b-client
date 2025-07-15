@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
@@ -97,7 +99,9 @@ public class SegregazioneDeliveryPushSteps {
                     newUrl = getApiUrl(NEW_TIMELINE_URL, iun, queryParams);
                     timelineOld = callGetApi(oldUrl);
                     timelineNew = callGetApi(newUrl);
-                    assertThat(timelineOld).isEqualTo(timelineNew);
+                    JsonElement oldApiJsonElement = JsonParser.parseString(timelineOld);
+                    JsonElement newApiJsonElement = JsonParser.parseString(timelineNew);
+                    assertThat(oldApiJsonElement).isEqualTo(newApiJsonElement);
                 } catch (AssertionError ae) {
                     log.warn("NOT MATCHING DATA FOR IUN : " + iun + " OLD TIMELINE BODY " + timelineOld);
                     log.warn("NOT MATCHING DATA FOR IUN : " + iun + " NEW TIMELINE BODY " + timelineNew);
@@ -147,7 +151,9 @@ public class SegregazioneDeliveryPushSteps {
                     newUrl = getApiUrl(NEW_STATUS_HISTORY_URL, iun, queryParams);
                     statusHistoryOld = callGetApi(oldUrl);
                     statusHistoryNew = callGetApi(newUrl);
-                    assertThat(statusHistoryOld).isEqualTo(statusHistoryNew);
+                    JsonElement oldApiJsonElement = JsonParser.parseString(statusHistoryOld);
+                    JsonElement newApiJsonElement = JsonParser.parseString(statusHistoryNew);
+                    assertThat(oldApiJsonElement).isEqualTo(newApiJsonElement);
                 } catch (AssertionError ae) {
                     log.warn("NOT MATCHING DATA FOR IUN : " + iun + " OLD HISTORY BODY " + statusHistoryOld);
                     log.warn("NOT MATCHING DATA FOR IUN : " + iun + " NEW HISTORY BODY " + statusHistoryNew);
