@@ -388,8 +388,7 @@ public class AvanzamentoNotificheB2bSteps {
                 .deliveryDetailCode(deliveryDetailCode)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        String speedStrategy = timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)? TIMELINE_SLOW : TIMELINE_RAPID;
-        b2bStepsInterface.waitForEventOrStatus(speedStrategy, TIMELINE, timelineEventCategory, filters);
+        b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
         b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, null, null);
     }
 
@@ -849,8 +848,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConResponseStatus(String timelineEventCategory, String responseStatus) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        String speedStrategy = timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)? TIMELINE_SLOW : TIMELINE_RAPID;
-        b2bStepsInterface.waitForEventOrStatus(speedStrategy, TIMELINE, timelineEventCategory, filters);
+        b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
         TimelineElementCheckFilters checkFilters = TimelineElementCheckFilters.builder()
                 .responseStatus(responseStatus)
                 .build();
