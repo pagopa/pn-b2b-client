@@ -1,5 +1,5 @@
 @m2m-purposes
-Feature: Gestione purposes
+Feature: Gestione purposes attraverso APIs M2M V2
 
   Scenario Outline: [M2M_PURPOSES_LIST_1] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN
     Given l'utente è un "admin" di "PA1"

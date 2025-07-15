@@ -1,4 +1,4 @@
-Feature: Gestione delle deleghe
+Feature: Gestione delle deleghe attraverso APIs M2M V2
   Background:
     # TODO 07/02/2025: considerare di generalizzare così da resettare TUTTI gli enti automaticamente
     Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe in fruizione

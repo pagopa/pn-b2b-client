@@ -1,5 +1,5 @@
 @m2m-agreements
-Feature: Gestione degli agreements
+Feature: Gestione degli agreements attraverso APIs M2M V2
 
   Scenario Outline: [M2M_AGREEMENTS_LIST_1] La lista degli agreements può essere visionata da un utente con ruolo M2M o M2M-ADMIN
     Given "PA1" ha già creato e pubblicato 5 e-services

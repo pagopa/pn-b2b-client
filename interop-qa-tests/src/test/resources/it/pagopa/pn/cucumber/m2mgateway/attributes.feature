@@ -1,5 +1,5 @@
 @m2m-attributes
-Feature: Gestione degli attributes
+Feature: Gestione degli attributes attraverso APIs M2M V2
 
   Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_1] Recupero del dettaglio di un attributo certificato con utente autorizzato (Scenario 61)
     Given "PA1" ha già creato e pubblicato 1 e-services
