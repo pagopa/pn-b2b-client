@@ -618,6 +618,9 @@ public class BFFDataPreparationService {
             purposeEServiceSeed.setConsumerId(teServiceMode.getConsumerId());
             purposeEServiceSeed.setRiskAnalysisId(teServiceMode.getRiskAnalysisId());
             httpCallExecutor.performCall(() -> purposeApiClient.createPurposeForReceiveEservice(purposeEServiceSeed));
+            if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+                sharedStepsContext.getPurposeCommonContext().addCreatedPurposeEService(purposeEServiceSeed);
+            }
         }
         else {
             // For modes other than RECEIVE, build a PurposeSeed

@@ -4,6 +4,7 @@ import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
+import it.pagopa.interop.agreement.service.IM2MClientsClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MDeclaredAttributeClient;
@@ -48,6 +49,7 @@ public class ClientTokenConfigurator {
     private IM2MEServiceTemplateClient m2mEServiceTemplateClient;
     private IM2MEserviceDescriptorClient m2mEServiceDescriptorClient;
     private IM2MDelegationClient m2mDelegationClient;
+    private IM2MClientsClient m2MClientsClient;
 
     public void setBearerToken(String token) {
         authorizationClient.setBearerToken(token);
@@ -69,6 +71,7 @@ public class ClientTokenConfigurator {
         m2mEServiceTemplateClient.setBearerToken(token);
         m2mEServiceDescriptorClient.setBearerToken(token);
         m2mDelegationClient.setBearerToken(token);
+        m2MClientsClient.setBearerToken(token);
     }
 
 }

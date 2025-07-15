@@ -3,11 +3,9 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
 import java.util.UUID;
 
 public class ClientPurposeAddSteps {
@@ -22,6 +20,14 @@ public class ClientPurposeAddSteps {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
+    }
+
+    @When("l'utente associa la finalità al client con successo")
+    public void userSuccessfullyRetrievesFinalization() {
+        userRetrievesFinalization();
+        if(httpCallExecutor.getClientResponse().isError()) {
+            throw new IllegalStateException("Errore manifestatosi durante l'associazione della finalità al client. Consultare logs per maggior dettagli.");
+        }
     }
 
     @When("l'utente richiede l'associazione della finalità al client")
