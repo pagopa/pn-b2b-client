@@ -19,7 +19,8 @@ public class LambdaInvoker {
     private LambdaClient getLambdaClient() {
         if (lambdaClient == null) {
             lambdaClient = LambdaClient.builder()
-                    //.credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core"))
+                    // SOLO IN LOCALE
+                    // .credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core"))
                     .credentialsProvider(DefaultCredentialsProvider.create())
                     .region(Region.EU_SOUTH_1).build();
         }
