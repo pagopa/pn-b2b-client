@@ -39,7 +39,6 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
 
 
-
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -224,7 +223,6 @@ Feature: Abilitazione domicilio digitale
     And viene verificata l'assenza di indirizzi Pec per il comune "Comune_Root"
 
 
-
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_9] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -241,7 +239,6 @@ Feature: Abilitazione domicilio digitale
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_2"
-
 
 
   @sercq @addressBook3
@@ -468,7 +465,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
 
-  @sercq @addressBook1 @webhook1 @cleanWebhook @ignoreHotfixTemp #temp
+  @sercq @precondition @addressBook1 @webhook1 @cleanWebhook @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V10] Creazione di un nuovo stream con versione V10 e controllo che SERCQ non è presente
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2

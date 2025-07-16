@@ -48,9 +48,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -141,6 +139,11 @@ public abstract class B2bUtils {
         OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(date, zoneId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         return offsetDateTime.truncatedTo(java.time.temporal.ChronoUnit.SECONDS).format(formatter);
+    }
+
+    public static OffsetDateTime convertStringToOffsetDateTime(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return LocalDate.parse(dateString, formatter).atStartOfDay().atOffset(ZoneOffset.UTC);
     }
 
     public static int convertToSeconds(String timeStr) {
@@ -394,6 +397,31 @@ public abstract class B2bUtils {
             default ->
                     throw new RuntimeException("Modalità di calcolo non riconosciuta, controllare i dati in input e le properties");
         };
+    }
+
+    /**
+     * Verifica se un oggetto "expected" ha tutti i campi null.
+     * Usato in fase di confronto expected/actual: quando expected ha tutti i campi null si procede a verificare che actual != null
+     *
+     * @return true se tutti i campi dell'oggetto sono null
+     */
+    public static boolean objectHasAllFieldsNull(Object expected) {
+        Class<?> clazz = expected.getClass();
+        List<Field> nonStaticFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).toList();
+        try {
+            for (Field expectedField : nonStaticFields) {
+                expectedField.setAccessible(true);
+                Object expectedValue = expectedField.get(expected);
+                if (expectedValue != null) {
+                    return false;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            assertThat(true)
+                    .as("Eccezione imprevista in fase di verifica se l'expected è NOT NULL tramite reflection " + e.getMessage())
+                    .isFalse();
+        }
+        return true;
     }
 
     /**

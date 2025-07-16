@@ -22,6 +22,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
+        <gson.version>2.11.0</gson.version>
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
@@ -81,6 +82,14 @@
             <artifactId>swagger-annotations</artifactId>
             <version>1.6.5</version>
         </dependency>
+
+        <!-- Gson: Library for serializing and deserializing Java objects to and from JSON format -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
