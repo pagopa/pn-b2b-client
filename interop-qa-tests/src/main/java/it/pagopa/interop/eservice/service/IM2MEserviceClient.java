@@ -21,4 +21,5 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     EServices getAll(EserviceListRequest payload);
     EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId);
+    void delete(UUID id);
 }

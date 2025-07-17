@@ -42,7 +42,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 401
 
   Scenario: [M2M_AGREEMENTS_PURPOSES_3] La lista delle finalità correlate a un agreement non può essere visualizzata specificando un id inesistente (Parte2#Scenario 15)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di ottenere la lista delle finalità correlate a una richiesta di fruizione inesistente
     Then si ottiene status code 404
 

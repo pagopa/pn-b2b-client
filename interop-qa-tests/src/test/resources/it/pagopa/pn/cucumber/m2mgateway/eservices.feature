@@ -161,3 +161,41 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | ruolo-m2m |
       | m2m       |
       | m2m-admin |
+
+  Scenario: [M2MG_ESERVICES_18] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service (Parte2#Scenario 32)
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la cancellazione dell'e-service
+    Then si ottiene lo status code 200
+    When l'utente tenta di recuperare il record di eService creato
+    Then si ottiene lo status code 404
+
+  Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario 34)
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la cancellazione dell'e-service
+    Then si ottiene lo status code 401
+
+  Scenario: [M2MG_ESERVICES_20] La cancellazione di un e-service non può essere effettuata specificando un id inesistente (Parte2#Scenario 35)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la cancellazione di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  Scenario: [M2MG_ESERVICES_21] La cancellazione di un e-service non può essere effettuata specificando un token non valido (Parte2#Scenario 36)
+    Given viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la cancellazione di un e-service inesistente
+    Then si ottiene status code 401
+
+  Scenario: [M2MG_ESERVICES_22] La cancellazione di un e-service precedentemente rimosso non può essere effettuata (Parte2#Scenario 37)
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente effettua la cancellazione dell'e-service con successo
+    When l'utente tenta di effettuare la cancellazione dell'e-service
+    Then si ottiene lo status code 404
+
+  Scenario: [M2MG_ESERVICES_23] La cancellazione di un e-service non può essere effettuata da un ente diverso dal creatore dell'e-service (Parte2#Scenario 38)
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la cancellazione dell'e-service
+    Then si ottiene lo status code 403
