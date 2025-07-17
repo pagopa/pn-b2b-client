@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 
 import io.cucumber.java.en.And;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
-import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;

@@ -12,6 +12,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -353,6 +354,16 @@ public class PurposesSteps {
         UUID purposeId = UUID.randomUUID();
         UUID versionId = UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId));
+    }
+
+    @Then("il file restituito non è vuoto")
+    public void nonEmptyFile() {
+        FileDownloadMultipart fileMultipart = (FileDownloadMultipart) httpCallExecutor.getResponse();
+        assertSoftly(softly -> {
+            softly.assertThat(fileMultipart.getId()).as("File id check").isNotNull();
+            softly.assertThat(fileMultipart.getFilename()).as("Filename check").isNotBlank();
+            softly.assertThat(fileMultipart.getFile().length()).as("File size check").isGreaterThan(0L);
+        });
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {

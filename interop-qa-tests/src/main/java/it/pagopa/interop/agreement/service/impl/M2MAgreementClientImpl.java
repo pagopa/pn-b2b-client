@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -81,13 +82,12 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
 
     @Override
     public Documents getConsumerDocuments(UUID agreementId) {
-        return this.getConsumerDocuments(agreementId, 30, 0);
+        return this.getConsumerDocuments(agreementId, 0, 30);
     }
 
-    //TODO 11/07/2025 valorizzare una volta rilasciate le APIs in oggetto
     @Override
-    public Documents getConsumerDocuments(UUID agreementId, int limit, int offset) {
-        return null;
+    public Documents getConsumerDocuments(UUID agreementId, int offset, int limit) {
+        return this.agreementsApi.getAgreementConsumerDocuments(agreementId, offset, limit);
     }
 
     @Override

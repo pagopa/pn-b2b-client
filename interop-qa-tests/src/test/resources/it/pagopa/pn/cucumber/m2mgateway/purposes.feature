@@ -662,6 +662,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo-m2m>
     And l'utente tenta di ottenere il documento dell'analisi del rischio correlato alla finalità
     Then si ottiene status code 200
+    And il file restituito non è vuoto
     Examples:
       | ruolo-m2m  |
       | m2m-admin  |

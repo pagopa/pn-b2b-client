@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
-import it.pagopa.interop.attribute.service.IM2MDeclaredAttributeClient.DeclaredAttribute;
-import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import java.util.ArrayList;
 import java.util.List;

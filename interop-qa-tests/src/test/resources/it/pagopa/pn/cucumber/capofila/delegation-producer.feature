@@ -113,11 +113,6 @@ Feature: Creazione di una delega in erogazione
     When l'utente richiede la creazione di una delega per l'ente "PA2"
     Then si ottiene lo status code 403
 
-        # FIXME serve solo come prova dopo locale i recenti adattamenti a tutta la parte degli user, se finisce nel repo è un errore, rimuovere
-  Scenario: aaa
-    #Given l'utente è un "admin" di "PA2"
-    Given l'utente è il numero 2 ad avere ruolo "admin" di "PA2"
-
   #TC-7: L'accettazione di una delega NON può essere fatta da un utente con ruolo diverso da ADMIN
   #TC-8: La revoca di una delega NON può essere fatta da un utente con ruolo diverso da ADMIN
   #TC-13: L'accettazione di una delega può essere fatta da un utente con ruolo ADMIN

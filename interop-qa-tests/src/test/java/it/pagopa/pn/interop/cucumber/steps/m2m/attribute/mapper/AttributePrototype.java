@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor(staticName = "of")
 public class AttributePrototype {
-
     public String name;
     public String description;
     public String code;

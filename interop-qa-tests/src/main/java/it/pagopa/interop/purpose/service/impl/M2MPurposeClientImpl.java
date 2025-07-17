@@ -105,7 +105,7 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
 
     @Override
     public FileDownloadMultipart downloadPurposeVersionDocument(UUID purposeId, UUID versionId) {
-        return purposesApi.downloadPurposeVersionDocument(purposeId, versionId);
+        return purposesApi.downloadPurposeVersionRiskAnalysisDocument(purposeId, versionId);
     }
 
     @Override
