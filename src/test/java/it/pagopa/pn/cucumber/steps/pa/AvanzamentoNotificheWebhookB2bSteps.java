@@ -565,11 +565,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V10);
 
         StatusElementSearchResult<NotificationStatus> searchElementResult = webhookStepsInterface.getStatusEventForStream(status, timingForPolling.getTimingForElement(status));
-
         NotificationStatus notificationStatus = searchElementResult.getNotificationStatus();
-
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(searchElementResult.getNotificationStatus().name());
 
         Object progressResponseElement = null;
         int wait = 48;
@@ -581,7 +577,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification
                     .getNotificationStatusHistory().stream()
-                    .filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue()))
+                    .filter(elem -> elem.getStatus().getValue().equals(notificationStatus.getValue()))
                     .findAny()
                     .orElse(null);
 
