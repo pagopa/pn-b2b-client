@@ -37,6 +37,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | 92044 | 342   | PALMA DI MONTECHIARO  | AG       | notifica analogica RECAPITISTA |
 
       | 14027 | 420   | TONENGO               | AT       | notifica analogica RECAPITISTA |
+      | 90010 | 398   | ALTAVILLA MILICIA               | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 342   | CORTALE               | CZ       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAprile25
   Scenario: [CALCOLO-COSTO_RS-20GR_2] (Aprile) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
