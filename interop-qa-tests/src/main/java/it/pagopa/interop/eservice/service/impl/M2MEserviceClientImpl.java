@@ -103,6 +103,12 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
+    public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
+        // TODO 17/07/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
+        //        //  metodo nel client da chiamare
+    }
+
+    @Override
     public UUID generateId(EntityIdType type) {
         return switch (type){
             case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato

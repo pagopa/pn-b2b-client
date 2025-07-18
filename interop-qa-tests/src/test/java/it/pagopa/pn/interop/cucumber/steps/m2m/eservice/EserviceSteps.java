@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -10,6 +11,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
@@ -33,7 +35,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
-    public void deleteEServiceSuccessfully() {
+    public void successfullyDeleteEService() {
         deleteEService();
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         pollingService.makePolling(
@@ -52,6 +54,37 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void deleteEService() {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         httpExecutor.performCall(() -> this.client.delete(eserviceId));
+    }
+
+    @When("l'utente tenta di effettuare la riattivazione dell'e-service")
+    public void unsuspendEService() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
+    }
+
+    @When("l'utente tenta di effettuare la riattivazione di un e-service inesistente")
+    public void unsuspendNonExistentEService() {
+        UUID eserviceId = UUID.randomUUID();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
+    }
+
+    @When("l'utente tenta di effettuare la riattivazione di un descriptor dell'e-service inesistente")
+    public void unsuspendNonExistentDescriptor() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = UUID.randomUUID();
+        httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
+    }
+
+    @Then("l'e-service è stato riattivato con successo")
+    public void successfullyUnsuspendedEService() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        pollingService.makePolling(() -> httpExecutor.performCall(
+            () ->client.getDescriptor(eserviceId, descriptorId)),
+            status -> status.is2xxSuccessful() && ((it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor) httpExecutor.getResponse()).getState().equals(EServiceDescriptorState.PUBLISHED),
+            "Il servizio non è stato riattivato come previsto.");
     }
 
     @Override
