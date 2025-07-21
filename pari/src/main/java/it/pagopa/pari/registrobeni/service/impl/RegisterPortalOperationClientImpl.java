@@ -13,8 +13,13 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.model.PortalConsen
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RegisterPortalOperationClientImpl {
     private final RestTemplate restTemplate;
     private final PortalConsentApi portalConsentApi;
@@ -31,7 +36,7 @@ public class RegisterPortalOperationClientImpl {
     }
 
     private ApiClient createApiClient(String bearerToken) {
-        ApiClient apiClient = new ApiClient();
+        ApiClient apiClient = new ApiClient(restTemplate);
         apiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return apiClient;
     }
