@@ -11,12 +11,14 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.e
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffAddressType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffAddressVerificationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffChannelType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
@@ -201,7 +203,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 .toList();
     }
 
-    public UserAddresses getAddressesByRecipient() throws RestClientException {
+    public UserAddresses getAddressesByRecipientOld() throws RestClientException {
         List<LegalAndUnverifiedDigitalAddress> legal = new ArrayList<>();
         List<CourtesyDigitalAddress> courtesy = new ArrayList<>();
 
@@ -218,6 +220,17 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         userAddresses.courtesy(courtesy);
         return userAddresses;
     }
+
+
+    public RecipientWrapper getAddressesByRecipient() throws RestClientException {
+
+        List<BffUserAddress> bffUserAddress = addressesApi.getAddressesV1();
+        RecipientWrapper recipientWrapper = new RecipientWrapper();
+        recipientWrapper.setBffUserAddress(bffUserAddress);
+
+        return recipientWrapper;
+    }
+
 
     public void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
         addressesApi.deleteAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()));

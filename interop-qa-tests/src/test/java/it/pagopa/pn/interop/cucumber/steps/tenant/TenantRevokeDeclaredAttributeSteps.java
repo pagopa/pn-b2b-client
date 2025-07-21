@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.tenant;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -8,7 +9,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 public class TenantRevokeDeclaredAttributeSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public TenantRevokeDeclaredAttributeSteps(ClientTokenConfigurator clientTokenConfigurator,
                                               SharedStepsContext sharedStepsContext) {

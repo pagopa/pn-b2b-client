@@ -19,6 +19,7 @@ public class EServicesCommonContext {
     private List<EServiceDescriptor> publishedEservicesIds = new ArrayList<>();
     private List<EServiceDescriptor> suspendedEservicesIds = new ArrayList<>();
     private List<EServiceDescriptor> draftEServicesIds = new ArrayList<>();
+    private List<EServiceDescriptor> retrievedEservicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
     private UUID documentId;

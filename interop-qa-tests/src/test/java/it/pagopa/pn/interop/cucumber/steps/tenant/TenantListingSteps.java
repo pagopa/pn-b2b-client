@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -10,7 +12,7 @@ import org.junit.jupiter.api.Assertions;
 
 public class TenantListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
     public TenantListingSteps(ClientTokenConfigurator clientTokenConfigurator,

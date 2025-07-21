@@ -6,13 +6,14 @@ import static java.util.stream.Collectors.toList;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
@@ -32,16 +33,16 @@ import java.util.stream.IntStream;
 @Slf4j
 public class ClientCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
     private PurposeAdditionDetailsSeed purposeAdditionDetailsSeed;
 
     @Autowired
     public ClientCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
-                             DataPreparationService dataPreparationService,
+                             BFFDataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;

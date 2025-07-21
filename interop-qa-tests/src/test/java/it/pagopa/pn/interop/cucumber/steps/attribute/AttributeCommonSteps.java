@@ -5,12 +5,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.domain.TenantType;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import java.util.UUID;
@@ -21,13 +22,13 @@ public class AttributeCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final AttributeCommonContext attributeCommonContext;
-    private final DataPreparationService dataPreparationService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final BFFDataPreparationService dataPreparationService;
+    private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
 
     public AttributeCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        DataPreparationService dataPreparationService)
+        BFFDataPreparationService dataPreparationService)
     {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
