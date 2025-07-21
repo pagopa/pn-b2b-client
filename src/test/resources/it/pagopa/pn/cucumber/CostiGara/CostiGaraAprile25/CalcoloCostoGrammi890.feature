@@ -119,7 +119,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 10010 | 1106  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1171  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 90054 | 1030  | GERACI SICULO  | PA       | notifica analogica RECAPITISTA |
-      | 88071 | 1053  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
+      | 88071 | 1212  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
       | 06012 | 1053  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 38097 | 1212  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |

@@ -114,7 +114,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 645   | ALBUCCIONE       | RM       | notifica analogica RECAPITISTA |
       | 00118 | 532   | ROMA             | RM       | notifica analogica RECAPITISTA |
       | 04100 | 560   | FOGLIANO         | LT       | notifica analogica RECAPITISTA |
-      | 91030 | 540   | SAN VITO LO CAPO | TP       | notifica analogica RECAPITISTA |
+      | 91030 | 632   | SAN VITO LO CAPO | TP       | notifica analogica RECAPITISTA |
       | 36049 | 645   | SOVIZZO          | VI       | notifica analogica RECAPITISTA |
       | 63094 | 683   | BISIGNANO        | AP       | notifica analogica RECAPITISTA |
       | 64011 | 683   | ALBA ADRIATICA   | TE       | notifica analogica RECAPITISTA |
