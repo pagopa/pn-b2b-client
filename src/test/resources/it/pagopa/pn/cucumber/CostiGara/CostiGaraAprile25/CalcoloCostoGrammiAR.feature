@@ -122,7 +122,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 95056 | 540   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
       | 90010 | 632   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
       | 88020 | 540   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 631   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+      | 71010 | 632   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
 
 
 
@@ -236,7 +236,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 647   | ROMA              | RM       | notifica analogica RECAPITISTA |
       | 04100 | 676   | FOGLIANO          | LT       | notifica analogica RECAPITISTA |
       | 90020 | 638   | CASTELLANA SICULA | PA       | notifica analogica RECAPITISTA |
-      | 64100 | 712   | TERAMO            | TE       | notifica analogica RECAPITISTA |
+      | 64100 | 528   | TERAMO            | TE       | notifica analogica RECAPITISTA |
       | 86081 | 800   | AGNONE            | IS       | notifica analogica RECAPITISTA |
       | 95056 | 638   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
       | 90010 | 745   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
@@ -282,7 +282,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 95056 | 733   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
       | 90010 | 840   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
       | 88020 | 733   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 839   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+      | 71010 | 840   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
 
 
 
@@ -322,7 +322,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 95056 | 762   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
       | 90010 | 876   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
       | 88020 | 762   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 875   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+      | 71010 | 876   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
 
 
 
@@ -439,7 +439,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 95056 | 1307   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
       | 90010 | 1435   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
       | 88020 | 1307   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 1434   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+      | 71010 | 1435   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
 
 
 
