@@ -9,28 +9,39 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
+import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl.EServiceInterfaceUploadRequest;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.RandomUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpExecutor;
     private final PollingService pollingService;
     private final IM2MEserviceClient client;
+    private final BlobFileCreator blobFileCreator;
 
-    public EserviceSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
+    public EserviceSteps(
+        SharedStepsContext sharedStepsContext,
+        ClientTokenConfigurator clientTokenConfigurator,
+        BlobFileCreator blobFileCreator) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.client  = clientTokenConfigurator.getM2meServiceClient();
+        this.blobFileCreator = blobFileCreator;
         client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
     }
 
@@ -85,6 +96,84 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
             () ->client.getDescriptor(eserviceId, descriptorId)),
             status -> status.is2xxSuccessful() && ((it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor) httpExecutor.getResponse()).getState().equals(EServiceDescriptorState.PUBLISHED),
             "Il servizio non è stato riattivato come previsto.");
+    }
+
+    @Given("l'utente effettua il caricamento dell'interfaccia dell'e-service con successo")
+    public void successfullyUploadInterface() {
+        uploadInterface();
+        interfaceUploadedCheck();
+    }
+
+    @When("l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service")
+    public void uploadInterface(){
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        String interfaceName = "e-service-%s-descriptor-%s-interface-%d".formatted(eServiceId,
+            descriptorId,
+            RandomUtils.secure().randomInt(0, 99));
+        uploadInterface(interfaceName, eServiceId, descriptorId);
+    }
+
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia con lo stesso nome")
+    public void uploadSameNameInterface() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
+        uploadInterface(interfaceName, eServiceId, descriptorId);
+    }
+
+    @Then("l'interfaccia è stata caricata con successo")
+    public void interfaceUploadedCheck() {
+        Predicate<HttpStatus> interfaceUploaded = HttpStatus::is2xxSuccessful;
+        checkUploadedInterface(interfaceUploaded);
+    }
+
+    @Then("l'interfaccia non è stata caricata")
+    public void interfaceNotUploadedCheck() {
+        Predicate<HttpStatus> interfaceUploaded = HttpStatus::isError;
+        checkUploadedInterface(interfaceUploaded);
+    }
+
+    private void checkUploadedInterface(Predicate<HttpStatus> interfaceUploaded) {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        pollingService.makePolling(
+            () -> httpExecutor.performCall(() -> client.downloadEServiceDescriptorInterface(eServiceId, descriptorId)),
+            interfaceUploaded,
+            "L'interfaccia non è stata trovata. Visionare logs per maggiori dettagli");
+    }
+
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service inesistente")
+    public void uploadNonExistentEServiceInterface(){
+        UUID eServiceId = UUID.randomUUID();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
+        uploadInterface(interfaceName, eServiceId, descriptorId);
+    }
+
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service descriptor inesistente")
+    public void uploadNonExistentEServiceDescriptorInterface(){
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = UUID.randomUUID();
+        String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
+        uploadInterface(interfaceName, eServiceId, descriptorId);
+    }
+
+    private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
+        String fileName = String.format("interface.%s", "yaml"); // TODO 18/07/2025 potrebbe essere il caso di parametrizzare i test coinvolti per più di un formato
+        String filePath = String.format("src/main/resources/%s", fileName);
+        Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
+        sharedStepsContext.getEServicesCommonContext().setInterfaceName(interfaceName);
+        EServiceInterfaceUploadRequest request = new EServiceInterfaceUploadRequest()
+
+            /* TODO 18/07/2025: frutto di una deduzione personale, non disponendo ancora della
+                specifica OpenAPI: può darsi che intenda il nome del file stesso */
+            .name(interfaceName)
+
+            .resource(resource)
+            .eServiceId(eServiceId)
+            .descriptorId(descriptorId);
+        httpExecutor.performCall(() -> client.uploadInterface(request));
     }
 
     @Override

@@ -25,6 +25,7 @@ public class EServicesCommonContext {
     private UUID documentId;
     private UUID documentId2;
     private UUID interfaceId;
+    private String interfaceName;
     private UUID oldDescriptorId;
     private String name;
 

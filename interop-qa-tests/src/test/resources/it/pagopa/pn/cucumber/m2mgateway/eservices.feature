@@ -245,8 +245,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | WAITING_FOR_APPROVAL  |
 
   Scenario: [M2MG_ESERVICES_30] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service se non è il creatore dello stesso (Parte2#Scenario 46)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 403

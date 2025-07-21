@@ -10,21 +10,59 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
+import java.util.List;
+import java.util.UUID;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MEserviceClientImpl extends AbstractClient implements IM2MEserviceClient {
+    /* TODO 18/07/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
+    *   adattare una volta ottenuta la specifica completa */
+    @Data
+    public static class EServiceInterfaceUploadRequest {
+        private UUID eServiceId;
+        private UUID descriptorId;
+        private Resource file;
+        private String name;
+
+        public EServiceInterfaceUploadRequest resource(Resource resource) {
+            this.file = resource;
+            return this;
+        }
+
+        public EServiceInterfaceUploadRequest name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EServiceInterfaceUploadRequest eServiceId(UUID eServiceId) {
+            this.eServiceId = eServiceId;
+            return this;
+        }
+
+        public EServiceInterfaceUploadRequest descriptorId(UUID descriptorId) {
+            this.descriptorId = descriptorId;
+            return this;
+        }
+    }
+
+    @Data
+    public static class EServiceInterfaceUploadResponse {
+        private UUID id;
+    }
+    /* ***************************************************************************************/
+
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
@@ -106,6 +144,19 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
         // TODO 17/07/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //        //  metodo nel client da chiamare
+    }
+
+    @Override
+    public EServiceInterfaceUploadResponse uploadInterface(EServiceInterfaceUploadRequest body) {
+        // TODO 17/07/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
+        //        //  metodo nel client da chiamare
+        return new EServiceInterfaceUploadResponse(); // <-- sostituire con impl. reale una volta rilasciata l'API
+    }
+
+    @Override
+    public FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId,
+        UUID descriptorId) {
+        return eservicesApi.downloadEServiceDescriptorInterface(eserviceId, descriptorId);
     }
 
     @Override
