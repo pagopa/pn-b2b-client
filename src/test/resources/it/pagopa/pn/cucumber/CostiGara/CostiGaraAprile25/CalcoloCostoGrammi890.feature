@@ -308,7 +308,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06022 | 1257   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
       | 09050 | 1257   | PULA               | CA       | notifica analogica RECAPITISTA |
       | 67020 | 1429   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1422   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+      | 86020 | 1429   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
 
 
