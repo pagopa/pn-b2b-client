@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
-import java.util.function.Supplier;
 
 @Slf4j
 @Getter
@@ -23,6 +22,7 @@ public class HttpCallExecutor implements IHttpExecutor {
     private String errorMessage;
     private Object response;
 
+    @Override
     public <T> HttpStatus performCall(Supplier<T> promise) {
         try {
             response = promise.get();
@@ -39,11 +39,11 @@ public class HttpCallExecutor implements IHttpExecutor {
      * facendo così anche a meno del secondo parametro. Probabilmente si avrebbe un comportamento
      * meglio standardizzato, visto che la versione attuale potenzialmente potrebbe lasciare
      * l'oggetto response a NULL, in caso di eccezioni. */
+    @Override
     public <T> T performCall(Supplier<T> promise, Function<T, HttpStatus> httpStatusMapper) {
         T promiseResponse = null;
         try {
             promiseResponse = promise.get();
-            log.debug("Response: {}", promiseResponse);
             response = promiseResponse;
             responseStatus = httpStatusMapper.apply(promiseResponse);
         } catch (HttpStatusCodeException e) {
@@ -53,6 +53,7 @@ public class HttpCallExecutor implements IHttpExecutor {
         return promiseResponse;
     }
 
+    @Override
     public HttpStatus performCall(Runnable promise) {
         try {
             promise.run();

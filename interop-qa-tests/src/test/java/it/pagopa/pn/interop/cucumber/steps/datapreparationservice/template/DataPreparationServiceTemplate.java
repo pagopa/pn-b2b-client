@@ -5,7 +5,6 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
 import it.pagopa.interop.common.operation.SimpleOperation;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation.AddConsumerDocumentParams;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation.CreateAgreementParams;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
@@ -43,7 +42,7 @@ public class DataPreparationServiceTemplate {
 
     public UUID createAndCheckAgreement(CreateAndCheckAgreementOperation operation, UUID eServiceID, UUID descriptorId, UUID delegationId) {
         UUID agreementId = createAgreement(operation.getCreateOperation(), eServiceID, descriptorId, delegationId).orElseThrow(
-            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getClientResponse())));
+            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getResponseStatus())));
         assertValidResponse();
         pollingService.makePolling(
             () ->  httpCallExecutor.performCall(() -> operation.getCheckerApiCaller().apply(agreementId)),
@@ -140,7 +139,7 @@ public class DataPreparationServiceTemplate {
         // Recupera la risposta e l'esito della chiamata (cast se necessario)
         @SuppressWarnings("unchecked")
         T rawResponse = (T) httpCallExecutor.getResponse();
-        var response = httpCallExecutor.getClientResponse();
+        var response = httpCallExecutor.getResponseStatus();
 
         // Se la risposta è positiva, estrae e restituisce il risultato
         if (response.is2xxSuccessful()) {

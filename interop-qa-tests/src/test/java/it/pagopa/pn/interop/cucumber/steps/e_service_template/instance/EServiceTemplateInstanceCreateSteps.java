@@ -9,6 +9,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -18,10 +19,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIns
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.Data;
@@ -31,18 +31,18 @@ import org.springframework.http.ResponseEntity;
 /** Cucumber steps involving quotas of E-service templates */
 @Data
 public class EServiceTemplateInstanceCreateSteps {
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IEServiceTemplateClient eServiceTemplateClient;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EasyRandom easyRandom;
     private final IEServiceClient eServiceClient;
 
     private InstanceEServiceSeed lastEServiceCreatedFromTemplateSeed;
 
-    public EServiceTemplateInstanceCreateSteps(DataPreparationService dataPreparationService,
+    public EServiceTemplateInstanceCreateSteps(BFFDataPreparationService dataPreparationService,
         ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext
     ) {

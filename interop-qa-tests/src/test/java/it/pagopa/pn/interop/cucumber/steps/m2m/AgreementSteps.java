@@ -16,7 +16,6 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
@@ -72,7 +71,7 @@ public class AgreementSteps {
                 .build()
         ));
 
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             Agreements res = (Agreements) httpCallExecutor.getResponse();
             sharedStepsContext.getAgreementCommonContext().setAgreementIds(
                 res.getResults().stream()
@@ -83,7 +82,7 @@ public class AgreementSteps {
 
     @Then("sono stati visualizzati correttamente {int} agreements creati")
     public void agreementsSuccessfullyGot(int expectedSize) {
-        HttpStatus clientResponse = httpCallExecutor.getClientResponse();
+        HttpStatus clientResponse = httpCallExecutor.getResponseStatus();
         if(clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }

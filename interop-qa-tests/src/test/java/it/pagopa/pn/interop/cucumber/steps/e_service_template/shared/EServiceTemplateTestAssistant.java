@@ -6,9 +6,10 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.fail;
 
 import com.google.common.io.Files;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
@@ -25,10 +26,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateDocumentInfo;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -49,18 +49,18 @@ import org.springframework.http.ResponseEntity;
 @Data
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateTestAssistant {
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IEServiceTemplateClient eServiceTemplateClient;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EasyRandom easyRandom;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
     private final RiskAnalysisMapper riskAnalysisMapper;
 
     public EServiceTemplateTestAssistant(ClientTokenConfigurator clientTokenConfigurator,
-        DataPreparationService dataPreparationService,
+        BFFDataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
         DescriptorAttributesMapper descriptorAttributesMapper,
         RiskAnalysisMapper riskAnalysisMapper) {

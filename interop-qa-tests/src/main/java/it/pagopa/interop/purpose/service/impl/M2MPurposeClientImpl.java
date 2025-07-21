@@ -55,7 +55,10 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
         return purposesApi.getPurposes(
             request.getOffset(),
             request.getLimit(),
-            request.getEservicesIds());
+            request.getEservicesIds(),
+            null,
+            null,
+            null);
     }
 
     @Override

@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
@@ -12,10 +13,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSee
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import lombok.Data;
@@ -26,11 +26,11 @@ import org.springframework.http.HttpStatus;
  * of E-service template */
 @Data
 public class EServiceTemplateCreateSteps {
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IEServiceTemplateClient eServiceTemplateClient;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
 
@@ -40,7 +40,7 @@ public class EServiceTemplateCreateSteps {
     *   Provare a racchiudere il codice comune in un costruttore in una classe astratta da far
     *   ereditare a questa e a tutte le altre. */
     public EServiceTemplateCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
-        DataPreparationService dataPreparationService,
+        BFFDataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
