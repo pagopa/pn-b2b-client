@@ -66,7 +66,6 @@ import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
@@ -402,8 +401,8 @@ public class BFFDataPreparationService {
             () -> tenantsApi.addDeclaredAttribute(new DeclaredTenantAttributeSeed().id(attributeId)));
         assertValidResponse();
 
-        // FIXME 26/03/2025 al momento restituisce risultato vuoto, non chiaro il perché (al momento
-        //  non impattante sull'attuale parco test)
+        // FIXME 26/03/2025 momentaneamente disabilitato a causa dell'imprevisto contenuto della
+        //  risposta, la quale è vuota quando non dovrebbe. Non impattante sull'attuale parco test.
         /*pollingService.makePolling(
             () -> tenantsApi.getDeclaredAttributes(xCorrelationId, tenantId),
             res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
