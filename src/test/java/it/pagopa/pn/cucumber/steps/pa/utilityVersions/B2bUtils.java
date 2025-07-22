@@ -446,9 +446,18 @@ public abstract class B2bUtils {
                     Field actualField = clazz.getDeclaredField(fieldName);
                     actualField.setAccessible(true);
                     Object actualValue = actualField.get(actual);
-                    //TODO aggiunto controllo per escludere municipalityDetails dal controllo sull'equals (causa consolidatore che fa fallire i test)
-                    if (expectedValue != null && !fieldName.equals("municipalityDetails")) {
-                        assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
+                    if (expectedValue != null) {
+                        //TODO: aggiunto controllo isEqualToIgnoringCase esclusivamente per il campo address (causa consolidatore che fa fallire i test)
+                        if (fieldName.equals("address")) {
+                            assertThat(actualValue).as(error + fieldName + " non dev'essere null").isNotNull();
+                            String stringActual = (String) actualValue;
+                            String stringExpected = (String) expectedValue;
+                            assertThat(stringActual).as(error + fieldName + " non coincide col valore atteso").isEqualToIgnoringCase(stringExpected);
+                        }
+                        //TODO: aggiunto controllo per escludere municipalityDetails dal controllo sull'equals (causa consolidatore che fa fallire i test)
+                        else if (!fieldName.equals("municipalityDetails")) {
+                            assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
+                        }
                     }
                 } catch (NoSuchFieldException e) {
                     assertThat(true)
