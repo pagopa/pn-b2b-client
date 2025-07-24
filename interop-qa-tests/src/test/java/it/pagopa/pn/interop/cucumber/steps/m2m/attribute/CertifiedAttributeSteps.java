@@ -3,8 +3,8 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -33,6 +33,14 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
+    @Given("viene effettuata la creazione dell'attributo certificato con successo")
+    public void creazioneAttributoCertificatoConSuccesso(CertifiedAttributeSeed payloadAttrCert) {
+        creazioneAttributoCertificato(payloadAttrCert);
+        if(httpExecutor.getClientResponse().isError()) {
+            throw new IllegalStateException("La creazione dell'attributo certificato non ha avuto successo. Visionare logs per maggiori dettagli.");
+        }
+    }
+
     @And("viene effettuata la creazione dell'attributo certificato")
     public void creazioneAttributoCertificato(CertifiedAttributeSeed payloadAttrCert) {
         CertifiedAttribute result = client.create(payloadAttrCert);
@@ -44,22 +52,10 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
         attributeContext.setCertifiedPublished(published);
     }
 
-    @When("l'utente tenta di recuperare la lista di certifiedAttribute filtrata per nome")
-    public void getFilteredList() {
-        List<CertifiedAttribute> expected = sharedStepsContext.getAttributeCommonContext()
-            .getCertifiedPublished();
-        this.pollingService.makePolling(() -> httpExecutor.performCall(
-            () -> this.client.getFilteredBy(expected.stream().map(CertifiedAttribute::getName).toList())),
-            status -> status.is2xxSuccessful() && !((List<CertifiedAttribute>)httpExecutor.getResponse()).isEmpty(),
-            "La lista non contiene tutti gli attributi certificati attesi. Visionare logs delle chiamate HTTP per maggiori dettagli.");
-    }
-
-    @Then("la lista ottenuta contiene l'attributo certificato creato")
-    public void listCheck() {
-        List<CertifiedAttribute> expected = sharedStepsContext.getAttributeCommonContext()
-            .getCertifiedPublished();
-        List<CertifiedAttribute> actual = ((List<CertifiedAttribute>)httpExecutor.getResponse());
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+    @Then("la risposta contiene almeno {int} attributo certificato")
+    public void listCheck(int expectedSize) {
+        List<CertifiedAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedActual();
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
     }
 
     @Override

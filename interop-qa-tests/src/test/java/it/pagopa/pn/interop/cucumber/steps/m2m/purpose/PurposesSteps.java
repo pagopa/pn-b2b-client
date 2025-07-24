@@ -1,10 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -12,6 +15,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
@@ -27,6 +31,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
@@ -322,8 +327,8 @@ public class PurposesSteps {
         httpCallExecutor.performCall(() -> purposeClient.getPurposeAgreement(purposeId));
     }
 
-    @Then("la richiesta di fruizione è stata correttamente visualizzata")
-    public void agreementPurposeVisualized() {
+    @Then("la richiesta di fruizione è stata correttamente visualizzata in stato {string}")
+    public void agreementPurposeVisualized(String agreementState) {
         if (httpCallExecutor.getClientResponse().isError()) {
             fail("Il GET dell'agreement correlato alla purpose ha generato il "
                 + "seguente errore: %s. Consultare i log per maggiori dettagli.",
@@ -331,15 +336,27 @@ public class PurposesSteps {
         }
 
         Agreement returnedAgreement = (Agreement) httpCallExecutor.getResponse();
-        Agreement createdAgreement = sharedStepsContext.getAgreementCommonContext().getCreatedAgreement();
+        assertSoftly(softly -> {
+           softly.assertThat(returnedAgreement.getState())
+               .as("Verifica stato dell'agreement restituito")
+               .isEqualTo(AgreementState.fromValue(agreementState));
+           softly.assertThat(returnedAgreement.getEserviceId())
+               .as("Verifica eServiceId dell'agreement restituito")
+               .isEqualTo(sharedStepsContext.getEServicesCommonContext().getEserviceId());
+           softly.assertThat(returnedAgreement.getDescriptorId())
+               .as("Verifica e-service descriptorId dell'agreement restituito")
+               .isEqualTo(sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+           softly.assertThat(OffsetDateTime.parse(returnedAgreement.getCreatedAt()))
+               .as("Verifica data di creazione dell'agreement restituito")
+               .isCloseTo(sharedStepsContext.getAgreementCommonContext().getAgreementCreationTime(), within(10, SECONDS));
+        });
+    }
 
-        // DEV. NOTE pre-rilascio in qa 14/07/2025: alcuni campi, come ID e STATE, potrebbero differire
-        // visto il monento in cui viene salvato "createdAgreement": eventualmente si potranno
-        // "neutralizzare" suddetti campi impostandoli a NULL in entrambi i lati
-
-        assertThat(returnedAgreement)
-            .as("Check created and visualized purpose-related agreement consistency")
-            .isEqualTo(createdAgreement);
+    // FIXME usato solo per un test locale, rimuovere
+    @Given("vengono settate {string} come purposeId e {string} come versionId")
+    public void setPurposeVersion(String purposeId, String versionId) {
+        sharedStepsContext.getPurposeCommonContext().setPurposesIds(List.of(purposeId));
+        sharedStepsContext.getPurposeCommonContext().setCurrentVersionIds(List.of(versionId));
     }
 
     @When("l'utente tenta di ottenere il documento dell'analisi del rischio correlato alla finalità")

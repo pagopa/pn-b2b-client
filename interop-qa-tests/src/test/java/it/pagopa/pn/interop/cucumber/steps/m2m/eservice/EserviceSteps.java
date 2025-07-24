@@ -105,7 +105,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     @When("l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service")
-    public void uploadInterface(){
+    public void uploadInterface() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         String interfaceName = "e-service-%s-descriptor-%s-interface-%d".formatted(eServiceId,

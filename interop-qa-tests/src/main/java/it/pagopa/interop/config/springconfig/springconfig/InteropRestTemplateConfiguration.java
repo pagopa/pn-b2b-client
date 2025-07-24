@@ -1,6 +1,8 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
 
+import static java.util.List.of;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,7 +46,10 @@ public class InteropRestTemplateConfiguration {
         restTemplate.setRequestFactory(requestFactory);
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestResponseLoggingInterceptor());
-        restTemplate.getMessageConverters().add(new FileHttpMessageConverter());
+        restTemplate.getMessageConverters().addAll(of(
+            new FileHttpMessageConverter(),
+            new FileDownloadMultipartConverter()
+            ));
         return restTemplate;
     }
 

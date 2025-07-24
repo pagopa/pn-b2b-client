@@ -179,6 +179,12 @@
             <artifactId>spring-aspects</artifactId>
             <version>7.0.0-M5</version>
         </dependency>
+
+        <!-- Necessario per il parsing di messaggi HTTP di tipo multipart -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.5</version> </dependency>
      </dependencies>
 
     <build>

@@ -9,6 +9,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributes;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -56,7 +58,10 @@ public class M2MCertifiedAttributeClientImpl extends AbstractClient implements
 
     @Override
     public List<CertifiedAttribute> getAll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.performOperation(
+            SimpleOperation.of(
+                () -> attributesApi.getCertifiedAttributes(0, 30),
+                CertifiedAttributes::getResults)).orElse(Collections.emptyList());
     }
 
     @Override
@@ -79,11 +84,5 @@ public class M2MCertifiedAttributeClientImpl extends AbstractClient implements
                 () -> this.attributesApi.createCertifiedAttribute(agreementPayload),
                 res -> res
         )).orElse(null);
-    }
-
-    @Override
-    public List<CertifiedAttribute> getFilteredBy(List<String> attributeName) {
-        // TODO 10/07/2025 API non ancora rilasciata
-        return List.of();
     }
 }

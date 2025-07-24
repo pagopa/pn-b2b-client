@@ -4,7 +4,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 public class AgreementDocumentUploadSteps {
@@ -19,13 +21,13 @@ public class AgreementDocumentUploadSteps {
         this.blobFileCreator = blobFileCreator;
     }
 
-    @When("l'utente carica un documento allegato a quella richiesta di fruizione")
+    @When("l'utente carica un documento allegato a quella richiesta di fruizione con successo")
     public void uploadAgreementAttachment() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        String name = "documento-test-qa.pdf";
         String prettyName = "documento-test-qa";
-        LocalDateTime now = LocalDateTime.now();
-        Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", name);
+        OffsetDateTime now = OffsetDateTime.now();
+        Resource doc = new FileSystemResource("src/main/resources/dummy.pdf");
+        String name = FilenameUtils.getName(doc.getFilename());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
                     name, prettyName, doc)
@@ -37,6 +39,8 @@ public class AgreementDocumentUploadSteps {
                     .prettyName(prettyName)
                     .createdAt(now)
                     .build());
+        } else {
+            throw new IllegalStateException("Errore durante il caricamento del documento. Visionare logs per maggiori dettagli.");
         }
     }
 }

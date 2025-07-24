@@ -162,6 +162,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | m2m       |
       | m2m-admin |
 
+  # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   Scenario: [M2MG_ESERVICES_18] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service (Parte2#Scenario 32)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

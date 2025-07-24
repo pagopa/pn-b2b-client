@@ -43,7 +43,7 @@ public class ClientSteps {
 
     @When("l'utente tenta di ottenere le finalità associate al client")
     public void getClientPurposes() {
-        UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
         httpCallExecutor.performCall(() -> clientsApis.getClientPurposes(clientId));
     }
 

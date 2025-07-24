@@ -628,6 +628,8 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA2"
     And la finalità è in stato SUSPENDED
 
+  # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
+  @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_PURPOSES_AGREEMENT_1] La richiesta di fruizione correlata a una finalità può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 20)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -637,22 +639,25 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo-m2m>
     And l'utente tenta di ottenere la richiesta di fruizione correlata alla finalità
     Then si ottiene status code 200
-    And la richiesta di fruizione è stata correttamente visualizzata
+    And la richiesta di fruizione è stata correttamente visualizzata in stato "ACTIVE"
     Examples:
       | ruolo-m2m  |
       | m2m-admin  |
       | m2m        |
 
+  @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_AGREEMENT_2] La richiesta di fruizione correlata a una finalità non può essere visualizzata specificando un token non valido (Parte2#Scenario 22)
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere la richiesta di fruizione correlata a una finalità inesistente
     Then si ottiene status code 401
 
+  @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_AGREEMENT_3] La richiesta di fruizione correlata a una finalità non può essere visualizzata specificando un id inesistente (Parte2#Scenario 23)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di ottenere la richiesta di fruizione correlata a una finalità inesistente
     Then si ottiene status code 404
 
+  @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_PURPOSES_DOCUMENT_1] Il documento dell'analisi del rischio correlato a una finalità può essere visualizzato da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 24)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -668,12 +673,14 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | m2m-admin  |
       | m2m        |
 
+  @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_DOCUMENT_2] Il documento dell'analisi del rischio correlato a una finalità non può essere visualizzato specificando un token non valido (Parte2#Scenario 26)
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere il documento dell'analisi del rischio correlato a una finalità inesistente
     Then si ottiene status code 401
 
+  @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_DOCUMENT_3] Il documento dell'analisi del rischio correlato a una finalità non può essere visualizzato specificando un id inesistente (Parte2#Scenario 27)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di ottenere il documento dell'analisi del rischio correlato a una finalità inesistente
     Then si ottiene status code 404

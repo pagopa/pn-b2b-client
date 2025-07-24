@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.allNull;
+import static org.apache.commons.lang3.ObjectUtils.anyNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -18,14 +19,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -189,19 +191,37 @@ public class AgreementSteps {
         List<Document> returnedDocuments = ((Documents) httpCallExecutor.getResponse()).getResults();
         List<DocumentMetadata> createdDocuments = sharedStepsContext.getAgreementCommonContext().getDocumentMetadata();
         Predicate<Document> oneOfCreated = document -> createdDocuments.stream().anyMatch(created -> areConsistent(created, document));
-        assertThat(returnedDocuments)
-            .isNotEmpty()
-            .allMatch(oneOfCreated, "each returned document match at least one created document");
+        assertSoftly(softly -> {
+            softly.assertThat(returnedDocuments)
+                .as("Verifica coerenza tra metadati dei documenti ottenuti e quelli precedentemente caricati")
+                .isNotEmpty()
+                .allMatch(oneOfCreated, "each returned document match at least one created document");
+
+            List<UUID> returnedIds = returnedDocuments.stream().map(Document::getId).toList();
+            softly.assertThat(returnedIds)
+                .as("Verifica che tutti gli id di documenti ottenuti siano valorizzati")
+                .doesNotContainNull();
+
+            List<String> returnedContentTypes = returnedDocuments.stream().map(Document::getContentType).toList();
+            softly.assertThat(returnedContentTypes)
+                .as("Verifica che tutti i campi 'contentType' ottenuti siano valorizzati")
+                .doesNotContainNull();
+        });
     }
 
     private boolean areConsistent(DocumentMetadata createdDocument, Document returnedDocument) {
         return  allNull(createdDocument, returnedDocument) ||
                 Objects.equals(createdDocument.getName(), returnedDocument.getName()) &&
                 Objects.equals(createdDocument.getPrettyName(), returnedDocument.getPrettyName()) &&
-                Objects.equals(createdDocument.getCreatedAt(), returnedDocument.getCreatedAt());
+                areInRange(createdDocument.getCreatedAt(), OffsetDateTime.parse(returnedDocument.getCreatedAt()), 1);
     }
 
-
+    private static boolean areInRange(OffsetDateTime x, OffsetDateTime y, int minutes) {
+        OffsetDateTime upperBound = x.plusMinutes(minutes);
+        OffsetDateTime lowerBound = x.minusMinutes(minutes);
+        return !anyNull(x,y) || x.equals(y) ||
+            y.isAfter(lowerBound) && y.isBefore(upperBound);
+    }
 
         // FIXME
 /*

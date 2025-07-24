@@ -13,7 +13,7 @@ public class ParameterTypes {
     @ParameterType("verifiedAttribute|declaredAttribute|certifiedAttribute|descriptor|eService")
     public Class<? extends ICommonSteps> entityType(String type) {
         return switch (type) {
-            case "attributeAttribute" -> VerifiedAttributeSteps.class;
+            case "verifiedAttribute" -> VerifiedAttributeSteps.class;
             case "declaredAttribute" -> DeclaredAttributeSteps.class;
             case "certifiedAttribute" -> CertifiedAttributeSteps.class;
             case "descriptor" -> EserviceDescriptorSteps.class;

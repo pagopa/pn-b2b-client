@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,5 +9,5 @@ import lombok.Data;
 public class DocumentMetadata {
     private String name;
     private String prettyName;
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 }
