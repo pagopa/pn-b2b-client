@@ -2,7 +2,7 @@ Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e La
 
   @delayer
   Scenario: [DELAYER-TC01] Le notifiche sono elaborate secondo priorità
-    Given il CSV "tc02_limite_pa.csv" contiene 30 notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO
+    Given il CSV "tc01_priorita.csv" contiene 30 notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO
     Given il CSV "tc01_priorita.csv" è importato da S3 nella tabella di test tramite lambda
     When viene avviato l'algoritmo tramite lambda
     Then i risultati per requestId "{string}" contengono esattamente 30 notifiche
