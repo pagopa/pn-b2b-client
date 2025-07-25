@@ -92,7 +92,7 @@ public class ClientUserAddStep {
                 () -> authorizationClient.editClientAdmin(
                     clientId,
                     adminEditRequest));
-        if(httpCallExecutor.getClientResponse().is2xxSuccessful()){
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()){
             sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
         }
     }

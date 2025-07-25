@@ -8,6 +8,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
@@ -83,9 +84,22 @@ public class AgreementCommonSteps {
     public void tenantHasCreatedCertifiedAttribute(String certifier, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         UUID tenantId = identityService.getOrganizationId(tenantType);
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null);
-        sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
-        dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attributeId);
+        Attribute attribute = dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null);
+        sharedStepsContext.getAttributeCommonContext().addCreatedAttribute(attribute);
+        dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attribute.getId());
+    }
+
+    /* NOTA 26/03/2025: al momento usato solo in scenari di test negativi (in altri termini: non
+     * è stato testato in situazioni in cui ci si aspetta che funzioni) */
+    @Given("{string} ha creato un attributo dichiarato e lo ha assegnato a {string}")
+    public void tenantHasCreatedDeclaredAttribute(String certifier, String tenantType) {
+        AttributeKind attributeKind = AttributeKind.DECLARED;
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        Attribute attribute = dataPreparationService.createAttribute(
+            attributeKind, null);
+        sharedStepsContext.getAttributeCommonContext().addCreatedAttribute(attribute);
+        dataPreparationService.assignDeclaredAttributeToTenant(tenantId, attribute.getId());
     }
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
@@ -182,7 +196,7 @@ public class AgreementCommonSteps {
     public void tenantDeclaresAnAttribute(String tenantType) {
         UUID tenantId = this.identityService.getOrganizationId(tenantType);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null);
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null).getId();
         dataPreparationService.declareDeclaredAttribute(tenantId, attributeId);
         sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().add(List.of(attributeId));
         sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
