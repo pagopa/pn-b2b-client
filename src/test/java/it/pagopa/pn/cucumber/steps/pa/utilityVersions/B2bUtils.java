@@ -448,11 +448,13 @@ public abstract class B2bUtils {
                     Object actualValue = actualField.get(actual);
                     if (expectedValue != null) {
                         //TODO: aggiunto controllo isEqualToIgnoringCase per i campi stringa dell PhysicalAddress (escluso municipalityDetails) causa consolidatore che fa fallire i test
-                        if (expectedField.getType().equals(String.class) && !fieldName.equals("municipalityDetails")) {
-                            assertThat(actualValue).as(error + fieldName + " non dev'essere null").isNotNull();
-                            String stringActual = (String) actualValue;
-                            String stringExpected = (String) expectedValue;
-                            assertThat(stringActual).as(error + fieldName + " non coincide col valore atteso").isEqualToIgnoringCase(stringExpected);
+                        if (expectedField.getType().equals(String.class)) {
+                            if (!fieldName.equals("municipalityDetails")) {
+                                assertThat(actualValue).as(error + fieldName + " non dev'essere null").isNotNull();
+                                String stringActual = (String) actualValue;
+                                String stringExpected = (String) expectedValue;
+                                assertThat(stringActual).as(error + fieldName + " non coincide col valore atteso").isEqualToIgnoringCase(stringExpected);
+                            }
                         } else {
                             assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
                         }
