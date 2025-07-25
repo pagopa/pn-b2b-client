@@ -21,9 +21,18 @@ public class DelayerSteps {
 
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private Integer numeroNotifiche = 0;
+    private String actualCsv;
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
 
     private List<JsonNode> lastResult;
+
+    @Given("il CSV {string} contiene {int} notifiche appartenenti alla stessa categoria")
+    @Given("il CSV {string} contiene {int} notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO")
+    public void initParams(String csv, Integer numeroNotifiche) {
+        this.actualCsv = csv;
+        this.numeroNotifiche = numeroNotifiche;
+    }
 
     @Given("il CSV {string} è importato da S3 nella tabella di test tramite lambda")
     public void importaCsvTramiteLambda(String csvName, String lambdaArn) throws Exception {
@@ -97,43 +106,66 @@ public class DelayerSteps {
                 String.format("Numero di notifiche ottenute per requestId %s diverso da quello atteso", requestId));
     }
 
+    @Then("le prime {int} notifiche sono pianificate secondo ordine cronologico per il campo {string}")
+    public void verificaOrdinamentoCronologico(int limit, String campoOrdinamento) {
+        List<JsonNode> prime = lastResult.subList(0, Math.min(limit, lastResult.size()));
+        List<String> dateValues = prime.stream()
+                .map(n -> n.path(campoOrdinamento).asText())
+                .toList();
+
+        List<String> ordinati = new ArrayList<>(dateValues);
+        Collections.sort(ordinati);
+
+        Assertions.assertEquals(ordinati, dateValues,
+                String.format("Le prime %d notifiche non sono ordinate per '%s'", limit, campoOrdinamento));
+    }
+
     /**
-     * Verifica che tutte le notifiche caricate tramite CSV e associate all’ultimo requestId elaborato
-     * NON siano state effettivamente pianificate per l’invio (cioè non siano state iscritte nella tabella
-     * finale di recapito, come ad esempio {@code pn-PaperDeliveryReadyToSend}).
-     * <p>
-     * Questa verifica è resa possibile in modo indiretto grazie al campo {@code deliveryDate} restituito
-     * dalla Lambda {@code GET_BY_REQUEST_ID}, che riflette lo stato di avanzamento dell’elaborazione:
-     * <ul>
-     *   <li>Una {@code deliveryDate} valorizzata con una data reale (es. ≥ 2025-07-01) implica che
-     *       la notifica è stata pianificata per la stampa/recapito.</li>
-     *   <li>Valori come {@code 1970-01-01T00:00:00Z}, {@code 1970-01-05T00:00:00Z}, stringa vuota o null,
-     *       indicano che la notifica non è ancora stata presa in carico per l’invio.</li>
-     * </ul>
-     * <p>
-     * A causa delle limitazioni imposte al test non è possibile interrogare direttamente la tabella di recapito
-     * effettiva pn-PaperDeliveryReadyToSend.
-     * Pertanto, la logica di test deduce lo stato della notifica esclusivamente analizzando il contenuto del campo
-     * {@code deliveryDate}.
-     * <p>
-     * In caso di rilevamento di notifiche con {@code deliveryDate} valorizzata (cioè inviate), il metodo
-     * fallisce il test segnalando gli IUN coinvolti.
+     * Verifica che le notifiche indicate non siano ancora state pianificate per la spedizione.
      *
-     * @param tableName il nome logico della tabella di destinazione attesa (usato solo a scopo descrittivo nel test)
+     * <p>
+     * Poiché nei test non è possibile interrogare direttamente la tabella finale
+     * {@code pn-PaperDeliveryReadyToSend}, utilizziamo la tabella {@code pn-DelayerPaperDelivery}
+     * (accessibile via lambda) per inferire lo stato delle notifiche.
+     * </p>
+     *
+     * <p>
+     * In particolare, analizziamo il campo {@code deliveryDate}:
+     * <ul>
+     *     <li>Se il valore è pari a {@code 1970-01-05T00:00:00Z}, la notifica non è stata ancora
+     *         pianificata per la spedizione, e quindi non è presente nella tabella finale.</li>
+     *     <li>Se il campo è valorizzato con una data reale (es. {@code 2025-07-30T00:00:00Z} o maggiore),
+     *         significa che la spedizione è stata programmata per quel giorno.</li>
+     * </ul>
+     * </p>
+     *
+     * <p>
+     * Questa logica è conforme a quanto previsto nel documento di specifica (SRS),
+     * dove si afferma che la presenza di {@code deliveryDate} valorizzata indica
+     * l’inclusione in un batch di recapito. Il valore {@code 1970-01-05} rappresenta invece
+     * uno stato di default (non elaborato), poiché corrisponde a un timestamp nullo o iniziale
+     * nel formato Epoch.
+     * </p>
+     *
+     * <p><b>Nota tecnica:</b> il valore "1970-01-05" deriva dal comportamento del sistema
+     * quando una data non viene mai calcolata. Questo compromesso è adottato nei test per
+     * distinguere facilmente tra notifiche elaborate e non elaborate, sfruttando un default noto.</p>
+     *
+     * <p><b>Limite attuale:</b> la lambda test espone solo operazioni sulla tabella {@code pn-DelayerPaperDelivery}.
+     * In futuro, se verrà estesa a {@code pn-PaperDeliveryReadyToSend}, questa logica potrà essere sostituita
+     * da una verifica diretta.</p>
+     *
+     * @throws AssertionError se una o più notifiche risultano già pianificate (cioè con deliveryDate valorizzata)
      */
+    @Then("le restanti {int} notifiche non sono ancora pianificate")
+    public void verificaNonPianificate(int nonPianificateAttese) {
+        List<JsonNode> nonPianificate = lastResult.stream()
+                .filter(n -> !isDeliveryDateReal(n.path("deliveryDate").asText()))
+                .toList();
 
-    @Then("le restanti notifiche non sono presenti nella tabella {string}")
-    public void notificheNonPresentiNellaTabella(String tableName) {
-        List<JsonNode> notificheSpedite = lastResult.stream()
-                .filter(n -> isDeliveryDateReal(n.path("deliveryDate").asText()))
-                .collect(Collectors.toList());
-
-        if (!notificheSpedite.isEmpty()) {
-            String dettagli = notificheSpedite.stream()
-                    .map(n -> n.path("iun").asText())
-                    .collect(Collectors.joining(", "));
-            throw new AssertionError("Notifiche inaspettatamente inviate: " + dettagli);
-        }
+        Assertions.assertEquals(nonPianificateAttese, nonPianificate.size(),
+                String.format("Attese %d notifiche non pianificate, trovate %d",
+                        nonPianificateAttese, nonPianificate.size()));
     }
 
     private void assertOrdinati(List<JsonNode> lista, String campo, String categoria) {
@@ -225,9 +257,8 @@ public class DelayerSteps {
     /**
      * Considera 'reale' una deliveryDate solo se è valorizzata con una data futura rispetto all’Epoch.
      */
-    private boolean isDeliveryDateReal(String deliveryDate) {
-        if (deliveryDate == null || deliveryDate.isBlank()) return false;
-        return !deliveryDate.startsWith("1970-01");
+    private boolean isDeliveryDateReal(String dateStr) {
+        return !"1970-01-05T00:00:00Z".equals(dateStr);
     }
 
 }
