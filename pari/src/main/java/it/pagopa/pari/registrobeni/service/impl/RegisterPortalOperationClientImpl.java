@@ -13,6 +13,7 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.model.PortalConsen
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
+import it.pagopa.pari.utils.JWTUserRoleProvider;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,13 +23,15 @@ import org.springframework.web.client.RestTemplate;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RegisterPortalOperationClientImpl {
     private final RestTemplate restTemplate;
+    private final JWTUserRoleProvider jwtUserRoleProvider;
     private final PortalConsentApi portalConsentApi;
     private final ProductsUploadApi productsUploadApi;
     private final ProductsApi productsApi;
     private final InstitutionsApi institutionsApi;
 
-    public RegisterPortalOperationClientImpl(RestTemplate restTemplate) {
+    public RegisterPortalOperationClientImpl(RestTemplate restTemplate, JWTUserRoleProvider jwtUserRoleProvider) {
         this.restTemplate = restTemplate;
+        this.jwtUserRoleProvider = jwtUserRoleProvider;
         portalConsentApi = new PortalConsentApi(createApiClient("dummy"));
         productsUploadApi = new ProductsUploadApi(createApiClient("dummy"));
         productsApi = new ProductsApi(createApiClient("dummy"));
@@ -79,5 +82,13 @@ public class RegisterPortalOperationClientImpl {
 
     public InstitutionResponse retrieveInstitutionById(String institutionId) {
         return institutionsApi.retrieveInstitutionById(institutionId);
+    }
+
+    public void setBearerToken(String role) {
+        String bearerToken = jwtUserRoleProvider.provideJWTRole(role);
+        portalConsentApi.setApiClient(createApiClient(bearerToken));
+        productsUploadApi.setApiClient(createApiClient(bearerToken));
+        productsApi.setApiClient(createApiClient(bearerToken));
+        institutionsApi.setApiClient(createApiClient(bearerToken));
     }
 }

@@ -1,17 +1,157 @@
 package it.pagopa.pari.cucumber.steps.registrobeni;
 
+import com.opencsv.CSVWriter;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pari.cucumber.utils.ApiClientContext;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
+import it.pagopa.pari.registrobeni.service.impl.RegisterPortalOperationClientImpl;
+import org.junit.jupiter.api.Assertions;
+import org.junit.platform.commons.util.StringUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpStatusCodeException;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegistroBeniProductsUploadSteps {
+    private final ApiClientContext apiClientContext;
+    private final ResourceLoader resourceLoader;
 
-    @When("viene caricato il csv con dati:")
-    public void vieneGeneratoIlCsv(List<Map<String, String>> dataCsv) throws IOException {
-        String string = "ciao";
+    private RegisterUploadResponseDTO uploadResponseDTO;
+    private CsvDTO csvDTO;
+    private UploadsListDTO uploadsListDTO;
+
+    public RegistroBeniProductsUploadSteps(ApiClientContext apiClientContext, ResourceLoader resourceLoader) {
+        this.apiClientContext = apiClientContext;
+        this.resourceLoader = resourceLoader;
+    }
+
+    @When("viene caricato un file NON csv con categoria: {string} e dati:")
+    public void generateCsvWithWrongExtension(String categoria, List<Map<String, String>> dataCsv) throws Exception {
+        Resource notCsvFile = generaCsv(dataCsv, ".txt");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, notCsvFile);
+    }
+
+    @When("viene caricato il csv con categoria: {string} e dati:")
+    public void vieneGeneratoIlCsv(String categoria, List<Map<String, String>> dataCsv) throws Exception {
+//        apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 8, null);
+        Resource csvFile = generaCsv(dataCsv, ".csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, csvFile);
+    }
+
+    @When("viene recuperato il report di errore appena generato")
+    public void retrieveErrorReport() {
+        assertNotNull(uploadResponseDTO);
+        assertNotNull(uploadResponseDTO.getProductFileId());
+        csvDTO = apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(uploadResponseDTO.getProductFileId());
+    }
+
+    @Then("il report è correttamente popolato")
+    public void verifyReportSuccess() {
+        assertNotNull(csvDTO);
+        assertTrue(StringUtils.isNotBlank(csvDTO.getData()));
+    }
+
+    @When("si tenta di recuperare un report di errore {string} e si ottiene status code {int}")
+    public void verifyReportError(String productFileId, int expectedStatusCode) {
+        String reportId = "NOT_VALID".equals(productFileId) ? UUID.randomUUID().toString() : "invalid_product_file";
+        HttpStatus httpStatus = null;
+        try {
+            apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(reportId);
+        } catch (HttpStatusCodeException e) {
+            httpStatus = e.getStatusCode();
+        }
+        assertEquals(HttpStatus.valueOf(expectedStatusCode), httpStatus);
+    }
+
+    private Resource generaCsv(List<Map<String, String>> tableRow, String suffix) throws Exception {
+        File tempFile = File.createTempFile("products-", suffix);
+        tempFile.deleteOnExit();
+
+        // Otteniamo intestazione dalla prima mappa
+        Set<String> header = tableRow.get(0).keySet();
+
+        try (FileWriter fileWriter = new FileWriter(tempFile);
+             CSVWriter csvWriter = new CSVWriter(fileWriter, ';',
+                     CSVWriter.NO_QUOTE_CHARACTER,
+                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                     CSVWriter.DEFAULT_LINE_END)) {
+            csvWriter.writeNext(header.toArray(new String[0]));
+
+            for (Map<String, String> row : tableRow) {
+                String[] values = header.stream()
+                        .map(h -> row.getOrDefault(h, ""))
+                        .toArray(String[]::new);
+                csvWriter.writeNext(values);
+            }
+
+        }
+        return new FileSystemResource(tempFile);
+    }
+
+    @Then("si verifica che la risposta abbia:")
+    public void verifyResponse(DataTable dataTable) {
+        Map<String, String> expectedResults = dataTable.asMap();
+        assertEquals(expectedResults.get("errorKey"), uploadResponseDTO.getErrorKey(), "Mismatch on errorKey!");
+        assertEquals(expectedResults.get("status"), uploadResponseDTO.getStatus(), "Mismatch on status field!");
+        verifyProductFileId(expectedResults.get("productFileId"));
+    }
+
+    private void verifyProductFileId(String expectedValue) {
+        if ("NOT_NULL".equals(expectedValue)) {
+            assertNotNull(uploadResponseDTO.getProductFileId());
+            assertFalse(uploadResponseDTO.getProductFileId().isEmpty());
+        } else {
+            assertEquals(expectedValue, uploadResponseDTO.getProductFileId(), "Mismatch on productFileId!");
+        }
+    }
+
+    @Given("viene caricato un file csv di peso maggiore a quello consentito")
+    public void uploadLargeCSV() {
+        Resource csvFile = resourceLoader.getResource("file:src/main/resources/registroBeni/large-csv-up-two-mb.csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList("WASHINGMACHINES", csvFile);
+    }
+
+    @Given("viene caricato un file csv contente più righe di quelle accettate")
+    public void uploadLongCSV() {
+        Resource csvFile = resourceLoader.getResource("file:src/main/resources/registroBeni/long-csv-with-101-row.csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList("WASHINGMACHINES", csvFile);
 
     }
+
+    @When("si recupera la lista dei caricamenti effettuati dall'utenza")
+    public void retrieveUploadsList() {
+        uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10, null);
+    }
+
+    @Then("si verifica che la lista dei caricamenti non sia nulla")
+    public void verifyUploadsListResponse() {
+        assertNotNull(uploadsListDTO);
+        assertNotNull(uploadsListDTO.getTotalElements());
+        assertTrue(uploadsListDTO.getTotalElements() > 0);
+    }
+
 
 }
