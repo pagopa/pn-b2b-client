@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
@@ -67,7 +68,49 @@ public class AnagraficaRaddAltSteps {
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
     }
 
-
+//    private String idToken;
+//    private String accessToken;
+//
+//    @Given("utente con username {string} e password {string} fa login in Cognito")
+//    public void loginCognito(String username, String password) {
+//        String clientId = "TUO_COGNITO_APP_CLIENT_ID";
+//        String region = "eu-west-1";
+//
+//        CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
+//                .region(software.amazon.awssdk.regions.Region.of(region))
+//                .build();
+//
+//        try{
+//        Map<String, String> authParams = new HashMap<>();
+//        authParams.put("USERNAME", username);
+//        authParams.put("PASSWORD", password);
+//
+//        InitiateAuthRequest authRequest = InitiateAuthRequest.builder()
+//                .authFlow(AuthFlowType.USER_PASSWORD_AUTH)
+//                .clientId(clientId)
+//                .authParameters(authParams)
+//                .build();
+//
+//        InitiateAuthResponse response = cognitoClient.initiateAuth(authRequest);
+//
+//        AuthenticationResultType authResult = response.authenticationResult();
+//        assertNotNull(authResult);
+//
+//        idToken = authResult.idToken();
+//        accessToken = authResult.accessToken();
+//
+//        assertNotNull(idToken);
+//        assertNotNull(accessToken);
+//
+//        System.out.println("ID Token: " + idToken);
+//} catch (Exception e) {
+//        System.err.println("Errore durante l'autenticazione: " + e.getMessage());
+//        Assertions.fail("L'autenticazione con Cognito è fallita.", e);
+//        } finally {
+//                cognitoClient.close(); // Chiudi sempre il client per rilasciare le risorse
+//        }
+//    }
+//}
 
     @When("viene caricato il csv con dati:")
     public void vieneGeneratoIlCsv(List<Map<String, String>> dataCsv) throws IOException {
@@ -408,7 +451,7 @@ public class AnagraficaRaddAltSteps {
         this.sportelloRaddCrudV2 = dataSportello;
 
         log.info("Request inserimento: {}", dataSportello);
-        RegistryV2 creationResponse = raddAltClientV2.addRegistry(null, null,this.uid, null, dataSportello);
+        RegistryV2 creationResponse = raddAltClientV2.addRegistry(null, dataSportello);
 
         try {
             Assertions.assertNotNull(creationResponse);
@@ -434,7 +477,7 @@ public class AnagraficaRaddAltSteps {
     @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
     public void vieneGeneratoConErroreSportelloRaddv2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
         try {
-            raddAltClientV2.addRegistry(null, null, this.uid, null, dataSportelloV2);
+            raddAltClientV2.addRegistry( null, dataSportelloV2);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -445,6 +488,18 @@ public class AnagraficaRaddAltSteps {
         log.info("Upload Request: {}", dataSportello);
         try {
             Assertions.assertDoesNotThrow(() -> raddAltClient.updateRegistry(this.uid, this.registryId, dataSportello));
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Response Upload CSV: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene modificato uno sportello Radd V2 con dati:")
+    public void vieneModificatoSportelloRadd(@Transpose UpdateRegistryRequestV2 dataSportello) {
+        log.info("Upload Request: {}", dataSportello);
+        try {
+            Assertions.assertDoesNotThrow(() -> raddAltClientV2.updateRegistry(this.uid, this.registryId, dataSportello));
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{Response Upload CSV: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
@@ -509,7 +564,7 @@ public class AnagraficaRaddAltSteps {
 
         try {
             String finalEndDate = endDate;
-            Assertions.assertDoesNotThrow(() -> raddAltClientV2.deleteRegistry(null, null, this.uid, null, null));
+            Assertions.assertDoesNotThrow(() -> raddAltClientV2.deleteRegistry( null, null));
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{endDate: " + (endDate == null ? "NULL" : endDate) + " }";

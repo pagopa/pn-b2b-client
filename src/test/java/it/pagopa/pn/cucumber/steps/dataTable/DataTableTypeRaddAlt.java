@@ -7,6 +7,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.UpdateRegistryRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.AddressV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -161,6 +162,7 @@ public class DataTableTypeRaddAlt {
                                         .collect(Collectors.toList()))
                                 .orElse(null)
                 )
+                .email(getValue(data, RADD_EMAIL.key) == null ? null : setData(getValue(data, RADD_EMAIL.key)))
                 .externalCodes(
                         Optional.ofNullable(getValue(data, RADD_EXTERNAL_CODES.key))
                                 .filter(s -> !s.trim().isEmpty())
@@ -170,14 +172,18 @@ public class DataTableTypeRaddAlt {
                                 .orElse(null)
                 )
                 .startValidity(getValue(data, RADD_START_VALIDITY.key) == null ? null : setData(getValue(data, RADD_START_VALIDITY.key)))
-                .endValidity(getValue(data, RADD_END_VALIDITY.key) == null ? null : setData(getValue(data, RADD_END_VALIDITY.key)));
-        // todo t radd
-         //       .geoLocation(getValue(data, RADD_GEO_LOCATION.key) == null ? null : new GeoLocation()
-         //               .latitude(getValue(data, RADD_GEO_LOCATION_LATITUDINE.key) == null ? null : getValue(data, RADD_GEO_LOCATION_LATITUDINE.key))
-         //               .longitude(getValue(data, RADD_GEO_LOCATION_LONGITUDINE.key) == null ? null : getValue(data, RADD_GEO_LOCATION_LONGITUDINE.key)))
-         //       .openingTime(getValue(data, RADD_OPENING_TIME.key) == null ? null : getValue(data, RADD_OPENING_TIME.key))
-         //       .externalCodes(getValue(data, RADD_EXTERNAL_CODE.key) == null ? null : getValue(data, RADD_EXTERNAL_CODE.key))
-         //       .capacity(getValue(data, RADD_CAPACITY.key) == null ? null : getValue(data, RADD_CAPACITY.key));
+                .endValidity(getValue(data, RADD_END_VALIDITY.key) == null ? null : setData(getValue(data, RADD_END_VALIDITY.key)))
+                .locationId(getValue(data, RADD_LOCATION_ID.key) == null ? null : setData(getValue(data, RADD_LOCATION_ID.key)))
+                .appointmentRequired(getValue(data, RADD_APPOINTMENT_REQUIRED.key) == null ? Boolean.FALSE : Boolean.TRUE)
+                .website(getValue(data, RADD_WEBSITE.key) == null ? null : setData(getValue(data, RADD_WEBSITE.key)))
+                .partnerType(getValue(data, RADD_PARTNER_TYPE.key) == null ? null : setData(getValue(data, RADD_PARTNER_TYPE.key)))
+                // todo t radd
+                //  .geoLocation(getValue(data, RADD_GEO_LOCATION.key) == null ? null : new GeoLocation()
+                //           .latitude(getValue(data, RADD_GEO_LOCATION_LATITUDINE.key) == null ? null : getValue(data, RADD_GEO_LOCATION_LATITUDINE.key))
+                //           .longitude(getValue(data, RADD_GEO_LOCATION_LONGITUDINE.key) == null ? null : getValue(data, RADD_GEO_LOCATION_LONGITUDINE.key)))
+                .openingTime(getValue(data, RADD_OPENING_TIME.key) == null ? null : getValue(data, RADD_OPENING_TIME.key));
+        //  .externalCodes(getValue(data, RADD_EXTERNAL_CODE.key) == null ? null : getValue(data, RADD_EXTERNAL_CODE.key))
+        //  .capacity(getValue(data, RADD_CAPACITY.key) == null ? null : getValue(data, RADD_CAPACITY.key));
 
         try {
             Thread.sleep(2);
@@ -185,5 +191,39 @@ public class DataTableTypeRaddAlt {
             e.printStackTrace();
         }
         return sportelloRaddV2;
+    }
+
+    @DataTableType
+    public synchronized UpdateRegistryRequestV2 convertUpdateRegistryRequestV2(Map<String, String> data) {
+        UpdateRegistryRequestV2 sportelloAggiornatoRadd = new UpdateRegistryRequestV2()
+                .description(getValue(data, RADD_DESCRIPTION.key) == null ? null : getValue(data, RADD_DESCRIPTION.key))
+                .phoneNumbers(
+                        Optional.ofNullable(getValue(data, RADD_PHONE_NUMBERS.key))
+                                .filter(s -> !s.trim().isEmpty())
+                                .map(s -> Arrays.stream(s.split(","))
+                                        .map(String::trim)
+                                        .collect(Collectors.toList()))
+                                .orElse(null)
+                )
+                .openingTime(getValue(data, RADD_OPENING_TIME.key) == null ? null : getValue(data, RADD_OPENING_TIME.key))
+                .email(getValue(data, RADD_EMAIL.key) == null ? null : setData(getValue(data, RADD_EMAIL.key)))
+                .endValidity(getValue(data, RADD_END_VALIDITY.key) == null ? null : setData(getValue(data, RADD_END_VALIDITY.key)))
+                .externalCodes(
+                        Optional.ofNullable(getValue(data, RADD_EXTERNAL_CODES.key))
+                                .filter(s -> !s.trim().isEmpty())
+                                .map(s -> Arrays.stream(s.split(","))
+                                        .map(String::trim)
+                                        .collect(Collectors.toList()))
+                                .orElse(null)
+                )
+                .appointmentRequired(getValue(data, RADD_APPOINTMENT_REQUIRED.key) == null ? Boolean.FALSE : Boolean.TRUE)
+                .website(getValue(data, RADD_WEBSITE.key) == null ? null : setData(getValue(data, RADD_WEBSITE.key)));
+
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return sportelloAggiornatoRadd;
     }
 }

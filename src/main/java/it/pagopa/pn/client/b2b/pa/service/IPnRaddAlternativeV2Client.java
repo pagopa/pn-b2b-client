@@ -3,7 +3,6 @@ package it.pagopa.pn.client.b2b.pa.service;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadRequest;
@@ -36,14 +35,14 @@ public interface IPnRaddAlternativeV2Client extends SettableAuthTokenRadd {
     VerifyRequestResponse verifyRequest(String uid, String requestId) throws RestClientException;
 
     //CreateRegistryResponse addRegistry(String uid, CreateRegistryRequest createRegistryRequest) throws RestClientException;
-    RegistryV2 addRegistry(CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String uid, String partnerId, CreateRegistryRequestV2 createRegistryRequestV2) throws RestClientException;
+    RegistryV2 addRegistry(String partnerId, CreateRegistryRequestV2 createRegistryRequestV2) throws RestClientException;
 
     //void deleteRegistry(String uid, String registryId, String endDate) throws RestClientException;
-    void deleteRegistry(CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String uid, String partnerId, String locationId);
+    void deleteRegistry(String partnerId, String locationId);
 
     //RegistriesResponse retrieveRegistries(String uid, Integer limit, String lastKey, String cap, String city, String pr, String externalCode) throws RestClientException;
 
     //void updateRegistry(String uid, String registryId, UpdateRegistryRequest updateRegistryRequest) throws RestClientException;
-    RegistryV2 updateRegistry(CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String uid, String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2);
+    RegistryV2 updateRegistry(String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2);
 
 }

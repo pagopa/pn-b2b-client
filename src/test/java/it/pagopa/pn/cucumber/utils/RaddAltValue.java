@@ -24,6 +24,11 @@ public enum RaddAltValue {
     RADD_START_VALIDITY("radd_start_validity",null,false),
     RADD_END_VALIDITY("radd_end_validity",null,false),
     RADD_CAPACITY("radd_capacity",null,false),
+    RADD_EMAIL("radd_email",null,false),
+    RADD_LOCATION_ID("radd_location_id",null,false),//todo t radd default?
+    RADD_APPOINTMENT_REQUIRED("radd_appointment_required",null,false),
+    RADD_WEBSITE("radd_website",null,false),
+    RADD_PARTNER_TYPE("radd_partner_type","CAF",false),
 
     //valori filtro per ricerca sportello
     RADD_FILTER_LIMIT("radd_filter_limit","5",false),

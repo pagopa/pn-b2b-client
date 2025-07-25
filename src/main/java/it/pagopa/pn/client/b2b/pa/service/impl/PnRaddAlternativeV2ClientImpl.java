@@ -8,7 +8,6 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCsv.ImportApi;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadRequest;
@@ -191,15 +190,15 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
     }
 
     @Override
-    public RegistryV2 addRegistry(CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String uid, String partnerId, CreateRegistryRequestV2 createRegistryRequestV2) throws RestClientException {
-        return this.apiAnagraficaCRUDV2.addRegistry(null ,null, uid, null, createRegistryRequestV2);
+    public RegistryV2 addRegistry(String partnerId, CreateRegistryRequestV2 createRegistryRequestV2) throws RestClientException {
+        return this.apiAnagraficaCRUDV2.addRegistry(null ,createRegistryRequestV2);
     }
 
  //todo t radd
 
     @Override
-    public void deleteRegistry(CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String uid, String partnerId, String locationId) throws RestClientException {
-        this.apiAnagraficaCRUDV2.deleteRegistry(null, null,uid, null, null);
+    public void deleteRegistry(String partnerId, String locationId) throws RestClientException {
+        this.apiAnagraficaCRUDV2.deleteRegistry( null, null);
     }
 
 //    @Override
@@ -208,8 +207,8 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
 //    }
 
     @Override
-    public RegistryV2 updateRegistry(CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String uid, String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2) throws RestClientException {
-        return this.apiAnagraficaCRUDV2.updateRegistry(null, null,uid, null,null, updateRegistryRequestV2);
+    public RegistryV2 updateRegistry(String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2) throws RestClientException {
+        return this.apiAnagraficaCRUDV2.updateRegistry(null, null, updateRegistryRequestV2);
     }
 
 
