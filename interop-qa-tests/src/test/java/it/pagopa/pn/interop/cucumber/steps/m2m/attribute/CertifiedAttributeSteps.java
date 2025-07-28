@@ -36,7 +36,7 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
     @Given("viene effettuata la creazione dell'attributo certificato con successo")
     public void creazioneAttributoCertificatoConSuccesso(CertifiedAttributeSeed payloadAttrCert) {
         creazioneAttributoCertificato(payloadAttrCert);
-        if(httpExecutor.getClientResponse().isError()) {
+        if(httpExecutor.getResponseStatus().isError()) {
             throw new IllegalStateException("La creazione dell'attributo certificato non ha avuto successo. Visionare logs per maggiori dettagli.");
         }
     }

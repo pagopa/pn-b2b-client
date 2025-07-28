@@ -730,7 +730,7 @@ public class BFFDataPreparationService {
             purposeEServiceSeed.setConsumerId(teServiceMode.getConsumerId());
             purposeEServiceSeed.setRiskAnalysisId(teServiceMode.getRiskAnalysisId());
             httpCallExecutor.performCall(() -> purposeApiClient.createPurposeForReceiveEservice(purposeEServiceSeed));
-            if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 sharedStepsContext.getPurposeCommonContext().addCreatedPurposeEService(purposeEServiceSeed);
             }
         }
@@ -748,7 +748,7 @@ public class BFFDataPreparationService {
             purposeSeed.setConsumerId(teServiceMode.getConsumerId());
             purposeSeed.setRiskAnalysisForm(teServiceMode.getRiskAnalysisFormSeed());
             httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(purposeSeed));
-            if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 sharedStepsContext.getPurposeCommonContext().addCreatedPurpose(purposeSeed);
             }
         }

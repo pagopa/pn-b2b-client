@@ -35,7 +35,7 @@ public class DeclaredAttributeCreationSteps {
             new AttributeSeed()
                 .name(attributeName)
                 .description(attributeDescription)));
-        if(httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             ResponseEntity<Attribute> response = (ResponseEntity<Attribute>) httpCallExecutor.getResponse();
             Attribute bffAttribute = response.getBody();
             AttributeCommonContext attributeCommonContext = sharedStepsContext.getAttributeCommonContext();

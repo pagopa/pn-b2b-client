@@ -25,7 +25,7 @@ public class ClientPurposeAddSteps {
     @When("l'utente associa la finalità al client con successo")
     public void userSuccessfullyRetrievesFinalization() {
         userRetrievesFinalization();
-        if(httpCallExecutor.getClientResponse().isError()) {
+        if(httpCallExecutor.getResponseStatus().isError()) {
             throw new IllegalStateException("Errore manifestatosi durante l'associazione della finalità al client. Consultare logs per maggior dettagli.");
         }
     }

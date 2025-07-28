@@ -32,7 +32,7 @@ public class AgreementDocumentUploadSteps {
                 () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
                     name, prettyName, doc)
         );
-        if (sharedStepsContext.getHttpCallExecutor().getClientResponse().is2xxSuccessful()) {
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getAgreementCommonContext().addDocumentMetadata(
                 DocumentMetadata.builder()
                     .name(name)

@@ -329,10 +329,10 @@ public class PurposesSteps {
 
     @Then("la richiesta di fruizione è stata correttamente visualizzata in stato {string}")
     public void agreementPurposeVisualized(String agreementState) {
-        if (httpCallExecutor.getClientResponse().isError()) {
+        if (httpCallExecutor.getResponseStatus().isError()) {
             fail("Il GET dell'agreement correlato alla purpose ha generato il "
                 + "seguente errore: %s. Consultare i log per maggiori dettagli.",
-                httpCallExecutor.getClientResponse());
+                httpCallExecutor.getResponseStatus());
         }
 
         Agreement returnedAgreement = (Agreement) httpCallExecutor.getResponse();
