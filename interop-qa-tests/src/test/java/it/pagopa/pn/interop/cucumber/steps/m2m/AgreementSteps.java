@@ -82,7 +82,7 @@ public class AgreementSteps {
                 .build()
         ));
 
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             Agreements res = (Agreements) httpCallExecutor.getResponse();
             sharedStepsContext.getAgreementCommonContext().setAgreementIds(
                 res.getResults().stream()
@@ -93,7 +93,7 @@ public class AgreementSteps {
 
     @Then("sono stati visualizzati correttamente {int} agreements creati")
     public void agreementsSuccessfullyGot(int expectedSize) {
-        HttpStatus clientResponse = httpCallExecutor.getClientResponse();
+        HttpStatus clientResponse = httpCallExecutor.getResponseStatus();
         if(clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }

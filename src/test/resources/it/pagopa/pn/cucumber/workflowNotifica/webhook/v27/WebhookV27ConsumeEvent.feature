@@ -42,7 +42,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And Si verifica che l'elemento di timeline "SCHEDULE_REFINEMENT" "abbia" il timestamp uguale a quello di "REFINEMENT" presente nel webhook con la versione "V27"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-    
+
   @webhookV27 @precondition @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_ES1.3_127] Consumo di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given viene generata una nuova notifica
@@ -185,10 +185,11 @@ Feature: avanzamento notifiche webhook b2b V27
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Mario Gherkin    |
-      | taxId                   | CLMCST42R12D969Z |
-      | digitalDomicile         | NULL             |
-      | physicalAddress_address | Via@ok_AR        |
+      | denomination                        | Mario Gherkin    |
+      | taxId                               | CLMCST42R12D969Z |
+      | digitalDomicile                     | NULL             |
+      | physicalAddress_address             | Via@ok_AR        |
+      | physicalAddress_municipalityDetails | FRAZIONE         |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata

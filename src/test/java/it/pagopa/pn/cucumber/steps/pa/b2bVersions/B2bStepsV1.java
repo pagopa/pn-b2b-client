@@ -343,6 +343,9 @@ public class B2bStepsV1 implements B2bStepsInterface {
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
         //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
+        if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)) {
+            pollingStrategy = TIMELINE_SLOW;
+        }
         String strategy = NotificationUtilsV1.getPollingStrategy(pollingStrategy);
         IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);

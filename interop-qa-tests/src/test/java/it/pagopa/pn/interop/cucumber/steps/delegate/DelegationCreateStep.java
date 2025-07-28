@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -169,7 +170,7 @@ public class DelegationCreateStep {
     private <T, U> void setDelegationAvailability(
         String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, Boolean isDelegatedProducer, Boolean isDelegatedConsumer) {
         httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(isDelegatedProducer, isDelegatedConsumer));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK)
             pollingService.makePolling(() -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
                         .orElse(List.of())
@@ -214,7 +215,7 @@ public class DelegationCreateStep {
         UUID organizationId = identityService.getOrganizationId(tenantType);
         httpCallExecutor.performCall(() -> delegationCreator.apply(
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) {
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
             delegationProxy.setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(
