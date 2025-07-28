@@ -1,9 +1,10 @@
+@pari-institution-list
 Feature: PARI - Portale registro dei beni
 
   Background:
     Given vengono generati tutti i token JWT necessari
 
-  Scenario: Lato INVITALIA viene recuperata la lista di produttori abilitati al caricamento di prodotti
+  Scenario: [TC-INSTITUTION-1] Lato INVITALIA viene recuperata la lista di produttori abilitati al caricamento di prodotti
     Given viene usata l'utenza: "INVITALIA"
 #    Given l'utente "ACCETTA" i TOS
     When viene recuperata la lista di istituzioni
@@ -16,7 +17,7 @@ Feature: PARI - Portale registro dei beni
     # POSSIBILE BUG: ritorna 500 INTERNAL_SERVER_ERROR invece che 400
     Then la chiamata ha restituito status code: 400
 
-  Scenario: Lato PRODUTTORE si verifica che non è possibile chiamare l'API per recuperare la lista di produttori abilitati al caricamento dei prodotti
+  Scenario: [TC-INSTITUTION-2] Lato PRODUTTORE si verifica che non è possibile chiamare l'API per recuperare la lista di produttori abilitati al caricamento dei prodotti
     Given viene usata l'utenza: "PRODUTTORE_1"
     When viene recuperata la lista di istituzioni
     Then la chiamata ha restituito status code: 403

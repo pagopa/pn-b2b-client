@@ -61,6 +61,12 @@ public class RegistroBeniProductsUploadSteps {
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, csvFile);
     }
 
+    @When("viene verificato il csv con categoria: {string} e dati:")
+    public void verifyCsv(String category, List<Map<String, String>> dataCsv) throws Exception {
+        Resource csvFile = generaCsv(dataCsv, ".csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().verifyProductList(category, csvFile);
+    }
+
     @When("viene recuperato il report di errore appena generato")
     public void retrieveErrorReport() {
         assertNotNull(uploadResponseDTO);
