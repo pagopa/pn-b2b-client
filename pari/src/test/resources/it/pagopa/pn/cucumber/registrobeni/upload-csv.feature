@@ -4,37 +4,21 @@ Feature: PARI - Portale registro dei beni
   Background:
     Given vengono generati tutti i token JWT necessari
 
-#  Scenario Outline: Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore in seguito all’accettazione dei ToS
-#    Given l'utente è un "<ruolo>" di "<ente>"
-#    Given l'utente "<action>" i TOS
-#    Given l'operazione viene effettuata senza errori
-#
-#    Examples:
-#      | ruolo        | ente        | action                |
-#      | A            | B           | ACCETTA               |
-#      | A            | B           | RIFIUTA               |
+  Scenario Outline: Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore in seguito all’accettazione dei ToS
+    Given viene rimossa l'accettazione dei ToS per l'utente: "<utenza>"
+    Given viene usata l'utenza: "<utenza>"
+    Given l'utente accetta i ToS con successo
+    Examples:
+      | utenza          |
+      | PRODUTTORE_1    |
+      | INVITALIA       |
 
-#  Scenario Outline: [TC_1] Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore ed accettazione dei ToS con body errato
-#    Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
-
-#    Given l'utente "<action>" i TOS con request body errato
-#    Given l'operazione produce errore
-#    When viene caricato il csv con categoria: "<categoria>" e dati:
-#      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto  | Categoria        | Paese di Produzione  |
-#      | <cod_eprel>      | <cod_gtin>          | 666777666        | <categoria>      | IT                   |
-#
-#    Examples:
-#    | cod_eprel   | cod_gtin    | categoria           |
-#    | 2405439     | 68888       | Lavatrice           |
-#    |             |             | WASHERDRIERS        |
-#    |             |             | OVENS               |
-#    |             |             | RANGEHOODS          |
-#    |             |             | DISHWASHERS         |
-#    |             |             | TUMBLEDRIERS        |
-#    |             |             | REFRIGERATINGAPPL   |
-
-
+  Scenario: [TC_1] La sottomissione di un csv prodotti senza l'accettazione dei ToS deve essere proibita
+    Given viene usata l'utenza: "PRODUTTORE_1"
+    Given viene rimossa l'accettazione dei ToS per l'utente: "PRODUTTORE_1"
+    When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
+      | Codice EPREL | Codice GTIN/EAN        | Codice Prodotto   | Categoria           | Paese di Produzione  |
+      | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice           | IT                   |
 
 
   Scenario: [TC_2] Inserimento di un nuovo file CSV con category errata
@@ -243,7 +227,28 @@ Feature: PARI - Portale registro dei beni
       | 2226586       | eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM11          | EIQINTWM149       | Cappa da cucina     | IT          |
       | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa\|Cucina&S     | IT      |
 
-
+  Scenario Outline: [TC_13] Inserimento di un nuovo file CSV con intestazione colonne errate
+    Given viene usata l'utenza: "PRODUTTORE_1"
+    When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
+      | <header_1>   | <header_2>             | <header_3>        | <header_4>          | <header_5>           |
+      | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice           | IT                   |
+    Then si verifica che la risposta abbia:
+      | status      | KO |
+      | errorKey    | product.invalid.file.header |
+    Examples:
+      | header_1        | header_2               | header_3           | header_4            | header_5             |
+      | codice Eprel    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | Paese di Produzione  |
+      | codiceEprel     | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | Paese di Produzione  |
+      |                 | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | Paese di Produzione  |
+      | Codice EPREL    | CodiceGTIN/EAN         | Codice Prodotto    | Categoria           | Paese di Produzione  |
+      | Codice EPREL    |                        | Codice Prodotto    | Categoria           | Paese di Produzione  |
+      | Codice EPREL    | Codice GTIN/EAN        | CodiceProdotto     | Categoria           | Paese di Produzione  |
+      | Codice EPREL    | Codice GTIN/EAN        |                    | Categoria           | Paese di Produzione  |
+      | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Cate\goria          | Paese di Produzione  |
+      | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    |                     | Paese di Produzione  |
+      | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | Paese_di_Produzione  |
+      | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | PaesediProduzione    |
+      | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           |                      |
 
 
 
