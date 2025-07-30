@@ -8,11 +8,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
-import it.pagopa.pari.registrobeni.service.impl.RegisterPortalOperationClientImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.platform.commons.util.StringUtils;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -21,14 +19,12 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,6 +38,7 @@ public class RegistroBeniProductsUploadSteps {
     private RegisterUploadResponseDTO uploadResponseDTO;
     private CsvDTO csvDTO;
     private UploadsListDTO uploadsListDTO;
+    private UploadDTO lastUpload;
 
     public RegistroBeniProductsUploadSteps(ApiClientContext apiClientContext, ResourceLoader resourceLoader) {
         this.apiClientContext = apiClientContext;
@@ -56,9 +53,10 @@ public class RegistroBeniProductsUploadSteps {
 
     @When("viene caricato il csv con categoria: {string} e dati:")
     public void vieneGeneratoIlCsv(String categoria, List<Map<String, String>> dataCsv) throws Exception {
-//        apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 8, null);
         Resource csvFile = generaCsv(dataCsv, ".csv");
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, csvFile);
+        // Viene aggiunto un secondo di delay per dare il tempo al csv di essere validato
+        Thread.sleep(1000);
     }
 
     @When("viene verificato il csv con categoria: {string} e dati:")
@@ -147,13 +145,27 @@ public class RegistroBeniProductsUploadSteps {
 
     }
 
-    @When("si recupera la lista dei caricamenti effettuati dall'utenza")
-    public void retrieveUploadsList() {
+    @When("si recupera l'ultimo caricamento effettuato dall'utenza")
+    public void retrieveLastUpload() {
         uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10, null);
+        lastUpload = uploadsListDTO.getContent().stream()
+                .filter(x -> StringUtils.isNotBlank(x.getDateUpload()))
+                .max(Comparator.comparing(UploadDTO::getDateUpload))
+                .orElse(null);
     }
 
-    @Then("si verifica che la lista dei caricamenti non sia nulla")
+    @Then("si verifica che i prodotti non siano stati aggiunti in quanto già caricati da un produttore diverso")
+    public void verifyProductsAreNotLoaded() {
+        assertNotNull(lastUpload);
+        csvDTO = apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(lastUpload.getProductFileId());
+        assertNotNull(csvDTO);
+        assertNotNull(csvDTO.getData());
+        assertTrue(csvDTO.getData().contains("Prodotto associato ad un altro produttore"));
+    }
+
+    @Then("si verifica che la lista dei caricamenti effettuata non sia nulla")
     public void verifyUploadsListResponse() {
+        uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10, null);
         assertNotNull(uploadsListDTO);
         assertNotNull(uploadsListDTO.getTotalElements());
         assertTrue(uploadsListDTO.getTotalElements() > 0);

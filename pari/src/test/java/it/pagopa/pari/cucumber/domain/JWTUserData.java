@@ -1,6 +1,5 @@
 package it.pagopa.pari.cucumber.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,4 +15,5 @@ public class JWTUserData {
     private String familyName;
     private String orgId;
     private String orgRole;
+    private String orgFc;
 }

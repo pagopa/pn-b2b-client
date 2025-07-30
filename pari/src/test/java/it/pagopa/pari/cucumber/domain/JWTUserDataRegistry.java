@@ -11,6 +11,15 @@ public class JWTUserDataRegistry {
                     .familyName("Polignano")
                     .orgId("b5ae0b41-b854-414e-8295-078595ee1db4")
                     .orgRole("operatore")
+                    .orgFc("00005005050")
+                    .build(),
+            "PRODUTTORE_2", JWTUserData.builder()
+                    .uid("195da70f-d3f0-4c57-b62e-ef471348e920")
+                    .name("Lorenzo")
+                    .familyName("Lollo")
+                    .orgId("b5ae0b41-b854-414e-8295-078595ee1db5")
+                    .orgRole("operatore")
+                    .orgFc("00005005051")
                     .build(),
             "INVITALIA", JWTUserData.builder()
                     .uid("195da70f-d3f0-4c57-b62e-ef471348e920")

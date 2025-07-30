@@ -1,5 +1,6 @@
 package it.pagopa.pari.cucumber.steps.registrobeni;
 
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import it.pagopa.pari.cucumber.domain.JWTUserDataRegistry;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
@@ -16,6 +17,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Slf4j
 public class RegistroBeniPortalConsentSteps {
@@ -52,5 +57,33 @@ public class RegistroBeniPortalConsentSteps {
         portalConsentApi.setFirstAcceptance(true);
         portalConsentApi.setVersionId("mock-version-id");
         Assertions.assertDoesNotThrow(() -> apiClientContext.getRegisterPortalOperationClient().savePortalConsent(portalConsentApi));
+    }
+
+    @Given("si verifica che i ToS {consentAction} stati accettati")
+    public void getUserToS(ConsentAction consentAction) {
+        PortalConsentDTO portalConsentDTO = apiClientContext.getRegisterPortalOperationClient().getConsent();
+        assertNotNull(portalConsentDTO);
+        if (ConsentAction.NON_SONO.equals(consentAction)) {
+            assertEquals(true, portalConsentDTO.getFirstAcceptance());
+            assertNotNull(portalConsentDTO.getVersionId());
+        } else {
+            assertNull(portalConsentDTO.getFirstAcceptance());
+            assertNull(portalConsentDTO.getVersionId());
+        }
+    }
+
+    @ParameterType("NON_SONO|SONO")
+    public ConsentAction consentAction(String consentAction) {
+        return switch (consentAction) {
+            case "NON_SONO" -> ConsentAction.NON_SONO;
+            case "SONO" -> ConsentAction.SONO;
+            default ->
+                    throw new IllegalArgumentException("Invalid consent action: " + consentAction);
+        };
+    }
+
+    public enum ConsentAction {
+        NON_SONO,
+        SONO
     }
 }

@@ -4,16 +4,19 @@ Feature: PARI - Portale registro dei beni
   Background:
     Given vengono generati tutti i token JWT necessari
 
-  Scenario Outline: Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore in seguito all’accettazione dei ToS
+  Scenario Outline: [TC_1_OK] Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore in seguito all’accettazione dei ToS
     Given viene rimossa l'accettazione dei ToS per l'utente: "<utenza>"
     Given viene usata l'utenza: "<utenza>"
-    Given l'utente accetta i ToS con successo
+    Then si verifica che i ToS NON_SONO stati accettati
+    When l'utente accetta i ToS con successo
+    Then si verifica che i ToS SONO stati accettati
     Examples:
       | utenza          |
       | PRODUTTORE_1    |
       | INVITALIA       |
 
-  Scenario: [TC_1] La sottomissione di un csv prodotti senza l'accettazione dei ToS deve essere proibita
+    #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-163
+  Scenario: [TC_1_KO] La sottomissione di un csv prodotti senza l'accettazione dei ToS deve essere proibita
     Given viene usata l'utenza: "PRODUTTORE_1"
     Given viene rimossa l'accettazione dei ToS per l'utente: "PRODUTTORE_1"
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
@@ -23,8 +26,7 @@ Feature: PARI - Portale registro dei beni
 
   Scenario: [TC_2] Inserimento di un nuovo file CSV con category errata
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
-
+    Given l'utente accetta i ToS con successo
     When viene caricato il csv con categoria: "ERRATA" e dati:
       | Codice EPREL | Codice GTIN/EAN        | Codice Prodotto   | Categoria           | Paese di Produzione  |
       | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice           | IT                   |
@@ -34,8 +36,7 @@ Feature: PARI - Portale registro dei beni
 
   Scenario: [TC-3] Inserimento di un nuovo file con estensione errata poiché diversa da csv
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
-
+    Given l'utente accetta i ToS con successo
     When viene caricato un file NON csv con categoria: "WASHINGMACHINES" e dati:
       | Codice EPREL | Codice GTIN/EAN        | Codice Prodotto   | Categoria           | Paese di Produzione  |
       | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice           | IT                   |
@@ -46,7 +47,7 @@ Feature: PARI - Portale registro dei beni
 
   Scenario Outline: [TC-4] Inserimento di un nuovo file CSV non valido con alcune colonne non popolate o popolate in modo non corretto
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
 
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
       | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione       |
@@ -82,18 +83,10 @@ Feature: PARI - Portale registro dei beni
     | 2226586      | eiQINTWM149V2          | EIQINTWM149       | LAV\|ATRIC&S     | IT                    |
 
 
-# Possibile bug perché ritorna
-#  413 Request Entity Too Large
-#  <html>
-#       <head><title>413 Request Entity Too Large</title></head>
-#   <body>
-#       <center><h1>413 Request Entity Too Large</h1></center>
-#       <hr><center>nginx</center>
-#   </body>
-#  </html>
+  #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-162
   Scenario: [TC-5] Inserimento di un nuovo file csv che supera il peso massimo (>2MB)
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
     When viene caricato un file csv di peso maggiore a quello consentito
     Then si verifica che la risposta abbia:
       | status      | KO |
@@ -101,33 +94,36 @@ Feature: PARI - Portale registro dei beni
 
   Scenario: [TC-6] Inserimento di un nuovo file csv che supera il numero di righe massimo (> 100 righe)
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
     When viene caricato un file csv contente più righe di quelle accettate
     Then si verifica che la risposta abbia:
       | status      | KO |
       | errorKey    | product.invalid.file.maxrow |
 
+    #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-161 una volta chiuso scommentare la riga sotto
   Scenario Outline: [TC-7] Recupero lista dei caricamenti e prodotti precedentemente caricati
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
-    When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
-      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto  | Categoria        | Paese di Produzione  |
-      | 2226586          | eiQINTWM149V2       | <codice_prodotto>      | Lavatrice        | IT                   |
+    Given l'utente accetta i ToS con successo
+    When viene caricato il csv con categoria: "<categoria_csv>" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2226586          | eiQINTWM149V2       | <codice_prodotto>      | <categoria>      | IT                   |
+#      | 2226586          | eiQINTWM149V2       | <codice_prodotto>      | lavatrice        | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
-    When vengono recuperati i prodotti precedentemente caricati
-    Then si verifica che la lista di prodotti ritornata non sia nulla
-    When si recupera la lista dei caricamenti effettuati dall'utenza
-    Then si verifica che la lista dei caricamenti non sia nulla
-
+    Then si verifica che la lista di prodotti caricati non sia nulla
+    Then si verifica che la lista dei caricamenti effettuata non sia nulla
   Examples:
-      | codice_prodotto     |
-      | EIQINTWM149         |
-      |                     |
+      | categoria_csv       | codice_prodotto     | categoria         |
+      | WASHERDRIERS        | EIQINTWM149         | Lavasciuga        |
+      | OVENS               |                     | Forno             |
+      | RANGEHOODS          |                     | Cappa da cucina   |
+      | DISHWASHERS         |                     | Lavastoviglie     |
+      | TUMBLEDRYERS        |                     | Asciugatrice      |
+      | REFRIGERATINGAPPL   |                     | Frigorifero       |
 
   Scenario: [TC-8] Inserimento di un nuovo file CSV non valido (Paese errato) e contestuale recupero del report
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
       | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione  |
       | 2226586             | eiQINTWM149V2          | EIQINTWM149             | Lavatrice           | I&                   |
@@ -141,6 +137,7 @@ Feature: PARI - Portale registro dei beni
 
     Scenario Outline: [TC-9] Si tenta di recuperare un report di errore con id non presente o non valido
       Given viene usata l'utenza: "PRODUTTORE_1"
+      Given l'utente accetta i ToS con successo
       When si tenta di recuperare un report di errore "<productFileId>" e si ottiene status code 404
       Examples:
         | productFileId |
@@ -149,7 +146,7 @@ Feature: PARI - Portale registro dei beni
 
   Scenario Outline: [TC-10] Inserimento di un nuovo file CSV per Piani Cottura non valido con alcune colonne non popolate o popolate in modo non corretto
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
 
     When viene caricato il csv con categoria: "COOKINGHOBS" e dati:
       | Codice GTIN/EAN     | Codice Prodotto        | Categoria         | Paese di Produzione       | Marca     | Modello    |
@@ -181,7 +178,7 @@ Feature: PARI - Portale registro dei beni
 
   Scenario Outline: [TC-11] Inserimento di un nuovo file CSV valido per Piani Cottura
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
 
     When viene caricato il csv con categoria: "COOKINGHOBS" e dati:
       | Codice GTIN/EAN     | Codice Prodotto        | Categoria         | Paese di Produzione       | Marca     | Modello    |
@@ -196,7 +193,7 @@ Feature: PARI - Portale registro dei beni
 
   Scenario Outline: [TC-12] Verifica di un nuovo file CSV valido per Cappe da cucina
     Given viene usata l'utenza: "PRODUTTORE_1"
-#    Given l'utente "ACCETTA" i TOS
+    Given l'utente accetta i ToS con successo
 
     When viene verificato il csv con categoria: "RANGEHOODS" e dati:
       | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione       |
@@ -227,6 +224,7 @@ Feature: PARI - Portale registro dei beni
       | 2226586       | eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM11          | EIQINTWM149       | Cappa da cucina     | IT          |
       | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa\|Cucina&S     | IT      |
 
+    #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-164
   Scenario Outline: [TC_13] Inserimento di un nuovo file CSV con intestazione colonne errate
     Given viene usata l'utenza: "PRODUTTORE_1"
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
@@ -250,6 +248,19 @@ Feature: PARI - Portale registro dei beni
       | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | PaesediProduzione    |
       | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           |                      |
 
+  Scenario: [TC-14] Un secondo Produttore prova a caricare dei prodotti che sono stati caricati precedentemente da un altro Produttore e riceve errore
+    Given viene usata l'utenza: "PRODUTTORE_1"
+    Given l'utente accetta i ToS con successo
+    When viene caricato il csv con categoria: "COOKINGHOBS" e dati:
+      | Codice GTIN/EAN     | Codice Prodotto        | Categoria           | Paese di Produzione       | Marca     | Modello    |
+      | 8016361967658       | 33801999               | Piano cottura       | IT                        | Candy     | x100       |
+    Given viene usata l'utenza: "PRODUTTORE_2"
+    Given l'utente accetta i ToS con successo
+    When viene caricato il csv con categoria: "COOKINGHOBS" e dati:
+      | Codice GTIN/EAN     | Codice Prodotto        | Categoria           | Paese di Produzione       | Marca     | Modello    |
+      | 8016361967658       | 33801999               | Piano cottura       | IT                        | Candy     | x100       |
+    When si recupera l'ultimo caricamento effettuato dall'utenza
+    Then si verifica che i prodotti non siano stati aggiunti in quanto già caricati da un produttore diverso
 
 
 

@@ -16,14 +16,10 @@ public class RegistroBeniProductsSteps {
         this.apiClientContext = apiClientContext;
     }
 
-    @When("vengono recuperati i prodotti precedentemente caricati")
-    public void retrieveProducts() {
+    @Then("si verifica che la lista di prodotti caricati non sia nulla")
+    public void verifyResponseProductsList() {
         productListDTO = apiClientContext.getRegisterPortalOperationClient().getProducts("", 0, 10, null, null,
                 null, null, null, null);
-    }
-
-    @Then("si verifica che la lista di prodotti ritornata non sia nulla")
-    public void verifyResponseProductsList() {
         assertNotNull(productListDTO);
         assertNotNull(productListDTO.getContent());
         assertFalse(productListDTO.getContent().isEmpty());
