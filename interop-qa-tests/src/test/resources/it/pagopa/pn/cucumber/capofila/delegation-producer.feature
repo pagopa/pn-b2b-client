@@ -64,7 +64,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
-  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
+  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
@@ -187,3 +187,18 @@ Feature: Creazione di una delega in erogazione
     Given l'utente è un "admin" di "PA2"
     Given l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL
     Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
+
+  # NOTA 30/07/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  # TODO 30/07/2025 prolisso: molti step possono essere compattati
+  Scenario: [TC_CAPOFILA_PUB_1] La pubblicazione di un e-service da parte di un ente delegato all'erogazione conduce l'e-service allo stato WAITING_FOR_APPROVAL
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'ente "PA2" accetta la delega
+    And l'utente è un "admin" di "PA2"
+    When l'utente pubblica l'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"

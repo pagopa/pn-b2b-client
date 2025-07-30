@@ -101,7 +101,13 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @Given("l'utente effettua il caricamento dell'interfaccia dell'e-service con successo")
     public void successfullyUploadInterface() {
         uploadInterface();
-        interfaceUploadedCheck();
+        interfaceExistsCheck();
+    }
+
+    @Given("l'utente effettua la cancellazione dell'interfaccia dell'e-service con successo")
+    public void successfullyDeletedInterface() {
+        deleteInterface();
+        interfaceNotExistsCheck();
     }
 
     @When("l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service")
@@ -114,33 +120,36 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
-    @When("l'utente tenta di effettuare il caricamento di un'interfaccia con lo stesso nome")
-    public void uploadSameNameInterface() {
+    @When("l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service")
+    public void deleteInterface() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
-        uploadInterface(interfaceName, eServiceId, descriptorId);
+        deleteInterface(eServiceId, descriptorId);
     }
 
-    @Then("l'interfaccia è stata caricata con successo")
-    public void interfaceUploadedCheck() {
+    private void deleteInterface(UUID eServiceId, UUID descriptorId) {
+        httpExecutor.performCall(() -> client.deleteInterface(eServiceId, descriptorId));
+    }
+
+    @Then("è presente un'interfaccia per l'e-service")
+    public void interfaceExistsCheck() {
         Predicate<HttpStatus> interfaceUploaded = HttpStatus::is2xxSuccessful;
-        checkUploadedInterface(interfaceUploaded);
+        checkEServiceInterface(interfaceUploaded);
     }
 
-    @Then("l'interfaccia non è stata caricata")
-    public void interfaceNotUploadedCheck() {
+    @Then("non è presente alcuna interfaccia per l'e-service")
+    public void interfaceNotExistsCheck() {
         Predicate<HttpStatus> interfaceUploaded = HttpStatus::isError;
-        checkUploadedInterface(interfaceUploaded);
+        checkEServiceInterface(interfaceUploaded);
     }
 
-    private void checkUploadedInterface(Predicate<HttpStatus> interfaceUploaded) {
+    private void checkEServiceInterface(Predicate<HttpStatus> interfaceUploaded) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         pollingService.makePolling(
             () -> httpExecutor.performCall(() -> client.downloadEServiceDescriptorInterface(eServiceId, descriptorId)),
             interfaceUploaded,
-            "L'interfaccia non è stata trovata. Visionare logs per maggiori dettagli");
+            "L'interfaccia dell'e-service non sottostà alle condizioni attese. Visionare logs per maggiori dettagli");
     }
 
     @When("l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service inesistente")
@@ -157,6 +166,20 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         UUID descriptorId = UUID.randomUUID();
         String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
         uploadInterface(interfaceName, eServiceId, descriptorId);
+    }
+
+    @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
+    public void deleteNonExistentEServiceInterface(){
+        UUID eServiceId = UUID.randomUUID();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        deleteInterface(eServiceId, descriptorId);
+    }
+
+    @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service descriptor inesistente")
+    public void deleteNonExistentEServiceDescriptorInterface(){
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = UUID.randomUUID();
+        deleteInterface(eServiceId, descriptorId);
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {

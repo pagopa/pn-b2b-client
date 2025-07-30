@@ -25,23 +25,15 @@ public class AttributeCommonContext {
     List<List<UUID>> requiredVerifiedAttributes = new ArrayList<>();
     String attributeConsumerTenant;
 
-    //--M2M--
-    List<CertifiedAttribute> published = new ArrayList<>();
-    List<CertifiedAttribute> actual = new ArrayList<>();
-
     List<Attribute> createdAttributes = new ArrayList<>();
-
     public Attribute getLastCreatedAttribute() {
         return lastOf(createdAttributes);
     }
-
     public void addCreatedAttribute(Attribute attribute) {
         this.createdAttributes.add(attribute);
     }
 
-    private <T> T lastOf(List<T> list) {
-        return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
-    }
+    //--M2M--
     List<CertifiedAttribute> certifiedPublished = new ArrayList<>();
     List<CertifiedAttribute> certifiedActual = new ArrayList<>();
 
@@ -50,4 +42,8 @@ public class AttributeCommonContext {
 
     List<VerifiedAttribute> verifiedPublished = new ArrayList<>();
     List<VerifiedAttribute> verifiedActual = new ArrayList<>();
+
+    private <T> T lastOf(List<T> list) {
+        return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
+    }
 }

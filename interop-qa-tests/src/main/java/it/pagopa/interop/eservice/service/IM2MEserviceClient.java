@@ -22,9 +22,16 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     }
 
     EServices getAll(EserviceListRequest payload);
+
     EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId);
+
     void delete(UUID id);
+
+    void deleteInterface(UUID eServiceId, UUID descriptorId);
+
     void unsuspendEService(UUID eServiceId, UUID descriptorId);
+
     EServiceInterfaceUploadResponse uploadInterface(EServiceInterfaceUploadRequest body);
+
     FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId, UUID descriptorId);
 }

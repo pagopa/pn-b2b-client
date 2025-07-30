@@ -74,6 +74,7 @@ public class DescriptorPublicationSteps {
     }
 
     @When("l'utente pubblica quel descrittore")
+    @When("l'utente pubblica l'e-service")
     public void userPublishDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(

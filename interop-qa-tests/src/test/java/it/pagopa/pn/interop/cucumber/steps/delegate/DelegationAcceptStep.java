@@ -39,14 +39,14 @@ public class DelegationAcceptStep {
     public void userAcceptTheDelegation() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         approveProducerDelegation();
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApprove();
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApproved();
     }
 
     @And("l'ente {string} accetta la delega")
     public void producerDelegationIsAcceptedByTenant(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         approveProducerDelegation();
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApprove();
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApproved();
     }
 
     @And("l'ente {delegationRole} accetta la delega in fruizione")
@@ -54,7 +54,7 @@ public class DelegationAcceptStep {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         approveConsumerDelegation();
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApprove();
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApproved();
     }
 
     private void approveProducerDelegation() {
@@ -69,7 +69,7 @@ public class DelegationAcceptStep {
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
-    public void waitUntilDelegationIsApprove() {
+    public void waitUntilDelegationIsApproved() {
         // wait until delegation is correctly approved
         pollingService.makePolling(
                 () -> delegationApiClient.getDelegation(
