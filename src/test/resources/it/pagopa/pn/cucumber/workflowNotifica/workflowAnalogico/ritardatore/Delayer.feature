@@ -3,11 +3,15 @@ Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e La
   @delayer
   Scenario: [DELAYER-TC01] Le notifiche sono elaborate secondo priorità
     Given il CSV "tc01_priorita.csv" contiene 30 notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO
-    And la capacità disponibile per il driver "{recapitista}" su provincia "{provincia}" è configurata a 30
-    Given il CSV "tc01_priorita.csv" è importato da S3 nella tabella di test tramite lambda
+    And il CSV "tc01_priorita.csv" è importato da S3 nella tabella di test tramite lambda
     When viene avviato l'algoritmo tramite lambda
-    Then i risultati per requestId "{string}" contengono esattamente 30 notifiche
-    And le prime 30 notifiche sono selezionate secondo l’ordine di priorità:
+    And i risultati per requestId "{requestId}" e workflow step "EVALUATE_SENDER_LIMIT" contengono esattamente 30 notifiche
+    And la capacità disponibile per il driver "Poste" su provincia "RM" per le deliveryDate calcolate dalle prepareRequestDate è almeno 30
+    And i risultati per requestId "{requestId}" e workflow step "EVALUATE_DRIVER_CAPACITY" contengono esattamente 30 notifiche
+    And i risultati per requestId "{requestId}" e workflow step "EVALUATE_PRINT_CAPACITY" contengono esattamente 30 notifiche
+    And i risultati per requestId "{requestId}" e workflow step "SENT_TO_PREPARE_PHASE_2" contengono esattamente 30 notifiche
+    And la deliveryDate delle notifiche coincide con la deliveryDate aspettata
+    Then le prime 30 notifiche sono selezionate secondo l’ordine di priorità:
       | categoria         | ordinamentoCampo   |
       | RS                | prepareRequestDate |
       | SECONDO_TENTATIVO | prepareRequestDate |

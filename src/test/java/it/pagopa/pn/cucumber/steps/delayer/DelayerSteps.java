@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
@@ -19,10 +20,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -32,13 +30,22 @@ public class DelayerSteps {
 
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
     private static final String DEFAULT_DELIVERY_DATE = "1970-01-05T00:00:00Z";
+    private static final List<String> WORKFLOW_STEPS = List.of(
+            "EVALUATE_SENDER_LIMIT",
+            "EVALUATE_DRIVER_CAPACITY",
+            "EVALUATE_PRINT_CAPACITY",
+            "SENT_TO_PREPARE_PHASE_2"
+    );
+
 
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private List<JsonNode> lastResult;
+    Map<String, List<JsonNode>> groupedByPkSubstring = new HashMap<>();
     private Integer numeroNotifiche = 0;
     private String actualCsv;
+    private Map<String, String> predictDeliveryDateMap = new HashMap<>();
 
     @Given("il CSV {string} contiene {int} notifiche appartenenti alla stessa categoria")
     @Given("il CSV {string} contiene {int} notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO")
@@ -52,13 +59,8 @@ public class DelayerSteps {
         this.numeroNotifiche = numeroNotifiche;
     }
 
-    @Given("la capacità disponibile per il driver {string} su provincia {string} è configurata a {int}")
-    public void checkCapacity(String recapitista, String provincia, Integer capacita) {
-        throw new RuntimeException("Metodo non implementato");
-    }
-
     @Given("il CSV {string} è importato da S3 nella tabella di test tramite lambda")
-    public void importaCsvTramiteLambda(String csvName, String lambdaArn) throws Exception {
+    public void importaCsvTramiteLambda(String csvName) throws Exception {
         String payload = """
                 {
                   "operationType": "IMPORT_DATA",
@@ -66,7 +68,7 @@ public class DelayerSteps {
                 }
                 """;
 
-        String rawResult = lambdaInvoker.invokeMyLambda(lambdaArn, payload);
+        String rawResult = lambdaInvoker.invokeMyLambda(this.LAMBDA_NAME, payload);
         checkLambdaResponse(rawResult, "IMPORT_DATA");
         log.info("Importazione CSV [{}] completata correttamente", csvName);
     }
@@ -86,6 +88,45 @@ public class DelayerSteps {
         log.info("Algoritmo avviato correttamente.");
     }
 
+    @Then("la capacità disponibile per il driver {string}, provincia {string}, delivery date corrispondente è superiore a {int}")
+    public void verificaCapacitaPerDeliveryDateCalcolata(String driver, String provincia, int minExpected) throws Exception {
+        if (lastResult == null || lastResult.isEmpty()) {
+            throw new IllegalStateException("Nessuna notifica trovata per verificare la deliveryDate.");
+        }
+
+        // Prendo la deliveryDate dalla prima notifica elaborata
+        String deliveryDate = lastResult.get(0).path("deliveryDate").asText();
+        if (deliveryDate == null || deliveryDate.isBlank() || deliveryDate.equals("1970-01-05T00:00:00Z")) {
+            throw new AssertionError("La deliveryDate non è stata valorizzata correttamente.");
+        }
+
+        String payload = String.format("""
+                {
+                  "operationType": "GET_USED_CAPACITY",
+                  "parameters": [ "%s", "%s", "%s" ]
+                }
+                """, driver, provincia, deliveryDate);
+
+        String raw = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
+        checkLambdaResponse(raw, "GET_USED_CAPACITY");
+
+        JsonNode body = objectMapper.readTree(raw).path("body");
+        if (body.isTextual()) {
+            body = objectMapper.readTree(body.asText());
+        }
+
+        int capacity = body.path("capacity").asInt(-1);
+        int used = body.path("usedCapacity").asInt(-1);
+
+        log.info("Capacità disponibile per {}~{}@{}: {}/{}", driver, provincia, deliveryDate, used, capacity);
+
+        if ((capacity - used) < minExpected) {
+            throw new AssertionError(String.format(
+                    "Capacità insufficiente: disponibile %d, atteso almeno %d", capacity - used, minExpected
+            ));
+        }
+    }
+
     /**
      * Verifica che le prime {@code limit} notifiche siano elaborate in ordine di priorità,
      * seguendo le regole dell'algoritmo Delayer:
@@ -96,7 +137,7 @@ public class DelayerSteps {
      *   <li><b>Altri</b>: ordinate per {@code notificationSentAt}</li>
      * </ul>
      *
-     * @param limit Numero di notifiche da considerare (le prime N)
+     * @param limit         Numero di notifiche da considerare (le prime N)
      * @param expectedOrder Tabella Gherkin con la sequenza attesa
      */
     @Then("le prime {int} notifiche sono selezionate secondo l’ordine di priorità:")
@@ -129,11 +170,23 @@ public class DelayerSteps {
         assertOrdinati(altri, "notificationSentAt", "ALTRO");
     }
 
-    @Then("i risultati per requestId {string} contengono esattamente {int} notifiche")
-    public void risultatiContengonoEsattamente(String requestId, int expectedCount) throws Exception {
-        lastResult = pollNotificheByRequestId(requestId, expectedCount, 10, 2000); // polling max 10 volte
-        Assertions.assertEquals(expectedCount, lastResult.size(),
-                String.format("Numero di notifiche ottenute per requestId %s diverso da quello atteso", requestId));
+    @Then("i risultati per requestId {string} e workflow step {string} contengono esattamente {int} notifiche")
+    public void risultatiContengonoEsattamente(String requestId, int expectedCount, String workflowStep) throws Exception {
+        lastResult = pollNotificheByRequestId(requestId, expectedCount, 10, 2000);
+
+        for (String key : WORKFLOW_STEPS) {
+            groupedByPkSubstring.put(key, new ArrayList<>());
+        }
+
+        for (JsonNode node : lastResult) {
+            String pk = node.path("pk").asText();
+            for (String key : WORKFLOW_STEPS) {
+                if (pk.contains(key)) groupedByPkSubstring.get(key).add(node);
+            }
+        }
+
+        Assertions.assertEquals(expectedCount, groupedByPkSubstring.get(workflowStep).size(),
+                String.format("Numero di notifiche ottenute per requestId %s e workflow step %s diverso da quello atteso", requestId, workflowStep));
     }
 
     @Then("le prime {int} notifiche sono pianificate secondo ordine cronologico per il campo {string}")
@@ -242,9 +295,9 @@ public class DelayerSteps {
      * che il controllo sia allineato alla settimana in cui si collocano le notifiche.
      * </p>
      *
-     * @param driver il nome del recapitista (unifiedDeliveryDriver)
-     * @param provincia la provincia/geoKey
-     * @param productType il tipo di prodotto (es. "AR", "RS")
+     * @param driver           il nome del recapitista (unifiedDeliveryDriver)
+     * @param provincia        la provincia/geoKey
+     * @param productType      il tipo di prodotto (es. "AR", "RS")
      * @param expectedCapacity il valore atteso di capacità configurata
      * @throws Exception in caso di errore di invocazione o mismatch
      */
@@ -402,11 +455,11 @@ public class DelayerSteps {
         }
 
         String payload = String.format("""
-            {
-              "operationType": "GET_USED_CAPACITY",
-              "parameters": [ "Poste", "PRINT", "%s" ]
-            }
-            """, deliveryDate);
+                {
+                  "operationType": "GET_USED_CAPACITY",
+                  "parameters": [ "Poste", "PRINT", "%s" ]
+                }
+                """, deliveryDate);
 
         String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
         checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
@@ -432,6 +485,65 @@ public class DelayerSteps {
                     "Capacità residua di stampa errata per il %s: attesa %d, trovata %d (totale=%d, usata=%d)",
                     deliveryDate, expectedAvailable, actualAvailable, capacity, used));
         }
+    }
+
+    @Given("la capacità disponibile per il driver {string} su provincia {string} per le deliveryDate calcolate dalle prepareRequestDate è almeno {int}")
+    public void verificaCapacitaPredettaDaPrepareRequestDate(String driver, String provincia, Integer capacitaMinimaAttesa) {
+
+        if (lastResult == null || lastResult.isEmpty()) {
+            throw new IllegalStateException("Nessuna notifica trovata per verificare la deliveryDate.");
+        }
+
+        // Recupera univocamente le prepareRequestDate
+        Set<String> prepareRequestDates = new HashSet<>();
+
+        for (JsonNode node : groupedByPkSubstring.get(WORKFLOW_STEPS.get(0))) {
+            String prepareRequestDate = node.path("prepareRequestDate").asText();
+            if (prepareRequestDate == null || prepareRequestDate.isBlank()) {
+                throw new IllegalStateException("deliveryDate mancante o non valida nella notifica.");
+            }
+            prepareRequestDates.add(prepareRequestDate);
+        }
+
+        // Calcola tutte le deliveryDate associate alle prepareRequestDate
+        prepareRequestDates.forEach(rd -> {
+            LocalDate lunedi = LocalDate.parse(rd.substring(0, 10)).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            String deliveryDate = lunedi.toString() + "T00:00:00Z";
+            this.predictDeliveryDateMap.put(rd, deliveryDate);
+        });
+
+        // Verifica che per ogni deliveryDate ci sia abbastanza capacità
+        predictDeliveryDateMap.forEach((rd, deliveryDate) -> {
+            String payload = String.format("""
+                    {
+                      "operationType": "GET_USED_CAPACITY",
+                      "parameters": [ "%s", "%s", "%s" ]
+                    }
+                    """, driver, provincia, deliveryDate);
+
+            String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
+            JsonNode body = null;
+
+            try {
+                checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
+                body = objectMapper.readTree(rawResult).path("body");
+                if (body.isTextual()) body = objectMapper.readTree(body.asText());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            int capacity = body.path("capacity").asInt(-1);
+            int used = body.path("usedCapacity").asInt(-1);
+            int available = capacity - used;
+
+            log.info("Capacità driver {} su {} per {}: disponibile {} su {}", driver, provincia, deliveryDate, available, capacity);
+
+            if (available < capacitaMinimaAttesa) {
+                throw new AssertionError(String.format(
+                        "Capacità insufficiente: attesi almeno %d slot liberi, disponibili %d",
+                        capacitaMinimaAttesa, available));
+            }
+        });
     }
 
     @Then("sono state {word} tutte le {int} notifiche \\(verifica basata su deliveryDate)")
@@ -484,6 +596,31 @@ public class DelayerSteps {
             throw new AssertionError("Le seguenti notifiche non sono state pianificate: " + dettagli);
         }
     }
+
+    @Then("la deliveryDate delle notifiche coincide con la deliveryDate aspettata")
+    public void verificaDeliveryDateValorizzata() {
+        if (lastResult == null || lastResult.isEmpty()) {
+            throw new IllegalStateException("Nessuna notifica trovata per verificare la deliveryDate.");
+        }
+
+        for (JsonNode node : groupedByPkSubstring) {
+            String deliveryDate = node.path("deliveryDate").asText();
+
+            if (deliveryDate == null || deliveryDate.isBlank()) {
+                throw new AssertionError("Una notifica ha deliveryDate mancante o vuota.");
+            }
+
+            if (deliveryDate.equals(DEFAULT_DELIVERY_DATE)) {
+                throw new AssertionError("La deliveryDate non è stata pianificata correttamente (rimasta al default).");
+            }
+
+            if (!deliveryDate.equals(predictDeliveryDate))
+                throw new AssertionError("Errore di pianificazione: la deliveryDate ricevuta ('" + deliveryDate + "') non coincide con la deliveryDate predetta ('" + predictDeliveryDate + "').");
+        }
+
+        log.info("Tutte le notifiche hanno deliveryDate correttamente valorizzata.");
+    }
+
 
     private void assertOrdinati(List<JsonNode> lista, String campo, String categoria) {
         List<String> valori = lista.stream()
