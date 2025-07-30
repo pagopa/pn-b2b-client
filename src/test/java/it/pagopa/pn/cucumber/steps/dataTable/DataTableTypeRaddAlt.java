@@ -173,7 +173,7 @@ public class DataTableTypeRaddAlt {
                 )
                 .startValidity(getValue(data, RADD_START_VALIDITY.key) == null ? null : setData(getValue(data, RADD_START_VALIDITY.key)))
                 .endValidity(getValue(data, RADD_END_VALIDITY.key) == null ? null : setData(getValue(data, RADD_END_VALIDITY.key)))
-                .locationId(getValue(data, RADD_LOCATION_ID.key) == null ? null : setData(getValue(data, RADD_LOCATION_ID.key)))
+               // .locationId(getValue(data, RADD_LOCATION_ID.key) == null ? null : setData(getValue(data, RADD_LOCATION_ID.key)))
                 .appointmentRequired(getValue(data, RADD_APPOINTMENT_REQUIRED.key) == null ? Boolean.FALSE : Boolean.TRUE)
                 .website(getValue(data, RADD_WEBSITE.key) == null ? null : setData(getValue(data, RADD_WEBSITE.key)))
                 .partnerType(getValue(data, RADD_PARTNER_TYPE.key) == null ? null : setData(getValue(data, RADD_PARTNER_TYPE.key)))
