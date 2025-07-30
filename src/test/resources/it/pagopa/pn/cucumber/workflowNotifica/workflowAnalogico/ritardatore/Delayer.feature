@@ -1,31 +1,36 @@
 Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
   @delayer
-  Scenario: [DELAYER-TC01] Le notifiche sono elaborate secondo priorità
+  Scenario: [DELAYER-TC01] Le notifiche sono pianificate secondo priorità
     Given il CSV "tc01_priorita.csv" contiene 30 notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO
     And il CSV "tc01_priorita.csv" è importato da S3 nella tabella di test tramite lambda
     When viene avviato l'algoritmo tramite lambda
-    And i risultati per requestId "{requestId}" e workflow step "EVALUATE_SENDER_LIMIT" contengono esattamente 30 notifiche
-    And la capacità disponibile per il driver "Poste" su provincia "RM" per le deliveryDate calcolate dalle prepareRequestDate è almeno 30
-    And i risultati per requestId "{requestId}" e workflow step "EVALUATE_DRIVER_CAPACITY" contengono esattamente 30 notifiche
-    And i risultati per requestId "{requestId}" e workflow step "EVALUATE_PRINT_CAPACITY" contengono esattamente 30 notifiche
-    And i risultati per requestId "{requestId}" e workflow step "SENT_TO_PREPARE_PHASE_2" contengono esattamente 30 notifiche
-    And la deliveryDate delle notifiche coincide con la deliveryDate aspettata
-    Then le prime 30 notifiche sono selezionate secondo l’ordine di priorità:
+    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_SENDER_LIMIT" contengono esattamente 30 notifiche
+    And la capacità disponibile per il driver "Poste" su provincia "RM" e per ogni deliveryDate attesa è almeno 30
+    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_DRIVER_CAPACITY" contengono esattamente 30 notifiche
+    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_PRINT_CAPACITY" contengono esattamente 30 notifiche
+    And i risultati per requestId "tc01r1" e workflow step "SENT_TO_PREPARE_PHASE_2" contengono esattamente 30 notifiche
+    And la deliveryDate delle notifiche coincide con la deliveryDate attesa
+    Then le prime 30 notifiche per il workflow step "SENT_TO_PREPARE_PHASE_2" sono selezionate secondo l’ordine di priorità:
       | categoria         | ordinamentoCampo   |
       | RS                | prepareRequestDate |
       | SECONDO_TENTATIVO | prepareRequestDate |
       | ALTRO             | notificationSentAt |
 
   @delayer
-    #TODO: check limite settimanale mittente e recapitista
+    #TODO: impostare il limite mittente a 20
+    #Domanda: se lato mittente ci sono dei limiti, le notifiche eccedenti e non prioritarie non passano al workflow successivo, giusto ?
   Scenario: [DELAYER-TC02] Rispetto del limite settimanale mittente e ordinamento cronologico
-    Given il CSV "tc02_limite_pa.csv" contiene 30 notifiche appartenenti alla stessa categoria
-    And il CSV "tc02_limite_pa.csv" è importato da S3 nella tabella di test tramite lambda
+    Given il CSV "tc02_limite_mitt.csv" contiene 30 notifiche appartenenti alla stessa categoria
+    And il CSV "tc02_limite_mitt.csv" è importato da S3 nella tabella di test tramite lambda
     When viene avviato l'algoritmo tramite lambda
-    Then i risultati per requestId "{string}" contengono esattamente 30 notifiche
-    And le prime 20 notifiche sono pianificate secondo ordine cronologico per il campo "prepareRequestDate"
-    And le restanti 10 notifiche non sono ancora pianificate
+    And i risultati per requestId "tc02r1" e workflow step "EVALUATE_SENDER_LIMIT" contengono esattamente 30 notifiche
+    And la capacità disponibile per il driver "Poste" su provincia "RM" e per ogni deliveryDate attesa è almeno 20
+    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_DRIVER_CAPACITY" contengono esattamente 20 notifiche
+    And i risultati per requestId "tc02r1" e workflow step "EVALUATE_PRINT_CAPACITY" contengono esattamente 20 notifiche
+    And i risultati per requestId "tc02r1" e workflow step "SENT_TO_PREPARE_PHASE_2" contengono esattamente 20 notifiche
+    And la deliveryDate delle notifiche coincide con la deliveryDate attesa
+    Then le prime 20 notifiche sono pianificate secondo ordine cronologico per il campo "prepareRequestDate"
 
   @delayer
   # Si necessita di impostare a monte la capacità per il recapito nella provincia in esame

@@ -140,14 +140,14 @@ public class DelayerSteps {
      * @param limit         Numero di notifiche da considerare (le prime N)
      * @param expectedOrder Tabella Gherkin con la sequenza attesa
      */
-    @Then("le prime {int} notifiche sono selezionate secondo l’ordine di priorità:")
-    public void verificaOrdinePrioritaLimitate(int limit, DataTable expectedOrder) {
+    @Then("le prime {int} notifiche per il workflow step {string} sono selezionate secondo l’ordine di priorità:")
+    public void verificaOrdinePrioritaLimitate(int limit, String workflowStep, DataTable expectedOrder) {
 
         if (lastResult == null || lastResult.isEmpty()) {
             throw new IllegalStateException("Nessuna notifica disponibile da verificare.");
         }
 
-        List<JsonNode> primeNotifiche = lastResult.subList(0, Math.min(limit, lastResult.size()));
+        List<JsonNode> primeNotifiche =  groupedByPkSubstring.get(workflowStep).subList(0, Math.min(limit, groupedByPkSubstring.get(workflowStep).size()));
 
         List<JsonNode> rs = new ArrayList<>();
         List<JsonNode> secondiTentativi = new ArrayList<>();
@@ -156,13 +156,10 @@ public class DelayerSteps {
         for (JsonNode node : primeNotifiche) {
             String tipo = node.path("productType").asText();
             int attempt = node.path("attempt").asInt();
-            if ("RS".equalsIgnoreCase(tipo)) {
-                rs.add(node);
-            } else if (attempt == 1) {
-                secondiTentativi.add(node);
-            } else {
-                altri.add(node);
-            }
+
+            if ("RS".equalsIgnoreCase(tipo)) rs.add(node);
+            else if (attempt == 1) secondiTentativi.add(node);
+            else altri.add(node);
         }
 
         assertOrdinati(rs, "prepareRequestDate", "RS");
@@ -191,8 +188,14 @@ public class DelayerSteps {
 
     @Then("le prime {int} notifiche sono pianificate secondo ordine cronologico per il campo {string}")
     public void verificaOrdinamentoCronologico(int limit, String campoOrdinamento) {
-        List<JsonNode> prime = lastResult.subList(0, Math.min(limit, lastResult.size()));
-        List<String> dateValues = prime.stream()
+        if (lastResult == null || lastResult.isEmpty()) {
+            throw new IllegalStateException("Nessuna notifica disponibile da verificare.");
+        }
+
+        List<JsonNode> listaPianificate = groupedByPkSubstring.get(WORKFLOW_STEPS.get(WORKFLOW_STEPS.size()-1));
+        List<JsonNode> primeNotifiche =  listaPianificate.subList(0, Math.min(limit, listaPianificate.size()));
+
+        List<String> dateValues = primeNotifiche.stream()
                 .map(n -> n.path(campoOrdinamento).asText())
                 .toList();
 
@@ -487,7 +490,7 @@ public class DelayerSteps {
         }
     }
 
-    @Given("la capacità disponibile per il driver {string} su provincia {string} per le deliveryDate calcolate dalle prepareRequestDate è almeno {int}")
+    @Given("la capacità disponibile per il driver {string} su provincia {string} e per ogni deliveryDate attesa è almeno {int}")
     public void verificaCapacitaPredettaDaPrepareRequestDate(String driver, String provincia, Integer capacitaMinimaAttesa) {
 
         if (lastResult == null || lastResult.isEmpty()) {
@@ -597,14 +600,25 @@ public class DelayerSteps {
         }
     }
 
-    @Then("la deliveryDate delle notifiche coincide con la deliveryDate aspettata")
+    @Then("la deliveryDate delle notifiche coincide con la deliveryDate attesa")
     public void verificaDeliveryDateValorizzata() {
         if (lastResult == null || lastResult.isEmpty()) {
             throw new IllegalStateException("Nessuna notifica trovata per verificare la deliveryDate.");
         }
 
-        for (JsonNode node : groupedByPkSubstring) {
-            String deliveryDate = node.path("deliveryDate").asText();
+        for (JsonNode node : groupedByPkSubstring.get(WORKFLOW_STEPS.get(WORKFLOW_STEPS.size() - 1))) {
+            String sk = node.path("sk").asText();
+            String deliveryDate;
+
+            if (sk != null && !sk.isBlank()) {
+                String[] parts = sk.split("~");
+
+                if (parts.length > 0) deliveryDate = parts[0];
+                else throw new IllegalStateException("Formato sk non valido: " + sk);
+
+            } else
+                throw new IllegalStateException("Campo sk mancante o vuoto nel nodo: " + node);
+
 
             if (deliveryDate == null || deliveryDate.isBlank()) {
                 throw new AssertionError("Una notifica ha deliveryDate mancante o vuota.");
@@ -614,6 +628,7 @@ public class DelayerSteps {
                 throw new AssertionError("La deliveryDate non è stata pianificata correttamente (rimasta al default).");
             }
 
+            String predictDeliveryDate = predictDeliveryDateMap.get(deliveryDate);
             if (!deliveryDate.equals(predictDeliveryDate))
                 throw new AssertionError("Errore di pianificazione: la deliveryDate ricevuta ('" + deliveryDate + "') non coincide con la deliveryDate predetta ('" + predictDeliveryDate + "').");
         }
