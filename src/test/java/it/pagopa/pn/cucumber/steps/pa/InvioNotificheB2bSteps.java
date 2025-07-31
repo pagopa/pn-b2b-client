@@ -394,7 +394,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         String key = switch (documentType) {
             case "ATTO OPPONIBILE" -> fullSentNotification.getDocuments().get(0).getRef().getKey();
             case "PAGOPA" ->
@@ -410,8 +410,8 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV27 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < fullSentNotification.getDocuments().size(); i++) {
                 String key = fullSentNotification.getDocuments().get(i).getRef().getKey();
@@ -428,9 +428,9 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV27 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < fullSentNotification.getRecipients().get(0).getPayments().size(); i++) {
                 String key = fullSentNotification.getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
 
@@ -448,7 +448,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sul type zip attachment di {string} per l'elemento di timeline {string} con DOC {string}")
     public void attachmentCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, String doc, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV27 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
             assertSoftly(softly -> {
                 softly.assertThat(timelineElement.getDetails().getAttachments())
@@ -470,9 +470,9 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention del PAGOPA di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV27 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < fullSentNotification.getRecipients().get(0).getPayments().size(); i++) {
                 String key = fullSentNotification.getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
 
@@ -725,7 +725,7 @@ public class InvioNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente su checkout")
     public void laNotificaVienePagatasuCheckout() {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
@@ -894,9 +894,9 @@ public class InvioNotificheB2bSteps {
         String regex = "[{}-~¡-ÿ^]";
         String regexCaratteriA = "[æ]";
 
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
 
-        TimelineElementV27 timelineNormalizer = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
+        TimelineElementV28 timelineNormalizer = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
         PhysicalAddress oldAddress = timelineNormalizer.getDetails().getOldAddress();
         PhysicalAddress normalizedAddress = timelineNormalizer.getDetails().getNormalizedAddress();
 
@@ -1016,7 +1016,7 @@ public class InvioNotificheB2bSteps {
     @And("si verifica lo SHA degli attachment inseriti nella pec del destinatario {int} di tipo {string}")
     public void verificaSHAAllegatiPecDelDestinatario(Integer destinatario, String tipoAttachment) {
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             //caricamento in Mappa di tutti i documenti della notifica
             for (NotificationDocument documentNotifica : fullSentNotification.getDocuments()) {
                 sharedSteps.getMapAllegatiNotificaSha256().put(documentNotifica.getRef().getKey(), documentNotifica.getDigests().getSha256());
@@ -1192,7 +1192,7 @@ public class InvioNotificheB2bSteps {
     }
 
     public BffPaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         BffPaymentRequest requestCheckout = new BffPaymentRequest()
                 .paymentNotice(new PaymentNotice()
                         .noticeNumber(dataCheckout.get("noticeCode") != null ? dataCheckout.get("noticeCode") :
@@ -1253,10 +1253,10 @@ public class InvioNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        TimelineElementCategoryV27 timelineElementInternalCategory = TimelineElementCategoryV27.AAR_GENERATION;
-        TimelineElementV27 timelineElement = null;
+        TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.AAR_GENERATION;
+        TimelineElementV28 timelineElement = null;
 
-        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
 
             if (Objects.requireNonNull(element.getCategory().getValue()).equals(timelineElementInternalCategory.getValue())) {
                 timelineElement = element;

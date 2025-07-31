@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 
-@Service(PnPollingStrategy.STATUS_SLOW_V28)
+@Service(PnPollingStrategy.STATUS_SLOW_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceStatusSlowV28 extends PnPollingServiceStatusRapidV28 {
+public class PnPollingServiceStatusSlowV29 extends PnPollingServiceStatusRapidV29 {
 
-    public PnPollingServiceStatusSlowV28(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+    public PnPollingServiceStatusSlowV29(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         super(timingForPolling, b2bClient);
     }
 

@@ -1,11 +1,11 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v29;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -18,26 +18,26 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.STATUS_RAPID_V28)
+@Service(PnPollingStrategy.STATUS_RAPID_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceStatusRapidV28 extends PnPollingTemplate<PnPollingResponseV28> {
+public class PnPollingServiceStatusRapidV29 extends PnPollingTemplate<PnPollingResponseV29> {
 
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient b2bClient;
-    private FullSentNotificationV27 fullSentNotification;
+    private FullSentNotificationV28 fullSentNotification;
 
-    public PnPollingServiceStatusRapidV28(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+    public PnPollingServiceStatusRapidV29(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         this.timingForPolling = timingForPolling;
         this.b2bClient = b2bClient;
     }
 
     @Override
-    protected Callable<PnPollingResponseV28> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
+    protected Callable<PnPollingResponseV29> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
-            PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
+            PnPollingResponseV29 pnPollingResponse = new PnPollingResponseV29();
             try {
-                fullSentNotification = b2bClient.getSentNotificationV27(iun);
+                fullSentNotification = b2bClient.getSentNotificationV28(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
@@ -48,7 +48,7 @@ public class PnPollingServiceStatusRapidV28 extends PnPollingTemplate<PnPollingR
     }
 
     @Override
-    protected Predicate<PnPollingResponseV28> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
+    protected Predicate<PnPollingResponseV29> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
@@ -63,8 +63,8 @@ public class PnPollingServiceStatusRapidV28 extends PnPollingTemplate<PnPollingR
     }
 
     @Override
-    protected PnPollingResponseV28 getException(Exception exception) {
-        PnPollingResponseV28 pollingResponse = new PnPollingResponseV28();
+    protected PnPollingResponseV29 getException(Exception exception) {
+        PnPollingResponseV29 pollingResponse = new PnPollingResponseV29();
         pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
@@ -97,13 +97,13 @@ public class PnPollingServiceStatusRapidV28 extends PnPollingTemplate<PnPollingR
         return b2bClient.getApiKeySetted();
     }
 
-    private boolean isEqualStatus(PnPollingResponseV28 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        NotificationStatusHistoryElementV26 notificationStatusHistoryElement = pnPollingResponse.getNotification()
+    private boolean isEqualStatus(PnPollingResponseV29 pnPollingResponse, PnPollingParameter pnPollingParameter) {
+        NotificationStatusHistoryElementV28 notificationStatusHistoryElement = pnPollingResponse.getNotification()
                 .getNotificationStatusHistory()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null ?
                         statusHistory -> statusHistory.getStatus().getValue().equals(pnPollingParameter.getValue())
-                        : pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV26())
+                        : pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV28())
                 .findAny()
                 .orElse(null);
         if (notificationStatusHistoryElement != null) {

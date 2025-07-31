@@ -6,9 +6,9 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV27;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV27;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
@@ -373,10 +373,10 @@ public class LegalFactContentVerifySteps {
 
     @Then("tra gli elementi di timeline con categoria {string} è presente un legalFact con categoria {string}")
     public void checkLegalFactAllVersions(String timelineElementCategory, String legalFactCategory) {
-        List<LegalFactsIdV20> legalFactsList = this.sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(
+        List<LegalFactsIdV28> legalFactsList = this.sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(
                 x -> x.getCategory().getValue().equals(timelineElementCategory)).findFirst().orElse(null).getLegalFactsIds();
         Assertions.assertFalse(legalFactsList.isEmpty());
-        LegalFactsIdV20 legalFact = legalFactsList.stream().filter(x -> x.getCategory().equals(legalFactCategory)).findFirst().orElse(null);
+        LegalFactsIdV28 legalFact = legalFactsList.stream().filter(x -> x.getCategory().equals(legalFactCategory)).findFirst().orElse(null);
         Assertions.assertNotNull(legalFact);
         setLegalFactType(legalFactCategory);
         setLegalFactUrl(legalFact.getKey());
@@ -391,9 +391,9 @@ public class LegalFactContentVerifySteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
-
+        //todo t v29 verifica vers di PnTimelineLegalFact
         PnTimelineLegalFactV27 categoriesV26 = pnTimelineAndLegalFactV27.getCategory(legalFactCategory);
-        TimelineElementV27 timelineElement = sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(elem ->
+        TimelineElementV28 timelineElement = sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(elem ->
                         elem.getCategory().getValue().equals(categoriesV26.getTimelineElementInternalCategory().getValue()))
                 .findAny()
                 .orElse(null);
@@ -448,8 +448,8 @@ public class LegalFactContentVerifySteps {
             throw new RuntimeException(exc);
         }
 
-        TimelineElementV27 timelineElement = null;
-        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        TimelineElementV28 timelineElement = null;
+        for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
             if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
                 timelineElement = element;
                 break;
@@ -500,9 +500,9 @@ public class LegalFactContentVerifySteps {
             throw new RuntimeException(exc);
         }
         PnTimelineLegalFactV27 categories = pnTimelineAndLegalFactV27.getCategory(legalFactCategory);
-        TimelineElementV27 timelineElement = null;
+        TimelineElementV28 timelineElement = null;
 
-        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
             if (!Objects.equals(element.getCategory(), categories.getTimelineElementInternalCategory())) {
                 continue;
             }
@@ -540,9 +540,9 @@ public class LegalFactContentVerifySteps {
             throw new RuntimeException(exc);
         }
         PnTimelineLegalFactV27 categories = pnTimelineAndLegalFactV27.getCategory(legalFactCategory);
-        TimelineElementV27 timelineElement = null;
+        TimelineElementV28 timelineElement = null;
 
-        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
             if (!Objects.equals(element.getCategory(), categories.getTimelineElementInternalCategory())) {
                 continue;
             }
@@ -602,9 +602,9 @@ public class LegalFactContentVerifySteps {
             throw new RuntimeException(exc);
         }
         PnTimelineLegalFactV27 categories = pnTimelineAndLegalFactV27.getCategory(legalFactCategory);
-        TimelineElementV27 timelineElement = null;
+        TimelineElementV28 timelineElement = null;
 
-        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
             if (!Objects.equals(element.getCategory(), categories.getTimelineElementInternalCategory())) {
                 continue;
             }
@@ -651,12 +651,12 @@ public class LegalFactContentVerifySteps {
             throw new RuntimeException(exc);
         }
 
-        TimelineElementV27 timelineElement = null;
+        TimelineElementV28 timelineElement = null;
 
-        TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.SEND_DIGITAL_PROGRESS;
+        TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.SEND_DIGITAL_PROGRESS;
         LegalFactCategory category = LegalFactCategory.PEC_RECEIPT;
 
-        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
             if (!Objects.equals(element.getCategory(), timelineElementInternalCategory)) {
                 continue;
             }

@@ -3,11 +3,11 @@ package it.pagopa.pn.client.b2b.pa.polling.impl.v29;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV29;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -23,28 +23,28 @@ import java.util.function.Predicate;
 @Service(PnPollingStrategy.WEBHOOK_V28)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingResponseV28> {
+public class PnPollingServiceWebhookV29 extends PnPollingTemplate<PnPollingResponseV29> {
     private final IPnWebhookB2bClient webhookB2bClient;
     private final TimingForPolling timingForPolling;
-    private List<ProgressResponseElementV28> progressResponseElementList;
+    private List<ProgressResponseElementV29> progressResponseElementList;
     private String iun;
 
-    public PnPollingServiceWebhookV28(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
+    public PnPollingServiceWebhookV29(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
         this.timingForPolling = timingForPolling;
         this.webhookB2bClient = webhookB2bClient;
     }
 
     @Override
-    protected Callable<PnPollingResponseV28> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
+    protected Callable<PnPollingResponseV29> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         this.iun = iun;
         return () -> {
-            PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
-            ResponseEntity<List<ProgressResponseElementV28>> listResponseEntity;
+            PnPollingResponseV29 pnPollingResponse = new PnPollingResponseV29();
+            ResponseEntity<List<ProgressResponseElementV29>> listResponseEntity;
             int deepCount = pnPollingParameter.getDeepCount();
             try {
                 ++deepCount;
                 pnPollingParameter.setDeepCount(deepCount);
-                listResponseEntity = webhookB2bClient.consumeEventStreamHttpV28(pnPollingParameter.getStreamId(), pnPollingParameter.getLastEventId());
+                listResponseEntity = webhookB2bClient.consumeEventStreamHttpV29(pnPollingParameter.getStreamId(), pnPollingParameter.getLastEventId());
                 progressResponseElementList = listResponseEntity.getBody();
                 pnPollingResponse.setProgressResponseElementList(listResponseEntity.getBody());
                 log.info("ELEMENTI NEL WEBHOOK: " + Objects.requireNonNull(progressResponseElementList));
@@ -65,7 +65,7 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
     }
 
     @Override
-    protected Predicate<PnPollingResponseV28> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
+    protected Predicate<PnPollingResponseV29> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
             if (pnPollingResponse.getProgressResponseElementList() == null
                     || pnPollingResponse.getProgressResponseElementList().isEmpty()) {
@@ -83,8 +83,8 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
     }
 
     @Override
-    protected PnPollingResponseV28 getException(Exception exception) {
-        PnPollingResponseV28 pollingResponse = new PnPollingResponseV28();
+    protected PnPollingResponseV29 getException(Exception exception) {
+        PnPollingResponseV29 pollingResponse = new PnPollingResponseV29();
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -117,12 +117,12 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
     }
 
 
-    private boolean isWaitTerminated(PnPollingResponseV28 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElementV28 progressResponseElement = pnPollingResponse.getProgressResponseElementList()
+    private boolean isWaitTerminated(PnPollingResponseV29 pnPollingResponse, PnPollingParameter pnPollingParameter) {
+        ProgressResponseElementV29 progressResponseElement = pnPollingResponse.getProgressResponseElementList()
                 .stream()
                 .peek(pre -> {
-                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV28().contains(pre)) {
-                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV28().add(pre);
+                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV29().contains(pre)) {
+                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV29().add(pre);
                     }
                 })
                 .filter(toCheckCondition(pnPollingParameter))
@@ -135,8 +135,8 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
         return false;
     }
 
-    private void selectLastEventId(PnPollingResponseV28 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElementV28 lastProgress = pnPollingResponse
+    private void selectLastEventId(PnPollingResponseV29 pnPollingResponse, PnPollingParameter pnPollingParameter) {
+        ProgressResponseElementV29 lastProgress = pnPollingResponse
                 .getProgressResponseElementList()
                 .stream()
                 .reduce((prev, curr) -> prev.getEventId().compareTo(curr.getEventId()) < 0 ? curr : prev)
@@ -144,16 +144,16 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
         pnPollingParameter.setLastEventId(Objects.requireNonNull(lastProgress).getEventId());
     }
 
-    private Predicate<ProgressResponseElementV28> toCheckCondition(PnPollingParameter pnPollingParameter) {
+    private Predicate<ProgressResponseElementV29> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElement ->
                 progressResponseElement.getIun() != null
                         && progressResponseElement.getIun().equals(iun)
                         && progressResponseElement.getElement().getCategory() != null
                         && progressResponseElement.getElement().getCategory().equals(
-                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV28())
+                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV29())
                         || progressResponseElement.getIun() != null
                         && progressResponseElement.getIun().equals(iun)
                         && (progressResponseElement.getNewStatus() != null
-                        && (progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV28())));
+                        && (progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV29())));
     }
 }

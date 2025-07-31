@@ -4,7 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyAttachment;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -41,7 +41,7 @@ public class AppIOB2bSteps {
     public void notificationCanBeRetrievedAppIO() {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId())));
             Assertions.assertNotNull(notificationByIun.get());
@@ -52,7 +52,7 @@ public class AppIOB2bSteps {
 
     @Then("il documento notificato può essere recuperata tramite AppIO")
     public void notifiedDocumentCanBeRetrievedAppIO() {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<NotificationDocument> documents = fullSentNotification.getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
                 iPnAppIOB2bClient.getSentNotificationDocument(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
@@ -69,7 +69,7 @@ public class AppIOB2bSteps {
 
     @Then("il documento di pagamento {string} può essere recuperata tramite AppIO")
     public void notifiedDocumentPaymentCanBeRetrievedAppIO(String typeDocument) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<NotificationDocument> documents = fullSentNotification.getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
                 iPnAppIOB2bClient.getReceivedNotificationAttachment(fullSentNotification.getIun(), typeDocument, fullSentNotification.getRecipients().get(0).getTaxId(), Integer.parseInt(documents.get(0).getDocIdx()));
@@ -94,7 +94,7 @@ public class AppIOB2bSteps {
 
     public void downloadPAGOPAAppIo(String typeDocument, String recipient) {
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             List<NotificationDocument> documents = fullSentNotification.getDocuments();
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse downloadResponse =
                     iPnAppIOB2bClient.getReceivedNotificationAttachment(fullSentNotification.getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
@@ -125,7 +125,7 @@ public class AppIOB2bSteps {
 
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId())));
             Assertions.assertNotNull(notificationByIun.get());
@@ -177,7 +177,7 @@ public class AppIOB2bSteps {
     @Then("il documento notificato può essere recuperata tramite AppIO da {string}")
     public void notifiedDocumentCanBeRetrievedAppIO(String recipient) {
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             List<NotificationDocument> documents = fullSentNotification.getDocuments();
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
                     iPnAppIOB2bClient.getSentNotificationDocument(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()), selectTaxIdUser(recipient));
@@ -231,7 +231,7 @@ public class AppIOB2bSteps {
 
     @Then("{string} recupera il documento notificato tramite AppIO")
     public void recuperaIlDocumentoNotificatoTramiteAppIO(String recipient) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<NotificationDocument> documents = fullSentNotification.getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
                 iPnAppIOB2bClient.getSentNotificationDocument(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()),

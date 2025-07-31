@@ -18,10 +18,12 @@ public class PnPollingPredicate {
     private Predicate<TimelineElementV25> timelineElementPredicateV25;
     private Predicate<TimelineElementV26> timelineElementPredicateV26;
     private Predicate<TimelineElementV27> timelineElementPredicateV27;
+    private Predicate<TimelineElementV28> timelineElementPredicateV28;
 
     private Predicate<NotificationStatusHistoryElement> notificationStatusHistoryElementPredicateV1;
     private Predicate<NotificationStatusHistoryElement> notificationStatusHistoryElementPredicateV20;
     private Predicate<NotificationStatusHistoryElement> notificationStatusHistoryElementPredicateV21;
     private Predicate<NotificationStatusHistoryElement> notificationStatusHistoryElementPredicateV23;
     private Predicate<NotificationStatusHistoryElementV26> notificationStatusHistoryElementPredicateV26;
+    private Predicate<NotificationStatusHistoryElementV28> notificationStatusHistoryElementPredicateV28;
 }

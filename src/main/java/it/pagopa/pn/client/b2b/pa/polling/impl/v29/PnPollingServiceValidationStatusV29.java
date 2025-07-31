@@ -1,11 +1,11 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v29;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -18,30 +18,30 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.VALIDATION_STATUS_V28)
+@Service(PnPollingStrategy.VALIDATION_STATUS_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPollingResponseV28> {
+public class PnPollingServiceValidationStatusV29 extends PnPollingTemplate<PnPollingResponseV29> {
     private final IPnPaB2bClient b2bClient;
     private NewNotificationRequestStatusResponseV25 requestStatusResponse;
-    private FullSentNotificationV27 fullSentNotification;
+    private FullSentNotificationV28 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
-    public PnPollingServiceValidationStatusV28(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
+    public PnPollingServiceValidationStatusV29(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         this.b2bClient = b2bClient;
         this.timingForPolling = timingForPolling;
     }
 
     @Override
-    protected Callable<PnPollingResponseV28> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
+    protected Callable<PnPollingResponseV29> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
-            PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
+            PnPollingResponseV29 pnPollingResponse = new PnPollingResponseV29();
             requestStatusResponse = b2bClient.getNotificationRequestStatusV25(id);
             pnPollingResponse.setStatusResponse(requestStatusResponse);
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 try {
-                    fullSentNotification = b2bClient.getSentNotificationV27(pnPollingResponse.getStatusResponse().getIun());
+                    fullSentNotification = b2bClient.getSentNotificationV28(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
                     log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
                     throw new PnPollingException(exception.getMessage());
@@ -53,7 +53,7 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
     }
 
     @Override
-    protected Predicate<PnPollingResponseV28> checkCondition(String id, PnPollingParameter pnPollingParameter) {
+    protected Predicate<PnPollingResponseV29> checkCondition(String id, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
             if (pnPollingResponse.getStatusResponse() == null) {
                 pnPollingResponse.setResult(false);
@@ -73,8 +73,8 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
     }
 
     @Override
-    protected PnPollingResponseV28 getException(Exception exception) {
-        PnPollingResponseV28 pollingResponse = new PnPollingResponseV28();
+    protected PnPollingResponseV29 getException(Exception exception) {
+        PnPollingResponseV29 pollingResponse = new PnPollingResponseV29();
         pollingResponse.setStatusResponse(requestStatusResponse);
         pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);

@@ -1,10 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v29;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -18,25 +18,25 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.TIMELINE_SLOW_E2E_V28)
+@Service(PnPollingStrategy.TIMELINE_SLOW_E2E_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimelineRapidV28 {
+public class PnPollingServiceTimelineSlowE2eV29 extends PnPollingServiceTimelineRapidV29 {
 
     private final IPnPaB2bClient b2bClient;
-    private FullSentNotificationV27 fullSentNotification;
+    private FullSentNotificationV28 fullSentNotification;
 
-    public PnPollingServiceTimelineSlowE2eV28(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+    public PnPollingServiceTimelineSlowE2eV29(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         super(timingForPolling, b2bClient);
         this.b2bClient = b2bClient;
     }
 
     @Override
-    public Callable<PnPollingResponseV28> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
+    public Callable<PnPollingResponseV29> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
-            PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
+            PnPollingResponseV29 pnPollingResponse = new PnPollingResponseV29();
             try {
-                fullSentNotification = b2bClient.getSentNotificationV27(iun);
+                fullSentNotification = b2bClient.getSentNotificationV28(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
@@ -47,7 +47,7 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     }
 
     @Override
-    protected Predicate<PnPollingResponseV28> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
+    protected Predicate<PnPollingResponseV29> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
@@ -63,8 +63,8 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     }
 
     @Override
-    protected PnPollingResponseV28 getException(Exception exception) {
-        PnPollingResponseV28 pollingResponse = new PnPollingResponseV28();
+    protected PnPollingResponseV29 getException(Exception exception) {
+        PnPollingResponseV29 pollingResponse = new PnPollingResponseV29();
         pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
@@ -83,14 +83,14 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
         return timingResult.waiting() * timingResult.numCheck();
     }
 
-    private boolean isPresentCategory(PnPollingResponseV28 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV27 timelineElement = pnPollingResponse
+    private boolean isPresentCategory(PnPollingResponseV29 pnPollingResponse, PnPollingParameter pnPollingParameter) {
+        TimelineElementV28 timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null ?
                         te -> te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV27())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV28())
                 .findAny()
                 .orElse(null);
 
