@@ -35,7 +35,7 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
 
     public void verifyByHttpStatus(int expectedStatusCode) {
-        int actualStatusCode = context.getHttpCallExecutor().getClientResponse().value();
+        int actualStatusCode = context.getHttpCallExecutor().getResponseStatus().value();
 
         boolean isMatch = actualStatusCode == expectedStatusCode;
 

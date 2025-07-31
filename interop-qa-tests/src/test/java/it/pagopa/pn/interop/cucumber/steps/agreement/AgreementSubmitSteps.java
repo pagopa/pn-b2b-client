@@ -61,7 +61,7 @@ public class AgreementSubmitSteps {
     @Given("{string} non possiede uno specifico attributo dichiarato")
     public void tenantDoesntHaveSpecificDeclaredAttribute(String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null);
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null).getId();
         sharedStepsContext.getAttributeCommonContext().setRequiredDeclaredAttributes(List.of(List.of(attributeId)));
     }
 }

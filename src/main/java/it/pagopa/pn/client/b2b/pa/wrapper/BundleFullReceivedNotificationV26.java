@@ -42,7 +42,6 @@ public class BundleFullReceivedNotificationV26 {
     private String version;
     private UsedServices usedServices;
     private BundleNotificationStatusV26 notificationStatus;
-    private List<NotificationStatusHistoryElementV26> notificationStatusHistory;
     private List<TimelineElementV27> timeline;
 
     public enum BundleNotificationStatusV26 {

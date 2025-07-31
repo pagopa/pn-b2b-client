@@ -1,5 +1,7 @@
 package it.pagopa.interop.agreement.service.impl;
 
+import static java.util.Objects.isNull;
+
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -7,17 +9,34 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +45,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -180,6 +190,90 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public CreatedEServiceDescriptor importEService(FileResource fileResource) {
         return eservicesApi.importEService(fileResource);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
+        UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
+        /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
+        * nessuno dei suoi campi lo è; per comodità si permette a questo metodo di passare NULL
+        * mappandolo con un'istanza vuota. */
+        return this.eservicesApi.createEServiceInstanceFromTemplateWithHttpInfo(
+            templateId,
+            isNull(instanceEServiceSeed) ? new InstanceEServiceSeed() : instanceEServiceSeed);
+    }
+
+    @Override
+    public ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
+        UUID templateId) {
+        /* Di default l'api NON restituisce le istanze in stato DRAFT, invece si chiedono in
+         * questo modo tutte quante */
+        List<EServiceDescriptorState> states = Arrays.stream(EServiceDescriptorState.values()).toList();
+        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(templateId, 0, 50, null, states);
+    }
+
+    @Override
+    public ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
+        UUID templateId, Integer offset, Integer limit, String producerName,
+        List<EServiceDescriptorState> states) {
+        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(templateId, offset, limit, producerName, states);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> upgradeEServiceInstanceWithHttpInfo(UUID eServiceId) {
+        return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
+        UUID eserviceId, UUID descriptorId) {
+        return this.eservicesApi.getProducerEServiceDescriptorWithHttpInfo(eserviceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
+        String eServiceName) {
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, eServiceName, null, null);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> updateEServiceTemplateInstanceByIdWithHttpInfo(
+        UUID eServiceId,
+        UpdateEServiceTemplateInstanceSeed updateEServiceTemplateInstanceSeed
+    ) {
+        return this.eservicesApi.updateEServiceTemplateInstanceByIdWithHttpInfo(eServiceId, updateEServiceTemplateInstanceSeed);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> updateDraftDescriptorTemplateInstanceWithHttpInfo(
+        UUID eServiceId,
+        UUID descriptorId,
+        UpdateEServiceDescriptorTemplateInstanceSeed updateEServiceDescriptorTemplateInstanceSeed
+    ) {
+        return this.eservicesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, updateEServiceDescriptorTemplateInstanceSeed);
+    }
+
+
+    @Override
+    public ResponseEntity<CreatedResource> updateTemplateInstanceDescriptorWithHttpInfo(
+        UUID eServiceId,
+        UUID descriptorId,
+        UpdateEServiceTemplateInstanceDescriptorQuotas descriptorQuotas
+    ) {
+        return this.eservicesApi.updateTemplateInstanceDescriptorWithHttpInfo(eServiceId, descriptorId, descriptorQuotas);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServiceDetails> getProducerEServiceDetailsWithHttpInfo(
+        UUID eserviceId) {
+        return this.eservicesApi.getProducerEServiceDetailsWithHttpInfo(eserviceId);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
+        UUID eServiceId, UUID descriptorId,
+        TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed) {
+        return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
     }
 
     @Override

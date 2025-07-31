@@ -7,8 +7,8 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
 import java.util.UUID;
 
 public class PurposeRejectStep {

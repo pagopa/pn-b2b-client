@@ -41,6 +41,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 64011 | 604   | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 86170 | 535   | ISERNIA        | IS       | notifica analogica RECAPITISTA |
       | 95056 | 465   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 543   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 465   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 543   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -75,6 +78,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 74021 | 506   | CAROSINO     | TA       | notifica analogica RECAPITISTA |
       | 95056 | 524   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 615   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 524   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 615   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
 
 
   @costoAnalogicoAprile25
@@ -107,12 +114,17 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 645   | ALBUCCIONE       | RM       | notifica analogica RECAPITISTA |
       | 00118 | 532   | ROMA             | RM       | notifica analogica RECAPITISTA |
       | 04100 | 560   | FOGLIANO         | LT       | notifica analogica RECAPITISTA |
-      | 91030 | 540   | SAN VITO LO CAPO | TP       | notifica analogica RECAPITISTA |
+      | 91030 | 632   | SAN VITO LO CAPO | TP       | notifica analogica RECAPITISTA |
       | 36049 | 645   | SOVIZZO          | VI       | notifica analogica RECAPITISTA |
       | 63094 | 683   | BISIGNANO        | AP       | notifica analogica RECAPITISTA |
       | 64011 | 683   | ALBA ADRIATICA   | TE       | notifica analogica RECAPITISTA |
       | 86170 | 594   | ISERNIA          | IS       | notifica analogica RECAPITISTA |
       | 95056 | 540   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 632   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 540   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 632   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_AR-51GR_4] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -147,6 +159,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 28028 | 686   | PETTENASCO   | NO       | notifica analogica RECAPITISTA |
       | 95056 | 573   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 672   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 573   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 672   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_AR-100GR_5] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
@@ -182,6 +199,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 80146 | 515   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 95056 | 602   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 701   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 602   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 701   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_AR-101GR_6] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -214,9 +236,14 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 647   | ROMA              | RM       | notifica analogica RECAPITISTA |
       | 04100 | 676   | FOGLIANO          | LT       | notifica analogica RECAPITISTA |
       | 90020 | 638   | CASTELLANA SICULA | PA       | notifica analogica RECAPITISTA |
-      | 64100 | 712   | TERAMO            | TE       | notifica analogica RECAPITISTA |
+      | 64100 | 528   | TERAMO            | TE       | notifica analogica RECAPITISTA |
       | 86081 | 800   | AGNONE            | IS       | notifica analogica RECAPITISTA |
       | 95056 | 638   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 745   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 638   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 745   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
 
   @costoAnalogicoAprile25
@@ -253,6 +280,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 87030 | 733   | SAN VINCENZO LA COSTA | CS       | notifica analogica RECAPITISTA |
       | 95056 | 733   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 840   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 733   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 840   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_AR-251GR_8] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -285,9 +317,14 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 778   | ROMA            | RM       | notifica analogica RECAPITISTA |
       | 04100 | 811   | FOGLIANO        | LT       | notifica analogica RECAPITISTA |
       | 51018 | 892   | PIEVE A NIEVOLE | PT       | notifica analogica RECAPITISTA |
-      | 64100 | 850   | TERAMO          | TE       | notifica analogica RECAPITISTA |
+      | 64100 | 528   | TERAMO          | TE       | notifica analogica RECAPITISTA |
       | 86081 | 932   | AGNONE          | IS       | notifica analogica RECAPITISTA |
       | 95056 | 762   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 876   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 762   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 876   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
 
   @costoAnalogicoAprile25
@@ -324,6 +361,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 95058 | 824   | CAMPOROTONDO ETNEO | CT       | notifica analogica RECAPITISTA |
       | 44026 | 954   | MESOLA             | FE       | notifica analogica RECAPITISTA |
       | 95056 | 824   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 938   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 824   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 938   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_AR-351GR_10] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -356,6 +398,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 919   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 948   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
       | 95056 | 886   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 1013   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 886   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 1013   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
 
 
   @costoAnalogicoAprile25
@@ -391,6 +437,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 96026 | 1307  | PORTOPALO DI CAPO PASSERO | SR       | notifica analogica RECAPITISTA |
       | 95056 | 1307   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 1435   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 1307   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 1435   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
 
   @costoAnalogicoAprile25
@@ -424,6 +475,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 1433  | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 1463  | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
       | 95056 | 1379   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 1524   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 1379   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 1524   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
 
   @costoAnalogicoAprile25
@@ -457,6 +513,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 2083  | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 2113  | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
       | 95056 | 2029   | SANT'AGATA LI BATTIATI  | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 2174   | ALTAVILLA MILICIA  | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 2029   | CORTALE  | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 2174   | CAGNANO VARANO  | FG       | notifica analogica RECAPITISTA |
+
+
 
 
   @costoAnalogicoAprile25

@@ -81,7 +81,7 @@ public class PurposeVersionCreateSteps {
                 },
                 "The desired purpose version was not found!"
         );
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(newDailyCalls, version.get().getDailyCalls());
         Assertions.assertEquals(desiredState, version.get().getState().getValue());
     }
