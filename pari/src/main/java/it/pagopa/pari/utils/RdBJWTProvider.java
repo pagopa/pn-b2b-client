@@ -1,5 +1,6 @@
 package it.pagopa.pari.utils;
 
+import it.pagopa.pari.registrobeni.domain.RdbRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -13,14 +14,14 @@ import java.util.Map;
 @Setter
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class JWTUserRoleProvider {
-    private Map<String, String> jwtUserRole = new HashMap<>();
+public class RdBJWTProvider {
+    private Map<RdbRole, String> jwtForRole = new HashMap<>();
 
-    public String provideJWTRole(String role) {
-        return jwtUserRole.get(role);
+    public String provideJWT(RdbRole role) {
+        return jwtForRole.get(role);
     }
 
-    public void storeJwt(String operator, String jwt) {
-        jwtUserRole.put(operator, jwt);
+    public void storeJwt(RdbRole operator, String jwt) {
+        jwtForRole.put(operator, jwt);
     }
 }

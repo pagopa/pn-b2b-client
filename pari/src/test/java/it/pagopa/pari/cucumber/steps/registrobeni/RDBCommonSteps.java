@@ -4,7 +4,8 @@ import io.cucumber.java.en.Given;
 import it.pagopa.pari.cucumber.domain.JWTUserData;
 import it.pagopa.pari.cucumber.domain.JWTUserDataRegistry;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
-import it.pagopa.pari.utils.JWTUserRoleProvider;
+import it.pagopa.pari.registrobeni.domain.RdbRole;
+import it.pagopa.pari.utils.RdBJWTProvider;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,14 +14,14 @@ import org.springframework.web.client.RestTemplate;
 public class RDBCommonSteps {
     private final ApiClientContext apiClientContext;
     private final RestTemplate restTemplate;
-    private final JWTUserRoleProvider JWTUserRoleProvider;
+    private final RdBJWTProvider jWTUserRoleProvider;
     private final JWTUserDataRegistry jwtUserDataRegistry;
 
-    public RDBCommonSteps(ApiClientContext apiClientContext, RestTemplate restTemplate, JWTUserRoleProvider jwtUserRoleProvider,
+    public RDBCommonSteps(ApiClientContext apiClientContext, RestTemplate restTemplate, RdBJWTProvider rdBJWTProvider,
                           JWTUserDataRegistry jwtUserDataRegistry) {
         this.apiClientContext = apiClientContext;
         this.restTemplate = restTemplate;
-        this.JWTUserRoleProvider = jwtUserRoleProvider;
+        this.jWTUserRoleProvider = rdBJWTProvider;
         this.jwtUserDataRegistry = jwtUserDataRegistry;
     }
 
@@ -31,15 +32,15 @@ public class RDBCommonSteps {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        for (String role : jwtUserDataRegistry.getAll().keySet()) {
+        for (RdbRole role : jwtUserDataRegistry.getAll().keySet()) {
             HttpEntity<JWTUserData> requestBody = new HttpEntity<>(jwtUserDataRegistry.getUserData(role), httpHeaders);
             String jwtToken = restTemplate.postForEntity(url, requestBody, String.class).getBody();
-            JWTUserRoleProvider.storeJwt(role, jwtToken);
+            jWTUserRoleProvider.storeJwt(role, jwtToken);
         }
     }
 
-    @Given("viene usata l'utenza: {string}")
-    public void setUser(String user) {
+    @Given("viene usata l'utenza: {rdbRole}")
+    public void setUser(RdbRole user) {
         apiClientContext.setBearerToken(user);
     }
 

@@ -1,10 +1,11 @@
 package it.pagopa.pari.cucumber.steps.registrobeni;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
+import it.pagopa.pari.cucumber.steps.registrobeni.StepParameterTypes.ConsentAction;
 import it.pagopa.pari.cucumber.domain.JWTUserDataRegistry;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.PortalConsentDTO;
+import it.pagopa.pari.registrobeni.domain.RdbRole;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -34,8 +35,8 @@ public class RegistroBeniPortalConsentSteps {
         this.jwtUserDataRegistry = jwtUserDataRegistry;
     }
 
-    @Given("viene rimossa l'accettazione dei ToS per l'utente: {string}")
-    public void removeToSForUser(String user) throws URISyntaxException {
+    @Given("viene rimossa l'accettazione dei ToS per l'utente: {rdbRole}")
+    public void removeToSForUser(RdbRole user) throws URISyntaxException {
         URI uri = new URIBuilder("https://idpay.itn.internal.dev.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent")
                 .addParameter("userId", jwtUserDataRegistry.getUserData(user).getUid())
                 .build();
@@ -72,18 +73,5 @@ public class RegistroBeniPortalConsentSteps {
         }
     }
 
-    @ParameterType("NON_SONO|SONO")
-    public ConsentAction consentAction(String consentAction) {
-        return switch (consentAction) {
-            case "NON_SONO" -> ConsentAction.NON_SONO;
-            case "SONO" -> ConsentAction.SONO;
-            default ->
-                    throw new IllegalArgumentException("Invalid consent action: " + consentAction);
-        };
-    }
 
-    public enum ConsentAction {
-        NON_SONO,
-        SONO
-    }
 }

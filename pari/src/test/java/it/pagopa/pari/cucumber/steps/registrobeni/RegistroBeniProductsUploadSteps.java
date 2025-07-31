@@ -55,8 +55,8 @@ public class RegistroBeniProductsUploadSteps {
     public void vieneGeneratoIlCsv(String categoria, List<Map<String, String>> dataCsv) throws Exception {
         Resource csvFile = generaCsv(dataCsv, ".csv");
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, csvFile);
-        // Viene aggiunto un secondo di delay per dare il tempo al csv di essere validato
-        Thread.sleep(1000);
+        // Viene aggiunto un delay per dare il tempo al csv di essere validato
+        Thread.sleep(500);
     }
 
     @When("viene verificato il csv con categoria: {string} e dati:")
