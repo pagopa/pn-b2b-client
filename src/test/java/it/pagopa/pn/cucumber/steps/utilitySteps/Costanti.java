@@ -134,6 +134,10 @@ public class Costanti {
     // TimelineElementCategoryV27
     public static final String PUBLIC_REGISTRY_VALIDATION_CALL = "PUBLIC_REGISTRY_VALIDATION_CALL";
     public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE = "PUBLIC_REGISTRY_VALIDATION_RESPONSE";
+    // TimelineElementCategoryV28
+    public static final String SEND_ANALOG_TIMEOUT_CREATION_REQUEST = "SEND_ANALOG_TIMEOUT_CREATION_REQUEST";
+    public static final String SEND_ANALOG_TIMEOUT = "SEND_ANALOG_TIMEOUT";
+    public static final String ANALOG_FAILURE_WORKFLOW_TIMEOUT = "ANALOG_FAILURE_WORKFLOW_TIMEOUT";
 
     //TimelineEquality errors
     public static final String EQUALITY_DIGITAL_ADDRESS = "digitalAddress";

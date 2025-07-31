@@ -339,6 +339,49 @@ public enum TimelineEventId {
                     .append(eventId.getIun());
             return sb.toString();
         }
+    },
+
+    //TODO t v29
+    SEND_ANALOG_TIMEOUT_CREATION_REQUEST("SEND_ANALOG_TIMEOUT_CREATION_REQUEST") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .withSentAttemptMade(eventId.getSentAttemptMade())
+                    .build();
+
+        }
+    },
+
+    //TODO t v29
+    SEND_ANALOG_TIMEOUT("SEND_ANALOG_TIMEOUT") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .withSentAttemptMade(eventId.getSentAttemptMade())
+                    .build();
+
+        }
+    },
+
+    //TODO t v29
+    ANALOG_FAILURE_WORKFLOW_TIMEOUT("ANALOG_FAILURE_WORKFLOW_TIMEOUT") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+
+        }
+
+
     };
 
     public String buildEventId(EventId eventId) {

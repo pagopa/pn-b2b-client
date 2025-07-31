@@ -303,6 +303,22 @@ public class DataTestV25 extends AbstractDataTest {
 
                 }
             }
+            //todo t v29 !!!
+            case SEND_ANALOG_TIMEOUT_CREATION_REQUEST -> {
+                if (expected != null) {
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                }
+            }
+            case SEND_ANALOG_TIMEOUT -> {
+                if (expected != null) {
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                }
+            }
+            case ANALOG_FAILURE_WORKFLOW_TIMEOUT -> {
+                if (expected != null) {
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                }
+            }
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }
     }

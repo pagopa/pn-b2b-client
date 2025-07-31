@@ -145,7 +145,13 @@ public class TimingForPolling {
 
         //V27
         PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
-        PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1);
+        PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1),
+
+        //V28 todo t v29 valutare
+        DELIVERY_TIMEOUT(12, 1),
+        ANALOG_FAILURE_WORKFLOW_TIMEOUT(12, 1),
+        SEND_ANALOG_TIMEOUT(12, 1),
+        SEND_ANALOG_TIMEOUT_CREATION_REQUEST(15, 1);
 
 
         private final int numCheck;

@@ -542,8 +542,13 @@ public abstract class B2bUtils {
             case ANALOG_WORKFLOW_RECIPIENT_DECEASED ->
                     TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
             case PUBLIC_REGISTRY_VALIDATION_CALL -> TimelineEventId.PUBLIC_REGISTRY_VALIDATION_CALL.buildEventId(event);
-            case PUBLIC_REGISTRY_VALIDATION_RESPONSE ->
-                    TimelineEventId.PUBLIC_REGISTRY_VALIDATION_RESPONSE.buildEventId(event);
+
+            case ANALOG_FAILURE_WORKFLOW_TIMEOUT ->
+                    TimelineEventId.ANALOG_FAILURE_WORKFLOW_TIMEOUT.buildEventId(event);
+            case SEND_ANALOG_TIMEOUT ->
+                    TimelineEventId.SEND_ANALOG_TIMEOUT.buildEventId(event);
+            case SEND_ANALOG_TIMEOUT_CREATION_REQUEST -> TimelineEventId.SEND_ANALOG_TIMEOUT_CREATION_REQUEST.buildEventId(event);
+
             default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
     }
