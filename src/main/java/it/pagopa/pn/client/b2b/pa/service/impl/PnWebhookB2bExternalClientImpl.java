@@ -231,13 +231,16 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     @Override
     public void deleteEventStreamV25(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        streamsApi.removeEventStreamV25(streamId);
+       // streamsApi.removeEventStreamV25(streamId);
+        //todo t v29
     }
 
     @Override
     public StreamMetadataResponseV25 retrieveEventStreamV25(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return streamsApi.retrieveEventStreamV25(streamId);
+        //return streamsApi.retrieveEventStreamV25(streamId);
+        //todo t v29
+        return null;
     }
 
     @Override
@@ -280,13 +283,14 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     @Override
     public void deleteEventStreamV26(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        streamsApi.removeEventStreamV26(streamId);
+        //streamsApi.removeEventStreamV26(streamId);todo t v29
     }
 
     @Override
     public StreamMetadataResponseV26 retrieveEventStreamV26(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return streamsApi.retrieveEventStreamV26(streamId);
+        //return streamsApi.retrieveEventStreamV26(streamId);7
+        return null; // todo t v29
     }
 
     @Override
@@ -329,13 +333,14 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     @Override
     public void deleteEventStreamV27(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        streamsApi.removeEventStreamV27(streamId);
+        //streamsApi.removeEventStreamV27(streamId);todo t v29
     }
 
     @Override
     public StreamMetadataResponseV27 retrieveEventStreamV27(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return streamsApi.retrieveEventStreamV27(streamId);
+        //return streamsApi.retrieveEventStreamV27(streamId);
+        return null; //todo t v29
     }
 
     @Override
@@ -378,13 +383,14 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     @Override
     public void deleteEventStreamV28(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        streamsApi.removeEventStreamV28(streamId);
+       // streamsApi.removeEventStreamV28(streamId); todo t v29
     }
 
     @Override
     public StreamMetadataResponseV28 retrieveEventStreamV28(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return streamsApi.retrieveEventStreamV28(streamId);
+        //return streamsApi.retrieveEventStreamV28(streamId);
+        return null; //todo t v29
     }
 
     @Override
@@ -403,6 +409,56 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     public ResponseEntity<List<ProgressResponseElementV28>> consumeEventStreamHttpV28(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return eventsApi.consumeEventStreamV28WithHttpInfo(streamId, lastEventId);
+    }
+
+    //V29
+    @Override
+    public StreamMetadataResponseV29 createEventStreamV29(StreamCreationRequestV29 streamCreationRequestV29) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.createEventStreamV29(streamCreationRequestV29);
+    }
+
+    @Override
+    public StreamMetadataResponseV29 disableEventStreamV29(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.disableEventStreamV29(streamId);
+    }
+
+    @Override
+    public List<StreamListElement> listEventStreamsV29() throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.listEventStreamsV29();
+    }
+
+    @Override
+    public void deleteEventStreamV29(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        //streamsApi.removeEventStreamV29(streamId);todo t v29
+    }
+
+    @Override
+    public StreamMetadataResponseV29 retrieveEventStreamV29(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        //return streamsApi.retrieveEventStreamV29(streamId);
+        return null; //todo t v29
+    }
+
+    @Override
+    public StreamMetadataResponseV29 updateEventStreamV29(UUID streamId, StreamRequestV29 streamRequestV29) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.updateEventStreamV29(streamId, streamRequestV29);
+    }
+
+    @Override
+    public List<ProgressResponseElementV29> consumeEventStreamV29(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV29(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV29>> consumeEventStreamHttpV29(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV29WithHttpInfo(streamId, lastEventId);
     }
 
     @Override

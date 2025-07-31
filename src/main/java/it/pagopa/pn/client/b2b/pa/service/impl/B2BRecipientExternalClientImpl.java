@@ -16,7 +16,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -82,8 +82,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public BundleFullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return deepCopy(recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId), BundleFullReceivedNotificationV26.class);
+    public BundleFullReceivedNotification getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV27(iun, mandateId), BundleFullReceivedNotification.class);
     }
 
     @Override
@@ -173,10 +173,10 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         return this.bearerTokenSetted;
     }
 
-    private it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26 convertStatus(NotificationStatusV26 status) {
+    private it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV28 convertStatus(NotificationStatusV26 status) {
         return Optional.ofNullable(status)
                 .map(NotificationStatusV26::getValue)
-                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26::fromValue)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV28::fromValue)
                 .orElse(null);
     }
 

@@ -12,7 +12,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
@@ -23,13 +22,14 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
@@ -72,7 +72,7 @@ public class RicezioneNotificheWebSteps {
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
     private HttpStatusCodeException notificationError;
-    private BundleFullReceivedNotificationV26 fullReceivedNotification;
+    private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
@@ -175,7 +175,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(getTimelineElement(category, deliveryDetailCode));
     }
 
-    private TimelineElementV27 getTimelineElement(String category, String deliveryDetailCode) {
+    private TimelineElementV28 getTimelineElement(String category, String deliveryDetailCode) {
         fullReceivedNotification.getTimeline().forEach(x -> log.info(x.toString()));
         return fullReceivedNotification.getTimeline().stream()
                 .filter(x -> x.getCategory().getValue().equals(category) &&
@@ -186,7 +186,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("lato api l'elemento di timeline della notifica {string} {is} visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, boolean isVisibile) {
-        TimelineElementV27 timelineElement = getTimelineElement(category, null);
+        TimelineElementV28 timelineElement = getTimelineElement(category, null);
         if (isVisibile) {
             assertThat(timelineElement).as("Il timeline element " + category + " dovrebbe risultare visibile al destinatario").isNotNull();
         } else {
@@ -320,9 +320,9 @@ public class RicezioneNotificheWebSteps {
         String iun = sharedSteps.getNotificationIun();
 
         try {
-            String scheduleDate = Objects.requireNonNull(webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(
+            OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(
                     elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
-            String refinementDate = webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(
+            OffsetDateTime refinementDate = webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(
                     elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);

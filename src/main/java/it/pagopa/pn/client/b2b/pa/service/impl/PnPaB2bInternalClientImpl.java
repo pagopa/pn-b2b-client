@@ -278,10 +278,13 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV27 getSentNotificationV27(String iun) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV27 resp;
-        resp = senderReadB2BApi.getSentNotificationV27(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
-        return deepCopy(resp, FullSentNotificationV27.class);
+    public FullSentNotificationV27 getSentNotificationV27(String iun) { throw new UnsupportedOperationException();}
+
+    @Override
+    public FullSentNotificationV28 getSentNotificationV28(String iun) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV28 resp;
+        resp = senderReadB2BApi.getSentNotificationV28(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
+        return deepCopy(resp, FullSentNotificationV28.class);
     }
 
 

@@ -5,20 +5,19 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
@@ -507,8 +506,8 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromTimeline(String recipient, String timelineEventString) {
         sharedSteps.selectUser(recipient);
         try {
-            TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.valueOf(timelineEventString);
-            TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
+            TimelineElementCategoryV28 timelineElementCategory = TimelineElementCategoryV28.valueOf(timelineEventString);
+            TimelineElementV28 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
             assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Valore non valido per TimelineElementCategoryV27: " + timelineEventString, e);
@@ -524,10 +523,10 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         // Definisce la categoria dell'elemento di timeline da verificare
-        TimelineElementCategoryV27 category = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
+        TimelineElementCategoryV28 category = TimelineElementCategoryV28.NOTIFICATION_VIEWED;
 
         // Recupera l'elemento di timeline per il destinatario
-        TimelineElementV27 timelineElement = getTimelineElementWebRecipient(category);
+        TimelineElementV28 timelineElement = getTimelineElementWebRecipient(category);
 
         // Verifica che l'elemento di timeline non esista
         if (timelineElement != null) {
@@ -547,8 +546,8 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private TimelineElementV27 getTimelineElementWebRecipient(TimelineElementCategoryV27 timelineElementCategory) {
-        BundleFullReceivedNotificationV26 result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
+    private TimelineElementV28 getTimelineElementWebRecipient(TimelineElementCategoryV28 timelineElementCategory) {
+        BundleFullReceivedNotification result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + result.getTimeline());
         return result
                 .getTimeline()

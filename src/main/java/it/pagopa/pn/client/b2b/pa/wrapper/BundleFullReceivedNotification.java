@@ -2,6 +2,7 @@ package it.pagopa.pn.client.b2b.pa.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class BundleFullReceivedNotificationV26 {
+public class BundleFullReceivedNotification {
     private String idempotenceToken;
     private String paProtocolNumber;
     private String subject;
@@ -20,7 +21,7 @@ public class BundleFullReceivedNotificationV26 {
     private NotificationFeePolicy notificationFeePolicy;
     private String cancelledIun;
 
-    private FullReceivedNotificationV26.PhysicalCommunicationTypeEnum physicalCommunicationType;
+    private FullReceivedNotificationV27.PhysicalCommunicationTypeEnum physicalCommunicationType;
 
     @lombok.ToString.Exclude
     private String senderDenomination;
@@ -32,7 +33,7 @@ public class BundleFullReceivedNotificationV26 {
     private Integer paFee;
     private Integer vat;
 
-    private FullReceivedNotificationV26.PagoPaIntModeEnum pagoPaIntMode;
+    private FullReceivedNotificationV27.PagoPaIntModeEnum pagoPaIntMode;
     private List<String> additionalLanguages;
     private String senderPaId;
     private String iun;
@@ -41,11 +42,11 @@ public class BundleFullReceivedNotificationV26 {
     private Boolean documentsAvailable;
     private String version;
     private UsedServices usedServices;
-    private BundleNotificationStatusV26 notificationStatus;
+    private BundleNotificationStatus notificationStatus;
     private List<NotificationStatusHistoryElementV26> notificationStatusHistory;
-    private List<TimelineElementV27> timeline;
+    private List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28> timeline;
 
-    public enum BundleNotificationStatusV26 {
+    public enum BundleNotificationStatus {
         IN_VALIDATION("IN_VALIDATION"),
         ACCEPTED("ACCEPTED"),
         REFUSED("REFUSED"),
@@ -57,18 +58,19 @@ public class BundleFullReceivedNotificationV26 {
         UNREACHABLE("UNREACHABLE"),
         CANCELLED("CANCELLED"),
         CANCELLATION_IN_PROGRESS("CANCELLATION_IN_PROGRESS"),
-        RETURNED_TO_SENDER("RETURNED_TO_SENDER");
+        RETURNED_TO_SENDER("RETURNED_TO_SENDER"),
+        DELIVERY_TIMEOUT("DELIVERY_TIMEOUT");
 
         private final String value;
 
-        BundleNotificationStatusV26(String value) {
+        BundleNotificationStatus(String value) {
             this.value = value;
         }
 
-        public static BundleNotificationStatusV26 fromValue(String value) {
-            for (BundleNotificationStatusV26 notificationStatusV26 : BundleNotificationStatusV26.values()) {
-                if (notificationStatusV26.value.equals(value)) {
-                    return notificationStatusV26;
+        public static BundleNotificationStatus fromValue(String value) {
+            for (BundleNotificationStatus notificationStatus : BundleNotificationStatus.values()) {
+                if (notificationStatus.value.equals(value)) {
+                    return notificationStatus;
                 }
             }
             throw new IllegalArgumentException("Unexpected value '" + value + "'");

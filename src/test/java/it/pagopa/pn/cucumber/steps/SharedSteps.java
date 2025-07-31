@@ -235,8 +235,8 @@ public class SharedSteps {
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV27 getSentNotificationLastVersion() {
-        return b2bClient.getSentNotificationV27(notificationIun);
+    public FullSentNotificationV28 getSentNotificationLastVersion() {
+        return b2bClient.getSentNotificationV28(notificationIun);
     }
 
     /**
@@ -245,8 +245,8 @@ public class SharedSteps {
      * Usato in un solo punto del codice
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV27 getSentNotificationLastVersionByIun(String iun) {
-        return b2bClient.getSentNotificationV27(iun);
+    public FullSentNotificationV28 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV28(iun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
@@ -1153,8 +1153,8 @@ public class SharedSteps {
     }
 
     private static EventId getEventId(String iun, DataTest dataFromTest) {
-        TimelineElementV27 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV27 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV28 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV28 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -1176,16 +1176,16 @@ public class SharedSteps {
      * @param dataFromTest          the data filters
      * @return a list of timeline elements that match the given event category and data from test
      */
-    public List<TimelineElementV27> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        FullSentNotificationV27 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV27> timelineElementList = fullSentNotification.getTimeline();
+    public List<TimelineElementV28> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV28> timelineElementList = fullSentNotification.getTimeline();
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, notificationIun, dataFromTest);
             if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)
                     || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
-                TimelineElementV27 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV27 timelineElementDetails = timelineElementFromTest.getDetails();
+                TimelineElementV28 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV28 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem ->
                                 Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
                                         && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
@@ -1196,7 +1196,7 @@ public class SharedSteps {
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
 
-    public TimelineElementV27 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    public TimelineElementV28 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
                 .findAny()
                 .orElse(null);
