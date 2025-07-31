@@ -1,15 +1,18 @@
 Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
+  Scenario: Test - Caricamento del file csv
+    Given il CSV "tc01_priorita.csv" contiene 30 notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO
+
   @delayer
   Scenario: [DELAYER-TC01] Le notifiche sono pianificate secondo priorità
     Given il CSV "tc01_priorita.csv" contiene 30 notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO
-    And il CSV "tc01_priorita.csv" è importato da S3 nella tabella di test tramite lambda
-    When viene avviato l'algoritmo tramite lambda
-    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_SENDER_LIMIT" contengono esattamente 30 notifiche
-    And la capacità disponibile per il driver "Poste" su provincia "RM" e per ogni deliveryDate attesa è almeno 30
-    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_DRIVER_CAPACITY" contengono esattamente 30 notifiche
-    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_PRINT_CAPACITY" contengono esattamente 30 notifiche
-    And i risultati per requestId "tc01r1" e workflow step "SENT_TO_PREPARE_PHASE_2" contengono esattamente 30 notifiche
+    #And il CSV "tc01_priorita.csv" è importato da S3 nella tabella di test tramite lambda
+    #When viene avviato l'algoritmo tramite lambda
+    And esattamente 30 notifiche sono al workflow step "EVALUATE_SENDER_LIMIT"
+    And esattamente 30 notifiche sono al workflow step "EVALUATE_DRIVER_CAPACITY"
+    And la capacità disponibile per ogni tripla driver, provincia e delivery date attesa è almeno 30
+    And esattamente 30 notifiche sono al workflow step "EVALUATE_PRINT_CAPACITY"
+    And esattamente 30 notifiche sono al workflow step "SENT_TO_PREPARE_PHASE_2"
     And la deliveryDate delle notifiche coincide con la deliveryDate attesa
     Then le prime 30 notifiche per il workflow step "SENT_TO_PREPARE_PHASE_2" sono selezionate secondo l’ordine di priorità:
       | categoria         | ordinamentoCampo   |
@@ -17,35 +20,60 @@ Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e La
       | SECONDO_TENTATIVO | prepareRequestDate |
       | ALTRO             | notificationSentAt |
 
-  @delayer
-    #TODO: impostare il limite mittente a 20
+    #TODO: serve come prova, va eliminato
     #Domanda: se lato mittente ci sono dei limiti, le notifiche eccedenti e non prioritarie non passano al workflow successivo, giusto ?
-  Scenario: [DELAYER-TC02] Rispetto del limite settimanale mittente e ordinamento cronologico
+  Scenario: [DELAYER-TC02-PROVA-DA-ELIMINARE] Rispetto del limite settimanale mittente e ordinamento cronologico
     Given il CSV "tc02_limite_mitt.csv" contiene 30 notifiche appartenenti alla stessa categoria
     And il CSV "tc02_limite_mitt.csv" è importato da S3 nella tabella di test tramite lambda
     When viene avviato l'algoritmo tramite lambda
-    And i risultati per requestId "tc02r1" e workflow step "EVALUATE_SENDER_LIMIT" contengono esattamente 30 notifiche
-    And la capacità disponibile per il driver "Poste" su provincia "RM" e per ogni deliveryDate attesa è almeno 20
-    And i risultati per requestId "tc01r1" e workflow step "EVALUATE_DRIVER_CAPACITY" contengono esattamente 20 notifiche
-    And i risultati per requestId "tc02r1" e workflow step "EVALUATE_PRINT_CAPACITY" contengono esattamente 20 notifiche
-    And i risultati per requestId "tc02r1" e workflow step "SENT_TO_PREPARE_PHASE_2" contengono esattamente 20 notifiche
+    And esattamente 30 notifiche sono al workflow step "EVALUATE_SENDER_LIMIT"
+    And la capacità disponibile per ogni tripla driver, provincia e delivery date attesa è almeno 30
+    And esattamente 20 notifiche sono al workflow step "EVALUATE_DRIVER_CAPACITY"
+    And esattamente 20 notifiche sono al workflow step "EVALUATE_PRINT_CAPACITY"
+    And esattamente 20 notifiche sono al workflow step "SENT_TO_PREPARE_PHASE_2"
     And la deliveryDate delle notifiche coincide con la deliveryDate attesa
-    Then le prime 20 notifiche sono pianificate secondo ordine cronologico per il campo "prepareRequestDate"
+    Then tutte le notifiche sono pianificate secondo ordine cronologico per il campo "prepareRequestDate"
 
   @delayer
-  # Si necessita di impostare a monte la capacità per il recapito nella provincia in esame
+    #TODO: impostare il limite mittente_1 a 20, limite recapitista_2 a 20, limite di stampa a 20
+    #Domanda: se lato mittente ci sono dei limiti, le notifiche eccedenti e non prioritarie non passano al workflow successivo, giusto ?
+  Scenario Outline: [DELAYER-TC02] Rispetto dei limiti settimanali mittenti, recapitisti, di stampa e ordinamento cronologico
+    Given il CSV <csv> contiene 30 notifiche appartenenti alla stessa categoria
+    And il CSV <csv> è importato da S3 nella tabella di test tramite lambda
+    When viene avviato l'algoritmo tramite lambda
+    And esattamente 30 notifiche sono al workflow step "EVALUATE_SENDER_LIMIT"
+    And la capacità disponibile per ogni tripla driver, provincia e delivery date attesa è almeno <nDriverCapacity>
+    And esattamente <nDriverCapacity> notifiche sono al workflow step "EVALUATE_DRIVER_CAPACITY"
+    And esattamente <nPrintCapacity> notifiche sono al workflow step "EVALUATE_PRINT_CAPACITY"
+    And esattamente <nPreparePhase2> notifiche sono al workflow step "SENT_TO_PREPARE_PHASE_2"
+    And la deliveryDate delle notifiche coincide con la deliveryDate attesa
+    Then tutte le notifiche sono pianificate secondo ordine cronologico per il campo "prepareRequestDate"
+
+    Examples:
+      | csv                    | nDriverCapacity | nPrintCapacity | nPreparePhase2 |
+      | "tc02_limite_mitt.csv" | 20              | 20             | 20             |
+      | "tc03_limite_rec.csv"  | 30              | 20             | 20             |
+      | "tc04_limite_stmp.csv" | 30              | 30             | 20             |
+
+  @delayer
+  #TODO: impostare capacità recapitista, servono 3 csv distinti,
   Scenario Outline: [DELAYER-TC03] Le notifiche dei mittenti non censiti sono elaborate solo in base alla capacità residua
-    Given il CSV "tc03_mittente_non_censito.csv" contiene 40 notifiche: 30 da mittenti censiti e 10 da mittenti non censiti
-    And la capacità disponibile per il driver "<recapitista>" su provincia "<provincia>" è configurata a <capacity>
+    Given il CSV "tc03_mittente_non_censito.csv" contiene 30 notifiche: 20 da mittenti censiti e 10 da mittenti non censiti
     And il CSV "tc03_mittente_non_censito.csv" è importato da S3 nella tabella di test tramite lambda
     When viene avviato l'algoritmo tramite lambda
-    Then i risultati per requestId "{string}" contengono esattamente <elaborateTotali> notifiche
+
+    And esattamente 30 notifiche sono al workflow step "EVALUATE_SENDER_LIMIT"
+    And la capacità disponibile per ogni tripla driver, provincia e delivery date attesa è almeno <nDriverCapacity>
+    And esattamente <nDriverCapacity> notifiche sono al workflow step "EVALUATE_DRIVER_CAPACITY"
+    And esattamente <nPrintCapacity> notifiche sono al workflow step "EVALUATE_PRINT_CAPACITY"
+    And esattamente <nPreparePhase2> notifiche sono al workflow step "SENT_TO_PREPARE_PHASE_2"
+
     And sono state elaborate esattamente <elaborateNonCensiti> notifiche dei mittenti non censiti
     And sono state accantonate esattamente <accantonateNonCensiti> notifiche dei mittenti non censiti
     And la capacità usata per il driver "<recapitista>", provincia "<provincia>", data "<deliveryDate>" è pari a <elaborateTotali> su una capacità totale di <capacity>
 
     Examples:
-      | provincia | capacity | elaborateTotali | elaborateNonCensiti | accantonateNonCensiti | recapitista | deliveryDate        |
+      | provincia | capacity | elaborateTotali | elaborateNonCensiti | accantonateNonCensiti | recapitista | deliveryDate         |
       | RM        | 30       | 30              | 0                   | 10                    | Poste       | 2025-07-14T00:00:00Z |
       | RM        | 35       | 35              | 5                   | 5                     | Poste       | 2025-07-14T00:00:00Z |
       | RM        | 40       | 40              | 10                  | 0                     | Poste       | 2025-07-14T00:00:00Z |
@@ -121,9 +149,9 @@ Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e La
     And sono state <stato> tutte le 10 notifiche (verifica basata su deliveryDate)
 
     Examples:
-      | provincia | recapitista | capacita | stato         |
-      | XX        | Poste       | 0        | accantonate   |
-      | XX        | Poste       | 10       | pianificate   |
+      | provincia | recapitista | capacita | stato       |
+      | XX        | Poste       | 0        | accantonate |
+      | XX        | Poste       | 10       | pianificate |
 
   @delayer
   Scenario: [DELAYER-TC11] Il limite settimanale è applicato separatamente per ciascun mittente e prodotto
@@ -178,10 +206,10 @@ Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e La
     When viene avviato l'algoritmo tramite lambda
     Then i risultati per requestId "TC14-BATCH" contengono esattamente 20 notifiche
     And le prime 20 notifiche sono selezionate secondo l’ordine di priorità:
-      | categoria           | ordinamentoCampo      |
-      | RS                  | prepareRequestDate    |
-      | SECONDO_TENTATIVO   | prepareRequestDate    |
-      | ALTRO               | notificationSentAt    |
+      | categoria         | ordinamentoCampo   |
+      | RS                | prepareRequestDate |
+      | SECONDO_TENTATIVO | prepareRequestDate |
+      | ALTRO             | notificationSentAt |
 
   @delayer
   Scenario: [DELAYER-TC15] Le notifiche sono elaborate normalmente se la tabella limiti mittente è assente
