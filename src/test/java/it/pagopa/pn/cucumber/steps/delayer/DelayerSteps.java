@@ -115,6 +115,8 @@ public class DelayerSteps {
 
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
     private static final String CSV_PATH = "it/pagopa/pn/cucumber/workflowNotifica/workflowAnalogico/delayer/csv";
+
+    @Getter
     enum WorkflowStep {
         EVALUATE_SENDER_LIMIT(0),
         EVALUATE_DRIVER_CAPACITY(1),
@@ -125,10 +127,6 @@ public class DelayerSteps {
 
         WorkflowStep(int index) {
             this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
         }
 
         public static Optional<WorkflowStep> fromIndex(int index) {
@@ -158,7 +156,7 @@ public class DelayerSteps {
     private Integer driverCapacity = null;
     private Integer printCapacity = 0;
     private String expectedDeliveryDate = null;
-    private List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
+    private final List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
 
 
     @Given("il CSV {string} contiene {int} notifiche cosi distribuite:")
