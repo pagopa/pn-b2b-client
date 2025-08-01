@@ -15,6 +15,7 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUplo
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
 import it.pagopa.pari.registrobeni.domain.RdbRole;
 import it.pagopa.pari.utils.RdBJWTProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -29,10 +30,14 @@ public class RegisterPortalOperationClientImpl {
     private final ProductsUploadApi productsUploadApi;
     private final ProductsApi productsApi;
     private final InstitutionsApi institutionsApi;
+    private final String basePath;
 
-    public RegisterPortalOperationClientImpl(RestTemplate restTemplate, RdBJWTProvider rdBJWTProvider) {
+    public RegisterPortalOperationClientImpl(RestTemplate restTemplate,
+                                             RdBJWTProvider rdBJWTProvider,
+                                             @Value("${rdb.base-url}") String basePath) {
         this.restTemplate = restTemplate;
         this.rdBJWTProvider = rdBJWTProvider;
+        this.basePath = basePath;
         portalConsentApi = new PortalConsentApi(createApiClient("dummy"));
         productsUploadApi = new ProductsUploadApi(createApiClient("dummy"));
         productsApi = new ProductsApi(createApiClient("dummy"));
@@ -41,6 +46,7 @@ public class RegisterPortalOperationClientImpl {
 
     private ApiClient createApiClient(String bearerToken) {
         ApiClient apiClient = new ApiClient(restTemplate);
+        apiClient.setBasePath(basePath);
         apiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return apiClient;
     }

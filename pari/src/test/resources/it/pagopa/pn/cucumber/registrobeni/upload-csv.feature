@@ -90,7 +90,7 @@ Feature: PARI - Portale registro dei beni
     When viene caricato un file csv di peso maggiore a quello consentito
     Then si verifica che la risposta abbia:
       | status      | KO |
-      | errorKey    | product.invalid.file.extension |
+      | errorKey    | product.invalid.file.maxsize |
 
   Scenario: [TC_UPLOAD_6] Inserimento di un nuovo file csv che supera il numero di righe massimo (> 100 righe)
     Given viene usata l'utenza: PRODUTTORE_1
