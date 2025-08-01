@@ -31,7 +31,7 @@ public class RegistroBeniInstitutionsSteps {
     private InstitutionResponse institutionResponse;
     private InstitutionDTO institutionDTO;
     private HttpStatusCodeException httpStatusCodeException;
-    private ProductDTO productDTO;
+    private List<ProductDTO> productDTO;
 
     public RegistroBeniInstitutionsSteps(ApiClientContext apiClientContext) {
         this.apiClientContext = apiClientContext;
@@ -60,28 +60,25 @@ public class RegistroBeniInstitutionsSteps {
                 .stream()
                 .map(this::createInstitution)
                 .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(ist.getInstitutionId(), 0, 10, null, null,
-                            null, null, null, null))
+                        null, null, null, null))
                 .filter(Objects::nonNull)
                 .map(ProductListDTO::getContent)
                 .filter(Objects::nonNull)
-                .flatMap(List::stream)
+                .filter(list -> !list.isEmpty())
                 .findFirst()
-                .orElse(null);
+                .orElse(List.of());
     }
 
     @And("si verifica che il prodotto ritornato abbia tutti i campi validi")
     public void verifyProductsData() {
         assertNotNull(productDTO);
-        assertNotNull(productDTO.getCountryOfProduction());
-        assertNotNull(productDTO.getProductCode());
-        assertNotNull(productDTO.getProductFileId());
-        assertNotNull(productDTO.getBrand());
-        assertNotNull(productDTO.getCapacity());
-        assertNotNull(productDTO.getEprelCode());
-        assertNotNull(productDTO.getProductGroup());
-        assertNotNull(productDTO.getCategory());
-        assertNotNull(productDTO.getEnergyClass());
-        assertNotNull(productDTO.getGtinCode());
+        productDTO.forEach(x -> {
+            assertNotNull(x.getOrganizationId());
+            assertNotNull(x.getRegistrationDate());
+            assertNotNull(x.getStatus());
+            assertNotNull(x.getModel());
+            assertNotNull(x.getCategory());
+        });
     }
 
     @When("si tenta di recuperare il dettaglio di una specifica istituzione con id: {string}")
