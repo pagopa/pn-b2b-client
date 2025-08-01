@@ -30,8 +30,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DelayerSteps {
 
+
     @Getter
-    class DelayerPaperDelivery {
+    static class DelayerPaperDelivery {
         private String pk;
         private String sk;
         private String requestId;
@@ -113,8 +114,24 @@ public class DelayerSteps {
     }
 
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
-    private static final String DEFAULT_DELIVERY_DATE = "1970-01-05T00:00:00Z";
     private static final String CSV_PATH = "it/pagopa/pn/cucumber/workflowNotifica/workflowAnalogico/delayer/csv";
+    enum WorkflowStep {
+        EVALUATE_SENDER_LIMIT,
+        EVALUATE_DRIVER_CAPACITY,
+        EVALUATE_PRINT_CAPACITY,
+        SENT_TO_PREPARE_PHASE_2;
+
+        public static Optional<WorkflowStep> fromString(String name) {
+            return Arrays.stream(values())
+                    .filter(ws -> ws.name().equalsIgnoreCase(name))
+                    .findFirst();
+        }
+
+        @Override
+        public String toString() {
+            return name();
+        }
+    }
     private static final List<String> WORKFLOW_STEPS = List.of(
             "EVALUATE_SENDER_LIMIT",
             "EVALUATE_DRIVER_CAPACITY",
@@ -125,28 +142,22 @@ public class DelayerSteps {
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private List<JsonNode> lastResult;
     Map<String, List<DelayerPaperDelivery>> groupedByPkSubstring = new HashMap<>();
     private Integer numeroNotifiche = 0;
+    private Integer senderLimit = null;
+    private Integer driverCapacity = null;
+    private Integer printCapacity = 0;
+    private String expectedDeliveryDate = null;
     private List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
-    private Map<String, String> predictDeliveryDateMap = new HashMap<>();
 
-    @Given("il CSV {string} contiene {int} notifiche appartenenti alla stessa categoria")
-    @Given("il CSV {string} contiene {int} notifiche appartenenti alle categorie RS, SECONDO TENTATIVO, ALTRO")
-    @Given("il CSV {string} contiene {int} notifiche: 20 da mittenti censiti e 10 da mittenti non censiti")
-    @Given("il CSV {string} contiene {int} notifiche: 10 RS e 10 con attempt = 1")
-    @Given("il CSV {string} contiene {int} notifiche: 10 valide e 10 non valide")
-    @Given("il CSV {string} contiene {int} notifiche non prioritarie da mittenti non censiti")
-    @Given("il CSV {string} contiene {int} notifiche da mittenti validi ma con provincia non mappata")
-    public void initParams(String csv, Integer numeroNotifiche) {
+
+    @Given("il CSV {string} contiene {int} notifiche cosi distribuite:")
+    public void initParams(String csv, Integer numeroNotifiche, DataTable dataTable) {
+        // Inizializzazione CSV
         List<List<String>> actualCsv = FileUtils.readCsvSafe(String.join("/", CSV_PATH, csv), ";", false);
         List<String> header = actualCsv.get(0);
 
-        this.numeroNotifiche = actualCsv.size()-1;
-
-        for (String key : WORKFLOW_STEPS) {
-            groupedByPkSubstring.put(key, new ArrayList<>());
-        }
+        this.numeroNotifiche = actualCsv.size() - 1;
 
         if (!this.numeroNotifiche.equals(numeroNotifiche))
             throw new RuntimeException("Il numero di notifiche dichiarate non corrisponde al numero di notifiche lette nel file csv");
@@ -155,11 +166,62 @@ public class DelayerSteps {
             this.actualCsv.add(new DelayerPaperDelivery(header, actualCsv.get(i)));
         }
 
-        if(this.actualCsv.size() != this.numeroNotifiche)
+        if (this.actualCsv.size() != this.numeroNotifiche)
             throw new RuntimeException("Sono state lette " + this.actualCsv.size() + " notifiche su " + this.numeroNotifiche + " totali nel file csv");
+
+        // Inizializzazione Map workflowItem-notifiche
+        for (String key : WORKFLOW_STEPS) {
+            groupedByPkSubstring.put(key, new ArrayList<>());
+        }
+
+        // Inizializzazione expected delivery
+        /*
+         Gli elementi usciti dalla PREPARE fase 1 alla settimana W vengono inseriti nella pn-DelayerPaperDelivey con la deliveryDate che punta a W+1
+         Dal punto di vista del test siamo nel POV della valutazione, quindi è come se le notifiche fossero state caricate in tabella la settimana scorsa (W)
+         con la deliveryDate alla W+1(corrente) e ora, settimana W+1 le stiamo valutando
+        */
+        if (expectedDeliveryDate == null) {
+            LocalDate lunedi = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            expectedDeliveryDate = lunedi.toString();
+        }
+
     }
 
-    @Given("il CSV {string} è importato da S3 nella tabella di test tramite lambda")
+    @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province-deliveryDate) sia {word} {int}")
+    @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province-deliveryDate) sia {word} a {int}")
+    public void siPresupponeCheIlLimiteMittenteSettimanalePaIdProduct_typeProvinceDeliveryDateSiaAlmeno(String compare, int limit) {
+        senderLimit = calculateLimitByComparativo(compare, limit);
+        if (senderLimit < 0) throw new IllegalArgumentException("SenderLimit non valido");
+    }
+
+    @And("si presuppone che il limite recapitista unificato settimanale \\(unifiedDeliveryDriver-provincia-deliveryDate) sia {word} {int}")
+    @And("si presuppone che il limite recapitista unificato settimanale \\(unifiedDeliveryDriver-provincia-deliveryDate) sia {word} a {int}")
+    public void siPresupponeCheIlLimiteRecapitistaUnificatoSettimanaleUnifiedDeliveryDriverProvinciaDeliveryDateSia(String compare, int limit) {
+        driverCapacity = calculateLimitByComparativo(compare, limit);
+        if (driverCapacity < 0) throw new IllegalArgumentException("DriverCapacity non valido");
+    }
+
+    @And("si presuppone che la capacità di stampa giornaliera sia {word}")
+    public void siPresupponeCheLaCapacitàDiStampaGiornalieraSiaSufficiente(String compare) {
+        switch (compare) {
+            case "sufficiente":
+                this.printCapacity = 180_000;
+                break;
+            case "insufficiente":
+                this.printCapacity = 0;
+                break;
+            default:
+                throw new IllegalArgumentException("Il comparativo non è valido: " + compare);
+        }
+    }
+
+    @And("si presuppone che la capacità di stampa giornaliera sia {word} {int}")
+    public void siPresupponeCheLaCapacitàDiStampaGiornalieraSiaSufficiente(String compare, int limit) {
+        printCapacity = calculateLimitByComparativo(compare, limit);
+        if (printCapacity < 0) throw new IllegalArgumentException("PrintCapacity non valido");
+    }
+
+    @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
     public void importaCsvTramiteLambda(String csvName) throws Exception {
         String payload = """
                 {
@@ -188,425 +250,52 @@ public class DelayerSteps {
         log.info("Algoritmo avviato correttamente.");
     }
 
-    /**
-     * Verifica che le prime {@code limit} notifiche siano elaborate in ordine di priorità,
-     * seguendo le regole dell'algoritmo Delayer:
-     *
-     * <ul>
-     *   <li><b>RS</b>: ordinate per {@code prepareRequestDate}</li>
-     *   <li><b>Secondi tentativi</b> (attempt = 1): ordinate per {@code prepareRequestDate}</li>
-     *   <li><b>Altri</b>: ordinate per {@code notificationSentAt}</li>
-     * </ul>
-     *
-     * @param limit         Numero di notifiche da considerare (le prime N)
-     * @param expectedOrder Tabella Gherkin con la sequenza attesa
-     */
-    @Then("le prime {int} notifiche per il workflow step {string} sono selezionate secondo l’ordine di priorità:")
-    public void verificaOrdinePrioritaLimitate(int limit, String workflowStep, DataTable expectedOrder) {
-        List<DelayerPaperDelivery> notifiche = groupedByPkSubstring.get(workflowStep);
+    @Then("il processo valutato fino al workflow step {string} ha rispettato i criteri di ranking:")
+    public void verificaOrdinePrioritaLimitate(String workflowStep, DataTable expectedOrder) {
+        Map<String, List<DelayerPaperDelivery>> expectedNotifiche = this.calculateExpectedWorkflowItems(workflowStep);
+        List<DelayerPaperDelivery> expected = expectedNotifiche.get(workflowStep);
+        List<DelayerPaperDelivery> actual = groupedByPkSubstring.get(workflowStep);
 
-        if (notifiche == null || notifiche.isEmpty()) {
-            throw new IllegalStateException("Nessuna notifica disponibile da verificare per workflow step: " + workflowStep);
+        if (expected == null || expected.isEmpty() || actual == null || actual.isEmpty()) {
+            throw new IllegalArgumentException("Expected or actual notifications are null for workflowStep: " + workflowStep);
         }
 
-        List<DelayerPaperDelivery> primeNotifiche = notifiche.subList(0, Math.min(limit, notifiche.size()));
+        Set<Map<String, String>> expectedSet = expected.stream()
+                .map(n -> toComparableMap(n, workflowStep))
+                .collect(Collectors.toSet());
 
-        List<DelayerPaperDelivery> rs = new ArrayList<>();
-        List<DelayerPaperDelivery> secondiTentativi = new ArrayList<>();
-        List<DelayerPaperDelivery> altri = new ArrayList<>();
+        Set<Map<String, String>> actualSet = actual.stream()
+                .map(n -> toComparableMap(n, workflowStep))
+                .collect(Collectors.toSet());
 
-        for (DelayerPaperDelivery notifica : primeNotifiche) {
-            String tipo = notifica.getProductType();
-
-            int attempt;
-            try {
-                attempt = Integer.parseInt(notifica.getAttempt());
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Tentativo non numerico: " + notifica.getAttempt());
-            }
-
-            if ("RS".equalsIgnoreCase(tipo)) {
-                rs.add(notifica);
-            } else if (attempt == 1) {
-                secondiTentativi.add(notifica);
-            } else {
-                altri.add(notifica);
-            }
-        }
-
-        assertOrdinati(rs, "prepareRequestDate", "RS");
-        assertOrdinati(secondiTentativi, "prepareRequestDate", "SECONDO_TENTATIVO");
-        assertOrdinati(altri, "notificationSendAt", "ALTRO");
+        Assertions.assertTrue(expectedSet.containsAll(actualSet),
+                () -> {
+                    Set<Map<String, String>> missing = new HashSet<>(actualSet);
+                    missing.removeAll(expectedSet);
+                    return "Alcune notifiche attese non corrispondono:\n" + missing;
+                });
     }
 
     @Then("esattamente {int} notifiche sono al workflow step {string}")
     public void risultatiContengonoEsattamente(int expectedCount, String workflowStep) throws Exception {
+        List<DelayerPaperDelivery> notifiche = findByWorkflowStep(expectedCount, workflowStep, expectedDeliveryDate);
 
-        final int totalBudgetMillis = 900_000;
-        final int pollingFrequency = 3000;
-        final int maxTotalAttempts = totalBudgetMillis / pollingFrequency;
-        final int maxAttempts = Math.max(1, maxTotalAttempts / this.actualCsv.size());
-
-        Set<String> requestIdsDaTrovare = this.actualCsv.stream()
-                .map(DelayerPaperDelivery::getRequestId)
-                .collect(Collectors.toSet());
-
-        Set<DelayerPaperDelivery> notificheTrovate = new LinkedHashSet<>();
-        String stepKey = workflowStep.toUpperCase();
-
-        int attempt = 1;
-        while (!requestIdsDaTrovare.isEmpty() && notificheTrovate.size() < expectedCount && attempt <= maxAttempts) {
-            log.info("Tentativo {}/{} - RequestId rimanenti: {}", attempt, maxAttempts, requestIdsDaTrovare);
-
-            Iterator<String> iterator = requestIdsDaTrovare.iterator();
-            while (iterator.hasNext()) {
-                String requestId = iterator.next();
-
-                List<DelayerPaperDelivery> risultati = pollNotificheByRequestId(requestId, 3, null);
-
-                Optional<DelayerPaperDelivery> maybeRecord = risultati.stream()
-                        .filter(r -> r.getPk().contains(stepKey))
-                        .findFirst();  // uno solo per combinazione requestId-step
-
-                if (maybeRecord.isPresent()) {
-                    DelayerPaperDelivery record = maybeRecord.get();
-                    if (notificheTrovate.add(record)) {
-                        groupedByPkSubstring.get(stepKey).add(record);
-                        iterator.remove();
-                    }
-                }
-            }
-
-            if (notificheTrovate.size() < expectedCount) {
-                Thread.sleep(pollingFrequency);
-            }
-
-            attempt++;
-        }
-
-        int trovate = groupedByPkSubstring.get(stepKey).size();
-        Assertions.assertEquals(
-                expectedCount,
-                trovate,
-                String.format("Numero di notifiche trovate al workflow step '%s' diverso da quello atteso. Trovate: %d, Attese: %d",
-                        stepKey, trovate, expectedCount)
-        );
+        groupedByPkSubstring.get(workflowStep).clear();
+        groupedByPkSubstring.get(workflowStep).addAll(notifiche);
     }
 
-    @Then("tutte le notifiche sono pianificate secondo ordine cronologico per il campo {string}")
-    public void verificaOrdinamentoCronologico(int limit, String campoOrdinamento) {
-        String ultimoStep = WORKFLOW_STEPS.get(WORKFLOW_STEPS.size() - 1);
-        List<DelayerPaperDelivery> listaPianificate = groupedByPkSubstring.get(ultimoStep);
-
-        if (listaPianificate == null || listaPianificate.isEmpty()) {
-            throw new IllegalStateException("Nessuna notifica disponibile da verificare per lo step: " + ultimoStep);
-        }
-
-        List<DelayerPaperDelivery> primeNotifiche = listaPianificate.subList(0, Math.min(limit, listaPianificate.size()));
-
-        List<String> dateValues = primeNotifiche.stream()
-                .map(d -> getCampo(d, campoOrdinamento))
-                .toList();
-
-        List<String> ordinati = new ArrayList<>(dateValues);
-        Collections.sort(ordinati);
-
-        Assertions.assertEquals(
-                ordinati,
-                dateValues,
-                String.format("Le prime %d notifiche non sono ordinate cronologicamente per '%s'", limit, campoOrdinamento)
-        );
+    @Then("esattamente {int} notifiche sono state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente")
+    public void esattamenteNEvaluateSenderLimitNotificheSonoStateCongelateERicaricateConWorkflowStepEDeliveryDateAllaSettimanaSeguente(int congelate, String workflowStep) throws Exception {
+        findCongelate(congelate);
     }
 
+    @Given("verifica che la capacità disponibile per ogni tripla \\(unifiedDeliveryDriver-provincia-deliveryDate) sia esattamente {int}")
+    @And("verifica che la capacità disponibile per ogni tripla \\(unifiedDeliveryDriver-provincia-deliveryDate) sia almeno {int}")
+    public void verificaCapacitaPredettaDaPrepareRequestDate(Integer capacitaMinimaAttesa, String compareToken) {
 
-    /**
-     * Verifica che le notifiche indicate non siano ancora state pianificate per la spedizione.
-     *
-     * <p>
-     * Poiché nei test non è possibile interrogare direttamente la tabella finale
-     * {@code pn-PaperDeliveryReadyToSend}, utilizziamo la tabella {@code pn-DelayerPaperDelivery}
-     * (accessibile via lambda) per inferire lo stato delle notifiche.
-     * </p>
-     *
-     * <p>
-     * In particolare, analizziamo il campo {@code deliveryDate}:
-     * <ul>
-     *     <li>Se il valore è pari a {@code 1970-01-05T00:00:00Z}, la notifica non è stata ancora
-     *         pianificata per la spedizione, e quindi non è presente nella tabella finale.</li>
-     *     <li>Se il campo è valorizzato con una data reale (es. {@code 2025-07-30T00:00:00Z} o maggiore),
-     *         significa che la spedizione è stata programmata per quel giorno.</li>
-     * </ul>
-     * </p>
-     *
-     * <p>
-     * Questa logica è conforme a quanto previsto nel documento di specifica (SRS),
-     * dove si afferma che la presenza di {@code deliveryDate} valorizzata indica
-     * l’inclusione in un batch di recapito. Il valore {@code 1970-01-05} rappresenta invece
-     * uno stato di default (non elaborato), poiché corrisponde a un timestamp nullo o iniziale
-     * nel formato Epoch.
-     * </p>
-     *
-     * <p><b>Nota tecnica:</b> il valore "1970-01-05" deriva dal comportamento del sistema
-     * quando una data non viene mai calcolata. Questo compromesso è adottato nei test per
-     * distinguere facilmente tra notifiche elaborate e non elaborate, sfruttando un default noto.</p>
-     *
-     * <p><b>Limite attuale:</b> la lambda test espone solo operazioni sulla tabella {@code pn-DelayerPaperDelivery}.
-     * In futuro, se verrà estesa a {@code pn-PaperDeliveryReadyToSend}, questa logica potrà essere sostituita
-     * da una verifica diretta.</p>
-     *
-     * @throws AssertionError se una o più notifiche risultano già pianificate (cioè con deliveryDate valorizzata)
-     */
-    @Then("le restanti {int} notifiche non sono ancora pianificate")
-    public void verificaNonPianificate(int nonPianificateAttese) {
-        List<JsonNode> nonPianificate = lastResult.stream()
-                .filter(n -> !isDeliveryPlanned(n))
-                .toList();
+        List<DelayerPaperDelivery> notifiche = groupedByPkSubstring.get(WORKFLOW_STEPS.get(0));
 
-        Assertions.assertEquals(nonPianificateAttese, nonPianificate.size(),
-                String.format("Attese %d notifiche non pianificate, trovate %d",
-                        nonPianificateAttese, nonPianificate.size()));
-    }
-
-    @Then("la capacità usata per il driver {string}, provincia {string}, data {string} è pari a {int} su una capacità totale di {int}")
-    public void verificaCapacitaUsata(String driver, String provincia, String deliveryDateStr, int expectedUsed, int expectedCapacity) throws Exception {
-        String payload = String.format("""
-                {
-                  "operationType": "GET_USED_CAPACITY",
-                  "parameters": [ "%s", "%s", "%s" ]
-                }
-                """, driver, provincia, deliveryDateStr);
-
-        String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
-        checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
-
-        JsonNode root = objectMapper.readTree(rawResult);
-        JsonNode body = root.path("body");
-        if (body.isTextual()) {
-            body = objectMapper.readTree(body.asText());
-        }
-
-        int used = body.path("usedCapacity").asInt(-1);
-        int capacity = body.path("capacity").asInt(-1);
-
-        Assertions.assertEquals(expectedUsed, used,
-                String.format("Capacità usata errata per %s~%s a %s: attesa %d, trovata %d", driver, provincia, deliveryDateStr, expectedUsed, used));
-
-        Assertions.assertEquals(expectedCapacity, capacity,
-                String.format("Capacità totale errata per %s~%s a %s: attesa %d, trovata %d", driver, provincia, deliveryDateStr, expectedCapacity, capacity));
-    }
-
-    /**
-     * Verifica che la capacità disponibile per un determinato recapitista (driver),
-     * su una provincia e per un tipo di prodotto specifico, alla data di delivery prevista,
-     * corrisponda al valore atteso.
-     *
-     * <p>
-     * Questo controllo sfrutta la lambda `GET_DRIVER_CAPACITY`, che restituisce i dati
-     * dalla tabella {@code pn-PaperDeliveryDriverWeeklyCapacity}, filtrando per:
-     * driver + provincia (geoKey) + productType + deliveryDate.
-     * </p>
-     *
-     * <p>
-     * La deliveryDate è calcolata a partire dalle notifiche del test, per garantire
-     * che il controllo sia allineato alla settimana in cui si collocano le notifiche.
-     * </p>
-     *
-     * @param driver           il nome del recapitista (unifiedDeliveryDriver)
-     * @param provincia        la provincia/geoKey
-     * @param productType      il tipo di prodotto (es. "AR", "RS")
-     * @param expectedCapacity il valore atteso di capacità configurata
-     * @throws Exception in caso di errore di invocazione o mismatch
-     */
-    @Then("la capacità disponibile per il driver {string}, provincia {string}, prodotto {string} è configurata a {int}")
-    public void verificaCapacitaDriverProvinciaProdotto(String driver, String provincia, String productType, int expectedCapacity) throws Exception {
-        // Calcoliamo la deliveryDate settimanale attesa (basata sulle notifiche nel CSV)
-        String deliveryDate = extractDeliveryDateFromLastResult();
-
-        // Costruiamo il payload per la lambda
-        String payload = String.format("""
-                {
-                  "operationType": "GET_DRIVER_CAPACITY",
-                  "parameters": [ "%s", "%s", "%s", "%s" ]
-                }
-                """, driver, provincia, productType, deliveryDate);
-
-        // Invoca lambda
-        String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
-        checkLambdaResponse(rawResult, "GET_DRIVER_CAPACITY");
-
-        JsonNode parsed = objectMapper.readTree(rawResult);
-        JsonNode body = parsed.path("body");
-        if (body.isTextual()) {
-            body = objectMapper.readTree(body.asText());
-        }
-
-        int actualCapacity = body.path("capacity").asInt(-1);
-        Assertions.assertEquals(expectedCapacity, actualCapacity, String.format(
-                "Capacità attesa per driver %s, provincia %s, prodotto %s e data %s: %d, ma trovata %d",
-                driver, provincia, productType, deliveryDate, expectedCapacity, actualCapacity
-        ));
-    }
-
-    @Then("tutte le {int} notifiche sono posticipate: deliveryDate corrisponde al lunedì della settimana successiva")
-    public void tutteNotifichePosticipate(int expectedCount) {
-        if (lastResult == null || lastResult.size() != expectedCount) {
-            throw new AssertionError("Numero notifiche inatteso: attese " + expectedCount + ", trovate " + (lastResult == null ? 0 : lastResult.size()));
-        }
-
-        // Calcola il lunedì della settimana successiva
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-        ZonedDateTime expectedDate = nextMonday.atStartOfDay(ZoneOffset.UTC);
-
-        for (JsonNode notifica : lastResult) {
-            String deliveryDateRaw = notifica.path("deliveryDate").asText();
-            ZonedDateTime deliveryDate;
-            try {
-                deliveryDate = ZonedDateTime.parse(deliveryDateRaw);
-            } catch (Exception e) {
-                throw new AssertionError("Data non valida: " + deliveryDateRaw);
-            }
-
-            if (!deliveryDate.toLocalDate().equals(expectedDate.toLocalDate())) {
-                throw new AssertionError(String.format("Notifica %s ha deliveryDate %s, ma ci si aspettava %s",
-                        notifica.path("iun").asText(), deliveryDateRaw, expectedDate));
-            }
-        }
-
-        log.info("Tutte le {} notifiche sono posticipate correttamente al lunedì della settimana successiva: {}", expectedCount, expectedDate);
-    }
-
-    /**
-     * Verifica il numero di notifiche dei mittenti non censiti che sono state elaborate o accantonate,
-     * in base al tipo richiesto.
-     *
-     * <p>Le notifiche dei mittenti non censiti sono identificate controllando l'assenza del mittente
-     * nella tabella dei limiti settimanali (che nei test lasciamo volutamente vuota).
-     * Per distinguere se una notifica è stata elaborata o accantonata:
-     * <ul>
-     *     <li>Le notifiche <b>elaborate</b> hanno una {@code deliveryDate} valorizzata (diversa da {@code 1970-01-05}).</li>
-     *     <li>Le notifiche <b>accantonate</b> hanno {@code deliveryDate} uguale a {@code 1970-01-05T00:00:00Z}.</li>
-     * </ul>
-     *
-     * @param tipo          "elaborate" o "accantonate"
-     * @param expectedCount numero atteso di notifiche per quel tipo
-     * @throws AssertionError se il conteggio non corrisponde
-     */
-    @Then("sono state {word} esattamente {int} notifiche dei mittenti non censiti")
-    public void verificaNotificheNonCensitePerStato(String tipo, int expectedCount) {
-        boolean elaborate = tipo.equalsIgnoreCase("elaborate");
-
-        List<JsonNode> filtrate = lastResult.stream()
-                .filter(n -> !isMittenteCensito(n))
-                .filter(n -> elaborate ? isDeliveryPlanned(n) : !isDeliveryPlanned(n))
-                .toList();
-
-        Assertions.assertEquals(expectedCount, filtrate.size(), "Numero inatteso di notifiche " + tipo);
-    }
-
-    @Then("tutte le {int} notifiche restano in attesa perché la capacità di stampa giornaliera è esaurita")
-    public void notificheRestanoInAttesaPerStampaPiena(int expectedCount) {
-        List<JsonNode> nonPianificate = lastResult.stream()
-                .filter(this::isDeliveryPlanned)
-                .toList();
-
-        if (nonPianificate.size() != expectedCount) {
-            throw new AssertionError(String.format(
-                    "Attese %d notifiche non pianificate (stampa piena), ma trovate %d",
-                    expectedCount, nonPianificate.size()
-            ));
-        }
-    }
-
-    @Then("nessuna notifica è stata ancora pianificata per la spedizione")
-    public void nessunaNotificaPianificata() {
-        List<JsonNode> pianificate = lastResult.stream()
-                .filter(this::isDeliveryPlanned)
-                .toList();
-
-        if (!pianificate.isEmpty()) {
-            String iuns = pianificate.stream().map(n -> n.path("iun").asText()).collect(Collectors.joining(", "));
-            throw new AssertionError("Alcune notifiche risultano inaspettatamente pianificate per la spedizione: " + iuns);
-        }
-    }
-
-    /**
-     * Verifica che la capacità residua disponibile per la stampa (PRINT) sia pari al valore atteso
-     * nella data specificata dal campo {@code deliveryDate} delle notifiche elaborate.
-     *
-     * <p>
-     * L'operazione si basa sull'invocazione della lambda test con operationType {@code GET_USED_CAPACITY},
-     * che interroga la tabella {@code pn-PaperDeliveryDriverUsedCapacities} per ottenere la capacità settimanale
-     * del recapitista nel contesto di stampa, ovvero per:
-     * <ul>
-     *     <li>{@code unifiedDeliveryDriver}: "Poste"</li>
-     *     <li>{@code geoKey}: "PRINT"</li>
-     *     <li>{@code deliveryDate}: valorizzata in base alle notifiche testate</li>
-     * </ul>
-     * </p>
-     *
-     * <p>
-     * Il test è utile in tutti gli scenari in cui si intende verificare la capacità di stampa giornaliera.
-     * </p>
-     *
-     * <h3>📄 Requisiti per il CSV</h3>
-     * <ul>
-     *     <li>Tutte le notifiche devono avere la stessa {@code deliveryDate} predefinita</li>
-     *     <li>{@code unifiedDeliveryDriver} deve essere impostato a {@code Poste}</li>
-     *     <li>{@code geoKey} deve essere esattamente {@code PRINT}</li>
-     * </ul>
-     *
-     * @param expectedAvailable capacità residua attesa per la stampa (es. 0)
-     * @throws Exception se la capacità residua è diversa dal valore atteso
-     */
-    @And("la capacità disponibile per la stampa nella data prevista di delivery è configurata a {int}")
-    public void verificaCapacitaStampaConValoreAtteso(int expectedAvailable) throws Exception {
-        if (lastResult == null || lastResult.isEmpty()) {
-            throw new IllegalStateException("Nessuna notifica trovata per verificare la deliveryDate.");
-        }
-
-        String deliveryDate = lastResult.get(0).path("deliveryDate").asText();
-        if (deliveryDate == null || deliveryDate.isBlank()) {
-            throw new IllegalStateException("deliveryDate mancante o non valida nella notifica.");
-        }
-
-        String payload = String.format("""
-                {
-                  "operationType": "GET_USED_CAPACITY",
-                  "parameters": [ "Poste", "PRINT", "%s" ]
-                }
-                """, deliveryDate);
-
-        String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
-        checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
-
-        JsonNode body = objectMapper.readTree(rawResult).path("body");
-        if (body.isTextual()) {
-            body = objectMapper.readTree(body.asText());
-        }
-
-        int capacity = body.path("capacity").asInt(-1);
-        int used = body.path("usedCapacity").asInt(-1);
-
-        log.info("Capacità stampa su PRINT per {}: total={}, used={}", deliveryDate, capacity, used);
-
-        if (capacity == -1 || used == -1) {
-            throw new IllegalStateException("Risposta lambda incompleta: capacity o usedCapacity mancanti.");
-        }
-
-        int actualAvailable = capacity - used;
-
-        if (actualAvailable != expectedAvailable) {
-            throw new AssertionError(String.format(
-                    "Capacità residua di stampa errata per il %s: attesa %d, trovata %d (totale=%d, usata=%d)",
-                    deliveryDate, expectedAvailable, actualAvailable, capacity, used));
-        }
-    }
-
-    @Given("la capacità disponibile per ogni tripla driver, provincia e delivery date attesa è almeno {int}")
-    public void verificaCapacitaPredettaDaPrepareRequestDate(Integer capacitaMinimaAttesa) {
-
-        if (actualCsv == null || actualCsv.isEmpty()) {
+        if (notifiche == null || notifiche.isEmpty()) {
             throw new IllegalStateException("Nessuna notifica pianificata trovata.");
         }
 
@@ -619,24 +308,12 @@ public class DelayerSteps {
         }
 
         Set<CapacityRequest> requests =
-                actualCsv.stream()
-                .map(dpd -> {
-                    String rd = dpd.getPrepareRequestDate();
-
-                    /*
-                    LocalDate lunedi = LocalDate.parse(rd.substring(0, 10)).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-                    String deliveryDate = lunedi + "T00:00:00Z";
-                     */
-
-                    // La delviery date è il lunedi della settimana corrente
-                    LocalDate lunedi = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-                    String deliveryDate = lunedi + "T00:00:00Z";
-
-                    predictDeliveryDateMap.put(rd,deliveryDate);
-
-                    return new CapacityRequest(dpd.getProvince(), dpd.getUnifiedDeliveryDriver(), deliveryDate);
-                })
-                .collect(Collectors.toSet());
+                notifiche.stream()
+                        .map(dpd -> {
+                            String deliveryDate = extractDeliveryDate(dpd);
+                            return new CapacityRequest(dpd.getProvince(), dpd.getUnifiedDeliveryDriver(), deliveryDate);
+                        })
+                        .collect(Collectors.toSet());
 
 
         // Verifica capacità per ogni deliveryDate
@@ -665,119 +342,31 @@ public class DelayerSteps {
 
                 log.info("Capacità driver {} su {} per {}: disponibile {} su {}", driver, provincia, deliveryDate, available, capacity);
 
-                if (available <= capacitaMinimaAttesa) {
-                    throw new AssertionError(String.format(
-                            "Capacità insufficiente per deliveryDate %s: attesi almeno %d slot liberi, disponibili %d",
-                            deliveryDate, capacitaMinimaAttesa, available));
+                switch (compareToken) {
+                    case "esattamente":
+                        if (available <= capacitaMinimaAttesa) {
+                            throw new AssertionError(String.format(
+                                    "Capacità insufficiente per deliveryDate %s: attesi almeno %d slot liberi, disponibili %d",
+                                    deliveryDate, capacitaMinimaAttesa, available));
+                        }
+                        break;
+
+                    case "almeno":
+                        if (available == capacitaMinimaAttesa) {
+                            throw new AssertionError(String.format(
+                                    "Capacità insufficiente per deliveryDate %s: attesi esattamente %d slot liberi, disponibili %d",
+                                    deliveryDate, capacitaMinimaAttesa, available));
+                        }
+                        break;
+
+                    default:
+                        throw new AssertionError(String.format("Unrecognized compareToken: %s", compareToken));
                 }
 
             } catch (Exception e) {
                 throw new RuntimeException("Errore durante la verifica della capacità per deliveryDate: " + deliveryDate, e);
             }
         }
-    }
-
-    @Then("sono state {word} tutte le {int} notifiche \\(verifica basata su deliveryDate)")
-    public void verificaNotifichePianificateOAccantonate(String stato, int expectedCount) {
-        List<JsonNode> selezionate;
-
-        if ("pianificate".equalsIgnoreCase(stato)) {
-            selezionate = lastResult.stream()
-                    .filter(n -> isDeliveryPlanned(n))
-                    .toList();
-        } else if ("accantonate".equalsIgnoreCase(stato)) {
-            selezionate = lastResult.stream()
-                    .filter(n -> !isDeliveryPlanned(n))
-                    .toList();
-        } else {
-            throw new IllegalArgumentException("Stato atteso non riconosciuto: " + stato);
-        }
-
-        Assertions.assertEquals(expectedCount, selezionate.size(),
-                String.format("Attese %d notifiche '%s', ma trovate %d", expectedCount, stato, selezionate.size()));
-    }
-
-    /**
-     * Verifica che tutte le notifiche attualmente in memoria ({@code lastResult}) siano state pianificate,
-     * ovvero che il campo {@code deliveryDate} sia valorizzato con una data reale (diversa dal default "1970-01-05T00:00:00Z").
-     *
-     * <p>
-     * La valorizzazione del campo {@code deliveryDate} indica che la notifica è stata assegnata
-     * a una data di recapito effettiva, risultando quindi elaborata dal sistema.
-     * </p>
-     *
-     * @param expectedCount Numero atteso di notifiche pianificate
-     * @throws AssertionError se alcune notifiche risultano non pianificate o il conteggio non corrisponde
-     */
-    @Then("tutte le {int} notifiche sono state pianificate \\(deliveryDate valorizzato)")
-    public void tutteNotifichePianificate(int expectedCount) {
-        if (lastResult.size() != expectedCount) {
-            throw new AssertionError(String.format(
-                    "Numero di notifiche attese: %d, trovate: %d", expectedCount, lastResult.size()));
-        }
-
-        List<JsonNode> nonPianificate = lastResult.stream()
-                .filter(n -> !isDeliveryPlanned(n))
-                .toList();
-
-        if (!nonPianificate.isEmpty()) {
-            String dettagli = nonPianificate.stream()
-                    .map(n -> n.path("iun").asText())
-                    .collect(Collectors.joining(", "));
-            throw new AssertionError("Le seguenti notifiche non sono state pianificate: " + dettagli);
-        }
-    }
-
-    @Then("la deliveryDate delle notifiche coincide con la deliveryDate attesa")
-    public void verificaDeliveryDateValorizzata() {
-        String preparePhase2Step = WORKFLOW_STEPS.get(WORKFLOW_STEPS.size() - 1);
-        List<DelayerPaperDelivery> notifichePianificate = groupedByPkSubstring.get(preparePhase2Step);
-
-        if (notifichePianificate == null || notifichePianificate.isEmpty()) {
-            throw new IllegalStateException("Nessuna notifica pianificata trovata per verificare la deliveryDate.");
-        }
-
-        for (DelayerPaperDelivery notifica : notifichePianificate) {
-            String deliveryDate = extractDeliveryDate(notifica);
-
-            if (deliveryDate.equals(DEFAULT_DELIVERY_DATE)) {
-                throw new AssertionError("La deliveryDate non è stata pianificata correttamente: è rimasta al default.");
-            }
-
-            String predictDeliveryDate = predictDeliveryDateMap.get(notifica.getRequestId());
-
-            if(predictDeliveryDate == null || predictDeliveryDate.isEmpty())
-                throw new RuntimeException("Non è stata predetta nessuna deliveryDate per la prepareRequestDate: " + notifica.getPrepareRequestDate());
-
-            if (!deliveryDate.equals(predictDeliveryDate)) {
-                throw new AssertionError(String.format(
-                        "Errore di pianificazione: deliveryDate ricevuta ('%s') ≠ deliveryDate predetta ('%s') per requestId %s",
-                        deliveryDate, predictDeliveryDate, notifica.getRequestId()
-                ));
-            }
-        }
-
-        log.info("Tutte le notifiche hanno deliveryDate correttamente valorizzata.");
-    }
-
-    private void assertOrdinati(List<DelayerPaperDelivery> lista, String campo, String categoria) {
-        List<DelayerPaperDelivery> ordinati = new ArrayList<>(lista);
-        ordinati.sort(comparatorePerCampo(campo));
-
-        Assertions.assertEquals(
-                ordinati,
-                lista,
-                String.format("La categoria '%s' non è ordinata correttamente per '%s'", categoria, campo)
-        );
-    }
-
-    private Comparator<DelayerPaperDelivery> comparatorePerCampo(String campo) {
-        return switch (campo) {
-            case "prepareRequestDate" -> Comparator.comparing(d -> parseDate(d.getPrepareRequestDate()));
-            case "notificationSendAt", "notificationSentAt" ->
-                    Comparator.comparing(d -> parseDate(d.getNotificationSentAt()));
-            default -> throw new IllegalArgumentException("Campo non supportato per ordinamento: " + campo);
-        };
     }
 
     private LocalDateTime parseDate(String dateStr) {
@@ -788,31 +377,22 @@ public class DelayerSteps {
         }
     }
 
-    private String getCampo(DelayerPaperDelivery d, String campo) {
-        return switch (campo) {
-            case "prepareRequestDate" -> d.getPrepareRequestDate();
-            case "notificationSendAt", "notificationSentAt" -> d.getNotificationSentAt();
-            case "deliveryDate" -> extractDeliveryDate(d);
-            default -> throw new IllegalArgumentException("Campo non supportato: " + campo);
-        };
-    }
-
     private String extractDeliveryDate(DelayerPaperDelivery notifica) {
-        String sk = notifica.getSk();
+        String pk = notifica.getPk();
 
-        if (sk == null || sk.isBlank()) {
-            throw new IllegalStateException("Campo sk mancante o vuoto: " + sk);
+        if (pk == null || pk.isBlank()) {
+            throw new IllegalStateException("Campo pk mancante o vuoto: " + pk);
         }
 
-        String[] parts = sk.split("~");
+        String[] parts = pk.split("~");
         if (parts.length == 0) {
-            throw new IllegalStateException("Formato sk non valido: " + sk);
+            throw new IllegalStateException("Formato pk non valido: " + pk);
         }
 
         String deliveryDate = parts[0];
 
         if (deliveryDate == null || deliveryDate.isBlank()) {
-            throw new AssertionError(String.format("La notifica (requestId: %s) ha una sk vuota: %s", notifica.getRequestId(), sk));
+            throw new AssertionError(String.format("La notifica (requestId: %s) ha una pk vuota: %s", notifica.getRequestId(), pk));
         }
 
         return deliveryDate;
@@ -892,26 +472,260 @@ public class DelayerSteps {
         return Collections.emptyList();
     }
 
-    public boolean isDeliveryDateReal(String deliveryDate) {
-        return deliveryDate != null && !deliveryDate.isBlank()
-                && !"1970-01-05T00:00:00Z".equals(deliveryDate);
+    private boolean isMittenteCensito(String senderKey) {
+
+
+        if (senderKey == null || senderKey.isBlank()) {
+            throw new IllegalStateException("SenderKey mancante o vuoto: " + senderKey);
+        }
+
+        String[] parts = senderKey.split("~");
+        if (parts.length == 0) {
+            throw new IllegalStateException("Formato senderKey non valido: " + senderKey);
+        }
+
+        String paId = parts[0];
+
+        if (paId == null || paId.isBlank()) {
+            throw new AssertionError(String.format("La SenderKey (%s) ha una paId vuota: %s", senderKey, paId));
+        }
+
+        return !paId.equals("unknow");
     }
 
-    private boolean isDeliveryPlanned(JsonNode node) {
-        return !DEFAULT_DELIVERY_DATE.equals(node.path("deliveryDate").asText());
+    private Map<String, List<DelayerPaperDelivery>> calculateExpectedWorkflowItems(String workflowStep) {
+        Map<String, List<DelayerPaperDelivery>> groupedByStep = new HashMap<>();
+        for (String step : WORKFLOW_STEPS) {
+            groupedByStep.put(step, new ArrayList<>());
+        }
+
+        Map<String, List<DelayerPaperDelivery>> bySenderKey = new HashMap<>();
+        Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
+        List<DelayerPaperDelivery> mittentiNonCensiti = new ArrayList<>();
+        List<DelayerPaperDelivery> notifiche = new ArrayList<>(actualCsv);
+
+        // Tutte iniziano nello step iniziale
+        groupedByStep.get("EVALUATE_SENDER_LIMIT").addAll(notifiche);
+        if (workflowStep.equals("EVALUATE_SENDER_LIMIT")) return groupedByStep;
+
+        // I driver sono disponibili a partire dall'evento EVALUATE_DRIVER_CAPACITY, li considero da qui
+        // Crea una mappa per accesso rapido alle notifiche originali
+        Map<String, DelayerPaperDelivery> byRequestId = notifiche.stream()
+                .collect(Collectors.toMap(d -> d.requestId, d -> d));
+
+        // Itera sul gruppo e aggiorna se esiste una corrispondenza
+        List<DelayerPaperDelivery> notificheConDriver = this.groupedByPkSubstring.get("EVALUATE_DRIVER_LIMIT");
+        if (notificheConDriver != null && !notificheConDriver.isEmpty()) {
+            for (DelayerPaperDelivery n : notificheConDriver) {
+                DelayerPaperDelivery match = byRequestId.get(n.requestId);
+                if (match != null) {
+                    match.unifiedDeliveryDriver = n.unifiedDeliveryDriver;
+                }
+            }
+        }
+
+        // Raggruppa per mittente
+        for (DelayerPaperDelivery n : notifiche) {
+            String senderKey = String.join("~", n.getSenderPaId(), n.getProductType(), n.getProvince());
+            bySenderKey.computeIfAbsent(senderKey, k -> new ArrayList<>()).add(n);
+        }
+
+        // Applica limite mittente (prima censiti, poi non censiti)
+        List<DelayerPaperDelivery> postSenderLimit = new ArrayList<>();
+
+        for (Map.Entry<String, List<DelayerPaperDelivery>> entry : bySenderKey.entrySet()) {
+            List<DelayerPaperDelivery> gruppo = prioritaDelayer(entry.getValue());
+
+            if (isMittenteCensito(entry.getKey())) {
+                postSenderLimit.addAll(gruppo.stream().limit(senderLimit).toList());
+            } else {
+                mittentiNonCensiti.addAll(gruppo); // salva per dopo
+            }
+        }
+
+        // Raggruppa per recapitista
+        for (DelayerPaperDelivery n : postSenderLimit) {
+            String driverKey = String.join("~", n.getUnifiedDeliveryDriver(), n.getProvince());
+            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(n);
+        }
+
+        // Calcola capacità residua per driver
+        Map<String, Integer> driverResidua = new HashMap<>();
+        for (String driverKey : byDriverKey.keySet()) {
+            driverResidua.put(driverKey, Math.max(0, driverCapacity - byDriverKey.get(driverKey).size()));
+        }
+
+        // Assegna capacità residua ai non censiti (dopo i censiti)
+        for (DelayerPaperDelivery n : mittentiNonCensiti) {
+            String driverKey = String.join("~", n.getUnifiedDeliveryDriver(), n.getProvince());
+            int available = driverResidua.getOrDefault(driverKey, 0);
+            if (available > 0) {
+                postSenderLimit.add(n);
+                driverResidua.put(driverKey, available - 1);
+            }
+        }
+
+        groupedByStep.get("EVALUATE_DRIVER_CAPACITY").addAll(postSenderLimit);
+        if (workflowStep.equals("EVALUATE_DRIVER_CAPACITY")) return groupedByStep;
+
+        // Raggruppa nuovamente per driver per il secondo filtro
+        byDriverKey.clear();
+        for (DelayerPaperDelivery n : postSenderLimit) {
+            String driverKey = String.join("~", n.getUnifiedDeliveryDriver(), n.getProvince());
+            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(n);
+        }
+
+        // Applica limite recapitista
+        List<DelayerPaperDelivery> postDriverLimit = new ArrayList<>();
+        for (List<DelayerPaperDelivery> gruppo : byDriverKey.values()) {
+            postDriverLimit.addAll(prioritaDelayer(gruppo).stream().limit(driverCapacity).toList());
+        }
+
+        groupedByStep.get("EVALUATE_PRINT_CAPACITY").addAll(postDriverLimit);
+        if (workflowStep.equals("EVALUATE_PRINT_CAPACITY")) return groupedByStep;
+
+        // Applica capacità di stampa
+        List<DelayerPaperDelivery> postPrintLimit;
+        if (printCapacity == null || printCapacity >= postDriverLimit.size()) {
+            postPrintLimit = postDriverLimit;
+        } else {
+            postPrintLimit = prioritaDelayer(postDriverLimit).subList(0, printCapacity);
+        }
+
+        groupedByStep.get("SENT_TO_PREPARE_PHASE_2").addAll(postPrintLimit);
+
+        return groupedByStep;
     }
 
-    private boolean isMittenteCensito(JsonNode node) {
-        String mittente = node.path("senderPaId").asText();
-        return mittente != null && (mittente.equals("idMittente1") || mittente.equals("idMittente2"));
+    private List<DelayerPaperDelivery> prioritaDelayer(List<DelayerPaperDelivery> notifiche) {
+        List<DelayerPaperDelivery> rs = new ArrayList<>();
+        List<DelayerPaperDelivery> secondi = new ArrayList<>();
+        List<DelayerPaperDelivery> altri = new ArrayList<>();
+
+        for (DelayerPaperDelivery n : notifiche) {
+            String tipo = n.getProductType();
+            int att = Integer.parseInt(n.getAttempt());
+            if ("RS".equalsIgnoreCase(tipo)) {
+                rs.add(n);
+            } else if (att == 1) {
+                secondi.add(n);
+            } else {
+                altri.add(n);
+            }
+        }
+
+        Comparator<DelayerPaperDelivery> byPrepare = Comparator.comparing(d -> parseDate(d.getPrepareRequestDate()));
+        Comparator<DelayerPaperDelivery> byNotification = Comparator.comparing(d -> parseDate(d.getNotificationSentAt()));
+
+        rs.sort(byPrepare);
+        secondi.sort(byPrepare);
+        altri.sort(byNotification);
+
+        List<DelayerPaperDelivery> ordinati = new ArrayList<>();
+        ordinati.addAll(rs);
+        ordinati.addAll(secondi);
+        ordinati.addAll(altri);
+        return ordinati;
     }
 
-    private String extractDeliveryDateFromLastResult() {
-        return lastResult.stream()
-                .map(n -> n.path("deliveryDate").asText())
-                .filter(d -> isDeliveryDateReal(d))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Nessuna deliveryDate valida trovata"));
+    private Map<String, String> toComparableMap(DelayerPaperDelivery d, String workflowStep) {
+        int wsIndex = WORKFLOW_STEPS.indexOf(workflowStep);
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put("pk", d.getPk());
+        result.put("sk", d.getSk());
+        result.put("requestId", d.getRequestId());
+        result.put("notificationSentAt", d.getNotificationSentAt());
+        result.put("prepareRequestDate", d.getPrepareRequestDate());
+        result.put("productType", d.getProductType());
+        result.put("senderPaId", d.getSenderPaId());
+        result.put("province", d.getProvince());
+        result.put("cap", d.getCap());
+        result.put("attempt", d.getAttempt());
+        result.put("iun", d.getIun());
+        if (wsIndex > 0) result.put("unifiedDeliveryDriver", d.getUnifiedDeliveryDriver());
+        return result;
     }
+
+    private List<DelayerPaperDelivery> findByWorkflowStep(int expectedCount, String workflowStep, String deliveryDate) throws Exception {
+
+        final int totalBudgetMillis = 900_000;
+        final int pollingFrequency = 3000;
+        final int maxTotalAttempts = totalBudgetMillis / pollingFrequency;
+        final int maxAttempts = Math.max(1, maxTotalAttempts / this.actualCsv.size());
+
+        Set<String> requestIdsDaTrovare = this.actualCsv.stream()
+                .map(DelayerPaperDelivery::getRequestId)
+                .collect(Collectors.toSet());
+
+        Set<DelayerPaperDelivery> notificheTrovate = new LinkedHashSet<>();
+        String stepKey = workflowStep.toUpperCase();
+
+        int attempt = 1;
+        while (!requestIdsDaTrovare.isEmpty() && notificheTrovate.size() < expectedCount && attempt <= maxAttempts) {
+            log.info("Tentativo {}/{} - RequestId rimanenti: {}", attempt, maxAttempts, requestIdsDaTrovare);
+
+            Iterator<String> iterator = requestIdsDaTrovare.iterator();
+            while (iterator.hasNext()) {
+                String requestId = iterator.next();
+
+                List<DelayerPaperDelivery> risultati = pollNotificheByRequestId(requestId, 3, null);
+                String chosenDeliveryDate = (deliveryDate == null) ? this.expectedDeliveryDate : deliveryDate;
+
+                try {
+                    LocalDate.parse(chosenDeliveryDate, DateTimeFormatter.ISO_LOCAL_DATE);
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException(
+                            "Formato deliveryDate non valido. Atteso formato ISO 8601 'YYYY-MM-DD', es: 2025-08-04. Ricevuto: " + chosenDeliveryDate,
+                            e
+                    );
+                }
+
+
+                Optional<DelayerPaperDelivery> maybeRecord = risultati.stream()
+                        .filter(r -> r.getPk().contains(stepKey) && r.getPk().contains(chosenDeliveryDate))
+                        .findFirst();  // uno solo per combinazione requestId-step
+
+                if (maybeRecord.isPresent()) {
+                    DelayerPaperDelivery record = maybeRecord.get();
+                    if (notificheTrovate.add(record)) {
+                        //groupedByPkSubstring.get(stepKey).add(record);
+                        iterator.remove();
+                    }
+                }
+            }
+
+            if (notificheTrovate.size() < expectedCount) {
+                Thread.sleep(pollingFrequency);
+            }
+
+            attempt++;
+        }
+
+        int trovate = notificheTrovate.size();
+        Assertions.assertEquals(
+                expectedCount,
+                trovate,
+                String.format("Numero di notifiche trovate al workflow step '%s' diverso da quello atteso. Trovate: %d, Attese: %d",
+                        stepKey, trovate, expectedCount)
+        );
+
+        return notificheTrovate.stream().toList();
+    }
+
+    private List<DelayerPaperDelivery> findCongelate(int expectedCount) throws Exception {
+        LocalDate lunedi = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        String deliveryDate = lunedi.toString();
+
+        return findByWorkflowStep(expectedCount, WORKFLOW_STEPS.get(0), deliveryDate);
+    }
+
+    private int calculateLimitByComparativo(String compare, int limit) {
+        return switch (compare) {
+            case "almeno", "esattamente" -> limit;
+            case "inferiore" -> limit - 1;
+            default -> throw new IllegalArgumentException("Il comparativo non è valido: " + compare);
+        };
+    }
+
 
 }
