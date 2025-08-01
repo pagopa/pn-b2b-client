@@ -116,10 +116,26 @@ public class DelayerSteps {
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
     private static final String CSV_PATH = "it/pagopa/pn/cucumber/workflowNotifica/workflowAnalogico/delayer/csv";
     enum WorkflowStep {
-        EVALUATE_SENDER_LIMIT,
-        EVALUATE_DRIVER_CAPACITY,
-        EVALUATE_PRINT_CAPACITY,
-        SENT_TO_PREPARE_PHASE_2;
+        EVALUATE_SENDER_LIMIT(0),
+        EVALUATE_DRIVER_CAPACITY(1),
+        EVALUATE_PRINT_CAPACITY(2),
+        SENT_TO_PREPARE_PHASE_2(3);
+
+        private final int index;
+
+        WorkflowStep(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public static Optional<WorkflowStep> fromIndex(int index) {
+            return Arrays.stream(values())
+                    .filter(ws -> ws.index == index)
+                    .findFirst();
+        }
 
         public static Optional<WorkflowStep> fromString(String name) {
             return Arrays.stream(values())
@@ -129,15 +145,9 @@ public class DelayerSteps {
 
         @Override
         public String toString() {
-            return name();
+            return name() + "(" + index + ")";
         }
     }
-    private static final List<String> WORKFLOW_STEPS = List.of(
-            "EVALUATE_SENDER_LIMIT",
-            "EVALUATE_DRIVER_CAPACITY",
-            "EVALUATE_PRINT_CAPACITY",
-            "SENT_TO_PREPARE_PHASE_2"
-    );
 
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -170,9 +180,7 @@ public class DelayerSteps {
             throw new RuntimeException("Sono state lette " + this.actualCsv.size() + " notifiche su " + this.numeroNotifiche + " totali nel file csv");
 
         // Inizializzazione Map workflowItem-notifiche
-        for (String key : WORKFLOW_STEPS) {
-            groupedByPkSubstring.put(key, new ArrayList<>());
-        }
+        for (WorkflowStep key :  WorkflowStep.values()) groupedByPkSubstring.put(key.toString(), new ArrayList<>());
 
         // Inizializzazione expected delivery
         /*
@@ -251,10 +259,12 @@ public class DelayerSteps {
     }
 
     @Then("il processo valutato fino al workflow step {string} ha rispettato i criteri di ranking:")
-    public void verificaOrdinePrioritaLimitate(String workflowStep, DataTable expectedOrder) {
+    public void verificaOrdinePrioritaLimitate(String ws, DataTable expectedOrder) {
+        WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
+
         Map<String, List<DelayerPaperDelivery>> expectedNotifiche = this.calculateExpectedWorkflowItems(workflowStep);
-        List<DelayerPaperDelivery> expected = expectedNotifiche.get(workflowStep);
-        List<DelayerPaperDelivery> actual = groupedByPkSubstring.get(workflowStep);
+        List<DelayerPaperDelivery> expected = expectedNotifiche.get(workflowStep.name());
+        List<DelayerPaperDelivery> actual = groupedByPkSubstring.get(workflowStep.name());
 
         if (expected == null || expected.isEmpty() || actual == null || actual.isEmpty()) {
             throw new IllegalArgumentException("Expected or actual notifications are null for workflowStep: " + workflowStep);
@@ -277,11 +287,12 @@ public class DelayerSteps {
     }
 
     @Then("esattamente {int} notifiche sono al workflow step {string}")
-    public void risultatiContengonoEsattamente(int expectedCount, String workflowStep) throws Exception {
+    public void risultatiContengonoEsattamente(int expectedCount, String ws) throws Exception {
+        WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
         List<DelayerPaperDelivery> notifiche = findByWorkflowStep(expectedCount, workflowStep, expectedDeliveryDate);
 
-        groupedByPkSubstring.get(workflowStep).clear();
-        groupedByPkSubstring.get(workflowStep).addAll(notifiche);
+        groupedByPkSubstring.get(workflowStep.name()).clear();
+        groupedByPkSubstring.get(workflowStep.name()).addAll(notifiche);
     }
 
     @Then("esattamente {int} notifiche sono state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente")
@@ -293,7 +304,7 @@ public class DelayerSteps {
     @And("verifica che la capacità disponibile per ogni tripla \\(unifiedDeliveryDriver-provincia-deliveryDate) sia almeno {int}")
     public void verificaCapacitaPredettaDaPrepareRequestDate(Integer capacitaMinimaAttesa, String compareToken) {
 
-        List<DelayerPaperDelivery> notifiche = groupedByPkSubstring.get(WORKFLOW_STEPS.get(0));
+        List<DelayerPaperDelivery> notifiche = groupedByPkSubstring.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
 
         if (notifiche == null || notifiche.isEmpty()) {
             throw new IllegalStateException("Nessuna notifica pianificata trovata.");
@@ -493,10 +504,10 @@ public class DelayerSteps {
         return !paId.equals("unknow");
     }
 
-    private Map<String, List<DelayerPaperDelivery>> calculateExpectedWorkflowItems(String workflowStep) {
+    private Map<String, List<DelayerPaperDelivery>> calculateExpectedWorkflowItems(WorkflowStep workflowStep) {
         Map<String, List<DelayerPaperDelivery>> groupedByStep = new HashMap<>();
-        for (String step : WORKFLOW_STEPS) {
-            groupedByStep.put(step, new ArrayList<>());
+        for (WorkflowStep step : WorkflowStep.values()) {
+            groupedByStep.put(step.name(), new ArrayList<>());
         }
 
         Map<String, List<DelayerPaperDelivery>> bySenderKey = new HashMap<>();
@@ -505,8 +516,8 @@ public class DelayerSteps {
         List<DelayerPaperDelivery> notifiche = new ArrayList<>(actualCsv);
 
         // Tutte iniziano nello step iniziale
-        groupedByStep.get("EVALUATE_SENDER_LIMIT").addAll(notifiche);
-        if (workflowStep.equals("EVALUATE_SENDER_LIMIT")) return groupedByStep;
+        groupedByStep.get(WorkflowStep.EVALUATE_SENDER_LIMIT.name()).addAll(notifiche);
+        if (workflowStep.equals(WorkflowStep.EVALUATE_SENDER_LIMIT)) return groupedByStep;
 
         // I driver sono disponibili a partire dall'evento EVALUATE_DRIVER_CAPACITY, li considero da qui
         // Crea una mappa per accesso rapido alle notifiche originali
@@ -565,8 +576,8 @@ public class DelayerSteps {
             }
         }
 
-        groupedByStep.get("EVALUATE_DRIVER_CAPACITY").addAll(postSenderLimit);
-        if (workflowStep.equals("EVALUATE_DRIVER_CAPACITY")) return groupedByStep;
+        groupedByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name()).addAll(postSenderLimit);
+        if (workflowStep.equals(WorkflowStep.EVALUATE_DRIVER_CAPACITY)) return groupedByStep;
 
         // Raggruppa nuovamente per driver per il secondo filtro
         byDriverKey.clear();
@@ -581,8 +592,8 @@ public class DelayerSteps {
             postDriverLimit.addAll(prioritaDelayer(gruppo).stream().limit(driverCapacity).toList());
         }
 
-        groupedByStep.get("EVALUATE_PRINT_CAPACITY").addAll(postDriverLimit);
-        if (workflowStep.equals("EVALUATE_PRINT_CAPACITY")) return groupedByStep;
+        groupedByStep.get(WorkflowStep.EVALUATE_PRINT_CAPACITY.name()).addAll(postDriverLimit);
+        if (workflowStep.equals(WorkflowStep.EVALUATE_PRINT_CAPACITY)) return groupedByStep;
 
         // Applica capacità di stampa
         List<DelayerPaperDelivery> postPrintLimit;
@@ -628,8 +639,8 @@ public class DelayerSteps {
         return ordinati;
     }
 
-    private Map<String, String> toComparableMap(DelayerPaperDelivery d, String workflowStep) {
-        int wsIndex = WORKFLOW_STEPS.indexOf(workflowStep);
+    private Map<String, String> toComparableMap(DelayerPaperDelivery d, WorkflowStep workflowStep) {
+        int wsIndex = workflowStep.getIndex();
         Map<String, String> result = new LinkedHashMap<>();
         result.put("pk", d.getPk());
         result.put("sk", d.getSk());
@@ -646,7 +657,7 @@ public class DelayerSteps {
         return result;
     }
 
-    private List<DelayerPaperDelivery> findByWorkflowStep(int expectedCount, String workflowStep, String deliveryDate) throws Exception {
+    private List<DelayerPaperDelivery> findByWorkflowStep(int expectedCount, WorkflowStep workflowStep, String deliveryDate) throws Exception {
 
         final int totalBudgetMillis = 900_000;
         final int pollingFrequency = 3000;
@@ -658,7 +669,7 @@ public class DelayerSteps {
                 .collect(Collectors.toSet());
 
         Set<DelayerPaperDelivery> notificheTrovate = new LinkedHashSet<>();
-        String stepKey = workflowStep.toUpperCase();
+        String stepKey = workflowStep.name();
 
         int attempt = 1;
         while (!requestIdsDaTrovare.isEmpty() && notificheTrovate.size() < expectedCount && attempt <= maxAttempts) {
@@ -716,7 +727,7 @@ public class DelayerSteps {
         LocalDate lunedi = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         String deliveryDate = lunedi.toString();
 
-        return findByWorkflowStep(expectedCount, WORKFLOW_STEPS.get(0), deliveryDate);
+        return findByWorkflowStep(expectedCount, WorkflowStep.EVALUATE_SENDER_LIMIT, deliveryDate);
     }
 
     private int calculateLimitByComparativo(String compare, int limit) {
