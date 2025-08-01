@@ -25,3 +25,5 @@ role:
     orgId: b5ae0b41-b854-414e-8295-078595ee1da1
     orgRole: invitalia
     orgFc: "00005005052"
+
+removeTos.endpoint: https://idpay.itn.internal.dev.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent

@@ -9,6 +9,7 @@ import it.pagopa.pari.registrobeni.domain.RdbRole;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Slf4j
 public class RegistroBeniPortalConsentSteps {
+    @Value("${removeTos.endpoint}")
+    private String removeTosEndpoint;
     private final ApiClientContext apiClientContext;
     private final RestTemplate restTemplate;
     private final JWTUserDataRegistry jwtUserDataRegistry;
@@ -37,7 +40,7 @@ public class RegistroBeniPortalConsentSteps {
 
     @Given("viene rimossa l'accettazione dei ToS per l'utente: {rdbRole}")
     public void removeToSForUser(RdbRole user) throws URISyntaxException {
-        URI uri = new URIBuilder("https://idpay.itn.internal.dev.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent")
+        URI uri = new URIBuilder(removeTosEndpoint)
                 .addParameter("userId", jwtUserDataRegistry.getUserData(user).getUid())
                 .build();
 
