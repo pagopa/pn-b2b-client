@@ -100,18 +100,16 @@ Feature: PARI - Portale registro dei beni
       | status      | KO |
       | errorKey    | product.invalid.file.maxrow |
 
-    #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-161 una volta chiuso scommentare la riga sotto
   Scenario Outline: [TC_UPLOAD_7] Recupero lista dei caricamenti e prodotti precedentemente caricati
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
     When viene caricato il csv con categoria: "<categoria_csv>" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
       | 2226586          | eiQINTWM149V2       | <codice_prodotto>      | <categoria>      | IT                   |
-#      | 2226586          | eiQINTWM149V2       | <codice_prodotto>      | lavatrice        | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Then si verifica che la lista di prodotti caricati non sia nulla
-    Then si verifica che la lista dei caricamenti effettuata non sia nulla
+    Then si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo
   Examples:
       | categoria_csv       | codice_prodotto     | categoria         |
       | WASHERDRIERS        | EIQINTWM149         | Lavasciuga        |

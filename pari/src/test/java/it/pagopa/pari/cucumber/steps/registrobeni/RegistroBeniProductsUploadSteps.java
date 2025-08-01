@@ -19,6 +19,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -163,13 +165,21 @@ public class RegistroBeniProductsUploadSteps {
         assertTrue(csvDTO.getData().contains("Prodotto associato ad un altro produttore"));
     }
 
-    @Then("si verifica che la lista dei caricamenti effettuata non sia nulla")
+    @Then("si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo")
     public void verifyUploadsListResponse() {
         uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10, null);
         assertNotNull(uploadsListDTO);
         assertNotNull(uploadsListDTO.getTotalElements());
         assertTrue(uploadsListDTO.getTotalElements() > 0);
-    }
+        assertTrue(
+                uploadsListDTO.getContent().stream()
+                        .anyMatch(x -> {
+                            LocalDateTime uploadTime = LocalDateTime.parse(x.getDateUpload());
+                            LocalDateTime now = LocalDateTime.now();
+                            Duration diff = Duration.between(uploadTime, now);
+                            return !uploadTime.isAfter(now) && diff.toMinutes() < 1;
+                        })
+        );    }
 
 
 }

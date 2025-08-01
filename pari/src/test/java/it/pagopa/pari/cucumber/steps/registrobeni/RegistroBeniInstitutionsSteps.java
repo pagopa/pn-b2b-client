@@ -1,16 +1,23 @@
 package it.pagopa.pari.cucumber.steps.registrobeni;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionsResponse;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,6 +31,7 @@ public class RegistroBeniInstitutionsSteps {
     private InstitutionResponse institutionResponse;
     private InstitutionDTO institutionDTO;
     private HttpStatusCodeException httpStatusCodeException;
+    private ProductDTO productDTO;
 
     public RegistroBeniInstitutionsSteps(ApiClientContext apiClientContext) {
         this.apiClientContext = apiClientContext;
@@ -44,6 +52,38 @@ public class RegistroBeniInstitutionsSteps {
         institutionResponse = apiClientContext.getRegisterPortalOperationClient().retrieveInstitutionById(institutionDTO.getInstitutionId());
     }
 
+    @When("viene recuperata la lista prodotti di una specifica istituzione tra quelle recuperate precedentemente")
+    public void retrieveInstitutionProducts() {
+        assertNotNull(institutionsResponse);
+        productDTO = Optional.ofNullable(institutionsResponse.getInstitutions())
+                .orElse(List.of())
+                .stream()
+                .map(this::createInstitution)
+                .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(ist.getInstitutionId(), 0, 10, null, null,
+                            null, null, null, null))
+                .filter(Objects::nonNull)
+                .map(ProductListDTO::getContent)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @And("si verifica che il prodotto ritornato abbia tutti i campi validi")
+    public void verifyProductsData() {
+        assertNotNull(productDTO);
+        assertNotNull(productDTO.getCountryOfProduction());
+        assertNotNull(productDTO.getProductCode());
+        assertNotNull(productDTO.getProductFileId());
+        assertNotNull(productDTO.getBrand());
+        assertNotNull(productDTO.getCapacity());
+        assertNotNull(productDTO.getEprelCode());
+        assertNotNull(productDTO.getProductGroup());
+        assertNotNull(productDTO.getCategory());
+        assertNotNull(productDTO.getEnergyClass());
+        assertNotNull(productDTO.getGtinCode());
+    }
+
     @When("si tenta di recuperare il dettaglio di una specifica istituzione con id: {string}")
     public void retrieveIstitutionById(String institutionId) {
         try {
@@ -60,12 +100,11 @@ public class RegistroBeniInstitutionsSteps {
 
     @Then("si controlla che la lista ritornata sia popolata correttamente")
     public void verifyInstitutionResponse() {
-        ObjectMapper mapper = new ObjectMapper();
         assertNull(httpStatusCodeException);
         assertNotNull(institutionsResponse);
         assertNotNull(institutionsResponse.getInstitutions());
         institutionsResponse.getInstitutions().forEach(x -> {
-            institutionDTO = mapper.convertValue(x, InstitutionDTO.class);
+            institutionDTO = createInstitution(x);
             assertFalse(institutionDTO.getInstitutionId().isEmpty());
             assertFalse(institutionDTO.getCreatedAt().isEmpty());
             assertFalse(institutionDTO.getUpdatedAt().isEmpty());
@@ -84,6 +123,11 @@ public class RegistroBeniInstitutionsSteps {
         assertTrue(StringUtils.isNotBlank(institutionResponse.getFiscalCode()));
         assertTrue(StringUtils.isNotBlank(institutionResponse.getVatNumber()));
         assertTrue(StringUtils.isNotBlank(institutionResponse.getZipCode()));
+    }
+
+    private InstitutionDTO createInstitution(Object fromObj) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(fromObj, InstitutionDTO.class);
     }
 
     @Getter
