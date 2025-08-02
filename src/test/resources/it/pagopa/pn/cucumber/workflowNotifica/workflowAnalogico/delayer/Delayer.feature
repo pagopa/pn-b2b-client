@@ -14,7 +14,7 @@
       And si presuppone che il limite mittente settimanale (paId-product_type-province-deliveryDate) sia esattamente <senderLimit>
       And si presuppone che il limite recapitista unificato settimanale (unifiedDeliveryDriver-provincia-deliveryDate) sia almeno <driverCapacity>
       And si presuppone che la capacità di stampa giornaliera sia esattamente <printCapacity>
-      And il processo valutato fino al workflow step "EVALUATE_DRIVER_CAPACITY" ha rispettato i criteri di ranking:
+      And il processo valutato fino al workflow step "SENT_TO_PREPARE_PHASE_2" ha rispettato i criteri di ranking:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
