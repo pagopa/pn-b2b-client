@@ -19,6 +19,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -93,10 +95,10 @@ public class RegistroBeniProductsUploadSteps {
     }
 
     private Resource generaCsv(List<Map<String, String>> tableRow, String suffix) throws Exception {
-        File tempFile = File.createTempFile("products-", suffix);
+        Path tempPath = Files.createTempFile("products-", suffix);
+        File tempFile = tempPath.toFile();
         tempFile.deleteOnExit();
 
-        // Otteniamo intestazione dalla prima mappa
         Set<String> header = tableRow.get(0).keySet();
 
         try (FileWriter fileWriter = new FileWriter(tempFile);
