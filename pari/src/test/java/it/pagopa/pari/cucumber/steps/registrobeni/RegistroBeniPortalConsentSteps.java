@@ -59,7 +59,7 @@ public class RegistroBeniPortalConsentSteps {
     public void userHandleTos() {
         PortalConsentDTO portalConsentApi = new PortalConsentDTO();
         portalConsentApi.setFirstAcceptance(true);
-        portalConsentApi.setVersionId("mock-version-id");
+        portalConsentApi.setVersionId("03ebfa19-129f-4e42-b3dc-23821c5eda55");
         Assertions.assertDoesNotThrow(() -> apiClientContext.getRegisterPortalOperationClient().savePortalConsent(portalConsentApi));
     }
 

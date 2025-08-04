@@ -22,6 +22,8 @@ Feature: PARI - Portale registro dei beni
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
       | Codice EPREL | Codice GTIN/EAN        | Codice Prodotto   | Categoria           | Paese di Produzione  |
       | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice           | IT                   |
+    Then si verifica che la risposta abbia:
+      | status      | KO |
 
 
   Scenario: [TC_UPLOAD_2] Inserimento di un nuovo file CSV con category errata
