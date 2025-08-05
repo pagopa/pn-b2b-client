@@ -10,6 +10,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -81,5 +82,19 @@ public class M2MVerifiedAttributeClientImpl extends AbstractClient implements
                 VerifiedAttribute::new, // TODO 09/07/2025 placeholder, rimuovere una volta rilasciate le API in QA
                 res -> res
         )).orElse(null);
+    }
+
+    // TODO 04/08/2025: specifica OpenAPI ancora non rilasciata,
+    //  sostituire lo stub seguente con l'implementazione reale una volta rilasciata
+    @Override
+    public List<UUID> getVerifiers(UUID tenantId, UUID attributeId) {
+        return Collections.emptyList();
+    }
+
+    // TODO 05/08/2025: specifica OpenAPI ancora non rilasciata,
+    //  sostituire lo stub seguente con l'implementazione reale una volta rilasciata
+    @Override
+    public List<UUID> getRevokers(UUID organizationId, UUID verifiedAttributeId) {
+        return Collections.emptyList();
     }
 }

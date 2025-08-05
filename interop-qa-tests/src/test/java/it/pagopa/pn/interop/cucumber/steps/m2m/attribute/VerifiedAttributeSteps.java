@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -9,6 +10,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttributeSeed;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -74,6 +76,86 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
                     + " coerenti con quelle specificate in fase di creazione")
                 .isEqualTo(expected);
         });
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo")
+    public void recuperaVerifiers() {
+        String tenant = sharedStepsContext.getTenantType();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+
+        recuperaVerifiers(organizationId, verifiedAttributeId);
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente")
+    public void recuperaVerifiersEnteInesistente() {
+        UUID organizationId = UUID.randomUUID();
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+        recuperaVerifiers(organizationId, verifiedAttributeId);
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un attributo inesistente")
+    public void recuperaVerifiersAttributoInesistente() {
+        String tenant = sharedStepsContext.getTenantType();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = UUID.randomUUID();
+        recuperaVerifiers(organizationId, verifiedAttributeId);
+    }
+
+    private void recuperaVerifiers(UUID organizationId, UUID verifiedAttributeId) {
+        httpExecutor.performCall(() -> client.getVerifiers(organizationId, verifiedAttributeId));
+    }
+
+
+    @Then("la lista degli enti che hanno verificato l'attributo è")
+    public void verificaVerifiers(List<String> tenants) {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
+        List<UUID> expectedVerifiers = tenants.stream().map(identityService::getOrganizationId).toList();
+        List<UUID> actualVerifiers = (List<UUID>) httpExecutor.getResponse();
+
+        assertThat(actualVerifiers)
+            .as("Verifica che gli enti verificatori attesi siano quelli effettivamente restituiti")
+            .containsExactlyInAnyOrderElementsOf(expectedVerifiers);
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo")
+    public void recuperaRevokers() {
+        String tenant = sharedStepsContext.getTenantType();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+
+        recuperaRevokers(organizationId, verifiedAttributeId);
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente")
+    public void recuperaRevokersEnteInesistente() {
+        UUID organizationId = UUID.randomUUID();
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+        httpExecutor.performCall(() -> client.getRevokers(organizationId, verifiedAttributeId));
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un attributo inesistente")
+    public void recuperaRevokersAttributoInesistente() {
+        String tenant = sharedStepsContext.getTenantType();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = UUID.randomUUID();
+        httpExecutor.performCall(() -> client.getRevokers(organizationId, verifiedAttributeId));
+    }
+
+    private void recuperaRevokers(UUID organizationId, UUID verifiedAttributeId) {
+        httpExecutor.performCall(() -> client.getRevokers(organizationId, verifiedAttributeId));
+    }
+
+
+    @Then("la lista degli enti che hanno revocato l'attributo è")
+    public void verificaRevokers(List<String> tenants) {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
+        List<UUID> expectedRevokers = tenants.stream().map(identityService::getOrganizationId).toList();
+        List<UUID> actualRevokers = (List<UUID>) httpExecutor.getResponse();
+
+        assertThat(actualRevokers)
+            .as("Verifica che gli enti revocatori attesi siano quelli effettivamente restituiti")
+            .containsExactlyInAnyOrderElementsOf(expectedRevokers);
     }
 
     @Override
