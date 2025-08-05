@@ -3,17 +3,92 @@
   # con la deliveryDate alla W+1(corrente) e ora, settimana W+1 le stiamo valutando
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
-    Scenario Outline: Test di prova
+    Scenario Outline: prova metodo
       Given il CSV <csv> contiene <TOT> notifiche cosi distribuite:
         | categoria              | quantita            |
         | RS                     | <RS>                |
         | SECONDO_TENTATIVO      | <SECONDO_TENTATIVO> |
         | ALTRO                  | <ALTRO>             |
         | RECAPITISTI_UTILIZZATI | 1                   |
-        | MITTENTI_UTILIZZATI    | 1                   |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province-deliveryDate) sia esattamente <senderLimit>
-      And si presuppone che il limite recapitista unificato settimanale (unifiedDeliveryDriver-provincia-deliveryDate) sia almeno <driverCapacity>
+        | MITTENTI_UTILIZZATI    | 3                   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId           | comparative | limit |
+        | senderPaId1~RS~RM  | almeno      | 10    |
+        | senderPaId1~AR~RM  | almeno      | 10    |
+        | senderPaId1~890~RM | almeno      | 10    |
+      And si presuppone che il limite recapitista unificato settimanale (unifiedDeliveryDriver-province) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Poste~RM                | almeno      | 30    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente <printCapacity>
+      And il processo valutato fino al workflow step "SENT_TO_PREPARE_PHASE_2" ha rispettato i criteri di ranking:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      Examples:
+        | csv                      | RS | SECONDO_TENTATIVO | ALTRO | TOT | printCapacity | nEvaluateSenderLimit | nEvaluateDriverCapacity | nEvaluatePrintCapacity | nSentPhase2 | nCongelate |
+        | "tc01_priorita_roma.csv" | 0  | 15                | 15    | 30  | 180000        | 30                   | 30                      | 30                     | 30          | 0          |
+
+
+    Scenario Outline: [REFACTORING] Refactor in un solo csv
+      Given il CSV <csv> contiene <TOT> notifiche cosi distribuite:
+        | categoria              | quantita            |
+        | RS                     | <RS>                |
+        | SECONDO_TENTATIVO      | <SECONDO_TENTATIVO> |
+        | ALTRO                  | <ALTRO>             |
+        | RECAPITISTI_UTILIZZATI | 7                   |
+        | MITTENTI_UTILIZZATI    | 7                   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId           | comparative | limit |
+        | senderPaId1~RS~P1  | esattamente | 0     |
+        | senderPaId1~AR~P1  | esattamente | 15    |
+        | senderPaId1~890~P1 | esattamente | 15    |
+        | senderPaId2~RS~P2  | esattamente | 15    |
+        | senderPaId2~AR~P2  | esattamente | 15    |
+        | senderPaId2~890~P2 | esattamente | 0     |
+        | senderPaId3~RS~P3  | esattamente | 15    |
+        | senderPaId3~AR~P3  | esattamente | 0     |
+        | senderPaId3~890~P3 | esattamente | 15    |
+        | senderPaId4~RS~P4  | esattamente | 30    |
+        | senderPaId4~AR~P4  | esattamente | 0     |
+        | senderPaId4~890~P4 | esattamente | 0     |
+        | senderPaId5~RS~P5  | esattamente | 0     |
+        | senderPaId5~AR~P5  | esattamente | 30    |
+        | senderPaId5~890~P5 | esattamente | 0     |
+        | senderPaId6~RS~P6  | esattamente | 0     |
+        | senderPaId6~AR~P6  | esattamente | 0     |
+        | senderPaId6~890~P6 | esattamente | 30    |
+        | senderPaId7~RS~P7  | esattamente | 10    |
+        | senderPaId7~AR~P7  | esattamente | 10    |
+        | senderPaId7~890~P7 | esattamente | 10    |
+      And si presuppone che il limite recapitista unificato settimanale (unifiedDeliveryDriver-province) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Driver1~RM              | esattamente | 20    |
+        | Driver2~RM              | esattamente | 20    |
+        | Driver3~RM              | esattamente | 20    |
+        | Driver4~RM              | esattamente | 20    |
+        | Driver5~RM              | esattamente | 20    |
+        | Driver6~RM              | esattamente | 20    |
+        | Driver7~RM              | almeno      | 30    |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      When viene avviato l'algoritmo tramite lambda
+      And esattamente <nEvaluateSenderLimit> notifiche sono al workflow step "EVALUATE_SENDER_LIMIT"
+      And esattamente <nEvaluateDriverCapacity> notifiche sono al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che la capacità disponibile per ogni tripla (unifiedDeliveryDriver-provincia-deliveryDate) sia esattamente <driverCapacity>
+      And il processo valutato fino al workflow step "EVALUATE_DRIVER_CAPACITY" ha rispettato i criteri di ranking:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And esattamente <nEvaluatePrintCapacity> notifiche sono al workflow step "EVALUATE_PRINT_CAPACITY"
+      And il processo valutato fino al workflow step "EVALUATE_PRINT_CAPACITY" ha rispettato i criteri di ranking:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And esattamente <nSentPhase2> notifiche sono al workflow step "SENT_TO_PREPARE_PHASE_2"
+      Then esattamente <nCongelate> notifiche sono state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente
       And il processo valutato fino al workflow step "SENT_TO_PREPARE_PHASE_2" ha rispettato i criteri di ranking:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
@@ -21,8 +96,58 @@
         | ALTRO             | notificationSentAt |
 
       Examples:
-        | csv                     | RS | SECONDO_TENTATIVO | ALTRO | TOT | senderLimit | driverCapacity | printCapacity | nEvaluateSenderLimit | nEvaluateDriverCapacity | nEvaluatePrintCapacity | nSentPhase2 | nCongelate |
-        | "tc01_priorita_2nd.csv" | 0  | 5                 | 5     | 10  | 10          | 8              | 180000        | 10                   | 10                      | 8                      | 8           | 2          |
+        | csv                           | TOT | nEvaluateSenderLimit | nEvaluateDriverCapacity | nEvaluatePrintCapacity | nSentPhase2 | nCongelate |
+        | "tc01_priorita_2nd.csv"       | 210 | 210                   | 30                      | 20                     | 20          | 10         |
+        | "tc01_priorita_rs.csv"        | 30  | 30                   | 30                      | 20                     | 20          | 10         |
+        | "tc01_priorita_rs_int.csv"    | 30  | 30                   | 30                      | 20                     | 20          | 10         |
+        | "tc01_priorita_2nd_int.csv"   | 30  | 30                   | 30                      | 20                     | 20          | 10         |
+        | "tc01_priorita_altro_int.csv" | 30  | 30                   | 30                      | 20                     | 20          | 10         |
+
+
+    Scenario Outline: [DELAYER-TC01] Le notifiche sono pianificate secondo i criteri di ranking
+      Given il CSV <csv> contiene <TOT> notifiche cosi distribuite:
+        | categoria              | quantita            |
+        | RS                     | <RS>                |
+        | SECONDO_TENTATIVO      | <SECONDO_TENTATIVO> |
+        | ALTRO                  | <ALTRO>             |
+        | RECAPITISTI_UTILIZZATI | 1                   |
+        | MITTENTI_UTILIZZATI    | 1                   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId           | comparative | limit |
+        | senderPaId1~RS~RM  | almeno      | 10    |
+        | senderPaId1~AR~RM  | almeno      | 10    |
+        | senderPaId1~890~RM | almeno      | 10    |
+      And si presuppone che il limite recapitista unificato settimanale (unifiedDeliveryDriver-province) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Poste~RM                | almeno      | 30    |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente <printCapacity>
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      When viene avviato l'algoritmo tramite lambda
+      And esattamente <nEvaluateSenderLimit> notifiche sono al workflow step "EVALUATE_SENDER_LIMIT"
+      And esattamente <nEvaluateDriverCapacity> notifiche sono al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che la capacità disponibile per ogni tripla (unifiedDeliveryDriver-provincia-deliveryDate) sia almeno <driverCapacity>
+      And il processo valutato fino al workflow step "EVALUATE_DRIVER_CAPACITY" ha rispettato i criteri di ranking:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And esattamente <nEvaluatePrintCapacity> notifiche sono al workflow step "EVALUATE_PRINT_CAPACITY"
+      And il processo valutato fino al workflow step "EVALUATE_PRINT_CAPACITY" ha rispettato i criteri di ranking:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And esattamente <nSentPhase2> notifiche sono al workflow step "SENT_TO_PREPARE_PHASE_2"
+      Then esattamente <nCongelate> notifiche sono state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente
+      And il processo valutato fino al workflow step "SENT_TO_PREPARE_PHASE_2" ha rispettato i criteri di ranking:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+
+      Examples:
+        | csv                      | RS | SECONDO_TENTATIVO | ALTRO | TOT | senderLimit | driverCapacity | printCapacity | nEvaluateSenderLimit | nEvaluateDriverCapacity | nEvaluatePrintCapacity | nSentPhase2 | nCongelate |
+        | "tc01_priorita_roma.csv" | 0  | 15                | 15    | 30  | 30          | 30             | 180000        | 30                   | 30                      | 30                     | 30          | 0          |
 
 
     @delayer
@@ -34,6 +159,11 @@
         | ALTRO                  | <ALTRO>             |
         | RECAPITISTI_UTILIZZATI | 1                   |
         | MITTENTI_UTILIZZATI    | 1                   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId           | comparative | limit |
+        | senderPaId1~RS~RM  | almeno      | 10    |
+        | senderPaId1~AR~RM  | almeno      | 10    |
+        | senderPaId1~890~RM | almeno      | 10    |
       And si presuppone che il limite mittente settimanale (paId-product_type-province-deliveryDate) sia esattamente <senderLimit>
       And si presuppone che il limite recapitista unificato settimanale (unifiedDeliveryDriver-provincia-deliveryDate) sia almeno <driverCapacity>
       And si presuppone che la capacità di stampa giornaliera sia esattamente <printCapacity>
