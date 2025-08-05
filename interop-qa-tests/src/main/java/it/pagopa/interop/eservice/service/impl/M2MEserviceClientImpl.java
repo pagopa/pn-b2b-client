@@ -94,7 +94,9 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public EServices getAll(EserviceListRequest req) {
         return this.performOperation(SimpleOperation.of(
-                () -> eservicesApi.getEServices(req.getOffset(), req.getLimit(), req.getProducerIds(), req.getTemplateIds()),
+                () -> eservicesApi.getEServices(req.getOffset(), req.getLimit(), req.getProducerIds(), req.getTemplateIds(),
+                        req.getName(), req.getEServiceTechnology(), req.getEServiceMode(),
+                        req.getIsSignalHubEnabled(), req.getIsConsumerDelegable(), req.getIsClientAccessDelegable()),
                 res -> res
         )).orElse(null);
     }
@@ -123,7 +125,13 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
                         this.defaultEserviceListRequest.getOffset(),
                         this.defaultEserviceListRequest.getLimit(),
                         this.defaultEserviceListRequest.getProducerIds(),
-                        this.defaultEserviceListRequest.getTemplateIds()
+                        this.defaultEserviceListRequest.getTemplateIds(),
+                        this.defaultEserviceListRequest.getName(),
+                        this.defaultEserviceListRequest.getEServiceTechnology(),
+                        this.defaultEserviceListRequest.getEServiceMode(),
+                        this.defaultEserviceListRequest.getIsSignalHubEnabled(),
+                        this.defaultEserviceListRequest.getIsConsumerDelegable(),
+                        this.defaultEserviceListRequest.getIsClientAccessDelegable()
                 ),
                 EServices::getResults
         )).orElse(List.of());

@@ -4,6 +4,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
@@ -83,14 +84,22 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
         return purposesApi.getPurpose(purposeId);
     }
 
+    public PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef) {
+        return purposesApi.activatePurposeVersion(purposeId, versionId, delegationRef);
+    }
+
     @Override
     public PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId) {
-        return purposesApi.activatePurposeVersion(purposeId, versionId);
+        return purposesApi.activatePurposeVersion(purposeId, versionId, null);
+    }
+
+    public PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef) {
+        return purposesApi.suspendPurposeVersion(purposeId, versionId, delegationRef);
     }
 
     @Override
     public PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId) {
-        return purposesApi.suspendPurposeVersion(purposeId, versionId);
+        return purposesApi.suspendPurposeVersion(purposeId, versionId, null);
     }
 
     @Override
