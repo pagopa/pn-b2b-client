@@ -236,6 +236,7 @@ public class Costanti {
     public static final String PHYSICAL_ADDRESS_REGEX = "^[A-Z0-9_.\\-:;@' \\[\\] ]*$";
     // Properties
     public static final String COSTO_BASE_NOTIFICA = "pn.external.costo_base_notifica";
+    public static final String RETENTION_ATTACHMENT_DAYS_AFTER_DELIVERY_TIMEOUT = "pn.retention_attachment_days_after_delivery_timeout";
     public static final String TECHNICAL_REFUSAL_COST_MODE = "pn.technical_refusal_cost_mode";
     @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
     public static String DIGITAL_ADDRESS;

@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -48,8 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -426,6 +426,44 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @And("viene effettuato un controllo sulla durata della retention configurabile di {string} per l'elemento di timeline {string}")
+    public void retentionCheckLoadForTimelineElementFromConfiguration(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
+
+        ApplicationContext context = sharedSteps.getContext();
+
+        Integer retentionFromProperty = Integer.valueOf(context.getEnvironment().getProperty(RETENTION_ATTACHMENT_DAYS_AFTER_DELIVERY_TIMEOUT));
+
+        TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+
+
+        //todo t v29 retention
+
+
+        // if > 0
+        //daysFromTimeout = (Instant.now()) - la data di timeout di ANALOG_FAILURE_WORKFLOW_TIMEOUT
+
+
+
+
+
+
+        if (documentType.equals("ATTACHMENTS")) {
+            for (int i = 0; i < fullSentNotification.getDocuments().size(); i++) {
+                String key = fullSentNotification.getDocuments().get(i).getRef().getKey();
+
+
+
+                assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
+                        .as("La verifica della retention ha fallito per la chiave '%s'. retentionTimeLoad: %d, timelineElement.getTimestamp: %s",
+                                key, retentionTimeLoad, timelineElement.getTimestamp())
+                        .isTrue();
+            }
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
     @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
@@ -657,6 +695,32 @@ public class InvioNotificheB2bSteps {
 
     private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws RuntimeException {
         await().atMost(120000, TimeUnit.MILLISECONDS);
+        PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
+        System.out.println(safeStorageResponse);
+        OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime();
+        OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
+        log.info("now: " + timelineEventDate);
+        log.info("retentionUntil: " + retentionUntil);
+        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.DAYS);
+
+        long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
+
+        LocalTime timelineEventDateLocalTime = timelineEventDate.toLocalTime();
+        LocalTime retentionUntilLocalTime = retentionUntil.toLocalTime();
+        Duration diff = Duration.between(timelineEventDateLocalTime, retentionUntilLocalTime);
+        long diffInMinutes = diff.toMinutes();
+
+        log.info("Difference: " + between);
+        log.info("diffInMinutes: " + diffInMinutes);
+        return retentionTime == between && Math.abs(diffInMinutes) <= 10;
+    }
+
+    private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp,String test) throws RuntimeException {
+        await().atMost(120000, TimeUnit.MILLISECONDS);
+
+            //todo t v29 retention
+
         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
         System.out.println(safeStorageResponse);
         OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime();

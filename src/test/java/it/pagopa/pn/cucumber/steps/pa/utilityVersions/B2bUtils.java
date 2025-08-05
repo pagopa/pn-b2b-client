@@ -356,6 +356,17 @@ public abstract class B2bUtils {
         return context.getEnvironment().getProperty(propertyName);
     }
 
+    public static void calcolaRetentionFromConfiguration(ApplicationContext context, String parametriCalcoloCostoNotifica) {
+    //todo t v29 retention
+
+
+
+
+        String propertyValue = getProperty(context, RETENTION_ATTACHMENT_DAYS_AFTER_DELIVERY_TIMEOUT);
+
+
+        };
+
     /**
      * Se nel DataTest viene passato il parametro parametriCalcoloCostoNotifica, provvede a calcolare il costo della notifica a partire
      * da una stringa in input con il seguente formato: recipients:1,ko:1,ok:0

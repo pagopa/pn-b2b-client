@@ -2,13 +2,16 @@ Feature: Mancato esito spedizione analogica este@mancatoEsitoSpedizioneEstera
 
 
 
-  #SEND_ANALOG_TIMEOUT_CREATION_REQUEST
+  #SEND_ANALOG_TIMEOUT_CREATION_REQUEST(diagnostico)
   #SEND_ANALOG_TIMEOUT
 
   #ANALOG_FAILURE_WORKFLOW_TIMEOUT
-  #DELIVERY_TIMEOUT
+  #DELIVERY_TIMEOUT(stato)
+
+  #deliveryDetailsCode RIR DEMAT : RECRSI004B - RECRI004B - RECRI003B
 
 
+#And viene effettuato un controllo sulla durata della retention di
 
   #                      *** MONODESTINATARIO ***
 
