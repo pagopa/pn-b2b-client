@@ -17,6 +17,12 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
         @NonNull private Integer limit;
         private List<UUID> producerIds;
         private List<UUID> templateIds;
+        String name;
+        EServiceTechnology eServiceTechnology;
+        EServiceMode eServiceMode;
+        Boolean isSignalHubEnabled;
+        Boolean isConsumerDelegable;
+        Boolean isClientAccessDelegable;
     }
 
     EServices getAll(EserviceListRequest payload);
