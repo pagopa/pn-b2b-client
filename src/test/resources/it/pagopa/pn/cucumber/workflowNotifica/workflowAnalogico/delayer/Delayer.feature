@@ -8,13 +8,12 @@
         | seed            | quantita |
         | tcPriorityRs2nd | 30       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId           | comparative | limit |
-        | senderPaId1~RS~RM  | esattamente | 15    |
-        | senderPaId1~AR~RM  | esattamente | 15    |
-        | senderPaId1~890~RM | esattamente | 0     |
+        | senderId          | comparative | limit |
+        | senderPaId1~RS~RM | esattamente | 15    |
+        | senderPaId1~AR~RM | esattamente | 15    |
       And si verifica che il limite recapitista unificato settimanale (unifiedDeliveryDriver-province) sia:
         | unifiedDeliveryDriverId | comparative | limit |
-        | Driver1~RM              | esattamente | 20    |
+        | Poste~RM                | almeno      | 30    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
       #And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And viene simulato internamente l'algoritmo di pianificazione
@@ -29,6 +28,7 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      Then verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                        | TOT |
@@ -47,23 +47,14 @@
         | tcPriorityAll     | 30       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId           | comparative | limit |
-        | senderPaId1~RS~P1  | esattamente | 0     |
         | senderPaId1~AR~P1  | esattamente | 15    |
         | senderPaId1~890~P1 | esattamente | 15    |
         | senderPaId2~RS~P2  | esattamente | 15    |
         | senderPaId2~AR~P2  | esattamente | 15    |
-        | senderPaId2~890~P2 | esattamente | 0     |
         | senderPaId3~RS~P3  | esattamente | 15    |
-        | senderPaId3~AR~P3  | esattamente | 0     |
         | senderPaId3~890~P3 | esattamente | 15    |
         | senderPaId4~RS~P4  | esattamente | 30    |
-        | senderPaId4~AR~P4  | esattamente | 0     |
-        | senderPaId4~890~P4 | esattamente | 0     |
-        | senderPaId5~RS~P5  | esattamente | 0     |
         | senderPaId5~AR~P5  | esattamente | 30    |
-        | senderPaId5~890~P5 | esattamente | 0     |
-        | senderPaId6~RS~P6  | esattamente | 0     |
-        | senderPaId6~AR~P6  | esattamente | 0     |
         | senderPaId6~890~P6 | esattamente | 30    |
         | senderPaId7~RS~P7  | esattamente | 10    |
         | senderPaId7~AR~P7  | esattamente | 10    |
@@ -101,6 +92,7 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      Then verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv              | TOT |

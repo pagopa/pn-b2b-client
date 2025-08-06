@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -32,7 +33,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DelayerSteps {
 
-
     @Getter
     static class DelayerPaperDelivery {
         private String pk;
@@ -47,6 +47,7 @@ public class DelayerSteps {
         private String attempt;
         private String iun;
         private String unifiedDeliveryDriver;
+        private String priority;
 
         public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
             if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -83,6 +84,23 @@ public class DelayerSteps {
             this.attempt = requireField(tableRecord, "attempt", false);
             this.iun = requireField(tableRecord, "iun", false);
             this.unifiedDeliveryDriver = requireField(tableRecord, "unifiedDeliveryDriver", true);
+            this.priority = requireField(tableRecord, "priority", true);
+        }
+
+        public DelayerPaperDelivery(DelayerPaperDelivery source) {
+            this.pk = source.pk;
+            this.sk = source.sk;
+            this.requestId = source.requestId;
+            this.notificationSentAt = source.notificationSentAt;
+            this.prepareRequestDate = source.prepareRequestDate;
+            this.productType = source.productType;
+            this.senderPaId = source.senderPaId;
+            this.province = source.province;
+            this.cap = source.cap;
+            this.attempt = source.attempt;
+            this.iun = source.iun;
+            this.unifiedDeliveryDriver = source.unifiedDeliveryDriver;
+            this.priority = source.priority;
         }
 
         private String requireField(JsonNode node, String fieldName, boolean nullable) {
@@ -124,7 +142,8 @@ public class DelayerSteps {
         EVALUATE_SENDER_LIMIT(0),
         EVALUATE_DRIVER_CAPACITY(1),
         EVALUATE_PRINT_CAPACITY(2),
-        SENT_TO_PREPARE_PHASE_2(3);
+        SENT_TO_PREPARE_PHASE_2(3),
+        EVALUATE_RESIDUAL_CAPACITY(4);
 
         private final int index;
 
@@ -165,7 +184,8 @@ public class DelayerSteps {
     Map<String, List<DelayerPaperDelivery>> groupedBySeed = new HashMap<>();
     Map<String, Map<String, List<DelayerPaperDelivery>>> expectedPianification = new HashMap<>();
     Map<String, Map<String, List<DelayerPaperDelivery>>> actualPianification = new HashMap<>();
-    Map<String, Map<String, List<DelayerPaperDelivery>>> failPianification = new HashMap<>();
+    Map<String, String> failPianification = new HashMap<>();
+    private Map<String, List<String>> priorityConfigMap;
 
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -175,6 +195,7 @@ public class DelayerSteps {
         initializeExpectedDeliveryDate();
         initializeSenderAndDriverMaps();
         initializeSeedMaps(dataTable);
+        initializePriorityConfigMap();
     }
 
     @And("si presuppone che il limite {word} settimanale \\(paId-product_type-province) sia:")
@@ -219,10 +240,10 @@ public class DelayerSteps {
 
             targetMap.put(entityId, calculatedLimit);
 
-//            if (!isMittente) {
-//                List<DelayerPaperDelivery> notifiche = getExpectedNotification(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
-//                validateDriverCapacitiesViaLambda(notifiche, dataTable);
-//            }
+            if (!isMittente) {
+                List<DelayerPaperDelivery> notifiche = getExpectedNotification(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
+                validateDriverCapacitiesViaLambda(notifiche, dataTable);
+            }
         }
     }
 
@@ -323,14 +344,14 @@ public class DelayerSteps {
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
     public void populateTargetTable(String csvName) throws Exception {
-        String payload = """
+        String payload = String.format("""
                 {
                   "operationType": "IMPORT_DATA",
-                  "parameters": []
+                  "parameters": ["%s"]
                 }
-                """;
+                """, csvName);
 
-        String rawResult = lambdaInvoker.invokeMyLambda(this.LAMBDA_NAME, payload);
+        String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
         checkLambdaResponse(rawResult, "IMPORT_DATA");
         log.info("Importazione CSV [{}] completata correttamente", csvName);
     }
@@ -390,21 +411,42 @@ public class DelayerSteps {
                     .getOrDefault(seed, Collections.emptyMap())
                     .get(workflowStep.name());
 
-            if (expectedList == null || actualList == null || expectedList.size() != actualList.size()) {
-                this.failPianification.put(seed, this.actualPianification.get(seed));
+            if (expectedList == null) {
+                String errorMsg = String.format(
+                        "Seed '%s': pianificazione attesa assente per lo step '%s'.",
+                        seed, workflowStep.name()
+                );
+                registerFailureIfAbsent(seed, errorMsg);
+
+            } else if (actualList == null || expectedList.size() != actualList.size()) {
+                String errorMsg = String.format(
+                        "Seed '%s': mismatch nel numero di notifiche per lo step '%s' - Attese: %d, Trovate: %d",
+                        seed,
+                        workflowStep.name(),
+                        expectedList.size(),
+                        actualList == null ? 0 : actualList.size()
+                );
+                registerFailureIfAbsent(seed, errorMsg);
             }
         }
 
         // 3. Segnala i seed completamente mancanti
         for (String missingSeed : missingSeeds) {
-            this.failPianification.put(missingSeed, this.actualPianification.get(missingSeed));
+            String errorMsg = String.format(
+                    "Seed '%s': nessuna notifica trovata per lo step '%s' (seed completamente mancante).",
+                    missingSeed, workflowStep.name()
+            );
+            registerFailureIfAbsent(missingSeed, errorMsg);
         }
 
         // 4. Verifica se tutti i seed hanno fallito
         if (failPianification.keySet().containsAll(this.groupedBySeed.keySet())) {
-            throw new IllegalStateException("All seeds failed");
+            assertPianifications();
         }
+    }
 
+    private void registerFailureIfAbsent(String seed, String errorMsg) {
+        failPianification.putIfAbsent(seed, errorMsg);
     }
 
     private Map<String, List<DelayerPaperDelivery>> bySeed(List<DelayerPaperDelivery> notifiche) {
@@ -443,37 +485,45 @@ public class DelayerSteps {
     @Then("verifica che il processo fino al workflow step {string} abbia rispettato i criteri di ranking per almeno un test case:")
     public void checkRanking(String ws, DataTable expectedOrder) {
         WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
+
         Set<String> seedsToCheck = this.groupedBySeed.keySet().stream()
                 .filter(seed -> !failPianification.containsKey(seed))
                 .collect(Collectors.toSet());
 
         if (seedsToCheck.isEmpty()) {
-            throw new IllegalStateException("All seeds have failed the planning step: " + workflowStep.name());
+            throw new IllegalStateException("Tutti i seed hanno fallito lo step di pianificazione: " + workflowStep.name());
         }
+
+        boolean almenoUnSeedValido = false;
 
         for (String seed : seedsToCheck) {
             Map<String, List<DelayerPaperDelivery>> expectedMap = expectedPianification.get(seed);
             Map<String, List<DelayerPaperDelivery>> actualMap = actualPianification.get(seed);
 
             if (expectedMap == null) {
-                throw new IllegalStateException("Missing expected planning data for seed: " + seed);
+                putFailIfAbsent(seed, "Seed '%s': pianificazione attesa mancante per lo step '%s'.".formatted(seed, workflowStep.name()));
+                continue;
             }
 
             if (actualMap == null) {
-                throw new IllegalStateException("Missing actual planning data for seed: " + seed);
+                putFailIfAbsent(seed, "Seed '%s': pianificazione reale mancante per lo step '%s'.".formatted(seed, workflowStep.name()));
+                continue;
             }
 
             List<DelayerPaperDelivery> expected = expectedMap.get(workflowStep.name());
             List<DelayerPaperDelivery> actual = actualMap.get(workflowStep.name());
 
             if (expected == null || expected.isEmpty()) {
-                throw new IllegalArgumentException("Expected notifications are null or empty for workflowStep: " + workflowStep + " and seed: " + seed);
+                putFailIfAbsent(seed, "Seed '%s': notifiche attese vuote o nulle per lo step '%s'.".formatted(seed, workflowStep.name()));
+                continue;
             }
 
             if (actual == null || actual.isEmpty()) {
-                throw new IllegalArgumentException("Actual notifications are null or empty for workflowStep: " + workflowStep + " and seed: " + seed);
+                putFailIfAbsent(seed, "Seed '%s': notifiche reali vuote o nulle per lo step '%s'.".formatted(seed, workflowStep.name()));
+                continue;
             }
 
+            // Ranking check
             List<Map<String, String>> expectedRank = expected.stream()
                     .map(n -> toComparableMap(n, workflowStep))
                     .toList();
@@ -482,24 +532,49 @@ public class DelayerSteps {
                     .map(n -> toComparableMap(n, workflowStep))
                     .toList();
 
-            Assertions.assertEquals(expectedRank, actualRank,
-                    () -> "Ranking mismatch for seed: " + seed + "\nExpected: " + expectedRank + "\nActual: " + actualRank);
+            try {
+                Assertions.assertEquals(expectedRank, actualRank,
+                        () -> "Ranking diverso per seed: " + seed + "\nExpected: " + expectedRank + "\nActual: " + actualRank);
+                almenoUnSeedValido = true;
+            } catch (AssertionError e) {
+                putFailIfAbsent(seed, "Seed '%s': ordine delle notifiche non rispettato allo step '%s'.%nDettaglio: %s".formatted(seed, workflowStep.name(), e.getMessage()));
+            }
+        }
+
+        if (!almenoUnSeedValido) {
+            assertPianifications();
+        }
+    }
+
+    private void putFailIfAbsent(String seed, String errorMsg) {
+        if (!failPianification.containsKey(seed)) {
+            failPianification.put(seed, errorMsg);
         }
     }
 
     @Then("verifica che le opportune notifiche siano state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente per almeno un test case")
-    public void checkFrozen(String ws) throws Exception {
+    public void checkFrozen(String ws) {
         WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
         Set<String> validSeeds = this.groupedBySeed.keySet().stream()
                 .filter(seed -> !failPianification.containsKey(seed))
                 .collect(Collectors.toSet());
 
         if (validSeeds.isEmpty()) {
-            throw new IllegalStateException("All seeds failed – cannot validate frozen notifications.");
+            assertPianifications();
         }
 
-        List<DelayerPaperDelivery> allExpectedFrozen = getExpectedNotification("FROZEN");
-        List<DelayerPaperDelivery> allActualFrozen = findCongelate(allExpectedFrozen);
+        List<DelayerPaperDelivery> allExpectedFrozen = new ArrayList<>();
+        List<DelayerPaperDelivery> allActualFrozen;
+
+        try {
+            allActualFrozen = findCongelate(getExpectedNotification("FROZEN"));
+        } catch (Exception e) {
+            validSeeds.forEach(seed ->
+                    registerFailureIfAbsent(seed, "Seed '%s': errore durante il recupero delle notifiche congelate: %s"
+                            .formatted(seed, e.getMessage()))
+            );
+            return;
+        }
 
         for (String seed : validSeeds) {
             Map<String, List<DelayerPaperDelivery>> expectedMap = expectedPianification.get(seed);
@@ -514,23 +589,26 @@ public class DelayerSteps {
             if (actualFrozen != null) allActualFrozen.addAll(actualFrozen);
         }
 
-        Assertions.assertEquals(allExpectedFrozen.size(), allActualFrozen.size(),
-                "Il numero di notifiche congelate non corrisponde al valore atteso.");
+        if (allExpectedFrozen.size() != allActualFrozen.size()) {
+            validSeeds.forEach(seed -> registerFailureIfAbsent(seed,
+                    "Seed '%s': numero di notifiche congelate non corrispondente. Attese: %d, Trovate: %d"
+                            .formatted(seed, allExpectedFrozen.size(), allActualFrozen.size())));
+            return;
+        }
 
         Set<Map<String, String>> expectedSet = allExpectedFrozen.stream()
                 .map(n -> toComparableMap(n, workflowStep))
                 .collect(Collectors.toSet());
 
-        Set<Map<String, String>> actualSet = allActualFrozen.stream()
-                .map(n -> toComparableMap(n, workflowStep))
-                .collect(Collectors.toSet());
+        Set<Map<String, String>> missing = allActualFrozen.stream()
+                .map(n -> toComparableMap(n, workflowStep)).collect(Collectors.toSet());
+        missing.removeAll(expectedSet);
 
-        Assertions.assertTrue(expectedSet.containsAll(actualSet),
-                () -> {
-                    Set<Map<String, String>> missing = new HashSet<>(actualSet);
-                    missing.removeAll(expectedSet);
-                    return "Alcune notifiche congelate non corrispondono a quelle attese:\n" + missing;
-                });
+        if (!missing.isEmpty()) {
+            validSeeds.forEach(seed -> registerFailureIfAbsent(seed,
+                    "Seed '%s': notifiche congelate non corrispondono a quelle attese.%nDifferenze: %s"
+                            .formatted(seed, missing)));
+        }
     }
 
     @Given("verifica che la capacità disponibile per ogni tripla \\(unifiedDeliveryDriver-provincia-deliveryDate) sia {word} {int}")
@@ -621,6 +699,21 @@ public class DelayerSteps {
                             "', deliveryDate: " + request.deliveryDate, e);
                 }
             }
+        }
+    }
+
+    @Then("verifica la corretta pianificazione di ogni test case")
+    public void assertPianifications() {
+        if (!failPianification.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Pianificazione fallita per i seguenti seed:\n");
+
+            failPianification.forEach((seed, error) -> {
+                message.append("• Seed: ").append(seed).append("\n")
+                        .append("  Errore: ").append(error).append("\n\n");
+            });
+
+            Assertions.fail(message.toString());
         }
     }
 
@@ -748,6 +841,7 @@ public class DelayerSteps {
         return !paId.equals("unknow");
     }
 
+    /*
     private Map<String, List<DelayerPaperDelivery>> simulateAlgorithm(WorkflowStep endAt, String seed) {
         Map<String, List<DelayerPaperDelivery>> groupedByStep = new HashMap<>();
         Map<String, List<DelayerPaperDelivery>> frozenByStep = new HashMap<>();
@@ -767,32 +861,21 @@ public class DelayerSteps {
             throw new RuntimeException("");
 
         // Tutte iniziano nello step iniziale
-        groupedByStep.get(WorkflowStep.EVALUATE_SENDER_LIMIT.name()).addAll(notifiche);
+        groupedByStep.get(WorkflowStep.EVALUATE_SENDER_LIMIT.name())
+                .addAll(
+                        notifiche.stream()
+                                .map(DelayerPaperDelivery::new)
+                                .peek(n -> {
+                                    n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_SENDER_LIMIT, this.expectedDeliveryDate);
+                                    n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_SENDER_LIMIT, n);
+                                    n.priority = calculatePriority(n);
+                                })
+                                .toList()
+                );
+
         if (endAt.equals(WorkflowStep.EVALUATE_SENDER_LIMIT)) {
             groupedByStep.put("FROZEN", List.of());
             return groupedByStep;
-        }
-
-        // I driver sono disponibili a partire dall'evento EVALUATE_DRIVER_CAPACITY, li considero da qui
-        // Crea una mappa per accesso rapido alle notifiche originali
-        Map<String, DelayerPaperDelivery> byRequestId = notifiche.stream()
-                .collect(Collectors.toMap(d -> d.requestId, d -> d));
-
-        // TODO: (iterazione non piu necessaria) Itera sul gruppo e aggiorna se esiste una corrispondenza
-        List<DelayerPaperDelivery> notificheConDriver = this.groupedByPkSubstring.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
-        if (notificheConDriver != null && !notificheConDriver.isEmpty()) {
-            for (DelayerPaperDelivery n : notificheConDriver) {
-                DelayerPaperDelivery match = byRequestId.get(n.requestId);
-                if (match != null) {
-                    // Aggiorno i campi calcolati automaticamente dall'algoritmo nelle mie notifiche
-                    if (!this.driverCapacityMap.containsKey(n.requestId))
-                        throw new RuntimeException(String.format("La notifica con requestId: %s presenta un unifiedDeliveryDriver (%s) non previsto", n.requestId, n.unifiedDeliveryDriver));
-
-                    match.unifiedDeliveryDriver = n.unifiedDeliveryDriver;
-                    match.pk = n.pk;
-                    match.sk = n.sk;
-                }
-            }
         }
 
         // Raggruppa per mittente
@@ -811,8 +894,18 @@ public class DelayerSteps {
                 int senderLimit = getSenderLimit(entry);
 
                 postSenderLimit.addAll(gruppo.stream().limit(senderLimit).toList());
+
                 frozenByStep.get(WorkflowStep.EVALUATE_SENDER_LIMIT.name()).addAll(
-                        gruppo.stream().skip(senderLimit).toList());
+                        gruppo.stream()
+                                .skip(senderLimit)
+                                .map(DelayerPaperDelivery::new)
+                                .peek(n -> {
+                                    n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_SENDER_LIMIT, this.expectedDeliveryDate);
+                                    n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_SENDER_LIMIT, n);
+                                    n.priority = calculatePriority(n);
+                                })
+                                .toList()
+                );
             } else {
                 mittentiNonCensiti.addAll(gruppo); // salva per dopo
             }
@@ -836,11 +929,26 @@ public class DelayerSteps {
                 postSenderLimit.add(n);
                 driverResidua.put(driverKey, available - 1);
             } else {
-                frozenByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name()).add(n);
+                DelayerPaperDelivery not = new DelayerPaperDelivery(n);
+                n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_SENDER_LIMIT, expectedDeliveryDate);
+                n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_SENDER_LIMIT, n);
+                n.priority = calculatePriority(n);
+                frozenByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name()).add(not);
             }
         }
 
-        groupedByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name()).addAll(postSenderLimit);
+        groupedByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name())
+                .addAll(
+                        postSenderLimit
+                                .stream()
+                                .peek(n -> {
+                                    n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_DRIVER_CAPACITY, this.expectedDeliveryDate);
+                                    n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_DRIVER_CAPACITY, n);
+                                    n.priority = calculatePriority(n);
+                                })
+                                .map(DelayerPaperDelivery::new).toList()
+                );
+
         if (endAt.equals(WorkflowStep.EVALUATE_DRIVER_CAPACITY)) {
             groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
             return groupedByStep;
@@ -864,12 +972,30 @@ public class DelayerSteps {
             postDriverLimit.addAll(ordinati.stream().limit(driverCapacity).toList());
 
             // Congela il resto per lo step EVALUATE_DRIVER_CAPACITY
-            frozenByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name())
-                    .addAll(ordinati.stream().skip(driverCapacity).toList());
+            frozenByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name()).addAll(
+                    ordinati.stream()
+                            .skip(driverCapacity)
+                            .peek(n -> {
+                                n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_SENDER_LIMIT, this.expectedDeliveryDate);
+                                n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_SENDER_LIMIT, n);
+                                n.priority = calculatePriority(n);
+                            })
+                            .map(DelayerPaperDelivery::new).toList()
+            );
         }
 
 
-        groupedByStep.get(WorkflowStep.EVALUATE_PRINT_CAPACITY.name()).addAll(postDriverLimit);
+        groupedByStep.get(WorkflowStep.EVALUATE_PRINT_CAPACITY.name())
+                .addAll(
+                        postDriverLimit.stream()
+                                .peek(n -> {
+                                    n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_PRINT_CAPACITY, this.expectedDeliveryDate);
+                                    n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_PRINT_CAPACITY, n);
+                                    n.priority = calculatePriority(n);
+                                })
+                                .map(DelayerPaperDelivery::new).toList()
+                );
+
         if (endAt.equals(WorkflowStep.EVALUATE_PRINT_CAPACITY)) {
             groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
             return groupedByStep;
@@ -884,15 +1010,294 @@ public class DelayerSteps {
         } else {
             postPrintLimit = ordinati.subList(0, printCapacity);
             frozenByStep.get(WorkflowStep.EVALUATE_PRINT_CAPACITY.name()).addAll(
-                    ordinati.subList(printCapacity, ordinati.size()));
+                    ordinati.subList(printCapacity, ordinati.size()).stream()
+                            .peek(n -> {
+                                n.pk = calculateNotificationPk(WorkflowStep.EVALUATE_SENDER_LIMIT, this.expectedDeliveryDate);
+                                n.sk = calculateNotificationSk(WorkflowStep.EVALUATE_SENDER_LIMIT, n);
+                                n.priority = calculatePriority(n);
+                            })
+                            .map(DelayerPaperDelivery::new).toList()
+            );
         }
 
-        groupedByStep.get(WorkflowStep.SENT_TO_PREPARE_PHASE_2.name()).addAll(postPrintLimit);
+
+        groupedByStep.get(WorkflowStep.SENT_TO_PREPARE_PHASE_2.name())
+                .addAll(
+                        postPrintLimit.stream()
+                                .peek(n -> {
+                                    n.pk = calculateNotificationPk(WorkflowStep.SENT_TO_PREPARE_PHASE_2, this.expectedDeliveryDate);
+                                    n.sk = calculateNotificationSk(WorkflowStep.SENT_TO_PREPARE_PHASE_2, n);
+                                    n.priority = calculatePriority(n);
+                                })
+                                .map(DelayerPaperDelivery::new).toList()
+                );
 
         // Congelati finali aggregati da tutti gli step
         groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
 
         return groupedByStep;
+    }
+     */
+
+    private Map<String, List<DelayerPaperDelivery>> simulateAlgorithm(WorkflowStep endAt, String seed) {
+        Map<String, List<DelayerPaperDelivery>> groupedByStep = initWorkflowMap();
+        Map<String, List<DelayerPaperDelivery>> frozenByStep = initWorkflowMap();
+
+        List<DelayerPaperDelivery> notifications = new ArrayList<>(groupedBySeed.get(seed));
+        if (notifications.isEmpty()) {
+            throw new RuntimeException("Nessuna notifica trovata per il seed " + seed);
+        }
+
+        // Step 1: Sender Limit
+        var pairResult = applySenderLimit(notifications, groupedByStep, frozenByStep);
+        List<DelayerPaperDelivery> toDriverCapacity = pairResult.getLeft();
+        List<DelayerPaperDelivery> toResidualCapacity = pairResult.getRight();
+        if (endAt == WorkflowStep.EVALUATE_SENDER_LIMIT) return finalizeResult(groupedByStep, frozenByStep);
+
+        // Step 2a: Residual Capacity 
+        List<DelayerPaperDelivery> residualNotifications = applyResidualCapacity(toResidualCapacity, groupedByStep, frozenByStep);
+        if (endAt == WorkflowStep.EVALUATE_RESIDUAL_CAPACITY) return finalizeResult(groupedByStep, frozenByStep);
+        
+        // Step 2b: Driver Capacity
+        List<DelayerPaperDelivery> postDriverCapacity = applyDriverCapacity(toDriverCapacity, groupedByStep, frozenByStep);
+        List<DelayerPaperDelivery> processedResidues = applyDriverCapacity(residualNotifications, groupedByStep, frozenByStep);
+        List<DelayerPaperDelivery> toPrintCapacity = new ArrayList<>(postDriverCapacity);
+        toPrintCapacity.addAll(processedResidues);
+        if (endAt == WorkflowStep.EVALUATE_DRIVER_CAPACITY) return finalizeResult(groupedByStep, frozenByStep);
+
+        // Step 3: Print Capacity
+        List<DelayerPaperDelivery> toPreparePhase2 = applyPrintCapacity(toPrintCapacity, groupedByStep, frozenByStep);
+        if (endAt == WorkflowStep.EVALUATE_PRINT_CAPACITY) return finalizeResult(groupedByStep, frozenByStep);
+
+        // Step 4: Sent to Prepare Phase 2
+        groupedByStep.get(WorkflowStep.SENT_TO_PREPARE_PHASE_2.name())
+                .addAll(deepCopyAndUpdateKeys(toPreparePhase2, WorkflowStep.SENT_TO_PREPARE_PHASE_2, this.expectedDeliveryDate));
+
+        groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
+        return groupedByStep;
+    }
+
+    private List<DelayerPaperDelivery> applyResidualCapacity(List<DelayerPaperDelivery> toResidualCapacity, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+        groupedByStep.get(WorkflowStep.EVALUATE_RESIDUAL_CAPACITY.name())
+                .addAll(deepCopyAndUpdateKeys(toResidualCapacity, WorkflowStep.EVALUATE_RESIDUAL_CAPACITY, this.expectedDeliveryDate));
+
+        return toResidualCapacity;
+    }
+
+    private Map<String, List<DelayerPaperDelivery>> initWorkflowMap() {
+        Map<String, List<DelayerPaperDelivery>> map = new HashMap<>();
+        for (WorkflowStep step : WorkflowStep.values()) {
+            map.put(step.name(), new ArrayList<>());
+        }
+        return map;
+    }
+
+    private Map<String, List<DelayerPaperDelivery>> finalizeResult(Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+        groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
+        return groupedByStep;
+    }
+
+    private List<DelayerPaperDelivery> deepCopyAndUpdateKeys(List<DelayerPaperDelivery> source, WorkflowStep step, String deliveryDate) {
+        return source.stream()
+                .map(DelayerPaperDelivery::new)
+                .peek(n -> {
+                    n.pk = calculateNotificationPk(step, deliveryDate);
+                    n.sk = calculateNotificationSk(step, n);
+                    n.priority = calculatePriority(n);
+                })
+                .toList();
+    }
+
+    private void freezeNotifications(List<DelayerPaperDelivery> list, WorkflowStep step, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+        String deliveryDate = getNextWeekMonday();
+        frozenByStep.get(step.name()).addAll(deepCopyAndUpdateKeys(list, WorkflowStep.EVALUATE_SENDER_LIMIT, deliveryDate));
+    }
+
+    private String getNextWeekMonday() {
+        LocalDate today = LocalDate.now();
+        LocalDate nextMonday = today
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    private Pair<List<DelayerPaperDelivery>,List<DelayerPaperDelivery>> applySenderLimit(List<DelayerPaperDelivery> notifications, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+
+        List<DelayerPaperDelivery> postSenderLimit = new ArrayList<>();
+        List<DelayerPaperDelivery> toResidualCapacity = new ArrayList<>();
+
+        // 1. Tutto parte in EVALUTE_SENDER_LIMIT
+        groupedByStep.get(WorkflowStep.EVALUATE_SENDER_LIMIT.name())
+                .addAll(deepCopyAndUpdateKeys(notifications, WorkflowStep.EVALUATE_SENDER_LIMIT, this.expectedDeliveryDate));
+
+        // 2. Separa RS e secondi tentativi
+        List<DelayerPaperDelivery> rsOrSecondAttempt = notifications.stream()
+                .filter(n -> isRS(n) || isSecondAttempt(n))
+                .toList();
+
+        List<DelayerPaperDelivery> toEvaluateNormally = notifications.stream()
+                .filter(n -> !(isRS(n) || isSecondAttempt(n)))
+                .toList();
+
+        // 3. RS e secondi tentativi vanno direttamente allo step DRIVER_CAPACITY
+        postSenderLimit.addAll(deepCopyAndUpdateKeys(rsOrSecondAttempt,WorkflowStep.EVALUATE_DRIVER_CAPACITY, this.expectedDeliveryDate));
+
+        //4. Gli 890 vengono processati per mittente censito e non
+        Map<String, List<DelayerPaperDelivery>> bySenderKey = groupBySender(toEvaluateNormally);
+
+        for (Map.Entry<String, List<DelayerPaperDelivery>> entry : bySenderKey.entrySet()) {
+            List<DelayerPaperDelivery> sorted = sortByPriority(entry.getValue());
+
+            if (isMittenteCensito(entry.getKey())) {
+                int senderLimit = getSenderLimit(entry);
+                postSenderLimit.addAll(deepCopyAndUpdateKeys(sorted.stream().limit(senderLimit).toList(), WorkflowStep.EVALUATE_DRIVER_CAPACITY, this.expectedDeliveryDate));
+                toResidualCapacity.addAll(deepCopyAndUpdateKeys(sorted.stream().skip(senderLimit).toList(), WorkflowStep.EVALUATE_RESIDUAL_CAPACITY, this.expectedDeliveryDate));
+            } else {
+                toResidualCapacity.addAll(deepCopyAndUpdateKeys(sorted, WorkflowStep.EVALUATE_RESIDUAL_CAPACITY, this.expectedDeliveryDate));
+            }
+        }
+
+        return Pair.of(postSenderLimit, toResidualCapacity);
+    }
+
+    private boolean isSecondAttempt(DelayerPaperDelivery n) {
+        return Integer.parseInt(n.getAttempt()) == 2;
+    }
+
+    private boolean isRS(DelayerPaperDelivery n) {
+        return n.getProductType().equalsIgnoreCase("RS");
+    }
+
+    private List<DelayerPaperDelivery> applyDriverCapacity(List<DelayerPaperDelivery> toEvaluate, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+
+        // 1. Raggruppa per driver
+        Map<String, List<DelayerPaperDelivery>> byDriverKey = groupByDriver(toEvaluate);
+        Map<String, Integer> driverResidualCapacity = new HashMap<>();
+
+        // 2. Calcola capacità residua per ogni driver (inizialmente tutta disponibile)
+        for (String driverKey : byDriverKey.keySet()) {
+            int capacity = getDriverCapacity(driverKey);
+            driverResidualCapacity.put(driverKey, capacity);
+        }
+
+        List<DelayerPaperDelivery> assigned = new ArrayList<>();
+        List<DelayerPaperDelivery> toFreeze = new ArrayList<>();
+
+        // 3. Processa PRIMA i mittenti censiti
+        List<DelayerPaperDelivery> censiti = toEvaluate.stream()
+                .filter(n -> isMittenteCensito(getSenderKey(n)))
+                .toList();
+
+        for (DelayerPaperDelivery n : sortByPriority(censiti)) {
+            assigned.add(n);
+            String driverKey = getDriverKey(n);
+            int remaining = driverResidualCapacity.getOrDefault(driverKey, 0);
+            driverResidualCapacity.put(driverKey, Math.max(0, remaining - 1));
+        }
+
+        // 4. Poi processa i mittenti NON censiti
+        List<DelayerPaperDelivery> nonCensiti = toEvaluate.stream()
+                .filter(n -> !isMittenteCensito(getSenderKey(n)))
+                .toList();
+
+        for (DelayerPaperDelivery n : sortByPriority(nonCensiti)) {
+            String driverKey = getDriverKey(n);
+            int available = driverResidualCapacity.getOrDefault(driverKey, 0);
+
+            if (available > 0) {
+                assigned.add(n);
+                driverResidualCapacity.put(driverKey, available - 1);
+            } else {
+                toFreeze.add(n);
+            }
+        }
+
+        // 5. Aggiorna grouped e frozen con le notifiche elaborate
+        groupedByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name())
+                .addAll(deepCopyAndUpdateKeys(assigned, WorkflowStep.EVALUATE_DRIVER_CAPACITY, this.expectedDeliveryDate));
+
+        freezeNotifications(toFreeze, WorkflowStep.EVALUATE_DRIVER_CAPACITY, frozenByStep);
+
+        return assigned;
+    }
+
+    private List<DelayerPaperDelivery> applyPrintCapacity(List<DelayerPaperDelivery> input, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+
+        List<DelayerPaperDelivery> ordered = sortByPriority(input);
+
+        int effectiveLimit = Math.min(printCapacity, ordered.size());
+        List<DelayerPaperDelivery> accepted = ordered.subList(0, effectiveLimit);
+        List<DelayerPaperDelivery> frozen = ordered.subList(effectiveLimit, ordered.size());
+
+        groupedByStep.get(WorkflowStep.EVALUATE_PRINT_CAPACITY.name())
+                .addAll(deepCopyAndUpdateKeys(accepted, WorkflowStep.EVALUATE_PRINT_CAPACITY, this.expectedDeliveryDate));
+
+        freezeNotifications(frozen, WorkflowStep.EVALUATE_PRINT_CAPACITY, frozenByStep);
+        return accepted;
+    }
+
+    private String calculateNotificationSk(WorkflowStep workflowStep, DelayerPaperDelivery n) {
+        String requestId = n.getRequestId();
+
+        switch (workflowStep) {
+
+            case EVALUATE_SENDER_LIMIT -> {
+                // Usa notificationSentAt se RS o secondo tentativo, altrimenti prepareRequestDate
+                String product = n.getProductType();
+                boolean isRsOrSecondAttempt =  "RS".equalsIgnoreCase(product) || (Integer.parseInt(n.attempt) > 0);
+
+                String date = isRsOrSecondAttempt
+                        ? n.getNotificationSentAt()
+                        : n.getPrepareRequestDate();
+
+                String province = n.getProvince();
+
+                return String.join("~", province, date, requestId);
+            }
+
+            case EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
+                String driver = n.getUnifiedDeliveryDriver();
+                String date = expectedDeliveryDate;
+                String province = n.getProvince();
+                String priority = calculatePriority(n);
+
+                return String.join("~", driver, province, priority, date, requestId);
+            }
+
+            case EVALUATE_PRINT_CAPACITY -> {
+                String priority = calculatePriority(n);
+                String date =expectedDeliveryDate;
+
+                return String.join("~", priority, date, requestId);
+            }
+
+            case SENT_TO_PREPARE_PHASE_2 -> {
+                String date = expectedDeliveryDate;
+
+                return String.join("~", date, requestId);
+            }
+
+            default -> throw new IllegalArgumentException("Unsupported workflowStep: " + workflowStep);
+        }
+    }
+
+    private String calculatePriority(DelayerPaperDelivery n) {
+        String key = String.format("PRODUCT_%s.ATTEMPT_%d", n.getProductType(), Integer.parseInt(n.getAttempt()));
+
+        for (Map.Entry<String, List<String>> entry : priorityConfigMap.entrySet()) {
+            if (entry.getValue().contains(key)) {
+                return entry.getKey();
+            }
+        }
+
+        throw new IllegalStateException(String.format(
+                "Priorità non trovata per la chiave: %s. Controlla la configurazione dei parametri.", key));
+    }
+
+    private String calculateNotificationPk(WorkflowStep workflowStep, String expectedDeliveryDate) {
+        if (workflowStep == null || expectedDeliveryDate == null || expectedDeliveryDate.isEmpty())
+            throw new RuntimeException("Errore nel calcolo della pk della notifica");
+
+        return String.join("~", expectedDeliveryDate, workflowStep.name());
     }
 
     private void byDriverKey(List<DelayerPaperDelivery> postSenderLimit, Map<String, List<DelayerPaperDelivery>> byDriverKey) {
@@ -928,13 +1333,31 @@ public class DelayerSteps {
         return String.join("~", n.getSenderPaId(), n.getProductType(), n.getProvince());
     }
 
+    private Map<String, List<DelayerPaperDelivery>> groupBySender(List<DelayerPaperDelivery> notifications) {
+        Map<String, List<DelayerPaperDelivery>> bySenderKey = new HashMap<>();
+        for (DelayerPaperDelivery notification : notifications) {
+            String senderKey = getSenderKey(notification); // Metodo esistente
+            bySenderKey.computeIfAbsent(senderKey, k -> new ArrayList<>()).add(notification);
+        }
+        return bySenderKey;
+    }
+
+    private Map<String, List<DelayerPaperDelivery>> groupByDriver(List<DelayerPaperDelivery> notifications) {
+        Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
+        for (DelayerPaperDelivery notification : notifications) {
+            String driverKey = getDriverKey(notification); // Usa già "unifiedDeliveryDriver~provincia"
+            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(notification);
+        }
+        return byDriverKey;
+    }
+
     private List<DelayerPaperDelivery> collectAllFrozen(Map<String, List<DelayerPaperDelivery>> frozenByStep) {
         return frozenByStep.values().stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    private List<DelayerPaperDelivery> prioritaDelayer(List<DelayerPaperDelivery> notifiche) {
+    private List<DelayerPaperDelivery> sortByPriority(List<DelayerPaperDelivery> notifiche) {
         List<DelayerPaperDelivery> rs = new ArrayList<>();
         List<DelayerPaperDelivery> secondi = new ArrayList<>();
         List<DelayerPaperDelivery> altri = new ArrayList<>();
@@ -1149,8 +1572,15 @@ public class DelayerSteps {
             groupedBySeed.put(seed, matchingDeliveries);
             expectedPianification.put(seed, maps);
             actualPianification.put(seed, maps);
-            //failPianification.put(seed, maps);
         }
+    }
+
+    private void initializePriorityConfigMap() {
+        priorityConfigMap = Map.of(
+                "1", List.of("PRODUCT_RS.ATTEMPT_0"),
+                "2", List.of("PRODUCT_AR.ATTEMPT_1", "PRODUCT_890.ATTEMPT_1"),
+                "3", List.of("PRODUCT_AR.ATTEMPT_0", "PRODUCT_890.ATTEMPT_0")
+        );
     }
 
 }
