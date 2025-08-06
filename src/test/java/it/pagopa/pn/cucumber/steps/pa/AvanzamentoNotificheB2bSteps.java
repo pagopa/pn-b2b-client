@@ -1782,6 +1782,42 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
+    /**
+     * Input: 2 Delivery details code degli elementi SEND_ANALOG_PROGRESS e SEND_ANALOG_FEEDBACK
+     * verifica che non siano presenti
+     */
+    @And("verifica che in timeline non siano presenti i DeliveryDetailCode di demat {string} {string}")
+    public void checkDematDetailCode(String detailCode1, String detailCode2) {
+        try {
+            FullSentNotificationV28 fullSentNotification = b2bClient.getSentNotificationV28(sharedSteps.getNotificationIun());
+
+            List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+
+            List<TimelineElementV28> matchingElements = timeline.stream()
+                    .filter(item -> {
+                        String category = item.getCategory().getValue();
+
+                        return (("SEND_ANALOG_FEEDBACK".equals(category) || "SEND_ANALOG_PROGRESS".equals(category))
+                                && Optional.ofNullable(item.getDetails())
+                                .map(TimelineElementDetailsV28::getDeliveryDetailCode)
+                                .filter(code -> code.equals(detailCode1) || code.equals(detailCode2))
+                                .isPresent());
+                    })
+                    .toList();
+
+            assertThat(matchingElements)
+                    .as("Nella timeline non devono esserci elementi con deliveryDetailCode di DEMAT uguale a %s o %s", detailCode1, detailCode2)
+                    .isEmpty();
+
+            log.info("Verifica superata: nessun deliveryDetailCode di demat non previsto è presente nella timeline. IUN: {}", sharedSteps.getNotificationIun());
+
+        } catch (Exception exception) {
+            log.error("Errore durante checkDematDetailCode(), IUN: {}, Errore: {}", sharedSteps.getNotificationIun(), exception.getMessage(), exception);
+            throw new PnPollingException(exception.getMessage());
+        }
+    }
+
+
 
 
     @DataTableType
