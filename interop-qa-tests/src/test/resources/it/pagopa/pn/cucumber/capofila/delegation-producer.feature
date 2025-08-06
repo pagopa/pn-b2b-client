@@ -189,7 +189,6 @@ Feature: Creazione di una delega in erogazione
     Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
 
   # NOTA 30/07/2025: aggiunto a posteriori, momentaneamente assente in SRS
-  # TODO 30/07/2025 prolisso: molti step possono essere compattati
   Scenario: [TC_CAPOFILA_PUB_1] La pubblicazione di un e-service da parte di un ente delegato all'erogazione conduce l'e-service allo stato WAITING_FOR_APPROVAL
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"

@@ -10,6 +10,7 @@ import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import org.springframework.http.HttpStatus;
 
 public class DelegationAcceptStep {
@@ -38,15 +39,44 @@ public class DelegationAcceptStep {
     @And("l'utente accetta la delega")
     public void userAcceptTheDelegation() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        approveProducerDelegation();
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApproved();
+        approveProducerDelegation(
+            httpCallExecutor,
+            producerDelegationsApiClient,
+            delegationApiClient,
+            sharedStepsContext.getDelegationCommonContext(),
+            pollingService
+        );
     }
 
     @And("l'ente {string} accetta la delega")
     public void producerDelegationIsAcceptedByTenant(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        approveProducerDelegation();
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApproved();
+        approveProducerDelegation(
+            httpCallExecutor,
+            producerDelegationsApiClient,
+            delegationApiClient,
+            sharedStepsContext.getDelegationCommonContext(),
+            pollingService
+        );
+    }
+
+    public static void approveProducerDelegation(
+        IHttpExecutor httpExecutor,
+        IProducerDelegationsApiClient producerClient,
+        IDelegationApiClient delegationClient,
+        DelegationCommonContext context,
+        PollingService pollingService
+    ) {
+        httpExecutor.performCall(
+            () -> producerClient.approveProducerDelegation(
+                context.getDelegationId()));
+        if (httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            waitUntilDelegationIsApproved(
+                delegationClient,
+                pollingService,
+                context
+            );
+        }
     }
 
     @And("l'ente {delegationRole} accetta la delega in fruizione")
@@ -54,13 +84,13 @@ public class DelegationAcceptStep {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         approveConsumerDelegation();
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitUntilDelegationIsApproved();
-    }
-
-    private void approveProducerDelegation() {
-        httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.approveProducerDelegation(
-                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            waitUntilDelegationIsApproved(
+                delegationApiClient,
+                pollingService,
+                sharedStepsContext.getDelegationCommonContext()
+            );
+        }
     }
 
     private void approveConsumerDelegation() {
@@ -69,11 +99,15 @@ public class DelegationAcceptStep {
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
-    public void waitUntilDelegationIsApproved() {
+    public static void waitUntilDelegationIsApproved(
+        IDelegationApiClient delegationClient,
+        PollingService pollingService,
+        DelegationCommonContext context
+    ) {
         // wait until delegation is correctly approved
         pollingService.makePolling(
-                () -> delegationApiClient.getDelegation(
-                        sharedStepsContext.getDelegationCommonContext().getDelegationId()),
+                () -> delegationClient.getDelegation(
+                    context.getDelegationId()),
                 res ->  res.getState().equals(DelegationState.ACTIVE),
                 "There was an error while accepting the delegation!"
         );

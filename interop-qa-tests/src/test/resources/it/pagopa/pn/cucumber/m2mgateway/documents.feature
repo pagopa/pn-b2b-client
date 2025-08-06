@@ -120,6 +120,14 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | ARCHIVED              |
 
   Scenario: [M2MG_DOCUMENTS_16] Un utente non può effettuare la cancellazione di un'interfaccia di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 62)
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
+    Then si ottiene lo status code 400
+    And è presente un'interfaccia per l'e-service
+
+  # FIXME per debug momentaneo locale, rimuovere
+  Scenario: Prova creazione e-service in stato WAITING_FOR_APPROVAL
     # tutta questa prima parte serve per ricondursi allo stato WAITING_FOR_APPROVAL, ripresa da [TC_CAPOFILA_PUB_1]
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -130,12 +138,12 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     And l'ente "PA2" accetta la delega
     And l'utente è un "admin" di "PA2"
     And l'utente pubblica l'e-service
+    When si attendono 5 secondi
+    And l'utente richiede la lettura di quel descrittore
 
-    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
-    Then si ottiene lo status code 400
-    And è presente un'interfaccia per l'e-service
-
-    # TODO essendo coinvolto il processo di delega, occorrerà un test specifico per questo stato. Ricercare ticket aperti che coinvolgono
-    # questo stato e rocondursi ai corrispettivi scenari, dovrebbero poter fare da template.
-    #  | WAITING_FOR_APPROVAL  |
+  # FIXME per debug momentaneo locale, rimuovere
+  Scenario: [M2MG_DOCUMENTS_16] Prova sintetica creazione e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1"
+    When si attendono 5 secondi
+    Then l'utente richiede la lettura di quel descrittore

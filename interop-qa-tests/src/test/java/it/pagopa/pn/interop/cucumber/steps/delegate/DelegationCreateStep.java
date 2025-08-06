@@ -21,12 +21,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -169,14 +169,36 @@ public class DelegationCreateStep {
 
     private <T, U> void setDelegationAvailability(
         String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, Boolean isDelegatedProducer, Boolean isDelegatedConsumer) {
-        httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(isDelegatedProducer, isDelegatedConsumer));
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK)
-            pollingService.makePolling(() -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
+        setDelegationAvailability(
+            tenantType,
+            delegationStrategy,
+            isDelegatedProducer,
+            isDelegatedConsumer,
+            identityService,
+            httpCallExecutor,
+            tenantsApi,
+            pollingService
+        );
+    }
+
+    public static <T, U> void setDelegationAvailability(
+        String tenantType,
+        DelegationAvailabilityStrategy<T, U> delegationStrategy,
+        Boolean isDelegatedProducer,
+        Boolean isDelegatedConsumer,
+        IdentityService identityService,
+        IHttpExecutor httpExecutor,
+        ITenantsApi client,
+        PollingService pollingService
+    ) {
+        httpExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(isDelegatedProducer, isDelegatedConsumer));
+        if (httpExecutor.getResponseStatus() == HttpStatus.OK)
+            pollingService.makePolling(() -> client.getTenant(identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
-                        .orElse(List.of())
-                        .stream()
-                        .map(delegationStrategy.getFeatureExtractor())
-                        .anyMatch(Objects::nonNull),
+                    .orElse(List.of())
+                    .stream()
+                    .map(delegationStrategy.getFeatureExtractor())
+                    .anyMatch(Objects::nonNull),
                 "There was an error while providing the delegation availability!");
     }
 
@@ -212,16 +234,38 @@ public class DelegationCreateStep {
         String tenantType,
         Function<DelegationSeed, CreatedResource> delegationCreator,
         DelegationProxy delegationProxy) {
+        createDelegate(
+            tenantType,
+            delegationCreator,
+            delegationProxy,
+            identityService,
+            httpCallExecutor,
+            sharedStepsContext.getEServicesCommonContext(),
+            pollingService,
+            delegationApiClient
+        );
+    }
+
+    public static void createDelegate(
+        String tenantType,
+        Function<DelegationSeed, CreatedResource> delegationCreator,
+        DelegationProxy delegationProxy,
+        IdentityService identityService,
+        IHttpExecutor httpExecutor,
+        EServicesCommonContext context,
+        PollingService pollingService,
+        IDelegationApiClient client
+    ) {
         UUID organizationId = identityService.getOrganizationId(tenantType);
-        httpCallExecutor.performCall(() -> delegationCreator.apply(
-                new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
-            delegationProxy.setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
+        httpExecutor.performCall(() -> delegationCreator.apply(
+            new DelegationSeed().eserviceId(context.getEserviceId()).delegateId(organizationId)));
+        if (httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            delegationProxy.setDelegationId(((CreatedResource) httpExecutor.getResponse()).getId());
             pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(
-                            delegationProxy.getDelegationId())),
-                    res -> res != HttpStatus.NOT_FOUND,
-                    "There was an error while creating the delegation!"
+                () -> httpExecutor.performCall(() -> client.getDelegation(
+                    delegationProxy.getDelegationId())),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while creating the delegation!"
             );
         }
     }
