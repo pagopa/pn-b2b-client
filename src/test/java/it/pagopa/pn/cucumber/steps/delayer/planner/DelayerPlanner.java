@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.delayer.planner;
 
-import it.pagopa.pn.cucumber.steps.delayer.DelayerStepsOld;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
@@ -174,8 +173,8 @@ public class DelayerPlanner {
         return source.stream()
                 .map(DelayerPaperDelivery::new)
                 .peek(n -> {
-                    n.setPk(utils.calculateNotificationPk(step, deliveryDate));
-                    n.setSk(utils.calculateNotificationSk(step, n));
+                    n.setPk(utils.calculatePk(step, deliveryDate));
+                    n.setSk(utils.calculateSk(step, n));
                     n.setPriority(utils.calculatePriority(n));
                 })
                 .toList();
@@ -212,13 +211,4 @@ public class DelayerPlanner {
         frozenByStep.get(step.name()).addAll(deepCopyAndUpdateKeys(list, WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate));
     }
 
-    public List<DelayerPaperDelivery> getExpectedNotification(String workflowStep) {
-        List<DelayerPaperDelivery> expected = new ArrayList<>();
-
-        context.expectedPianification.forEach((seed, pianification) -> {
-            if (!context.failPianification.containsKey(seed)) expected.addAll(pianification.get(workflowStep));
-        });
-
-        return expected;
-    }
 }

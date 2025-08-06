@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.delayer.utils;
 
-import it.pagopa.pn.cucumber.steps.delayer.DelayerStepsOld;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
@@ -128,14 +127,14 @@ public class DelayerPaperDeliveryUtils {
         return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
-    public String calculateNotificationPk(WorkflowSteps workflowStep, String expectedDeliveryDate) {
+    public String calculatePk(WorkflowSteps workflowStep, String expectedDeliveryDate) {
         if (workflowStep == null || expectedDeliveryDate == null || expectedDeliveryDate.isEmpty())
             throw new RuntimeException("Errore nel calcolo della pk della notifica");
 
         return String.join("~", expectedDeliveryDate, workflowStep.name());
     }
 
-    public String calculateNotificationSk(WorkflowSteps workflowStep, DelayerPaperDelivery n) {
+    public String calculateSk(WorkflowSteps workflowStep, DelayerPaperDelivery n) {
         String requestId = n.getRequestId();
 
         switch (workflowStep) {
@@ -162,17 +161,11 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", driver, province, priority, date, requestId);
             }
 
-            case EVALUATE_PRINT_CAPACITY -> {
+            case EVALUATE_PRINT_CAPACITY, SENT_TO_PREPARE_PHASE_2 -> {
                 String priority = calculatePriority(n);
                 String date = context.expectedDeliveryDate;
 
                 return String.join("~", priority, date, requestId);
-            }
-
-            case SENT_TO_PREPARE_PHASE_2 -> {
-                String date = context.expectedDeliveryDate;
-
-                return String.join("~", date, requestId);
             }
 
             default -> throw new IllegalArgumentException("Unsupported workflowStep: " + workflowStep);
