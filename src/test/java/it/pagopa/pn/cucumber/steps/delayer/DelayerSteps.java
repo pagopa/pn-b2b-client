@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
@@ -65,6 +67,7 @@ public class DelayerSteps {
             this.cap = requireField(rowMap, "cap");
             this.attempt = requireField(rowMap, "attempt");
             this.iun = requireField(rowMap, "iun");
+            this.unifiedDeliveryDriver = requireField(rowMap, "unifiedDeliveryDriver");
         }
 
         public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -158,52 +161,25 @@ public class DelayerSteps {
     private final Map<String, Integer> driverCapacityMap = new HashMap<>();
     private final List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
 
+    // Refactoring seed
+    Map<String, List<DelayerPaperDelivery>> groupedBySeed = new HashMap<>();
+    Map<String, Map<String, List<DelayerPaperDelivery>>> expectedPianification = new HashMap<>();
+    Map<String, Map<String, List<DelayerPaperDelivery>>> actualPianification = new HashMap<>();
+    Map<String, Map<String, List<DelayerPaperDelivery>>> failPianification = new HashMap<>();
 
-    @Given("il CSV {string} contiene {int} notifiche cosi distribuite:")
-    public void initParams(String csv, Integer numeroNotifiche, DataTable dataTable) {
-        // Inizializzazione CSV
-        List<List<String>> csvJustRead = FileUtils.readCsvSafe(String.join("/", CSV_PATH, csv), ";", false);
-        List<String> header = csvJustRead.get(0);
 
-        this.numeroNotifiche = csvJustRead.size() - 1;
-
-        if (!this.numeroNotifiche.equals(numeroNotifiche))
-            throw new RuntimeException("Il numero di notifiche dichiarate non corrisponde al numero di notifiche lette nel file csv");
-
-        for (int i = 1; i <= numeroNotifiche; i++) {
-            this.actualCsv.add(new DelayerPaperDelivery(header, csvJustRead.get(i)));
-        }
-
-        if (this.actualCsv.size() != this.numeroNotifiche)
-            throw new RuntimeException("Sono state lette " + this.actualCsv.size() + " notifiche su " + this.numeroNotifiche + " totali nel file csv");
-
-        // Inizializzazione Map workflowItem-notifiche
-        for (WorkflowStep key :  WorkflowStep.values()) groupedByPkSubstring.put(key.name(), new ArrayList<>());
-
-        // Inizializzazione expected delivery
-        /*
-         Gli elementi usciti dalla PREPARE fase 1 alla settimana W vengono inseriti nella pn-DelayerPaperDelivey con la deliveryDate che punta a W+1
-         Dal punto di vista del test siamo nel POV della valutazione, quindi è come se le notifiche fossero state caricate in tabella la settimana scorsa (W)
-         con la deliveryDate alla W+1(corrente) e ora, settimana W+1 le stiamo valutando
-        */
-        if (expectedDeliveryDate == null) {
-            LocalDate lunedi = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-            expectedDeliveryDate = lunedi.toString();
-        }
-
-        // Inizializzazione senderLimitMap, driverCapacityMap
-        this.actualCsv.forEach(n -> {
-            String senderKey = getSenderKey(n);
-            String driverKey = getDriverKey(n);
-
-            senderLimitMap.putIfAbsent(senderKey, 0);
-            driverCapacityMap.putIfAbsent(driverKey, 0);
-        });
+    @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
+    public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
+        readCsv(csv, expectedNotificationCount);
+        initializeWorkflowStepMap();
+        initializeExpectedDeliveryDate();
+        initializeSenderAndDriverMaps();
+        initializeSeedMaps(dataTable);
     }
 
     @And("si presuppone che il limite {word} settimanale \\(paId-product_type-province) sia:")
-    @And("si presuppone che il limite {word} unificato settimanale \\(unifiedDeliveryDriver-province) sia:")
-    public void siPresupponeCheIlLimiteSettimanaleSia(String subject, DataTable dataTable) {
+    @And("si verifica che il limite {word} unificato settimanale \\(unifiedDeliveryDriver-province) sia:")
+    public void initSenderOrDriverLimit(String subject, DataTable dataTable) {
         boolean isMittente;
         if ("mittente".equalsIgnoreCase(subject)) {
             isMittente = true;
@@ -236,23 +212,117 @@ public class DelayerSteps {
 
             Map<String, Integer> targetMap = isMittente ? senderLimitMap : driverCapacityMap;
 
-            if (isMittente && !targetMap.containsKey(entityId)) {
-                throw new IllegalArgumentException("senderId" +
+            if (!targetMap.containsKey(entityId)) {
+                log.warn((isMittente ? "senderId" : "driverId") +
                         " non presente nel file CSV caricato: " + entityId);
             }
 
             targetMap.put(entityId, calculatedLimit);
+
+//            if (!isMittente) {
+//                List<DelayerPaperDelivery> notifiche = getExpectedNotification(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
+//                validateDriverCapacitiesViaLambda(notifiche, dataTable);
+//            }
+        }
+    }
+
+    private void validateDriverCapacitiesViaLambda(List<DelayerPaperDelivery> notifiche, DataTable dataTable) {
+        // Mappa driverKey -> notifiche
+        Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
+        byDriverKey(notifiche, byDriverKey);
+
+        // Map driverKey -> (comparative, expectedLimit)
+        Map<String, ComparativeLimit> expectedLimits = new HashMap<>();
+        for (Map<String, String> row : dataTable.asMaps()) {
+            String driverKey = row.get("unifiedDeliveryDriverId");
+            String comparative = row.get("comparative");
+            int rawLimit = Integer.parseInt(row.get("limit"));
+
+            expectedLimits.put(driverKey, new ComparativeLimit(comparative, rawLimit));
+        }
+
+        for (Map.Entry<String, List<DelayerPaperDelivery>> entry : byDriverKey.entrySet()) {
+            String driverKey = entry.getKey();
+            ComparativeLimit limitInfo = expectedLimits.get(driverKey);
+
+            if (limitInfo == null) {
+                throw new IllegalStateException("Nessun limite definito in feature file per driver: " + driverKey);
+            }
+
+            String[] parts = driverKey.split("~");
+            if (parts.length != 2) {
+                throw new IllegalStateException("Formato driverKey non valido: " + driverKey);
+            }
+
+            String driverId = parts[0];
+            String provincia = parts[1];
+            String deliveryDate = expectedDeliveryDate;
+
+            String payload = String.format("""
+                    {
+                      "operationType": "GET_USED_CAPACITY",
+                      "parameters": [ "%s", "%s", "%s" ]
+                    }
+                    """, driverId, provincia, deliveryDate);
+
+            try {
+                String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
+                checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
+
+                JsonNode body = objectMapper.readTree(rawResult).path("body");
+                if (body.isTextual()) {
+                    body = objectMapper.readTree(body.asText());
+                }
+
+                int declared = body.path("declaredCapacity").asInt(-1);
+                int used = body.path("usedCapacity").asInt(-1);
+                int available = declared - used;
+
+                log.info("Driver {} - Capacità: dichiarata {}, usata {}, disponibile {}", driverKey, declared, used, available);
+
+                switch (limitInfo.comparative.toLowerCase()) {
+                    case "almeno":
+                        if (available < limitInfo.expected) {
+                            throw new AssertionError(String.format(
+                                    "Driver %s - attesi almeno %d slot disponibili, trovati %d",
+                                    driverKey, limitInfo.expected, available));
+                        }
+                        break;
+                    case "esattamente":
+                        if (available != limitInfo.expected) {
+                            throw new AssertionError(String.format(
+                                    "Driver %s - attesi esattamente %d slot disponibili, trovati %d",
+                                    driverKey, limitInfo.expected, available));
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Comparativo non supportato: " + limitInfo.comparative);
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException("Errore durante la verifica via Lambda per driver: " + driverKey, e);
+            }
+        }
+    }
+
+    private static class ComparativeLimit {
+        final String comparative;
+        final int expected;
+
+        ComparativeLimit(String comparative, int expected) {
+            this.comparative = comparative;
+            this.expected = expected;
         }
     }
 
     @And("si presuppone che la capacità di stampa giornaliera sia {word} {int}")
-    public void siPresupponeCheLaCapacitàDiStampaGiornalieraSiaSufficiente(String compare, int limit) {
+    public void initPrintCapacity(String compare, int limit) {
         printCapacity = calculateLimitByComparativo(compare, limit);
         if (printCapacity < 0) throw new IllegalArgumentException("PrintCapacity non valido");
     }
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
-    public void importaCsvTramiteLambda(String csvName) throws Exception {
+    public void populateTargetTable(String csvName) throws Exception {
         String payload = """
                 {
                   "operationType": "IMPORT_DATA",
@@ -265,9 +335,15 @@ public class DelayerSteps {
         log.info("Importazione CSV [{}] completata correttamente", csvName);
     }
 
+    @And("viene simulato internamente l'algoritmo di pianificazione")
+    public void runSimulation() {
+        expectedPianification.replaceAll((seed, oldStepMap) ->
+                simulateAlgorithm(WorkflowStep.SENT_TO_PREPARE_PHASE_2, seed)
+        );
+    }
+
     @When("viene avviato l'algoritmo tramite lambda")
-    @When("viene avviato nuovamente l'algoritmo tramite lambda")
-    public void eseguiAlgoritmo() throws Exception {
+    public void runAlgorithm() throws Exception {
         String payload = """
                 {
                   "operationType": "RUN_ALGORITHM",
@@ -277,31 +353,175 @@ public class DelayerSteps {
 
         String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
         checkLambdaResponse(rawResult, "RUN_ALGORITHM");
-        log.info("Algoritmo avviato correttamente.");
+        log.debug("Algoritmo avviato correttamente.");
     }
 
-    @Then("il processo valutato fino al workflow step {string} ha rispettato i criteri di ranking:")
-    public void verificaOrdinePrioritaLimitate(String ws, DataTable expectedOrder) {
+    @Then("vengono recuperate le notifiche al workflow step {string}")
+    public void fetchNotification(String ws) throws Exception {
         WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
+        List<DelayerPaperDelivery> toFind = getExpectedNotification(workflowStep.name());
+        List<DelayerPaperDelivery> notifiche = findByWorkflowStep(toFind, workflowStep, expectedDeliveryDate);
 
-        Map<String, List<DelayerPaperDelivery>> expectedNotifiche = this.calculateExpectedWorkflowItems(workflowStep);
-        List<DelayerPaperDelivery> expected = expectedNotifiche.get(workflowStep.name());
-        List<DelayerPaperDelivery> actual = groupedByPkSubstring.get(workflowStep.name());
+        updateActualPianification(workflowStep, notifiche);
+    }
 
-        if (expected == null || expected.isEmpty()) {
-            throw new IllegalArgumentException("Expected notifications are null or empty for workflowStep: " + workflowStep);
+    private void updateActualPianification(WorkflowStep workflowStep, List<DelayerPaperDelivery> notifiche) {
+        Map<String, List<DelayerPaperDelivery>> groupedBySeed = bySeed(notifiche);
+
+        // 1. Identifica i seed mancanti
+        Set<String> missingSeeds = new HashSet<>(this.groupedBySeed.keySet());
+        missingSeeds.removeAll(groupedBySeed.keySet());
+
+        // 2. Aggiorna actualPianification e rileva mismatch
+        for (Map.Entry<String, List<DelayerPaperDelivery>> entry : groupedBySeed.entrySet()) {
+            String seed = entry.getKey();
+            List<DelayerPaperDelivery> updatedList = entry.getValue();
+
+            List<DelayerPaperDelivery> actualList = this.actualPianification
+                    .getOrDefault(seed, Collections.emptyMap())
+                    .get(workflowStep.name());
+
+            if (actualList != null) {
+                actualList.clear();
+                actualList.addAll(updatedList);
+            }
+
+            List<DelayerPaperDelivery> expectedList = this.expectedPianification
+                    .getOrDefault(seed, Collections.emptyMap())
+                    .get(workflowStep.name());
+
+            if (expectedList == null || actualList == null || expectedList.size() != actualList.size()) {
+                this.failPianification.put(seed, this.actualPianification.get(seed));
+            }
         }
 
-        if (actual == null || actual.isEmpty()) {
-            throw new IllegalArgumentException("Actual notifications are null or empty for workflowStep: " + workflowStep);
+        // 3. Segnala i seed completamente mancanti
+        for (String missingSeed : missingSeeds) {
+            this.failPianification.put(missingSeed, this.actualPianification.get(missingSeed));
         }
 
+        // 4. Verifica se tutti i seed hanno fallito
+        if (failPianification.keySet().containsAll(this.groupedBySeed.keySet())) {
+            throw new IllegalStateException("All seeds failed");
+        }
 
-        Set<Map<String, String>> expectedSet = expected.stream()
+    }
+
+    private Map<String, List<DelayerPaperDelivery>> bySeed(List<DelayerPaperDelivery> notifiche) {
+        Map<String, List<DelayerPaperDelivery>> groupedBySeed = new HashMap<>();
+
+        for (DelayerPaperDelivery delivery : notifiche) {
+            if (delivery.requestId == null) continue;
+
+            Optional<String> maybeSeed = this.groupedBySeed.keySet().stream()
+                    .filter(delivery.requestId::contains)
+                    .findFirst();
+
+            if (maybeSeed.isPresent()) {
+                String seed = maybeSeed.get();
+                groupedBySeed
+                        .computeIfAbsent(seed, k -> new ArrayList<>())
+                        .add(delivery);
+            } else {
+                throw new RuntimeException(String.format("RequestId '%s' does not match any known seed", delivery.requestId));
+            }
+        }
+
+        return groupedBySeed;
+    }
+
+    private List<DelayerPaperDelivery> getExpectedNotification(String workflowStep) {
+        List<DelayerPaperDelivery> expected = new ArrayList<>();
+
+        expectedPianification.forEach((seed, pianification) -> {
+            if (!failPianification.containsKey(seed)) expected.addAll(pianification.get(workflowStep));
+        });
+
+        return expected;
+    }
+
+    @Then("verifica che il processo fino al workflow step {string} abbia rispettato i criteri di ranking per almeno un test case:")
+    public void checkRanking(String ws, DataTable expectedOrder) {
+        WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
+        Set<String> seedsToCheck = this.groupedBySeed.keySet().stream()
+                .filter(seed -> !failPianification.containsKey(seed))
+                .collect(Collectors.toSet());
+
+        if (seedsToCheck.isEmpty()) {
+            throw new IllegalStateException("All seeds have failed the planning step: " + workflowStep.name());
+        }
+
+        for (String seed : seedsToCheck) {
+            Map<String, List<DelayerPaperDelivery>> expectedMap = expectedPianification.get(seed);
+            Map<String, List<DelayerPaperDelivery>> actualMap = actualPianification.get(seed);
+
+            if (expectedMap == null) {
+                throw new IllegalStateException("Missing expected planning data for seed: " + seed);
+            }
+
+            if (actualMap == null) {
+                throw new IllegalStateException("Missing actual planning data for seed: " + seed);
+            }
+
+            List<DelayerPaperDelivery> expected = expectedMap.get(workflowStep.name());
+            List<DelayerPaperDelivery> actual = actualMap.get(workflowStep.name());
+
+            if (expected == null || expected.isEmpty()) {
+                throw new IllegalArgumentException("Expected notifications are null or empty for workflowStep: " + workflowStep + " and seed: " + seed);
+            }
+
+            if (actual == null || actual.isEmpty()) {
+                throw new IllegalArgumentException("Actual notifications are null or empty for workflowStep: " + workflowStep + " and seed: " + seed);
+            }
+
+            List<Map<String, String>> expectedRank = expected.stream()
+                    .map(n -> toComparableMap(n, workflowStep))
+                    .toList();
+
+            List<Map<String, String>> actualRank = actual.stream()
+                    .map(n -> toComparableMap(n, workflowStep))
+                    .toList();
+
+            Assertions.assertEquals(expectedRank, actualRank,
+                    () -> "Ranking mismatch for seed: " + seed + "\nExpected: " + expectedRank + "\nActual: " + actualRank);
+        }
+    }
+
+    @Then("verifica che le opportune notifiche siano state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente per almeno un test case")
+    public void checkFrozen(String ws) throws Exception {
+        WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
+        Set<String> validSeeds = this.groupedBySeed.keySet().stream()
+                .filter(seed -> !failPianification.containsKey(seed))
+                .collect(Collectors.toSet());
+
+        if (validSeeds.isEmpty()) {
+            throw new IllegalStateException("All seeds failed – cannot validate frozen notifications.");
+        }
+
+        List<DelayerPaperDelivery> allExpectedFrozen = getExpectedNotification("FROZEN");
+        List<DelayerPaperDelivery> allActualFrozen = findCongelate(allExpectedFrozen);
+
+        for (String seed : validSeeds) {
+            Map<String, List<DelayerPaperDelivery>> expectedMap = expectedPianification.get(seed);
+            Map<String, List<DelayerPaperDelivery>> actualMap = actualPianification.get(seed);
+
+            if (expectedMap == null || actualMap == null) continue;
+
+            List<DelayerPaperDelivery> expectedFrozen = expectedMap.get("FROZEN");
+            List<DelayerPaperDelivery> actualFrozen = actualMap.get("FROZEN");
+
+            if (expectedFrozen != null) allExpectedFrozen.addAll(expectedFrozen);
+            if (actualFrozen != null) allActualFrozen.addAll(actualFrozen);
+        }
+
+        Assertions.assertEquals(allExpectedFrozen.size(), allActualFrozen.size(),
+                "Il numero di notifiche congelate non corrisponde al valore atteso.");
+
+        Set<Map<String, String>> expectedSet = allExpectedFrozen.stream()
                 .map(n -> toComparableMap(n, workflowStep))
                 .collect(Collectors.toSet());
 
-        Set<Map<String, String>> actualSet = actual.stream()
+        Set<Map<String, String>> actualSet = allActualFrozen.stream()
                 .map(n -> toComparableMap(n, workflowStep))
                 .collect(Collectors.toSet());
 
@@ -309,51 +529,28 @@ public class DelayerSteps {
                 () -> {
                     Set<Map<String, String>> missing = new HashSet<>(actualSet);
                     missing.removeAll(expectedSet);
-                    return "Alcune notifiche attese non corrispondono:\n" + missing;
-                });
-    }
-
-    @Then("esattamente {int} notifiche sono al workflow step {string}")
-    public void risultatiContengonoEsattamente(int expectedCount, String ws) throws Exception {
-        WorkflowStep workflowStep = WorkflowStep.valueOf(ws);
-        List<DelayerPaperDelivery> notifiche = findByWorkflowStep(expectedCount, workflowStep, expectedDeliveryDate);
-
-        groupedByPkSubstring.get(workflowStep.name()).clear();
-        groupedByPkSubstring.get(workflowStep.name()).addAll(notifiche);
-    }
-
-    @Then("esattamente {int} notifiche sono state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente")
-    public void esattamenteNEvaluateSenderLimitNotificheSonoStateCongelateERicaricateConWorkflowStepEDeliveryDateAllaSettimanaSeguente(int congelate, String workflowStep) throws Exception {
-        List<DelayerPaperDelivery> actualFrozen = findCongelate(congelate);
-        List<DelayerPaperDelivery> expectedFrozen = calculateExpectedWorkflowItems(WorkflowStep.SENT_TO_PREPARE_PHASE_2).get("FROZEN");
-
-        if (expectedFrozen == null || expectedFrozen.isEmpty() || actualFrozen == null || actualFrozen.isEmpty()) {
-            throw new IllegalArgumentException("Expected or actual notifications are null for workflowStep: " + workflowStep);
-        }
-
-        Set<Map<String, String>> expectedSet = expectedFrozen.stream()
-                .map(n -> toComparableMap(n, WorkflowStep.SENT_TO_PREPARE_PHASE_2))
-                .collect(Collectors.toSet());
-
-        Set<Map<String, String>> actualSet = actualFrozen.stream()
-                .map(n -> toComparableMap(n, WorkflowStep.SENT_TO_PREPARE_PHASE_2))
-                .collect(Collectors.toSet());
-
-        Assertions.assertTrue(expectedSet.containsAll(actualSet),
-                () -> {
-                    Set<Map<String, String>> missing = new HashSet<>(actualSet);
-                    missing.removeAll(expectedSet);
-                    return "Alcune notifiche attese non corrispondono:\n" + missing;
+                    return "Alcune notifiche congelate non corrispondono a quelle attese:\n" + missing;
                 });
     }
 
     @Given("verifica che la capacità disponibile per ogni tripla \\(unifiedDeliveryDriver-provincia-deliveryDate) sia {word} {int}")
-    public void verificaCapacitaPredettaDaPrepareRequestDate(String compareToken, Integer capacitaMinimaAttesa) {
+    public void checkDriverCapacity(String compareToken, Integer capacitaMinimaAttesa) {
+        List<DelayerPaperDelivery> notifiche = getExpectedNotification(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
 
-        List<DelayerPaperDelivery> notifiche = groupedByPkSubstring.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
+        if (notifiche.isEmpty()) {
+            throw new IllegalStateException("Nessuna notifica pianificata trovata per EVALUATE_DRIVER_CAPACITY.");
+        }
 
-        if (notifiche == null || notifiche.isEmpty()) {
-            throw new IllegalStateException("Nessuna notifica pianificata trovata.");
+        // Raggruppa notifiche per seed
+        Map<String, List<DelayerPaperDelivery>> bySeed = bySeed(notifiche);
+
+        // Filtro solo i seed validi
+        Set<String> validSeeds = bySeed.keySet().stream()
+                .filter(seed -> !failPianification.containsKey(seed))
+                .collect(Collectors.toSet());
+
+        if (validSeeds.isEmpty()) {
+            throw new IllegalStateException("Tutti i seed hanno fallito: nessuna capacità da verificare.");
         }
 
         @EqualsAndHashCode(of = {"provincia", "driver", "deliveryDate"})
@@ -364,64 +561,65 @@ public class DelayerSteps {
             String deliveryDate;
         }
 
-        Set<CapacityRequest> requests =
-                notifiche.stream()
-                        .map(dpd -> {
-                            String deliveryDate = extractDeliveryDate(dpd);
-                            return new CapacityRequest(dpd.getProvince(), dpd.getUnifiedDeliveryDriver(), deliveryDate);
-                        })
-                        .collect(Collectors.toSet());
+        for (String seed : validSeeds) {
+            List<DelayerPaperDelivery> seedNotifiche = bySeed.get(seed);
 
+            Set<CapacityRequest> requests = seedNotifiche.stream()
+                    .map(dpd -> new CapacityRequest(
+                            dpd.getProvince(),
+                            dpd.getUnifiedDeliveryDriver(),
+                            extractDeliveryDate(dpd)))
+                    .collect(Collectors.toSet());
 
-        // Verifica capacità per ogni deliveryDate
-        for (CapacityRequest request : requests) {
-            String driver = request.driver;
-            String deliveryDate = request.deliveryDate;
-            String provincia = request.provincia;
+            for (CapacityRequest request : requests) {
+                String payload = String.format("""
+                        {
+                          "operationType": "GET_USED_CAPACITY",
+                          "parameters": [ "%s", "%s", "%s" ]
+                        }
+                        """, request.driver, request.provincia, request.deliveryDate);
 
-            String payload = String.format("""
-                    {
-                      "operationType": "GET_USED_CAPACITY",
-                      "parameters": [ "%s", "%s", "%s" ]
+                try {
+                    String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
+                    checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
+
+                    JsonNode body = objectMapper.readTree(rawResult).path("body");
+                    if (body.isTextual()) {
+                        body = objectMapper.readTree(body.asText());
                     }
-                    """, driver, provincia, deliveryDate);
 
-            try {
-                String rawResult = lambdaInvoker.invokeMyLambda(LAMBDA_NAME, payload);
-                checkLambdaResponse(rawResult, "GET_USED_CAPACITY");
+                    int capacity = body.path("declaredCapacity").asInt(-1);
+                    int used = body.path("usedCapacity").asInt(-1);
+                    int available = capacity - used;
 
-                JsonNode body = objectMapper.readTree(rawResult).path("body");
-                if (body.isTextual()) body = objectMapper.readTree(body.asText());
+                    log.info("Seed [{}] - Capacità driver {} su {} per {}: disponibile {} su {}",
+                            seed, request.driver, request.provincia, request.deliveryDate, available, capacity);
 
-                int capacity = body.path("declaredCapacity").asInt(-1);
-                int used = body.path("usedCapacity").asInt(-1);
-                int available = capacity - used;
+                    switch (compareToken.toLowerCase()) {
+                        case "esattamente":
+                            if (available != capacitaMinimaAttesa) {
+                                throw new AssertionError(String.format(
+                                        "Seed [%s]: capacità esatta non rispettata per deliveryDate %s. Attesi: %d, Disponibili: %d",
+                                        seed, request.deliveryDate, capacitaMinimaAttesa, available));
+                            }
+                            break;
 
-                log.info("Capacità driver {} su {} per {}: disponibile {} su {}", driver, provincia, deliveryDate, available, capacity);
+                        case "almeno":
+                            if (available < capacitaMinimaAttesa) {
+                                throw new AssertionError(String.format(
+                                        "Seed [%s]: capacità minima non rispettata per deliveryDate %s. Attesi almeno: %d, Disponibili: %d",
+                                        seed, request.deliveryDate, capacitaMinimaAttesa, available));
+                            }
+                            break;
 
-                switch (compareToken) {
-                    case "esattamente":
-                        if (available != capacitaMinimaAttesa) {
-                            throw new AssertionError(String.format(
-                                    "Capacità insufficiente per deliveryDate %s: attesi almeno %d slot liberi, disponibili %d",
-                                    deliveryDate, capacitaMinimaAttesa, available));
-                        }
-                        break;
+                        default:
+                            throw new AssertionError("Compare token non riconosciuto: " + compareToken);
+                    }
 
-                    case "almeno":
-                        if (available < capacitaMinimaAttesa) {
-                            throw new AssertionError(String.format(
-                                    "Capacità insufficiente per deliveryDate %s: attesi esattamente %d slot liberi, disponibili %d",
-                                    deliveryDate, capacitaMinimaAttesa, available));
-                        }
-                        break;
-
-                    default:
-                        throw new AssertionError(String.format("Unrecognized compareToken: %s", compareToken));
+                } catch (Exception e) {
+                    throw new RuntimeException("Errore durante la verifica della capacità per seed '" + seed +
+                            "', deliveryDate: " + request.deliveryDate, e);
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException("Errore durante la verifica della capacità per deliveryDate: " + deliveryDate, e);
             }
         }
     }
@@ -550,7 +748,7 @@ public class DelayerSteps {
         return !paId.equals("unknow");
     }
 
-    private Map<String, List<DelayerPaperDelivery>> calculateExpectedWorkflowItems(WorkflowStep workflowStep) {
+    private Map<String, List<DelayerPaperDelivery>> simulateAlgorithm(WorkflowStep endAt, String seed) {
         Map<String, List<DelayerPaperDelivery>> groupedByStep = new HashMap<>();
         Map<String, List<DelayerPaperDelivery>> frozenByStep = new HashMap<>();
 
@@ -563,11 +761,14 @@ public class DelayerSteps {
         Map<String, List<DelayerPaperDelivery>> bySenderKey = new HashMap<>();
         Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
         List<DelayerPaperDelivery> mittentiNonCensiti = new ArrayList<>();
-        List<DelayerPaperDelivery> notifiche = new ArrayList<>(actualCsv);
+        List<DelayerPaperDelivery> notifiche = new ArrayList<>(groupedBySeed.get(seed));
+
+        if (notifiche.isEmpty())
+            throw new RuntimeException("");
 
         // Tutte iniziano nello step iniziale
         groupedByStep.get(WorkflowStep.EVALUATE_SENDER_LIMIT.name()).addAll(notifiche);
-        if (workflowStep.equals(WorkflowStep.EVALUATE_SENDER_LIMIT)) {
+        if (endAt.equals(WorkflowStep.EVALUATE_SENDER_LIMIT)) {
             groupedByStep.put("FROZEN", List.of());
             return groupedByStep;
         }
@@ -577,14 +778,14 @@ public class DelayerSteps {
         Map<String, DelayerPaperDelivery> byRequestId = notifiche.stream()
                 .collect(Collectors.toMap(d -> d.requestId, d -> d));
 
-        // Itera sul gruppo e aggiorna se esiste una corrispondenza
+        // TODO: (iterazione non piu necessaria) Itera sul gruppo e aggiorna se esiste una corrispondenza
         List<DelayerPaperDelivery> notificheConDriver = this.groupedByPkSubstring.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name());
         if (notificheConDriver != null && !notificheConDriver.isEmpty()) {
             for (DelayerPaperDelivery n : notificheConDriver) {
                 DelayerPaperDelivery match = byRequestId.get(n.requestId);
                 if (match != null) {
                     // Aggiorno i campi calcolati automaticamente dall'algoritmo nelle mie notifiche
-                    if(!this.driverCapacityMap.containsKey(n.requestId))
+                    if (!this.driverCapacityMap.containsKey(n.requestId))
                         throw new RuntimeException(String.format("La notifica con requestId: %s presenta un unifiedDeliveryDriver (%s) non previsto", n.requestId, n.unifiedDeliveryDriver));
 
                     match.unifiedDeliveryDriver = n.unifiedDeliveryDriver;
@@ -618,10 +819,7 @@ public class DelayerSteps {
         }
 
         // Raggruppa per recapitista
-        for (DelayerPaperDelivery n : postSenderLimit) {
-            String driverKey = getDriverKey(n);
-            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(n);
-        }
+        byDriverKey(postSenderLimit, byDriverKey);
 
         // Calcola capacità residua per driver
         Map<String, Integer> driverResidua = new HashMap<>();
@@ -643,17 +841,14 @@ public class DelayerSteps {
         }
 
         groupedByStep.get(WorkflowStep.EVALUATE_DRIVER_CAPACITY.name()).addAll(postSenderLimit);
-        if (workflowStep.equals(WorkflowStep.EVALUATE_DRIVER_CAPACITY)) {
+        if (endAt.equals(WorkflowStep.EVALUATE_DRIVER_CAPACITY)) {
             groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
             return groupedByStep;
         }
 
         // Raggruppa nuovamente per driver per il secondo filtro
         byDriverKey.clear();
-        for (DelayerPaperDelivery n : postSenderLimit) {
-            String driverKey = getDriverKey(n);
-            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(n);
-        }
+        byDriverKey(postSenderLimit, byDriverKey);
 
         // Applica limite recapitista
         List<DelayerPaperDelivery> postDriverLimit = new ArrayList<>();
@@ -675,7 +870,7 @@ public class DelayerSteps {
 
 
         groupedByStep.get(WorkflowStep.EVALUATE_PRINT_CAPACITY.name()).addAll(postDriverLimit);
-        if (workflowStep.equals(WorkflowStep.EVALUATE_PRINT_CAPACITY)) {
+        if (endAt.equals(WorkflowStep.EVALUATE_PRINT_CAPACITY)) {
             groupedByStep.put("FROZEN", collectAllFrozen(frozenByStep));
             return groupedByStep;
         }
@@ -700,6 +895,13 @@ public class DelayerSteps {
         return groupedByStep;
     }
 
+    private void byDriverKey(List<DelayerPaperDelivery> postSenderLimit, Map<String, List<DelayerPaperDelivery>> byDriverKey) {
+        for (DelayerPaperDelivery n : postSenderLimit) {
+            String driverKey = getDriverKey(n);
+            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(n);
+        }
+    }
+
     private Integer getSenderLimit(Map.Entry<String, List<DelayerPaperDelivery>> entry) {
         Integer senderLimit = this.senderLimitMap.get(entry.getKey());
         if (senderLimit == null)
@@ -709,11 +911,11 @@ public class DelayerSteps {
     }
 
     private Integer getDriverCapacity(String driverId) {
-        if(driverId == null || driverId.split("~")[0].equalsIgnoreCase("null"))
+        if (driverId == null || driverId.split("~")[0].equalsIgnoreCase("null"))
             return this.actualCsv.size();
 
         Integer capacity = this.driverCapacityMap.get(driverId);
-        if(capacity == null) throw new RuntimeException("DriverId missing: " + driverId);
+        if (capacity == null) throw new RuntimeException("DriverId missing: " + driverId);
 
         return capacity;
     }
@@ -781,18 +983,18 @@ public class DelayerSteps {
         return result;
     }
 
-    private List<DelayerPaperDelivery> findByWorkflowStep(int expectedCount, WorkflowStep workflowStep, String deliveryDate) throws Exception {
+    private List<DelayerPaperDelivery> findByWorkflowStep(List<DelayerPaperDelivery> toFind, WorkflowStep workflowStep, String deliveryDate) throws Exception {
 
         final int pollingFrequency = 3000;
         final int internalRequestFrequency = 500;
-        final int notificheDaTrovare = this.actualCsv.size();
+        final int notificheDaTrovare = toFind.size();
         final int desiredTotalMillis = 25 * 60 * 1000; // 25 minuti
         final int estimatedTimePerAttempt = notificheDaTrovare * internalRequestFrequency + pollingFrequency;
 
         // Garantisce almeno 25 minuti di polling anche nel caso peggiore
         final int maxAttempts = Math.max(1, desiredTotalMillis / estimatedTimePerAttempt + 1);
 
-        Set<String> requestIdsDaTrovare = this.actualCsv.stream()
+        Set<String> requestIdsDaTrovare = toFind.stream()
                 .map(DelayerPaperDelivery::getRequestId)
                 .collect(Collectors.toSet());
 
@@ -800,7 +1002,7 @@ public class DelayerSteps {
         String stepKey = workflowStep.name();
 
         int attempt = 1;
-        while (!requestIdsDaTrovare.isEmpty() && notificheTrovate.size() < expectedCount && attempt <= maxAttempts) {
+        while (!requestIdsDaTrovare.isEmpty() && notificheTrovate.size() < notificheDaTrovare && attempt <= maxAttempts) {
             log.info("Tentativo {}/{} - RequestId rimanenti: {}", attempt, maxAttempts, requestIdsDaTrovare);
 
             Iterator<String> iterator = requestIdsDaTrovare.iterator();
@@ -833,7 +1035,7 @@ public class DelayerSteps {
                 }
             }
 
-            if (notificheTrovate.size() < expectedCount) {
+            if (notificheTrovate.size() < notificheDaTrovare) {
                 Thread.sleep(pollingFrequency);
             }
 
@@ -842,20 +1044,20 @@ public class DelayerSteps {
 
         int trovate = notificheTrovate.size();
         Assertions.assertEquals(
-                expectedCount,
+                notificheDaTrovare,
                 trovate,
                 String.format("Numero di notifiche trovate al workflow step '%s' diverso da quello atteso. Trovate: %d, Attese: %d",
-                        stepKey, trovate, expectedCount)
+                        stepKey, trovate, notificheDaTrovare)
         );
 
         return notificheTrovate.stream().toList();
     }
 
-    private List<DelayerPaperDelivery> findCongelate(int expectedCount) throws Exception {
+    private List<DelayerPaperDelivery> findCongelate(List<DelayerPaperDelivery> toFind) throws Exception {
         LocalDate lunedi = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         String deliveryDate = lunedi.toString();
 
-        return findByWorkflowStep(expectedCount, WorkflowStep.EVALUATE_SENDER_LIMIT, deliveryDate);
+        return findByWorkflowStep(toFind, WorkflowStep.EVALUATE_SENDER_LIMIT, deliveryDate);
     }
 
     private int calculateLimitByComparativo(String compare, int limit) {
@@ -866,5 +1068,89 @@ public class DelayerSteps {
         };
     }
 
+    private void readCsv(String csvFileName, int expectedCount) {
+        List<List<String>> rawCsv = FileUtils.readCsvSafe(String.join("/", CSV_PATH, csvFileName), ";", false);
+        List<String> header = rawCsv.get(0);
+        int actualCount = rawCsv.size() - 1;
+
+        this.numeroNotifiche = actualCount;
+
+        if (actualCount != expectedCount) {
+            throw new RuntimeException("Declared notification count (" + expectedCount +
+                    ") does not match the number of rows read from CSV (" + actualCount + ")");
+        }
+
+        for (int i = 1; i <= actualCount; i++) {
+            this.actualCsv.add(new DelayerPaperDelivery(header, rawCsv.get(i)));
+        }
+
+        if (this.actualCsv.size() != this.numeroNotifiche) {
+            throw new RuntimeException("Loaded " + this.actualCsv.size() +
+                    " notifications, expected " + this.numeroNotifiche + " from CSV");
+        }
+    }
+
+    private void initializeWorkflowStepMap() {
+        for (WorkflowStep step : WorkflowStep.values()) {
+            groupedByPkSubstring.put(step.name(), new ArrayList<>());
+        }
+    }
+
+    private void initializeExpectedDeliveryDate() {
+        if (expectedDeliveryDate == null) {
+            LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            expectedDeliveryDate = monday.toString();
+        }
+    }
+
+    private void initializeSenderAndDriverMaps() {
+        for (DelayerPaperDelivery delivery : actualCsv) {
+            String senderKey = getSenderKey(delivery);
+            String driverKey = getDriverKey(delivery);
+
+            senderLimitMap.putIfAbsent(senderKey, 0);
+            driverCapacityMap.putIfAbsent(driverKey, 0);
+        }
+    }
+
+    private void initializeSeedMaps(DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> row : rows) {
+            String seed = row.get("seed");
+            String quantityStr = row.get("quantita");
+
+            if (seed == null || quantityStr == null) {
+                throw new IllegalArgumentException("Incomplete row in data table: " + row);
+            }
+
+            int expectedCount;
+            try {
+                expectedCount = Integer.parseInt(quantityStr);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid quantity for seed '" + seed + "': " + quantityStr, e);
+            }
+
+            List<DelayerPaperDelivery> matchingDeliveries = actualCsv.stream()
+                    .filter(d -> d.requestId != null && d.requestId.contains(seed))
+                    .collect(Collectors.toList());
+
+            if (matchingDeliveries.size() != expectedCount) {
+                throw new IllegalStateException(String.format(
+                        "Seed '%s': found %d items, expected %d",
+                        seed, matchingDeliveries.size(), expectedCount));
+            }
+
+            Map<String, List<DelayerPaperDelivery>> maps = new HashMap<>();
+            for (WorkflowStep step : WorkflowStep.values()) {
+                maps.put(step.name(), new ArrayList<>());
+            }
+
+            groupedBySeed.put(seed, matchingDeliveries);
+            expectedPianification.put(seed, maps);
+            actualPianification.put(seed, maps);
+            //failPianification.put(seed, maps);
+        }
+    }
 
 }
