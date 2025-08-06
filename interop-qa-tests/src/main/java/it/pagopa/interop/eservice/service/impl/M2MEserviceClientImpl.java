@@ -27,8 +27,9 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MEserviceClientImpl extends AbstractClient implements IM2MEserviceClient {
-    /* TODO 18/07/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
-    *   adattare una volta ottenuta la specifica completa */
+    /* ***************************************************************************************
+        TODO 18/07/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
+     *    adattare una volta ottenuta la specifica completa */
     @Data
     public static class EServiceInterfaceUploadRequest {
         private UUID eServiceId;
@@ -60,6 +61,22 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Data
     public static class EServiceInterfaceUploadResponse {
         private UUID id;
+    }
+
+    @Data
+    public static class EServicePatchRequest {
+        private String name;
+        private String description;
+
+        public EServicePatchRequest name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EServicePatchRequest description(String description) {
+            this.description = description;
+            return this;
+        }
     }
     /* ***************************************************************************************/
 
@@ -171,6 +188,12 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     public FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId,
         UUID descriptorId) {
         return eservicesApi.downloadEServiceDescriptorInterface(eserviceId, descriptorId);
+    }
+
+    @Override
+    public void patchEService(UUID eServiceId, EServicePatchRequest body) {
+        // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
+        //  metodo nel client da chiamare
     }
 
     @Override

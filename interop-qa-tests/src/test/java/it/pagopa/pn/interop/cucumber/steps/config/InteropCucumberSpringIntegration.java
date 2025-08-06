@@ -46,11 +46,13 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @CucumberContextConfiguration
@@ -105,7 +107,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MDelegationClient.class,
         M2MDeclaredAttributeClientImpl.class,
         M2MVerifiedAttributeClientImpl.class,
-        M2MClientsClientImpl.class
+        M2MClientsClientImpl.class,
+        EServiceMapperImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

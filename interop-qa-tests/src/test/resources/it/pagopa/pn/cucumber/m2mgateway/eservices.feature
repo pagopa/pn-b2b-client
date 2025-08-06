@@ -163,7 +163,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | m2m-admin |
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
-  Scenario: [M2MG_ESERVICES_18] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service (Parte2#Scenario 32)
+  Scenario: [M2MG_ESERVICES_18] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 32)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la cancellazione dell'e-service
@@ -171,68 +171,68 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di recuperare il record di eService creato
     Then si ottiene lo status code 404
 
-  Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario 34)
+  Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 34)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la cancellazione dell'e-service
     Then si ottiene lo status code 401
 
-  Scenario: [M2MG_ESERVICES_20] La cancellazione di un e-service non può essere effettuata specificando un id inesistente (Parte2#Scenario 35)
+  Scenario: [M2MG_ESERVICES_20] La cancellazione di un e-service non può essere effettuata specificando un id inesistente (Parte2#Scenario intorno a 35)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 404
 
-  Scenario: [M2MG_ESERVICES_21] La cancellazione di un e-service non può essere effettuata specificando un token non valido (Parte2#Scenario 36)
+  Scenario: [M2MG_ESERVICES_21] La cancellazione di un e-service non può essere effettuata specificando un token non valido (Parte2#Scenario intorno a 36)
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene status code 401
 
-  Scenario: [M2MG_ESERVICES_22] La cancellazione di un e-service precedentemente rimosso non può essere effettuata (Parte2#Scenario 37)
+  Scenario: [M2MG_ESERVICES_22] La cancellazione di un e-service precedentemente rimosso non può essere effettuata (Parte2#Scenario intorno a 37)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente effettua la cancellazione dell'e-service con successo
     When l'utente tenta di effettuare la cancellazione dell'e-service
     Then si ottiene lo status code 404
 
-  Scenario: [M2MG_ESERVICES_23] La cancellazione di un e-service non può essere effettuata da un ente diverso dal creatore dell'e-service (Parte2#Scenario 38)
+  Scenario: [M2MG_ESERVICES_23] La cancellazione di un e-service non può essere effettuata da un ente diverso dal creatore dell'e-service (Parte2#Scenario intorno a 38)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service
     Then si ottiene lo status code 403
 
-  Scenario: [M2MG_ESERVICES_24] Un utente con ruolo M2M-ADMIN può effettuare riattivazione di un e-service in stato SUSPENDED (Parte2#Scenario 39)
+  Scenario: [M2MG_ESERVICES_24] Un utente con ruolo M2M-ADMIN può effettuare riattivazione di un e-service in stato SUSPENDED (Parte2#Scenario intorno a 39)
     Given "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 200
     And l'e-service è stato riattivato con successo
 
-  Scenario: [M2MG_ESERVICES_25] Un utente con ruolo M2M non può effettuare riattivazione di un e-service (Parte2#Scenario 41)
+  Scenario: [M2MG_ESERVICES_25] Un utente con ruolo M2M non può effettuare riattivazione di un e-service (Parte2#Scenario intorno a 41)
     Given "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 401
 
-  Scenario: [M2MG_ESERVICES_26] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario 42)
+  Scenario: [M2MG_ESERVICES_26] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 42)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione di un e-service inesistente
     Then si ottiene lo status code 404
     When l'utente tenta di effettuare la riattivazione di un descriptor dell'e-service inesistente
     Then si ottiene lo status code 404
 
-  Scenario: [M2MG_ESERVICES_27] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service specificando un token non valido (Parte2#Scenario 43)
+  Scenario: [M2MG_ESERVICES_27] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service specificando un token non valido (Parte2#Scenario intorno a 43)
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 401
 
-  Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato ACTIVE (Parte2#Scenario 44)
+  Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato ACTIVE (Parte2#Scenario intorno a 44)
     Given "PA1" ha già creato un e-service con un descrittore in stato "ACTIVE"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 409
 
-  Scenario Outline: [M2MG_ESERVICES_29] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato diverso da ACTIVE o SUSPENDED (Parte2#Scenario 45)
+  Scenario Outline: [M2MG_ESERVICES_29_A] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato diverso da ACTIVE o SUSPENDED (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
@@ -243,10 +243,69 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | PUBLISHED             |
       | DEPRECATED            |
       | ARCHIVED              |
-      | WAITING_FOR_APPROVAL  |
 
-  Scenario: [M2MG_ESERVICES_30] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service se non è il creatore dello stesso (Parte2#Scenario 46)
+  Scenario: [M2MG_ESERVICES_29_B] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45)
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la riattivazione dell'e-service
+    Then si ottiene lo status code 400
+
+  Scenario: [M2MG_ESERVICES_30] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service se non è il creatore dello stesso (Parte2#Scenario intorno a 46)
     Given "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 403
+
+  Scenario: [M2MG_ESERVICES_31] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di un e-service in stato DRAFT (Parte2#Scenario intorno a 71)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+
+  Scenario: [M2MG_ESERVICES_32] Un utente con ruolo M2M NON può effettuare una modifica parziale di un e-service (Parte2#Scenario intorno a 73)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+
+  Scenario: [M2MG_ESERVICES_33] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service inesistente (Parte2#Scenario intorno a 74)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  Scenario: [M2MG_ESERVICES_34] Un utente NON può effettuare una modifica parziale di un e-service indicando un token non valido (Parte2#Scenario intorno a 75)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service non ha subito modifiche
+
+  Scenario Outline: [M2MG_ESERVICES_35_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 76)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+      | ARCHIVED    |
+
+  Scenario: [M2MG_ESERVICES_35_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 76)
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+
+  Scenario: [M2MG_ESERVICES_36] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service che non gli appartiene (Parte2#Scenario intorno a 77)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
