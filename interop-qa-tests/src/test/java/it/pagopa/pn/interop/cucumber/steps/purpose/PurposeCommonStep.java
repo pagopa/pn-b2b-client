@@ -63,7 +63,7 @@ public class PurposeCommonStep {
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
-        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null);
     }
 
     @Given("{string} ha già pubblicato quella versione di e-service")
@@ -143,10 +143,11 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole1);
         UUID consumerId = identityService.getOrganizationId(tenantType);
-        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState,
+                new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
-    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState) {
+    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef) {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         for (int index = 0; index < n; index++) {
@@ -156,7 +157,8 @@ public class PurposeCommonStep {
                             .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
                             .consumerId(consumerId)
                             .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
-                            .build());
+                            .build(),
+                    delegationRef);
 
             purposeCommonContext.getPurposesIds().add(purposeCommonContext.getPurposeId());
             purposeCommonContext.getCurrentVersionIds().add(purposeCommonContext.getVersionId());
