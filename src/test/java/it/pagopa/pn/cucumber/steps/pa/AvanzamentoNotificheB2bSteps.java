@@ -1446,6 +1446,28 @@ public class AvanzamentoNotificheB2bSteps {
         b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, CHECK_NOTIFICATION_COST_FOR_USER, checkFilters);
     }
 
+    @Then("esiste l'elemento di timeline della notifica {string} con productType uguale a {string} per l'utente {int}")
+    public void TimelineElementOfNotificationProductType(String timelineEventCategory, String productType, Integer recipientIndex) {
+        try {
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            assertSoftly(softly -> {
+                assertThat(fullSentNotification).as("La fullSentNotification non dev'essere null").isNotNull();
+                assertThat(fullSentNotification.getTimeline()).as("La timeline della fullSentNotification non dev'essere null").isNotNull();
+                TimelineElementV28 te = fullSentNotification.getTimeline()
+                        .stream()
+                        .filter(data -> data.getElementId().startsWith(timelineEventCategory))
+                        .filter(data -> data.getDetails() != null)
+                        .filter(data -> data.getDetails().getProductType().equals(productType))
+                        .filter(data -> data.getDetails().getRecIndex().equals(recipientIndex))
+                        .findFirst().orElse(null);
+                assertThat(te).as("Il timelineElement atteso non è stato trovato").isNotNull();
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+
     @Then("viene controllato che l'elemento di timeline della notifica {string} non esiste con V23")
     public void readingNotEventUpToTheTimelineElementOfNotificationV23(String timelineEventCategory) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
