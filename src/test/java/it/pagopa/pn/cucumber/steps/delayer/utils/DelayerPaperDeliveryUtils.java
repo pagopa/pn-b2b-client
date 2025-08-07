@@ -63,6 +63,14 @@ public class DelayerPaperDeliveryUtils {
         return senderLimit;
     }
 
+    public Integer getSenderLimit(String senderKey) {
+        Integer senderLimit = context.senderLimitMap.get(senderKey);
+        if (senderLimit == null)
+            throw new RuntimeException("Sender limit not found");
+
+        return senderLimit;
+    }
+
     public boolean isMittenteCensito(String senderKey) {
         
         if (senderKey == null || senderKey.isBlank()) {
