@@ -52,6 +52,21 @@ public class DelayerPaperDeliveryUtils {
     }
 
     public void setDriverCapacity(String driverId, int capacity) {
+        String[] parts = splitDriverId(driverId);
+        String location = parts[1];
+
+        if (capacity < 0) {
+            throw new IllegalArgumentException("La capacità non può essere negativa");
+        }
+
+        if (isProvince(location)) {
+            return; // ignorato volutamente
+        }
+
+        if (!(isValidCap(location) || isValidTestCap(location))) {
+            throw new IllegalArgumentException("Il secondo token non è un CAP valido o di test: " + location);
+        }
+
         Map<String, Integer> capMap = findCapacityOrMap(driverId, true);
         capMap.put(driverId, capacity);
     }
@@ -69,7 +84,7 @@ public class DelayerPaperDeliveryUtils {
         String driverKey = parts[0];
         String location = parts[1]; // può essere provincia o cap
 
-        Map<String, Map<String, Integer>> driverMap = context.driverCapCapacityMap;
+        Map<String, Map<String, Integer>> driverMap = context.driverCapacityMap;
 
         if (isProvince(location)) {
             return driverMap.containsKey(driverId);
@@ -273,7 +288,7 @@ public class DelayerPaperDeliveryUtils {
 
         // Caso: provincia
         if (isProvince(location)) {
-            Map<String, Integer> capMap = context.driverCapCapacityMap.get(driverId);
+            Map<String, Integer> capMap = context.driverCapacityMap.get(driverId);
             if (capMap == null) {
                 throw new IllegalStateException("Nessuna mappa trovata per driver/provincia: " + driverId);
             }
@@ -288,7 +303,7 @@ public class DelayerPaperDeliveryUtils {
         if (isValidCap(location) || isValidTestCap(location)) {
             String fullKey = driver + "~" + location;
 
-            return context.driverCapCapacityMap.values().stream()
+            return context.driverCapacityMap.values().stream()
                     .filter(capMap -> capMap.containsKey(fullKey))
                     .findFirst()
                     .map(capMap -> {

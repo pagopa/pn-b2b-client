@@ -59,10 +59,10 @@ public class DelayerCsvLoader {
             context.senderLimitMap.putIfAbsent(senderKey, 0);
 
             // Se driverKey non esiste, crea nuova mappa cap -> 0
-            context.driverCapCapacityMap.computeIfAbsent(unifiedDeliveryDriverKey, k -> new HashMap<>());
+            context.driverCapacityMap.computeIfAbsent(unifiedDeliveryDriverKey, k -> new HashMap<>());
 
             // Se cap non esiste per quel driverKey, aggiungilo
-            Map<String, Integer> capMap = context.driverCapCapacityMap.get(unifiedDeliveryDriverKey);
+            Map<String, Integer> capMap = context.driverCapacityMap.get(unifiedDeliveryDriverKey);
             capMap.putIfAbsent(capDeliveryDriverKey, 0);
         }
     }
