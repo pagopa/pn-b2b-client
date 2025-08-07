@@ -11,6 +11,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class DelayerSteps {
     private final DelayerPlanner planner;
     private final DelayerLambdaClient lambdaClient;
     private final DelayerValidator validator;
+    private final DelayerPaperDeliveryUtils utils;
 
     @Autowired
     public DelayerSteps(LambdaInvoker lambdaInvoker) {
@@ -47,6 +49,7 @@ public class DelayerSteps {
         this.planner = new DelayerPlanner(context);
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, LAMBDA_NAME);
         this.validator = new DelayerValidator(context, lambdaClient);
+        this.utils = new DelayerPaperDeliveryUtils(context);
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -62,52 +65,62 @@ public class DelayerSteps {
         lambdaClient.invoke("IMPORT_DATA", csvName);
     }
 
-    @And("si presuppone che il limite {word} settimanale \\(paId-product_type-province) sia:")
-    @And("si verifica che il limite {word} unificato settimanale \\(unifiedDeliveryDriver-province) sia:")
-    public void initSenderOrDriverLimit(String subject, DataTable dataTable) {
-        boolean isMittente;
-        if ("mittente".equalsIgnoreCase(subject)) {
-            isMittente = true;
-        } else if ("recapitista".equalsIgnoreCase(subject)) {
-            isMittente = false;
-        } else {
-            throw new IllegalArgumentException("Subject non valido: " + subject);
-        }
+    @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province) sia:")
+    public void initSenderLimit(DataTable dataTable) {
 
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
 
         for (Map<String, String> row : rows) {
-            String idKey = isMittente ? "senderId" : "unifiedDeliveryDriverId";
+            String idKey = "senderId";
             String entityId = row.get(idKey);
             String comparative = row.get("comparative");
             int rawLimit = Integer.parseInt(row.get("limit"));
 
             int calculatedLimit = calculateLimitByComparativo(comparative, rawLimit);
-            Map<String, Integer> targetMap = isMittente ? context.senderLimitMap : context.driverCapacityMap;
 
-            if (!targetMap.containsKey(entityId)) {
+            if (!context.senderLimitMap.containsKey(entityId)) {
                 log.warn("{} non presente nel CSV: {}", idKey, entityId);
             }
 
-            targetMap.put(entityId, calculatedLimit);
+            context.senderLimitMap.put(entityId, calculatedLimit);
+        }
+    }
 
-//            if (!isMittente) {
-//                int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
+    @And("si verifica che il limite settimanale dei recapitisti \\(unifiedDeliveryDriver-geoKey) sia:")
+    public void initDriverLimit(DataTable dataTable) {
+
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> row : rows) {
+            String idKey = "driverId";
+            String entityId = row.get(idKey);
+            String comparative = row.get("comparative");
+            int rawLimit = Integer.parseInt(row.get("limit"));
+
+            int calculatedLimit = calculateLimitByComparativo(comparative, rawLimit);
+
+            if (!utils.hasDriver(entityId)) {
+                log.warn("{} non presente nel CSV: {}", idKey, entityId);
+            }
+
+            utils.setDriverCapacity(entityId, calculatedLimit);
+
+//            int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
 //
-//                switch (comparative.toLowerCase()) {
-//                    case "almeno" -> {
-//                        if (actual < rawLimit) {
-//                            throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
-//                        }
+//            switch (comparative.toLowerCase()) {
+//                case "almeno" -> {
+//                    if (actual < rawLimit) {
+//                        throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
 //                    }
-//                    case "esattamente" -> {
-//                        if (actual != rawLimit) {
-//                            throw new AssertionError("Capacità di " + entityId + " diversa da " + rawLimit + ", trovata: " + actual);
-//                        }
-//                    }
-//                    default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);
 //                }
+//                case "esattamente" -> {
+//                    if (actual != rawLimit) {
+//                        throw new AssertionError("Capacità di " + entityId + " diversa da " + rawLimit + ", trovata: " + actual);
+//                    }
+//                }
+//                default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);
 //            }
+
         }
     }
 

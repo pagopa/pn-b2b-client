@@ -11,7 +11,7 @@ public class DelayerContext {
     public List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
 
     public Map<String, Integer> senderLimitMap = new HashMap<>();
-    public Map<String, Integer> driverCapacityMap = new HashMap<>();
+    public Map<String, Map<String,Integer>> driverCapCapacityMap = new HashMap<>();
 
     public Map<String, List<DelayerPaperDelivery>> groupedBySeed = new HashMap<>();
     public Map<String, Map<String, List<DelayerPaperDelivery>>> expectedPianification = new HashMap<>();

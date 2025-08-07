@@ -11,9 +11,10 @@
         | senderId          | comparative | limit |
         | senderPaId1~RS~RM | esattamente | 15    |
         | senderPaId1~AR~RM | esattamente | 15    |
-      And si verifica che il limite recapitista unificato settimanale (unifiedDeliveryDriver-province) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | Poste~RM                | almeno      | 30    |
+      And si verifica che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | driverId    | comparative | limit |
+        | Poste~RM    | almeno      | 30    |
+        | Poste~00139 | almeno      | 30    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
       #And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And viene simulato internamente l'algoritmo di pianificazione

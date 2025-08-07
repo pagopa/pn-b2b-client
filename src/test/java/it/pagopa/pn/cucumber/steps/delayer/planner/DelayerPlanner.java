@@ -100,10 +100,6 @@ public class DelayerPlanner {
     private List<DelayerPaperDelivery> applyDriverCapacity(List<DelayerPaperDelivery> inEvaluateDriverCapacity, List<DelayerPaperDelivery> inEvaluateResidualCapacity, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
 
         // 1. Inserisco le notifiche che verranno elaborate in questo step
-        List<DelayerPaperDelivery> toEvaluate = new ArrayList<>();
-        toEvaluate.addAll(inEvaluateDriverCapacity);
-        toEvaluate.addAll(inEvaluateResidualCapacity);
-
         groupedByStep.get(WorkflowSteps.EVALUATE_DRIVER_CAPACITY.name())
                 .addAll(deepCopyAndUpdateKeys(sortByPriority(inEvaluateDriverCapacity), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
 
@@ -111,50 +107,46 @@ public class DelayerPlanner {
                 .addAll(deepCopyAndUpdateKeys(sortByPriority(inEvaluateResidualCapacity), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
 
 
-        // 2. Raggruppa per driver
-        Map<String, List<DelayerPaperDelivery>> byDriverKey = groupByDriver(toEvaluate);
-        Map<String, Integer> driverResidualCapacity = new HashMap<>();
-
-        // 3. Calcola capacità residua per ogni driver (inizialmente tutta disponibile)
-        for (String driverKey : byDriverKey.keySet()) {
-            int capacity = utils.getDriverCapacity(driverKey);
-            driverResidualCapacity.put(driverKey, capacity);
-        }
-
+        // 2. Processa PRIMA le notifiche in EVALUATE_DRIVER_CAPACITY
         List<DelayerPaperDelivery> toEvaluatePrintCapacity = new ArrayList<>();
         List<DelayerPaperDelivery> toFreeze = new ArrayList<>();
 
-        // 4. Processa PRIMA le notifiche in EVALUATE_DRIVER_CAPACITY
         inEvaluateDriverCapacity = sortByPriority(inEvaluateDriverCapacity);
 
         for(DelayerPaperDelivery notification : inEvaluateDriverCapacity) {
-            String driverKey = getDriverKey(notification);
-            int remaining = driverResidualCapacity.getOrDefault(driverKey, 0);
+            String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(notification);
+            String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
 
-            if(remaining > 0) {
+            int remainingProvincial = utils.getDriverCapacity(unifiedDeliveryDriverKey);
+            int remainingCap = utils.getDriverCapacity(capDeliveryDriverKey);
+
+            if(remainingProvincial > 0 && remainingCap > 0) {
                 toEvaluatePrintCapacity.add(notification);
-                driverResidualCapacity.put(driverKey, Math.max(0, remaining - 1));
+                utils.setDriverCapacity(capDeliveryDriverKey, Math.max(0, remainingCap - 1));
             } else {
                 toFreeze.add(notification);
             }
         }
 
-        // 5. Processa DOPO le notifiche in EVALUATE_RESIDUAL_CAPACITY
+        // 3. Processa DOPO le notifiche in EVALUATE_RESIDUAL_CAPACITY
         inEvaluateResidualCapacity = sortByPriority(inEvaluateResidualCapacity);
 
         for(DelayerPaperDelivery notification : inEvaluateResidualCapacity) {
-            String driverKey = getDriverKey(notification);
-            int remaining = driverResidualCapacity.getOrDefault(driverKey, 0);
+            String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(notification);
+            String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
 
-            if(remaining > 0) {
+            int remainingProvincial = utils.getDriverCapacity(unifiedDeliveryDriverKey);
+            int remainingCap = utils.getDriverCapacity(capDeliveryDriverKey);
+
+            if(remainingProvincial > 0 && remainingCap > 0) {
                 toEvaluatePrintCapacity.add(notification);
-                driverResidualCapacity.put(driverKey, Math.max(0, remaining - 1));
+                utils.setDriverCapacity(capDeliveryDriverKey, Math.max(0, remainingCap - 1));
             } else {
                 toFreeze.add(notification);
             }
         }
 
-        // 6. Congelo le notifiche non elaborate
+        // 4. Congela le notifiche non elaborate
         freezeNotifications(toFreeze, WorkflowSteps.EVALUATE_DRIVER_CAPACITY, frozenByStep);
 
         return sortByPriority(toEvaluatePrintCapacity);

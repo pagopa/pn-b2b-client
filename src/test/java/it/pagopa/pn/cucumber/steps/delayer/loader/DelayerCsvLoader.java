@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+
 @Slf4j
 public class DelayerCsvLoader {
 
@@ -50,12 +52,21 @@ public class DelayerCsvLoader {
     public void initializeLimits() {
         for (DelayerPaperDelivery delivery : context.actualCsv) {
             String senderKey = getSenderKey(delivery);
-            String driverKey = getDriverKey(delivery);
+            String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(delivery);
+            String capDeliveryDriverKey = getCapDeliveryDriverKey(delivery);
 
+            // Inizializza limite mittente se non presente
             context.senderLimitMap.putIfAbsent(senderKey, 0);
-            context.driverCapacityMap.putIfAbsent(driverKey, 0);
+
+            // Se driverKey non esiste, crea nuova mappa cap -> 0
+            context.driverCapCapacityMap.computeIfAbsent(unifiedDeliveryDriverKey, k -> new HashMap<>());
+
+            // Se cap non esiste per quel driverKey, aggiungilo
+            Map<String, Integer> capMap = context.driverCapCapacityMap.get(unifiedDeliveryDriverKey);
+            capMap.putIfAbsent(capDeliveryDriverKey, 0);
         }
     }
+
 
     public void initializeSeeds(DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
@@ -84,13 +95,5 @@ public class DelayerCsvLoader {
             context.expectedPianification.put(seed, new HashMap<>(workflowMap));
             context.actualPianification.put(seed, new HashMap<>(workflowMap));
         }
-    }
-
-    private String getSenderKey(DelayerPaperDelivery n) {
-        return String.join("~", n.getSenderPaId(), n.getProductType(), n.getProvince());
-    }
-
-    private String getDriverKey(DelayerPaperDelivery n) {
-        return String.join("~", n.getUnifiedDeliveryDriver(), n.getProvince());
     }
 }

@@ -19,27 +19,66 @@ public class DelayerPaperDeliveryUtils {
         this.context = context;
     }
 
-    public static Map<String, List<DelayerPaperDelivery>> groupByDriver(List<DelayerPaperDelivery> notifications) {
-        Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
-        for (DelayerPaperDelivery notification : notifications) {
-            String driverKey = getDriverKey(notification);
-            byDriverKey.computeIfAbsent(driverKey, k -> new ArrayList<>()).add(notification);
+    public static String getUnifiedDeliveryDriverKey(DelayerPaperDelivery n) {
+        String driver = n.getUnifiedDeliveryDriver();
+        String province = n.getProvince();
+
+        if (driver == null || driver.isBlank()) {
+            throw new IllegalArgumentException("UnifiedDeliveryDriver mancante o vuoto");
         }
-        return byDriverKey;
+        if (province == null || province.isBlank()) {
+            throw new IllegalArgumentException("Provincia mancante o vuota");
+        }
+
+        return driver + "~" + province;
     }
 
-    public static String getDriverKey(DelayerPaperDelivery n) {
-        return String.join("~", n.getUnifiedDeliveryDriver(), n.getProvince());
+    public static String getCapDeliveryDriverKey(DelayerPaperDelivery n) {
+        String driver = n.getUnifiedDeliveryDriver();
+        String cap = n.getCap();
+
+        if (driver == null || driver.isBlank()) {
+            throw new IllegalArgumentException("UnifiedDeliveryDriver mancante o vuoto");
+        }
+        if (cap == null || cap.isBlank()) {
+            throw new IllegalArgumentException("CAP mancante o vuoto");
+        }
+
+        return driver + "~" + cap;
     }
 
-    public Integer getDriverCapacity(String driverId) {
-        if (driverId == null || driverId.split("~")[0].equalsIgnoreCase("null")) 
-            throw new RuntimeException("Driver id not found");
+    public int getDriverCapacity(String driverId) {
+        return findCapacityOrMap(driverId, false);
+    }
 
-        Integer capacity = context.driverCapacityMap.get(driverId);
-        if (capacity == null) throw new RuntimeException("DriverId missing: " + driverId);
+    public void setDriverCapacity(String driverId, int capacity) {
+        Map<String, Integer> capMap = findCapacityOrMap(driverId, true);
+        capMap.put(driverId, capacity);
+    }
 
-        return capacity;
+    public boolean hasDriver(String driverId) {
+        if (driverId == null || !driverId.contains("~")) {
+            return false;
+        }
+
+        String[] parts = driverId.split("~");
+        if (parts.length != 2) {
+            return false;
+        }
+
+        String driverKey = parts[0];
+        String location = parts[1]; // può essere provincia o cap
+
+        Map<String, Map<String, Integer>> driverMap = context.driverCapCapacityMap;
+
+        if (isProvince(location)) {
+            return driverMap.containsKey(driverId);
+        } else if (isValidCap(location) || isValidTestCap(location)) {
+            return driverMap.values().stream()
+                    .anyMatch(capMap -> capMap.containsKey(location));
+        }
+
+        return false;
     }
 
     public static String getSenderKey(DelayerPaperDelivery n) {
@@ -53,14 +92,6 @@ public class DelayerPaperDeliveryUtils {
             bySenderKey.computeIfAbsent(senderKey, k -> new ArrayList<>()).add(notification);
         }
         return bySenderKey;
-    }
-
-    public Integer getSenderLimit(Map.Entry<String, List<DelayerPaperDelivery>> entry) {
-        Integer senderLimit = context.senderLimitMap.get(entry.getKey());
-        if (senderLimit == null)
-            throw new RuntimeException("Sender limit not found");
-
-        return senderLimit;
     }
 
     public Integer getSenderLimit(String senderKey) {
@@ -201,4 +232,80 @@ public class DelayerPaperDeliveryUtils {
         };
     }
 
+    private boolean isValidCap(String cap) {
+        return cap != null && cap.matches("^\\d{5}$");
+    }
+
+    private boolean isValidTestCap(String cap) {
+        return cap != null && cap.matches("^CAP\\d+_P\\d+$");
+    }
+
+    private boolean isProvince(String value) {
+        return value != null && value.matches("^[A-Z]{2}$");
+    }
+
+    private String[] splitDriverId(String driverId) {
+        if (driverId == null || driverId.isBlank() || !driverId.contains("~")) {
+            throw new IllegalArgumentException("Driver ID non valido o mancante: " + driverId);
+        }
+
+        String[] parts = driverId.split("~");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Formato driverId non valido (atteso 'driver~location'): " + driverId);
+        }
+
+        return parts;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T findCapacityOrMap(String driverId, boolean returnMap) {
+        if (driverId == null || driverId.isBlank() || !driverId.contains("~")) {
+            throw new IllegalArgumentException("Driver ID non valido o mancante: " + driverId);
+        }
+
+        String[] parts = driverId.split("~");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Formato driverId non valido. Atteso 'driver~location': " + driverId);
+        }
+
+        String driver = parts[0];
+        String location = parts[1];
+
+        // Caso: provincia
+        if (isProvince(location)) {
+            Map<String, Integer> capMap = context.driverCapCapacityMap.get(driverId);
+            if (capMap == null) {
+                throw new IllegalStateException("Nessuna mappa trovata per driver/provincia: " + driverId);
+            }
+
+            return (T) (returnMap ? capMap :
+                    Integer.valueOf(capMap.values().stream()
+                            .mapToInt(Integer::intValue)
+                            .sum()));
+        }
+
+        // Caso: CAP o CAP di test
+        if (isValidCap(location) || isValidTestCap(location)) {
+            String fullKey = driver + "~" + location;
+
+            return context.driverCapCapacityMap.values().stream()
+                    .filter(capMap -> capMap.containsKey(fullKey))
+                    .findFirst()
+                    .map(capMap -> {
+                        if (returnMap) {
+                            return (T) capMap;
+                        } else {
+                            Integer capacity = capMap.get(fullKey);
+                            if (capacity == null) {
+                                throw new IllegalStateException("Capacità non trovata per chiave '%s'".formatted(fullKey));
+                            }
+                            return (T) capacity;
+                        }
+                    })
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Nessuna mappa trovata per driver '%s' con CAP '%s'".formatted(driver, location)));
+        }
+
+        throw new IllegalArgumentException("Il secondo token non è una provincia o CAP valido: " + location);
+    }
 }
