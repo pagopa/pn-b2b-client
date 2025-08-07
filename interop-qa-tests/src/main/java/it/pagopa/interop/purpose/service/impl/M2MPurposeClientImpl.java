@@ -3,6 +3,7 @@ package it.pagopa.interop.purpose.service.impl;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -35,14 +36,22 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
         return apiClient;
     }
 
+    public Purpose activatePurpose(UUID purposeId, DelegationRef delegationRef) {
+        return purposesApi.activateDraftPurpose(purposeId, delegationRef);
+    }
+
     @Override
     public Purpose activatePurpose(UUID purposeId) {
-        return purposesApi.activateDraftPurpose(purposeId);
+        return purposesApi.activateDraftPurpose(purposeId, null);
+    }
+
+    public Purpose suspendPurpose(UUID purposeId, DelegationRef delegationRef) {
+        return purposesApi.suspendPurpose(purposeId, delegationRef);
     }
 
     @Override
     public Purpose suspendPurpose(UUID purposeId) {
-        return purposesApi.suspendPurpose(purposeId);
+        return purposesApi.suspendPurpose(purposeId, null);
     }
 
     @Override
@@ -67,14 +76,22 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
         return purposesApi.createPurposeVersion(purposeId.toString(), purposeVersionSeed);
     }
 
+    public Purpose unsuspendPurpose(UUID purposeId, DelegationRef delegationRef) {
+        return purposesApi.unsuspendPurpose(purposeId, delegationRef);
+    }
+
     @Override
     public Purpose unsuspendPurpose(UUID purposeId) {
-        return purposesApi.unsuspendPurpose(purposeId);
+        return purposesApi.unsuspendPurpose(purposeId, null);
+    }
+
+    public Purpose approvePurpose(UUID purposeId, DelegationRef delegationRef) {
+        return purposesApi.approvePurpose(purposeId, delegationRef);
     }
 
     @Override
     public Purpose approvePurpose(UUID purposeId) {
-        return purposesApi.approvePurpose(purposeId);
+        return purposesApi.approvePurpose(purposeId, null);
     }
 
     @Override
