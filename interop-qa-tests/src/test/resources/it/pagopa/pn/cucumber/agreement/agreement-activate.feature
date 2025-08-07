@@ -76,11 +76,7 @@ Feature: Attivazione richiesta di fruizione
       | ARCHIVED       |
 
 
-
-
-
-
-  Scenario: [TC_CAPOFILA_35_55_59] Un delegato all’erogazione che gestisce finalità per conto del delegante può rifiutare e non sospendere una finalità in stato pending
+  Scenario: Un delegato alla fruizione sospende ed attiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -93,41 +89,17 @@ Feature: Attivazione richiesta di fruizione
     When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
     Then si ottiene status code 200
     And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato richiede una operazione di attivazione di quella richiesta di fruizione
-    ### BUG PERCHé prima chiamata non funziona
+    # NON AGGENDO COME DELEGATO, DEVE APPROVARE LA RICHIESTA DI FRUIZIONE SENZA PASSARE IL DELEGATION-ID
     And "PA1" ha già approvato quella richiesta di fruizione
-
-#    When "GSP" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" dell'ente delegato
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-
-
     And l'ente delegato sospende quella finalità in stato "ACTIVE"
     And l'utente è un "admin" dell'ente delegato
-    When l'utente riattiva la finalità in stato "SUSPENDED" per quell'e-service
-
+    When l'utente delegato riattiva la finalità in stato "SUSPENDED" per quell'e-service
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente delegato ha già approvato quella richiesta di fruizione
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  Scenario: [TC_CAPOFILA_4_5] Il richiamo dell’API di creazione di una delega possa essere compiuto da un utente di livello operatore amministrativo (admin)
+  Scenario: Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     Given l'utente è un "admin" di "PA1"
     # CREAZIONE DELEGA IN FRUIZIONE VERSO PA1
@@ -144,9 +116,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA1" concede la disponibilità a ricevere deleghe
     When l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
     And l'ente "PA1" accetta la delega
-
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente delegato ha già approvato quella richiesta di fruizione
 
