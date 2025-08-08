@@ -37,7 +37,7 @@
         | rankingRS_2nd_890~RS~P7  | esattamente | 0     |
         | rankingRS_2nd_890~AR~P7  | esattamente | 0     |
         | rankingRS_2nd_890~890~P7 | esattamente | 7     |
-      And si verifica che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId         | comparative | limit |
         | driverRanking2nd_890~P1         | esattamente | 10    |
         | driverRanking2nd_890~CAP1_P1    | esattamente | 10    |
@@ -53,6 +53,22 @@
         | driverRanking890~CAP1_P6        | esattamente | 10    |
         | driverRankingRS_2nd_890~P7      | esattamente | 10    |
         | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId         | comparative | limit |
+        | driverRanking2nd_890~P1         | esattamente | 0     |
+        | driverRanking2nd_890~CAP1_P1    | esattamente | 0     |
+        | driverRankingRS_2nd~P2          | esattamente | 0     |
+        | driverRankingRS_2nd~CAP1_P2     | esattamente | 0     |
+        | driverRankingRS_890~P3          | esattamente | 0     |
+        | driverRankingRS_890~CAP1_P3     | esattamente | 0     |
+        | driverRankingRS~P4              | esattamente | 0     |
+        | driverRankingRS~CAP1_P4         | esattamente | 0     |
+        | driverRanking2nd~P5             | esattamente | 0     |
+        | driverRanking2nd~CAP1_P5        | esattamente | 0     |
+        | driverRanking890~P6             | esattamente | 0     |
+        | driverRanking890~CAP1_P6        | esattamente | 0     |
+        | driverRankingRS_2nd_890~P7      | esattamente | 0     |
+        | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 0     |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And viene simulato internamente l'algoritmo di pianificazione
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:

@@ -86,7 +86,7 @@ public class DelayerSteps {
         }
     }
 
-    @And("si verifica che il limite settimanale dei recapitisti \\(unifiedDeliveryDriver-geoKey) sia:")
+    @And("si presume che il limite settimanale dei recapitisti \\(unifiedDeliveryDriver-geoKey) sia:")
     public void initDriverLimit(DataTable dataTable) {
 
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
@@ -104,22 +104,35 @@ public class DelayerSteps {
             }
 
             utils.setDriverCapacity(entityId, calculatedLimit);
+        }
+    }
 
-//            int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
-//
-//            switch (comparative.toLowerCase()) {
-//                case "almeno" -> {
-//                    if (actual < rawLimit) {
-//                        throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
-//                    }
-//                }
-//                case "esattamente" -> {
-//                    if (actual != rawLimit) {
-//                        throw new AssertionError("Capacità di " + entityId + " diversa da " + rawLimit + ", trovata: " + actual);
-//                    }
-//                }
-//                default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);
-//            }
+    @And("si verifica che il limite settimanale utilizzato dai recapitisti \\(unifiedDeliveryDriver-geoKey) sia:")
+    public void checkDriverAvailableCapacity(DataTable dataTable) {
+
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> row : rows) {
+            String idKey = "unifiedDeliveryDriverId";
+            String entityId = row.get(idKey);
+            String comparative = row.get("comparative");
+            int rawLimit = Integer.parseInt(row.get("limit"));
+
+            int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
+
+            switch (comparative.toLowerCase()) {
+                case "almeno" -> {
+                    if (actual < rawLimit) {
+                        throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
+                    }
+                }
+                case "esattamente" -> {
+                    if (actual != rawLimit) {
+                        throw new AssertionError("Capacità di " + entityId + " diversa da " + rawLimit + ", trovata: " + actual);
+                    }
+                }
+                default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);
+            }
 
         }
     }
