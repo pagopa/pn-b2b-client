@@ -150,9 +150,14 @@ public class DelayerSteps {
         );
     }
 
-    @When("viene avviato l'algoritmo tramite lambda")
-    public void runAlgorithm() throws Exception {
-        lambdaClient.invoke("RUN_ALGORITHM");
+    @When("viene avviata la step function BatchWorkflowStateMachine")
+    public void runFirstStepFunction() throws Exception {
+        lambdaClient.invoke("RUN_ALGORITHM", String.valueOf(context.printCapacity));
+    }
+
+    @When("viene avviata la step function DelayerToPaperChannelStateMachine")
+    public void runSecondStepFunction() throws Exception {
+        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL");
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")

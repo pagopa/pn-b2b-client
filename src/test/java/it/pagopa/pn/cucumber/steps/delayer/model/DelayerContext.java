@@ -4,8 +4,10 @@ import java.util.*;
 
 public class DelayerContext {
 
+    private static final int STANDARD_PRINT_CAPACITY = 180_000;
+
     public String expectedDeliveryDate;
-    public Integer printCapacity;
+    public Integer printCapacity = STANDARD_PRINT_CAPACITY;
     public Integer numeroNotifiche;
 
     public List<DelayerPaperDelivery> actualCsv = new ArrayList<>();

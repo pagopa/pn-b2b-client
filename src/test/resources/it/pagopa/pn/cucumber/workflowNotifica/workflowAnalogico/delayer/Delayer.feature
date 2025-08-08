@@ -155,7 +155,7 @@
       And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And viene simulato internamente l'algoritmo di pianificazione
-      When viene avviato l'algoritmo tramite lambda
+      When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -180,6 +180,7 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
+      And viene avviata la step function DelayerToPaperChannelStateMachine
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -214,7 +215,7 @@
       And si presuppone che la capacità di stampa giornaliera sia esattamente 0
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And viene simulato internamente l'algoritmo di pianificazione
-      When viene avviato l'algoritmo tramite lambda
+      When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -239,6 +240,7 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
+      And viene avviata la step function DelayerToPaperChannelStateMachine
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -278,7 +280,7 @@
       And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And viene simulato internamente l'algoritmo di pianificazione
-      When viene avviato l'algoritmo tramite lambda
+      When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -303,6 +305,7 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
+      And viene avviata la step function DelayerToPaperChannelStateMachine
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
