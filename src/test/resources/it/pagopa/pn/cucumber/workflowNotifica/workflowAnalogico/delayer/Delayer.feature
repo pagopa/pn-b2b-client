@@ -58,6 +58,11 @@
       And viene simulato internamente l'algoritmo di pianificazione
       #When viene avviato l'algoritmo tramite lambda
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
       And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -83,7 +88,7 @@
         | "tcRankingMerged.csv" | 110 |
 
 
-    Scenario Outline: [DELAYER-RANKING] Refactor in un solo csv
+    Scenario Outline: [DELAYER-RANKING] Verifica che l'algoritmo pianifichi correttamente le notifiche in base alla priorità
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed                 | quantita |
         | tcRanking_2nd_890_   | 16       |
@@ -130,6 +135,12 @@
       And viene simulato internamente l'algoritmo di pianificazione
       When viene avviato l'algoritmo tramite lambda
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
       And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |

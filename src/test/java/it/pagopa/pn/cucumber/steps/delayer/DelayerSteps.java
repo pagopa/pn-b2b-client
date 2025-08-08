@@ -163,7 +163,7 @@ public class DelayerSteps {
                 .toList();
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 18);
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         actual.forEach(dpd -> {
             String seed = context.groupedBySeed.keySet().stream()

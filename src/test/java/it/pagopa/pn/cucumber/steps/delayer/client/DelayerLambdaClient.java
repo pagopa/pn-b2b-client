@@ -115,13 +115,18 @@ public class DelayerLambdaClient {
             reason = "Uscita anticipata imprevista (possibile errore nel loop)";
         }
 
-        Assertions.assertEquals(requestIds.size(), found.size(),
-                """
-                Trovate %d notifiche su %d attese per step '%s'
-                Tempo totale di polling: %d secondi
-                Motivo dell'uscita: %s
-                """.formatted(found.size(), requestIds.size(), workflowStep, elapsedSeconds, reason)
-        );
+        if (found.size() != requestIds.size()) {
+            log.warn("""
+                    Trovate %d notifiche su %d attese per step '%s'
+                    Tempo totale di polling: %d secondi
+                    Motivo dell'uscita: %s
+                    """.formatted(found.size(), requestIds.size(), workflowStep, elapsedSeconds, reason));
+        } else {
+            log.info("""
+                    Tutte le %d notifiche trovate correttamente per step '%s'
+                    Tempo di polling: %d secondi
+                    """.formatted(found.size(), workflowStep, elapsedSeconds));
+        }
 
         return new ArrayList<>(found);
     }

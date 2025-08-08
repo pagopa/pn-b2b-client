@@ -37,7 +37,7 @@ public class DelayerValidator {
                 .collect(Collectors.toSet());
 
         if (validSeeds.isEmpty()) {
-            throw new IllegalStateException("Tutti i seed hanno fallito allo step: " + step);
+            throw new IllegalStateException("Tutti i seed hanno fallito allo step: " + step.name());
         }
 
         boolean almenoUnoOk = false;
@@ -47,7 +47,7 @@ public class DelayerValidator {
             List<DelayerPaperDelivery> actual = context.actualPianification.get(seed).get(step.name());
 
             if (expected == null || actual == null || expected.isEmpty() || actual.isEmpty()) {
-                registerFailureIfAbsent(seed, "Ranking mancante per step: " + step);
+                registerFailureIfAbsent(seed, "Ranking mancante per step: " + step.name());
                 continue;
             }
 
