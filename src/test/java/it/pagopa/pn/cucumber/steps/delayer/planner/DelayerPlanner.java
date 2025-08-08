@@ -89,6 +89,7 @@ public class DelayerPlanner {
                 int senderLimit = utils.getSenderLimit(senderKey);
                 postEvaluateSenderLimit.addAll(deepCopyAndUpdateKeys(Stream.of(notification).limit(senderLimit).toList(), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
                 toResidualCapacity.addAll(deepCopyAndUpdateKeys(Stream.of(notification).skip(senderLimit).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
+                utils.setSenderLimit(senderKey, Math.max(0, senderLimit - 1));
             } else {
                 toResidualCapacity.addAll(deepCopyAndUpdateKeys(Stream.of(notification).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
             }

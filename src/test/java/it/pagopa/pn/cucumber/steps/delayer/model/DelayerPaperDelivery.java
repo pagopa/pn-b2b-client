@@ -109,7 +109,7 @@ public class DelayerPaperDelivery {
     }
 
     public boolean isSecondAttempt() {
-        return Integer.parseInt(this.getAttempt()) == 2;
+        return Integer.parseInt(this.getAttempt()) == 1;
     }
 
 }

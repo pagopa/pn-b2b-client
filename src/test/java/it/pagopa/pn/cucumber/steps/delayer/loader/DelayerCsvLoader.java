@@ -11,6 +11,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
 
@@ -75,8 +76,10 @@ public class DelayerCsvLoader {
             String seed = row.get("seed");
             int expectedCount = Integer.parseInt(row.get("quantita"));
 
+            Pattern pattern = Pattern.compile("^" + Pattern.quote(seed) + "\\d+$");
+
             List<DelayerPaperDelivery> matching = context.actualCsv.stream()
-                    .filter(d -> d.getRequestId().contains(seed))
+                    .filter(d -> pattern.matcher(d.getRequestId()).matches())
                     .toList();
 
             if (matching.size() != expectedCount) {

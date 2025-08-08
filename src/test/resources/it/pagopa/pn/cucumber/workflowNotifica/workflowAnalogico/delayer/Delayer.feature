@@ -3,73 +3,120 @@
   # con la deliveryDate alla W+1(corrente) e ora, settimana W+1 le stiamo valutando
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
-    Scenario Outline: prova metodo
+
+    Scenario Outline: [Prova] Refactor in un solo csv
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed            | quantita |
-        | tcPriorityRs2nd | 30       |
+        | seed                 | quantita |
+        | tcRanking_2nd_890_   | 16       |
+        | tcRanking_RS_2nd_    | 14       |
+        | tcRanking_RS_890_    | 16       |
+        | tcRanking_RS_        | 14       |
+        | tcRanking_2nd_       | 14       |
+        | tcRanking_890_       | 16       |
+        | tcRankingRS_2nd_890_ | 20       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId          | comparative | limit |
-        | senderPaId1~RS~RM | esattamente | 15    |
-        | senderPaId1~AR~RM | esattamente | 15    |
+        | senderId                 | comparative | limit |
+        | ranking2nd_890~RS~P1     | esattamente | 0     |
+        | ranking2nd_890~AR~P1     | esattamente | 0     |
+        | ranking2nd_890~890~P1    | esattamente | 7     |
+        | rankingRS_2nd~RS~P2      | esattamente | 0     |
+        | rankingRS_2nd~AR~P2      | esattamente | 0     |
+        | rankingRS_2nd~890~P2     | esattamente | 0     |
+        | rankingRS_890~RS~P3      | esattamente | 0     |
+        | rankingRS_890~AR~P3      | esattamente | 0     |
+        | rankingRS_890~890~P3     | esattamente | 7     |
+        | rankingRS~RS~P4          | esattamente | 0     |
+        | rankingRS~AR~P4          | esattamente | 0     |
+        | rankingRS~890~P4         | esattamente | 0     |
+        | ranking2nd~RS~P5         | esattamente | 0     |
+        | ranking2nd~AR~P5         | esattamente | 0     |
+        | ranking2nd~890~P5        | esattamente | 0     |
+        | ranking890~RS~P6         | esattamente | 0     |
+        | ranking890~AR~P6         | esattamente | 0     |
+        | ranking890~890~P6        | esattamente | 14    |
+        | rankingRS_2nd_890~RS~P7  | esattamente | 0     |
+        | rankingRS_2nd_890~AR~P7  | esattamente | 0     |
+        | rankingRS_2nd_890~890~P7 | esattamente | 7     |
       And si verifica che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | driverId    | comparative | limit |
-        | Poste~RM    | almeno      | 30    |
-        | Poste~00139 | esattamente | 30    |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
-      #And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+        | unifiedDeliveryDriverId         | comparative | limit |
+        | driverRanking2nd_890~P1         | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1    | esattamente | 10    |
+        | driverRankingRS_2nd~P2          | esattamente | 10    |
+        | driverRankingRS_2nd~CAP1_P2     | esattamente | 10    |
+        | driverRankingRS_890~P3          | esattamente | 10    |
+        | driverRankingRS_890~CAP1_P3     | esattamente | 10    |
+        | driverRankingRS~P4              | esattamente | 10    |
+        | driverRankingRS~CAP1_P4         | esattamente | 10    |
+        | driverRanking2nd~P5             | esattamente | 10    |
+        | driverRanking2nd~CAP1_P5        | esattamente | 10    |
+        | driverRanking890~P6             | esattamente | 10    |
+        | driverRanking890~CAP1_P6        | esattamente | 10    |
+        | driverRankingRS_2nd_890~P7      | esattamente | 10    |
+        | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And viene simulato internamente l'algoritmo di pianificazione
-      #When viene avviato l'algoritmo tramite lambda
-      #And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      #And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
-      #And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      #And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       Then verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                        | TOT |
-        | "tc01_priorita_rs_2nd.csv" | 30  |
+        | csv                   | TOT |
+        | "tcRankingMerged.csv" | 110 |
 
 
-    Scenario Outline: [REFACTORING] Refactor in un solo csv
+    Scenario Outline: [DELAYER-RANKING] Refactor in un solo csv
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed              | quantita |
-        | tcPriority2nd     | 30       |
-        | tcPriorityRs2nd   | 30       |
-        | tcPriorityRsAltr  | 30       |
-        | tcPriorityRsInt   | 30       |
-        | tcPriority2ndInt  | 30       |
-        | tcPriorityAltrInt | 30       |
-        | tcPriorityAll     | 30       |
+        | seed                 | quantita |
+        | tcRanking_2nd_890_   | 16       |
+        | tcRanking_RS_2nd_    | 14       |
+        | tcRanking_RS_890_    | 16       |
+        | tcRanking_RS_        | 14       |
+        | tcRanking_2nd_       | 14       |
+        | tcRanking_890_       | 16       |
+        | tcRankingRS_2nd_890_ | 20       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId           | comparative | limit |
-        | senderPaId1~AR~P1  | esattamente | 15    |
-        | senderPaId1~890~P1 | esattamente | 15    |
-        | senderPaId2~RS~P2  | esattamente | 15    |
-        | senderPaId2~AR~P2  | esattamente | 15    |
-        | senderPaId3~RS~P3  | esattamente | 15    |
-        | senderPaId3~890~P3 | esattamente | 15    |
-        | senderPaId4~RS~P4  | esattamente | 30    |
-        | senderPaId5~AR~P5  | esattamente | 30    |
-        | senderPaId6~890~P6 | esattamente | 30    |
-        | senderPaId7~RS~P7  | esattamente | 10    |
-        | senderPaId7~AR~P7  | esattamente | 10    |
-        | senderPaId7~890~P7 | esattamente | 10    |
-      And si verifica che il limite recapitista unificato settimanale (unifiedDeliveryDriver-province) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | Driver1~RM              | esattamente | 20    |
-        | Driver2~RM              | esattamente | 20    |
-        | Driver3~RM              | esattamente | 20    |
-        | Driver4~RM              | esattamente | 20    |
-        | Driver5~RM              | esattamente | 20    |
-        | Driver6~RM              | esattamente | 20    |
-        | Driver7~RM              | almeno      | 30    |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+        | senderId                 | comparative | limit |
+        | ranking2nd_890~AR~P1     | esattamente | 0     |
+        | ranking2nd_890~890~P1    | esattamente | 0     |
+        | ranking2nd_890~RS~P1     | esattamente | 7     |
+        | rankingRS_2nd~AR~P2      | esattamente | 0     |
+        | rankingRS_2nd~RS~P2      | esattamente | 0     |
+        | rankingRS_2nd~890~P2     | esattamente | 0     |
+        | rankingRS_890~RS~P3      | esattamente | 0     |
+        | rankingRS_890~AR~P3      | esattamente | 0     |
+        | rankingRS_890~890~P3     | esattamente | 7     |
+        | rankingRS~RS~P4          | esattamente | 0     |
+        | rankingRS~AR~P4          | esattamente | 0     |
+        | rankingRS~890~P4         | esattamente | 0     |
+        | ranking2nd~RS~P5         | esattamente | 0     |
+        | ranking2nd~AR~P5         | esattamente | 0     |
+        | ranking2nd~890~P5        | esattamente | 0     |
+        | ranking890~RS~P6         | esattamente | 0     |
+        | ranking890~AR~P6         | esattamente | 0     |
+        | ranking890~890~P6        | esattamente | 14    |
+        | rankingRS_2nd_890~RS~P7  | esattamente | 0     |
+        | rankingRS_2nd_890~AR~P7  | esattamente | 0     |
+        | rankingRS_2nd_890~890~P7 | esattamente | 7     |
+      And si verifica che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId         | comparative | limit |
+        | driverRanking2nd_890~P1         | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1    | esattamente | 10    |
+        | driverRankingRS_2nd~P2          | esattamente | 10    |
+        | driverRankingRS_2nd~CAP1_P2     | esattamente | 10    |
+        | driverRankingRS_890~P3          | esattamente | 10    |
+        | driverRankingRS_890~CAP1_P3     | esattamente | 10    |
+        | driverRankingRS~P4              | esattamente | 10    |
+        | driverRankingRS~CAP1_P4         | esattamente | 10    |
+        | driverRanking2nd~P5             | esattamente | 10    |
+        | driverRanking2nd~CAP1_P5        | esattamente | 10    |
+        | driverRanking890~P6             | esattamente | 10    |
+        | driverRanking890~CAP1_P6        | esattamente | 10    |
+        | driverRankingRS_2nd_890~P7      | esattamente | 10    |
+        | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And viene simulato internamente l'algoritmo di pianificazione
       When viene avviato l'algoritmo tramite lambda
@@ -96,8 +143,8 @@
       Then verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv              | TOT |
-        | "tc01_total.csv" | 210 |
+        | csv                   | TOT |
+        | "tcRankingMerged.csv" | 110 |
 
 
     @delayer

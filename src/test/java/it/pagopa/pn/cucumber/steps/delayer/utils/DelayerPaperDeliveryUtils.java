@@ -59,11 +59,11 @@ public class DelayerPaperDeliveryUtils {
             throw new IllegalArgumentException("La capacità non può essere negativa");
         }
 
-        if (isProvince(location)) {
+        if (isValidProvince(location)) {
             return; // ignorato volutamente
         }
 
-        if (!(isValidCap(location) || isValidTestCap(location))) {
+        if (!isValidCap(location)) {
             throw new IllegalArgumentException("Il secondo token non è un CAP valido o di test: " + location);
         }
 
@@ -86,9 +86,9 @@ public class DelayerPaperDeliveryUtils {
 
         Map<String, Map<String, Integer>> driverMap = context.driverCapacityMap;
 
-        if (isProvince(location)) {
+        if (isValidProvince(location)) {
             return driverMap.containsKey(driverId);
-        } else if (isValidCap(location) || isValidTestCap(location)) {
+        } else if (isValidCap(location)) {
             return driverMap.values().stream()
                     .anyMatch(capMap -> capMap.containsKey(location));
         }
@@ -115,6 +115,23 @@ public class DelayerPaperDeliveryUtils {
             throw new RuntimeException("Sender limit not found");
 
         return senderLimit;
+    }
+
+    public void setSenderLimit(String senderKey, int limit) {
+        if (senderKey == null || senderKey.isBlank()) {
+            throw new IllegalArgumentException("Sender key non può essere nulla o vuota");
+        }
+
+        if (limit < 0) {
+            throw new IllegalArgumentException("Il limite del mittente non può essere negativo");
+        }
+
+        context.senderLimitMap.put(senderKey, limit);
+
+        Integer stored = context.senderLimitMap.get(senderKey);
+        if (stored == null || stored != limit) {
+            throw new IllegalStateException("Errore nell'impostazione del limite per il sender: " + senderKey);
+        }
     }
 
     public boolean isMittenteCensito(String senderKey) {
@@ -248,15 +265,19 @@ public class DelayerPaperDeliveryUtils {
     }
 
     private boolean isValidCap(String cap) {
-        return cap != null && cap.matches("^\\d{5}$");
+        return (cap != null && cap.matches("^\\d{5}$")) || isValidTestCap(cap);
     }
 
     private boolean isValidTestCap(String cap) {
         return cap != null && cap.matches("^CAP\\d+_P\\d+$");
     }
 
-    private boolean isProvince(String value) {
-        return value != null && value.matches("^[A-Z]{2}$");
+    private boolean isValidProvince(String value) {
+        return (value != null && value.matches("^[A-Z]{2}$")) || isValidTestProvince(value);
+    }
+
+    private boolean isValidTestProvince(String value) {
+        return value != null && value.matches("^P\\d+$");
     }
 
     private String[] splitDriverId(String driverId) {
@@ -287,7 +308,7 @@ public class DelayerPaperDeliveryUtils {
         String location = parts[1];
 
         // Caso: provincia
-        if (isProvince(location)) {
+        if (isValidProvince(location)) {
             Map<String, Integer> capMap = context.driverCapacityMap.get(driverId);
             if (capMap == null) {
                 throw new IllegalStateException("Nessuna mappa trovata per driver/provincia: " + driverId);
@@ -300,7 +321,7 @@ public class DelayerPaperDeliveryUtils {
         }
 
         // Caso: CAP o CAP di test
-        if (isValidCap(location) || isValidTestCap(location)) {
+        if (isValidCap(location)) {
             String fullKey = driver + "~" + location;
 
             return context.driverCapacityMap.values().stream()
