@@ -7,6 +7,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
@@ -35,15 +36,15 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
         private UUID eServiceId;
         private UUID descriptorId;
         private Resource file;
-        private String name;
+        private String prettyName;
 
         public EServiceInterfaceUploadRequest resource(Resource resource) {
             this.file = resource;
             return this;
         }
 
-        public EServiceInterfaceUploadRequest name(String name) {
-            this.name = name;
+        public EServiceInterfaceUploadRequest prettyName(String name) {
+            this.prettyName = name;
             return this;
         }
 
@@ -176,10 +177,13 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
-    public EServiceInterfaceUploadResponse uploadInterface(EServiceInterfaceUploadRequest body) {
-        // TODO 17/07/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //        //  metodo nel client da chiamare
-        return new EServiceInterfaceUploadResponse(); // <-- sostituire con impl. reale una volta rilasciata l'API
+    public Document uploadInterface(EServiceInterfaceUploadRequest body) {
+        return this.eservicesApi.uploadEServiceDescriptorInterface(
+            body.getEServiceId(),
+            body.getDescriptorId(),
+            body.getFile(),
+            body.getPrettyName()
+        );
     }
 
     @Override

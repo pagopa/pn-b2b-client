@@ -115,10 +115,14 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void uploadInterface() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        String interfaceName = "e-service-%s-descriptor-%s-interface-%d".formatted(eServiceId,
+        String interfaceName = buildInterfaceName(eServiceId, descriptorId);
+        uploadInterface(interfaceName, eServiceId, descriptorId);
+    }
+
+    private static String buildInterfaceName(UUID eServiceId, UUID descriptorId) {
+        return "e-service-%s-descriptor-%s-interface-%d".formatted(eServiceId,
             descriptorId,
             RandomUtils.secure().randomInt(0, 99));
-        uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
     @When("l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service")
@@ -156,16 +160,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service inesistente")
     public void uploadNonExistentEServiceInterface(){
         UUID eServiceId = UUID.randomUUID();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
-        uploadInterface(interfaceName, eServiceId, descriptorId);
-    }
-
-    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service descriptor inesistente")
-    public void uploadNonExistentEServiceDescriptorInterface(){
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = UUID.randomUUID();
-        String interfaceName = sharedStepsContext.getEServicesCommonContext().getInterfaceName();
+        String interfaceName = buildInterfaceName(eServiceId, descriptorId);
         uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
@@ -184,16 +180,12 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
-        String fileName = String.format("interface.%s", "yaml"); // TODO 18/07/2025 potrebbe essere il caso di parametrizzare i test coinvolti per più di un formato
+        String fileName = String.format("interface.%s", "yaml");
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
         sharedStepsContext.getEServicesCommonContext().setInterfaceName(interfaceName);
         EServiceInterfaceUploadRequest request = new EServiceInterfaceUploadRequest()
-
-            /* TODO 18/07/2025: frutto di una deduzione personale, non disponendo ancora della
-                specifica OpenAPI: può darsi che intenda il nome del file stesso */
-            .name(interfaceName)
-
+            .prettyName(interfaceName)
             .resource(resource)
             .eServiceId(eServiceId)
             .descriptorId(descriptorId);
