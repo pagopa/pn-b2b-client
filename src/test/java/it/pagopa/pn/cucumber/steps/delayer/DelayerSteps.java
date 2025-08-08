@@ -121,8 +121,8 @@ public class DelayerSteps {
             int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
 
             switch (comparative.toLowerCase()) {
-                case "almeno" -> {
-                    if (actual < rawLimit) {
+                case "almeno","inferiore" -> {
+                    if (actual <= rawLimit) {
                         throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
                     }
                 }
