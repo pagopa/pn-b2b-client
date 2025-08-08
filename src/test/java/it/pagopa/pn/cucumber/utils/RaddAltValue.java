@@ -39,7 +39,8 @@ public enum RaddAltValue {
     RADD_REQUESTID("radd_requestId","corretto",false),
     RADD_REGISTRYID("radd_registryId","corretto",false),
 
-    RADD_UID("radd_uid","",true);
+    RADD_UID("radd_uid","",true),
+    RADD_PN_CX_ID("radd_pn_cx_id","",true);//todo t radd default?
 
 
     private static final String NULL_VALUE = "NULL";

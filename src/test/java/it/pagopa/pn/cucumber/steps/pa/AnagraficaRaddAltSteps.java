@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.opencsv.CSVWriter;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Then;
@@ -11,6 +12,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.GetRegistryResponseV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
@@ -35,6 +37,7 @@ import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 import static it.pagopa.pn.cucumber.utils.RaddAltValue.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class AnagraficaRaddAltSteps {
@@ -68,49 +71,183 @@ public class AnagraficaRaddAltSteps {
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
     }
 
-//    private String idToken;
-//    private String accessToken;
-//
-//    @Given("utente con username {string} e password {string} fa login in Cognito")
-//    public void loginCognito(String username, String password) {
-//        String clientId = "TUO_COGNITO_APP_CLIENT_ID";
-//        String region = "eu-west-1";
-//
-//        CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
-//                .region(software.amazon.awssdk.regions.Region.of(region))
-//                .build();
-//
-//        try{
-//        Map<String, String> authParams = new HashMap<>();
-//        authParams.put("USERNAME", username);
-//        authParams.put("PASSWORD", password);
-//
-//        InitiateAuthRequest authRequest = InitiateAuthRequest.builder()
-//                .authFlow(AuthFlowType.USER_PASSWORD_AUTH)
-//                .clientId(clientId)
-//                .authParameters(authParams)
-//                .build();
-//
-//        InitiateAuthResponse response = cognitoClient.initiateAuth(authRequest);
-//
-//        AuthenticationResultType authResult = response.authenticationResult();
-//        assertNotNull(authResult);
-//
-//        idToken = authResult.idToken();
-//        accessToken = authResult.accessToken();
-//
-//        assertNotNull(idToken);
-//        assertNotNull(accessToken);
-//
-//        System.out.println("ID Token: " + idToken);
-//} catch (Exception e) {
-//        System.err.println("Errore durante l'autenticazione: " + e.getMessage());
-//        Assertions.fail("L'autenticazione con Cognito è fallita.", e);
-//        } finally {
-//                cognitoClient.close(); // Chiudi sempre il client per rilasciare le risorse
-//        }
-//    }
-//}
+    protected String xPagopaPnCxId = getDefaultValue(RADD_PN_CX_ID.key);;
+    protected String locationId;
+    protected RegistryV2 registryV2Response;
+
+
+
+    @Then("viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId")
+    public void locationIdPresentInResponse() {
+
+        GetRegistryResponseV2 response = raddAltClientV2.retrieveRegistries(xPagopaPnCxId, 100, null);
+
+//        // Estrai tutti i locationId dalla lista items
+//        List<String> locationIds = response.getItems()
+//                .stream()
+//                .map(RegistryV2::getLocationId)
+//                .toList();
+
+//        assertThat(locationIds)
+//                .withFailMessage("Il locationId non è presente nella risposta")
+//                .contains(locationId);
+
+        try {
+            Assertions.assertNotNull(response);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Lista sportelli: " + (this.requestid == null ? "NULL" : this.requestid) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+        assertThat(response.getItems())
+                .withFailMessage("Il locationId non è presente nella risposta")
+                .extracting(RegistryV2::getLocationId)
+                .contains(locationId);
+    }
+
+
+    @When("viene richiesta la lista degli sportelli Radd v2 con dati:")
+    public void vieneRichiestolaListaDeiSportelliRaddV2(Map<String, String> dataSportello) {
+
+        try {
+            GetRegistryResponseV2 sportello = raddAltClientV2.retrieveRegistries(
+                    this.xPagopaPnCxId
+                    , getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key))
+                    , getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+        try {
+            //todo t radd
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{endDate: " + (this.requestid == null ? "NULL" : this.requestid) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene generato uno sportello Radd V2 con dati:")
+    public void vieneGeneratoSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportello) {
+
+        this.sportelloRaddCrudV2 = dataSportello;
+
+        log.info("Request inserimento: {}", dataSportello);
+        RegistryV2 creationResponse = raddAltClientV2.addRegistry(null, dataSportello);
+
+
+        try {
+            Assertions.assertNotNull(creationResponse);
+            //   Assertions.assertNotNull(creationResponse.getRequestId());
+
+            //  this.requestid = creationResponse.getRequestId();
+
+            this.locationId = creationResponse.getLocationId();
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Response Upload CSV: " + (creationResponse == null ? "NULL" : creationResponse) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
+    public void vieneGeneratoConErroreSportelloRaddv2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
+        try {
+            raddAltClientV2.addRegistry( null, dataSportelloV2);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @When("viene modificato uno sportello Radd V2 con dati:")
+    public void vieneModificatoSportelloRaddV2(@Transpose UpdateRegistryRequestV2 dataSportello) {
+        log.info("Upload Request: {}", dataSportello);
+        try {
+            Assertions.assertDoesNotThrow(() -> raddAltClientV2.updateRegistry(this.xPagopaPnCxId, this.locationId, dataSportello));
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Response Upload: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene modificato uno sportello Radd V2 con dati:")
+    public void vieneModificatoSportelloRadd(@Transpose UpdateRegistryRequestV2 dataSportello) {
+        log.info("Upload Request: {}", dataSportello);
+        try {
+            Assertions.assertDoesNotThrow(() -> raddAltClientV2.updateRegistry(this.uid, this.registryId, dataSportello));
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Response Upload CSV: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene modificato uno sportello Radd V2 con dati errati:")
+    public void vieneModificatoSportelloRaddV2(Map<String, String> datiAggiornamento) {
+
+        UpdateRegistryRequestV2 aggiornamentoSportelloRadd = dataTableTypeRaddAlt.convertUpdateRegistryRequestV2(datiAggiornamento);
+
+        try {
+            raddAltClientV2.updateRegistry(
+                    getValue(datiAggiornamento, RADD_PN_CX_ID.key),
+                    getValue(datiAggiornamento, RADD_LOCATION_ID.key),aggiornamentoSportelloRadd);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+            log.info("errore: {}", e.getStatusText());
+        }
+    }
+
+    @When("viene cancellato uno sportello Radd V2 con dati:")
+    public void vieneCancellatoSportelloRaddV2() {
+
+        log.info("data cancellazione sportello: {}");
+
+        try {
+
+            Assertions.assertDoesNotThrow(() -> raddAltClientV2.deleteRegistry(this.xPagopaPnCxId, this.locationId));
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() ;
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @Then("la response a seguito del nuovo inserimento deve contenere i valori attesi")
+    public void checkResponseValueFromInsert(DataTable dataTable) {
+        Map<String, String> expectedData = dataTable.asMap(String.class, String.class);
+
+        RegistryV2 response = registryV2Response;
+
+        assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
+        assertThat(response.getLocationId()).isEqualTo(expectedData.get("locationId"));
+        assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
+        assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
+
+        if (expectedData.get("appointmentRequired") != null) {
+            assertThat(response.getAppointmentRequired())
+                    .isEqualTo(Boolean.valueOf(expectedData.get("appointmentRequired")));
+        }
+
+        if (expectedData.get("externalCodes") != null) {
+            List<String> expectedCodes = Arrays.stream(expectedData.get("externalCodes").split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+            assertThat(response.getExternalCodes())
+                    .containsExactlyInAnyOrderElementsOf(expectedCodes);
+        }
+
+        if (expectedData.get("phoneNumbers") != null) {
+            List<String> expectedPhones = Arrays.stream(expectedData.get("phoneNumbers").split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+            assertThat(response.getPhoneNumbers())
+                    .containsExactlyInAnyOrderElementsOf(expectedPhones);
+        }
+    }
+
+
+    //       V1
 
     @When("viene caricato il csv con dati:")
     public void vieneGeneratoIlCsv(List<Map<String, String>> dataCsv) throws IOException {
@@ -445,39 +582,10 @@ public class AnagraficaRaddAltSteps {
         }
     }
 
-    @When("viene generato uno sportello Radd V2 con dati:")
-    public void vieneGeneratoSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportello) {
-
-        this.sportelloRaddCrudV2 = dataSportello;
-
-        log.info("Request inserimento: {}", dataSportello);
-        RegistryV2 creationResponse = raddAltClientV2.addRegistry(null, dataSportello);
-
-        try {
-            Assertions.assertNotNull(creationResponse);
-         //   Assertions.assertNotNull(creationResponse.getRequestId());
-
-          //  this.requestid = creationResponse.getRequestId();
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{Response Upload CSV: " + (creationResponse == null ? "NULL" : creationResponse) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
     @When("viene generato uno sportello Radd con restituzione errore con dati:")
     public void vieneGeneratoConErroreSportelloRadd(@Transpose CreateRegistryRequest dataSportello) {
         try {
             raddAltClient.addRegistry(this.uid, dataSportello);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
-    }
-
-    @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
-    public void vieneGeneratoConErroreSportelloRaddv2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
-        try {
-            raddAltClientV2.addRegistry( null, dataSportelloV2);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -488,18 +596,6 @@ public class AnagraficaRaddAltSteps {
         log.info("Upload Request: {}", dataSportello);
         try {
             Assertions.assertDoesNotThrow(() -> raddAltClient.updateRegistry(this.uid, this.registryId, dataSportello));
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{Response Upload CSV: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    @When("viene modificato uno sportello Radd V2 con dati:")
-    public void vieneModificatoSportelloRadd(@Transpose UpdateRegistryRequestV2 dataSportello) {
-        log.info("Upload Request: {}", dataSportello);
-        try {
-            Assertions.assertDoesNotThrow(() -> raddAltClientV2.updateRegistry(this.uid, this.registryId, dataSportello));
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{Response Upload CSV: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
@@ -541,30 +637,6 @@ public class AnagraficaRaddAltSteps {
         try {
             String finalEndDate = endDate;
             Assertions.assertDoesNotThrow(() -> raddAltClient.deleteRegistry(this.uid, this.registryId, finalEndDate));
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{endDate: " + (endDate == null ? "NULL" : endDate) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    @When("viene cancellato uno sportello Radd V2 con dati:")
-    public void vieneCancellatoSportelloRaddV2(Map<String, String> richiestaCancellazione) {
-        String endDate = getValue(richiestaCancellazione, RADD_END_VALIDITY.key);
-
-//        if (endDate != null) {
-//            if (endDate.toLowerCase().contains("corretto")) {
-//                endDate = this.sportelloRaddCrudV2.getStartValidity();
-//            } else {
-//                endDate = dataTableTypeRaddAlt.setData(endDate);
-//            }
-//        } // todo t radd serve?
-
-        log.info("data cancellazione sportello: {}", endDate);
-
-        try {
-            String finalEndDate = endDate;
-            Assertions.assertDoesNotThrow(() -> raddAltClientV2.deleteRegistry( null, null));
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{endDate: " + (endDate == null ? "NULL" : endDate) + " }";

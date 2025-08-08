@@ -8,11 +8,11 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCsv.ImportApi;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.GetRegistryResponseV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.VerifyRequestResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.ApiClient;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.api.NotificationInquiryApi;
@@ -78,6 +78,33 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
         this.apiAnagraficaCRUDV2 = new RegistryApi(newApiClientExternal(restTemplate,basePath, raddista1));
         this.issuerTokenSetted = AuthTokenRaddType.ISSUER_1;
     }
+
+
+    //todo t radd
+
+    @Override
+    public void deleteRegistry(String partnerId, String locationId) throws RestClientException {
+        this.apiAnagraficaCRUDV2.deleteRegistry( null, null);
+    }
+
+    @Override
+    public GetRegistryResponseV2 retrieveRegistries(String xPagopaPnCxId, Integer limit, String lastKey) throws RestClientException {
+        return this.apiAnagraficaCRUDV2.retrieveRegistries(xPagopaPnCxId, limit, lastKey);
+    }
+
+    @Override
+    public RegistryV2 updateRegistry(String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2) throws RestClientException {
+        return this.apiAnagraficaCRUDV2.updateRegistry(null, null, updateRegistryRequestV2);
+    }
+
+
+
+
+
+
+
+
+
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
         ApiClient newApiClient = new ApiClient( restTemplate );
@@ -175,11 +202,6 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
     }
 
     @Override
-    public RequestResponse retrieveRequestItems(String uid, String requestId, Integer limit, String lastKey) throws RestClientException {
-        return this.apiCaricamentoCsv.retrieveRequestItems(uid, requestId, limit, lastKey);
-    }
-
-    @Override
     public RegistryUploadResponse uploadRegistryRequests(String uid, RegistryUploadRequest registryUploadRequest) throws RestClientException {
         return this.apiCaricamentoCsv.uploadRegistryRequests(uid, registryUploadRequest);
     }
@@ -194,22 +216,10 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
         return this.apiAnagraficaCRUDV2.addRegistry(null ,createRegistryRequestV2);
     }
 
- //todo t radd
-
-    @Override
-    public void deleteRegistry(String partnerId, String locationId) throws RestClientException {
-        this.apiAnagraficaCRUDV2.deleteRegistry( null, null);
-    }
-
 //    @Override
 //    public RegistriesResponse retrieveRegistries(String uid, Integer limit, String lastKey, String cap, String city, String pr, String externalCode) throws RestClientException {
 //        return this.apiAnagraficaCRUDV2.retrieveRegistries(uid, limit, lastKey, cap, city, pr, externalCode);
 //    }
-
-    @Override
-    public RegistryV2 updateRegistry(String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2) throws RestClientException {
-        return this.apiAnagraficaCRUDV2.updateRegistry(null, null, updateRegistryRequestV2);
-    }
 
 
     @Override
