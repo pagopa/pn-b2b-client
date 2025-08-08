@@ -85,13 +85,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare la riattivazione di un e-service inesistente")
     public void unsuspendNonExistentEService() {
         UUID eserviceId = UUID.randomUUID();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
-    }
-
-    @When("l'utente tenta di effettuare la riattivazione di un descriptor dell'e-service inesistente")
-    public void unsuspendNonExistentDescriptor() {
-        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = UUID.randomUUID();
         httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
     }

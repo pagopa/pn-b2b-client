@@ -277,6 +277,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public void approveDelegatedEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
+        this.eservicesApi.approveDelegatedEServiceDescriptor(eserviceId, descriptorId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.eservicesApi.setApiClient(createApiClient(bearerToken));
     }
