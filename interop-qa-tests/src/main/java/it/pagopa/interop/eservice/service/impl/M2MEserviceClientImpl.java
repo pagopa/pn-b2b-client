@@ -167,8 +167,7 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
 
     @Override
     public void deleteInterface(UUID eServiceId, UUID descriptorId) {
-        // TODO 16/07/2025 specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
+        this.eservicesApi.deleteEServiceDescriptorInterface(eServiceId, descriptorId);
     }
 
     @Override

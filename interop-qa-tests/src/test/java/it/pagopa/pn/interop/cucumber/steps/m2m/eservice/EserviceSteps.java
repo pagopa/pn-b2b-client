@@ -168,13 +168,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
     public void deleteNonExistentEServiceInterface(){
         UUID eServiceId = UUID.randomUUID();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        deleteInterface(eServiceId, descriptorId);
-    }
-
-    @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service descriptor inesistente")
-    public void deleteNonExistentEServiceDescriptorInterface(){
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = UUID.randomUUID();
         deleteInterface(eServiceId, descriptorId);
     }
