@@ -4,12 +4,14 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 @Component
 public class LambdaInvoker {
@@ -19,10 +21,15 @@ public class LambdaInvoker {
     private LambdaClient getLambdaClient() {
         if (lambdaClient == null) {
             lambdaClient = LambdaClient.builder()
-                    // SOLO IN LOCALE
-                     .credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core"))
-                    //.credentialsProvider(DefaultCredentialsProvider.create())
-                    .region(Region.EU_SOUTH_1).build();
+                    .httpClient(ApacheHttpClient.builder()
+                            .maxConnections(50) // o anche 100+
+                            .connectionTimeout(Duration.ofSeconds(10))
+                            .socketTimeout(Duration.ofSeconds(30))
+                            .build())
+                    .credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core")) // in locale
+                    //.credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
+                    .region(Region.EU_SOUTH_1)
+                    .build();
         }
         return lambdaClient;
     }

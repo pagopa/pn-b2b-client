@@ -56,25 +56,36 @@ public class DelayerLambdaClient {
             Thread.sleep(sleepMillis);
         }
 
-        log.warn("Polling esaurito per requestId {}", requestId);
+        log.debug("Polling esaurito per requestId {}", requestId);
         return Collections.emptyList();
     }
 
     public List<DelayerPaperDelivery> findByWorkflowStep(Set<String> requestIds, String workflowStep, String deliveryDate, int maxMinutes) throws Exception {
         Set<DelayerPaperDelivery> found = new LinkedHashSet<>();
-        int pollingFrequency = 3000;
-        int internalSleep = 500;
-        int maxAttempts = Math.max(1, (maxMinutes * 60 * 1000) / (requestIds.size() * internalSleep + pollingFrequency));
-
         Set<String> pending = new HashSet<>(requestIds);
 
-        for (int attempt = 1; attempt <= maxAttempts && !pending.isEmpty(); attempt++) {
-            log.info("Tentativo {}/{} - RequestId rimanenti: {}", attempt, maxAttempts, pending.size());
+        final int retryFrequency = 3000; // ms
+        final int pollingFrequency = 200;     // ms per richiesta
+        final long totalMinPollingTimeMillis = maxMinutes * 60L * 1000L;
+
+        long startTime = System.currentTimeMillis();
+        int attempt = 0;
+
+        do {
+            attempt++;
+
+            long elapsedMillis = System.currentTimeMillis() - startTime;
+            long remainingMillis = Math.max(0, totalMinPollingTimeMillis - elapsedMillis);
+            long elapsedSeconds = elapsedMillis / 1000;
+            long remainingSeconds = remainingMillis / 1000;
+
+            log.info("Tentativo {} - RequestId rimanenti: {} | Workflow step: {} | Tempo trascorso: {}s | Tempo rimanente: {}s",
+                    attempt, pending.size(), workflowStep, elapsedSeconds, remainingSeconds);
 
             Iterator<String> iterator = pending.iterator();
             while (iterator.hasNext()) {
                 String requestId = iterator.next();
-                List<DelayerPaperDelivery> results = pollByRequestId(requestId, 1, internalSleep);
+                List<DelayerPaperDelivery> results = pollByRequestId(requestId, 1, pollingFrequency);
 
                 Optional<DelayerPaperDelivery> match = results.stream()
                         .filter(r -> r.getPk().contains(workflowStep) && r.getPk().contains(deliveryDate))
@@ -86,12 +97,31 @@ public class DelayerLambdaClient {
                 });
             }
 
-            if (!pending.isEmpty()) Thread.sleep(pollingFrequency);
+            if (!pending.isEmpty()) {
+                Thread.sleep(retryFrequency);
+            }
+
+        } while (!pending.isEmpty() && (System.currentTimeMillis() - startTime < totalMinPollingTimeMillis));
+
+        long elapsedMillis = System.currentTimeMillis() - startTime;
+        long elapsedSeconds = elapsedMillis / 1000;
+
+        String reason;
+        if (pending.isEmpty()) {
+            reason = "Tutte le notifiche trovate correttamente";
+        } else if (elapsedMillis >= totalMinPollingTimeMillis) {
+            reason = "Timeout raggiunto dopo almeno %d minuti".formatted(maxMinutes);
+        } else {
+            reason = "Uscita anticipata imprevista (possibile errore nel loop)";
         }
 
         Assertions.assertEquals(requestIds.size(), found.size(),
-                "Trovate %d notifiche su %d attese per step %s"
-                        .formatted(found.size(), requestIds.size(), workflowStep));
+                """
+                Trovate %d notifiche su %d attese per step '%s'
+                Tempo totale di polling: %d secondi
+                Motivo dell'uscita: %s
+                """.formatted(found.size(), requestIds.size(), workflowStep, elapsedSeconds, reason)
+        );
 
         return new ArrayList<>(found);
     }
