@@ -199,6 +199,12 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         httpExecutor.performCall(() -> this.client.patchEService(eServiceId, patchBody));
     }
 
+    @When("l'utente tenta di recuperare l'e-service creato")
+    public void getEService() {
+        UUID eService = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        this.client.get(eService);
+    }
+
     @When("l'utente tenta di effettuare la modifica parziale di un e-service inesistente")
     public void patchNonExistentEService() {
         UUID eServiceId = UUID.randomUUID();

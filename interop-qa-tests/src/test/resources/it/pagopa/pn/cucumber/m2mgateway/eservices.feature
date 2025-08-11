@@ -169,7 +169,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la cancellazione dell'e-service
     Then si ottiene lo status code 200
-    When l'utente tenta di recuperare il record di eService creato
+    When l'utente tenta di recuperare l'e-service creato
     Then si ottiene lo status code 404
 
   Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 34)
