@@ -45,11 +45,11 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Then si ottiene lo status code 400
     And non è presente alcuna interfaccia per l'e-service
     Examples:
-      | stato                 |
-      | SUSPENDED             |
-      | PUBLISHED             |
-      | DEPRECATED            |
-      | ARCHIVED              |
+      | stato       |
+      | SUSPENDED   |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | ARCHIVED    |
 
 
   @m2m-parte2-agosto-rilascio1

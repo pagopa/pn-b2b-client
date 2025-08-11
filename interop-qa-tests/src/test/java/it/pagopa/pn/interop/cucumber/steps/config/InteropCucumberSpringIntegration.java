@@ -51,6 +51,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -109,7 +110,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MVerifiedAttributeClientImpl.class,
         M2MClientsClientImpl.class,
         EServiceMapperImpl.class,
-        M2MTenantClientImpl.class
+        M2MTenantClientImpl.class,
+        DelayServiceImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
