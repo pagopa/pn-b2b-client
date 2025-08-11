@@ -36,6 +36,10 @@ public class DelayerPlanner {
         }
         sortedNotifications = sortByPriority(notifications);
 
+
+        // Step 0: reserve capacity
+        // Per ogni driver devo riservare capacità per RS e secondi tentativi
+
         // Step 1: Sender Limit
         var pairResult = applySenderLimit(sortedNotifications, groupedByStep, frozenByStep);
         List<DelayerPaperDelivery> toEvaluateDriverCapacity = pairResult.getLeft();
@@ -60,8 +64,8 @@ public class DelayerPlanner {
 
     private Pair<List<DelayerPaperDelivery>, List<DelayerPaperDelivery>> applySenderLimit(List<DelayerPaperDelivery> notifications, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
 
-        List<DelayerPaperDelivery> postEvaluateSenderLimit = new ArrayList<>();
-        List<DelayerPaperDelivery> toResidualCapacity = new ArrayList<>();
+        List<DelayerPaperDelivery> passedSenderLimit = new ArrayList<>();
+        List<DelayerPaperDelivery> notPassedSenderLimit = new ArrayList<>();
 
         // 1. Inserisco le notifiche che verranno elaborate in questo step
         groupedByStep.get(WorkflowSteps.EVALUATE_SENDER_LIMIT.name())
@@ -76,8 +80,8 @@ public class DelayerPlanner {
                 .filter(n -> !(n.isRS() || n.isSecondAttempt()))
                 .toList();
 
-        // 3. RS e secondi tentativi vanno direttamente allo step DRIVER_CAPACITY
-        postEvaluateSenderLimit.addAll(deepCopyAndUpdateKeys(rsOrSecondAttempt, WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
+        // 3. RS e secondi tentativi vanno direttamente alla valutazione successiva
+        passedSenderLimit.addAll(deepCopyAndUpdateKeys(rsOrSecondAttempt, WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
 
         //4. Gli 890 vengono processati per mittente censito e non
         toEvaluateNormally = sortByPriority(toEvaluateNormally);
@@ -87,34 +91,26 @@ public class DelayerPlanner {
 
             if (utils.isMittenteCensito(senderKey)) {
                 int senderLimit = utils.getSenderLimit(senderKey);
-                postEvaluateSenderLimit.addAll(deepCopyAndUpdateKeys(Stream.of(notification).limit(senderLimit).toList(), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
-                toResidualCapacity.addAll(deepCopyAndUpdateKeys(Stream.of(notification).skip(senderLimit).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
+                passedSenderLimit.addAll(deepCopyAndUpdateKeys(Stream.of(notification).limit(senderLimit).toList(), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
+                notPassedSenderLimit.addAll(deepCopyAndUpdateKeys(Stream.of(notification).skip(senderLimit).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
                 utils.setSenderLimit(senderKey, Math.max(0, senderLimit - 1));
             } else {
-                toResidualCapacity.addAll(deepCopyAndUpdateKeys(Stream.of(notification).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
+                notPassedSenderLimit.addAll(deepCopyAndUpdateKeys(Stream.of(notification).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
             }
         }
 
-        return Pair.of(sortByPriority(postEvaluateSenderLimit), sortByPriority(toResidualCapacity));
+        return Pair.of(sortByPriority(passedSenderLimit), sortByPriority(notPassedSenderLimit));
     }
 
-    private List<DelayerPaperDelivery> applyDriverCapacity(List<DelayerPaperDelivery> inEvaluateDriverCapacity, List<DelayerPaperDelivery> inEvaluateResidualCapacity, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+    private List<DelayerPaperDelivery> applyDriverCapacity(List<DelayerPaperDelivery> passedSenderLimit, List<DelayerPaperDelivery> notPassedSenderLimit, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
 
-        // 1. Inserisco le notifiche che verranno elaborate in questo step
-        groupedByStep.get(WorkflowSteps.EVALUATE_DRIVER_CAPACITY.name())
-                .addAll(deepCopyAndUpdateKeys(sortByPriority(inEvaluateDriverCapacity), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
-
-        groupedByStep.get(WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY.name())
-                .addAll(deepCopyAndUpdateKeys(sortByPriority(inEvaluateResidualCapacity), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
-
-
-        // 2. Processa PRIMA le notifiche in EVALUATE_DRIVER_CAPACITY
-        List<DelayerPaperDelivery> toEvaluatePrintCapacity = new ArrayList<>();
+        // 1. Processa PRIMA le notifiche in passedSenderLimit
+        List<DelayerPaperDelivery> toEvaluateDriverCapacity = new ArrayList<>();
+        List<DelayerPaperDelivery> toEvaluateResidualCapacity = new ArrayList<>();
         List<DelayerPaperDelivery> toFreeze = new ArrayList<>();
+        passedSenderLimit = sortByPriority(passedSenderLimit);
 
-        inEvaluateDriverCapacity = sortByPriority(inEvaluateDriverCapacity);
-
-        for(DelayerPaperDelivery notification : inEvaluateDriverCapacity) {
+        for(DelayerPaperDelivery notification : passedSenderLimit) {
             String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(notification);
             String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
 
@@ -122,17 +118,18 @@ public class DelayerPlanner {
             int remainingCap = utils.getDriverCapacity(capDeliveryDriverKey);
 
             if(remainingProvincial > 0 && remainingCap > 0) {
-                toEvaluatePrintCapacity.add(notification);
+                toEvaluateDriverCapacity.add(notification);
                 utils.setDriverCapacity(capDeliveryDriverKey, Math.max(0, remainingCap - 1));
             } else {
-                toFreeze.add(notification);
+                toEvaluateResidualCapacity.add(notification);
             }
         }
 
-        // 3. Processa DOPO le notifiche in EVALUATE_RESIDUAL_CAPACITY
-        inEvaluateResidualCapacity = sortByPriority(inEvaluateResidualCapacity);
+        // 2. Processa DOPO le notifiche in notPassedSenderLimit
+        toEvaluateResidualCapacity.addAll(notPassedSenderLimit);
+        toEvaluateResidualCapacity = sortByPriority(toEvaluateResidualCapacity);
 
-        for(DelayerPaperDelivery notification : inEvaluateResidualCapacity) {
+        for(DelayerPaperDelivery notification : toEvaluateResidualCapacity) {
             String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(notification);
             String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
 
@@ -140,36 +137,45 @@ public class DelayerPlanner {
             int remainingCap = utils.getDriverCapacity(capDeliveryDriverKey);
 
             if(remainingProvincial > 0 && remainingCap > 0) {
-                toEvaluatePrintCapacity.add(notification);
+                toEvaluateDriverCapacity.add(notification);
                 utils.setDriverCapacity(capDeliveryDriverKey, Math.max(0, remainingCap - 1));
             } else {
                 toFreeze.add(notification);
             }
         }
 
-        // 4. Congela le notifiche non elaborate
+        // 3. Congela le notifiche non elaborate
         freezeNotifications(toFreeze, WorkflowSteps.EVALUATE_DRIVER_CAPACITY, frozenByStep);
 
-        return sortByPriority(toEvaluatePrintCapacity);
+        // 4. Inserisce le notifiche negli step
+        groupedByStep.get(WorkflowSteps.EVALUATE_DRIVER_CAPACITY.name())
+                .addAll(deepCopyAndUpdateKeys(sortByPriority(toEvaluateDriverCapacity), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
+
+        groupedByStep.get(WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY.name())
+                .addAll(deepCopyAndUpdateKeys(sortByPriority(toEvaluateResidualCapacity), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
+
+        return sortByPriority(toEvaluateDriverCapacity);
     }
 
-    private List<DelayerPaperDelivery> applyPrintCapacity(List<DelayerPaperDelivery> inEvaluatePrintCapacity, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
+    private List<DelayerPaperDelivery> applyPrintCapacity(List<DelayerPaperDelivery> passedDriverCapacity, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
 
         // 1. Inserisco le notifiche che verranno elaborate in questo step
-        List<DelayerPaperDelivery> toEvaluate = sortByPriority(inEvaluatePrintCapacity);
+        List<DelayerPaperDelivery> toEvaluate = sortByPriority(passedDriverCapacity);
+
+        // Se utilizzassi come limite 180_000 andrei in errore sulla size dell'array
+        int effectiveLimit = Math.min(context.printCapacity, toEvaluate.size());
+        List<DelayerPaperDelivery> toEvaluatePrintCapacity = toEvaluate.subList(0, effectiveLimit);
+        List<DelayerPaperDelivery> frozen = toEvaluate.subList(effectiveLimit, toEvaluate.size());
 
         groupedByStep.get(WorkflowSteps.EVALUATE_PRINT_CAPACITY.name())
                 .addAll(deepCopyAndUpdateKeys(sortByPriority(toEvaluate), WorkflowSteps.EVALUATE_PRINT_CAPACITY, context.expectedDeliveryDate));
 
-        // 2. Verifica la capacità di stampa e la applica
-        int effectiveLimit = Math.min(context.printCapacity, toEvaluate.size());
-        List<DelayerPaperDelivery> toPreparePhase2 = toEvaluate.subList(0, effectiveLimit);
-        List<DelayerPaperDelivery> frozen = toEvaluate.subList(effectiveLimit, toEvaluate.size());
+
 
         // 3. Congela le notifiche in eccesso
         freezeNotifications(frozen, WorkflowSteps.EVALUATE_PRINT_CAPACITY, frozenByStep);
 
-        return toPreparePhase2;
+        return toEvaluatePrintCapacity;
     }
 
     private List<DelayerPaperDelivery> deepCopyAndUpdateKeys(List<DelayerPaperDelivery> source, WorkflowSteps step, String deliveryDate) {

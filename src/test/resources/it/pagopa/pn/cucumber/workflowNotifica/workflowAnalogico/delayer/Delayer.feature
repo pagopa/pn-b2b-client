@@ -53,7 +53,7 @@
         | driverRanking890~CAP1_P6        | esattamente | 10    |
         | driverRankingRS_2nd_890~P7      | esattamente | 10    |
         | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And viene simulato internamente l'algoritmo di pianificazione
       And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
