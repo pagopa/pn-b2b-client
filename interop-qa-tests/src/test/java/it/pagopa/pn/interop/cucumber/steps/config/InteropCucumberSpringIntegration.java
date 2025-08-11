@@ -7,6 +7,7 @@ import it.pagopa.interop.agreement.service.impl.AgreementClientImpl;
 import it.pagopa.interop.agreement.service.impl.EServiceApiClientImpl;
 import it.pagopa.interop.agreement.service.impl.M2MAgreementClientImpl;
 import it.pagopa.interop.agreement.service.impl.M2MClientsClientImpl;
+import it.pagopa.interop.agreement.service.impl.M2MTenantClientImpl;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.impl.AttributeApiClientImpl;
 import it.pagopa.interop.attribute.service.impl.M2MCertifiedAttributeClientImpl;
@@ -25,12 +26,12 @@ import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.M2MDelegationClient;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
-import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
-import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
-import it.pagopa.interop.eservice_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
+import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
+import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
+import it.pagopa.interop.eservice_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -40,19 +41,18 @@ import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @CucumberContextConfiguration
@@ -108,7 +108,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MDeclaredAttributeClientImpl.class,
         M2MVerifiedAttributeClientImpl.class,
         M2MClientsClientImpl.class,
-        EServiceMapperImpl.class
+        EServiceMapperImpl.class,
+        M2MTenantClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

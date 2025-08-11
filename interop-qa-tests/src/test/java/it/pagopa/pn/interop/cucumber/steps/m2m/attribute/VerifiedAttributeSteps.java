@@ -8,10 +8,15 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.service.IM2MTenantClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttributeSeed;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevoker;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevokers;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifier;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifiers;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -24,20 +29,22 @@ import java.util.UUID;
 public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribute, UUID> {
 
     private final SharedStepsContext sharedStepsContext;
-    private final IM2MVerifiedAttributeClient client;
+    private final IM2MVerifiedAttributeClient verifiedAttributeClient;
+    private final IM2MTenantClient tenantClient;
     private final IHttpExecutor httpExecutor;
 
     public VerifiedAttributeSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         super("verifiedAttribute", clientTokenConfigurator.getM2mVerifiedAttributeClient(), sharedStepsContext);
-        this.client = clientTokenConfigurator.getM2mVerifiedAttributeClient();
+        this.verifiedAttributeClient = clientTokenConfigurator.getM2mVerifiedAttributeClient();
+        this.tenantClient = clientTokenConfigurator.getM2mTenantClient();
         this.sharedStepsContext = sharedStepsContext;
-        this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        this.verifiedAttributeClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @And("viene effettuata la creazione dell'attributo verificato")
     public void creazioneAttributoVerificato(VerifiedAttributeSeed payloadAttrCert) {
-        VerifiedAttribute result = client.create(payloadAttrCert);
+        VerifiedAttribute result = verifiedAttributeClient.create(payloadAttrCert);
         var attributeContext = sharedStepsContext.getAttributeCommonContext();
 
         List<VerifiedAttribute> published = new ArrayList<>();
@@ -51,7 +58,7 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     @When("l'utente tenta di recuperare l'attributo verificato creato")
     public void recuperaAttributoVerificato() {
         UUID attributeId = this.sharedStepsContext.getAttributeCommonContext().getAttributeId();
-        httpExecutor.performCall(() -> client.get(attributeId));
+        httpExecutor.performCall(() -> verifiedAttributeClient.get(attributeId));
     }
 
     @Then("l'attributo verificato è stato creato correttamente")
@@ -90,7 +97,7 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     @When("l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente")
     public void recuperaVerifiersEnteInesistente() {
         UUID organizationId = UUID.randomUUID();
-        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+        UUID verifiedAttributeId = UUID.randomUUID();
         recuperaVerifiers(organizationId, verifiedAttributeId);
     }
 
@@ -103,15 +110,18 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     }
 
     private void recuperaVerifiers(UUID organizationId, UUID verifiedAttributeId) {
-        httpExecutor.performCall(() -> client.getVerifiers(organizationId, verifiedAttributeId));
+        httpExecutor.performCall(() -> tenantClient.getVerifiers(organizationId, verifiedAttributeId));
     }
 
 
     @Then("la lista degli enti che hanno verificato l'attributo è")
-    public void verificaVerifiers(List<String> tenants) {
+    public void verificaVerifiers(List<String> tenants) throws InterruptedException {
+        Thread.sleep(3000);
         IdentityService identityService = sharedStepsContext.getIdentityService();
         List<UUID> expectedVerifiers = tenants.stream().map(identityService::getOrganizationId).toList();
-        List<UUID> actualVerifiers = (List<UUID>) httpExecutor.getResponse();
+        List<UUID> actualVerifiers = ((TenantVerifiedAttributeVerifiers) httpExecutor.getResponse()).getResults().stream()
+            .map(TenantVerifiedAttributeVerifier::getId)
+            .toList();
 
         assertThat(actualVerifiers)
             .as("Verifica che gli enti verificatori attesi siano quelli effettivamente restituiti")
@@ -119,7 +129,8 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     }
 
     @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo")
-    public void recuperaRevokers() {
+    public void recuperaRevokers() throws InterruptedException {
+        Thread.sleep(3000);
         String tenant = sharedStepsContext.getTenantType();
         UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
         UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
@@ -130,8 +141,8 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente")
     public void recuperaRevokersEnteInesistente() {
         UUID organizationId = UUID.randomUUID();
-        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
-        httpExecutor.performCall(() -> client.getRevokers(organizationId, verifiedAttributeId));
+        UUID verifiedAttributeId = UUID.randomUUID();
+        recuperaRevokers(organizationId, verifiedAttributeId);
     }
 
     @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un attributo inesistente")
@@ -139,11 +150,11 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
         String tenant = sharedStepsContext.getTenantType();
         UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
         UUID verifiedAttributeId = UUID.randomUUID();
-        httpExecutor.performCall(() -> client.getRevokers(organizationId, verifiedAttributeId));
+        recuperaRevokers(organizationId, verifiedAttributeId);
     }
 
     private void recuperaRevokers(UUID organizationId, UUID verifiedAttributeId) {
-        httpExecutor.performCall(() -> client.getRevokers(organizationId, verifiedAttributeId));
+        httpExecutor.performCall(() -> tenantClient.getRevokers(organizationId, verifiedAttributeId));
     }
 
 
@@ -151,7 +162,9 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     public void verificaRevokers(List<String> tenants) {
         IdentityService identityService = sharedStepsContext.getIdentityService();
         List<UUID> expectedRevokers = tenants.stream().map(identityService::getOrganizationId).toList();
-        List<UUID> actualRevokers = (List<UUID>) httpExecutor.getResponse();
+        List<UUID> actualRevokers = ((TenantVerifiedAttributeRevokers) httpExecutor.getResponse()).getResults().stream()
+            .map(TenantVerifiedAttributeRevoker::getId)
+            .toList();
 
         assertThat(actualRevokers)
             .as("Verifica che gli enti revocatori attesi siano quelli effettivamente restituiti")

@@ -1,8 +1,7 @@
 package it.pagopa.interop.attribute.service;
 
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.common.client.IClient;
-import java.util.List;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import java.util.UUID;
 import lombok.Data;
 
@@ -32,6 +31,4 @@ public interface IM2MVerifiedAttributeClient extends IClient<VerifiedAttribute, 
     }
 
     VerifiedAttribute create(VerifiedAttributeSeed agreementPayload);
-    List<UUID> getVerifiers(UUID tenantId, UUID attributeId);
-    List<UUID> getRevokers(UUID organizationId, UUID verifiedAttributeId);
 }

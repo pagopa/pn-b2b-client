@@ -187,6 +187,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
   # DEV. NOTE 05/08/2025: l'assenza di polling attivo per le APIs in test dovrebbe essere
   # compensata dal tempo occupato dagli step intermedi necessari. Considerare la possibilità che
   # NON sia così qualora il test fallisse.
+  @m2m-parte2-agosto-rilascio1
   Scenario Outline: [M2MG_VERIFIEDATTRIBUTES_7]
           (Parte 1) Un utente con ruolo M2M o M2M-ADMIN può recuperare la lista degli enti che hanno verificato un certo attributo associato al proprio ente di appartenenza.
           (Parte 2) Inoltre, la revoca dell'attributo da parte di uno degli enti coinvolti implica il suo inserimento nella lista dei revokers, e la sua rimozione dalla lista dei verifiers.
@@ -202,59 +203,67 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo
     Then si ottiene lo status code 200
     And la lista degli enti che hanno verificato l'attributo è
-      | "PA2"   |
-      | "GSP"   |
+      | PA2   |
+      | GSP   |
 
     #Parte 2
     Given "GSP" revoca l'attributo precedentemente verificato
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
     When l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo
     Then la lista degli enti che hanno verificato l'attributo è
-      | "PA2"   |
+      | PA2   |
     When l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo
     Then la lista degli enti che hanno revocato l'attributo è
-      | "GSP"   |
+      | GSP   |
     Examples:
       | ruolo-m2m |
-      | m2m       |
       | m2m-admin |
+      | m2m       |
 
+  @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_8] Accesso negato alla lista degli enti verificatori di un attributo con token non valido
     Given "PA2" ha già creato un attributo verificato
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 401
 
+  @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_9] Un utente non può recuperare la lista degli enti che hanno verificato un certo attributo verificato indicando identificativi inesistenti
     Given "PA2" ha già creato un attributo verificato
-
-    # TODO 05/08/2025 Almeno questi non dovrebbero essere necessari ai fini del test, rimuovere eventualmente
-    #And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    #And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    #And "PA2" ha già verificato l'attributo verificato a "PA1"
-
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 404
-    And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un attributo inesistente
-    Then si ottiene lo status code 404
 
+  @m2m-parte2-agosto-rilascio1
+  Scenario: [M2MG_VERIFIEDATTRIBUTES_12] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno verificato un attributo associato ad un altro ente.
+    Given "PA2" ha già creato un attributo verificato
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA2" ha già verificato l'attributo verificato a "PA1"
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo
+    Then si ottiene lo status code 403
+
+  @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_10] Accesso negato alla lista degli enti revocatori di un attributo con token non valido
     Given "PA2" ha già creato un attributo verificato
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 401
 
+  @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_11] Un utente non può recuperare la lista degli enti che hanno verificato un certo attributo verificato indicando identificativi inesistenti
     Given "PA2" ha già creato un attributo verificato
-
-    # TODO 05/08/2025 Almeno questi non dovrebbero essere necessari ai fini del test, rimuovere eventualmente
-    #And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    #And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    #And "PA2" ha già verificato l'attributo verificato a "PA1"
-
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 404
-    And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un attributo inesistente
-    Then si ottiene lo status code 404
+
+  @m2m-parte2-agosto-rilascio1
+  Scenario: [M2MG_VERIFIEDATTRIBUTES_13] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno revocato un attributo associato ad un altro ente.
+    Given "PA2" ha già creato un attributo verificato
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA2" ha già verificato l'attributo verificato a "PA1"
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo
+    Then si ottiene lo status code 403
