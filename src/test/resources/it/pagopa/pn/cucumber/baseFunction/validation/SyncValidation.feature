@@ -1077,7 +1077,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario
-      | denomination | Fieramosca EttoreXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   |
+      | denomination | Fieramosca EttoreXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   |
       | taxId        | FRMTTR76M06B715E |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -1088,7 +1088,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario
-      | denomination | Fieramosca EttoreXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   |
+      | denomination | Fieramosca EttoreXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   |
       | taxId        | FRMTTR76M06B715E |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
