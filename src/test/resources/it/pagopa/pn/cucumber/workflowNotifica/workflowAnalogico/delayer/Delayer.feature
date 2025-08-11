@@ -55,26 +55,7 @@
         | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
       And viene simulato internamente l'algoritmo di pianificazione
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |

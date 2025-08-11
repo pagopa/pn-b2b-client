@@ -76,10 +76,8 @@ public class DelayerCsvLoader {
             String seed = row.get("seed");
             int expectedCount = Integer.parseInt(row.get("quantita"));
 
-            Pattern pattern = Pattern.compile("^" + Pattern.quote(seed) + "\\d+$");
-
             List<DelayerPaperDelivery> matching = context.actualCsv.stream()
-                    .filter(d -> pattern.matcher(d.getRequestId()).matches())
+                    .filter(d -> hasSeedInRequestId(seed, d))
                     .toList();
 
             if (matching.size() != expectedCount) {

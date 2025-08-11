@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DelayerPaperDeliveryUtils {
-    
+
     private final DelayerContext context;
 
     public DelayerPaperDeliveryUtils(DelayerContext context) {
@@ -96,8 +98,120 @@ public class DelayerPaperDeliveryUtils {
         return false;
     }
 
+    public static boolean hasSeedInRequestId(String seed, DelayerPaperDelivery n) {
+        Pattern pattern = Pattern.compile("^" + Pattern.quote(seed) + "\\d+$");
+        return pattern.matcher(n.getRequestId()).matches();
+    }
+
+    public static String extractSeed(DelayerPaperDelivery n) {
+        if (n == null || n.getRequestId() == null || n.getRequestId().isBlank()) {
+            throw new IllegalArgumentException("Notifica o requestId nullo/vuoto");
+        }
+
+        Pattern pattern = Pattern.compile("^(.+?)\\d+$"); // Gruppo 1: tutto prima delle cifre finali
+        Matcher matcher = pattern.matcher(n.getRequestId());
+
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("RequestId non rispetta il formato atteso: " + n.getRequestId());
+        }
+
+        return matcher.group(1); // Il seed
+    }
+
+    public static WorkflowSteps extractWorkflowStep(DelayerPaperDelivery n) {
+        if (n.getPk() == null || n.getPk().isBlank()) {
+            throw new IllegalArgumentException("PK mancante: impossibile estrarre il workflow step");
+        }
+
+        // Divido PK per "~"
+        String[] tokens = n.getPk().split("~");
+        String token = tokens[1];
+
+        try {
+            return WorkflowSteps.valueOf(token);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Workflow step non riconosciuto dal PK: " + n.getPk(), e);
+        }
+    }
+
+    public List<String> compare(List<DelayerPaperDelivery> expected, List<DelayerPaperDelivery> actual) {
+        List<Map<String, String>> expectedList = toComparableMapList(expected == null ? List.of() : expected);
+        List<Map<String, String>> actualList = toComparableMapList(actual == null ? List.of() : actual);
+
+        List<String> problems = new ArrayList<>();
+
+        // indicizza gli expected per requestId (segnala duplicati)
+        Map<String, Map<String, String>> expectedByReqId = new LinkedHashMap<>();
+        Set<String> expectedDupes = new LinkedHashSet<>();
+        for (Map<String, String> m : expectedList) {
+            String id = m.get("requestId");
+            if (id == null) {
+                problems.add("Expected senza requestId: " + m);
+                continue;
+            }
+            if (expectedByReqId.putIfAbsent(id, m) != null) expectedDupes.add(id);
+        }
+        expectedDupes.forEach(d -> problems.add("Duplicato in expected per requestId=" + d));
+
+        // indicizza gli actual per requestId (segnala duplicati)
+        Map<String, Map<String, String>> actualByReqId = new LinkedHashMap<>();
+        Set<String> actualDupes = new LinkedHashSet<>();
+        for (Map<String, String> m : actualList) {
+            String id = m.get("requestId");
+            if (id == null) {
+                problems.add("Actual senza requestId: " + m);
+                continue;
+            }
+            if (actualByReqId.putIfAbsent(id, m) != null) actualDupes.add(id);
+        }
+        actualDupes.forEach(d -> problems.add("Duplicato in actual per requestId=" + d));
+
+        // per ogni actual: verifica che sia atteso e che i campi combacino
+        for (Map.Entry<String, Map<String, String>> e : actualByReqId.entrySet()) {
+            String reqId = e.getKey();
+            Map<String, String> aMap = e.getValue();
+
+            Map<String, String> eMap = expectedByReqId.get(reqId);
+            if (eMap == null) {
+                problems.add("Actual non atteso (requestId=" + reqId + ")");
+                continue;
+            }
+
+            // confronto campo per campo (union chiavi)
+            Set<String> keys = new LinkedHashSet<>();
+            keys.addAll(eMap.keySet());
+            keys.addAll(aMap.keySet());
+
+            List<String> diffs = new ArrayList<>();
+            for (String k : keys) {
+                String ev = eMap.get(k);
+                String av = aMap.get(k);
+                if (!Objects.equals(ev, av)) {
+                    diffs.add(k + " [expected=" + ev + ", actual=" + av + "]");
+                }
+            }
+            if (!diffs.isEmpty()) {
+                problems.add("Differenze per requestId=" + reqId + " -> " + diffs);
+            }
+        }
+
+        // per ogni expected: verifica che esista in actual (mancanze in actual)
+        for (String reqId : expectedByReqId.keySet()) {
+            if (!actualByReqId.containsKey(reqId)) {
+                problems.add("Atteso ma non presente in actual (requestId=" + reqId + ")");
+            }
+        }
+
+        return problems; // vuota == tutto ok (stesse occorrenze e campi identici)
+    }
+
     public static String getSenderKey(DelayerPaperDelivery n) {
         return String.join("~", n.getSenderPaId(), n.getProductType(), n.getProvince());
+    }
+
+    public String extractDeliveryDate(DelayerPaperDelivery n) {
+        String[] parts = n.getPk().split("~");
+        return (parts.length > 0) ? parts[0] : "";
     }
 
     public static Map<String, List<DelayerPaperDelivery>> groupBySender(List<DelayerPaperDelivery> notifications) {
@@ -135,7 +249,7 @@ public class DelayerPaperDeliveryUtils {
     }
 
     public boolean isMittenteCensito(String senderKey) {
-        
+
         if (senderKey == null || senderKey.isBlank()) {
             throw new IllegalStateException("SenderKey mancante o vuoto: " + senderKey);
         }
@@ -150,7 +264,7 @@ public class DelayerPaperDeliveryUtils {
         if (paId == null || paId.isBlank()) {
             throw new AssertionError(String.format("La SenderKey (%s) ha una paId vuota: %s", senderKey, paId));
         }
-        
+
         return context.senderLimitMap.containsKey(senderKey);
     }
 
@@ -211,32 +325,35 @@ public class DelayerPaperDeliveryUtils {
         switch (workflowStep) {
 
             case EVALUATE_SENDER_LIMIT -> {
-                // Usa notificationSentAt se RS o secondo tentativo, altrimenti prepareRequestDate
-                boolean isRsOrSecondAttempt = n.isRS() || n.isSecondAttempt();
-
-                String date = isRsOrSecondAttempt
-                        ? n.getNotificationSentAt()
-                        : n.getPrepareRequestDate();
-
+                String date = resolveReferenceDate(n);
                 String province = n.getProvince();
-
                 return String.join("~", province, date, requestId);
             }
 
-            case EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
+            case EVALUATE_DRIVER_CAPACITY -> {
                 String driver = n.getUnifiedDeliveryDriver();
-                String date = context.expectedDeliveryDate;
                 String province = n.getProvince();
                 String priority = calculatePriority(n);
-
-                return String.join("~", driver, province, priority, date, requestId);
+                String refIso = resolveReferenceDate(n);
+                return String.join("~", driver, province, priority, refIso, requestId);
             }
 
-            case EVALUATE_PRINT_CAPACITY, SENT_TO_PREPARE_PHASE_2 -> {
+            case EVALUATE_RESIDUAL_CAPACITY -> {
+                String driver = n.getUnifiedDeliveryDriver();
+                String province = n.getProvince();
+                String refIso = resolveReferenceDate(n);
+                return String.join("~", driver, province, refIso, requestId);
+            }
+
+            case EVALUATE_PRINT_CAPACITY -> {
                 String priority = calculatePriority(n);
                 String date = context.expectedDeliveryDate;
-
                 return String.join("~", priority, date, requestId);
+            }
+
+            case SENT_TO_PREPARE_PHASE_2 -> {
+                String date = context.expectedDeliveryDate;
+                return String.join("~", date, requestId);
             }
 
             default -> throw new IllegalArgumentException("Unsupported workflowStep: " + workflowStep);
@@ -291,6 +408,35 @@ public class DelayerPaperDeliveryUtils {
         }
 
         return parts;
+    }
+
+    private List<Map<String, String>> toComparableMapList(List<DelayerPaperDelivery> list) {
+        return list.stream()
+                .map(n -> {
+                    Map<String, String> map = new LinkedHashMap<>();
+                    WorkflowSteps step = extractWorkflowStep(n);
+
+                    map.put("pk", n.getPk());
+                    map.put("sk", n.getSk());
+                    map.put("requestId", n.getRequestId());
+                    map.put("notificationSentAt", n.getNotificationSentAt());
+                    map.put("prepareRequestDate", n.getPrepareRequestDate());
+                    map.put("productType", n.getProductType());
+                    map.put("senderPaId", n.getSenderPaId());
+                    map.put("province", n.getProvince());
+                    map.put("cap", n.getCap());
+                    map.put("attempt", n.getAttempt());
+                    map.put("iun", n.getIun());
+                    if (step.getIndex() > 0)
+                        map.put("unifiedDeliveryDriver", n.getUnifiedDeliveryDriver());
+
+                    return map;
+                }).toList();
+    }
+
+    private String resolveReferenceDate(DelayerPaperDelivery n) {
+        boolean isRsOrSecondAttempt = n.isRS() || n.isSecondAttempt();
+        return isRsOrSecondAttempt ? n.getNotificationSentAt() : n.getPrepareRequestDate();
     }
 
     @SuppressWarnings("unchecked")

@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.calculateLimitByComparativo;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -48,8 +48,8 @@ public class DelayerSteps {
         this.csvLoader = new DelayerCsvLoader(context);
         this.planner = new DelayerPlanner(context);
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, LAMBDA_NAME);
-        this.validator = new DelayerValidator(context, lambdaClient);
         this.utils = new DelayerPaperDeliveryUtils(context);
+        this.validator = new DelayerValidator(context, lambdaClient, utils);
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -171,12 +171,11 @@ public class DelayerSteps {
         List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 18);
 
         actual.forEach(dpd -> {
-            String seed = context.groupedBySeed.keySet().stream()
-                    .filter(dpd.getRequestId()::contains)
-                    .findFirst()
-                    .orElseThrow();
+            String seed = extractSeed(dpd);
             context.actualPianification.get(seed).get(step.name()).add(dpd);
         });
+
+        validator.checkSilentlyAll(step);
     }
 
     @Then("verifica che il processo fino al workflow step {string} abbia rispettato i criteri di ranking per almeno un test case:")

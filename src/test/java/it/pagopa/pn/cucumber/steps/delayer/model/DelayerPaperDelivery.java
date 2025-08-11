@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"pk", "requesId"})
+@EqualsAndHashCode(of = {"pk", "requestId"})
 public class DelayerPaperDelivery {
 
     private String pk;
