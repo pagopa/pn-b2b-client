@@ -103,7 +103,8 @@ public class DelayerSteps {
                 log.warn("{} non presente nel CSV: {}", idKey, entityId);
             }
 
-            utils.setDriverCapacity(entityId, calculatedLimit);
+            utils.setAvailableDriverCapacity(entityId, calculatedLimit);
+            utils.setInitialDriverCapacity(entityId, calculatedLimit);
         }
     }
 
@@ -121,14 +122,19 @@ public class DelayerSteps {
             int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
 
             switch (comparative.toLowerCase()) {
-                case "almeno","inferiore" -> {
-                    if (actual <= rawLimit) {
+                case "almeno" -> {
+                    if (actual < rawLimit) {
                         throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
                     }
                 }
                 case "esattamente" -> {
                     if (actual != rawLimit) {
                         throw new AssertionError("Capacità di " + entityId + " diversa da " + rawLimit + ", trovata: " + actual);
+                    }
+                }
+                case "inferiore" -> {
+                    if (actual > rawLimit) {
+                        throw new AssertionError("Capacità di " + entityId + " superiore a " + rawLimit + ", trovata: " + actual);
                     }
                 }
                 default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);

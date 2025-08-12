@@ -49,11 +49,15 @@ public class DelayerPaperDeliveryUtils {
         return driver + "~" + cap;
     }
 
-    public int getDriverCapacity(String driverId) {
-        return findCapacityOrMap(driverId, false);
+    public int getAvailableDriverCapacity(String driverId) {
+        return findCapacityOrMap(driverId, false, false);
     }
 
-    public void setDriverCapacity(String driverId, int capacity) {
+    public int getInitalDriverCapacity(String driverId) {
+        return findCapacityOrMap(driverId, false, true);
+    }
+
+    public void setAvailableDriverCapacity(String driverId, int capacity) {
         String[] parts = splitDriverId(driverId);
         String location = parts[1];
 
@@ -69,8 +73,39 @@ public class DelayerPaperDeliveryUtils {
             throw new IllegalArgumentException("Il secondo token non è un CAP valido o di test: " + location);
         }
 
-        Map<String, Integer> capMap = findCapacityOrMap(driverId, true);
+        Map<String, Integer> capMap = findCapacityOrMap(driverId, true, false);
         capMap.put(driverId, capacity);
+    }
+
+    public void setInitialDriverCapacity(String driverId, int capacity) {
+        String[] parts = splitDriverId(driverId);
+        String location = parts[1];
+
+        if (capacity < 0) {
+            throw new IllegalArgumentException("La capacità non può essere negativa");
+        }
+
+        if (isValidProvince(location)) {
+            return; // ignorato volutamente
+        }
+
+        if (!isValidCap(location)) {
+            throw new IllegalArgumentException("Il secondo token non è un CAP valido o di test: " + location);
+        }
+
+        Map<String, Integer> capMap = findCapacityOrMap(driverId, true, true);
+        capMap.put(driverId, capacity);
+    }
+
+    public List<DelayerPaperDelivery> deepCopyAndUpdateKeys(List<DelayerPaperDelivery> source, WorkflowSteps step, String deliveryDate) {
+        return source.stream()
+                .map(DelayerPaperDelivery::new)
+                .peek(n -> {
+                    n.setPk(calculatePk(step, deliveryDate));
+                    n.setSk(calculateSk(step, n));
+                    n.setPriority(calculatePriority(n));
+                })
+                .toList();
     }
 
     public boolean hasDriver(String driverId) {
@@ -209,7 +244,7 @@ public class DelayerPaperDeliveryUtils {
         return String.join("~", n.getSenderPaId(), n.getProductType(), n.getProvince());
     }
 
-    public String extractDeliveryDate(DelayerPaperDelivery n) {
+    public static String extractDeliveryDate(DelayerPaperDelivery n) {
         String[] parts = n.getPk().split("~");
         return (parts.length > 0) ? parts[0] : "";
     }
@@ -221,6 +256,28 @@ public class DelayerPaperDeliveryUtils {
             bySenderKey.computeIfAbsent(senderKey, k -> new ArrayList<>()).add(notification);
         }
         return bySenderKey;
+    }
+
+    public Map<String, List<DelayerPaperDelivery>> groupByDriver(List<DelayerPaperDelivery> notifications) {
+        Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
+        if (notifications == null || notifications.isEmpty()) {
+            return byDriverKey;
+        }
+
+        for (DelayerPaperDelivery n : notifications) {
+            String senderKey   = getUnifiedDeliveryDriverKey(n);
+            WorkflowSteps step = extractWorkflowStep(n);
+            String deliveryDate = extractDeliveryDate(n);
+
+            // Calcola il blocco da aggiungere (può anche essere immutabile, non è un problema)
+            List<DelayerPaperDelivery> chunk =
+                    deepCopyAndUpdateKeys(Collections.singletonList(n), step, deliveryDate);
+
+            // Assicura una lista MUTABILE nel map value e poi aggiunge
+            byDriverKey.computeIfAbsent(senderKey, k -> new ArrayList<>()).addAll(chunk);
+        }
+
+        return byDriverKey;
     }
 
     public Integer getSenderLimit(String senderKey) {
@@ -265,7 +322,7 @@ public class DelayerPaperDeliveryUtils {
             throw new AssertionError(String.format("La SenderKey (%s) ha una paId vuota: %s", senderKey, paId));
         }
 
-        return context.senderLimitMap.containsKey(senderKey);
+        return !paId.equalsIgnoreCase("unknow");
     }
 
     public static List<DelayerPaperDelivery> sortByPriority(List<DelayerPaperDelivery> notifiche) {
@@ -347,7 +404,7 @@ public class DelayerPaperDeliveryUtils {
 
             case EVALUATE_PRINT_CAPACITY -> {
                 String priority = calculatePriority(n);
-                String date = context.expectedDeliveryDate;
+                String date = n.getPrepareRequestDate();
                 return String.join("~", priority, date, requestId);
             }
 
@@ -440,7 +497,7 @@ public class DelayerPaperDeliveryUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T findCapacityOrMap(String driverId, boolean returnMap) {
+    private <T> T findCapacityOrMap(String driverId, boolean returnMap, boolean initial) {
         if (driverId == null || driverId.isBlank() || !driverId.contains("~")) {
             throw new IllegalArgumentException("Driver ID non valido o mancante: " + driverId);
         }
@@ -455,7 +512,7 @@ public class DelayerPaperDeliveryUtils {
 
         // Caso: provincia
         if (isValidProvince(location)) {
-            Map<String, Integer> capMap = context.driverCapacityMap.get(driverId);
+            Map<String, Integer> capMap = initial ? context.driverCapacityMap.get(driverId) : context.usedDriverCapacityMap.get(driverId);
             if (capMap == null) {
                 throw new IllegalStateException("Nessuna mappa trovata per driver/provincia: " + driverId);
             }
@@ -469,8 +526,9 @@ public class DelayerPaperDeliveryUtils {
         // Caso: CAP o CAP di test
         if (isValidCap(location)) {
             String fullKey = driver + "~" + location;
+            var targetMap = initial ? context.driverCapacityMap : context.usedDriverCapacityMap;
 
-            return context.driverCapacityMap.values().stream()
+            return targetMap.values().stream()
                     .filter(capMap -> capMap.containsKey(fullKey))
                     .findFirst()
                     .map(capMap -> {
