@@ -19,6 +19,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -33,6 +34,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final PollingService pollingService;
     private final IM2MEserviceClient client;
     private final BlobFileCreator blobFileCreator;
+    private final DelayService delayService;
 
     private final EServiceMapper eServiceMapper;
     private EService originalEService;
@@ -51,6 +53,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.blobFileCreator = blobFileCreator;
         client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.eServiceMapper = eServiceMapper;
+        this.delayService = sharedStepsContext.getDelayService();
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -223,6 +226,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @Then("l'e-service è stato parzialmente modificato correttamente")
     public void verificaPatchedEService() {
+        delayService.delay();
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         EService actualPatchedEService = client.get(eServiceId);
         assertThat(actualPatchedEService)
@@ -232,6 +236,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @Then("l'e-service non ha subito modifiche")
     public void verificaUnpatchedEService() {
+        delayService.delay();
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         EService actualPatchedEService = client.get(eServiceId);
         assertThat(actualPatchedEService)
