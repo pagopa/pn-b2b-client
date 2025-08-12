@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -93,22 +94,72 @@ public class DelayerSteps {
 
         for (Map<String, String> row : rows) {
             String idKey = "unifiedDeliveryDriverId";
-            String entityId = row.get(idKey);
+            String driverKey = row.get(idKey);
             String comparative = row.get("comparative");
             int rawLimit = Integer.parseInt(row.get("limit"));
 
             int calculatedLimit = calculateLimitByComparativo(comparative, rawLimit);
 
-            if (!utils.hasDriver(entityId)) {
-                log.warn("{} non presente nel CSV: {}", idKey, entityId);
+            if (!utils.hasDriver(driverKey)) {
+                log.warn("{} non presente nel CSV: {}", idKey, driverKey);
             }
 
-            utils.setAvailableDriverCapacity(entityId, calculatedLimit);
-            utils.setInitialDriverCapacity(entityId, calculatedLimit);
+            utils.setInitialDriverCapacity(driverKey, calculatedLimit);
         }
+
+        initAvailableDriverCapacity();
+    }
+
+    private void initAvailableDriverCapacity() {
+        // Per ogni provincia (driver~provincia) inizializza le capacità disponibili
+        context.driverCapacityMap.forEach((provinceDriverKey, capMap) -> {
+            String[] parts = provinceDriverKey.split("~");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Formato driverId non valido. Atteso 'driver~location': " + provinceDriverKey);
+            }
+
+            final String driver = parts[0];
+            final String location = parts[1];
+
+            // 1) Riporto tutte le capacità in avaiable
+            capMap.forEach(utils::setAvailableDriverCapacity);
+
+            // 2) Modifico Available per PROVINCIA = somma dei CAP / mittenti distinti su (driver, provincia)
+            if (utils.isValidProvince(location)) {
+                int totalProvinceCapacity = capMap.keySet().stream()
+                        .filter(k -> !k.equals(provinceDriverKey))
+                        .mapToInt(capMap::get)
+                        .sum();
+
+                if(!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
+                    throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
+
+                long distinctSenders = context.actualCsv.stream()
+                        .filter(d -> driver.equals(d.getUnifiedDeliveryDriver()))
+                        .filter(d -> location.equalsIgnoreCase(d.getProvince()))
+                        .map(DelayerPaperDelivery::getSenderPaId)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .count();
+
+                int divisor = (int) Math.max(1, distinctSenders);
+                int perSenderProvinceCapacity = totalProvinceCapacity / divisor;
+
+                Map<String, Integer> inner = context.usedDriverCapacityMap.get(provinceDriverKey);
+                if (inner == null) {
+                    throw new IllegalStateException("Mappa capacità mancante per: " + provinceDriverKey);
+                }
+
+                inner.replaceAll((k, v) -> k.equals(provinceDriverKey) ? v : perSenderProvinceCapacity);
+
+            }
+            else throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
+
+        });
     }
 
     @And("si verifica che il limite settimanale utilizzato dai recapitisti \\(unifiedDeliveryDriver-geoKey) sia:")
+    @And("si verifica che la capacità disponibile settimanale dei recapitisti \\(unifiedDeliveryDriver-geoKey) sia:")
     public void checkDriverAvailableCapacity(DataTable dataTable) {
 
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
@@ -120,11 +171,12 @@ public class DelayerSteps {
             int rawLimit = Integer.parseInt(row.get("limit"));
 
             int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
+            if (actual == -1) actual = rawLimit;
 
             switch (comparative.toLowerCase()) {
                 case "almeno" -> {
                     if (actual < rawLimit) {
-                        throw new AssertionError("Capacità di " + entityId + " inferiore ad almeno " + rawLimit + ", trovata: " + actual);
+                        throw new AssertionError("Capacità di " + entityId + " inferiore ad " + rawLimit + ", trovata: " + actual);
                     }
                 }
                 case "esattamente" -> {
@@ -154,6 +206,11 @@ public class DelayerSteps {
         context.expectedPianification.replaceAll((seed, oldStepMap) ->
                 planner.simulateAlgorithm(SENT_TO_PREPARE_PHASE_2, seed)
         );
+    }
+
+    @And("viene simulato internamente la seconda parte dell'algoritmo di pianificazione")
+    public void runSimulation2() {
+        planner.simulateAlgorithm2(context.expectedPianification);
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine")

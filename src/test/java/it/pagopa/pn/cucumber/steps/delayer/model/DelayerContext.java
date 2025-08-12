@@ -19,6 +19,8 @@ public class DelayerContext {
     public Map<String, List<DelayerPaperDelivery>> groupedBySeed = new HashMap<>();
     public Map<String, Map<String, List<DelayerPaperDelivery>>> expectedPianification = new HashMap<>();
     public Map<String, Map<String, List<DelayerPaperDelivery>>> actualPianification = new HashMap<>();
+    public List<DelayerPaperDelivery> expectedTotalPreparePhase2 = new ArrayList<>();
+    public List<DelayerPaperDelivery> actualTotalPreparePhase2 = new ArrayList<>();
     public Map<String, String> failPianification = new HashMap<>();
 
     public Map<String, List<String>> priorityConfigMap = Map.of(

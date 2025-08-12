@@ -57,6 +57,7 @@ public class DelayerPaperDeliveryUtils {
         return findCapacityOrMap(driverId, false, true);
     }
 
+    // Qui deve scalare la capacità provinciale invece di quella di cap
     public void setAvailableDriverCapacity(String driverId, int capacity) {
         String[] parts = splitDriverId(driverId);
         String location = parts[1];
@@ -65,12 +66,8 @@ public class DelayerPaperDeliveryUtils {
             throw new IllegalArgumentException("La capacità non può essere negativa");
         }
 
-        if (isValidProvince(location)) {
-            return; // ignorato volutamente
-        }
-
-        if (!isValidCap(location)) {
-            throw new IllegalArgumentException("Il secondo token non è un CAP valido o di test: " + location);
+        if (!isValidProvince(location) && !isValidCap(location)) {
+            throw new IllegalArgumentException("Il secondo token non è una provincia o un cap valido o di test: " + location);
         }
 
         Map<String, Integer> capMap = findCapacityOrMap(driverId, true, false);
@@ -85,12 +82,8 @@ public class DelayerPaperDeliveryUtils {
             throw new IllegalArgumentException("La capacità non può essere negativa");
         }
 
-        if (isValidProvince(location)) {
-            return; // ignorato volutamente
-        }
-
-        if (!isValidCap(location)) {
-            throw new IllegalArgumentException("Il secondo token non è un CAP valido o di test: " + location);
+        if (!isValidProvince(location) && !isValidCap(location)) {
+            throw new IllegalArgumentException("Il secondo token non è una provincia o un cap valido o di test: " + location);
         }
 
         Map<String, Integer> capMap = findCapacityOrMap(driverId, true, true);
@@ -258,7 +251,7 @@ public class DelayerPaperDeliveryUtils {
         return bySenderKey;
     }
 
-    public Map<String, List<DelayerPaperDelivery>> groupByDriver(List<DelayerPaperDelivery> notifications) {
+    public Map<String, List<DelayerPaperDelivery>> groupByUnifiedDeliveryDriver(List<DelayerPaperDelivery> notifications) {
         Map<String, List<DelayerPaperDelivery>> byDriverKey = new HashMap<>();
         if (notifications == null || notifications.isEmpty()) {
             return byDriverKey;
@@ -278,6 +271,22 @@ public class DelayerPaperDeliveryUtils {
         }
 
         return byDriverKey;
+    }
+
+    public String[] splitDriverKey(String driverKey) {
+        String[] parts = driverKey.split("~");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Formato driverId non valido. Atteso 'driver~location': " + driverKey);
+        }
+
+        String driver = parts[0];
+        String location = parts[1];
+
+        if (!isValidProvince(location) && !isValidCap(location)) {
+            throw new IllegalArgumentException("Il secondo token non è una provincia o un cap valido o di test: " + location);
+        }
+
+        return parts;
     }
 
     public Integer getSenderLimit(String senderKey) {
@@ -409,8 +418,9 @@ public class DelayerPaperDeliveryUtils {
             }
 
             case SENT_TO_PREPARE_PHASE_2 -> {
-                String date = context.expectedDeliveryDate;
-                return String.join("~", date, requestId);
+                String priority = calculatePriority(n);
+                String date = n.getPrepareRequestDate();
+                return String.join("~", priority, date, requestId);
             }
 
             default -> throw new IllegalArgumentException("Unsupported workflowStep: " + workflowStep);
@@ -438,7 +448,7 @@ public class DelayerPaperDeliveryUtils {
         };
     }
 
-    private boolean isValidCap(String cap) {
+    public boolean isValidCap(String cap) {
         return (cap != null && cap.matches("^\\d{5}$")) || isValidTestCap(cap);
     }
 
@@ -446,7 +456,7 @@ public class DelayerPaperDeliveryUtils {
         return cap != null && cap.matches("^CAP\\d+_P\\d+$");
     }
 
-    private boolean isValidProvince(String value) {
+    public boolean isValidProvince(String value) {
         return (value != null && value.matches("^[A-Z]{2}$")) || isValidTestProvince(value);
     }
 
@@ -517,10 +527,7 @@ public class DelayerPaperDeliveryUtils {
                 throw new IllegalStateException("Nessuna mappa trovata per driver/provincia: " + driverId);
             }
 
-            return (T) (returnMap ? capMap :
-                    Integer.valueOf(capMap.values().stream()
-                            .mapToInt(Integer::intValue)
-                            .sum()));
+            return (T) (returnMap ? capMap : capMap.get(driverId));
         }
 
         // Caso: CAP o CAP di test

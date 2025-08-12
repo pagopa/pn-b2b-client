@@ -33,6 +33,7 @@ public class DelayerLambdaClient {
             JsonNode body = extractBody(response);
             int declared = body.path("declaredCapacity").asInt(-1);
             int used = body.path("usedCapacity").asInt(-1);
+            if(declared == -1 && used == -1) return -1;
             return declared - used;
         } catch (Exception e) {
             throw new RuntimeException("Errore durante GET_USED_CAPACITY per driver %s".formatted(driver), e);
