@@ -17,6 +17,25 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 public interface IM2MPurposeClient extends SettableBearerToken {
+    /* ***************************************************************************************
+    TODO 12/08/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
+ *    ampliare e adattare una volta ottenuta la specifica completa */
+    @Data
+    class PurposePatchRequest {
+        private String title;
+        private String description;
+
+        public PurposePatchRequest title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public PurposePatchRequest description(String description) {
+            this.description = description;
+            return this;
+        }
+    }
+    /* ***************************************************************************************/
 
     @Data
     @EqualsAndHashCode(callSuper = true)
@@ -63,4 +82,6 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     Purpose approvePurpose(UUID purposeId);
 
     Purpose archivePurpose(UUID purposeId);
+
+    void patchPurpose(UUID purposeId, PurposePatchRequest body);
 }

@@ -4,8 +4,8 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -123,6 +123,12 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     @Override
     public FileDownloadMultipart downloadPurposeVersionDocument(UUID purposeId, UUID versionId) {
         return purposesApi.downloadPurposeVersionRiskAnalysisDocument(purposeId, versionId);
+    }
+
+    @Override
+    public void patchPurpose(UUID purposeId, PurposePatchRequest body) {
+        // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
+        //  metodo nel client da chiamare
     }
 
     @Override

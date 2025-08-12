@@ -24,6 +24,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
+import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -31,6 +32,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +52,12 @@ public class PurposesSteps {
     private final IPurposeApiClient bffPurposeClient;
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
+    private final DelayService delayService;
     private final int newDailyCalls = 50;
+
+    private PurposeMapper purposeMapper;
+    private Purpose originalPurpose;
+    private Purpose expectedPatchedPurpose;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext) {
@@ -61,6 +68,7 @@ public class PurposesSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.bffPurposeClient = clientTokenConfigurator.getPurposeApiClient();
+        this.delayService = sharedStepsContext.getDelayService();
     }
 
     @SuppressWarnings("java:S6204")
@@ -381,6 +389,56 @@ public class PurposesSteps {
             softly.assertThat(fileMultipart.getFilename()).as("Filename check").isNotBlank();
             softly.assertThat(fileMultipart.getFile().length()).as("File size check").isGreaterThan(0L);
         });
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità")
+    public void patchPurpose() {
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+
+        PurposePatchRequest patchBody = buildPatchBody();
+
+        this.originalPurpose = this.purposeClient.getPurpose(purposeId);
+
+        this.expectedPatchedPurpose = this.purposeMapper.copyPurpose(originalPurpose);
+        this.purposeMapper.copyPatchRequestToPurpose(patchBody, this.expectedPatchedPurpose);
+
+        httpCallExecutor.performCall(() -> this.purposeClient.patchPurpose(purposeId, patchBody));
+    }
+
+    @Then("la finalità è stata parzialmente modificata correttamente")
+    public void verificaPatchedPurpose() {
+        delayService.delay();
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+        Purpose actualPatchedPurpose = this.purposeClient.getPurpose(purposeId);
+        assertThat(actualPatchedPurpose)
+            .as("Verifica che le modifiche apportate alla finalità con l'API PATCH siano state apportate correttamente")
+            .isEqualTo(this.expectedPatchedPurpose);
+    }
+
+    @Then("la finalità non ha subito modifiche")
+    public void verificaUnpatchedPurpose() {
+        delayService.delay();
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+        Purpose actualPatchedPurpose = this.purposeClient.getPurpose(purposeId);
+        assertThat(actualPatchedPurpose)
+            .as("Verifica che non siano state apportate modifiche alla finalità")
+            .isEqualTo(this.originalPurpose);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale di una finalità inesistente")
+    public void patchNonExistentPurpose() {
+        UUID purposeId = UUID.randomUUID();
+
+        PurposePatchRequest patchBody = buildPatchBody();
+        httpCallExecutor.performCall(() -> this.purposeClient.patchPurpose(purposeId, patchBody));
+    }
+
+    // TODO 12/08/2025 destinato a essere modificato e ampliato non appena la specifica
+    //  OpenAPI dell'API in oggetto sarà rilasciata
+    private static PurposePatchRequest buildPatchBody() {
+        return new PurposePatchRequest()
+            .description("patched description")
+            .title("patched title");
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {
