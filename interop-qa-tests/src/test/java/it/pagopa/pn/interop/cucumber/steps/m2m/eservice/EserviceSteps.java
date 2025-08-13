@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import io.cucumber.java.en.Given;
@@ -11,13 +10,13 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl.EServiceInterfaceUploadRequest;
-import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl.EServicePatchRequest;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.List;
@@ -37,6 +36,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final DelayService delayService;
 
     private final EServiceMapper eServiceMapper;
+    private final EServicePatchOperationsAssistant eServicePatchAssistant;
+
     private EService originalEService;
     private EService expectedPatchedEService;
 
@@ -44,7 +45,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator clientTokenConfigurator,
         BlobFileCreator blobFileCreator,
-        EServiceMapper eServiceMapper) {
+        EServiceMapper eServiceMapper,
+        EServicePatchOperationsAssistant eServicePatchAssistant) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -54,6 +56,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.eServiceMapper = eServiceMapper;
         this.delayService = sharedStepsContext.getDelayService();
+        this.eServicePatchAssistant = eServicePatchAssistant;
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -190,16 +193,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service")
     public void patchEService() {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-
-        EServicePatchRequest patchBody = buildPatchBody();
-
-        this.originalEService = client.get(eServiceId);
-
-        this.expectedPatchedEService = this.eServiceMapper.copyEService(originalEService);
-        this.eServiceMapper.copyPatchRequestToEService(patchBody, this.expectedPatchedEService);
-
-        httpExecutor.performCall(() -> this.client.patchEService(eServiceId, patchBody));
+        eServicePatchAssistant.patchResource();
     }
 
     @When("l'utente tenta di recuperare l'e-service creato")
@@ -210,38 +204,17 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale di un e-service inesistente")
     public void patchNonExistentEService() {
-        UUID eServiceId = UUID.randomUUID();
-
-        EServicePatchRequest patchBody = buildPatchBody();
-        httpExecutor.performCall(() -> this.client.patchEService(eServiceId, patchBody));
-    }
-
-    // TODO 05/08/2025 destinato a essere modificato e ampliato non appena la specifica
-    //  OpenAPI dell'API in oggetto sarà rilasciata
-    private static EServicePatchRequest buildPatchBody() {
-        return new EServicePatchRequest()
-            .description("patched description")
-            .name("patched name");
+        eServicePatchAssistant.patchNonExistentResource();
     }
 
     @Then("l'e-service è stato parzialmente modificato correttamente")
     public void verificaPatchedEService() {
-        delayService.delay();
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        EService actualPatchedEService = client.get(eServiceId);
-        assertThat(actualPatchedEService)
-            .as("Verifica che le modifiche apportate all'e-service con l'API PATCH siano state apportate correttamente")
-            .isEqualTo(this.expectedPatchedEService);
+        eServicePatchAssistant.checkPatchedResource();
     }
 
     @Then("l'e-service non ha subito modifiche")
     public void verificaUnpatchedEService() {
-        delayService.delay();
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        EService actualPatchedEService = client.get(eServiceId);
-        assertThat(actualPatchedEService)
-            .as("Verifica che non siano state apportate modifiche all'e-service")
-            .isEqualTo(this.originalEService);
+        eServicePatchAssistant.checkUnpatchedResource();
     }
 
     @Override
