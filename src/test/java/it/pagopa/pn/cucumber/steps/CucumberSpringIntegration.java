@@ -45,6 +45,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClient.class,
+        PnPaperTrackerClientImpl.class,
         PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
