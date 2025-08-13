@@ -1,10 +1,9 @@
 package it.pagopa.pn.cucumber.steps.delayer.validator;
 
+import io.cucumber.datatable.DataTable;
+import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
-
-import io.cucumber.datatable.DataTable;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -70,12 +69,12 @@ public class DelayerValidator {
     }
 
     public List<String> checkSilently(WorkflowSteps step, String seed) {
-        var actual   = context.actualPianification.getOrDefault(seed, Map.of()).get(step.name());
+        var actual = context.actualPianification.getOrDefault(seed, Map.of()).get(step.name());
         var expected = context.expectedPianification.getOrDefault(seed, Map.of()).get(step.name());
 
         // Normalizza i null a liste vuote
         List<DelayerPaperDelivery> exp = expected == null ? List.of() : expected;
-        List<DelayerPaperDelivery> act = actual   == null ? List.of() : actual;
+        List<DelayerPaperDelivery> act = actual == null ? List.of() : actual;
 
         // Entrambi vuoti -> ok
         if (exp.isEmpty() && act.isEmpty()) {
@@ -139,6 +138,17 @@ public class DelayerValidator {
         }
 
         return result;
+    }
+
+    public void checkNotExistSilently(List<DelayerPaperDelivery> notifications, String seed, WorkflowSteps ws) {
+        if (notifications != null && !notifications.isEmpty()) {
+            registerFailureIfAbsent(
+                    seed,
+                    "Trovate notifiche non attese allo stato " + ws.name() + " :" + notifications.stream()
+                            .map(DelayerPaperDelivery::getRequestId)
+                            .collect(Collectors.joining(", "))
+            );
+        }
     }
 
     public void checkFrozen(WorkflowSteps step, List<DelayerPaperDelivery> frozenExpected) throws Exception {
@@ -253,7 +263,8 @@ public class DelayerValidator {
                 .format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
-    private record SeedStep(String seed, String workflowStep) {}
+    private record SeedStep(String seed, String workflowStep) {
+    }
 
     // supponendo: record SeedStep(String seed, WorkflowSteps workflowStep) {}
     private SeedStep ensureHomogeneous(List<DelayerPaperDelivery> list, String label) {
@@ -278,7 +289,7 @@ public class DelayerValidator {
             String badSeed = extractSeed(bad);
             WorkflowSteps badStep = extractWorkflowStep(bad);
 
-            log.warn(  "Seed non omogenei all'interno di '%s': atteso seed=%s/step=%s ma trovato seed=%s/step=%s (requestId=%s)"
+            log.warn("Seed non omogenei all'interno di '%s': atteso seed=%s/step=%s ma trovato seed=%s/step=%s (requestId=%s)"
                     .formatted(label, seed0, step0.name(), badSeed, badStep.name(), bad.getRequestId()));
 
         }

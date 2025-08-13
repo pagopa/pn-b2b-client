@@ -6,108 +6,27 @@
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed                 | quantita |
-        | tcRanking_2nd_890_   | 16       |
-        | tcRanking_RS_2nd_    | 14       |
-        | tcRanking_RS_890_    | 16       |
-        | tcRanking_RS_        | 14       |
-        | tcRanking_2nd_       | 14       |
-        | tcRanking_890_       | 16       |
-        | tcRankingRS_2nd_890_ | 20       |
+        | seed            | quantita |
+        | tcSenderUnknow_ | 15       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId                 | comparative | limit |
-        | ranking2nd_890~RS~P1     | esattamente | 0     |
-        | ranking2nd_890~AR~P1     | esattamente | 0     |
-        | ranking2nd_890~890~P1    | esattamente | 7     |
-        | rankingRS_2nd~RS~P2      | esattamente | 0     |
-        | rankingRS_2nd~AR~P2      | esattamente | 0     |
-        | rankingRS_2nd~890~P2     | esattamente | 0     |
-        | rankingRS_890~RS~P3      | esattamente | 0     |
-        | rankingRS_890~AR~P3      | esattamente | 0     |
-        | rankingRS_890~890~P3     | esattamente | 7     |
-        | rankingRS~RS~P4          | esattamente | 0     |
-        | rankingRS~AR~P4          | esattamente | 0     |
-        | rankingRS~890~P4         | esattamente | 0     |
-        | ranking2nd~RS~P5         | esattamente | 0     |
-        | ranking2nd~AR~P5         | esattamente | 0     |
-        | ranking2nd~890~P5        | esattamente | 0     |
-        | ranking890~RS~P6         | esattamente | 0     |
-        | ranking890~AR~P6         | esattamente | 0     |
-        | ranking890~890~P6        | esattamente | 14    |
-        | rankingRS_2nd_890~RS~P7  | esattamente | 0     |
-        | rankingRS_2nd_890~AR~P7  | esattamente | 0     |
-        | rankingRS_2nd_890~890~P7 | esattamente | 7     |
+        | senderId      | comparative | limit |
+        | unknow~RS~P8  | esattamente | 0     |
+        | unknow~AR~P8  | esattamente | 0     |
+        | unknow~890~P8 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId         | comparative | limit |
-        | driverRanking2nd_890~P1         | esattamente | 10    |
-        | driverRanking2nd_890~CAP1_P1    | esattamente | 10    |
-        | driverRankingRS_2nd~P2          | esattamente | 10    |
-        | driverRankingRS_2nd~CAP1_P2     | esattamente | 10    |
-        | driverRankingRS_890~P3          | esattamente | 10    |
-        | driverRankingRS_890~CAP1_P3     | esattamente | 10    |
-        | driverRankingRS~P4              | esattamente | 10    |
-        | driverRankingRS~CAP1_P4         | esattamente | 10    |
-        | driverRanking2nd~P5             | esattamente | 10    |
-        | driverRanking2nd~CAP1_P5        | esattamente | 10    |
-        | driverRanking890~P6             | esattamente | 10    |
-        | driverRanking890~CAP1_P6        | esattamente | 10    |
-        | driverRankingRS_2nd_890~P7      | esattamente | 10    |
-        | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId         | comparative | limit |
-        | driverRanking2nd_890~P1         | almeno      | 0    |
-        | driverRanking2nd_890~CAP1_P1    | almeno      | 0    |
-        | driverRankingRS_2nd~P2          | almeno      | 0    |
-        | driverRankingRS_2nd~CAP1_P2     | almeno      | 0    |
-        | driverRankingRS_890~P3          | almeno      | 0    |
-        | driverRankingRS_890~CAP1_P3     | almeno      | 0    |
-        | driverRankingRS~P4              | almeno      | 0    |
-        | driverRankingRS~CAP1_P4         | almeno      | 0    |
-        | driverRanking2nd~P5             | almeno      | 0    |
-        | driverRanking2nd~CAP1_P5        | almeno      | 0    |
-        | driverRanking890~P6             | almeno      | 0    |
-        | driverRanking890~CAP1_P6        | almeno      | 0    |
-        | driverRankingRS_2nd_890~P7      | almeno      | 0    |
-        | driverRankingRS_2nd_890~CAP1_P7 | almeno      | 0    |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 5
-      And viene simulato internamente l'algoritmo di pianificazione
-      And viene simulato internamente la seconda parte dell'algoritmo di pianificazione
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      Then verifica la corretta pianificazione di ogni test case
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | almeno      | 15    |
+        | infinityDriverP8~CAP1_P8 | almeno      | 15    |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | inferiore   | 1000  |
+        | infinityDriverP8~CAP1_P8 | inferiore   | 1000  |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 0
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
 
       Examples:
-        | csv                   | TOT |
-        | "tcRankingMerged.csv" | 110 |
+        | csv                  | TOT |
+        | "tcSenderUnknow.csv" | 15  |
 
 
     @delayer
@@ -266,8 +185,9 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And viene avviata la step function DelayerToPaperChannelStateMachine
       And viene simulato internamente la seconda parte dell'algoritmo di pianificazione
+      And viene avviata la step function DelayerToPaperChannelStateMachine
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |

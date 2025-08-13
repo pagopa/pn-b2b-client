@@ -241,6 +241,19 @@ public class DelayerSteps {
         validator.checkSilentlyAll(step);
     }
 
+    @Then("verifica che non esistano notifiche al workflow step {string} per il seed {string}")
+    public void fetchNonExistentNotification(String ws, String seed) throws Exception {
+        WorkflowSteps step = valueOf(ws);
+        List<DelayerPaperDelivery> notExpected = context.actualCsv.stream().filter(n -> hasSeedInRequestId(seed, n)).toList();
+
+        if(notExpected.isEmpty()) log.warn("Nessuna notifica esistente per il seed: " + seed);
+
+        Set<String> requestIds = notExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 5);
+
+        validator.checkNotExistSilently(actual, seed, step);
+    }
+
     @Then("verifica che il processo fino al workflow step {string} abbia rispettato i criteri di ranking per almeno un test case:")
     public void checkRanking(String ws, DataTable expectedOrder) {
         WorkflowSteps step = valueOf(ws);
