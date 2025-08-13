@@ -14,12 +14,10 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,59 +26,6 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MEserviceClientImpl extends AbstractClient implements IM2MEserviceClient {
-    /* ***************************************************************************************
-        TODO 18/07/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
-     *    adattare una volta ottenuta la specifica completa */
-    @Data
-    public static class EServiceInterfaceUploadRequest {
-        private UUID eServiceId;
-        private UUID descriptorId;
-        private Resource file;
-        private String prettyName;
-
-        public EServiceInterfaceUploadRequest resource(Resource resource) {
-            this.file = resource;
-            return this;
-        }
-
-        public EServiceInterfaceUploadRequest prettyName(String name) {
-            this.prettyName = name;
-            return this;
-        }
-
-        public EServiceInterfaceUploadRequest eServiceId(UUID eServiceId) {
-            this.eServiceId = eServiceId;
-            return this;
-        }
-
-        public EServiceInterfaceUploadRequest descriptorId(UUID descriptorId) {
-            this.descriptorId = descriptorId;
-            return this;
-        }
-    }
-
-    @Data
-    public static class EServiceInterfaceUploadResponse {
-        private UUID id;
-    }
-
-    @Data
-    public static class EServicePatchRequest {
-        private String name;
-        private String description;
-
-        public EServicePatchRequest name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public EServicePatchRequest description(String description) {
-            this.description = description;
-            return this;
-        }
-    }
-    /* ***************************************************************************************/
-
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
     private final String basePath;

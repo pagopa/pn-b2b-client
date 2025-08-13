@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl.EServicePatchRequest;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceMapper;

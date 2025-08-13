@@ -1,8 +1,6 @@
 package it.pagopa.interop.eservice.service;
 
 import it.pagopa.interop.common.client.IClient;
-import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl.EServiceInterfaceUploadRequest;
-import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl.EServicePatchRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
@@ -15,6 +13,7 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import org.springframework.core.io.Resource;
 
 public interface IM2MEserviceClient extends IClient<EService, UUID> {
     @Data
@@ -31,6 +30,58 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
         Boolean isConsumerDelegable;
         Boolean isClientAccessDelegable;
     }
+
+    /* TODO 18/07/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
+     *  adattare una volta ottenuta la specifica completa **********************************/
+    @Data
+    class EServiceInterfaceUploadRequest {
+        private UUID eServiceId;
+        private UUID descriptorId;
+        private Resource file;
+        private String prettyName;
+
+        public EServiceInterfaceUploadRequest resource(Resource resource) {
+            this.file = resource;
+            return this;
+        }
+
+        public EServiceInterfaceUploadRequest prettyName(String name) {
+            this.prettyName = name;
+            return this;
+        }
+
+        public EServiceInterfaceUploadRequest eServiceId(UUID eServiceId) {
+            this.eServiceId = eServiceId;
+            return this;
+        }
+
+        public EServiceInterfaceUploadRequest descriptorId(UUID descriptorId) {
+            this.descriptorId = descriptorId;
+            return this;
+        }
+    }
+
+    @Data
+    class EServiceInterfaceUploadResponse {
+        private UUID id;
+    }
+
+    @Data
+    class EServicePatchRequest {
+        private String name;
+        private String description;
+
+        public EServicePatchRequest name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EServicePatchRequest description(String description) {
+            this.description = description;
+            return this;
+        }
+    }
+    /* *************************************************************************************/
 
     EServices getAll(EserviceListRequest payload);
 
