@@ -694,6 +694,9 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When l'utente tenta di effettuare la modifica parziale della finalità
     Then si ottiene lo status code 200
     And la finalità è stata parzialmente modificata correttamente
+    When l'utente tenta di effettuare la modifica parziale della finalità specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And la finalità è stata parzialmente modificata correttamente
 
   @m2m-parte2-agosto
   Scenario: [M2M_PURPOSES_PATCH_2] Un utente con ruolo M2M NON può effettuare una modifica parziale di una finalità (Parte2#Scenario intorno a 129)

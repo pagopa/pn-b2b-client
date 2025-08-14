@@ -12,6 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import java.util.List;
 import java.util.UUID;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -21,19 +22,10 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     TODO 12/08/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
  *    ampliare e adattare una volta ottenuta la specifica completa */
     @Data
+    @Builder
     class PurposePatchRequest {
         private String title;
         private String description;
-
-        public PurposePatchRequest title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public PurposePatchRequest description(String description) {
-            this.description = description;
-            return this;
-        }
     }
     /* ***************************************************************************************/
 

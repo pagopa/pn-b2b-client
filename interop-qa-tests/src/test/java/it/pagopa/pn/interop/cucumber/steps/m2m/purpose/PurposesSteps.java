@@ -31,6 +31,7 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.time.OffsetDateTime;
@@ -55,12 +56,10 @@ public class PurposesSteps {
     private final DelayService delayService;
     private final int newDailyCalls = 50;
 
-    private PurposeMapper purposeMapper;
-    private Purpose originalPurpose;
-    private Purpose expectedPatchedPurpose;
+    private PurposePatchOperationsAssistant purposePatchAssistant;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext) {
+        SharedStepsContext sharedStepsContext, PurposePatchOperationsAssistant purposePatchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -69,6 +68,7 @@ public class PurposesSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.bffPurposeClient = clientTokenConfigurator.getPurposeApiClient();
         this.delayService = sharedStepsContext.getDelayService();
+        this.purposePatchAssistant = purposePatchAssistant;
     }
 
     @SuppressWarnings("java:S6204")
@@ -393,52 +393,32 @@ public class PurposesSteps {
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità")
     public void patchPurpose() {
-        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
-
-        PurposePatchRequest patchBody = buildPatchBody();
-
-        this.originalPurpose = this.purposeClient.getPurpose(purposeId);
-
-        this.expectedPatchedPurpose = this.purposeMapper.copyPurpose(originalPurpose);
-        this.purposeMapper.copyPatchRequestToPurpose(patchBody, this.expectedPatchedPurpose);
-
-        httpCallExecutor.performCall(() -> this.purposeClient.patchPurpose(purposeId, patchBody));
+        purposePatchAssistant.patchResource(PurposePatchRequest.builder()
+            .title("patched title - " + UUID.randomUUID())
+            .description("patched description - " + UUID.randomUUID())
+            .build());
     }
 
     @Then("la finalità è stata parzialmente modificata correttamente")
     public void verificaPatchedPurpose() {
-        delayService.delay();
-        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
-        Purpose actualPatchedPurpose = this.purposeClient.getPurpose(purposeId);
-        assertThat(actualPatchedPurpose)
-            .as("Verifica che le modifiche apportate alla finalità con l'API PATCH siano state apportate correttamente")
-            .isEqualTo(this.expectedPatchedPurpose);
+        purposePatchAssistant.checkPatchedResource();
     }
 
     @Then("la finalità non ha subito modifiche")
     public void verificaUnpatchedPurpose() {
-        delayService.delay();
-        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
-        Purpose actualPatchedPurpose = this.purposeClient.getPurpose(purposeId);
-        assertThat(actualPatchedPurpose)
-            .as("Verifica che non siano state apportate modifiche alla finalità")
-            .isEqualTo(this.originalPurpose);
+        purposePatchAssistant.checkUnpatchedResource();
     }
 
     @When("l'utente tenta di effettuare la modifica parziale di una finalità inesistente")
     public void patchNonExistentPurpose() {
-        UUID purposeId = UUID.randomUUID();
-
-        PurposePatchRequest patchBody = buildPatchBody();
-        httpCallExecutor.performCall(() -> this.purposeClient.patchPurpose(purposeId, patchBody));
+        purposePatchAssistant.patchNonExistentResource();
     }
 
-    // TODO 12/08/2025 destinato a essere modificato e ampliato non appena la specifica
-    //  OpenAPI dell'API in oggetto sarà rilasciata
-    private static PurposePatchRequest buildPatchBody() {
-        return new PurposePatchRequest()
-            .description("patched description")
-            .title("patched title");
+    @When("l'utente tenta di effettuare la modifica parziale della finalità specificando un sottoinsieme di informazioni")
+    public void patchPurposeSubset() {
+        purposePatchAssistant.patchResource(PurposePatchRequest.builder()
+            .title("patched title - " + UUID.randomUUID())
+            .build());
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {
