@@ -583,3 +583,61 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | PUBLISHED   |
       | DEPRECATED  |
       | SUSPENDED   |
+
+  # EService Descriptor
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale del descriptor di un e-service in stato DRAFT (Parte2#Scenario intorno a 99)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
+    Then si ottiene lo status code 200
+    And l'e-service descriptor è stato parzialmente modificato correttamente
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And l'e-service descriptor è stato parzialmente modificato correttamente
+
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_02] Un utente con ruolo M2M NON può effettuare una modifica parziale del descriptor di un e-service (Parte2#Scenario intorno a 101)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service descriptor non ha subito modifiche
+
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_03] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del descriptor di un e-service inesistente (Parte2#Scenario intorno a 102)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del descriptor di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_04] Un utente NON può effettuare una modifica parziale del descriptor di un e-service indicando un token non valido (Parte2#Scenario intorno a 103)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service descriptor non ha subito modifiche
+
+  Scenario Outline: [M2MG_ESERVICES_DESCRIPTORS_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del descriptor di un e-service in stato non DRAFT (Parte2#Scenario intorno a 104)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service descriptor non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+      | ARCHIVED    |
+
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_05_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del descriptor di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 104)
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service descriptor non ha subito modifiche
+
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del descriptor di un e-service che non gli appartiene (Parte2#Scenario intorno a 105)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service descriptor non ha subito modifiche

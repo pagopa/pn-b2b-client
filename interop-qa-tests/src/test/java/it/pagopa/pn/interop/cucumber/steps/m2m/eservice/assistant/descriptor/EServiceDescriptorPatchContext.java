@@ -1,7 +1,7 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant;
+package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.m2m.AbstractResourceContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @Component
 @ScenarioScope
-public class EServicePatchContext extends AbstractResourceContext<EService> {
+public class EServiceDescriptorPatchContext extends AbstractResourceContext<EServiceDescriptor> {
 
 }

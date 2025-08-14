@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor, Pair<UUID,UUID>> {
-
     @Data
     @Builder
     class EserviceDescriptorsListRequest {
@@ -22,7 +21,19 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
         private EServiceDescriptorState state;
     }
 
+    /* TODO 14/08/2025: astrazione di un oggetto non ancora rilasciato nella specifica OpenAPI,
+     *  ampliare e adattare una volta ottenuta la specifica completa *************************/
+    @Data
+    @Builder
+    class EServiceDescriptorPatchRequest {
+        private Integer voucherLifespan;
+        private Integer dailyCallsPerConsumer;
+        private Integer dailyCallsTotal;
+    }
+
     EServiceDescriptor get(UUID eserviceId, UUID descriptorId);
+    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor getCompleteResource(UUID eserviceId, UUID descriptorId);
     List<EServiceDescriptor> getAll(EserviceDescriptorsListRequest eserviceDescriptorsListRequest);
     List<EServiceDescriptor> getAll(UUID eserviceId);
+    void patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body);
 }

@@ -64,6 +64,15 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
         )).orElse(null);
     }
 
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor getCompleteResource(
+        UUID eserviceId, UUID descriptorId) {
+        return this.performOperation(SimpleOperation.of(
+            () -> eservicesApi.getEServiceDescriptor(eserviceId, descriptorId),
+            res -> res
+        )).orElse(null);
+    }
+
 
     @Override
     public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getAll(EserviceDescriptorsListRequest eserviceDescriptorsListRequest) {
@@ -82,6 +91,12 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getAll(UUID eserviceId) {
         this.defaultDescriptorListRequest.setEserviceId(eserviceId);
         return this.getAll(defaultDescriptorListRequest);
+    }
+
+    @Override
+    public void patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body) {
+        // TODO 14/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
+        //  metodo nel client da chiamare
     }
 
     @Override

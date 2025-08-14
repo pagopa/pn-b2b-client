@@ -52,10 +52,13 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescri
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDescriptionMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceNameMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.descriptor.EServiceDescriptorMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
@@ -123,11 +126,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceNameMapperImpl.class,
         EServiceDelegationMapperImpl.class,
         EServiceDescriptionMapperImpl.class,
+        EServiceDescriptorMapperImpl.class,
         EServicePatchContext.class,
+        EServiceDescriptorPatchContext.class,
         EServicePatchOperationsAssistant.class,
         EServiceNamePatchOperationsAssistant.class,
         EServiceDelegationPatchOperationsAssistant.class,
         EServiceDescriptionPatchOperationsAssistant.class,
+        EServiceDescriptorPatchOperationsAssistant.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

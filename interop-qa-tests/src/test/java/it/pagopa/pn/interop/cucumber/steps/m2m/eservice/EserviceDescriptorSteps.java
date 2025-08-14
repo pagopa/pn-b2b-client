@@ -1,30 +1,39 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
+import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorPatchRequest;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
-import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
-
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchOperationsAssistant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.apache.commons.lang3.tuple.Pair;
+import org.assertj.core.api.Assertions;
 
 public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescriptor, Pair<UUID, UUID>> {
 
     private final IM2MEserviceDescriptorClient client;
     private final SharedStepsContext sharedStepsContext;
 
-    public EserviceDescriptorSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
+    private final EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant;
+
+    public EserviceDescriptorSteps(
+        SharedStepsContext sharedStepsContext,
+        ClientTokenConfigurator clientTokenConfigurator,
+        EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant
+    ) {
         super("descriptor", clientTokenConfigurator.getM2mEServiceDescriptorClient(), sharedStepsContext);
         this.client = clientTokenConfigurator.getM2mEServiceDescriptorClient();
         this.sharedStepsContext = sharedStepsContext;
         this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        this.eServiceDescriptorPatchAssistant = eServiceDescriptorPatchAssistant;
     }
 
 
@@ -46,6 +55,42 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
     public void getAll(EntityIdType entityIdType) {
         UUID eserviceId = this.generateId(entityIdType).getLeft();
         retrieveDescriptors(eserviceId);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service")
+    public void patchEServiceDescription() {
+        eServiceDescriptorPatchAssistant.patchResource(EServiceDescriptorPatchRequest.builder()
+            .voucherLifespan(100)
+            .dailyCallsTotal(10)
+            .dailyCallsPerConsumer(5)
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service specificando un sottoinsieme di informazioni")
+    public void patchEServiceDescriptionSubset() {
+        eServiceDescriptorPatchAssistant.patchResource(EServiceDescriptorPatchRequest.builder()
+            .voucherLifespan(200)
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del descriptor di un e-service inesistente")
+    public void patchNonExistentEServiceDescription() {
+        eServiceDescriptorPatchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service senza apportare cambiamenti")
+    public void patchEServiceWithSameDescription() {
+        eServiceDescriptorPatchAssistant.patchResourceWithSameInfo();
+    }
+
+    @Then("l'e-service descriptor è stato parzialmente modificato correttamente")
+    public void verificaPatchedEService() {
+        eServiceDescriptorPatchAssistant.checkPatchedResource();
+    }
+
+    @Then("l'e-service descriptor non ha subito modifiche")
+    public void verificaUnpatchedEService() {
+        eServiceDescriptorPatchAssistant.checkUnpatchedResource();
     }
 
     @Override
