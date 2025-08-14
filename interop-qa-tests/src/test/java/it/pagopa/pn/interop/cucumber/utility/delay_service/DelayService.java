@@ -9,6 +9,14 @@ import java.time.Duration;
  * useful for rate limiting, simulating network latency, or waiting for external resources.
  */
 public interface DelayService {
+    /* IDEA 14/08/2025: un comportamento alternativo di questo metodo sarebbe attendere un
+    * MASSIMO periodo di tempo in funzione di un timer nel frattempo iniziato con un altro metodo
+    * (per esempio start() ): questo minimizzerebbe il trascorrere di tempo superfluo per gli
+    * scenari in cui sono eseguiti step intermedi prima della chiamata di questo metodo, che già
+    * contribuirebbero allo scorrere del tempo necessario per allineare l'ambiente sottostante.
+    * Oppure, al posto di sostituire questo metodo lo si potrebbe affiancare da un altro
+    * del tipo "delayIfNeeded().
+    * N.B In ogni caso, lo scope della classe concrete andrebbe settato con @ScenarioScope .  */
     /**
      * Pauses the current thread for a default period of time.
      * <p>

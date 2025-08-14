@@ -269,6 +269,9 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di effettuare la modifica parziale dell'e-service
     Then si ottiene lo status code 200
     And l'e-service è stato parzialmente modificato correttamente
+    When l'utente tenta di effettuare la modifica parziale dell'e-service specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
 
   Scenario: [M2MG_ESERVICES_32] Un utente con ruolo M2M NON può effettuare una modifica parziale di un e-service (Parte2#Scenario intorno a 73)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -314,5 +317,269 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+
+  ## EService Delegation
+  Scenario Outline: [M2MG_ESERVICES_37] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 85)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_38] Un utente con ruolo M2M NON può effettuare una modifica parziale della delega di un e-service (Parte2#Scenario intorno a 87)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario: [M2MG_ESERVICES_39] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service inesistente (Parte2#Scenario intorno a 88)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  Scenario Outline: [M2MG_ESERVICES_40] Un utente NON può effettuare una modifica parziale della delega di un e-service indicando un token non valido (Parte2#Scenario intorno a 89)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_41_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in uno stato DRAFT o ARCHIVED
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
     Then si ottiene lo status code 400
     And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | DRAFT       |
+      | ARCHIVED    |
+
+  Scenario: [M2MG_ESERVICES_41_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+
+  Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service che non gli appartiene (Parte2#Scenario intorno a 90)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 91)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service senza apportare cambiamenti
+    Then si ottiene lo status code 409
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  ## EService Name
+  Scenario Outline: [M2MG_ESERVICES_43] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale del nome di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 78)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_44] Un utente con ruolo M2M NON può effettuare una modifica parziale del nome di un e-service (Parte2#Scenario intorno a 80)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario: [M2MG_ESERVICES_45] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service inesistente (Parte2#Scenario intorno a 81)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del nome di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  Scenario Outline: [M2MG_ESERVICES_46] Un utente NON può effettuare una modifica parziale del nome di un e-service indicando un token non valido (Parte2#Scenario intorno a 82)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_47_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service in stato DRAFT o ARCHIVED
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | DRAFT       |
+      | ARCHIVED    |
+
+  Scenario: [M2MG_ESERVICES_47_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+
+  Scenario Outline: [M2MG_ESERVICES_48] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service che non gli appartiene (Parte2#Scenario intorno a 83)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_49] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 84)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale del nome dell'e-service senza apportare cambiamenti
+    Then si ottiene lo status code 409
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  # EService Description
+  Scenario Outline: [M2MG_ESERVICES_44] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della descrizione di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 92)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And l'e-service è stato parzialmente modificato correttamente
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_45] Un utente con ruolo M2M NON può effettuare una modifica parziale della descrizione di un e-service (Parte2#Scenario intorno a 94)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario: [M2MG_ESERVICES_46] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service inesistente (Parte2#Scenario intorno a 95)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  Scenario Outline: [M2MG_ESERVICES_47] Un utente NON può effettuare una modifica parziale della descrizione di un e-service indicando un token non valido (Parte2#Scenario intorno a 96)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_48_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato DRAFT o ARCHIVED
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | DRAFT       |
+      | ARCHIVED    |
+
+  Scenario: [M2MG_ESERVICES_48_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+
+  Scenario Outline: [M2MG_ESERVICES_49] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service che non gli appartiene (Parte2#Scenario intorno a 97)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |
+
+  Scenario Outline: [M2MG_ESERVICES_50] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 98)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service senza apportare cambiamenti
+    Then si ottiene lo status code 409
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | DEPRECATED  |
+      | SUSPENDED   |

@@ -47,8 +47,15 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDescriptionMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceNameMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
@@ -110,10 +117,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MDeclaredAttributeClientImpl.class,
         M2MVerifiedAttributeClientImpl.class,
         M2MClientsClientImpl.class,
-        EServiceMapperImpl.class,
         M2MTenantClientImpl.class,
         DelayServiceImpl.class,
-        EServicePatchOperationsAssistant.class
+        EServiceMapperImpl.class,
+        EServiceNameMapperImpl.class,
+        EServiceDelegationMapperImpl.class,
+        EServiceDescriptionMapperImpl.class,
+        EServicePatchContext.class,
+        EServicePatchOperationsAssistant.class,
+        EServiceNamePatchOperationsAssistant.class,
+        EServiceDelegationPatchOperationsAssistant.class,
+        EServiceDescriptionPatchOperationsAssistant.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties

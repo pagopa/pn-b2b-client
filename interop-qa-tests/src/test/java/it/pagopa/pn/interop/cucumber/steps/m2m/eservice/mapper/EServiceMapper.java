@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
+package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper;
 
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;

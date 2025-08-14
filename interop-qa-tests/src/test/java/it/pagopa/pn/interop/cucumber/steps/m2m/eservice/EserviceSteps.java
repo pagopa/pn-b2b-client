@@ -9,16 +9,23 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceDelegationPatchRequest;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceDescriptionPatchRequest;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceInterfaceUploadRequest;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceNamePatchRequest;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -33,20 +40,21 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final PollingService pollingService;
     private final IM2MEserviceClient client;
     private final BlobFileCreator blobFileCreator;
-    private final DelayService delayService;
 
-    private final EServiceMapper eServiceMapper;
     private final EServicePatchOperationsAssistant eServicePatchAssistant;
-
-    private EService originalEService;
-    private EService expectedPatchedEService;
+    private final EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant;
+    private final EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant;
+    private final EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant;
 
     public EserviceSteps(
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator clientTokenConfigurator,
         BlobFileCreator blobFileCreator,
-        EServiceMapper eServiceMapper,
-        EServicePatchOperationsAssistant eServicePatchAssistant) {
+        EServicePatchOperationsAssistant eServicePatchAssistant,
+        EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
+        EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
+        EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant
+    ) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -54,9 +62,10 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.client  = clientTokenConfigurator.getM2meServiceClient();
         this.blobFileCreator = blobFileCreator;
         client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
-        this.eServiceMapper = eServiceMapper;
-        this.delayService = sharedStepsContext.getDelayService();
         this.eServicePatchAssistant = eServicePatchAssistant;
+        this.eServiceDelegationPatchAssistant = eServiceDelegationPatchAssistant;
+        this.eServiceNamePatchAssistant = eServiceNamePatchAssistant;
+        this.eServiceDescriptionPatchAssistant = eServiceDescriptionPatchAssistant;
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -193,7 +202,17 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service")
     public void patchEService() {
-        eServicePatchAssistant.patchResource();
+        eServicePatchAssistant.patchResource(EServicePatchRequest.builder()
+            .technology(EServiceTechnology.SOAP)
+            .isSignalHubEnabled(false)
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale dell'e-service specificando un sottoinsieme di informazioni")
+    public void patchEServiceSubset() {
+        eServicePatchAssistant.patchResource(EServicePatchRequest.builder()
+            .technology(EServiceTechnology.REST)
+            .build());
     }
 
     @When("l'utente tenta di recuperare l'e-service creato")
@@ -215,6 +234,81 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @Then("l'e-service non ha subito modifiche")
     public void verificaUnpatchedEService() {
         eServicePatchAssistant.checkUnpatchedResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service")
+    public void patchEServiceDelegation() {
+        eServiceDelegationPatchAssistant.patchResource(EServiceDelegationPatchRequest.builder()
+            .isConsumerDelegable(true)
+            .isClientAccessDelegable(true)
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della delega di un e-service inesistente")
+    public void patchNonExistentEServiceDelegation() {
+        eServiceDelegationPatchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni")
+    public void patchEServiceDelegationSubset() {
+        eServiceDelegationPatchAssistant.patchResource(EServiceDelegationPatchRequest.builder()
+            .isConsumerDelegable(false)
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service senza apportare cambiamenti")
+    public void patchEServiceWithSameDelegation() {
+        eServiceDelegationPatchAssistant.patchResourceWithSameInfo();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service")
+    public void patchEServiceName() {
+        eServiceNamePatchAssistant.patchResource(EServiceNamePatchRequest.builder()
+            .name("patched name - " + UUID.randomUUID())
+            .prettyName("patched pretty name - " + UUID.randomUUID())
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service specificando un sottoinsieme di informazioni")
+    public void patchEServiceNameSubset() {
+        eServiceNamePatchAssistant.patchResource(EServiceNamePatchRequest.builder()
+            .prettyName("patched pretty name")
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del nome di un e-service inesistente")
+    public void patchNonExistentEServiceName() {
+        eServiceNamePatchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service senza apportare cambiamenti")
+    public void patchEServiceWithSameName() {
+        eServiceNamePatchAssistant.patchResourceWithSameInfo();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service")
+    public void patchEServiceDescription() {
+        eServiceDescriptionPatchAssistant.patchResource(EServiceDescriptionPatchRequest.builder()
+            .description("patched description - " + UUID.randomUUID())
+            .summary("patched summary - " + UUID.randomUUID())
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service specificando un sottoinsieme di informazioni")
+    public void patchEServiceDescriptionSubset() {
+        eServiceDescriptionPatchAssistant.patchResource(EServiceDescriptionPatchRequest.builder()
+            .summary("patched summary")
+            .build());
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della descrizione di un e-service inesistente")
+    public void patchNonExistentEServiceDescription() {
+        eServiceDescriptionPatchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service senza apportare cambiamenti")
+    public void patchEServiceWithSameDescription() {
+        eServiceDescriptionPatchAssistant.patchResourceWithSameInfo();
     }
 
     @Override

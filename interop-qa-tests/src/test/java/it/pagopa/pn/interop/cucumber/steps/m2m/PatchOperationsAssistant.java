@@ -4,26 +4,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor
 public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE_ID> {
     private final ResourceMapper<PATCH_REQUEST, RESOURCE> resourceMapper;
     private final IHttpExecutor httpExecutor;
     private final DelayService delayService;
+    private final ResourceContext<RESOURCE> resourceContext;
     private final String resourceSimpleName;
-
-    private RESOURCE originalResource;
-    private RESOURCE expectedPatchedResource;
 
     /* di solito associato a step del tipo
      * "l'utente tenta di effettuare la modifica parziale di ..." */
     public void patchResource() {
+        patchResource(this.buildDefaultPatchRequest());
+    }
+
+    /* di solito associato a step del tipo
+     * "l'utente tenta di effettuare la modifica parziale di ..." */
+    public void patchResource(PATCH_REQUEST patchRequest) {
         RESOURCE_ID resourceId = this.getResourceId();
-        PATCH_REQUEST patchRequest = this.buildPatchRequest();
-        this.originalResource = this.getResource(resourceId);
-        this.expectedPatchedResource = this.resourceMapper.copyResource(originalResource);
-        this.resourceMapper.copyPatchRequestToResource(patchRequest, this.expectedPatchedResource);
+
+        RESOURCE originalResource = this.getResource(resourceId);
+        resourceContext.setOriginalResource(originalResource);
+
+        RESOURCE expectedPatchedResource = this.resourceMapper.copyResource(originalResource);
+        this.resourceMapper.copyPatchRequestToResource(patchRequest, expectedPatchedResource);
+        resourceContext.setExpectedResource(expectedPatchedResource);
+
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
     }
 
@@ -31,7 +43,19 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
      * "l'utente tenta di effettuare la modifica parziale di un ... inesistente" */
     public void patchNonExistentResource() {
         RESOURCE_ID resourceId = this.randomResourceId();
-        PATCH_REQUEST patchRequest = buildPatchRequest();
+        PATCH_REQUEST patchRequest = buildDefaultPatchRequest();
+        httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+    }
+
+    /* di solito associato a step del tipo
+     * "l'utente tenta di effettuare la modifica parziale di ... senza apportare cambiamenti" */
+    public void patchResourceWithSameInfo() {
+        RESOURCE_ID resourceId = this.getResourceId();
+
+        RESOURCE actualResource = this.getResource(resourceId);
+        resourceContext.setOriginalResource(actualResource);
+
+        PATCH_REQUEST patchRequest = resourceMapper.mapResourceToPatchRequest(actualResource);
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
     }
 
@@ -43,7 +67,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertThat(actualPatchedResource)
             .as("Verifica che le modifiche apportate a '%s' con l'API PATCH siano state apportate correttamente", this.resourceSimpleName)
-            .isEqualTo(this.expectedPatchedResource);
+            .isEqualTo(resourceContext.getExpectedResource());
     }
 
     /* di solito associato a step del tipo
@@ -54,14 +78,14 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertThat(actualPatchedResource)
             .as("Verifica che non siano state apportate modifiche a '%s'", this.resourceSimpleName)
-            .isEqualTo(this.originalResource);
+            .isEqualTo(resourceContext.getOriginalResource());
     }
 
     protected abstract RESOURCE_ID getResourceId();
 
     protected abstract RESOURCE getResource(RESOURCE_ID resourceId);
 
-    protected abstract PATCH_REQUEST buildPatchRequest();
+    protected abstract PATCH_REQUEST buildDefaultPatchRequest();
 
     protected abstract void patchResource(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
 

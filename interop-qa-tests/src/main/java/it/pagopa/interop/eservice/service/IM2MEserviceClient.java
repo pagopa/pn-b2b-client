@@ -67,19 +67,39 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     }
 
     @Data
+    @Builder
     class EServicePatchRequest {
+        private EServiceTechnology technology;
+        private Boolean isSignalHubEnabled;
+    }
+
+    @Data
+    @Builder
+    class EServiceNamePatchRequest {
         private String name;
+
+        // Ipotetico secondo campo, usato per simulare il caso in cui - per qualche motivo -
+        // l'api in questione non coinvolga solo il nome. La sua rimozione o modifica farà parte
+        // del processo di revisione det test a seguito del rilascio delle specifiche OpenAPI.
+        private String prettyName;
+    }
+
+    @Data
+    @Builder
+    class EServiceDelegationPatchRequest {
+        private Boolean isConsumerDelegable;
+        private Boolean isClientAccessDelegable;
+    }
+
+    @Data
+    @Builder
+    class EServiceDescriptionPatchRequest {
         private String description;
 
-        public EServicePatchRequest name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public EServicePatchRequest description(String description) {
-            this.description = description;
-            return this;
-        }
+        // Ipotetico secondo campo, usato per simulare il caso in cui - per qualche motivo -
+        // l'api in questione non coinvolga solo il nome. La sua rimozione o modifica farà parte
+        // del processo di revisione det test a seguito del rilascio delle specifiche OpenAPI.
+        private String summary;
     }
     /* *************************************************************************************/
 
@@ -98,4 +118,10 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId, UUID descriptorId);
 
     void patchEService(UUID eServiceId, EServicePatchRequest body);
+
+    void patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body);
+
+    void patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
+
+    void patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
 }

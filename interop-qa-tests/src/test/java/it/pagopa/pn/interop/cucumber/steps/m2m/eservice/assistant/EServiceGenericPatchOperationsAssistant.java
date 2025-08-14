@@ -7,7 +7,11 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.PatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.ResourceMapper;
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode(callSuper = true)
 public abstract class EServiceGenericPatchOperationsAssistant<PATCH_REQUEST> extends PatchOperationsAssistant<PATCH_REQUEST, EService, UUID> {
     protected final EServicesCommonContext context;
     protected final IM2MEserviceClient client;
@@ -15,12 +19,14 @@ public abstract class EServiceGenericPatchOperationsAssistant<PATCH_REQUEST> ext
     public EServiceGenericPatchOperationsAssistant(
         ResourceMapper<PATCH_REQUEST, EService> resourceMapper,
         SharedStepsContext sharedStepsContext,
-        IM2MEserviceClient client
+        IM2MEserviceClient client,
+        EServicePatchContext patchContext
     ) {
         super(
             resourceMapper,
             sharedStepsContext.getHttpCallExecutor(),
             sharedStepsContext.getDelayService(),
+            patchContext,
             "e-service");
         this.context = sharedStepsContext.getEServicesCommonContext();
         this.client = client;
