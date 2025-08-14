@@ -263,14 +263,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 403
 
+  ## EService Patch
   Scenario: [M2MG_ESERVICES_31] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di un e-service in stato DRAFT (Parte2#Scenario intorno a 71)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale dell'e-service
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     When l'utente tenta di effettuare la modifica parziale dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
 
   Scenario: [M2MG_ESERVICES_32] Un utente con ruolo M2M NON può effettuare una modifica parziale di un e-service (Parte2#Scenario intorno a 73)
@@ -320,15 +323,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
-  ## EService Delegation
+  ## EService Patch Delegation
   Scenario Outline: [M2MG_ESERVICES_37] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 85)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     Examples:
       | stato       |
@@ -408,15 +413,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
-  ## EService Name
+  ## EService Patch Name
   Scenario Outline: [M2MG_ESERVICES_43] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale del nome di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 78)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     When l'utente tenta di effettuare la modifica parziale del nome dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     Examples:
       | stato       |
@@ -496,15 +503,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
-  # EService Description
+  ## EService Patch Description
   Scenario Outline: [M2MG_ESERVICES_44] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della descrizione di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 92)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     Examples:
       | stato       |
@@ -584,15 +593,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
-  # EService Descriptor
+  ## EService Patch Descriptor
   Scenario: [M2MG_ESERVICES_DESCRIPTORS_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale del descriptor di un e-service in stato DRAFT (Parte2#Scenario intorno a 99)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service
     Then si ottiene lo status code 200
+    And l'e-service descriptor restituito è coerente con le modifiche effettuate
     And l'e-service descriptor è stato parzialmente modificato correttamente
     When l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
+    And l'e-service descriptor restituito è coerente con le modifiche effettuate
     And l'e-service descriptor è stato parzialmente modificato correttamente
 
   Scenario: [M2MG_ESERVICES_DESCRIPTORS_02] Un utente con ruolo M2M NON può effettuare una modifica parziale del descriptor di un e-service (Parte2#Scenario intorno a 101)

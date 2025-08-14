@@ -10,4 +10,5 @@ import org.springframework.stereotype.Component;
 public class AbstractResourceContext<RESOURCE> implements ResourceContext<RESOURCE> {
     private RESOURCE originalResource;
     private RESOURCE expectedResource;
+    private RESOURCE returnedResource;
 }

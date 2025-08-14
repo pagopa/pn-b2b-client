@@ -37,6 +37,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         resourceContext.setExpectedResource(expectedPatchedResource);
 
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+        this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
     }
 
     /* di solito associato a step del tipo
@@ -57,6 +58,16 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
 
         PATCH_REQUEST patchRequest = resourceMapper.mapResourceToPatchRequest(actualResource);
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+        this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
+    }
+
+    /* di solito associato a step del tipo
+     * "il ... restituito è coerente con le modifiche effettuate" */
+    public void checkPatchOperationResult() {
+        delayService.delay();
+        assertThat(resourceContext.getReturnedResource())
+            .as("Verifica che il risultato restituito dall'API PATCH su '%s' sia coerente con le modifiche effettuate", this.resourceSimpleName)
+            .isEqualTo(resourceContext.getExpectedResource());
     }
 
     /* di solito associato a step del tipo
@@ -87,7 +98,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
 
     protected abstract PATCH_REQUEST buildDefaultPatchRequest();
 
-    protected abstract void patchResource(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
+    protected abstract RESOURCE patchResource(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
 
     protected abstract RESOURCE_ID randomResourceId();
 }

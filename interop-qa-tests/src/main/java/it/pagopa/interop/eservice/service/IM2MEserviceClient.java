@@ -117,11 +117,11 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId, UUID descriptorId);
 
-    void patchEService(UUID eServiceId, EServicePatchRequest body);
+    EService patchEService(UUID eServiceId, EServicePatchRequest body);
 
-    void patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body);
+    EService patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body);
 
-    void patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
+    EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
 
-    void patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
+    EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
 }

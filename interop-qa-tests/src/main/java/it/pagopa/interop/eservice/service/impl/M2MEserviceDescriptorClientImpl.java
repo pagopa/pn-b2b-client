@@ -94,9 +94,10 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
-    public void patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body) {
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body) {
         // TODO 14/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        return null;
     }
 
     @Override

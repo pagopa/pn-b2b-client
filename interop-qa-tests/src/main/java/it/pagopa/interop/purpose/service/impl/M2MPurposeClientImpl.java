@@ -126,9 +126,10 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     }
 
     @Override
-    public void patchPurpose(UUID purposeId, PurposePatchRequest body) {
+    public Purpose patchPurpose(UUID purposeId, PurposePatchRequest body) {
         // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        return null;
     }
 
     @Override

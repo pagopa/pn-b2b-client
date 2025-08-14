@@ -693,9 +693,11 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della finalità
     Then si ottiene lo status code 200
+    And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
     When l'utente tenta di effettuare la modifica parziale della finalità specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
+    And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
   @m2m-parte2-agosto

@@ -93,6 +93,11 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         eServiceDescriptorPatchAssistant.checkUnpatchedResource();
     }
 
+    @Then("l'e-service descriptor restituito è coerente con le modifiche effettuate")
+    public void verificaRisultatoPatch() {
+        eServiceDescriptorPatchAssistant.checkPatchOperationResult();
+    }
+
     @Override
     public void bindActual(SharedStepsContext context, List<EServiceDescriptor> actualEntities) {
         var eserviceContext = this.sharedStepsContext.getEServicesCommonContext();

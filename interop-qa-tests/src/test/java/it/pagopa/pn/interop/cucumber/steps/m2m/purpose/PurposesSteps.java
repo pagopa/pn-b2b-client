@@ -421,6 +421,11 @@ public class PurposesSteps {
             .build());
     }
 
+    @Then("la finalità restituita è coerente con le modifiche effettuate")
+    public void checkPatchResult() {
+        purposePatchAssistant.checkPatchOperationResult();
+    }
+
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {
         UUID id = generateId(entityIdType);
         httpCallExecutor.performCall(() -> {

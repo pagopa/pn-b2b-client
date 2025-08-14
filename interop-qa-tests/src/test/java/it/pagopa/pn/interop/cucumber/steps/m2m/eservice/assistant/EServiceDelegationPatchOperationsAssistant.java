@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceDelegationPatchRequest;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapper;
@@ -35,8 +36,8 @@ public class EServiceDelegationPatchOperationsAssistant extends EServiceGenericP
     }
 
     @Override
-    protected void patchResource(UUID uuid, EServiceDelegationPatchRequest patchRequest) {
-        this.client.patchEServiceDelegation(uuid, patchRequest);
+    protected EService patchResource(UUID uuid, EServiceDelegationPatchRequest patchRequest) {
+        return this.client.patchEServiceDelegation(uuid, patchRequest);
     }
 
 }

@@ -13,4 +13,7 @@ public interface ResourceContext<RESOURCE> {
 
     RESOURCE getExpectedResource();
     void setExpectedResource(RESOURCE resource);
+
+    RESOURCE getReturnedResource();
+    void setReturnedResource(RESOURCE resource);
 }

@@ -311,6 +311,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         eServiceDescriptionPatchAssistant.patchResourceWithSameInfo();
     }
 
+    @Then("l'e-service restituito è coerente con le modifiche effettuate")
+    public void verificaRisultatoPatch() {
+        eServicePatchAssistant.checkPatchOperationResult();
+    }
+
     @Override
     public void bindActual(SharedStepsContext context, List<EService> actualEntities) {
         var eserviceContext = context.getEServicesCommonContext();

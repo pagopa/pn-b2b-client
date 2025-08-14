@@ -137,27 +137,31 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
-    public void patchEService(UUID eServiceId, EServicePatchRequest body) {
+    public EService patchEService(UUID eServiceId, EServicePatchRequest body) {
         // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        return null;
     }
 
     @Override
-    public void patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body) {
+    public EService patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body) {
         // TODO 13/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        return null;
     }
 
     @Override
-    public void patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body) {
+    public EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body) {
         // TODO 13/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        return null;
     }
 
     @Override
-    public void patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
+    public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         // TODO 13/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        return null;
     }
 
     @Override

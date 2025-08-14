@@ -75,5 +75,5 @@ public interface IM2MPurposeClient extends SettableBearerToken {
 
     Purpose archivePurpose(UUID purposeId);
 
-    void patchPurpose(UUID purposeId, PurposePatchRequest body);
+    Purpose patchPurpose(UUID purposeId, PurposePatchRequest body);
 }

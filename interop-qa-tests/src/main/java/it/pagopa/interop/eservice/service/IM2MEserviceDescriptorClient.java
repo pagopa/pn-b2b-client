@@ -35,5 +35,5 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor getCompleteResource(UUID eserviceId, UUID descriptorId);
     List<EServiceDescriptor> getAll(EserviceDescriptorsListRequest eserviceDescriptorsListRequest);
     List<EServiceDescriptor> getAll(UUID eserviceId);
-    void patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body);
+    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body);
 }
