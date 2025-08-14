@@ -190,7 +190,7 @@ public class PaperTrackerSteps {
 
     private String logFailedMatch(PaperEvent event, List<PaperTrackerOutput> outputs) {
         StringBuilder sb = new StringBuilder();
-        sb.append("L'evento\n").append(event).append("\nnon ha un corrispettivo in dry output: ");
+        sb.append("L'evento\n").append(event).append("\nnon ha un corrispettivo in dry output:\n");
         outputs.forEach(out -> {
             sb.append(out);
             sb.append("\n");
