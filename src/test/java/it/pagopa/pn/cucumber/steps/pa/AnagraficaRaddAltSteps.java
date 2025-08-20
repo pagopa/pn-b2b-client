@@ -4,17 +4,18 @@ import com.opencsv.CSVWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Transpose;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.utils.AuthenticatorCognito;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.GetRegistryResponseV2;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
@@ -23,11 +24,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.regions.Region;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -38,6 +44,7 @@ import java.util.stream.IntStream;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 import static it.pagopa.pn.cucumber.utils.RaddAltValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class AnagraficaRaddAltSteps {
@@ -54,7 +61,6 @@ public class AnagraficaRaddAltSteps {
     private String requestid;
     private String registryId;
     private CreateRegistryRequest sportelloRaddCrud;
-    private CreateRegistryRequestV2 sportelloRaddCrudV2;
     private RegistriesResponse sportelliRaddista;
     private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportelliCsvRaddista;
     private final String uid = getDefaultValue(RADD_UID.key);
@@ -63,18 +69,103 @@ public class AnagraficaRaddAltSteps {
     private String pageIndex = null;
     private final List<Address> addresses = new ArrayList<>();
 
+    private String tokenCognito;
+    private CreateRegistryRequestV2 createRegistryRequestV2;
+    private GetRegistryResponseV2 getRegistryResponseV2;
+    private UpdateRegistryRequestV2 updateRegistryRequestV2;
+    private final SettableAuthTokenRaddCognito settableAuthTokenRaddCognito;
+
     @Autowired
-    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient,PnRaddAlternativeV2ClientImpl raddAltClientV2, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt) {
+    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnRaddAlternativeV2ClientImpl raddAltClientV2, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt, SettableAuthTokenRaddCognito settableAuthTokenRaddCognito) {
         this.raddAltClient = raddAltClient;
         this.raddAltClientV2 = raddAltClientV2;
         this.sharedSteps = sharedSteps;
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
+        this.settableAuthTokenRaddCognito = settableAuthTokenRaddCognito;
     }
 
-    protected String xPagopaPnCxId = getDefaultValue(RADD_PN_CX_ID.key);;
+    //protected String xPagopaPnCxId = getDefaultValue(RADD_PN_CX_ID.key);
+    protected String xPagopaPnCxId = "Test-QA";
     protected String locationId;
     protected RegistryV2 registryV2Response;
 
+
+    // V2
+
+    @Given("l' utente con username {string} password {string} e clientId {string} richiede e riceve un token valido tramite cognito")
+    public void getTokenCognito(String username, String password, String clientId) {
+
+        AuthenticatorCognito authenticator = new AuthenticatorCognito(username, password, clientId, Region.EU_SOUTH_1); // cambia regione
+        this.tokenCognito = authenticator.generateJwtToken();
+
+        assertNotNull(tokenCognito, "Il token JWT non deve essere nullo");
+        assertTrue(tokenCognito.length() > 10, "Il token JWT sembra troppo corto");
+        System.out.println("Token ottenuto: " + tokenCognito);
+
+        raddAltClientV2.selectRaddista(tokenCognito);
+
+    }
+
+
+    /*
+     * "LETTURA_SCRITTURA" = usa credenziali user1, "SOLO_LETTURA" = usa credenziali user2
+     * */
+    @Given("Effettuo l'autenticazione per l' utente con permessi: {string}")
+    public void getSpecificTokenCognito(String permessi) {
+
+        String token = settableAuthTokenRaddCognito.generateToken(permessi);
+
+        raddAltClientV2.selectRaddista(token);
+    }
+
+    @And("la response registry V2 deve avere tutti i campi obbligatori valorizzati")
+    public void validateMandatoryFieldsInRegistry() {
+        RegistryV2 registry = this.registryV2Response;
+
+        assertNotNull(registry, "La response è null");
+
+        NormalizedAddress addr = registry.getNormalizedAddress();
+        assertNotNull(addr, "NormalizedAddress mancante");
+
+        assertTrue(isValidString(addr.getAddressRow()), "addressRow mancante o vuoto");
+        assertTrue(isValidString(addr.getCap()), "cap mancante o vuoto");
+        assertTrue(isValidString(addr.getCity()), "city mancante o vuoto");
+        assertTrue(isValidString(addr.getProvince()), "province mancante o vuoto");
+        assertTrue(isValidString(addr.getCountry()), "country mancante o vuoto");
+        assertNotNull(addr.getBiasPoint(), "biasPoint mancante o vuoto");
+        assertNotNull(addr.getLatitude(), "latitude mancante");
+        assertNotNull(addr.getLongitude(), "longitude mancante");
+
+        log.info("RegistryV2 response: ", registry.toString());
+
+    }
+
+    @And("la response registry V2 della lettura deve avere tutti i campi obbligatori valorizzati")
+    public void validateMandatoryFieldsInRegistryRead() {
+
+        this.registryV2Response = this.getRegistryResponseV2.getItems().get(0);
+        this.validateMandatoryFieldsInRegistry();
+    }
+
+    private boolean isValidString(String value) {
+        return value != null && !value.isBlank();
+    }
+
+
+    @Then("la response V2 contiene almeno un externalCode uguale a quello della request")
+    public void responseContainsExternalCodeFromRequest() {
+        CreateRegistryRequestV2 request = this.createRegistryRequestV2;
+        GetRegistryResponseV2 response = this.getRegistryResponseV2;
+
+        List<String> expectedExternalCodes = request.getExternalCodes();
+
+        boolean trovato = response.getItems().stream()
+                .anyMatch(registry -> registry.getExternalCodes() != null &&
+                        registry.getExternalCodes().stream().anyMatch(expectedExternalCodes::contains));
+
+        assertTrue(trovato,
+                "Nessun RegistryV2 nella response contiene almeno un externalCode della request");
+    }
 
 
     @Then("viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId")
@@ -82,44 +173,45 @@ public class AnagraficaRaddAltSteps {
 
         GetRegistryResponseV2 response = raddAltClientV2.retrieveRegistries(xPagopaPnCxId, 100, null);
 
-//        // Estrai tutti i locationId dalla lista items
-//        List<String> locationIds = response.getItems()
-//                .stream()
-//                .map(RegistryV2::getLocationId)
-//                .toList();
-
-//        assertThat(locationIds)
-//                .withFailMessage("Il locationId non è presente nella risposta")
-//                .contains(locationId);
-
         try {
-            Assertions.assertNotNull(response);
-
+            Assertions.assertNotNull(response, "La risposta da retrieveRegistries è NULL");
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{Lista sportelli: " + (this.requestid == null ? "NULL" : this.requestid) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+                    " {Lista sportelli attesa per requestId=" + (this.requestid == null ? "NULL" : this.requestid) + " }";
+            throw new AssertionFailedError(
+                    message,
+                    assertionFailedError.getExpected(),
+                    assertionFailedError.getActual(),
+                    assertionFailedError.getCause()
+            );
         }
+        Assertions.assertFalse(
+                response.getItems().isEmpty(),
+                "La lista di RegistryV2 restituita da retrieveRegistries è vuota"
+        );
         assertThat(response.getItems())
-                .withFailMessage("Il locationId non è presente nella risposta")
+                .as("Verifica che il locationId atteso sia presente nella lista di RegistryV2")
                 .extracting(RegistryV2::getLocationId)
                 .contains(locationId);
     }
 
 
-    @When("viene richiesta la lista degli sportelli Radd v2 con dati:")
+    @When("viene richiesta la lista degli sportelli Radd V2 con dati:")
     public void vieneRichiestolaListaDeiSportelliRaddV2(Map<String, String> dataSportello) {
 
         try {
-            GetRegistryResponseV2 sportello = raddAltClientV2.retrieveRegistries(
-                    this.xPagopaPnCxId
-                    , getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key))
-                    , getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
-        try {
-            //todo t radd
+            Assertions.assertDoesNotThrow(() -> {
+                GetRegistryResponseV2 sportello = raddAltClientV2.retrieveRegistries(
+                        this.xPagopaPnCxId,
+                        getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key)),
+                        getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key)
+                );
+                this.getRegistryResponseV2 = sportello;
+
+                if (this.getRegistryResponseV2 == null) {
+                    throw new AssertionFailedError("La response è nulla", null, "Response valorizzata");
+                }
+            });
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{endDate: " + (this.requestid == null ? "NULL" : this.requestid) + " }";
@@ -127,22 +219,38 @@ public class AnagraficaRaddAltSteps {
         }
     }
 
+    @Then("la response V2 deve contenere {int} items")
+    public void checkNumberOfItems(int expectedCount) {
+        GetRegistryResponseV2 response = getRegistryResponseV2;
+
+        if (response.getItems() == null) {
+            throw new AssertionError("La lista 'items' è null");
+        }
+
+        int actualCount = response.getItems().size();
+
+        System.out.println("Numero di items nella response: " + actualCount);
+
+        assertThat(actualCount)
+                .as("Il numero di items non corrisponde")
+                .isEqualTo(expectedCount);
+    }
+
     @When("viene generato uno sportello Radd V2 con dati:")
     public void vieneGeneratoSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportello) {
 
-        this.sportelloRaddCrudV2 = dataSportello;
+        this.createRegistryRequestV2 = dataSportello;
 
         log.info("Request inserimento: {}", dataSportello);
-        RegistryV2 creationResponse = raddAltClientV2.addRegistry(null, dataSportello);
-
+        RegistryV2 creationResponse = raddAltClientV2.addRegistry(xPagopaPnCxId, dataSportello);
 
         try {
-            Assertions.assertNotNull(creationResponse);
-            //   Assertions.assertNotNull(creationResponse.getRequestId());
-
-            //  this.requestid = creationResponse.getRequestId();
+            Assertions.assertNotNull(creationResponse, "La response di addRegistry è NULL");
+            Assertions.assertNotNull(creationResponse.getLocationId(), "locationId nullo nella response");
+            Assertions.assertFalse(creationResponse.getLocationId().isBlank(), "locationId vuoto nella response");
 
             this.locationId = creationResponse.getLocationId();
+            this.registryV2Response = creationResponse;
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -152,34 +260,30 @@ public class AnagraficaRaddAltSteps {
     }
 
     @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
-    public void vieneGeneratoConErroreSportelloRaddv2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
+    public void vieneGeneratoConErroreSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
         try {
-            raddAltClientV2.addRegistry( null, dataSportelloV2);
+            raddAltClientV2.addRegistry(xPagopaPnCxId, dataSportelloV2);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
     }
 
-    @When("viene modificato uno sportello Radd V2 con dati:")
-    public void vieneModificatoSportelloRaddV2(@Transpose UpdateRegistryRequestV2 dataSportello) {
-        log.info("Upload Request: {}", dataSportello);
-        try {
-            Assertions.assertDoesNotThrow(() -> raddAltClientV2.updateRegistry(this.xPagopaPnCxId, this.locationId, dataSportello));
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{Response Upload: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
 
     @When("viene modificato uno sportello Radd V2 con dati:")
-    public void vieneModificatoSportelloRadd(@Transpose UpdateRegistryRequestV2 dataSportello) {
-        log.info("Upload Request: {}", dataSportello);
+    public void vieneModificatoSportelloRaddDatiV2(@Transpose UpdateRegistryRequestV2 dataSportelloUpdate) {
+        log.info("Upload Request: {}", createRegistryRequestV2);
         try {
-            Assertions.assertDoesNotThrow(() -> raddAltClientV2.updateRegistry(this.uid, this.registryId, dataSportello));
+
+            RegistryV2 response = Assertions.assertDoesNotThrow(
+                    () -> raddAltClientV2.updateRegistry(this.xPagopaPnCxId, this.locationId, dataSportelloUpdate)
+            );
+
+            this.registryV2Response = response;
+            this.updateRegistryRequestV2 = dataSportelloUpdate;
+
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{Response Upload CSV: " + (dataSportello == null ? "NULL" : dataSportello) + " }";
+                    "{Response Upload CSV: " + (createRegistryRequestV2 == null ? "NULL" : createRegistryRequestV2) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -192,37 +296,71 @@ public class AnagraficaRaddAltSteps {
         try {
             raddAltClientV2.updateRegistry(
                     getValue(datiAggiornamento, RADD_PN_CX_ID.key),
-                    getValue(datiAggiornamento, RADD_LOCATION_ID.key),aggiornamentoSportelloRadd);
+                    getValue(datiAggiornamento, RADD_LOCATION_ID.key), aggiornamentoSportelloRadd);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             log.info("errore: {}", e.getStatusText());
         }
     }
 
-    @When("viene cancellato uno sportello Radd V2 con dati:")
+    @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId")
     public void vieneCancellatoSportelloRaddV2() {
 
-        log.info("data cancellazione sportello: {}");
-
         try {
+            ResponseEntity<Void> response = Assertions.assertDoesNotThrow(
+                    () -> raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, registryV2Response.getLocationId()),
+                    "La chiamata a deleteRegistryWithHttpInfo ha lanciato un'eccezione"
+            );
+            Assertions.assertTrue(response.getStatusCode().is2xxSuccessful(), "La cancellazione non è andata a buon fine");
+            assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
-            Assertions.assertDoesNotThrow(() -> raddAltClientV2.deleteRegistry(this.xPagopaPnCxId, this.locationId));
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() ;
+            String message = assertionFailedError.getMessage();
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
-    @Then("la response a seguito del nuovo inserimento deve contenere i valori attesi")
+    @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId: {string} con errore")
+    public void vieneCancellatoSportelloRaddV2Parameter(String locationId) {
+
+        try {
+            raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, locationId);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId con errore")
+    public void vieneCancellatoSportelloRaddV2ConErrore() {
+
+        try {
+            raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, registryV2Response.getLocationId());
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @Then("la response V2 a seguito del nuovo inserimento deve contenere i valori attesi")
     public void checkResponseValueFromInsert(DataTable dataTable) {
         Map<String, String> expectedData = dataTable.asMap(String.class, String.class);
 
         RegistryV2 response = registryV2Response;
 
-        assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
-        assertThat(response.getLocationId()).isEqualTo(expectedData.get("locationId"));
-        assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
-        assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
+        if (expectedData.get("partnerId") != null) {
+            assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
+        }
+
+        //if (expectedData.get("locationId") != null) {
+        //    assertThat(response.getLocationId()).isEqualTo(expectedData.get("locationId"));
+        //}
+
+        if (expectedData.get("description") != null) {
+            assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
+        }
+
+        if (expectedData.get("email") != null) {
+            assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
+        }
 
         if (expectedData.get("appointmentRequired") != null) {
             assertThat(response.getAppointmentRequired())
@@ -243,6 +381,103 @@ public class AnagraficaRaddAltSteps {
                     .collect(Collectors.toList());
             assertThat(response.getPhoneNumbers())
                     .containsExactlyInAnyOrderElementsOf(expectedPhones);
+        }
+
+        assertThat(response.getNormalizedAddress())
+                .withFailMessage("normalizedAddress non deve essere null quando ci sono valori attesi")
+                .isNotNull();
+
+        NormalizedAddress address = response.getNormalizedAddress();
+
+        if (expectedData.get("addressRow") != null) {
+            assertThat(address.getAddressRow()).isEqualTo(expectedData.get("addressRow"));
+        }
+        if (expectedData.get("city") != null) {
+            assertThat(address.getCity()).isEqualTo(expectedData.get("city"));
+        }
+        if (expectedData.get("cap") != null) {
+            assertThat(address.getCap()).isEqualTo(expectedData.get("cap"));
+        }
+        if (expectedData.get("province") != null) {
+            assertThat(address.getProvince()).isEqualTo(expectedData.get("province"));
+        }
+    }
+
+    @Then("i campi della response devono corrispondere alla request di update")
+    public void confrontaCampiUpdateConResponse() {
+        assertNotNull(this.registryV2Response, "La response RegistryV2 è null");
+        assertNotNull(this.updateRegistryRequestV2, "La request UpdateRegistryRequestV2 è null");
+
+        RegistryV2 resp = this.registryV2Response;
+        UpdateRegistryRequestV2 req = this.updateRegistryRequestV2;
+
+        assertEquals(req.getDescription(), resp.getDescription(), "Description diversa");
+        assertEquals(req.getOpeningTime(), resp.getOpeningTime(), "OpeningTime diversa");
+        assertEquals(req.getEndValidity(), resp.getEndValidity(), "EndValidity diversa");
+        assertEquals(req.getWebsite(), resp.getWebsite(), "Website diverso");
+        assertEquals(req.getEmail(), resp.getEmail(), "Email diversa");
+        assertEquals(req.getAppointmentRequired(), resp.getAppointmentRequired(), "AppointmentRequired diverso");
+
+        // liste
+        assertIterableEquals(req.getExternalCodes(), resp.getExternalCodes(), "ExternalCodes diversi");
+        assertIterableEquals(req.getPhoneNumbers(), resp.getPhoneNumbers(), "PhoneNumbers diversi");
+    }
+
+    @Then("la response V2 deve avere tutti i campi valorizzati")
+    public void checkAllFieldsAreNotNull() {
+        RegistryV2 response = registryV2Response;
+
+        assertThat(response).withFailMessage("La response V2 non deve essere null").isNotNull();
+
+        //Campi principali di RegistryV2
+        assertThat(response.getPartnerId()).as("partnerId").isNotNull();
+        assertThat(response.getLocationId()).as("locationId").isNotNull();
+        assertThat(response.getDescription()).as("description").isNotNull();
+        assertThat(response.getPhoneNumbers()).as("phoneNumbers").isNotNull();
+        assertThat(response.getEmail()).as("email").isNotNull();
+        assertThat(response.getOpeningTime()).as("openingTime").isNotNull();
+        assertThat(response.getStartValidity()).as("startValidity").isNotNull();
+        assertThat(response.getEndValidity()).as("endValidity").isNotNull();
+        assertThat(response.getExternalCodes()).as("externalCodes").isNotNull();
+        assertThat(response.getAppointmentRequired()).as("appointmentRequired").isNotNull();
+        assertThat(response.getWebsite()).as("website").isNotNull();
+        assertThat(response.getPartnerType()).as("partnerType").isNotNull();
+        assertThat(response.getCreationTimestamp()).as("creationTimestamp").isNotNull();
+        assertThat(response.getUpdateTimestamp()).as("updateTimestamp").isNotNull();
+
+        assertThat(response.getNormalizedAddress())
+                .as("normalizedAddress")
+                .isNotNull();
+
+        NormalizedAddress address = response.getNormalizedAddress();
+
+        // Campi di NormalizedAddress
+        assertThat(address.getAddressRow()).as("addressRow").isNotNull();
+        assertThat(address.getCap()).as("cap").isNotNull();
+        assertThat(address.getCity()).as("city").isNotNull();
+        assertThat(address.getProvince()).as("province").isNotNull();
+        assertThat(address.getCountry()).as("country").isNotNull();
+        assertThat(address.getLatitude()).as("latitude").isNotNull();
+        assertThat(address.getLongitude()).as("longitude").isNotNull();
+        assertThat(address.getBiasPoint()).as("biasPoint").isNotNull();
+    }
+
+    @Then("la response V2 deve aver restiutito in automatico startValidity odierno in formato yyyy-MM-dd")
+    public void checkStartValidityIsToday() {
+        String startValidity = registryV2Response.getStartValidity();
+        if (startValidity == null) {
+            throw new AssertionError("startValidity è null");
+        }
+        System.out.println("startValidity: '" + startValidity + "'");
+
+        // Prende solo i primi 10 caratteri in caso arrivi un datetime completo
+        String datePart = startValidity.length() >= 10 ? startValidity.substring(0, 10) : startValidity;
+
+        LocalDate parsedDate = LocalDate.parse(datePart); // usa default ISO yyyy-MM-dd
+        LocalDate today = LocalDate.now(ZoneId.of("Europe/Rome"));
+
+        if (!parsedDate.equals(today)) {
+            throw new AssertionError("startValidity (" + parsedDate + ") != oggi (" + today + ")");
         }
     }
 
@@ -328,7 +563,7 @@ public class AnagraficaRaddAltSteps {
         try {
             Assertions.assertNotNull(responseUploadCsv);
             Assertions.assertNotNull(responseUploadCsv.getStatus());
-            Assertions.assertEquals(stato.toUpperCase(), responseUploadCsv.getStatus());
+            assertEquals(stato.toUpperCase(), responseUploadCsv.getStatus());
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{Response Upload CSV: " + (responseUploadCsv == null ? "NULL" : responseUploadCsv) + " }";
@@ -346,8 +581,8 @@ public class AnagraficaRaddAltSteps {
             Assertions.assertNotNull(responseVerifyCsv);
             Assertions.assertNotNull(responseVerifyCsv.getStatus());
             Assertions.assertNotNull(responseVerifyCsv.getError());
-            Assertions.assertEquals("REJECTED", responseVerifyCsv.getStatus());
-            Assertions.assertEquals(mesaggioErrore, responseVerifyCsv.getError());
+            assertEquals("REJECTED", responseVerifyCsv.getStatus());
+            assertEquals(mesaggioErrore, responseVerifyCsv.getError());
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -434,7 +669,7 @@ public class AnagraficaRaddAltSteps {
 
         try {
             Assertions.assertNotNull(dato);
-            Assertions.assertEquals(status, dato.getStatus());
+            assertEquals(status, dato.getStatus());
             this.requestid = dato.getRequestId();
             this.registryId = dato.getRegistryId();
 
@@ -456,7 +691,7 @@ public class AnagraficaRaddAltSteps {
             log.info("sportelli trovati: '{}'", dato);
             Assertions.assertNotNull(dato);
             Assertions.assertFalse(dato.isEmpty());
-            Assertions.assertEquals(csvData.size(), dato.size());
+            assertEquals(csvData.size(), dato.size());
 
             Assertions.assertNotNull(dato);
             this.requestid = dato.stream().map(RegistryRequestResponse::getRequestId)
@@ -486,7 +721,7 @@ public class AnagraficaRaddAltSteps {
             log.info("sportelli trovati: '{}'", dato);
             Assertions.assertNotNull(dato);
             Assertions.assertFalse(dato.isEmpty());
-            Assertions.assertEquals(csvData.size(), dato.size());
+            assertEquals(csvData.size(), dato.size());
 
             Assertions.assertNotNull(dato);
             this.requestid = dato.stream().map(RegistryRequestResponse::getRequestId)
@@ -676,7 +911,7 @@ public class AnagraficaRaddAltSteps {
             if (!sportello.getRegistries().isEmpty() && sportello.getRegistries().size() != 0) {
                 this.registryId = sportello.getRegistries().get(0).getRegistryId();
             }
-                this.sportelliRaddista = sportello;
+            this.sportelliRaddista = sportello;
 
             log.info("lista sportelli: {}", sportello);
 
@@ -739,7 +974,7 @@ public class AnagraficaRaddAltSteps {
     @When("viene contrallato il numero di sportelli trovati sia uguale a {int}")
     public void vieneControllatoCheVenganoRitornatiTotValori(Integer numValori) {
         try {
-            Assertions.assertEquals(numValori, this.sportelliRaddista.getRegistries().size());
+            assertEquals(numValori, this.sportelliRaddista.getRegistries().size());
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{Lista sportelli: " + (this.sportelliRaddista == null ? "NULL" : this.sportelliRaddista) + " }";

@@ -20,6 +20,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -47,6 +48,9 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
     private final ImportApi apiCaricamentoCsv;
     private final RegistryApi apiAnagraficaCRUDV2;
 
+
+    private String tokenCognito;
+
     public PnRaddAlternativeV2ClientImpl(RestTemplate restTemplate,
                                          @Value("${pn.radd.alt.external.base-url}") String basePath,
                                          @Value("${pn.external.bearer-token-radd-1}") String raddista1,
@@ -60,6 +64,7 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
                                          @Value("${pn.external.bearer-token-radd-privateKey-diverso}") String raddistaJwtPrivateDiverso,
                                          @Value("${pn.external.bearer-token-radd-over-50KB}") String raddistaJwksOver50Kb
                                        ) {
+
         this.raddista1 = raddista1;
         this.raddista2 = raddista2;
         this.raddistaNonCensito = raddistaNonCensito;
@@ -80,11 +85,13 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
     }
 
 
+
+
     //todo t radd
 
     @Override
     public void deleteRegistry(String partnerId, String locationId) throws RestClientException {
-        this.apiAnagraficaCRUDV2.deleteRegistry( null, null);
+        this.apiAnagraficaCRUDV2.deleteRegistry( partnerId, locationId);
     }
 
     @Override
@@ -94,16 +101,13 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
 
     @Override
     public RegistryV2 updateRegistry(String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2) throws RestClientException {
-        return this.apiAnagraficaCRUDV2.updateRegistry(null, null, updateRegistryRequestV2);
+        return this.apiAnagraficaCRUDV2.updateRegistry(partnerId, locationId, updateRegistryRequestV2);
     }
 
-
-
-
-
-
-
-
+    @Override
+    public ResponseEntity<Void> deleteRegistryWithHttpInfo(String partnerId, String locationId) {
+        return this.apiAnagraficaCRUDV2.deleteRegistryWithHttpInfo(partnerId, locationId );
+    }
 
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
@@ -213,7 +217,7 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
 
     @Override
     public RegistryV2 addRegistry(String partnerId, CreateRegistryRequestV2 createRegistryRequestV2) throws RestClientException {
-        return this.apiAnagraficaCRUDV2.addRegistry(null ,createRegistryRequestV2);
+        return this.apiAnagraficaCRUDV2.addRegistry(partnerId ,createRegistryRequestV2);
     }
 
 //    @Override

@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.VerifyRequestResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.model.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
 
@@ -46,4 +47,5 @@ public interface IPnRaddAlternativeV2Client extends SettableAuthTokenRadd {
     //void updateRegistry(String uid, String registryId, UpdateRegistryRequest updateRegistryRequest) throws RestClientException;
     RegistryV2 updateRegistry(String partnerId, String locationId, UpdateRegistryRequestV2 updateRegistryRequestV2);
 
+    ResponseEntity<Void> deleteRegistryWithHttpInfo(String partnerId, String locationId);
 }

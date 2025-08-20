@@ -1,0 +1,93 @@
+package it.pagopa.pn.client.b2b.pa.service.utils;
+
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import software.amazon.awssdk.regions.Region;
+
+
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class SettableAuthTokenRaddCognito {
+
+
+    private final String raddCognitoUser1;
+    private final String raddCognitoPasswordUser1;
+    private final String raddCognitoClientIdUser1;
+    private final String raddCognitoUser2;
+    private final String raddCognitoPasswordUser2;
+    private final String raddCognitoClientIdUser2;
+
+    @Setter
+    @Getter
+    private String tokenCognito;
+
+    public SettableAuthTokenRaddCognito(@Value("${pn.external.radd-cognito-user-1}") String raddCognitoUser1,
+                                        @Value("${pn.external.radd-cognito-password-user-1}") String raddCognitoPasswordUser1,
+                                        @Value("${pn.external.radd-cognito-clientid-user-1}") String raddCognitoClientIdUser1,
+                                        @Value("${pn.external.radd-cognito-user-2}") String raddCognitoUser2,
+                                        @Value("${pn.external.radd-cognito-password-user-2}") String raddCognitoPasswordUser2,
+                                        @Value("${pn.external.radd-cognito-clientid-user-2}") String raddCognitoClientIdUser2
+    ) {
+        this.raddCognitoUser1 = raddCognitoUser1;
+        this.raddCognitoPasswordUser1 = raddCognitoPasswordUser1;
+        this.raddCognitoClientIdUser1 = raddCognitoClientIdUser1;
+        this.raddCognitoUser2 = raddCognitoUser2;
+        this.raddCognitoPasswordUser2 = raddCognitoPasswordUser2;
+        this.raddCognitoClientIdUser2 = raddCognitoClientIdUser2;
+
+    }
+
+    /**
+     * Restituisce un token JWT Cognito generato in base all'utente scelto
+     *
+     * @param userIndex LETTURA_SCRITTURA = usa credenziali user1, SOLO_LETTURA = usa credenziali user2
+     */
+    public String generateToken(String userIndex) {
+        String username;
+        String password;
+        String clientId;
+
+        switch (userIndex) {
+            case "LETTURA_SCRITTURA" -> {
+                username = raddCognitoUser1;
+                password = raddCognitoPasswordUser1;
+                clientId = raddCognitoClientIdUser1;
+            }
+            case "SOLO_LETTURA" -> {
+                username = raddCognitoUser2;
+                password = raddCognitoPasswordUser2;
+                clientId = raddCognitoClientIdUser2;
+            }
+            default -> throw new IllegalArgumentException("Indice utente non valido: " + userIndex);
+        }
+
+
+        this.tokenCognito = getTokenCognito(username, password, clientId);
+        return this.tokenCognito;
+    }
+
+    private String getTokenCognito(String username, String password, String clientId) {
+
+        AuthenticatorCognito authenticator =
+                new AuthenticatorCognito(username, password, clientId, Region.EU_SOUTH_1); // cambia regione se serve
+
+        String token = authenticator.generateJwtToken();
+
+        if (token == null || token.isEmpty()) {
+            throw new IllegalStateException("Errore: il token JWT restituito è nullo o vuoto");
+        }
+        if (token.length() <= 10) {
+            throw new IllegalStateException("Errore: il token JWT sembra troppo corto");
+        }
+
+        System.out.println("Token ottenuto correttamente: " + this.tokenCognito);
+
+        return token;
+    }
+}
+
