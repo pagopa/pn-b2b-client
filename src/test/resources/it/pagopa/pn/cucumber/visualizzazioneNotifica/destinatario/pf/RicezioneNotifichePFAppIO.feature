@@ -52,3 +52,14 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" tenta il recupero della notifica tramite AppIO
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
+  #viene richiesto il codice QR per lo IUN {string}
+
+  Scenario: [QR_CODE_1] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene generato il codice QR per la notifica appena creata
+    And l'utente "pippo" scansiona il QR Code per recuperare i dettagli della notifica
+    And la notifica può essere recuperata tramite AppIO

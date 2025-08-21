@@ -1230,4 +1230,12 @@ public class SharedSteps {
         }
     }
 
+    public String vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
+        HashMap<String, String> quickAccessLink = pnExternalServiceClient.getQuickAccessLink(iun);
+        log.debug("quickAccessLink: {}", quickAccessLink.toString());
+        String qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]);
+        log.debug("qrCode: {}", qrCode);
+        return qrCode;
+    }
+
 }

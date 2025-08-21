@@ -1,7 +1,11 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.RequestCheckAarMandateDto;
+import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ResponseCheckAarMandateDto;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyAttachment;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
@@ -30,11 +34,24 @@ public class AppIOB2bSteps {
     private HttpStatusCodeException notificationServerError;
     private String sha256DocumentDownload;
 
+    private String qrCode;
+
 
     @Autowired
     public AppIOB2bSteps(IPnAppIOB2bClient iPnAppIOB2bClient, SharedSteps sharedSteps) {
         this.iPnAppIOB2bClient = iPnAppIOB2bClient;
         this.sharedSteps = sharedSteps;
+    }
+
+    @Given("viene generato il codice QR per la notifica appena creata")
+    public void vieneGeneratoIlCodiceQRPerLaNotificaCreata() {
+        qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
+    }
+
+    @When("l'utente {string} scansiona il QR Code per recuperare i dettagli della notifica")
+    public void userScanQRCode(String user) {
+        RequestCheckAarMandateDto requestCheckAarMandateDto = new RequestCheckAarMandateDto().aarQrCodeValue(qrCode);
+        ResponseCheckAarMandateDto responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(sharedSteps.getSentNotificationLastVersion().getRecipients().get(0).getTaxId(), requestCheckAarMandateDto);
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
