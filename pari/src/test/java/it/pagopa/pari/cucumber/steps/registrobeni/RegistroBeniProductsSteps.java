@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RegistroBeniProductsSteps {
     private final ApiClientContext apiClientContext;
-    private ProductListDTO productListDTO;
 
     public RegistroBeniProductsSteps(ApiClientContext apiClientContext) {
         this.apiClientContext = apiClientContext;
@@ -18,8 +17,8 @@ public class RegistroBeniProductsSteps {
 
     @Then("si verifica che la lista di prodotti caricati non sia nulla")
     public void verifyResponseProductsList() {
-        productListDTO = apiClientContext.getRegisterPortalOperationClient().getProducts("", 0, 10, null, null,
-                null, null, null, null);
+        ProductListDTO productListDTO = apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null,
+                null, null, null, null, null, null);
         assertNotNull(productListDTO);
         assertNotNull(productListDTO.getContent());
         assertFalse(productListDTO.getContent().isEmpty());

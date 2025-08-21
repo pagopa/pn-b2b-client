@@ -26,9 +26,9 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,13 +52,13 @@ public class RegistroBeniProductsUploadSteps {
     @When("viene caricato un file NON csv con categoria: {string} e dati:")
     public void generateCsvWithWrongExtension(String categoria, List<Map<String, String>> dataCsv) throws Exception {
         Resource notCsvFile = generaCsv(dataCsv, ".txt");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, notCsvFile);
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(notCsvFile, categoria);
     }
 
     @When("viene caricato il csv con categoria: {string} e dati:")
     public void vieneGeneratoIlCsv(String categoria, List<Map<String, String>> dataCsv) throws Exception {
         Resource csvFile = generaCsv(dataCsv, ".csv");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(categoria, csvFile);
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, categoria);
         // Viene aggiunto un delay per dare il tempo al csv di essere validato
         Thread.sleep(1000);
     }
@@ -66,7 +66,7 @@ public class RegistroBeniProductsUploadSteps {
     @When("viene verificato il csv con categoria: {string} e dati:")
     public void verifyCsv(String category, List<Map<String, String>> dataCsv) throws Exception {
         Resource csvFile = generaCsv(dataCsv, ".csv");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().verifyProductList(category, csvFile);
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().verifyProductList(csvFile, category);
     }
 
     @When("viene recuperato il report di errore appena generato")
@@ -122,8 +122,8 @@ public class RegistroBeniProductsUploadSteps {
     @Then("si verifica che la risposta abbia:")
     public void verifyResponse(DataTable dataTable) {
         Map<String, String> expectedResults = dataTable.asMap();
-        assertEquals(expectedResults.get("errorKey"), uploadResponseDTO.getErrorKey(), "Mismatch on errorKey!");
-        assertEquals(expectedResults.get("status"), uploadResponseDTO.getStatus(), "Mismatch on status field!");
+        assertEquals(expectedResults.get("errorKey"), Optional.ofNullable(uploadResponseDTO.getErrorKey()).map(RegisterUploadResponseDTO.ErrorKeyEnum::getValue).orElse(null), "Mismatch on errorKey!");
+        assertEquals(expectedResults.get("status"), Optional.ofNullable(uploadResponseDTO.getStatus()).map(RegisterUploadResponseDTO.StatusEnum::getValue).orElse(null), "Mismatch on status field!");
         verifyProductFileId(expectedResults.get("productFileId"));
     }
 
@@ -139,19 +139,19 @@ public class RegistroBeniProductsUploadSteps {
     @Given("viene caricato un file csv di peso maggiore a quello consentito")
     public void uploadLargeCSV() {
         Resource csvFile = resourceLoader.getResource("file:src/main/resources/registroBeni/large-csv-up-two-mb.csv");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList("WASHINGMACHINES", csvFile);
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, "WASHINGMACHINES");
     }
 
     @Given("viene caricato un file csv contente più righe di quelle accettate")
     public void uploadLongCSV() {
         Resource csvFile = resourceLoader.getResource("file:src/main/resources/registroBeni/long-csv-with-101-row.csv");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList("WASHINGMACHINES", csvFile);
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, "WASHINGMACHINES");
 
     }
 
     @When("si recupera l'ultimo caricamento effettuato dall'utenza")
     public void retrieveLastUpload() {
-        uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10, null);
+        uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10);
         lastUpload = uploadsListDTO.getContent().stream()
                 .filter(x -> StringUtils.isNotBlank(x.getDateUpload()))
                 .max(Comparator.comparing(UploadDTO::getDateUpload))
@@ -169,7 +169,7 @@ public class RegistroBeniProductsUploadSteps {
 
     @Then("si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo")
     public void verifyUploadsListResponse() {
-        uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10, null);
+        uploadsListDTO = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10);
         assertNotNull(uploadsListDTO);
         assertNotNull(uploadsListDTO.getTotalElements());
         assertTrue(uploadsListDTO.getTotalElements() > 0);

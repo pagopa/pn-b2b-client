@@ -11,7 +11,9 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionR
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionsResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.PortalConsentDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductsUpdateDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UpdateResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
 import it.pagopa.pari.registrobeni.domain.RdbRole;
 import it.pagopa.pari.utils.RdBJWTProvider;
@@ -67,20 +69,20 @@ public class RegisterPortalOperationClientImpl {
         return productsUploadApi.getBatchNameList(xOrganizationSelected);
     }
 
-    public UploadsListDTO getProductFilesList(Integer page, Integer size, String sort) {
-        return productsUploadApi.getProductFilesList(page, size, sort);
+    public UploadsListDTO getProductFilesList(Integer page, Integer size) {
+        return productsUploadApi.getProductFilesList(page, size);
     }
 
-    public RegisterUploadResponseDTO uploadProductList(String category, org.springframework.core.io.Resource csv) {
-        return productsUploadApi.uploadProductList(category, csv);
+    public RegisterUploadResponseDTO uploadProductList(org.springframework.core.io.Resource csv, String category) {
+        return productsUploadApi.uploadProductList(csv, category);
     }
 
-    public RegisterUploadResponseDTO verifyProductList(String category, org.springframework.core.io.Resource csv) {
-        return productsUploadApi.verifyProductList(category, csv);
+    public RegisterUploadResponseDTO verifyProductList(org.springframework.core.io.Resource csv, String category) {
+        return productsUploadApi.verifyProductList(csv, category);
     }
 
-    public ProductListDTO getProducts(String xOrganizationSelected, Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productCode, String productFileId) {
-        return productsApi.getProducts(xOrganizationSelected, page, size, sort, category, eprelCode, gtinCode, productCode, productFileId);
+    public ProductListDTO getProducts(Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productFileId, String productName, String status, String organizationId) {
+        return productsApi.getProducts(page, size, sort, category, eprelCode, gtinCode, productFileId, productName, status, organizationId);
     }
 
     public InstitutionsResponse getInstitutionsList() {
@@ -89,6 +91,18 @@ public class RegisterPortalOperationClientImpl {
 
     public InstitutionResponse retrieveInstitutionById(String institutionId) {
         return institutionsApi.retrieveInstitutionById(institutionId);
+    }
+
+    public UpdateResponseDTO updateProductStatusApproved(String xOrganizationSelected, ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusApproved(xOrganizationSelected, productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusRejected(String xOrganizationSelected, ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusRejected(xOrganizationSelected, productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusSupervisioned(String xOrganizationSelected, ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusSupervisioned(xOrganizationSelected, productsUpdateDTO);
     }
 
     public void setBearerToken(RdbRole role) {
