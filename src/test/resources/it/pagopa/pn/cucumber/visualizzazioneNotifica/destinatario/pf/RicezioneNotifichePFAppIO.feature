@@ -54,12 +54,131 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
   #viene richiesto il codice QR per lo IUN {string}
 
+  #[TC_1]
   Scenario: [QR_CODE_1] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And viene generato il codice QR per la notifica appena creata
-    And l'utente "pippo" scansiona il QR Code per recuperare i dettagli della notifica
-    And la notifica può essere recuperata tramite AppIO
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+#    [TC_5]
+    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO
+    # [TC_8] SI PROVA A RIFIUTARE I TOS E RIACCEDERE SENZA SUCCESSO AL DETTAGLIO DELLA NOTIFICA
+    And l'utente "Mario Cucumber" "NON ACCETTA" i termini di servizio di tipo: TOS
+    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO
+    #[TC_3] SI PROVA A RIACCEDERE ALLA NOTIFICA SCANSIONANDO UN QR CODE NON VALIDO
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+    And viene generato il QR Code "malformato" per la notifica appena creata
+    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+
+    
+  #[TC_2]
+  Scenario Outline: [QR_CODE_2] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+    And viene chiamato l'endpoint "checkQRCode" con i seguenti params:
+    | taxId             | <PARAM_1>   |
+    | aarQrCodeValue    | <PARAM_2>   |
+    Then si verifica che la chiamata abbia ritornato uno status code: 400
+    Examples:
+    | PARAM_1           | PARAM_2 |
+    |                   | UFlEQS1RR05LLURWUlUtMjAyNTA4LU4tMV9QRi00ZmM3NWRmMy0wOTEzLTQwN2UtYmRhYS1lNTAzMjk3MDhiN2RfM2Y2MWQ1N2QtMmJmOC00NGU4LWFhMmMtNjBlZmNmODY3YTVh  |
+    | FRMTTR76M06B715E  |                                                                                                                                           |
+
+  #[TC_6] [TC_7]
+  Scenario Outline: [TC_6] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+    And viene chiamato l'endpoint "getReceivedNotification" con i seguenti params:
+      | iun             | <PARAM_1>   |
+      | taxId           | <PARAM_2>   |
+    Then si verifica che la chiamata abbia ritornato uno status code: 400
+    Examples:
+      | PARAM_1                     | PARAM_2           |
+      |                             | FRMTTR76M06B715E  |
+      | ERRA-T000-0000-ERRATO-0-0   | FRMTTR76M06B715E  |
+      | NAUZ-WNPH-WQZE-202508-Y-1   |                   |
+
+  Scenario: [TC_9]
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    Then a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO
+
+  #[TC_11]
+  Scenario Outline: [TC_6]
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+    And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
+      | iun             | <PARAM_1>   |
+      | docIdx          | <PARAM_2>   |
+      | taxId           | <PARAM_3>   |
+    Then si verifica che la chiamata abbia ritornato uno status code: 400
+    Examples:
+      | PARAM_1                     | PARAM_2     | PARAM_3                    |
+      |                             | 0           | FRMTTR76M06B715E           |
+      | ERRA-T000-0000-ERRATO-0-0   |             | FRMTTR76M06B715E           |
+      | NAUZ-WNPH-WQZE-202508-Y-1   | 0           |                            |
+
+  #[TC_12]
+  Scenario: [TC_12]
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
+  #[TC_13] [TC_14]
+  Scenario Outline: [TC_13]
+    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+    And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
+      | iun             | <PARAM_1>   |
+      | attachmentName  | <PARAM_2>   |
+      | taxId           | <PARAM_3>   |
+      | attachmentIdx   | <PARAM_4>   |
+    Examples:
+      | PARAM_1                     | PARAM_2     | PARAM_3                    | PARAM_4  |
+      |                             | F24         | FRMTTR76M06B715E           | 0        |
+      | ERRA-T000-0000-ERRATO-0-0   | F24         | FRMTTR76M06B715E           | 0        |
+      | NAUZ-WNPH-WQZE-202508-Y-1   |             | FRMTTR76M06B715E           | 0        |
+      | NAUZ-WNPH-WQZE-202508-Y-1   | PAGOPA      |                            | 0        |
+    #considera che PARAM_4 non è obbligatorio
+
+  Scenario: [TC_X] Lettura tramite AppIO di una notifica da parte di un delegato
+    Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
+    And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Root"
+    And "Mario Cucumber" accetta la delega "Mario Gherkin"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Aglientu         |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato
+
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato
+    And il download non ha prodotto errori
+
+    Then a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO
+
+
+
