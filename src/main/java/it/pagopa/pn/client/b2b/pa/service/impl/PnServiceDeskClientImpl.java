@@ -63,8 +63,12 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         return notification.numberOfUnreachableNotifications(operatorId, notificationRequest);
     }
 
-    public OperationsResponse createOperation(CreateOperationRequest createOperationRequest)throws RestClientException {
-        return operation.createOperation(operatorId,createOperationRequest);
+    public OperationsResponse createOperation(CreateOperationRequest createOperationRequest) throws RestClientException {
+        return operation.createOperation(operatorId, createOperationRequest);
+    }
+
+    public OperationsResponse createActOperation(CreateActOperationRequest createActOperationRequest) throws RestClientException {
+        return operation.createActOperation(operatorId, createActOperationRequest);
     }
 
     public VideoUploadResponse presignedUrlVideoUpload(String operationid, VideoUploadRequest videoUploadRequest){

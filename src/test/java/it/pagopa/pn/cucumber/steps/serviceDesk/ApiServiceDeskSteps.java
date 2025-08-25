@@ -65,6 +65,7 @@ public class ApiServiceDeskSteps {
     private final NotificationRequest notificationRequest;
     private final AnalogAddress analogAddress;
     private final CreateOperationRequest createOperationRequest;
+    private final CreateActOperationRequest createActOperationRequest;
     private final VideoUploadRequest videoUploadRequest;
     private final SearchNotificationRequest searchNotificationRequest;
     private final ApplicationContext ctx;
@@ -115,6 +116,7 @@ public class ApiServiceDeskSteps {
         this.notificationRequest = new NotificationRequest();
         this.analogAddress = new AnalogAddress();
         this.createOperationRequest = new CreateOperationRequest();
+        this.createActOperationRequest = new CreateActOperationRequest();
         this.videoUploadRequest = new VideoUploadRequest();
         this.searchNotificationRequest = new SearchNotificationRequest();
     }
@@ -204,6 +206,11 @@ public class ApiServiceDeskSteps {
         createOperationRequestSteps(cf);
     }
 
+    @Given("viene creata una nuova richiesta per invocare il servizio CREATE_ACT_OPERATION con {string}")
+    public void createActOperationReq(String cf) {
+        createActOperationRequestSteps(cf);
+    }
+
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con {string} {string} {string}")
     public void createOperationReq(String cf, String ticketid, String ticketOperationid) {
         if (cf.equals("CF_vuoto")) {
@@ -244,6 +251,19 @@ public class ApiServiceDeskSteps {
             });
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(operationsResponse);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @When("viene invocato il servizio CREATE_ACT_OPERATION")
+    public void callCreateActOperation() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                operationsResponse = ipServiceDeskClient.createActOperation(createActOperationRequest);
+            });
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
@@ -1126,6 +1146,18 @@ public class ApiServiceDeskSteps {
         log.info("ticketOperationId:" + ticketOperationId);
         createOperationRequest.setTicketOperationId(ticketOperationId);
         createOperationRequest.setAddress(analogAddress);
+    }
+
+    private void createActOperationRequestSteps(String cf) {
+        log.info("CF:" + cf);
+        createActOperationRequest.setTaxId(cf);
+        String ticketId = getPrefixedRandomAlphaNumeric(12);
+        log.info("ticketId:" + ticketId);
+        createActOperationRequest.setTicketId(ticketId);
+        String ticketOperationId = getPrefixedRandomAlphaNumeric(7);
+        log.info("ticketOperationId:" + ticketOperationId);
+        createActOperationRequest.setTicketOperationId(ticketOperationId);
+        createActOperationRequest.setAddress(new ActDigitalAddress().address("test@test.it").type("COURTESY"));
     }
 
     private void createPreUploadVideoRequestDocumentSteps() throws Exception {

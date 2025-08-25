@@ -10,6 +10,7 @@ import java.util.List;
 public interface IPServiceDeskClientImpl {
     NotificationsUnreachableResponse notification(NotificationRequest notificationRequest) throws RestClientException;
     OperationsResponse createOperation(CreateOperationRequest createOperationRequest)throws RestClientException;
+    OperationsResponse createActOperation(CreateActOperationRequest createActOperationRequest);
     VideoUploadResponse presignedUrlVideoUpload(String operationid, VideoUploadRequest videoUploadRequest);
     SearchResponse searchOperationsFromTaxId(SearchNotificationRequest searchNotificationRequest);
     //Integration Cruscotto Assistenza....
