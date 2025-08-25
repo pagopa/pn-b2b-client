@@ -66,6 +66,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     public void checkPatchOperationResult() {
         delayService.delay();
         assertThat(resourceContext.getReturnedResource())
+            .usingRecursiveComparison()
+            .ignoringFields("updatedAt", "currentVersion.updatedAt")
             .as("Verifica che il risultato restituito dall'API PATCH su '%s' sia coerente con le modifiche effettuate", this.resourceSimpleName)
             .isEqualTo(resourceContext.getExpectedResource());
     }
@@ -77,6 +79,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertThat(actualPatchedResource)
+            .usingRecursiveComparison()
+            .ignoringFields("updatedAt", "currentVersion.updatedAt")
             .as("Verifica che le modifiche apportate a '%s' con l'API PATCH siano state apportate correttamente", this.resourceSimpleName)
             .isEqualTo(resourceContext.getExpectedResource());
     }
