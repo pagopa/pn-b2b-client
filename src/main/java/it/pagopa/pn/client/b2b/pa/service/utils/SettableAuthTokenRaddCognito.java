@@ -9,9 +9,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.regions.Region;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class SettableAuthTokenRaddCognito {
 
 
@@ -42,34 +45,48 @@ public class SettableAuthTokenRaddCognito {
 
     }
 
+    private final Map<String, String> tokenCache = new HashMap<>();
+
     /**
      * Restituisce un token JWT Cognito generato in base all'utente scelto
      *
      * @param userIndex LETTURA_SCRITTURA = usa credenziali user1, SOLO_LETTURA = usa credenziali user2
      */
     public String generateToken(String userIndex) {
+        // Se il token è già stato generato, lo restituisco subito
+        if (tokenCache.containsKey(userIndex)) {
+            return tokenCache.get(userIndex);
+        }
         String username;
         String password;
         String clientId;
+        String token;
 
         switch (userIndex) {
             case "LETTURA_SCRITTURA" -> {
                 username = raddCognitoUser1;
                 password = raddCognitoPasswordUser1;
                 clientId = raddCognitoClientIdUser1;
+                token = getTokenCognito(username, password, clientId);
             }
             case "SOLO_LETTURA" -> {
                 username = raddCognitoUser2;
                 password = raddCognitoPasswordUser2;
                 clientId = raddCognitoClientIdUser2;
+                token = getTokenCognito(username, password, clientId);
+            }
+            case "TOKEN_NON_VALIDO" -> {
+                token = "";
             }
             default -> throw new IllegalArgumentException("Indice utente non valido: " + userIndex);
         }
 
-
-        this.tokenCognito = getTokenCognito(username, password, clientId);
-        return this.tokenCognito;
+        tokenCache.put(userIndex, token);
+        this.tokenCognito = token;
+        return token;
     }
+
+
 
     private String getTokenCognito(String username, String password, String clientId) {
 
@@ -90,4 +107,5 @@ public class SettableAuthTokenRaddCognito {
         return token;
     }
 }
+
 

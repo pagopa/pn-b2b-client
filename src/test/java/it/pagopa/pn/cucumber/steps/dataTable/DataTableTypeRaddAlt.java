@@ -128,15 +128,19 @@ public class DataTableTypeRaddAlt {
 
         if (data.toLowerCase().contains("+")) {
             dataString = dateTimeFormatter.format(OffsetDateTime.now().plusDays(Long.parseLong(dataNumber)));
-        } else if (data.toLowerCase().contains("-")) {
+        } else if (data.toLowerCase().startsWith("-")) {
             dataString = dateTimeFormatter.format(OffsetDateTime.now().minusDays(Long.parseLong(dataNumber)));
         } else if (data.equalsIgnoreCase("now")) {
             dataString = dateTimeFormatter.format(OffsetDateTime.now());
         } else if (data.equalsIgnoreCase("formato errato")) {
             dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             dataString = dateTimeFormatter.format(OffsetDateTime.now());
+//        } else {
+//            // Se arriva qui, assumiamo che sia una data assoluta già valida: yyyy-MM-dd
+//            DateTimeFormatter standardFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//            LocalDate.parse(data, standardFormatter); // valida formato
+//            dataString = data;
         }
-
 
         return dataString;
     }
@@ -209,7 +213,11 @@ public class DataTableTypeRaddAlt {
                                         .collect(Collectors.toList()))
                                 .orElse(null)
                 )
-                .appointmentRequired(getValue(data, RADD_APPOINTMENT_REQUIRED.key) == null ? Boolean.FALSE : Boolean.TRUE)
+                //.appointmentRequired(getValue(data, RADD_APPOINTMENT_REQUIRED.key) == null ? Boolean.FALSE : Boolean.TRUE)
+                .appointmentRequired(
+                        getValue(data, RADD_APPOINTMENT_REQUIRED.key) != null &&
+                                !"false".equalsIgnoreCase(getValue(data, RADD_APPOINTMENT_REQUIRED.key))
+                )
                 .website(getValue(data, RADD_WEBSITE.key) == null ? null : setData(getValue(data, RADD_WEBSITE.key)));
 
         try {
