@@ -188,7 +188,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
       | radd_phoneNumbers     | +399858425136 |
-      | radd_externalCodes    | EXT08QA       |
+      | radd_externalCodes    | EXT09QAA      |
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
       | address_radd_row      | via roma       |
       | address_radd_cap      | 80133          |
@@ -196,7 +196,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city     | NAPOLI         |
       | radd_description      | descrizione    |
       | radd_phoneNumbers     | +399858425136  |
-      | radd_externalCodes    | EEXT08QA,EXT11 |
+      | radd_externalCodes    | EXT09QAA,EXT11 |
     Then l'operazione ha prodotto un errore con status code "409"
 
 
@@ -213,7 +213,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +39 9858425136          |
+      | radd_phoneNumbers         | +399858425136           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -253,7 +253,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +39 9858425136          |
+      | radd_phoneNumbers         | +399858425136           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -274,22 +274,22 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then l'operazione ha prodotto un errore con status code "400"
     #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
     Examples:
-      | N  | description | openingTime              | phoneNumbers                        | email                    | end_validity             | externalCodes             | appointment_required | website     |
+      | N  | description | openingTime | phoneNumbers                        | email                    | end_validity             | externalCodes             | appointment_required | website     |
       #| 1  | NULL        | Mo-Fr 09:00-13:00,15:00-18:00 | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 2  | NULL        | NULL                     | +390123456789,3921573273,3333333333 | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 3  | NULL        | NULL                     | +39 012 3456789                     | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 4  | NULL        | NULL                     | NULL                                | NULL                     | 21-03-2024               | NULL                      | NULL                 | NULL        |
-      | 5  | NULL        | NULL                     | NULL                                | NULL                     | 1998-01-01               | NULL                      | NULL                 | NULL        |
-      | 6  | NULL        | NULL                     | NULL                                | NULL                     | 2025-01-0A               | NULL                      | NULL                 | NULL        |
-      | 7  | NULL        | NULL                     | NULL                                | NULL                     | 2025-01                  | NULL                      | NULL                 | NULL        |
-      | 8  | NULL        | NULL                     | NULL                                | NULL                     | 2025/01/01               | NULL                      | NULL                 | NULL        |
-      | 9  | NULL        | NULL                     | NULL                                | mail@@esempio.it         | NULL                     | NULL                      | NULL                 | NULL        |
-      | 10 | NULL        | NULL                     | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | www.esempio |
-      | 11 | NULL        | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 12 | NULL        | NULL                     | !!"$%&£%'?^\s#!SG(£%%£%'            | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 13 | NULL        | NULL                     | NULL                                | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                     | NULL                      | NULL                 | NULL        |
-      | 14 | NULL        | NULL                     | NULL                                | NULL                     | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s#l | NULL                 | NULL        |
-      | 15 | NULL        | NULL                     | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                      | NULL                 | NULL        |
+      | 2  | NULL        | NULL        | +390123456789,3921573273,3333333333 | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      | 3  | NULL        | NULL        | +39 012 3456789                     | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      | 4  | NULL        | NULL        | NULL                                | NULL                     | 21-03-2024               | NULL                      | NULL                 | NULL        |
+      | 5  | NULL        | NULL        | NULL                                | NULL                     | 1998-01-01               | NULL                      | NULL                 | NULL        |
+      | 6  | NULL        | NULL        | NULL                                | NULL                     | 2025-01-0A               | NULL                      | NULL                 | NULL        |
+      | 7  | NULL        | NULL        | NULL                                | NULL                     | 2025-01                  | NULL                      | NULL                 | NULL        |
+      | 8  | NULL        | NULL        | NULL                                | NULL                     | 2025/01/01               | NULL                      | NULL                 | NULL        |
+      | 9  | NULL        | NULL        | NULL                                | mail@@esempio.it         | NULL                     | NULL                      | NULL                 | NULL        |
+      | 10 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | www.esempio |
+      #| 11 | NULL        | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      | 12 | NULL        | NULL        | !!"$%&£%'?^\s#!SG(£%%£%'            | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      | 13 | NULL        | NULL        | NULL                                | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                     | NULL                      | NULL                 | NULL        |
+      | 14 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s#l | NULL                 | NULL        |
+      | 15 | NULL        | NULL        | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                      | NULL                 | NULL        |
       #| 16 | A           | NULL                     | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
 
 
@@ -303,7 +303,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +39 9858425136          |
+      | radd_phoneNumbers         | +399858425136           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -337,7 +337,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +39 9858425136          |
+      | radd_phoneNumbers         | +399858425136           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -350,7 +350,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then viene modificato uno sportello Radd V2 con dati errati:
       | radd_description          | descrizione modificata     |
       | radd_openingTime          | tue=10:00-20:00#           |
-      | radd_phoneNumbers         | +39 9858425255             |
+      | radd_phoneNumbers         | +399858425255              |
       | radd_email                | test@examplemodificato.com |
       | radd_end_validity         | 2030-10-10                 |
       | radd_appointment_required | false                      |
@@ -361,6 +361,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
      #  ***CANCELLAZIONE ***
 
+  # solo per testing
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_Delete] Cancellazione sportello RADD per testing con parametri
     Given viene cancellato lo sportello Radd V2 appena inserito tramite locationId: "<locationId>" e partnerId: "<partnerId>" con errore
     Examples:
@@ -451,11 +452,34 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
   @raddAnagraficaV2 #rif srs 63 e 68
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_17] Lettura sedi Radd con limite di impaginazione e verifica campi valorizzati
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +399858425136 |
+      | radd_externalCodes    | EXT17AD       |
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +399858425136 |
+      | radd_externalCodes    | EXT17AC       |
     When viene richiesta la lista degli sportelli Radd V2 con dati:
-      | radd_filter_limit   | 3    |
+      | radd_filter_limit   | 1    |
       | radd_filter_lastKey | NULL |
-    And la response V2 deve contenere 3 items
+    And la response V2 deve contenere 1 items
     And la response registry V2 della lettura deve avere i campi "obbligatori" valorizzati
+    When viene richiesta la lista degli sportelli Radd V2 con dati:
+      | radd_filter_limit   | 100    |
+      | radd_filter_lastKey | NULL |
+  Then cancello i registriV2 con externalCode:
+    |EXT17AC|
+    |EXT17AD|
+
 
   @raddAnagraficaV2 #rif srs 64
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_19] Lettura sedi Radd con token non valido

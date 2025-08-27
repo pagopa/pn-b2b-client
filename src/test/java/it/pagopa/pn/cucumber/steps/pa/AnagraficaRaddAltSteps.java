@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import software.amazon.awssdk.regions.Region;
 
 import java.io.FileWriter;
@@ -79,7 +80,7 @@ public class AnagraficaRaddAltSteps {
     private UpdateRegistryRequestV2 updateRegistryRequestV2;
     private final SettableAuthTokenRaddCognito settableAuthTokenRaddCognito;
     //protected String xPagopaPnCxId = getDefaultValue(RADD_PN_CX_ID.key);
-    protected String xPagopaPnCxId = "QA-Test-2208";
+    protected String xPagopaPnCxId = "98765432109";
     protected String locationId;
     protected RegistryV2 registryV2Response;
 
@@ -159,18 +160,6 @@ public class AnagraficaRaddAltSteps {
                 response.getItems().isEmpty(),
                 "La lista di RegistryV2 restituita da retrieveRegistries è vuota"
         );
-//        assertThat(response.getItems())
-//                .as("Verifica che il locationId atteso sia presente nella lista di RegistryV2")
-//                .extracting(RegistryV2::getLocationId)
-//                .contains(locationId);
-
-//        Optional<RegistryV2> registry = response.getItems().stream()
-//                .filter(x -> locationId.equals(x.getLocationId()))
-//                .findFirst();
-//
-//        Assertions.assertTrue(registry.isPresent(), "Nessun RegistryV2 trovato con il locationId atteso");
-//
-//        RegistryV2 registryFound = registry.get();
 
         this.registryV2Response = response.getItems().stream()
                 .filter(x -> locationId.equals(x.getLocationId()))
@@ -233,6 +222,30 @@ public class AnagraficaRaddAltSteps {
         assertThat(actualCount)
                 .as("Il numero di items non corrisponde")
                 .isEqualTo(expectedCount);
+    }
+
+    @Then("cancello i registriV2 con externalCode:")
+    public void deleteRegistryV2ByexternalCode(List<String> externalCodes) {
+        GetRegistryResponseV2 response = this.getRegistryResponseV2;
+
+        for (String externalCode : externalCodes) {
+            Optional<RegistryV2> registryToDelete = response.getItems().stream()
+                    .filter(r -> r.getExternalCodes() != null && r.getExternalCodes().contains(externalCode))
+                    .findFirst();
+
+            if (registryToDelete.isPresent()) {
+                String locationIdTmp = registryToDelete.get().getLocationId();
+
+                try {
+                    vieneCancellatoSportelloRaddV2Parameter(locationIdTmp);
+                    System.out.println("Registry con locationId " + locationIdTmp + " eliminato (externalCode: " + externalCode + ").");
+                } catch (RestClientException e) {
+                    throw new RuntimeException("Errore durante la cancellazione del registry con locationId " + locationIdTmp, e);
+                }
+            } else {
+                throw new AssertionError("Nessun registry trovato con externalCode: " + externalCode);
+            }
+        }
     }
 
     @When("viene generato uno sportello Radd V2 con dati:")
