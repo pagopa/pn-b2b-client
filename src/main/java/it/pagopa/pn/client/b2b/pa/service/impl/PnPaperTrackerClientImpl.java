@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerAttemptApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerErrorApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerOutputApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerTrackingApi;
@@ -25,6 +26,7 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     private final PaperTrackerTrackingApi paperTrackerTrackingApi;
     private final PaperTrackerOutputApi paperTrackerOutputApi;
     private final PaperTrackerErrorApi paperTrackerErrorApi;
+    private final PaperTrackerAttemptApi paperTrackerAttemptApi;
 
     private final RestTemplate restTemplate;
     private final String paperTrackerBaseUrl;
@@ -33,9 +35,10 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     public PnPaperTrackerClientImpl(RestTemplate restTemplate, @Value("${pn.internal.delivery-push-base-url}") String paperTrackerBaseUrl) {
         this.restTemplate = restTemplate;
         this.paperTrackerBaseUrl = paperTrackerBaseUrl;
-        this.paperTrackerTrackingApi = new PaperTrackerTrackingApi(newApiClient(this.restTemplate, this.paperTrackerBaseUrl));
-        this.paperTrackerOutputApi = new PaperTrackerOutputApi(newApiClient(this.restTemplate, this.paperTrackerBaseUrl));
-        this.paperTrackerErrorApi = new PaperTrackerErrorApi(newApiClient(this.restTemplate, this.paperTrackerBaseUrl));
+        this.paperTrackerTrackingApi = new PaperTrackerTrackingApi(newApiClient(restTemplate, paperTrackerBaseUrl));
+        this.paperTrackerOutputApi = new PaperTrackerOutputApi(newApiClient(restTemplate, paperTrackerBaseUrl));
+        this.paperTrackerErrorApi = new PaperTrackerErrorApi(newApiClient(restTemplate, paperTrackerBaseUrl));
+        this.paperTrackerAttemptApi = new PaperTrackerAttemptApi(newApiClient(restTemplate, paperTrackerBaseUrl))
         ;
     }
 
@@ -58,5 +61,10 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     @Override
     public TrackingErrorsResponse retrieveTrackerErrors(TrackingsRequest trackingsRequest) {
         return paperTrackerErrorApi.retrieveTrackingErrors(trackingsRequest);
+    }
+
+    @Override
+    public TrackingsResponse retrieveTrackingsByAttemptId(String attemptId) {
+        return paperTrackerAttemptApi.retrieveTrackingsByAttemptId(attemptId);
     }
 }
