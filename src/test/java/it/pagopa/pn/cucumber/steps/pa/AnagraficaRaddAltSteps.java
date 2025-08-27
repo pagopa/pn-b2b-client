@@ -274,6 +274,7 @@ public class AnagraficaRaddAltSteps {
     @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
     public void vieneGeneratoConErroreSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
         try {
+            this.createRegistryRequestV2 = dataSportelloV2;
             RegistryV2 response = raddAltClientV2.addRegistry(xPagopaPnCxId, dataSportelloV2);
             this.registryV2Response = response;
         } catch (HttpStatusCodeException e) {
@@ -320,9 +321,13 @@ public class AnagraficaRaddAltSteps {
             this.registryV2Response = response;
             this.updateRegistryRequestV2 = aggiornamentoSportelloRadd;
 
+            log.info("Response Body:\n{}", response.toString());
+            log.info("Request Body:\n{}", aggiornamentoSportelloRadd.toString());
+
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             log.info("errore: {}", e.getStatusText());
+            log.info("Request Body:\n{}", aggiornamentoSportelloRadd.toString());
         }
     }
 
@@ -390,7 +395,7 @@ public class AnagraficaRaddAltSteps {
     public void vieneCancellatoSportelloRaddV2Parameter(String locationId) {
 
         String locationIdTmp = "NULL".equalsIgnoreCase(locationId) ? null : locationId;
-
+        log.info("location id to delete: {}", locationId);
         try {
             raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, locationIdTmp);
         } catch (HttpStatusCodeException e) {
@@ -408,6 +413,7 @@ public class AnagraficaRaddAltSteps {
             raddAltClientV2.deleteRegistryWithHttpInfo(partnerIdTmp, locationIdTmp);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
+
         }
     }
 
@@ -431,6 +437,38 @@ public class AnagraficaRaddAltSteps {
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
+    }
+
+    @Then("l'operazione Radd V2 ha prodotto un errore con status code {string}")
+    public void operationProducedAnError(String statusCode) {
+
+            HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+
+            String createRequestStr = (this.createRegistryRequestV2 != null)
+                    ? this.createRegistryRequestV2.toString()
+                    : "createRegistryRequestV2 is null";
+
+            String updateRequestStr = (this.updateRegistryRequestV2 != null)
+                    ? this.updateRegistryRequestV2.toString()
+                    : "updateRegistryRequestV2 is null";
+
+            String locationIdStr = (this.locationId != null)
+                    ? this.locationId.toString()
+                    : "locationId is null";
+
+            assertThat(httpStatusCodeException)
+                    .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla. "
+                                    + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
+                            createRequestStr, updateRequestStr, locationIdStr)
+                    .isNotNull();
+
+            String actualStatusCode = httpStatusCodeException.getStatusCode().toString().substring(0, 3);
+
+            assertThat(actualStatusCode)
+                    .as("Il codice di stato HTTP non corrisponde a quello atteso. Atteso: %s, Ottenuto: %s. "
+                                    + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
+                            statusCode, actualStatusCode, createRequestStr, updateRequestStr, locationIdStr)
+                    .isEqualTo(statusCode);
     }
 
     @Then("la response V2 deve aver restiutito in automatico startValidity odierno in formato yyyy-MM-dd")

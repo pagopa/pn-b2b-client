@@ -25,7 +25,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
   #  *** INSERIMENTO ***
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 1
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 1
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_1] Creazione nuova sede RADD con dati corretti
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -47,7 +47,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 2
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 2
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_2] Creazione nuova sede RADD con intero campo address mancante
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
@@ -55,10 +55,10 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description   | descrizione   |
       | radd_phoneNumbers  | +399858425136 |
       | radd_externalCodes | EXT02QA       |
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 3-4-5-6-7-8-9
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 3-4-5-6-7-8-9
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_3] Creazione nuova sede RADD senza campi obbligatori
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
@@ -69,7 +69,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description      | <descrizione>   |
       | radd_phoneNumbers     | <telefono>      |
       | radd_externalCodes    | <externalCodes> |
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
       | via      | cap   | provincia | citta  | descrizione | telefono      | externalCodes |
       | NULL     | 80133 | NA        | NAPOLI | descrizione | +399858425136 | EXT03QA       |
@@ -81,7 +81,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | via roma | 80133 | NA        | NAPOLI | descrizione | +399858425136 | NULL          |
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs dal 10 al 28 + dal 30 al 36
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs dal 10 al 28 + dal 30 al 36
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_4] Creazione nuova sede con campi non validi
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
@@ -99,7 +99,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_email            | <email>             |
       | radd_website          | <website>           |
       | radd_partner_type     | <partnertype>       |
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
       | via          | cap    | provincia | citta  | stato  | descrizione | telefono      | aperturaSportello | startValidity | endValidity | externalCode   | email                | website      | partnertype |
       | Ciao@mondo#1 | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA1       | NULL                 | NULL         | NULL        |
@@ -127,7 +127,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | https://.com | ĄŁĽ         |
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 29
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 29
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_5] Creazione nuova sede RADD con campo stratValidity vuoto e restituzione campo formattato correttamente
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -142,7 +142,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then la response V2 deve aver restiutito in automatico startValidity odierno in formato yyyy-MM-dd
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 37
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 37
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_6] Creazione nuova sede RADD con utente non abilitato alla scrittura
     Given Effettuo l'autenticazione per l' utente con permessi: "SOLO_LETTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
@@ -156,7 +156,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then l'operazione ha prodotto un errore con status code "403"
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 40
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 40
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_7] Creazione nuova sede RADD con dati corretti e controllo response
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -178,7 +178,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response registry V2 deve avere i campi "tutti" valorizzati
     #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs x
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs x
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_8] Creazione nuova sede RADD con ExternalCode già esistente
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -197,13 +197,13 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description      | descrizione    |
       | radd_phoneNumbers     | +399858425136  |
       | radd_externalCodes    | EXT09QAA,EXT11 |
-    Then l'operazione ha prodotto un errore con status code "409"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "409"
 
 
 
   #  *** MODIFICA ***
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 42 e 56
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 42 e 56
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_9] Modifica sportello RADD con dati corretti con verifica response
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -243,7 +243,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | website             | https://www.ex1.com        |
 
 
-  @raddAnagraficaV2 @deleteNewSite @webhook1 #rif srs 47, 49, 50, 51, 52, 54, 55
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 47, 49, 50, 51, 52, 54, 55
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_10] Modifica sportello RADD con dati non conformi
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -271,7 +271,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_externalCodes        | <externalCodes>        |
       | radd_appointment_required | <appointment_required> |
       | radd_website              | <website>              |
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
     Examples:
       | N  | description | openingTime | phoneNumbers                        | email                    | end_validity             | externalCodes             | appointment_required | website     |
@@ -293,7 +293,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       #| 16 | A           | NULL                     | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 43-44
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 43-44
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_11] Modifica sportello RADD con dati locationId non corretto
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -321,13 +321,13 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_end_validity         | 2030-10-10                 |
       | radd_appointment_required | false                      |
       | radd_website              | https://www.ex1.com        |
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
       | locationId |
       | NULL       |
       | CASUALE    |
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 39
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 39
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_12] Aggiornamento sportello RADD con utente abilitato a sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -369,7 +369,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       |            |           |
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 38
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 38
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_13] Cancellazione sportello RADD con utente abilitato a sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -386,7 +386,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 58
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 58
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_14] Cancellazione sportello RADD e verifica assenza in lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -404,7 +404,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then verifica che il locationId oggetto della cancellazione è "ASSENTE" nella response di lettura
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 59, 60
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 59, 60
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_15] Cancellazione sportello RADD con locationId non accettato
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -416,7 +416,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_phoneNumbers     | +399858425136   |
       | radd_externalCodes    | <externalCodes> |
     Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId: "<locationId>" con errore
-    Then l'operazione ha prodotto un errore con status code "403"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "403"
     Examples:
       | locationId                           | externalCodes |
       | ee95edab-9b74-4c46-9d69-2b6c8b3f5f82 | EXT15QA1      |
@@ -426,7 +426,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 61
+  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 61
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_16] Cancellazione sportello RADD da partenrId non associato al localId
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -449,7 +449,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
     # *** LETTURA ***
 
-  @raddAnagraficaV2 #rif srs 63 e 68
+  @raddAnagraficaV2 @cognito1 #rif srs 63 e 68
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_17] Lettura sedi Radd con limite di impaginazione e verifica campi valorizzati
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -481,7 +481,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     |EXT17AD|
 
 
-  @raddAnagraficaV2 #rif srs 64
+  @raddAnagraficaV2 @cognito1 #rif srs 64
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_19] Lettura sedi Radd con token non valido
     Given Effettuo l'autenticazione per l' utente con permessi: "TOKEN_NON_VALIDO"
     Then viene richiesta la lista degli sportelli Radd V2 con errore
@@ -490,7 +490,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And l'operazione ha prodotto un errore con status code "403"
 
 
-  @raddAnagraficaV2 @deleteNewSite #rif srs 66 e 67
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 66 e 67
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_18] inserimento sportello RADD con dati corretti
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
