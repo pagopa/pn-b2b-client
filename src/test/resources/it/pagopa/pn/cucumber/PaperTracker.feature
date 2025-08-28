@@ -59,31 +59,31 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | <physicalAddress> |
       | digitalDomicile         | NULL              |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+   # When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<physicalAddress>"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>" e iun "<iun>"
     Examples:
-      | sequence                 | physicalAddress              |
-      | OK_AR                    | Via@ok_AR                    |
-      | OK-Retry_AR              | Via@OK-Retry_AR              |
-      | FAIL-Discovery_AR        | Via@fail-Discovery_AR        |
-      | FAIL_AR                  | Via@fail_AR                  |
-      | FAIL-Irreperibile_AR     | Via@FAIL-IRREPERIBILE_AR     |
-      | OK-Giacenza_AR           | Via@OK-Giacenza_AR           |
-      | FAIL-Giacenza_AR         | Via@FAIL-Giacenza_AR         |
-      | FAIL-CompiutaGiacenza_AR | Via@FAIL-CompiutaGiacenza_AR |
-      | FAIL-CompiutaGiacenza_AR | Via@OK-NonRendicontabile_AR |
-      | FAIL-CompiutaGiacenza_AR | Via@OK-CausaForzaMaggiore_AR |
-      | FAIL-CompiutaGiacenza_AR | Via@FAIL_CON996_PCRETRY_FURTO_AR |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_AR_INVALID_DATETIME |
-      | FAIL-CompiutaGiacenza_AR | Via@KO_AR_NO_EVENT_B |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_AR_TIMESTAMP_ERR |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_AR_NOT_ORDERED |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_GIACENZA_AR_2 |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_GIACENZA_AR_3 |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_GIACENZA_AR_4 |
-      | FAIL-CompiutaGiacenza_AR | Via@OK_AR_BAD_EVENT |
+      | sequence                          | physicalAddress                   | iun                         |
+      | OK_AR                             | Via@ok_AR                         | VXAY-LYAJ-EQXH-202508-G-1   |
+      | OK-Retry_AR                       | Via@OK-Retry_AR                   | JNLR-MNUQ-TPJU-202508-K-1   |
+      | FAIL-Discovery_AR                 | Via@fail-Discovery_AR             | JXEL-RHJU-DGVW-202508-P-1   |
+      | FAIL_AR                           | Via@fail_AR                       | PYTX-MAKN-YUKE-202508-P-1   |
+      | FAIL-Irreperibile_AR              | Via@FAIL-IRREPERIBILE_AR          | JQME-DLVK-LNPM-202508-Y-1   |
+      | OK-Giacenza_AR                    | Via@OK-Giacenza_AR                | UJXL-GWNV-YTAN-202508-V-1   |
+      | FAIL-Giacenza_AR                  | Via@FAIL-Giacenza_AR              | RKQN-DVXQ-EPND-202508-T-1   |
+      | FAIL-CompiutaGiacenza_AR          | Via@FAIL-CompiutaGiacenza_AR      | VKTW-MZLP-RGRK-202508-W-1   |
+      | OK-NonRendicontabile_AR           | Via@OK-NonRendicontabile_AR       | GNWM-DTGQ-YLUL-202508-Z-1   |
+      | OK-CausaForzaMaggiore_AR          | Via@OK-CausaForzaMaggiore_AR      | LGUZ-XUGA-YJDJ-202508-V-1   |
+      | FAIL_CON996_PCRETRY_FURTO_AR      | Via@FAIL_CON996_PCRETRY_FURTO_AR  | LHQR-NQJD-VGAQ-202508-Y-1   |
+      | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        | XHWE-ZAJD-JAUE-202508-U-1   |
+      | KO_AR_NO_EVENT_B                  | Via@KO_AR_NO_EVENT_B              | VMQD-AYMK-LQTR-202508-Z-1   |
+      | OK_AR_TIMESTAMP_ERR               | Via@OK_AR_TIMESTAMP_ERR           | XGLY-VRGM-ZUPT-202508-M-1   |
+      | OK_AR_NOT_ORDERED                 | Via@OK_AR_NOT_ORDERED             | GJRQ-MPZK-KJKM-202508-M-1   |
+      | OK_GIACENZA_AR_2                  | Via@OK_GIACENZA_AR_2              | NUTU-ZKYA-VYQA-202508-K-1   |
+      | OK_GIACENZA_AR_3                  | Via@OK_GIACENZA_AR_3              | RJKP-JLPQ-DKJY-202508-J-1   |
+      | OK_GIACENZA_AR_4                  | Via@OK_GIACENZA_AR_4              | KYDH-QUMN-HERG-202508-D-1   |
+      | OK_AR_BAD_EVENT                   | Via@OK_AR_BAD_EVENT               | HKPV-MHWT-KALU-202508-R-1   |
 
-      | FAIL-Discovery_AR        | Via@ok_RIR        |
-      | FAIL-Discovery_AR        | Via@fail_RIR        |
-      | FAIL-Discovery_AR        | Via@OK-Retry_RIR        |
+      | ok_RIR                            | Via@ok_RIR                        | YNTA-EGXP-MLKN-202508-Q-1   |
+      | fail_RIR                          | Via@fail_RIR                      | NPLV-RWXM-JAKL-202508-D-1   |
+      | OK-Retry_RIR                      | Via@OK-Retry_RIR                  | KDRZ-UAED-MGVA-202508-P-1   |

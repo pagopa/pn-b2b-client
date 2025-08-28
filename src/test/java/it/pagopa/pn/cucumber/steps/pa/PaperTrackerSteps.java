@@ -199,16 +199,14 @@ public class PaperTrackerSteps {
             mapTracking.put(j, result2);
         }
 
-        Map<Integer, List<UtilityObject>> mapTrackingRir;
-        if (responseTracking.getTrackings().stream().flatMap(tr -> tr.getEvents().stream()).anyMatch(ev -> ev.getProductType().equals("RIR"))) {
-            for (int i=0; i < analogEventIds0.size(); i++) {
-                int finalI = i;
+//        Map<Integer, List<UtilityObject>> mapTrackingRir;
+//        if (responseTracking.getTrackings().stream().flatMap(tr -> tr.getEvents().stream()).anyMatch(ev -> ev.getProductType().equals("RIR"))) {
+//            for (int i=0; i < analogEventIds0.size(); i++) {
+//                int finalI = i;
 //                List<UtilityObject> result = paperTrackerClient.retrieveTrackingsByAttemptId(analogEventIds0.get(i)).getTrackings()
 //                mapTimeline.put(i, result);
-            }
-        }
-
-
+//            }
+//        }
 
 
         PaperTrackerOutputsResponse responseOutput = paperTrackerClient.retrieveTrackerOutputs(request);
@@ -233,28 +231,6 @@ public class PaperTrackerSteps {
             // LA RISPOSTA DI OUTPUTS NON CONTIENE TUTTI I DATI PRESENTI SULLA TIMELINE
             Assertions.assertEquals(sortedTimeline, sortedOutputs);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -359,16 +335,22 @@ public class PaperTrackerSteps {
      * 5) per ciascuno di essi invoco il metodo di b2bSteps "checkIfTimelineElementExists"
      */
 
-    @Then("si controlla che siano presenti tutti gli eventi relativi alla sequence {string}")
-    public void checkSequenceEventsOnPaperTracker(String sequenceName) {
-        log.info("Creata notifica con sequence: " + sequenceName + " e IUN: " + sharedSteps.getNotificationIun());
-//        Sequence sequence = Sequence.getByName(sequenceName);
-//        assertThat(sequence).as("Sequence inesistente: " + sequenceName).isNotNull();
-//
-//        for (String eventString : sequence.getEvents()) {
-//            Map<String, String> data = buildDataMap(eventString);
-//            b2bSteps.checkIfTimelineElementExists(data.get("eventCategory"), true, data);
-//        }
+    @Then("si controlla che siano presenti tutti gli eventi relativi alla sequence {string} e iun {string}")
+    public void checkSequenceEventsOnPaperTracker(String sequenceName, String iun) {
+        Sequence sequence = Sequence.getByName(sequenceName);
+        sharedSteps.setNotificationIun(iun);
+        assertThat(sequence).as("Sequence inesistente: " + sequenceName).isNotNull();
+
+        for (String eventString : sequence.getEvents()) {
+            Map<String, String> data = buildDataMap(eventString);
+            Matcher m = Pattern.compile("_COUNT_(\\d+)").matcher(eventString);
+            if (m.find()) {
+                b2bSteps.checkNumberOfTimelineElementsWithCategoryFromMap(data.get("eventCategory"), Integer.parseInt(m.group(1)), data);
+            }
+            else {
+                b2bSteps.checkIfTimelineElementExists(data.get("eventCategory"), true, data);
+            }
+        }
     }
 
     private Map<String, String> buildDataMap(String eventString) {
@@ -378,7 +360,7 @@ public class PaperTrackerSteps {
 
         int openBracketIndex = eventString.indexOf("[");
 
-        String deliveryDetailCode = eventString.replaceAll("_ATTEMPT_\\d+", "");
+        String deliveryDetailCode = eventString.replaceAll("_ATTEMPT_\\d+", "").replaceAll("_COUNT_\\d+", "");
         String failureCause = null;
         String docType = null;
 
