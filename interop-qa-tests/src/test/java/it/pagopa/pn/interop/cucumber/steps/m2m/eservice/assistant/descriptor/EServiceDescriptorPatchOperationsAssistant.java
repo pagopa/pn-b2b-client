@@ -42,4 +42,11 @@ public class EServiceDescriptorPatchOperationsAssistant extends
     protected EServiceDescriptor patchResource(Pair<UUID, UUID> uuid, EServiceDescriptorPatchRequest eServicePatchRequest) {
         return this.client.patchEServiceDescriptor(uuid.getLeft(), uuid.getRight(), eServicePatchRequest);
     }
+
+    @Override
+    protected EServiceDescriptor patchResourceWithNotValidToken(Pair<UUID, UUID> uuid, EServiceDescriptorPatchRequest eServiceDescriptorPatchRequest) {
+        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
+        this.client.setBearerToken(expiredToken);
+        return this.client.patchEServiceDescriptor(uuid.getLeft(), uuid.getRight(), eServiceDescriptorPatchRequest);
+    }
 }

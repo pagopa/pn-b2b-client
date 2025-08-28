@@ -77,11 +77,6 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     @Builder
     class EServiceNamePatchRequest {
         private String name;
-
-        // Ipotetico secondo campo, usato per simulare il caso in cui - per qualche motivo -
-        // l'api in questione non coinvolga solo il nome. La sua rimozione o modifica farà parte
-        // del processo di revisione det test a seguito del rilascio delle specifiche OpenAPI.
-        private String prettyName;
     }
 
     @Data

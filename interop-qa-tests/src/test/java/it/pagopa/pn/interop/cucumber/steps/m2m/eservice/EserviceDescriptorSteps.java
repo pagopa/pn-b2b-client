@@ -4,6 +4,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.authorization.service.M2MTokenService;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorPatchRequest;
@@ -21,6 +22,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
 
     private final IM2MEserviceDescriptorClient client;
     private final SharedStepsContext sharedStepsContext;
+    private final ClientTokenConfigurator clientTokenConfigurator;
 
     private final EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant;
 
@@ -30,6 +32,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant
     ) {
         super("descriptor", clientTokenConfigurator.getM2mEServiceDescriptorClient(), sharedStepsContext);
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.client = clientTokenConfigurator.getM2mEServiceDescriptorClient();
         this.sharedStepsContext = sharedStepsContext;
         this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
@@ -59,18 +62,50 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
 
     @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service")
     public void patchEServiceDescription() {
-        eServiceDescriptorPatchAssistant.patchResource(EServiceDescriptorPatchRequest.builder()
-            .voucherLifespan(100)
-            .dailyCallsTotal(10)
-            .dailyCallsPerConsumer(5)
-            .build());
+        EServiceDescriptorPatchRequest request = EServiceDescriptorPatchRequest.builder()
+                .voucherLifespan(100)
+                .dailyCallsTotal(10)
+                .dailyCallsPerConsumer(5)
+                .build();
+        eServiceDescriptorPatchAssistant.patchResource(request);
+        eServiceDescriptorPatchAssistant.patchResourceAAA(request);
+    }
+
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del descriptor dell'e-service")
+    public void patchEServiceDescriptorNotOwned(String tenant, M2MTokenService.M2MRole m2mRole) {
+        EServiceDescriptorPatchRequest request = EServiceDescriptorPatchRequest.builder()
+                .voucherLifespan(100)
+                .dailyCallsTotal(10)
+                .dailyCallsPerConsumer(5)
+                .build();
+
+
+
+        eServiceDescriptorPatchAssistant.patchResource(request);
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        clientTokenConfigurator.setBearerToken(token);
+        eServiceDescriptorPatchAssistant.patchResourceAAA(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service con token non valido")
+    public void patchEServiceDescriptionWithNotValidToken() {
+        EServiceDescriptorPatchRequest request = EServiceDescriptorPatchRequest.builder()
+                .voucherLifespan(100)
+                .dailyCallsTotal(10)
+                .dailyCallsPerConsumer(5)
+                .build();
+        eServiceDescriptorPatchAssistant.patchResource(request);
+        eServiceDescriptorPatchAssistant.patchResourceWithNotValidToken(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceDescriptionSubset() {
-        eServiceDescriptorPatchAssistant.patchResource(EServiceDescriptorPatchRequest.builder()
-            .voucherLifespan(200)
-            .build());
+        EServiceDescriptorPatchRequest request = EServiceDescriptorPatchRequest.builder()
+                .voucherLifespan(200)
+                .build();
+
+        eServiceDescriptorPatchAssistant.patchResource(request);
+        eServiceDescriptorPatchAssistant.patchResourceAAA(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del descriptor di un e-service inesistente")

@@ -36,7 +36,28 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         this.resourceMapper.copyPatchRequestToResource(patchRequest, expectedPatchedResource);
         resourceContext.setExpectedResource(expectedPatchedResource);
 
+    }
+
+    public void patchResourceAAA(PATCH_REQUEST patchRequest) {
+        RESOURCE_ID resourceId = this.getResourceId();
+
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+        this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
+    }
+
+    /* di solito associato a step del tipo
+     * "l'utente tenta di effettuare la modifica parziale di ..." */
+    public void patchResourceWithNotValidToken(PATCH_REQUEST patchRequest) {
+        RESOURCE_ID resourceId = this.getResourceId();
+
+        RESOURCE originalResource = this.getResource(resourceId);
+        resourceContext.setOriginalResource(originalResource);
+
+        RESOURCE expectedPatchedResource = this.resourceMapper.copyResource(originalResource);
+        this.resourceMapper.copyPatchRequestToResource(patchRequest, expectedPatchedResource);
+        resourceContext.setExpectedResource(expectedPatchedResource);
+
+        httpExecutor.performCall(() -> this.patchResourceWithNotValidToken(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
     }
 
@@ -103,6 +124,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     protected abstract PATCH_REQUEST buildDefaultPatchRequest();
 
     protected abstract RESOURCE patchResource(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
+    protected abstract RESOURCE patchResourceWithNotValidToken(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
 
     protected abstract RESOURCE_ID randomResourceId();
 }

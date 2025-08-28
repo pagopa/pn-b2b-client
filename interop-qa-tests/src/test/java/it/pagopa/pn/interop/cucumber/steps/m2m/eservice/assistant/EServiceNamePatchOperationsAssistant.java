@@ -39,4 +39,11 @@ public class EServiceNamePatchOperationsAssistant extends EServiceGenericPatchOp
         return this.client.patchEServiceName(uuid, patchRequest);
     }
 
+    @Override
+    protected EService patchResourceWithNotValidToken(UUID uuid, EServiceNamePatchRequest eServiceNamePatchRequest) {
+        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
+        this.client.setBearerToken(expiredToken);
+        return this.client.patchEServiceName(uuid, eServiceNamePatchRequest);
+    }
+
 }

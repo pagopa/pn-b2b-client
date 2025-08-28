@@ -12,6 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDelegationUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
@@ -143,6 +144,8 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     public EService patchEService(UUID eServiceId, EServicePatchRequest body) {
         // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
         //  metodo nel client da chiamare
+        eservicesApi.updateDraftEService(eServiceId, new EServiceDraftUpdateSeed().technology(body.getTechnology())
+                .isSignalHubEnabled(body.getIsSignalHubEnabled()));
         return null;
     }
 

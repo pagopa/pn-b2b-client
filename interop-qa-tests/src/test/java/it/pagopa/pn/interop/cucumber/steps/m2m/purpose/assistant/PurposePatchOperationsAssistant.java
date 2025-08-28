@@ -2,7 +2,9 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
+import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
+import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.PurposeMapper;
@@ -37,6 +39,12 @@ public class PurposePatchOperationsAssistant extends PurposeGenericPatchOperatio
 
     @Override
     protected Purpose patchResource(UUID uuid, PurposePatchRequest eServicePatchRequest) {
+        return this.client.patchPurpose(uuid, eServicePatchRequest);
+    }
+
+    protected Purpose patchResourceWithNotValidToken(UUID uuid, PurposePatchRequest eServicePatchRequest) {
+        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
+        this.client.setBearerToken(expiredToken);
         return this.client.patchPurpose(uuid, eServicePatchRequest);
     }
 }
