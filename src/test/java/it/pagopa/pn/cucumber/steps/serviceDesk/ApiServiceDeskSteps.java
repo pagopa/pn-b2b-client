@@ -38,6 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +66,7 @@ public class ApiServiceDeskSteps {
     private final NotificationRequest notificationRequest;
     private final AnalogAddress analogAddress;
     private final CreateOperationRequest createOperationRequest;
-    private final CreateActOperationRequest createActOperationRequest;
+    private   CreateActOperationRequest createActOperationRequest;
     private final VideoUploadRequest videoUploadRequest;
     private final SearchNotificationRequest searchNotificationRequest;
     private final ApplicationContext ctx;
@@ -103,6 +104,8 @@ public class ApiServiceDeskSteps {
     private NotificationDocument notificationDocument;
     private SearchResponse searchResponse;
 
+    private String operationId;
+    private String statusOperationResponse;
 
     @Autowired
     public ApiServiceDeskSteps(SharedSteps sharedSteps, RestTemplate restTemplate, ApplicationContext ctx,
@@ -258,23 +261,11 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @When("viene invocato il servizio CREATE_ACT_OPERATION")
-    public void callCreateActOperation() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                operationsResponse = ipServiceDeskClient.createActOperation(createActOperationRequest);
-            });
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
     @Then("la risposta del servizio CREATE_OPERATION risponde con esito positivo")
     public void verifyCreateOperationResponse() {
         String idOperation = operationsResponse.getOperationId();
         Assertions.assertNotNull(idOperation);
+        this.operationId = idOperation;
         log.info("L'operation di creato per il CF:" + createOperationRequest.getTaxId() + " " + idOperation);
     }
 
@@ -1581,6 +1572,95 @@ public class ApiServiceDeskSteps {
         } else if (addressType.equals("legale")) {
             return data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
         } else throw new IllegalArgumentException("addressType not valid");
+    }
+
+
+
+
+    // Call center evoluto nuovo sviluppo
+
+
+    @Given("viene popolata una richiesta di creazione Act operation con i seguenti dati")
+    public void costruisciRichiestaDaMappa(Map<String, String> data) {
+        CreateActOperationRequest request = new CreateActOperationRequest();
+
+        request.setTicketId(getValue(data, "ticketId"));
+        request.setTicketOperationId(getValue(data, "ticketOperationId"));
+        request.setTaxId(getValue(data, "taxId"));
+        request.setIun(getValue(data, "iun"));
+        request.setTicketDate(getValue(data, "ticketDate"));
+        request.setVrDate(getValue(data, "vrDate"));
+
+        String addressType = getValue(data, "addressType");
+        String addressValue = getValue(data, "addressValue");
+
+        if (addressType != null && addressValue != null) {
+            ActDigitalAddress address = new ActDigitalAddress();
+            address.setType(addressType);
+            address.setAddress(addressValue);
+            request.setAddress(address);
+        } else {
+            request.setAddress(null);
+        }
+        createActOperationRequest  = request;
+
+}
+
+    public static String getValue(Map<String, String> data, String key) {
+        if (data.containsKey(key)) {
+            return "null".equalsIgnoreCase(data.get(key)) ? null : data.get(key);
+        } else {
+            return null;
+        }
+    }
+
+    @When("viene invocato il servizio CREATE_ACT_OPERATION")
+    public void callCreateActOperation() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                operationsResponse = ipServiceDeskClient.createActOperation(createActOperationRequest);
+                operationId = operationsResponse.getOperationId();
+            });
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @Then("ti tenta la chiamata di creazione Act Operation con errore")
+    public void createActOperationWithError() {
+        try {
+            operationsResponse = ipServiceDeskClient.createActOperation(createActOperationRequest);
+        } catch (HttpStatusCodeException exception) {
+            this.notificationError = exception;
+        }
+
+    }
+
+    @Then("viene recuperato lo stato dell' operazione tramite operation id")
+    public void getStatusOperationResponse() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                statusOperationResponse = ipServiceDeskClient.getOperationStatus(operationId);
+            });
+            threadWait(getWorkFlowWait());
+            Assertions.assertNotNull(operationsResponse);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @Then("si tenta di recuperare lo stato dell' operazione tramite operation id: {string} con errore")
+    public void getStatusOperationWithError(String operationId) {
+        try {
+            String operationStatus = ipServiceDeskClient.getOperationStatus(operationId);
+        } catch (HttpStatusCodeException exception) {
+            this.notificationError = exception;
+        }
+
     }
 
 }

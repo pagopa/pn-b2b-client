@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -77,6 +78,11 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
 
     public SearchResponse searchOperationsFromTaxId(SearchNotificationRequest searchNotificationRequest){
          return operation.searchOperationsFromTaxId(operatorId, searchNotificationRequest);
+    }
+
+
+    public String getOperationStatus(String operationId) {
+        return operation.getOperationStatus(operationId);
     }
 
     //Integration Cruscotto Assistenza....

@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.service;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import org.springframework.web.client.RestClientException;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface IPServiceDeskClientImpl {
     OperationsResponse createActOperation(CreateActOperationRequest createActOperationRequest);
     VideoUploadResponse presignedUrlVideoUpload(String operationid, VideoUploadRequest videoUploadRequest);
     SearchResponse searchOperationsFromTaxId(SearchNotificationRequest searchNotificationRequest);
+    String getOperationStatus(String operationId);
     //Integration Cruscotto Assistenza....
     ResponseApiKeys getApiKeys(String paId) throws RestClientException;
     DocumentsResponse getDocumentsOfIUN(String iun, DocumentsRequest documentsRequest) throws RestClientException;

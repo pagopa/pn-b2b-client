@@ -1060,5 +1060,45 @@ Feature: Api Service Desk
       | TMTTMS92M57G793P | CICCIO PASTICCIO | SIGN.    | Via@FAIL-Irreperibile_AR | Via@ok_RS | INTERNO 2   | 80100 | 80121 | NAPOLI | SOCCAVO | NA | ITALIA  |
 
 
+  @CallCenterEvoluto
+  Scenario Outline: [E2E_] Chiamata adi creazione Act operation con campi obbligatori null
+    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | <ticketId>          |
+      | ticketOperationId | <ticketOperationId> |
+      | taxId             | <taxId>             |
+      | iun               | <iun>               |
+      | ticketDate        | <ticketDate>        |
+      | vrDate            | <vrDate>            |
+      | addressType       | <addressType>       |
+      | addressValue      | <addressValue>      |
+    Then ti tenta la chiamata di creazione Act Operation con errore
+    And il servizio risponde con errore "400"
+    Examples:
+      | ticketId | ticketOperationId | taxId | iun | ticketDate | vrDate | addressType | addressValue |
+
+
+  @CallCenterEvoluto
+  Scenario: [E2E_] Chiamata adi creazione Act operation con esito positivo
+    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          |  |
+      | ticketOperationId |  |
+      | taxId             |  |
+      | iun               |  |
+      | ticketDate        |  |
+      | vrDate            |  |
+      | addressType       |  |
+      | addressValue      |  |
+    Then viene invocato il servizio CREATE_ACT_OPERATION
+    And la risposta del servizio CREATE_OPERATION risponde con esito positivo
+
+
+
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_ACT_OPERATION con "<CF>"
+
+    And viene recuperato lo stato dell' operazione tramite operation id
+
+    And si tenta di recuperare lo stato dell' operazione tramite operation id: "" con errore
+    And il servizio risponde con errore "404"
+
 
 
