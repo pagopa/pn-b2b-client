@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegrat
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.api.ProfileApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +24,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
     //Call Center Evoluto....
     private final NotificationApi notification;
     private final OperationApi operation;
+    private final OperationApi operationApiWithInvalidApiKey;
     //Integration Cruscotto Assistenza....
     private final ApiKeysApi apiKeysApi;
     private final NotificationAndMessageApi notificationAndMessageApi;
@@ -37,6 +39,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         //Call Center Evoluto....
         this.notification = new NotificationApi(newApiClient( restTemplate, deliveryBasePath,apiKeyBase));
         this.operation = new OperationApi(newApiClient( restTemplate, deliveryBasePath,apiKeyBase));
+        this.operationApiWithInvalidApiKey = new OperationApi(newApiClient( restTemplate, deliveryBasePath,"invalid-api-key"));
         //Integration Cruscotto Assistenza....
         this.apiKeysApi = new ApiKeysApi(newApiClientIntegration( restTemplate, deliveryBasePath, apiKeyBase));
         this.notificationAndMessageApi = new NotificationAndMessageApi(newApiClientIntegration( restTemplate, deliveryBasePath, apiKeyBase));
@@ -72,17 +75,36 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         return operation.createActOperation(operatorId, createActOperationRequest);
     }
 
+    @Override
+    public ResponseEntity<OperationsResponse> createActOperationWithHttpInfo(CreateActOperationRequest createActOperationRequest) {
+        return operation.createActOperationWithHttpInfo(operatorId, createActOperationRequest);
+    }
+
     public VideoUploadResponse presignedUrlVideoUpload(String operationid, VideoUploadRequest videoUploadRequest){
         return operation.presignedUrlVideoUpload(operatorId, operationid, videoUploadRequest);
+    }
+
+    @Override
+    public ResponseEntity<VideoUploadResponse> presignedUrlVideoUploadWithHttpInfo(String operationid, VideoUploadRequest videoUploadRequest) {
+        return operation.presignedUrlVideoUploadWithHttpInfo(operatorId, operationid, videoUploadRequest);
     }
 
     public SearchResponse searchOperationsFromTaxId(SearchNotificationRequest searchNotificationRequest){
          return operation.searchOperationsFromTaxId(operatorId, searchNotificationRequest);
     }
 
-
     public String getOperationStatus(String operationId) {
         return operation.getOperationStatus(operationId);
+    }
+
+    @Override
+    public ResponseEntity<String> getOperationStatusWithHttpInfo(String operationId) {
+        return operation.getOperationStatusWithHttpInfo(operationId);
+    }
+
+    @Override
+    public ResponseEntity<String> getOperationStatusWithHttpInfoAndInvalidApiKey(String operationId) {
+        return operationApiWithInvalidApiKey.getOperationStatusWithHttpInfo(operationId);
     }
 
     //Integration Cruscotto Assistenza....

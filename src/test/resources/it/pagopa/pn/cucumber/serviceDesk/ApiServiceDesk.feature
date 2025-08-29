@@ -1060,45 +1060,127 @@ Feature: Api Service Desk
       | TMTTMS92M57G793P | CICCIO PASTICCIO | SIGN.    | Via@FAIL-Irreperibile_AR | Via@ok_RS | INTERNO 2   | 80100 | 80121 | NAPOLI | SOCCAVO | NA | ITALIA  |
 
 
-  @CallCenterEvoluto
-  Scenario Outline: [E2E_] Chiamata adi creazione Act operation con campi obbligatori null
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Chiamata createActOperation (Scenario 2, 3)
     Given viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | <ticketId>          |
-      | ticketOperationId | <ticketOperationId> |
-      | taxId             | <taxId>             |
-      | iun               | <iun>               |
-      | ticketDate        | <ticketDate>        |
-      | vrDate            | <vrDate>            |
-      | addressType       | <addressType>       |
-      | addressValue      | <addressValue>      |
-    Then ti tenta la chiamata di creazione Act Operation con errore
-    And il servizio risponde con errore "400"
+      | ticketId          | <ticketId>     |
+      | ticketOperationId | auto           |
+      | taxId             | <taxId>        |
+      | addressType       | <addressType>  |
+      | addressValue      | <addressValue> |
+    Then viene invocata l'api "CREATE_ACT_OPERATION"
+    And il servizio risponde con <statusCode>
     Examples:
-      | ticketId | ticketOperationId | taxId | iun | ticketDate | vrDate | addressType | addressValue |
+      | ticketId | taxId            | addressType  | addressValue | statusCode |
+      | auto     | TMTTMS92M57G793P | test@test.it | COURTESY     | 201        |
+      | auto     | null             | null         | null         | 400        |
+      | null     | TMTTMS92M57G793P | null         | null         | 400        |
+      | null     | null             | test@test.it | COURTESY     | 400        |
 
-
-  @CallCenterEvoluto
-  Scenario: [E2E_] Chiamata adi creazione Act operation con esito positivo
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Verifica stato operazione (Scenario 4)
     Given viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          |  |
-      | ticketOperationId |  |
-      | taxId             |  |
-      | iun               |  |
-      | ticketDate        |  |
-      | vrDate            |  |
-      | addressType       |  |
-      | addressValue      |  |
-    Then viene invocato il servizio CREATE_ACT_OPERATION
-    And la risposta del servizio CREATE_OPERATION risponde con esito positivo
+      | ticketId          | <ticketId>     |
+      | ticketOperationId |                |
+      | taxId             | <taxId>        |
+      | iun               |                |
+      | ticketDate        |                |
+      | vrDate            |                |
+      | addressType       | <addressType>  |
+      | addressValue      | <addressValue> |
+    Then viene invocata l'api "GET_ACT_OPERATION_STATUS"
+    And il servizio risponde con <statusCode>
+    And l'operazione è in stato "PENDING"
+    Examples:
+      | ticketId | taxId | addressType | addressValue | statusCode |
+      | valid    | valid | valid       | valid        | 200        |
+
+  @CallCenterEvolutoViaMail
+  Scenario: [E2E_] Verifica stato operazione con operationId inesistente (Scenario 5)
+    Given viene settato l'operationId a "valore_inesistente"
+    Then viene invocata l'api "GET_ACT_OPERATION_STATUS"
+    And il servizio risponde con 404
+
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Verifica stato operazione con api-key invalida (Scenario 6)
+    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | <ticketId>     |
+      | ticketOperationId |                |
+      | taxId             | <taxId>        |
+      | iun               |                |
+      | ticketDate        |                |
+      | vrDate            |                |
+      | addressType       | <addressType>  |
+      | addressValue      | <addressValue> |
+    Then viene invocata l'api "GET_ACT_OPERATION_STATUS_INVALID_API_KEY"
+    And il servizio risponde con <statusCode>
+    Examples:
+      | ticketId | taxId | addressType | addressValue | statusCode |
+      | valid    | valid | valid       | valid        | 403        |
+
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Upload video riconoscimento utente (Scenario 7, 11)
+    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | <ticketId>     |
+      | ticketOperationId |                |
+      | taxId             | <taxId>        |
+      | iun               |                |
+      | ticketDate        |                |
+      | vrDate            |                |
+      | addressType       | <addressType>  |
+      | addressValue      | <addressValue> |
+    When viene invocata l'api "CREATE_ACT_OPERATION"
+    And il servizio risponde con 201
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 201
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    Then viene invocata l'api "GET_ACT_OPERATION_STATUS"
+    And il servizio risponde con 200
+    And l'operazione è in stato "OK"
+    Examples:
+      | ticketId | taxId | addressType | addressValue |
+      | valid    | valid | valid       | valid        |
+
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Verifica stato operazione con operationId inesistente (Scenario 8, 9)
+    Given viene settato l'operationId a <operationId>
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con <statusCode>
+    Examples:
+      | operationId          | statusCode |
+      | "valore_inesistente" | 404        |
+      | "valore_nullo"       | 400        |
+
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Upload secondo video riconoscimento utente (Scenario 10)
+    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | <ticketId>     |
+      | ticketOperationId |                |
+      | taxId             | <taxId>        |
+      | iun               |                |
+      | ticketDate        |                |
+      | vrDate            |                |
+      | addressType       | <addressType>  |
+      | addressValue      | <addressValue> |
+    When viene invocata l'api "CREATE_ACT_OPERATION"
+    And il servizio risponde con 201
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 201
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 400
+    Examples:
+      | ticketId | taxId | addressType | addressValue |
+      | valid    | valid | valid       | valid        |
 
 
 
-    Given viene creata una nuova richiesta per invocare il servizio CREATE_ACT_OPERATION con "<CF>"
-
-    And viene recuperato lo stato dell' operazione tramite operation id
-
-    And si tenta di recuperare lo stato dell' operazione tramite operation id: "" con errore
-    And il servizio risponde con errore "404"
 
 
 

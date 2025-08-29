@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -36,10 +37,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -105,6 +103,7 @@ public class ApiServiceDeskSteps {
     private SearchResponse searchResponse;
 
     private String operationId;
+    private ResponseEntity httpResponse;
     private String statusOperationResponse;
 
     @Autowired
@@ -207,11 +206,6 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con {string}")
     public void createOperationReq(String cf) {
         createOperationRequestSteps(cf);
-    }
-
-    @Given("viene creata una nuova richiesta per invocare il servizio CREATE_ACT_OPERATION con {string}")
-    public void createActOperationReq(String cf) {
-        createActOperationRequestSteps(cf);
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con {string} {string} {string}")
@@ -1139,7 +1133,8 @@ public class ApiServiceDeskSteps {
         createOperationRequest.setAddress(analogAddress);
     }
 
-    private void createActOperationRequestSteps(String cf) {
+    private CreateActOperationRequest createActOperationRequestSteps(String cf) {
+        final CreateActOperationRequest createActOperationRequest = new CreateActOperationRequest();
         log.info("CF:" + cf);
         createActOperationRequest.setTaxId(cf);
         String ticketId = getPrefixedRandomAlphaNumeric(12);
@@ -1149,6 +1144,7 @@ public class ApiServiceDeskSteps {
         log.info("ticketOperationId:" + ticketOperationId);
         createActOperationRequest.setTicketOperationId(ticketOperationId);
         createActOperationRequest.setAddress(new ActDigitalAddress().address("test@test.it").type("COURTESY"));
+        return createActOperationRequest;
     }
 
     private void createPreUploadVideoRequestDocumentSteps() throws Exception {
@@ -1579,20 +1575,46 @@ public class ApiServiceDeskSteps {
 
     // Call center evoluto nuovo sviluppo
 
+    @Then("il servizio risponde con {int}")
+    public void verifyCreateOperationResponse(Integer expected) {
+        Assertions.assertNotNull(httpResponse);
+        Integer statusCode = this.httpResponse.getStatusCodeValue();
+        Assertions.assertEquals(expected, statusCode);
+    }
+
+    @Given("viene creata una nuova richiesta per invocare il servizio CREATE_ACT_OPERATION con cf: {string}")
+    public void createActOperationReq(String cf) {
+        this.createActOperationRequest = createActOperationRequestSteps(cf);
+    }
+
 
     @Given("viene popolata una richiesta di creazione Act operation con i seguenti dati")
     public void costruisciRichiestaDaMappa(Map<String, String> data) {
+        String taxId = getValue(data, "ticketId");
+        Assertions.assertNotNull(taxId);
+
+        final CreateActOperationRequest precompiled = createActOperationRequestSteps(taxId);
         CreateActOperationRequest request = new CreateActOperationRequest();
 
-        request.setTicketId(getValue(data, "ticketId"));
-        request.setTicketOperationId(getValue(data, "ticketOperationId"));
+        // Obbligatori
+        // Automatizzabili
+        String ticketId = getValue(data, "ticketId");
+        request.setTicketId(ticketId != null && ticketId.equalsIgnoreCase("auto") ? precompiled.getTicketId() : ticketId);
+
+        // Non automatizzabili
         request.setTaxId(getValue(data, "taxId"));
+        String addressType = getValue(data, "addressType");
+        String addressValue = getValue(data, "addressValue");
+
+        // Opzionali
+        // Automatizzabili
+        String ticketOpId = getValue(data, "ticketOperationId");
+        request.setTicketOperationId(ticketOpId != null && ticketOpId.equalsIgnoreCase("auto") ? precompiled.getTicketOperationId() : ticketOpId);
+
+        // Non automatizzabili
         request.setIun(getValue(data, "iun"));
         request.setTicketDate(getValue(data, "ticketDate"));
         request.setVrDate(getValue(data, "vrDate"));
-
-        String addressType = getValue(data, "addressType");
-        String addressValue = getValue(data, "addressValue");
 
         if (addressType != null && addressValue != null) {
             ActDigitalAddress address = new ActDigitalAddress();
@@ -1614,53 +1636,54 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @When("viene invocato il servizio CREATE_ACT_OPERATION")
-    public void callCreateActOperation() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                operationsResponse = ipServiceDeskClient.createActOperation(createActOperationRequest);
+    @When("viene invocata l'api {string}")
+    public void createActOperation(String api){
+        switch (api.toUpperCase()){
+            case "CREATE_ACT_OPERATION" -> {
+                this.httpResponse = ipServiceDeskClient.createActOperationWithHttpInfo(createActOperationRequest);
+                operationsResponse = maybeBody(httpResponse.getBody(), OperationsResponse.class).orElseThrow(() -> new AssertionError("Body assente ma è richiesto"));
+                Assertions.assertNotNull(operationsResponse.getOperationId(), "OperationId nullo nella response di CREATE_ACT_OPERATION");
                 operationId = operationsResponse.getOperationId();
-            });
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    @Then("ti tenta la chiamata di creazione Act Operation con errore")
-    public void createActOperationWithError() {
-        try {
-            operationsResponse = ipServiceDeskClient.createActOperation(createActOperationRequest);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
-
-    }
-
-    @Then("viene recuperato lo stato dell' operazione tramite operation id")
-    public void getStatusOperationResponse() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                statusOperationResponse = ipServiceDeskClient.getOperationStatus(operationId);
-            });
-            threadWait(getWorkFlowWait());
-            Assertions.assertNotNull(operationsResponse);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    @Then("si tenta di recuperare lo stato dell' operazione tramite operation id: {string} con errore")
-    public void getStatusOperationWithError(String operationId) {
-        try {
-            String operationStatus = ipServiceDeskClient.getOperationStatus(operationId);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
+            }
+            case "GET_ACT_OPERATION_STATUS" -> {
+                this.httpResponse = ipServiceDeskClient.getOperationStatusWithHttpInfo(operationId);
+                statusOperationResponse = maybeBody(httpResponse.getBody(), String.class).orElseThrow(() -> new AssertionError("Body assente ma è richiesto"));
+                Assertions.assertFalse(statusOperationResponse.isBlank(), "Lo status dell'operazione è vuoto");
+            }
+            case "GET_ACT_OPERATION_STATUS_INVALID_API_KEY"-> {
+                this.httpResponse = ipServiceDeskClient.getOperationStatusWithHttpInfoAndInvalidApiKey(operationId);
+                statusOperationResponse = maybeBody(httpResponse.getBody(), String.class).orElse(null);
+            }
+            case "UPLOAD_VIDEO" -> {
+                String opId = (operationsResponse != null) ? operationsResponse.getOperationId() : operationId;
+                Assertions.assertNotNull(opId, "operationId mancante: chiama prima CREATE_ACT_OPERATION o imposta operationId");
+                this.httpResponse = ipServiceDeskClient.presignedUrlVideoUploadWithHttpInfo(opId, videoUploadRequest);
+                videoUploadResponse = (VideoUploadResponse) httpResponse.getBody();
+                videoUploadResponse = maybeBody(httpResponse.getBody(), VideoUploadResponse.class).orElseThrow(() -> new AssertionError("Body assente ma è richiesto"));
+                //Assertions.assertNotNull(videoUploadResponse.getUrl(), "UploadUrl nullo nella response di UPLOAD_VIDEO");
+            }
+            default -> Assertions.fail("Invalid operation");
         }
 
     }
+
+    private <T> Optional<T> maybeBody(Object body, Class<T> expectedType) {
+        if (body == null) return Optional.empty();
+        Assertions.assertTrue(expectedType.isInstance(body),
+                "Tipo body inatteso: " + "atteso " + expectedType.getSimpleName()
+                        + ", ottenuto " + body.getClass().getSimpleName());
+        return Optional.of(expectedType.cast(body));
+    }
+
+    @Given("viene settato l'operationId a {string}")
+    public void setOperationId(String operationId){
+        this.operationId = operationId;
+    }
+
+    @Then("l'operazione è in stato {string}")
+   public void checkOperationActStatus(String status){
+        Assertions.assertNotNull(status);
+        Assertions.assertEquals(status.toUpperCase(), statusOperationResponse.toUpperCase());
+   }
 
 }
