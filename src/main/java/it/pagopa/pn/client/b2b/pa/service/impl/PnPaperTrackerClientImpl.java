@@ -1,7 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerAttemptApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerErrorApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerOutputApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.api.PaperTrackerTrackingApi;
@@ -26,7 +25,6 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     private final PaperTrackerTrackingApi paperTrackerTrackingApi;
     private final PaperTrackerOutputApi paperTrackerOutputApi;
     private final PaperTrackerErrorApi paperTrackerErrorApi;
-    private final PaperTrackerAttemptApi paperTrackerAttemptApi;
 
     private final RestTemplate restTemplate;
     private final String paperTrackerBaseUrl;
@@ -38,8 +36,6 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
         this.paperTrackerTrackingApi = new PaperTrackerTrackingApi(newApiClient(restTemplate, paperTrackerBaseUrl));
         this.paperTrackerOutputApi = new PaperTrackerOutputApi(newApiClient(restTemplate, paperTrackerBaseUrl));
         this.paperTrackerErrorApi = new PaperTrackerErrorApi(newApiClient(restTemplate, paperTrackerBaseUrl));
-        this.paperTrackerAttemptApi = new PaperTrackerAttemptApi(newApiClient(restTemplate, paperTrackerBaseUrl))
-        ;
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
@@ -64,7 +60,7 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     }
 
     @Override
-    public TrackingsResponse retrieveTrackingsByAttemptId(String attemptId) {
-        return paperTrackerAttemptApi.retrieveTrackingsByAttemptId(attemptId);
+    public TrackingsResponse retrieveTrackingsByAttemptId(String attemptId, String pcRetry) {
+        return paperTrackerTrackingApi.retrieveTrackingsByAttemptId(attemptId, pcRetry);
     }
 }

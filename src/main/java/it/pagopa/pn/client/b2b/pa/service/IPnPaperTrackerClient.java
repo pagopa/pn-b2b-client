@@ -17,5 +17,5 @@ public interface IPnPaperTrackerClient {
     TrackingErrorsResponse retrieveTrackerErrors(TrackingsRequest trackingsRequest);
 
     //PaperTrackerAttemptApi
-    TrackingsResponse retrieveTrackingsByAttemptId(String attemptId);
+    TrackingsResponse retrieveTrackingsByAttemptId(String attemptId, String pcRetry);
 }
