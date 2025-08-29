@@ -48,6 +48,8 @@ Feature: Resa al mittente di una notifica
       | OK_AR_TIMESTAMP_ERR           | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR              |  SEQUENCE_VALIDATION  | DGZM-UTVT-WRHX-202508-H-1 |
       | OK_AR_NOT_ORDERED             | Via@OK_AR_NOT_ORDERED             | TRACKING_ID_NOT_FOUND   |  SEQUENCE_VALIDATION  | HYEV-LDKQ-LHEL-202508-T-1 |
       | OK_AR_BAD_EVENT               | Via@OK_AR_BAD_EVENT               | TRACKING_ID_NOT_FOUND   |  SEQUENCE_VALIDATION  | DETN-UGHR-LHDQ-202508-P-1 |
+      | OK_AR_NO_EVENT_B               | Via@OK_AR_NO_EVENT_B             | TRACKING_ID_NOT_FOUND   |  SEQUENCE_VALIDATION  | DETN-UGHR-LHDQ-202508-P-1 |
+
 
   #TODO: questo scenario andrà incluso nell'NRT totale
   @paperTracker
@@ -76,7 +78,7 @@ Feature: Resa al mittente di una notifica
       | OK-CausaForzaMaggiore_AR          | Via@OK-CausaForzaMaggiore_AR      | TGAU-TPQW-JXPW-202508-X-1   |
       | FAIL_CON996_PCRETRY_FURTO_AR      | Via@FAIL_CON996_PCRETRY_FURTO_AR  | VNYD-XTKN-JKYX-202508-G-1   |
       | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        | GUNV-DURQ-YKLW-202508-V-1   |
-      | KO_AR_NO_EVENT_B                  | Via@KO_AR_NO_EVENT_B              | PUNP-DRJK-RVJV-202508-G-1   |
+      | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B              | PUNP-DRJK-RVJV-202508-G-1   |
       | OK_AR_TIMESTAMP_ERR               | Via@OK_AR_TIMESTAMP_ERR           | DGZM-UTVT-WRHX-202508-H-1   |
       | OK_AR_NOT_ORDERED                 | Via@OK_AR_NOT_ORDERED             | HYEV-LDKQ-LHEL-202508-T-1   |
       | OK_GIACENZA_AR_2                  | Via@OK_GIACENZA_AR_2              | RXTU-MPZN-NENR-202508-G-1   |
