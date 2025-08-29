@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +14,13 @@ public interface IPServiceDeskClientImpl {
     NotificationsUnreachableResponse notification(NotificationRequest notificationRequest) throws RestClientException;
     OperationsResponse createOperation(CreateOperationRequest createOperationRequest)throws RestClientException;
     OperationsResponse createActOperation(CreateActOperationRequest createActOperationRequest);
-    ResponseEntity<OperationsResponse> createActOperationWithHttpInfo(CreateActOperationRequest createActOperationRequest);
+    ApiResult<OperationsResponse> createActOperationWithHttpInfo(CreateActOperationRequest createActOperationRequest);
     VideoUploadResponse presignedUrlVideoUpload(String operationid, VideoUploadRequest videoUploadRequest);
-    ResponseEntity<VideoUploadResponse> presignedUrlVideoUploadWithHttpInfo(String operationid, VideoUploadRequest videoUploadRequest);
+    ApiResult<VideoUploadResponse> presignedUrlVideoUploadWithHttpInfo(String operationid, VideoUploadRequest videoUploadRequest);
     SearchResponse searchOperationsFromTaxId(SearchNotificationRequest searchNotificationRequest);
     String getOperationStatus(String operationId);
-    ResponseEntity<String> getOperationStatusWithHttpInfo(String operationId);
-    ResponseEntity<String> getOperationStatusWithHttpInfoAndInvalidApiKey(String operationId);
+    ApiResult<String> getOperationStatusWithHttpInfo(String operationId);
+    ApiResult<String> getOperationStatusWithHttpInfoAndInvalidApiKey(String operationId);
     //Integration Cruscotto Assistenza....
     ResponseApiKeys getApiKeys(String paId) throws RestClientException;
     DocumentsResponse getDocumentsOfIUN(String iun, DocumentsRequest documentsRequest) throws RestClientException;

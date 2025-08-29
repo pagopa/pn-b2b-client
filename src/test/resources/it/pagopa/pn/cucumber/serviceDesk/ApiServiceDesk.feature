@@ -1059,23 +1059,52 @@ Feature: Api Service Desk
       | CF               | FULLNAME         | NAMEROW2 | ADDRESS                  | ADDRESS2  | ADDRESSROW2 | CAP   | CAP2  | CITY   | CITY2   | PR | COUNTRY |
       | TMTTMS92M57G793P | CICCIO PASTICCIO | SIGN.    | Via@FAIL-Irreperibile_AR | Via@ok_RS | INTERNO 2   | 80100 | 80121 | NAPOLI | SOCCAVO | NA | ITALIA  |
 
-
-  @CallCenterEvolutoViaMail
-  Scenario Outline: [E2E_] Chiamata createActOperation (Scenario 2, 3)
-    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
+  Scenario Outline: prova
+    Given imposto lo iun di SharedSteps a "PKJY-DTHU-JUKG-202508-M-1" e la pa a "Comune_Multi"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
       | ticketId          | <ticketId>     |
+      | iun               | <iun>          |
       | ticketOperationId | auto           |
       | taxId             | <taxId>        |
       | addressType       | <addressType>  |
       | addressValue      | <addressValue> |
-    Then viene invocata l'api "CREATE_ACT_OPERATION"
-    And il servizio risponde con <statusCode>
+      | ticketDate        | <ticketDate>   |
+      | vrDate            | <vrDate>       |
+    And viene invocata l'api "CREATE_ACT_OPERATION"
+    Then il servizio risponde con <statusCode>
     Examples:
-      | ticketId | taxId            | addressType  | addressValue | statusCode |
-      | auto     | TMTTMS92M57G793P | test@test.it | COURTESY     | 201        |
-      | auto     | null             | null         | null         | 400        |
-      | null     | TMTTMS92M57G793P | null         | null         | 400        |
-      | null     | null             | test@test.it | COURTESY     | 400        |
+      | ticketId | iun  | taxId            | addressType  | addressValue | ticketDate | vrDate | statusCode |
+      | auto     | auto | CLMCST42R12D969Z | test@test.it | COURTESY     | auto       | auto   | 201        |
+
+
+  @CallCenterEvolutoViaMail
+  Scenario Outline: [E2E_] Chiamata createActOperation (Scenario 2, 3)
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | <ticketId>     |
+      | iun               | <iun>          |
+      | ticketOperationId | auto           |
+      | taxId             | <taxId>        |
+      | addressType       | <addressType>  |
+      | addressValue      | <addressValue> |
+      | ticketDate        | <ticketDate>   |
+      | vrDate            | <vrDate>       |
+    And viene invocata l'api "CREATE_ACT_OPERATION"
+    Then il servizio risponde con <statusCode>
+    Examples:
+      | ticketId | iun  | taxId            | addressType  | addressValue | ticketDate | vrDate | statusCode |
+      | auto     | auto | CLMCST42R12D969Z | test@test.it | COURTESY     | auto       | auto   | 201        |
+      | auto     | null | null             | null         | null         | null       | null   | 400        |
+      | null     | auto | null             | null         | null         | null       | null   | 400        |
+      | null     | null | CLMCST42R12D969Z | null         | null         | null       | null   | 400        |
+      | null     | null | null             | test@test.it | COURTESY     | null       | null   | 400        |
+      | null     | null | null             | null         | null         | auto       | auto   | 400        |
 
   @CallCenterEvolutoViaMail
   Scenario Outline: [E2E_] Verifica stato operazione (Scenario 4)
