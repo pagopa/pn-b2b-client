@@ -68,7 +68,8 @@ public class DelayerSteps {
 
     @Then("pulisce i dati del csv {string} dalla tabella target")
     public void deleteDataFormTargetTable(String csvName) throws Exception {
-        lambdaClient.invoke("DELETE_DATA", "delayerPaperDeliveryTableName","deliveryDriverUsedCapacityTableName", "usedSenderLimitTableName", "paperDeliveryCountersTableName", csvName);
+        lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery","pn-PaperDeliveryDriverUsedCapacities",
+                "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csvName);
     }
 
     @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province) sia:")
@@ -225,7 +226,7 @@ public class DelayerSteps {
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "delayerPaperDeliveryTableName", "paperDeliveryCountersTableName");
+        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery","pn-PaperDeliveryCounters");
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")
