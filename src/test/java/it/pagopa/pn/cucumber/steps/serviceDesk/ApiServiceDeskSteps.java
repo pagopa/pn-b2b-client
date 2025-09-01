@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.serviceDesk;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -26,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -1655,7 +1655,7 @@ public class ApiServiceDeskSteps {
     }
 
     @When("viene invocata l'api {string}")
-    public void createActOperation(String api) {
+    public void invokeApi(String api) {
         switch (api.toUpperCase()) {
             case "CREATE_ACT_OPERATION" -> {
                 this.httpResponse = ipServiceDeskClient.createActOperationWithHttpInfo(createActOperationRequest);
@@ -1677,7 +1677,6 @@ public class ApiServiceDeskSteps {
             }
             case "UPLOAD_VIDEO" -> {
                 String opId = (operationsResponse != null) ? operationsResponse.getOperationId() : operationId;
-                Assertions.assertNotNull(opId, "operationId mancante: chiama prima CREATE_ACT_OPERATION o imposta operationId");
                 this.httpResponse = ipServiceDeskClient.presignedUrlVideoUploadWithHttpInfo(opId, videoUploadRequest);
                 videoUploadResponse = maybeBody(httpResponse.body(), VideoUploadResponse.class).orElse(null);
                 //Assertions.assertNotNull(videoUploadResponse.getUrl(), "UploadUrl nullo nella response di UPLOAD_VIDEO");
@@ -1697,7 +1696,7 @@ public class ApiServiceDeskSteps {
 
     @Given("viene settato l'operationId a {string}")
     public void setOperationId(String operationId) {
-        this.operationId = operationId;
+        this.operationId = operationId.equals("null") ? null : operationId.trim();
     }
 
     @Then("l'operazione è in stato {string}")
@@ -1727,4 +1726,20 @@ public class ApiServiceDeskSteps {
         sharedSteps.sendNotification("Comune_Multi", "ACCEPTED");
     }
 
+    @And("viene atteso lo stato {string} dell'operazione")
+    public void pollOperationActStatus(String status) throws Exception {
+        pollByStatus(status, 600, 500);
+        checkOperationActStatus(status);
+    }
+
+    public void pollByStatus(String status, int maxAttempts, int sleepMillis) throws Exception {
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            invokeApi("GET_ACT_OPERATION_STATUS");
+            System.out.println("Stato attuale: " + statusOperationResponse.toUpperCase());
+            if(status.equalsIgnoreCase(statusOperationResponse.toUpperCase())) return;
+            Thread.sleep(sleepMillis);
+        }
+
+        log.debug("Polling esaurito per operationId {}", operationId);
+    }
 }
