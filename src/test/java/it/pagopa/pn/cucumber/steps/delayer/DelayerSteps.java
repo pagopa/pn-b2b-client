@@ -63,7 +63,12 @@ public class DelayerSteps {
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
     public void populateTargetTable(String csvName) throws Exception {
-        lambdaClient.invoke("IMPORT_DATA", csvName);
+        lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
+    }
+
+    @Then("pulisce i dati dalla tabella target")
+    public void deleteDataFormTargetTable(String csvName) throws Exception {
+        lambdaClient.invoke("DELETE_DATA", "delayerPaperDeliveryTableName","deliveryDriverUsedCapacityTableName", "usedSenderLimitTableName", "paperDeliveryCountersTableName", csvName);
     }
 
     @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province) sia:")
@@ -131,7 +136,7 @@ public class DelayerSteps {
                         .mapToInt(capMap::get)
                         .sum();
 
-                if(!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
+                if (!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
                     throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
 
                 long distinctSenders = context.actualCsv.stream()
@@ -152,8 +157,7 @@ public class DelayerSteps {
 
                 inner.replaceAll((k, v) -> k.equals(provinceDriverKey) ? v : perSenderProvinceCapacity);
 
-            }
-            else throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
+            } else throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
 
         });
     }
@@ -215,12 +219,13 @@ public class DelayerSteps {
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        lambdaClient.invoke("RUN_ALGORITHM", String.valueOf(context.printCapacity));
+        lambdaClient.invoke("RUN_ALGORITHM", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverCapacities", "pn-PaperDeliveryDriverUsedCapacities",
+                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(context.printCapacity));
     }
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL");
+        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "delayerPaperDeliveryTableName", "paperDeliveryCountersTableName");
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")
@@ -246,7 +251,7 @@ public class DelayerSteps {
         WorkflowSteps step = valueOf(ws);
         List<DelayerPaperDelivery> notExpected = context.actualCsv.stream().filter(n -> hasSeedInRequestId(seed, n)).toList();
 
-        if(notExpected.isEmpty()) log.warn("Nessuna notifica esistente per il seed: " + seed);
+        if (notExpected.isEmpty()) log.warn("Nessuna notifica esistente per il seed: " + seed);
 
         Set<String> requestIds = notExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
         List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 5);

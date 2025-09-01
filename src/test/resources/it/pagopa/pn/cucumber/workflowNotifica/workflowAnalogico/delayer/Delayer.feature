@@ -133,6 +133,7 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica la corretta pianificazione di ogni test case
+      And pulisce i dati dalla tabella target
 
       Examples:
         | csv                   | TOT |
@@ -195,6 +196,7 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica la corretta pianificazione di ogni test case
+      And pulisce i dati dalla tabella target
 
       Examples:
         | csv                  | TOT |
@@ -261,6 +263,7 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica la corretta pianificazione di ogni test case
+      And pulisce i dati dalla tabella target
 
       Examples:
         | csv                 | TOT |
