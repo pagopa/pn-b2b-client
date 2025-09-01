@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.RiskAnalysisFormSeed;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -18,16 +19,16 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 public interface IM2MPurposeClient extends SettableBearerToken {
-    /* ***************************************************************************************
-    TODO 12/08/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
- *    ampliare e adattare una volta ottenuta la specifica completa */
     @Data
     @Builder
     class PurposePatchRequest {
         private String title;
         private String description;
+        private Boolean isFreeOfCharge;
+        private String freeOfChargeReason;
+        private RiskAnalysisFormSeed riskAnalysisForm;
+        private Integer dailyCalls;
     }
-    /* ***************************************************************************************/
 
     @Data
     @EqualsAndHashCode(callSuper = true)

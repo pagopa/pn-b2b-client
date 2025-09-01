@@ -517,7 +517,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_49] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 84)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del nome dell'e-service senza apportare cambiamenti
     Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
@@ -532,10 +532,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
-    Then si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
-    And l'e-service è stato parzialmente modificato correttamente
-    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
     And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
@@ -596,7 +592,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'e-service non ha subito modifiche
 
   @m2m-parte2-agosto-rilascio2
-  Scenario Outline: [M2MG_ESERVICES_49] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service che non gli appartiene (Parte2#Scenario intorno a 97)
+  Scenario Outline: [M2MG_ESERVICES_49_2] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service che non gli appartiene (Parte2#Scenario intorno a 97)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service

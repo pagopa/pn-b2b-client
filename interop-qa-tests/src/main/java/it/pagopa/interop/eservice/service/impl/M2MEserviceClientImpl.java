@@ -142,32 +142,29 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
 
     @Override
     public EService patchEService(UUID eServiceId, EServicePatchRequest body) {
-        // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
-        eservicesApi.updateDraftEService(eServiceId, new EServiceDraftUpdateSeed().technology(body.getTechnology())
-                .isSignalHubEnabled(body.getIsSignalHubEnabled()));
-        return null;
+        return eservicesApi.updateDraftEService(eServiceId, new EServiceDraftUpdateSeed()
+            .technology(body.getTechnology())
+            .isSignalHubEnabled(body.getIsSignalHubEnabled()))
+            .mode(body.getMode())
+            .description(body.getDescription())
+            .name(body.getName())
+            .isConsumerDelegable(body.getIsConsumerDelegable())
+            .isClientAccessDelegable(body.getIsClientAccessDelegable());
     }
 
     @Override
     public EService patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body) {
-        // TODO 13/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
         return eservicesApi.updatePublishedEServiceName(eServiceId, new EServiceNameUpdateSeed().name(body.getName()));
     }
 
     @Override
     public EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body) {
-        // TODO 13/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
         return eservicesApi.updatePublishedEServiceDelegation(eServiceId, new EServiceDelegationUpdateSeed()
                 .isConsumerDelegable(body.getIsConsumerDelegable()).isClientAccessDelegable(body.getIsClientAccessDelegable()));
     }
 
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
-        // TODO 13/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
         return eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription()));
     }
 

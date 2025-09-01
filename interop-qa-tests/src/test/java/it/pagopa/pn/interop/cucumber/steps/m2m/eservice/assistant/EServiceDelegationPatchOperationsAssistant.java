@@ -22,11 +22,9 @@ public class EServiceDelegationPatchOperationsAssistant extends EServiceGenericP
         ClientTokenConfigurator tokenConfigurator,
         EServicePatchContext patchContext
     ) {
-        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2meServiceClient(), patchContext);
+        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2meServiceClient(), patchContext, tokenConfigurator);
     }
 
-    // TODO 13/08/2025 destinato a essere modificato e ampliato non appena la specifica
-    //  OpenAPI dell'API in oggetto sarà rilasciata
     @Override
     protected EServiceDelegationPatchRequest buildDefaultPatchRequest() {
         return EServiceDelegationPatchRequest.builder()
@@ -39,12 +37,4 @@ public class EServiceDelegationPatchOperationsAssistant extends EServiceGenericP
     protected EService patchResource(UUID uuid, EServiceDelegationPatchRequest patchRequest) {
         return this.client.patchEServiceDelegation(uuid, patchRequest);
     }
-
-    @Override
-    protected EService patchResourceWithNotValidToken(UUID uuid, EServiceDelegationPatchRequest eServiceDelegationPatchRequest) {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        this.client.setBearerToken(expiredToken);
-        return this.client.patchEServiceDelegation(uuid, eServiceDelegationPatchRequest);
-    }
-
 }

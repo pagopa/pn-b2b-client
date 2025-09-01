@@ -16,7 +16,7 @@ public interface DelayService {
     * contribuirebbero allo scorrere del tempo necessario per allineare l'ambiente sottostante.
     * Oppure, al posto di sostituire questo metodo lo si potrebbe affiancare da un altro
     * del tipo "delayIfNeeded().
-    * N.B In ogni caso, lo scope della classe concrete andrebbe settato con @ScenarioScope .  */
+    * N.B In ogni caso, lo scope delle classi concrete andrebbe settato con @ScenarioScope .  */
     /**
      * Pauses the current thread for a default period of time.
      * <p>

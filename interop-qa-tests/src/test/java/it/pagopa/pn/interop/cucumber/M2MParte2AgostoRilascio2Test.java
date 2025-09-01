@@ -23,9 +23,9 @@ import org.junit.platform.suite.api.Suite;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix"})
-@IncludeTags({"m2m-parte2-agosto-rilascio1"})
+@IncludeTags({"m2m-parte2-agosto-rilascio2"})
 /* NOTA 11/08/2025: nel lungo termine si intende accorpare questa classe runner alla classe M2MTest,
 * per il momento si fa distinzione tra le due per poter testare in isolamento le APIs rilasciate
 * a scaglioni */
-public class M2MParte2AgostoRilascio1Test {
+public class M2MParte2AgostoRilascio2Test {
 }

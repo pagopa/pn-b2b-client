@@ -22,7 +22,7 @@ public class EServiceDescriptionPatchOperationsAssistant extends EServiceGeneric
         ClientTokenConfigurator tokenConfigurator,
         EServicePatchContext patchContext
     ) {
-        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2meServiceClient(), patchContext);
+        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2meServiceClient(), patchContext, tokenConfigurator);
     }
 
     // TODO 13/08/2025 destinato a essere modificato e ampliato non appena la specifica
@@ -38,12 +38,4 @@ public class EServiceDescriptionPatchOperationsAssistant extends EServiceGeneric
     protected EService patchResource(UUID uuid, EServiceDescriptionPatchRequest patchRequest) {
         return this.client.patchEServiceDescription(uuid, patchRequest);
     }
-
-    @Override
-    protected EService patchResourceWithNotValidToken(UUID uuid, EServiceDescriptionPatchRequest eServiceDescriptionPatchRequest) {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        this.client.setBearerToken(expiredToken);
-        return this.client.patchEServiceDescription(uuid, eServiceDescriptionPatchRequest);
-    }
-
 }

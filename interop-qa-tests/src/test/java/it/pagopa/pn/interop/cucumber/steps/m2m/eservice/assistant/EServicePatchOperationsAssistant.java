@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -23,28 +24,25 @@ public class EServicePatchOperationsAssistant extends EServiceGenericPatchOperat
         ClientTokenConfigurator tokenConfigurator,
         EServicePatchContext patchContext
     ) {
-        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2meServiceClient(), patchContext);
+        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2meServiceClient(), patchContext, tokenConfigurator);
     }
 
-    // TODO 05/08/2025 destinato a essere modificato e ampliato non appena la specifica
-    //  OpenAPI dell'API in oggetto sarà rilasciata
     @Override
-    protected EServicePatchRequest buildDefaultPatchRequest() {
+    public EServicePatchRequest buildDefaultPatchRequest() {
+        UUID uuid = UUID.randomUUID();
         return EServicePatchRequest.builder()
-            .isSignalHubEnabled(true)
+            .name("some patched name - " + uuid)
+            .description("some patched description - " + uuid)
             .technology(EServiceTechnology.SOAP)
+            .mode(EServiceMode.RECEIVE)
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(true)
             .build();
     }
 
     @Override
     protected EService patchResource(UUID uuid, EServicePatchRequest eServicePatchRequest) {
-        return this.client.patchEService(uuid, eServicePatchRequest);
-    }
-
-    @Override
-    protected EService patchResourceWithNotValidToken(UUID uuid, EServicePatchRequest eServicePatchRequest) {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        this.client.setBearerToken(expiredToken);
         return this.client.patchEService(uuid, eServicePatchRequest);
     }
 }

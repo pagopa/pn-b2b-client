@@ -2,10 +2,12 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant;
 
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.PatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.ResourceMapper;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,13 +22,15 @@ public abstract class PurposeGenericPatchOperationsAssistant<PATCH_REQUEST> exte
         ResourceMapper<PATCH_REQUEST, Purpose> resourceMapper,
         SharedStepsContext sharedStepsContext,
         IM2MPurposeClient client,
-        PurposePatchContext patchContext
+        PurposePatchContext patchContext,
+        ClientTokenConfigurator tokenConfigurator
     ) {
         super(
             resourceMapper,
             sharedStepsContext.getHttpCallExecutor(),
             sharedStepsContext.getDelayService(),
             patchContext,
+            tokenConfigurator,
             "e-service descriptor");
         this.context = sharedStepsContext.getPurposeCommonContext();
         this.client = client;
@@ -45,5 +49,11 @@ public abstract class PurposeGenericPatchOperationsAssistant<PATCH_REQUEST> exte
     @Override
     protected UUID randomResourceId() {
         return UUID.randomUUID();
+    }
+
+    @Override
+    public void patchResource(PATCH_REQUEST request, String getToken, String patchToken) {
+        this.context.setUpdateTime(OffsetDateTime.now());
+        super.patchResource(request, getToken, patchToken);
     }
 }

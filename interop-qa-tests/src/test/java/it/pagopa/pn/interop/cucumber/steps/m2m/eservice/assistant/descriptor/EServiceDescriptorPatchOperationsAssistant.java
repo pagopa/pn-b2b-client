@@ -2,10 +2,12 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorPatchRequest;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.descriptor.EServiceDescriptorMapper;
+import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,29 +26,23 @@ public class EServiceDescriptorPatchOperationsAssistant extends
         ClientTokenConfigurator tokenConfigurator,
         EServiceDescriptorPatchContext patchContext
     ) {
-        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2mEServiceDescriptorClient(), patchContext);
+        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2mEServiceDescriptorClient(), patchContext, tokenConfigurator);
     }
 
-    // TODO 14/08/2025 destinato a essere modificato e ampliato non appena la specifica
-    //  OpenAPI dell'API in oggetto sarà rilasciata
     @Override
-    protected EServiceDescriptorPatchRequest buildDefaultPatchRequest() {
+    public EServiceDescriptorPatchRequest buildDefaultPatchRequest() {
         return EServiceDescriptorPatchRequest.builder()
             .dailyCallsTotal(10)
             .dailyCallsPerConsumer(5)
             .voucherLifespan(1000)
+            .description("patched description")
+            .audience(List.of("patched", "audience"))
+            .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL)
             .build();
     }
 
     @Override
     protected EServiceDescriptor patchResource(Pair<UUID, UUID> uuid, EServiceDescriptorPatchRequest eServicePatchRequest) {
         return this.client.patchEServiceDescriptor(uuid.getLeft(), uuid.getRight(), eServicePatchRequest);
-    }
-
-    @Override
-    protected EServiceDescriptor patchResourceWithNotValidToken(Pair<UUID, UUID> uuid, EServiceDescriptorPatchRequest eServiceDescriptorPatchRequest) {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        this.client.setBearerToken(expiredToken);
-        return this.client.patchEServiceDescriptor(uuid.getLeft(), uuid.getRight(), eServiceDescriptorPatchRequest);
     }
 }

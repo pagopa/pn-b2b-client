@@ -16,46 +16,50 @@ import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IM2MDelegationClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
-import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Component
 @ScenarioScope
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ClientTokenConfigurator {
-    private IAuthorizationClient authorizationClient;
-    private IAgreementClient agreementClient;
-    private IAttributeApiClient attributeApiClient;
-    private ITenantsApi tenantsApi;
-    private IEServiceClient eServiceClient;
-    private IEServiceTemplateClient eServiceTemplateClient;
-    private IProducerClient producerClient;
-    private IPurposeApiClient purposeApiClient;
-    private IProducerDelegationsApiClient producerDelegationsApiClient;
-    private IConsumerDelegationsApiClient consumerDelegationsApiClient;
-    private IDelegationApiClient delegationApiClient;
-    private IM2MAgreementClient m2mAgreementClient;
-    private IM2MCertifiedAttributeClient m2mCertifiedAttributeClient;
-    private IM2MDeclaredAttributeClient m2mDeclaredAttributeClient;
-    private IM2MVerifiedAttributeClient m2mVerifiedAttributeClient;
-    private IM2MEserviceClient m2meServiceClient;
-    private IM2MPurposeClient m2mPurposeClient;
-    private IM2MEServiceTemplateClient m2mEServiceTemplateClient;
-    private IM2MEserviceDescriptorClient m2mEServiceDescriptorClient;
-    private IM2MDelegationClient m2mDelegationClient;
-    private IM2MClientsClient m2MClientsClient;
-    private IM2MTenantClient m2mTenantClient;
+    private String lastToken;
+
+    private final IAuthorizationClient authorizationClient;
+    private final IAgreementClient agreementClient;
+    private final IAttributeApiClient attributeApiClient;
+    private final ITenantsApi tenantsApi;
+    private final IEServiceClient eServiceClient;
+    private final IEServiceTemplateClient eServiceTemplateClient;
+    private final IProducerClient producerClient;
+    private final IPurposeApiClient purposeApiClient;
+    private final IProducerDelegationsApiClient producerDelegationsApiClient;
+    private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
+    private final IDelegationApiClient delegationApiClient;
+    private final IM2MAgreementClient m2mAgreementClient;
+    private final IM2MCertifiedAttributeClient m2mCertifiedAttributeClient;
+    private final IM2MDeclaredAttributeClient m2mDeclaredAttributeClient;
+    private final IM2MVerifiedAttributeClient m2mVerifiedAttributeClient;
+    private final IM2MEserviceClient m2meServiceClient;
+    private final IM2MPurposeClient m2mPurposeClient;
+    private final IM2MEServiceTemplateClient m2mEServiceTemplateClient;
+    private final IM2MEserviceDescriptorClient m2mEServiceDescriptorClient;
+    private final IM2MDelegationClient m2mDelegationClient;
+    private final IM2MClientsClient m2MClientsClient;
+    private final IM2MTenantClient m2mTenantClient;
 
     public void setBearerToken(String token) {
+        this.lastToken = token;
+
         authorizationClient.setBearerToken(token);
         agreementClient.setBearerToken(token);
         attributeApiClient.setBearerToken(token);

@@ -1,16 +1,25 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
-import it.pagopa.interop.purpose.service.IM2MPurposeClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
-import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.PurposeMapper;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @ToString
@@ -18,22 +27,50 @@ import org.springframework.stereotype.Component;
 @Component
 @ScenarioScope
 public class PurposePatchOperationsAssistant extends PurposeGenericPatchOperationsAssistant<PurposePatchRequest> {
+
+    private final BFFDataPreparationService dataPreparationService;
+    private final RiskAnalysisMapper riskAnalysisMapper;
+    private final IdentityService identityService;
+    private final SharedStepsContext sharedContext;
+    private final ClientTokenConfigurator clientTokenConfigurator;
+
     public PurposePatchOperationsAssistant(
         PurposeMapper resourceMapper,
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator tokenConfigurator,
-        PurposePatchContext patchContext
+        PurposePatchContext patchContext,
+        BFFDataPreparationService dataPreparationService,
+        RiskAnalysisMapper riskAnalysisMapper,
+        @Qualifier("interopIdentityService") IdentityService identityService
     ) {
-        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2mPurposeClient(), patchContext);
+        super(resourceMapper, sharedStepsContext, tokenConfigurator.getM2mPurposeClient(), patchContext, tokenConfigurator);
+        this.dataPreparationService = dataPreparationService;
+        this.riskAnalysisMapper = riskAnalysisMapper;
+        this.identityService = identityService;
+        this.sharedContext = sharedStepsContext;
+        this.clientTokenConfigurator = tokenConfigurator;
     }
 
-    // TODO 14/08/2025 destinato a essere modificato e ampliato non appena la specifica
-    //  OpenAPI dell'API in oggetto sarà rilasciata
     @Override
-    protected PurposePatchRequest buildDefaultPatchRequest() {
+    public PurposePatchRequest buildDefaultPatchRequest() {
+        UUID uuid = UUID.randomUUID();
+
+        String lastToken = clientTokenConfigurator.getLastToken();
+        String tenantType = sharedContext.getTenantType();
+        String token = identityService.getToken(tenantType, null);
+        clientTokenConfigurator.setBearerToken(token);
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+        clientTokenConfigurator.setBearerToken(lastToken);
+
+        RiskAnalysisFormSeed riskAnalysisFormSeed = riskAnalysisMapper.mapBFFToM2M(
+            riskAnalysis.getRiskAnalysisForm());
         return PurposePatchRequest.builder()
-            .title("patched title - " + UUID.randomUUID())
-            .description("patched description - " + UUID.randomUUID())
+            .title("patched title - " + uuid)
+            .description("patched description - " + uuid)
+            .dailyCalls(10)
+            .isFreeOfCharge(true)
+            .freeOfChargeReason("some reason - " + uuid)
+            .riskAnalysisForm(riskAnalysisFormSeed)
             .build();
     }
 
@@ -42,9 +79,24 @@ public class PurposePatchOperationsAssistant extends PurposeGenericPatchOperatio
         return this.client.patchPurpose(uuid, eServicePatchRequest);
     }
 
-    protected Purpose patchResourceWithNotValidToken(UUID uuid, PurposePatchRequest eServicePatchRequest) {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        this.client.setBearerToken(expiredToken);
-        return this.client.patchPurpose(uuid, eServicePatchRequest);
+    @Override
+    protected void assertImpl(Purpose actual, Purpose expected, String assertDescription) {
+        assertSoftly(softly -> {
+            softly.assertThat(actual)
+                .as(assertDescription)
+                .usingRecursiveComparison()
+                .ignoringFields("updatedAt", "currentVersion.updatedAt", "currentVersion.dailyCalls")
+                .isEqualTo(expected);
+
+            softly.assertThat(actual.getCurrentVersion().getDailyCalls())
+                .as("Verifica che l'attributo 'dailyCalls' sia coerente con le modifiche effettuate")
+                .isNotNull()
+                .isEqualTo(expected.getCurrentVersion().getDailyCalls());
+
+            softly.assertThat(OffsetDateTime.parse(actual.getUpdatedAt()))
+                .as("Verifica timestamp di modifica della finalità restituita")
+                .isNotNull()
+                .isCloseTo(this.context.getUpdateTime(), within(15, SECONDS));
+        });
     }
 }

@@ -128,9 +128,15 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
 
     @Override
     public Purpose patchPurpose(UUID purposeId, PurposePatchRequest body) {
-        // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
-        return purposesApi.updateDraftPurpose(purposeId, new PurposeDraftUpdateSeed().title(body.getTitle()).description(body.getDescription()));
+        return purposesApi.updateDraftPurpose(
+            purposeId,
+            new PurposeDraftUpdateSeed()
+                .title(body.getTitle())
+                .description(body.getDescription())
+                .riskAnalysisForm(body.getRiskAnalysisForm())
+                .dailyCalls(body.getDailyCalls())
+                .isFreeOfCharge(body.getIsFreeOfCharge())
+                .freeOfChargeReason(body.getFreeOfChargeReason()));
     }
 
     @Override

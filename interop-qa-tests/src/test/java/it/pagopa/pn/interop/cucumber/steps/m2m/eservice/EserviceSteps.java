@@ -205,41 +205,32 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service")
     public void patchEService() {
-        EServicePatchRequest request = EServicePatchRequest.builder()
-                .technology(EServiceTechnology.SOAP)
-                .isSignalHubEnabled(false)
-                .build();
+        EServicePatchRequest request = this.eServicePatchAssistant.buildDefaultPatchRequest();
         eServicePatchAssistant.patchResource(request);
-        eServicePatchAssistant.patchResourceAAA(request);
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service")
     public void patchEService(String tenant, M2MTokenService.M2MRole m2mRole) {
-        EServicePatchRequest request = EServicePatchRequest.builder()
-                .technology(EServiceTechnology.SOAP)
-                .isSignalHubEnabled(false)
-                .build();
-        eServicePatchAssistant.patchResource(request);
+        EServicePatchRequest request = this.eServicePatchAssistant.buildDefaultPatchRequest();
         String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        clientTokenConfigurator.setBearerToken(token);
-        eServicePatchAssistant.patchResourceAAA(request);
+        eServicePatchAssistant.patchResource(request, token);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service con token non valido")
     public void patchEServiceWithNotValidToken() {
-        eServicePatchAssistant.patchResourceWithNotValidToken(EServicePatchRequest.builder()
-                .technology(EServiceTechnology.SOAP)
-                .isSignalHubEnabled(false)
-                .build());
+        eServicePatchAssistant.patchResourceWithInvalidToken(
+            this.eServicePatchAssistant.buildDefaultPatchRequest());
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceSubset() {
+        UUID uuid = UUID.randomUUID();
         EServicePatchRequest request = EServicePatchRequest.builder()
-                .technology(EServiceTechnology.REST)
-                .build();
+            .name("some patched name - " + uuid)
+            .description("some patched description - " + uuid)
+            .technology(EServiceTechnology.REST)
+            .build();
         eServicePatchAssistant.patchResource(request);
-        eServicePatchAssistant.patchResourceAAA(request);
     }
 
     @When("l'utente tenta di recuperare l'e-service creato")
@@ -270,15 +261,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 .isClientAccessDelegable(true)
                 .build();
         eServiceDelegationPatchAssistant.patchResource(request);
-        eServiceDelegationPatchAssistant.patchResourceAAA(request);
-    }
-
-    @When("aaal'utente tenta di effettuare la modifica parziale della delega dell'e-service")
-    public void patchEServiceDelegationAAA() {
-        eServiceDelegationPatchAssistant.patchResourceAAA(EServiceDelegationPatchRequest.builder()
-                .isConsumerDelegable(true)
-                .isClientAccessDelegable(true)
-                .build());
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della delega di un e-service inesistente")
@@ -293,7 +275,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 .isClientAccessDelegable(false)
                 .build();
         eServiceDelegationPatchAssistant.patchResource(request);
-        eServiceDelegationPatchAssistant.patchResourceAAA(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido")
@@ -302,8 +283,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 .isConsumerDelegable(false)
                 .isClientAccessDelegable(false)
                 .build();
-        eServiceDelegationPatchAssistant.patchResource(request);
-        eServiceDelegationPatchAssistant.patchResourceWithNotValidToken(request);
+        eServiceDelegationPatchAssistant.patchResourceWithInvalidToken(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service senza apportare cambiamenti")
@@ -317,7 +297,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 .name("patched name - " + UUID.randomUUID())
                 .build();
         eServiceNamePatchAssistant.patchResource(request);
-        eServiceNamePatchAssistant.patchResourceAAA(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service con un token non valido")
@@ -325,14 +304,12 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         EServiceNamePatchRequest request = EServiceNamePatchRequest.builder()
                 .name("patched name - " + UUID.randomUUID())
                 .build();
-        eServiceNamePatchAssistant.patchResource(request);
-        eServiceNamePatchAssistant.patchResourceWithNotValidToken(request);
+        eServiceNamePatchAssistant.patchResourceWithInvalidToken(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceNameSubset() {
         eServiceNamePatchAssistant.patchResource(EServiceNamePatchRequest.builder().build());
-        eServiceNamePatchAssistant.patchResourceAAA(EServiceNamePatchRequest.builder().build());
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del nome di un e-service inesistente")
@@ -349,30 +326,16 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void patchEServiceDescription() {
         EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
                 .description("patched description - " + UUID.randomUUID())
-                .summary("patched summary - " + UUID.randomUUID())
                 .build();
         eServiceDescriptionPatchAssistant.patchResource(request);
-        eServiceDescriptionPatchAssistant.patchResourceAAA(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service con token non valido")
     public void patchEServiceDescriptionWithNotValidToken() {
         EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
                 .description("patched description - " + UUID.randomUUID())
-                .summary("patched summary - " + UUID.randomUUID())
                 .build();
-
-        eServiceDescriptionPatchAssistant.patchResource(request);
-        eServiceDescriptionPatchAssistant.patchResourceWithNotValidToken(request);
-    }
-
-    @When("l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service specificando un sottoinsieme di informazioni")
-    public void patchEServiceDescriptionSubset() {
-        EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
-                .summary("patched summary")
-                .build();
-        eServiceDescriptionPatchAssistant.patchResource(request);
-        eServiceDescriptionPatchAssistant.patchResourceAAA(request);
+        eServiceDescriptionPatchAssistant.patchResourceWithInvalidToken(request);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della descrizione di un e-service inesistente")
