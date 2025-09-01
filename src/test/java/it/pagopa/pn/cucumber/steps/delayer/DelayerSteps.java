@@ -66,7 +66,7 @@ public class DelayerSteps {
         lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
     }
 
-    @Then("pulisce i dati dalla tabella target")
+    @Then("pulisce i dati del csv {string} dalla tabella target")
     public void deleteDataFormTargetTable(String csvName) throws Exception {
         lambdaClient.invoke("DELETE_DATA", "delayerPaperDeliveryTableName","deliveryDriverUsedCapacityTableName", "usedSenderLimitTableName", "paperDeliveryCountersTableName", csvName);
     }
