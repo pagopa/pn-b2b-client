@@ -37,13 +37,17 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_phoneNumbers     | +399858425136 |
       | radd_externalCodes    | EXT01QA       |
     Then la response V2 a seguito del nuovo inserimento deve contenere i valori attesi
-      | addressRow    | Via Roma, 80133 Napoli NA, Italia |
-      | cap           | 80133                             |
-      | province      | NA                                |
-      | city          | Napoli                            |
-      | description   | descrizione                       |
-      | phoneNumbers  | +399858425136                     |
-      | externalCodes | EXT01QA                           |
+      | addressRow         | Via Roma, 80133 Napoli NA, Italia |
+      | cap                | 80133                             |
+      | province           | NA                                |
+      | city               | Napoli                            |
+      | description        | descrizione                       |
+      | phoneNumbers       | +399858425136                     |
+      | externalCodes      | EXT01QA                           |
+      | address_addressRow | via roma                          |
+      | address_cap        | 80133                             |
+      | address_province   | NA                                |
+      | address_city       | NAPOLI                            |
     Then viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId
 
 
@@ -57,6 +61,19 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_externalCodes | EXT02QA       |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
 
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_21] Creazione nuova sede RADD con partenr id non valido
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then viene impostato un partenr Id non valido
+    When viene generato uno sportello Radd V2 con restituzione errore con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +399858425136 |
+      | radd_externalCodes    | EXT11QA       |
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 3-4-5-6-7-8-9
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_3] Creazione nuova sede RADD senza campi obbligatori
@@ -104,27 +121,28 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | via          | cap    | provincia | citta  | stato  | descrizione | telefono      | aperturaSportello | startValidity | endValidity | externalCode   | email                | website      | partnertype |
       | Ciao@mondo#1 | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA1       | NULL                 | NULL         | NULL        |
       | via fiume2   | 123456 | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA2       | NULL                 | NULL         | NULL        |
-      | via fiume3   | 2016   | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA3       | NULL                 | NULL         | NULL        |
+      | via fiume3   | 8014   | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA3       | NULL                 | NULL         | NULL        |
       | via fiume4   | 2016Z  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA4       | NULL                 | NULL         | NULL        |
       | via fiume5   | 20161  | ITA       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA5       | NULL                 | NULL         | NULL        |
       | via fiume6   | 20161  | na        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA6       | NULL                 | NULL         | NULL        |
       | via fiume7   | 20161  | NAP       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA7       | NULL                 | NULL         | NULL        |
       | via fiume8   | 20161  | 10        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA8       | NULL                 | NULL         | NULL        |
       | via fiume9   | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136 | NULL              | NULL          | NULL        | EXT04QA9       | NULL                 | NULL         | NULL        |
-      | via fiume10  | 20161  | MI        | MILANO | ITALIA | Test        | +3998-842-136 | NULL              | NULL          | NULL        | EXT04QA10      | NULL                 | NULL         | NULL        |
+      | via fiume10  | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136  | NULL              | NULL          | NULL        | EXT04QA10      | NULL                 | NULL         | NULL        |
       | via fiume11  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA11      | https://exa_mple.com | NULL         | NULL        |
       | via fiume12  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA12      | nome@dominio         | NULL         | NULL        |
       | via fiume13  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA13      | @dominio.ext         | NULL         | NULL        |
-      #| via fiume14  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | Mo-Fr 09:00-13:00,15:00-18:00 | NULL          | NULL        | EXT04QA14      | NULL                 | NULL         | NULL        |
-      #| via fiume15  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | 08:00-1A:30,15:00-18:00       | NULL          | NULL        | EXT04QA15      | NULL                 | NULL         | NULL        |
       | via fiume16  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 1998-01-01    | NULL        | EXT04QA16      | NULL                 | NULL         | NULL        |
       | via fiume17  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 01-01-2030    | NULL        | EXT04QA17      | NULL                 | NULL         | NULL        |
       | via fiume18  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 202-01-01     | NULL        | EXT04QA18      | NULL                 | NULL         | NULL        |
       | via fiume19  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 01-01-2030  | EXT04QA19      | NULL                 | NULL         | NULL        |
-      | via fiume20  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA20      | NULL                 | NULL         | NULL        |
+      | via fiume20  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 2015-01-01  | EXT04QA20      | NULL                 | NULL         | NULL        |
+      | via fiume24  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA20      | NULL                 | NULL         | NULL        |
       | via fiume21  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | ĄŁĽŚŠŞSAFŤŹŽŻ1 | NULL                 | NULL         | NULL        |
       | via fiume22  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA21      | NULL                 | https://.com | NULL        |
-      | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | https://.com | ĄŁĽ         |
+      | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | ĄŁĽ         |
+      | via fiume25  | 20161  | MI        | MILANO | ITALIA | 1           | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
+      | via fiume26  | 201 1  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 29
@@ -176,9 +194,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_partner_type         | CAF                     |
       | radd_appointment_required | true                    |
     And la response registry V2 deve avere i campi "tutti" valorizzati
-    #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
 
-  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs x
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 69
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_8] Creazione nuova sede RADD con ExternalCode già esistente
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -232,6 +249,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_appointment_required | false                      |
       | radd_website              | https://www.ex1.com        |
     And la response registry V2 deve avere i campi "obbligatori" valorizzati
+    Then la response registry V2 deve avere i campi correttamente formattati
     And la response V2 a seguito del nuovo inserimento deve contenere i valori attesi
       | description         | descrizione modificata     |
       | openingTime         | tue=10:00-20:00#           |
@@ -275,7 +293,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
     Examples:
       | N  | description | openingTime | phoneNumbers                        | email                    | end_validity             | externalCodes             | appointment_required | website     |
-      #| 1  | NULL        | Mo-Fr 09:00-13:00,15:00-18:00 | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       | 2  | NULL        | NULL        | +390123456789,3921573273,3333333333 | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       | 3  | NULL        | NULL        | +39 012 3456789                     | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       | 4  | NULL        | NULL        | NULL                                | NULL                     | 21-03-2024               | NULL                      | NULL                 | NULL        |
@@ -285,12 +302,15 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 8  | NULL        | NULL        | NULL                                | NULL                     | 2025/01/01               | NULL                      | NULL                 | NULL        |
       | 9  | NULL        | NULL        | NULL                                | mail@@esempio.it         | NULL                     | NULL                      | NULL                 | NULL        |
       | 10 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | www.esempio |
-      #| 11 | NULL        | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       | 12 | NULL        | NULL        | !!"$%&£%'?^\s#!SG(£%%£%'            | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       | 13 | NULL        | NULL        | NULL                                | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                     | NULL                      | NULL                 | NULL        |
       | 14 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s#l | NULL                 | NULL        |
       | 15 | NULL        | NULL        | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                      | NULL                 | NULL        |
+      | 15 | NULL        | NULL        | ""                                  | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      #| 1  | NULL        | Mo-Fr 09:00-13:00,15:00-18:00 | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       #| 16 | A           | NULL                     | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      #| 2  | ""          | NULL        |NULL  | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      #| 11 | NULL        | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 43-44
@@ -316,16 +336,17 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | locationId                | <locationId>               |
       | radd_description          | descrizione modificata     |
       | radd_openingTime          | tue=10:00-20:00#           |
-      | radd_phoneNumbers         | +39 9858425255             |
+      | radd_phoneNumbers         | +399858425255              |
       | radd_email                | test@examplemodificato.com |
       | radd_end_validity         | 2030-10-10                 |
       | radd_appointment_required | false                      |
       | radd_website              | https://www.ex1.com        |
-    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "<statusCode>"
     Examples:
-      | locationId |
-      | NULL       |
-      | CASUALE    |
+      | locationId                           | statusCode |
+      | NULL                                 | 400        |
+      | CASUALE                              | 404        |
+      | 32d80697-da08-42ce-b0d3-c46e5152eda2 | 404        |
 
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 39
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_12] Aggiornamento sportello RADD con utente abilitato a sola lettura
@@ -416,14 +437,13 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_phoneNumbers     | +399858425136   |
       | radd_externalCodes    | <externalCodes> |
     Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId: "<locationId>" con errore
-    Then l'operazione Radd V2 ha prodotto un errore con status code "403"
+    Then l'operazione Radd V2 ha prodotto un errore con status code "<statusCode>"
     Examples:
-      | locationId                           | externalCodes |
-      | ee95edab-9b74-4c46-9d69-2b6c8b3f5f82 | EXT15QA1      |
-      | NULL                                 | EXT15QA2      |
-      | #@#@#@                               | EXT15QA3      |
-      | ĄŁĽŚŠŞSAFŤŹŽŻ                        | EXT15QA4      |
-    #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
+      | locationId                           | externalCodes | statusCode |
+      | ee95edab-9b74-4c46-9d69-2b6c8b3f5f82 | EXT15QA1      | 404        |
+      | NULL                                 | EXT15QA2      | 400        |
+      | #@#@#@                               | EXT15QA3      | 404        |
+      | ĄŁĽŚŠŞSAFŤŹŽŻ                        | EXT15QA4      | 404        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 61
@@ -437,14 +457,12 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description      | descrizione   |
       | radd_phoneNumbers     | +399858425136 |
       | radd_externalCodes    | EXT16QA       |
-    And viene cancellato lo sportello Radd V2 appena inserito con partnerId: "TEST" con errore
-    #Then l'operazione ha prodotto un errore con status code "403"
+    And viene cancellato lo sportello Radd V2 appena inserito con partnerId: "77765432555" con errore
+    Then l'operazione ha prodotto un errore con status code "404"
     When viene richiesta la lista degli sportelli Radd V2 con dati:
       | radd_filter_limit   | 100  |
       | radd_filter_lastKey | NULL |
     Then verifica che il locationId oggetto della cancellazione è "PRESENTE" nella response di lettura
-    #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
-
 
 
     # *** LETTURA ***
@@ -474,11 +492,11 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response V2 deve contenere 1 items
     And la response registry V2 della lettura deve avere i campi "obbligatori" valorizzati
     When viene richiesta la lista degli sportelli Radd V2 con dati:
-      | radd_filter_limit   | 100    |
+      | radd_filter_limit   | 100  |
       | radd_filter_lastKey | NULL |
-  Then cancello i registriV2 con externalCode:
-    |EXT17AC|
-    |EXT17AD|
+    Then cancello i registriV2 con externalCode:
+      | EXT17AC |
+      | EXT17AD |
 
 
   @raddAnagraficaV2 @cognito1 #rif srs 64
@@ -488,6 +506,15 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_limit   | 1    |
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "403"
+
+  @raddAnagraficaV2 @cognito1 #rif srs 65
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_20] Lettura sedi Radd con partenrId non valido
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then viene impostato un partenr Id non valido
+    Then viene richiesta la lista degli sportelli Radd V2 con errore
+      | radd_filter_limit   | 1    |
+      | radd_filter_lastKey | NULL |
+    And l'operazione ha prodotto un errore con status code "400"
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 66 e 67

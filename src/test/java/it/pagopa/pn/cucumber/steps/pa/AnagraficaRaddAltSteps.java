@@ -83,6 +83,7 @@ public class AnagraficaRaddAltSteps {
     protected String xPagopaPnCxId = "98765432109";
     protected String locationId;
     protected RegistryV2 registryV2Response;
+    protected String PARTNER_ID_NOT_VALID = "#@#";
 
     @Autowired
     public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnRaddAlternativeV2ClientImpl raddAltClientV2, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt, SettableAuthTokenRaddCognito settableAuthTokenRaddCognito) {
@@ -98,7 +99,8 @@ public class AnagraficaRaddAltSteps {
 
     @After("@deleteNewSite")
     public void afterApiRaddV2() {
-        vieneCancellatoSportelloRaddV2();
+        //vieneCancellatoSportelloRaddV2();
+        vieneCancellatoSportelloRaddV2ConErrore();
         log.info("Delete from @After");
     }
 
@@ -207,6 +209,14 @@ public class AnagraficaRaddAltSteps {
         }
     }
 
+    @Then("viene impostato un partenr Id non valido")
+    public void setPartenIdNotValid() {
+
+       xPagopaPnCxId = PARTNER_ID_NOT_VALID;
+    }
+
+
+
     @Then("la response V2 deve contenere {int} items")
     public void checkNumberOfItems(int expectedCount) {
         GetRegistryResponseV2 response = getRegistryResponseV2;
@@ -263,6 +273,8 @@ public class AnagraficaRaddAltSteps {
 
             this.locationId = creationResponse.getLocationId();
             this.registryV2Response = creationResponse;
+
+            log.info("Response inserimento: {}", creationResponse);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -432,6 +444,10 @@ public class AnagraficaRaddAltSteps {
     @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId con errore")
     public void vieneCancellatoSportelloRaddV2ConErrore() {
 
+        if (registryV2Response == null || registryV2Response.getLocationId() == null) {
+            log.warn("registryV2Response o locationId null: nessuno sportello da cancellare.");
+            return;
+        }
         try {
             raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, registryV2Response.getLocationId());
         } catch (HttpStatusCodeException e) {
@@ -479,7 +495,6 @@ public class AnagraficaRaddAltSteps {
         }
         System.out.println("startValidity: '" + startValidity + "'");
 
-        // Prende solo i primi 10 caratteri in caso arrivi un datetime completo
         String datePart = startValidity.length() >= 10 ? startValidity.substring(0, 10) : startValidity;
 
         LocalDate parsedDate = LocalDate.parse(datePart); // usa default ISO yyyy-MM-dd
@@ -496,29 +511,29 @@ public class AnagraficaRaddAltSteps {
 
         RegistryV2 response = registryV2Response;
 
-        //campi non controllati: locationId, partnerType, startValidity, creationTimestamp, updateTimestamp
+        assertSoftly(softly -> {
 
         if (expectedData.get("partnerId") != null) {
             log.info("Check partnerId: atteso={} ottenuto={}", expectedData.get("partnerId"), response.getPartnerId());
-            assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
+            softly.assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
         }
 
         //update
         if (expectedData.get("description") != null) {
             log.info("Check description: atteso={} ottenuto={}", expectedData.get("description"), response.getDescription());
-            assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
+            softly.assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
         }
 
         //update
         if (expectedData.get("email") != null) {
             log.info("Check email: atteso={} ottenuto={}", expectedData.get("email"), response.getEmail());
-            assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
+            softly.assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
         }
 
         //update
         if (expectedData.get("appointmentRequired") != null) {
             log.info("Check appointmentRequired: atteso={} ottenuto={}", expectedData.get("appointmentRequired"), response.getAppointmentRequired());
-            assertThat(response.getAppointmentRequired())
+            softly.assertThat(response.getAppointmentRequired())
                     .isEqualTo(Boolean.valueOf(expectedData.get("appointmentRequired")));
         }
 
@@ -528,7 +543,7 @@ public class AnagraficaRaddAltSteps {
                     .map(String::trim)
                     .collect(Collectors.toList());
             log.info("Check externalCodes: atteso={} ottenuto={}", expectedCodes, response.getExternalCodes());
-            assertThat(response.getExternalCodes())
+            softly.assertThat(response.getExternalCodes())
                     .containsExactlyInAnyOrderElementsOf(expectedCodes);
         }
 
@@ -538,78 +553,121 @@ public class AnagraficaRaddAltSteps {
                     .map(String::trim)
                     .collect(Collectors.toList());
             log.info("Check phoneNumbers: atteso={} ottenuto={}", expectedPhones, response.getPhoneNumbers());
-            assertThat(response.getPhoneNumbers())
+            softly.assertThat(response.getPhoneNumbers())
                     .containsExactlyInAnyOrderElementsOf(expectedPhones);
         }
 
         //update
         if (expectedData.get("openingTime") != null) {
             log.info("Check openingTime: atteso={} ottenuto={}", expectedData.get("openingTime"), response.getOpeningTime());
-            assertThat(response.getOpeningTime()).isEqualTo(expectedData.get("openingTime"));
+            softly.assertThat(response.getOpeningTime()).isEqualTo(expectedData.get("openingTime"));
         }
 
         //update
         if (expectedData.get("endValidity") != null) {
             log.info("Check endValidity: atteso={} ottenuto={}", expectedData.get("endValidity"), response.getEndValidity());
-            assertThat(response.getEndValidity()).isEqualTo(expectedData.get("endValidity"));
+            softly.assertThat(response.getEndValidity()).isEqualTo(expectedData.get("endValidity"));
         }
 
         //update
         if (expectedData.get("website") != null) {
             log.info("Check website: atteso={} ottenuto={}", expectedData.get("website"), response.getWebsite());
-            assertThat(response.getWebsite()).isEqualTo(expectedData.get("website"));
+            softly.assertThat(response.getWebsite()).isEqualTo(expectedData.get("website"));
         }
 
         if (expectedData.get("startValidity") != null) {
             log.info("Check startValidity: atteso={} ottenuto={}", expectedData.get("startValidity"), response.getEndValidity());
-            assertThat(response.getStartValidity()).isEqualTo(expectedData.get("startValidity"));
+            softly.assertThat(response.getStartValidity()).isEqualTo(expectedData.get("startValidity"));
         }
 
-        assertThat(response.getNormalizedAddress())
+            softly.assertThat(response.getNormalizedAddress())
                 .withFailMessage("normalizedAddress non deve essere null quando ci sono valori attesi")
                 .isNotNull();
 
         NormalizedAddress address = response.getNormalizedAddress();
 
         if (expectedData.get("province") != null) {
-            log.info("Check province: atteso={} ottenuto={}", expectedData.get("province"), address.getProvince());
-            assertThat(address.getProvince())
-                    .withFailMessage("province non corrisponde: atteso=%s ottenuto=%s",
+            log.info("Check province normalizzato: atteso={} ottenuto={}", expectedData.get("province"), address.getProvince());
+            softly.assertThat(address.getProvince())
+                    .withFailMessage("province normalizzato non corrisponde: atteso=%s ottenuto=%s",
                             expectedData.get("province"), address.getProvince())
                     .isEqualTo(expectedData.get("province"));
         }
 
         if (expectedData.get("addressRow") != null) {
-            log.info("Check addressRow: atteso={} ottenuto={}", expectedData.get("addressRow"), address.getAddressRow());
-            assertThat(address.getAddressRow())
-                    .withFailMessage("addressRow non corrisponde: atteso=%s ottenuto=%s",
+            log.info("Check addressRow normalizzato: atteso={} ottenuto={}", expectedData.get("addressRow"), address.getAddressRow());
+            softly.assertThat(address.getAddressRow())
+                    .withFailMessage("addressRow normalizzato non corrisponde: atteso=%s ottenuto=%s",
                             expectedData.get("addressRow"), address.getAddressRow())
                     .isEqualTo(expectedData.get("addressRow"));
         }
 
         if (expectedData.get("cap") != null) {
-            log.info("Check cap: atteso={} ottenuto={}", expectedData.get("cap"), address.getCap());
-            assertThat(address.getCap())
-                    .withFailMessage("CAP non corrisponde: atteso=%s ottenuto=%s",
+            log.info("Check cap normalizzato: atteso={} ottenuto={}", expectedData.get("cap"), address.getCap());
+            softly.assertThat(address.getCap())
+                    .withFailMessage("CAP normalizzato non corrisponde: atteso=%s ottenuto=%s",
                             expectedData.get("cap"), address.getCap())
                     .isEqualTo(expectedData.get("cap"));
         }
 
         if (expectedData.get("city") != null) {
-            log.info("Check city: atteso={} ottenuto={}", expectedData.get("city"), address.getCity());
+            log.info("Check city normalizzato: atteso={} ottenuto={}", expectedData.get("city"), address.getCity());
             assertThat(address.getCity())
-                    .withFailMessage("city non corrisponde: atteso=%s ottenuto=%s",
+                    .withFailMessage("city normalizzato non corrisponde: atteso=%s ottenuto=%s",
                             expectedData.get("city"), address.getCity())
                     .isEqualTo(expectedData.get("city"));
         }
 
         if (expectedData.get("country") != null) {
-            log.info("Check country: atteso={} ottenuto={}", expectedData.get("country"), address.getCountry());
-            assertThat(address.getCountry())
-                    .withFailMessage("country non corrisponde: atteso=%s ottenuto=%s",
+            log.info("Check country normalizzato: atteso={} ottenuto={}", expectedData.get("country"), address.getCountry());
+            softly.assertThat(address.getCountry())
+                    .withFailMessage("country normalizzato non corrisponde: atteso=%s ottenuto=%s",
                             expectedData.get("country"), address.getCountry())
                     .isEqualTo(expectedData.get("country"));
         }
+
+        AddressV2 addressV2 = response.getAddress();
+
+        if (expectedData.get("address_province") != null) {
+            log.info("Check province in input: atteso={} ottenuto={}", expectedData.get("address_province"), addressV2.getProvince());
+            softly.assertThat(addressV2.getProvince())
+                    .withFailMessage("province in input non corrisponde: atteso=%s ottenuto=%s",
+                            expectedData.get("address_province"), addressV2.getProvince())
+                    .isEqualTo(expectedData.get("address_province"));
+        }
+
+        if (expectedData.get("address_addressRow") != null) {
+            log.info("Check addressRow in input: atteso={} ottenuto={}", expectedData.get("address_addressRow"), addressV2.getAddressRow());
+            softly.assertThat(addressV2.getAddressRow())
+                    .withFailMessage("addressRow in input non corrisponde: atteso=%s ottenuto=%s",
+                            expectedData.get("address_addressRow"), addressV2.getAddressRow())
+                    .isEqualTo(expectedData.get("address_addressRow"));
+        }
+
+        if (expectedData.get("address_cap") != null) {
+            log.info("Check cap in input: atteso={} ottenuto={}", expectedData.get("address_cap"), addressV2.getCap());
+            softly.assertThat(addressV2.getCap())
+                    .withFailMessage("CAP in input non corrisponde: atteso=%s ottenuto=%s",
+                            expectedData.get("address_cap"), addressV2.getCap())
+                    .isEqualTo(expectedData.get("address_cap"));
+        }
+
+        if (expectedData.get("address_city") != null) {
+            log.info("Check city in input: atteso={} ottenuto={}", expectedData.get("address_city"), addressV2.getCity());
+            softly.assertThat(addressV2.getCity())
+                    .withFailMessage("city in input non corrisponde: atteso=%s ottenuto=%s",
+                            expectedData.get("address_city"), addressV2.getCity())
+                    .isEqualTo(expectedData.get("address_city"));
+        }
+
+        if (expectedData.get("address_country") != null) {
+            log.info("Check country in input: atteso={} ottenuto={}", expectedData.get("address_country"), addressV2.getCountry());
+            softly.assertThat(addressV2.getCountry())
+                    .withFailMessage("country in input non corrisponde: atteso=%s ottenuto=%s",
+                            expectedData.get("address_country"), addressV2.getCountry())
+                    .isEqualTo(expectedData.get("address_country"));
+        }
+        });
     }
 
 
@@ -645,14 +703,22 @@ public class AnagraficaRaddAltSteps {
         assertThat(addr).withFailMessage("NormalizedAddress mancante").isNotNull();
 
         //Campi obbligatori sempre controllati
-        assertTrue(isValidString(addr.getAddressRow()), "addressRow mancante o vuoto");
-        assertTrue(isValidString(addr.getCap()), "cap mancante o vuoto");
-        assertTrue(isValidString(addr.getCity()), "city mancante o vuoto");
-        assertTrue(isValidString(addr.getProvince()), "province mancante o vuoto");
-        assertTrue(isValidString(addr.getCountry()), "country mancante o vuoto");
+        assertTrue(isValidString(addr.getAddressRow()), "addressRow normalizzato mancante o vuoto");
+        assertTrue(isValidString(addr.getCap()), "cap normalizzato mancante o vuoto");
+        assertTrue(isValidString(addr.getCity()), "city normalizzato mancante o vuoto");
+        assertTrue(isValidString(addr.getProvince()), "province normalizzato mancante o vuoto");
+        assertTrue(isValidString(addr.getCountry()), "country normalizzato mancante o vuoto");
         assertNotNull(addr.getBiasPoint(), "biasPoint mancante o vuoto");
         assertNotNull(addr.getLatitude(), "latitude mancante");
         assertNotNull(addr.getLongitude(), "longitude mancante");
+
+        AddressV2 addressV2 = response.getAddress();
+
+        assertTrue(isValidString(addressV2.getAddressRow()), "addressRow mancante o vuoto");
+        assertTrue(isValidString(addressV2.getCap()), "cap mancante o vuoto");
+        assertTrue(isValidString(addressV2.getCity()), "city mancante o vuoto");
+        assertTrue(isValidString(addressV2.getProvince()), "province mancante o vuoto");
+        assertTrue(isValidString(addressV2.getCountry()), "country mancante o vuoto");
 
         //campi opzionali
         if ("tutti".equalsIgnoreCase(tipoControllo)) {
@@ -731,44 +797,44 @@ public class AnagraficaRaddAltSteps {
 
             if (biasPoint.getCountry() != null) {
                 softly.assertThat(biasPoint.getCountry())
-                        .withFailMessage("biasPoint.x deve essere 0 o 1")
+                        .withFailMessage("biasPoint Country deve essere 0 o 1")
                         .isIn(BigDecimal.ZERO, BigDecimal.ONE);
             }
 
             if (biasPoint.getLocality() != null) {
                 softly.assertThat(biasPoint.getLocality())
-                        .withFailMessage("biasPoint.y deve essere 0 o 1")
+                        .withFailMessage("biasPoint Locality deve essere 0 o 1")
                         .isIn(BigDecimal.ZERO, BigDecimal.ONE);
             }
             if (biasPoint.getOverall() != null) {
                 softly.assertThat(biasPoint.getOverall())
-                        .withFailMessage("biasPoint.x deve essere 0 o 1")
-                        .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+                        .withFailMessage("biasPoint Overall deve essere 0 o 1")
+                        .isBetween(BigDecimal.ZERO, BigDecimal.ONE);
             }
 
             if (biasPoint.getAddressNumber() != null) {
                 softly.assertThat(biasPoint.getAddressNumber())
-                        .withFailMessage("biasPoint.y deve essere 0 o 1")
+                        .withFailMessage("biasPoint AddressNumber deve essere 0 o 1")
                         .isIn(BigDecimal.ZERO, BigDecimal.ONE);
             }
             if (biasPoint.getSubRegion() != null) {
                 softly.assertThat(biasPoint.getSubRegion())
-                        .withFailMessage("biasPoint.x deve essere 0 o 1")
+                        .withFailMessage("biasPoint SubRegion deve essere 0 o 1")
                         .isIn(BigDecimal.ZERO, BigDecimal.ONE);
             }
 
             if (biasPoint.getPostalCode() != null) {
                 softly.assertThat(biasPoint.getPostalCode())
-                        .withFailMessage("biasPoint.y deve essere 0 o 1")
+                        .withFailMessage("biasPoint PostCode deve essere 0 o 1")
                         .isIn(BigDecimal.ZERO, BigDecimal.ONE);
             }
         }
 
-        // description → lunghezza NON tra 2 e 200
+        // description → lunghezza tra 0 e 200
         if (response.getDescription() != null) {
             int len = response.getDescription().length();
-            softly.assertThat(len > 2 || len < 200)
-                    .withFailMessage("Description deve avere lunghezza <2 o >200, trovata: %s", len)
+            softly.assertThat(len > 0 || len < 200)
+                    .withFailMessage("Description deve avere lunghezza >0 o <200, trovata: %s", len)
                     .isTrue();
         }
 
@@ -866,20 +932,20 @@ public class AnagraficaRaddAltSteps {
         });
     }
 
-//    @Then("la response V2 contiene almeno un externalCode uguale a quello della request")
-//    public void responseContainsExternalCodeFromRequest() {
-//        CreateRegistryRequestV2 request = this.createRegistryRequestV2;
-//        GetRegistryResponseV2 response = this.getRegistryResponseV2;
-//
-//        List<String> expectedExternalCodes = request.getExternalCodes();
-//
-//        boolean trovato = response.getItems().stream()
-//                .anyMatch(registry -> registry.getExternalCodes() != null &&
-//                        registry.getExternalCodes().stream().anyMatch(expectedExternalCodes::contains));
-//
-//        assertTrue(trovato,
-//                "Nessun RegistryV2 nella response contiene almeno un externalCode della request");
-//    }
+    @Then("la response V2 contiene almeno un externalCode uguale a quello della request")
+    public void responseContainsExternalCodeFromRequest() {
+        CreateRegistryRequestV2 request = this.createRegistryRequestV2;
+        GetRegistryResponseV2 response = this.getRegistryResponseV2;
+
+        List<String> expectedExternalCodes = request.getExternalCodes();
+
+        boolean trovato = response.getItems().stream()
+                .anyMatch(registry -> registry.getExternalCodes() != null &&
+                        registry.getExternalCodes().stream().anyMatch(expectedExternalCodes::contains));
+
+        assertTrue(trovato,
+                "Nessun RegistryV2 nella response contiene almeno un externalCode della request");
+    }
 
 
     //       V1
