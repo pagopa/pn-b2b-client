@@ -1664,6 +1664,7 @@ public class ApiServiceDeskSteps {
                 if(operationsResponse != null ){
                     Assertions.assertNotNull(operationsResponse.getOperationId(), "OperationId nullo nella response di CREATE_ACT_OPERATION");
                     operationId = operationsResponse.getOperationId();
+                    log.info("Operation id:" + operationId);
                 }
             }
             case "GET_ACT_OPERATION_STATUS" -> {
@@ -1671,7 +1672,7 @@ public class ApiServiceDeskSteps {
                 statusOperationResponse = maybeBody(httpResponse.body(), String.class).orElse("");
             }
             case "GET_ACT_OPERATION_STATUS_INVALID_API_KEY" -> {
-                this.httpResponse = ipServiceDeskClient.getOperationStatusWithHttpInfoAndInvalidApiKey(operationId);
+                this.httpResponse = ipServiceDeskClient.getOperationStatusWithHttpInfoAndInvalidApiKey(getPrefixedRandomAlphaNumeric(7));
                 statusOperationResponse = maybeBody(httpResponse.body(), String.class).orElse("");
             }
             case "UPLOAD_VIDEO" -> {

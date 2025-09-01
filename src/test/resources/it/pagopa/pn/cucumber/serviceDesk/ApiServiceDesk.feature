@@ -1060,7 +1060,7 @@ Feature: Api Service Desk
       | TMTTMS92M57G793P | CICCIO PASTICCIO | SIGN.    | Via@FAIL-Irreperibile_AR | Via@ok_RS | INTERNO 2   | 80100 | 80121 | NAPOLI | SOCCAVO | NA | ITALIA  |
 
   Scenario Outline: prova
-    Given imposto lo iun di SharedSteps a "PKJY-DTHU-JUKG-202508-M-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "XDPT-VYGV-QAKG-202509-E-1" e la pa a "Comune_Multi"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
       | ticketId          | <ticketId>     |
       | iun               | <iun>          |
@@ -1071,14 +1071,17 @@ Feature: Api Service Desk
       | ticketDate        | <ticketDate>   |
       | vrDate            | <vrDate>       |
     And viene invocata l'api "CREATE_ACT_OPERATION"
-    Then il servizio risponde con <statusCode>
+    Then il servizio risponde con 201
+    And viene invocata l'api "GET_ACT_OPERATION_STATUS"
+    And il servizio risponde con <statusCode>
+    Then l'operazione è in stato "CREATING"
     Examples:
       | ticketId | iun  | taxId            | addressType  | addressValue | ticketDate | vrDate | statusCode |
-      | auto     | auto | CLMCST42R12D969Z | test@test.it | COURTESY     | auto       | auto   | 201        |
+      | auto     | auto | CLMCST42R12D969Z | test@test.it | COURTESY     | auto       | auto   | 200        |
 
 
   @CallCenterEvolutoViaMail
-  Scenario Outline: [E2E_] Chiamata createActOperation (Scenario 2, 3)
+  Scenario Outline: [CCE_MAIL_CREATE_ACT_OPERATION] Chiamata createActOperation (Scenario 2, 3)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -1107,70 +1110,78 @@ Feature: Api Service Desk
       | null     | null | null             | null         | null         | auto       | auto   | 400        |
 
   @CallCenterEvolutoViaMail
-  Scenario Outline: [E2E_] Verifica stato operazione (Scenario 4)
-    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | <ticketId>     |
-      | ticketOperationId |                |
-      | taxId             | <taxId>        |
-      | iun               |                |
-      | ticketDate        |                |
-      | vrDate            |                |
-      | addressType       | <addressType>  |
-      | addressValue      | <addressValue> |
-    Then viene invocata l'api "GET_ACT_OPERATION_STATUS"
-    And il servizio risponde con <statusCode>
-    And l'operazione è in stato "PENDING"
-    Examples:
-      | ticketId | taxId | addressType | addressValue | statusCode |
-      | valid    | valid | valid       | valid        | 200        |
+  Scenario: [CCE_MAIL_GET_STATUS_1] Verifica stato operazione (Scenario 4)
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | auto             |
+      | iun               | auto             |
+      | ticketOperationId | auto             |
+      | taxId             | CLMCST42R12D969Z |
+      | addressType       | test@test.it     |
+      | addressValue      | COURTESY         |
+      | ticketDate        | auto             |
+      | vrDate            | auto             |
+    And viene invocata l'api "CREATE_ACT_OPERATION"
+    Then il servizio risponde con 201
+    And viene invocata l'api "GET_ACT_OPERATION_STATUS"
+    And il servizio risponde con 200
+    Then l'operazione è in stato "CREATING"
 
   @CallCenterEvolutoViaMail
-  Scenario: [E2E_] Verifica stato operazione con operationId inesistente (Scenario 5)
+  Scenario: [CCE_MAIL_GET_STATUS_2] Verifica stato operazione con operationId inesistente (Scenario 5)
     Given viene settato l'operationId a "valore_inesistente"
     Then viene invocata l'api "GET_ACT_OPERATION_STATUS"
     And il servizio risponde con 404
 
   @CallCenterEvolutoViaMail
-  Scenario Outline: [E2E_] Verifica stato operazione con api-key invalida (Scenario 6)
-    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | <ticketId>     |
-      | ticketOperationId |                |
-      | taxId             | <taxId>        |
-      | iun               |                |
-      | ticketDate        |                |
-      | vrDate            |                |
-      | addressType       | <addressType>  |
-      | addressValue      | <addressValue> |
+  Scenario: [CCE_MAIL_AUTH_1] Verifica stato operazione con api-key invalida (Scenario 6)
+    Given imposto lo iun di SharedSteps a "XDPT-VYGV-QAKG-202509-E-1" e la pa a "Comune_Multi"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | auto                      |
+      | iun               | XDPT-VYGV-QAKG-202509-E-1 |
+      | ticketOperationId | auto                      |
+      | taxId             | CLMCST42R12D969Z          |
+      | addressType       | test@test.it              |
+      | addressValue      | COURTESY                  |
+      | ticketDate        | auto                      |
+      | vrDate            | auto                      |
     Then viene invocata l'api "GET_ACT_OPERATION_STATUS_INVALID_API_KEY"
-    And il servizio risponde con <statusCode>
-    Examples:
-      | ticketId | taxId | addressType | addressValue | statusCode |
-      | valid    | valid | valid       | valid        | 403        |
+    And il servizio risponde con 401
 
   @CallCenterEvolutoViaMail
-  Scenario Outline: [E2E_] Upload video riconoscimento utente (Scenario 7, 11)
-    Given viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | <ticketId>     |
-      | ticketOperationId |                |
-      | taxId             | <taxId>        |
-      | iun               |                |
-      | ticketDate        |                |
-      | vrDate            |                |
-      | addressType       | <addressType>  |
-      | addressValue      | <addressValue> |
+  Scenario: [CCE_MAIL_UPLOAD_VIDEO_1] Upload video riconoscimento utente (Scenario 7, 11)
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | auto             |
+      | iun               | auto             |
+      | ticketOperationId | auto             |
+      | taxId             | CLMCST42R12D969Z |
+      | addressType       | test@test.it     |
+      | addressValue      | COURTESY         |
+      | ticketDate        | auto             |
+      | vrDate            | auto             |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
     And viene invocata l'api "UPLOAD_VIDEO"
-    And il servizio risponde con 201
+    And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
     And il video viene caricato su SafeStorage
     Then viene invocata l'api "GET_ACT_OPERATION_STATUS"
     And il servizio risponde con 200
     And l'operazione è in stato "OK"
-    Examples:
-      | ticketId | taxId | addressType | addressValue |
-      | valid    | valid | valid       | valid        |
 
   @CallCenterEvolutoViaMail
   Scenario Outline: [E2E_] Verifica stato operazione con operationId inesistente (Scenario 8, 9)
@@ -1198,7 +1209,7 @@ Feature: Api Service Desk
     And il servizio risponde con 201
     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
     And viene invocata l'api "UPLOAD_VIDEO"
-    And il servizio risponde con 201
+    And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
     And il video viene caricato su SafeStorage
     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
