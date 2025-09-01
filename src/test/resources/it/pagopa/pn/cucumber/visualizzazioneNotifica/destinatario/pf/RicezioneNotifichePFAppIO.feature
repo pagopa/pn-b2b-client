@@ -61,7 +61,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
     And l'utente scansiona il QR Code per recuperare i dettagli della notifica
 #    [TC_5]

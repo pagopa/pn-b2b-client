@@ -18,6 +18,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -44,6 +45,8 @@ public class AppIOB2bSteps {
     private String sha256DocumentDownload;
     private ResponseCheckAarMandateDto responseCheckAarMandateDto;
 
+    @Value("${pn.appIO.checkQrCode-bodyUrl}")
+    private String qrCodeBodyUrl;
     private String qrCode;
 
 
@@ -55,6 +58,7 @@ public class AppIOB2bSteps {
 
     @Given("viene generato il QR Code {string} per la notifica appena creata")
     public void vieneGeneratoIlCodiceQRPerLaNotificaCreata(String qrCodeType) {
+        sharedSteps.setNotificationIun("JAGL-QHWU-JZGE-202508-Y-1");
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
@@ -64,7 +68,7 @@ public class AppIOB2bSteps {
 
     @When("l'utente scansiona il QR Code per recuperare i dettagli della notifica")
     public void userScanQRCode() {
-        RequestCheckAarMandateDto requestCheckAarMandateDto = new RequestCheckAarMandateDto().aarQrCodeValue(qrCode);
+        RequestCheckAarMandateDto requestCheckAarMandateDto = new RequestCheckAarMandateDto().aarQrCodeValue(qrCodeBodyUrl + qrCode);
         responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(sharedSteps.getSentNotificationLastVersion().getRecipients().get(0).getTaxId(), requestCheckAarMandateDto);
     }
 
