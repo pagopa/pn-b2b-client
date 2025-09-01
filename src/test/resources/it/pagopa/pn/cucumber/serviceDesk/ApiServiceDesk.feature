@@ -1164,14 +1164,14 @@ Feature: Api Service Desk
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | auto             |
-      | iun               | auto             |
-      | ticketOperationId | auto             |
-      | taxId             | CLMCST42R12D969Z |
-      | addressType       | EMAIL            |
-      | addressValue      | test@test.it     |
-      | ticketDate        | auto             |
-      | vrDate            | auto             |
+      | ticketId          | auto                        |
+      | iun               | auto                        |
+      | ticketOperationId | auto                        |
+      | taxId             | CLMCST42R12D969Z            |
+      | addressType       | EMAIL                       |
+      | addressValue      | stefano.netti@grupposcai.it |
+      | ticketDate        | auto                        |
+      | vrDate            | auto                        |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
