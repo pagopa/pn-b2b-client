@@ -5,28 +5,10 @@
 
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
-      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed            | quantita |
-        | tcSenderUnknow_ | 15       |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId      | comparative | limit |
-        | unknow~RS~P8  | esattamente | 0     |
-        | unknow~AR~P8  | esattamente | 0     |
-        | unknow~890~P8 | esattamente | 0     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | almeno      | 15    |
-        | infinityDriverP8~CAP1_P8 | almeno      | 15    |
-      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | inferiore   | 1000  |
-        | infinityDriverP8~CAP1_P8 | inferiore   | 1000  |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 0
-      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
-
+      Given pulisce i dati del csv <csv> dalla tabella target
       Examples:
         | csv                  | TOT |
-        | "tcSenderUnknow.csv" | 15  |
+        | "tcRankingMerged.csv" | 110 |
 
 
     @delayer
