@@ -360,6 +360,30 @@ Feature: avanzamento notifiche webhook b2b V27
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @webhookV27 @webhookHeader @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_RETRY_AFTER] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | denomination            | Mario Gherkin    |
+      | taxId                   | CLMCST42R12D969Z |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | Via@ok_AR        |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    When si effettua la consume dello stream versione "V27" salvando l'intera response
+    Then l'header della response della consume con versione "V27" contiene il parametro "retry-after" con valore pari a "60000"
+    Given la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    When si effettua la consume dello stream versione "V27" salvando l'intera response
+    Then l'header della response della consume con versione "V27" contiene il parametro "retry-after" con valore pari a "0"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
 
 
 

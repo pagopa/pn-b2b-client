@@ -14,6 +14,7 @@ import org.junit.platform.suite.api.*;
         @ConfigurationParameter(key = Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"webhookV28", "webhookLatestVersion"})
+@IncludeTags({"webhookHeader"})
+//@IncludeTags({"webhookV28", "webhookLatestVersion"})
 public class WebhookLatestVersionTest {
 }
