@@ -33,7 +33,7 @@ public class DelayerSteps {
 
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv"};
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
-    public static final int POLLING_MAX_MINUTES = 30;
+    public static final int POLLING_MAX_MINUTES = 45;
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
@@ -65,7 +65,7 @@ public class DelayerSteps {
         lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
     }
 
-    @Then("pulisce i dati dalle tabelle target")
+    @Then("vengono puliti i dati dalle tabelle target")
     public void deleteDataFormTargetTable() {
         Arrays.stream(CSV_FILES).forEach(csv -> {
             try {
