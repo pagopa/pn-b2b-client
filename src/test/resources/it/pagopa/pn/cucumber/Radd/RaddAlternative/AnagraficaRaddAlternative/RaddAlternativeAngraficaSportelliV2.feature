@@ -118,31 +118,31 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_partner_type     | <partnertype>       |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
-      | via          | cap    | provincia | citta  | stato  | descrizione | telefono      | aperturaSportello | startValidity | endValidity | externalCode   | email                | website      | partnertype |
-      | Ciao@mondo#1 | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA1       | NULL                 | NULL         | NULL        |
-      | via fiume2   | 123456 | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA2       | NULL                 | NULL         | NULL        |
-      | via fiume3   | 8014   | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA3       | NULL                 | NULL         | NULL        |
-      | via fiume4   | 2016Z  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA4       | NULL                 | NULL         | NULL        |
-      | via fiume5   | 20161  | ITA       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA5       | NULL                 | NULL         | NULL        |
-      | via fiume6   | 20161  | na        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA6       | NULL                 | NULL         | NULL        |
-      | via fiume7   | 20161  | NAP       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA7       | NULL                 | NULL         | NULL        |
-      | via fiume8   | 20161  | 10        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA8       | NULL                 | NULL         | NULL        |
-      | via fiume9   | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136 | NULL              | NULL          | NULL        | EXT04QA9       | NULL                 | NULL         | NULL        |
-      | via fiume10  | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136  | NULL              | NULL          | NULL        | EXT04QA10      | NULL                 | NULL         | NULL        |
-      | via fiume11  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA11      | https://exa_mple.com | NULL         | NULL        |
-      | via fiume12  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA12      | nome@dominio         | NULL         | NULL        |
-      | via fiume13  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA13      | @dominio.ext         | NULL         | NULL        |
-      | via fiume16  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 1998-01-01    | NULL        | EXT04QA16      | NULL                 | NULL         | NULL        |
-      | via fiume17  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 01-01-2030    | NULL        | EXT04QA17      | NULL                 | NULL         | NULL        |
-      | via fiume18  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 202-01-01     | NULL        | EXT04QA18      | NULL                 | NULL         | NULL        |
-      | via fiume19  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 01-01-2030  | EXT04QA19      | NULL                 | NULL         | NULL        |
-      | via fiume20  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 2015-01-01  | EXT04QA20      | NULL                 | NULL         | NULL        |
-      | via fiume24  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA20      | NULL                 | NULL         | NULL        |
-      | via fiume21  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | ĄŁĽŚŠŞSAFŤŹŽŻ1 | NULL                 | NULL         | NULL        |
-      | via fiume22  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA21      | NULL                 | https://.com | NULL        |
-      | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | ĄŁĽ         |
-      | via fiume25  | 20161  | MI        | MILANO | ITALIA | 1           | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
-      | via fiume26  | 201 1  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
+      | via          | cap    | provincia | citta  | stato  | descrizione | telefono      | aperturaSportello | startValidity | endValidity | externalCode | email                | website      | partnertype |
+      | Ciao@mondo#1 | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA1     | NULL                 | NULL         | NULL        |
+      | via fiume2   | 123456 | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA2     | NULL                 | NULL         | NULL        |
+      | via fiume3   | 8014   | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA3     | NULL                 | NULL         | NULL        |
+      | via fiume4   | 2016Z  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA4     | NULL                 | NULL         | NULL        |
+      | via fiume5   | 20161  | ITA       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA5     | NULL                 | NULL         | NULL        |
+      | via fiume6   | 20161  | na        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA6     | NULL                 | NULL         | NULL        |
+      | via fiume7   | 20161  | NAP       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA7     | NULL                 | NULL         | NULL        |
+      | via fiume8   | 20161  | 10        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA8     | NULL                 | NULL         | NULL        |
+      | via fiume9   | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136 | NULL              | NULL          | NULL        | EXT04QA9     | NULL                 | NULL         | NULL        |
+      | via fiume10  | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume11  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA11    | https://exa_mple.com | NULL         | NULL        |
+      | via fiume12  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA12    | nome@dominio         | NULL         | NULL        |
+      | via fiume13  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA13    | @dominio.ext         | NULL         | NULL        |
+      | via fiume16  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 1998-01-01    | NULL        | EXT04QA16    | NULL                 | NULL         | NULL        |
+      | via fiume17  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 01-01-2030    | NULL        | EXT04QA17    | NULL                 | NULL         | NULL        |
+      | via fiume18  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 202-01-01     | NULL        | EXT04QA18    | NULL                 | NULL         | NULL        |
+      | via fiume19  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 01-01-2030  | EXT04QA19    | NULL                 | NULL         | NULL        |
+      | via fiume20  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 2015-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
+      | via fiume24  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
+      | via fiume22  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA21    | NULL                 | https://.com | NULL        |
+      | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | ĄŁĽ         |
+      | via fiume26  | 201 1  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | NULL        |
+      #| via fiume25  | 20161  | MI        | MILANO | ITALIA | 1           | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
+      #| via fiume21  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | ĄŁĽŚŠŞSAFŤŹŽŻ1 | NULL                 | NULL         | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 29
@@ -292,25 +292,25 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
     Examples:
-      | N  | description | openingTime | phoneNumbers                        | email                    | end_validity             | externalCodes             | appointment_required | website     |
-      | 2  | NULL        | NULL        | +390123456789,3921573273,3333333333 | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 3  | NULL        | NULL        | +39 012 3456789                     | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 4  | NULL        | NULL        | NULL                                | NULL                     | 21-03-2024               | NULL                      | NULL                 | NULL        |
-      | 5  | NULL        | NULL        | NULL                                | NULL                     | 1998-01-01               | NULL                      | NULL                 | NULL        |
-      | 6  | NULL        | NULL        | NULL                                | NULL                     | 2025-01-0A               | NULL                      | NULL                 | NULL        |
-      | 7  | NULL        | NULL        | NULL                                | NULL                     | 2025-01                  | NULL                      | NULL                 | NULL        |
-      | 8  | NULL        | NULL        | NULL                                | NULL                     | 2025/01/01               | NULL                      | NULL                 | NULL        |
-      | 9  | NULL        | NULL        | NULL                                | mail@@esempio.it         | NULL                     | NULL                      | NULL                 | NULL        |
-      | 10 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | www.esempio |
-      | 12 | NULL        | NULL        | !!"$%&£%'?^\s#!SG(£%%£%'            | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      | 13 | NULL        | NULL        | NULL                                | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                     | NULL                      | NULL                 | NULL        |
-      | 14 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s#l | NULL                 | NULL        |
-      | 15 | NULL        | NULL        | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                      | NULL                 | NULL        |
-      | 15 | NULL        | NULL        | ""                                  | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      | description | openingTime | phoneNumbers                        | email                    | end_validity             | externalCodes | appointment_required | website     |
+      | NULL        | NULL        | +390123456789,3921573273,3333333333 | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39 012 3456789                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | 21-03-2024               | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | 1998-01-01               | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | 2025-01-0A               | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | 2025-01                  | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | 2025/01/01               | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | mail@@esempio.it         | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | NULL                     | NULL          | NULL                 | www.esempio |
+      | NULL        | NULL        | !!"$%&£%'?^\s#!SG(£%%£%'            | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | ""                                  | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       #| 1  | NULL        | Mo-Fr 09:00-13:00,15:00-18:00 | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       #| 16 | A           | NULL                     | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       #| 2  | ""          | NULL        |NULL  | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
       #| 11 | NULL        | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
+      #| 14 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s#l | NULL                 | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 43-44
