@@ -20,6 +20,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 @Slf4j
 public class DelayerValidator {
 
+    public static final int FROZEN_POLLING_MAX_MINUTES = 30;
     private final DelayerContext context;
     private final DelayerLambdaClient lambdaClient;
     private final DelayerPaperDeliveryUtils utils;
@@ -164,7 +165,7 @@ public class DelayerValidator {
                 frozenExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet()),
                 step.name(),
                 getNextMonday(),
-                15
+                FROZEN_POLLING_MAX_MINUTES
         );
 
         if (frozenExpected.size() != actualFrozen.size()) {

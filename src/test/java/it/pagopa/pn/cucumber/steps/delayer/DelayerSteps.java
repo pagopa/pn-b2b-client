@@ -35,6 +35,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 public class DelayerSteps {
 
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
+    public static final int POLLING_MAX_MINUTES = 30;
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
@@ -66,10 +67,12 @@ public class DelayerSteps {
         lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
     }
 
-    @Then("pulisce i dati del csv {string} dalla tabella target")
+    @Then("pulisce i dati del csv {string} dalle tabelle target")
     public void deleteDataFormTargetTable(String csvName) throws Exception {
         lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery","pn-PaperDeliveryDriverUsedCapacities",
                 "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csvName);
+
+        // Inserisco una sleep per permettere ad eventuali step function
     }
 
     @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province) sia:")
@@ -237,7 +240,7 @@ public class DelayerSteps {
                 .toList();
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 30);
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, POLLING_MAX_MINUTES);
 
         actual.forEach(dpd -> {
             String seed = extractSeed(dpd);

@@ -5,7 +5,7 @@
 
 
     Scenario Outline: [TEST_PULIZIA]
-      Given pulisce i dati del csv <csv> dalla tabella target
+      Given pulisce i dati del csv <csv> dalle tabelle target
       Examples:
         | csv                  | TOT |
         | "tcRankingMerged.csv" | 110 |
@@ -105,6 +105,13 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
+      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      Then verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                  | TOT |
@@ -113,7 +120,7 @@
 
     @delayer
     Scenario Outline: [DELAYER-TC1] Verifica la coerenza dell'algoritmo valutando la corretta applicazione dei limiti mittente, recapitista, stampa e la pianificazione per priorità
-      Given pulisce i dati del csv <csv> dalla tabella target
+      Given pulisce i dati del csv <csv> dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed                 | quantita |
         | tcRanking_2nd_890_   | 16       |
@@ -223,7 +230,7 @@
 
     @delayer
     Scenario Outline: [DELAYER-TC2] Verifica la gestione di un mittente non censito
-      Given pulisce i dati del csv <csv> dalla tabella target
+      Given pulisce i dati del csv <csv> dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
         | tcSenderUnknow_ | 15       |
@@ -286,7 +293,7 @@
 
     @delayer
     Scenario Outline: [DELAYER-TC3] Verifica la corretta gestione della capacità di recapito aggregata
-      Given pulisce i dati del csv <csv> dalla tabella target
+      Given pulisce i dati del csv <csv> dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed           | quantita |
         | tcSplitSender_ | 14       |
