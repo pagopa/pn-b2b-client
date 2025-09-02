@@ -57,7 +57,6 @@ Feature: recupero notifiche tramite api AppIO b2b
   #[TC_1]
   @appIo
   Scenario: [QR_CODE_1] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -67,21 +66,18 @@ Feature: recupero notifiche tramite api AppIO b2b
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
 #    [TC_5]
     And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO
-    # [TC_8] SI PROVA A RIFIUTARE I TOS E RIACCEDERE SENZA SUCCESSO AL DETTAGLIO DELLA NOTIFICA
-    And l'utente "Mario Cucumber" "NON ACCETTA" i termini di servizio di tipo: TOS
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
-    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO
+    # SI VERIFICA CHE UN UTENTE CHE NON è DESTINATARIO O DELEGATO NON POSSA LEGGERE IL QRCODE
+    And l'utente Signor Generato scansiona il QR Code per recuperare i dettagli della notifica
+    And si verifica che la chiamata abbia ritornato uno status code: 403
+
     #[TC_3] SI PROVA A RIACCEDERE ALLA NOTIFICA SCANSIONANDO UN QR CODE NON VALIDO
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     And viene generato il QR Code "malformato" per la notifica appena creata
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
     And si verifica che la chiamata abbia ritornato uno status code: 404
-
     
   #[TC_2]
   @appIo
-  Scenario Outline: [QR_CODE_2] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+  Scenario Outline: [QR_CODE_2] Si verificano gli status code ritornati per il caso negativo dell'API: checkQRCode
     And viene chiamato l'endpoint "checkQRCode" con i seguenti params:
     | taxId             | <PARAM_1>   |
     | aarQrCodeValue    | <PARAM_2>   |
@@ -93,8 +89,7 @@ Feature: recupero notifiche tramite api AppIO b2b
 
   #[TC_6] [TC_7]
   @appIo
-  Scenario Outline: [QR_CODE_3] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+  Scenario Outline: [QR_CODE_3] Si verificano gli status code ritornati per il caso negativo dell'API: getReceivedNotification
     And viene chiamato l'endpoint "getReceivedNotification" con i seguenti params:
       | iun             | <PARAM_1>   |
       | taxId           | <PARAM_2>   |
@@ -106,8 +101,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | NAUZ-WNPH-WQZE-202508-Y-1   |                   |
 
   @appIo
-  Scenario: [QR_CODE_4]
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+  Scenario: [QR_CODE_4] Viene generata una notifica e invocato l'endpoint per il recupero del documento tramite docIdx (/delivery/notifications/received/{iun}/attachments/documents/{docIdx})
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -117,24 +111,24 @@ Feature: recupero notifiche tramite api AppIO b2b
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
     Then a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO
 
-  #[TC_11]
+  #[TC_9]
   @appIo
-  Scenario Outline: [QR_CODE_5]
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
+  Scenario Outline: [QR_CODE_5] Si verificano gli status code ritornati per il caso negativo dell'API: getSentNotificationDocument
     And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
       | iun             | <PARAM_1>   |
       | docIdx          | <PARAM_2>   |
       | taxId           | <PARAM_3>   |
-    Then si verifica che la chiamata abbia ritornato uno status code: 400
+    Then si verifica che la chiamata abbia ritornato uno status code: <PARAM_4>
     Examples:
-      | PARAM_1                     | PARAM_2     | PARAM_3                    |
-      |                             | 0           | FRMTTR76M06B715E           |
-      | ERRA-T000-0000-ERRATO-0-0   |             | FRMTTR76M06B715E           |
-      | NAUZ-WNPH-WQZE-202508-Y-1   | 0           |                            |
+      | PARAM_1                     | PARAM_2     | PARAM_3                    | PARAM_4  |
+      |                             | 0           | FRMTTR76M06B715E           | 400      |
+      | ERRA-T000-0000-ERRATO-0-0   |             | FRMTTR76M06B715E           | 400      |
+      | NAUZ-WNPH-WQZE-202508-Y-1   | 0           |                            | 400      |
+      | PKMK-AAAA-WJDK-202509-A-1   | 0           | FRMTTR76M06B715E           | 404      |
 
   #[TC_12]
   @appIo
-  Scenario: [QR_CODE_6]
+  Scenario: [QR_CODE_6] Viene creata una notifica e recuperato il documento di pagamento PAGOPA tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -153,26 +147,48 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
+  @appIo
+  Scenario: [QR_CODE_6] Viene creata una notifica e recuperato l'F24 tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                 |
+      | physicalAddress_address      | Via@ok_AR            |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
   #[TC_13] [TC_14]
   @appIo
-  Scenario Outline: [QR_CODE_7]
-    And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
-    And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
+  Scenario Outline: [QR_CODE_7] Si verificano gli status code ritornati per il caso negativo dell'API: getReceivedNotificationAttachment
+    And viene chiamato l'endpoint "getReceivedNotificationAttachment" con i seguenti params:
       | iun             | <PARAM_1>   |
       | attachmentName  | <PARAM_2>   |
       | taxId           | <PARAM_3>   |
       | attachmentIdx   | <PARAM_4>   |
-    Then si verifica che la chiamata abbia ritornato uno status code: 404
+    Then si verifica che la chiamata abbia ritornato uno status code: <PARAM_5>
     Examples:
-      | PARAM_1                     | PARAM_2     | PARAM_3                    | PARAM_4  |
-      |                             | F24         | FRMTTR76M06B715E           | 0        |
-      | ERRA-T000-0000-ERRATO-0-0   | F24         | FRMTTR76M06B715E           | 0        |
-      | NAUZ-WNPH-WQZE-202508-Y-1   |             | FRMTTR76M06B715E           | 0        |
-      | NAUZ-WNPH-WQZE-202508-Y-1   | PAGOPA      |                            | 0        |
-    #considera che PARAM_4 non è obbligatorio
+      | PARAM_1                     | PARAM_2     | PARAM_3                    | PARAM_4  | PARAM_5 |
+      |                             | F24         | FRMTTR76M06B715E           | 0        | 400     |
+      | ERRA-T000-0000-ERRATO-0-0   | F24         | FRMTTR76M06B715E           | 0        | 400     |
+      | NAUZ-WNPH-WQZE-202508-Y-1   |             | FRMTTR76M06B715E           | 0        | 400     |
+      | NAUZ-WNPH-WQZE-202508-Y-1   | PAGOPA      |                            | 0        | 400     |
+      | AAAA-AAAA-WQZE-202508-Y-1   | PAGOPA      | FRMTTR76M06B715E           | 0        | 404     |
 
   @appIo
-  Scenario: [QR_CODE_8] Lettura tramite AppIO di una notifica da parte di un delegato
+  Scenario: [QR_CODE_8] Lettura tramite AppIO di una notifica da parte di un delegato PF da un delegatore PF
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Root"
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
@@ -191,13 +207,44 @@ Feature: recupero notifiche tramite api AppIO b2b
     And viene generato il QR Code "corretto" per la notifica appena creata
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
     And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: Mario Cucumber
-
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato: Mario Cucumber
     And il download non ha prodotto errori
-
     Then a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Gherkin tramite AppIO
 #    [TC_18]
-    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO senza passare l'id della delega
+    And a seguito della scansione del QR Code, la notifica non può essere recuperata da: Mario Cucumber tramite AppIO senza passare l'id della delega
 
+  @appIo
+  Scenario: [QR_CODE_9] Lettura tramite AppIO di una notifica da parte di un PF delegato da una PG
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "CucumberSpa"
+    Given "Mario Gherkin" viene delegato da "CucumberSpa" per comune "Comune_Root"
+    And "Mario Gherkin" accetta la delega "CucumberSpa"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario CucumberSpa e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica
+    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: Mario Gherkin
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato: Mario Gherkin
+    And il download non ha prodotto errori
 
-
+#  @appIo
+#  Scenario: [QR_CODE_10]
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica con cucumber |
+#      | senderDenomination | comune di milano            |
+#    And destinatario Mario Cucumber
+#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+#    And viene generato il QR Code "corretto" per la notifica appena creata
+#    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+#    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO passando l'header srcIo uguale a: "QR_CODE"
+#    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" esista
+    #DA VERIFICARE MANUALMENTE SU DB CHE PER L'ELEMENTO NOTIFICATION_VIEWED_CREATION_REQUEST sourceChannel=IO e sourceChannelDetails = QR_CODE;
