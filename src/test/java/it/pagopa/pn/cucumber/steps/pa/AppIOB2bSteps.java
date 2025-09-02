@@ -94,14 +94,15 @@ public class AppIOB2bSteps {
         Assertions.assertEquals(statusCode, notificationServerError.getStatusCode().value());
     }
 
-    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO")
+    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO (senza passare l'id della delega)")
     public void notificationCanBeRetrievedFromAppIOAfterQRCodeScan() {
         assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), responseCheckAarMandateDto.getRecipientInfo().getTaxId(), null);
     }
 
     @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato")
     public void delegateRetrievesNotificationFromAppIOAfterQRCodeScan() {
-        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), responseCheckAarMandateDto.getRecipientInfo().getTaxId(), responseCheckAarMandateDto.getMandateId());
+        Assertions.assertNotNull(responseCheckAarMandateDto.getMandateId(), "MandateId cannot be null!");
+        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), responseCheckAarMandateDto.getRecipientInfo().getTaxId(), UUID.fromString(responseCheckAarMandateDto.getMandateId()));
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
@@ -110,11 +111,11 @@ public class AppIOB2bSteps {
         assertNotificationCanBeRetrievedFromAppIO(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId(), null);
     }
 
-    private void assertNotificationCanBeRetrievedFromAppIO(String iun, String taxId, String mandateId) {
+    private void assertNotificationCanBeRetrievedFromAppIO(String iun, String taxId, UUID mandateId) {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(iun, taxId, UUID.fromString(mandateId))));
+                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(iun, taxId, mandateId)));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
