@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
@@ -34,6 +31,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 @RequiredArgsConstructor
 public class DelayerSteps {
 
+    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv"};
     private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
     public static final int POLLING_MAX_MINUTES = 30;
 
@@ -67,12 +65,17 @@ public class DelayerSteps {
         lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
     }
 
-    @Then("pulisce i dati del csv {string} dalle tabelle target")
-    public void deleteDataFormTargetTable(String csvName) throws Exception {
-        lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery","pn-PaperDeliveryDriverUsedCapacities",
-                "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csvName);
+    @Then("pulisce i dati dalle tabelle target")
+    public void deleteDataFormTargetTable() {
+        Arrays.stream(CSV_FILES).forEach(csv -> {
+            try {
+                lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery","pn-PaperDeliveryDriverUsedCapacities",
+                        "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csv);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
-        // Inserisco una sleep per permettere ad eventuali step function
+        });
     }
 
     @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province) sia:")

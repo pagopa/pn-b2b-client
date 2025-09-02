@@ -3,13 +3,8 @@
   # con la deliveryDate alla W+1(corrente) e ora, settimana W+1 le stiamo valutando
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
-
-    Scenario Outline: [TEST_PULIZIA]
-      Given pulisce i dati del csv <csv> dalle tabelle target
-      Examples:
-        | csv                  | TOT |
-        | "tcRankingMerged.csv" | 110 |
-
+    Scenario: [TEST_PULIZIA]
+      Given pulisce i dati dalle tabelle target
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
@@ -120,7 +115,7 @@
 
     @delayer
     Scenario Outline: [DELAYER-TC1] Verifica la coerenza dell'algoritmo valutando la corretta applicazione dei limiti mittente, recapitista, stampa e la pianificazione per priorità
-      Given pulisce i dati del csv <csv> dalle tabelle target
+      Given pulisce i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed                 | quantita |
         | tcRanking_2nd_890_   | 16       |
@@ -230,7 +225,7 @@
 
     @delayer
     Scenario Outline: [DELAYER-TC2] Verifica la gestione di un mittente non censito
-      Given pulisce i dati del csv <csv> dalle tabelle target
+      Given pulisce i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
         | tcSenderUnknow_ | 15       |
@@ -293,7 +288,7 @@
 
     @delayer
     Scenario Outline: [DELAYER-TC3] Verifica la corretta gestione della capacità di recapito aggregata
-      Given pulisce i dati del csv <csv> dalle tabelle target
+      Given pulisce i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed           | quantita |
         | tcSplitSender_ | 14       |
