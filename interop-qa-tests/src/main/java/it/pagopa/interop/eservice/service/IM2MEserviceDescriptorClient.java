@@ -2,6 +2,7 @@ package it.pagopa.interop.eservice.service;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.IClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import lombok.Builder;
 import lombok.Data;
@@ -21,14 +22,15 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
         private EServiceDescriptorState state;
     }
 
-    /* TODO 14/08/2025: astrazione di un oggetto non ancora rilasciato nella specifica OpenAPI,
-     *  ampliare e adattare una volta ottenuta la specifica completa *************************/
     @Data
     @Builder
     class EServiceDescriptorPatchRequest {
+        private String description;
+        private List<String> audience;
         private Integer voucherLifespan;
         private Integer dailyCallsPerConsumer;
         private Integer dailyCallsTotal;
+        private AgreementApprovalPolicy agreementApprovalPolicy;
     }
 
     EServiceDescriptor get(UUID eserviceId, UUID descriptorId);

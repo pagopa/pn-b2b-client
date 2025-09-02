@@ -65,23 +65,24 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     class EServiceInterfaceUploadResponse {
         private UUID id;
     }
+    /* *************************************************************************************/
 
     @Data
     @Builder
     class EServicePatchRequest {
         private EServiceTechnology technology;
         private Boolean isSignalHubEnabled;
+        private String name;
+        private String description;
+        private EServiceMode mode;
+        private Boolean isConsumerDelegable;
+        private Boolean isClientAccessDelegable;
     }
 
     @Data
     @Builder
     class EServiceNamePatchRequest {
         private String name;
-
-        // Ipotetico secondo campo, usato per simulare il caso in cui - per qualche motivo -
-        // l'api in questione non coinvolga solo il nome. La sua rimozione o modifica farà parte
-        // del processo di revisione det test a seguito del rilascio delle specifiche OpenAPI.
-        private String prettyName;
     }
 
     @Data
@@ -95,13 +96,7 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     @Builder
     class EServiceDescriptionPatchRequest {
         private String description;
-
-        // Ipotetico secondo campo, usato per simulare il caso in cui - per qualche motivo -
-        // l'api in questione non coinvolga solo il nome. La sua rimozione o modifica farà parte
-        // del processo di revisione det test a seguito del rilascio delle specifiche OpenAPI.
-        private String summary;
     }
-    /* *************************************************************************************/
 
     EServices getAll(EserviceListRequest payload);
 

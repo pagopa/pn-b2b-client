@@ -393,10 +393,13 @@ public class PurposesSteps {
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità")
     public void patchPurpose() {
-        purposePatchAssistant.patchResource(PurposePatchRequest.builder()
-            .title("patched title - " + UUID.randomUUID())
-            .description("patched description - " + UUID.randomUUID())
-            .build());
+        PurposePatchRequest request = purposePatchAssistant.buildDefaultPatchRequest();
+        purposePatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità con token non valido")
+    public void patchPurposeWithNotValidToken() {
+        purposePatchAssistant.patchResourceWithInvalidToken(purposePatchAssistant.buildDefaultPatchRequest());
     }
 
     @Then("la finalità è stata parzialmente modificata correttamente")
@@ -416,9 +419,10 @@ public class PurposesSteps {
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità specificando un sottoinsieme di informazioni")
     public void patchPurposeSubset() {
-        purposePatchAssistant.patchResource(PurposePatchRequest.builder()
-            .title("patched title - " + UUID.randomUUID())
-            .build());
+        PurposePatchRequest request = PurposePatchRequest.builder()
+                .title("patched title - " + UUID.randomUUID())
+                .build();
+        purposePatchAssistant.patchResource(request);
     }
 
     @Then("la finalità restituita è coerente con le modifiche effettuate")

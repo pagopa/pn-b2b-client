@@ -9,6 +9,9 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDraftUpdateSeed;
+import java.util.List;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,9 +19,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -94,10 +94,18 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
-    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body) {
-        // TODO 14/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
-        return null;
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId,
+       UUID descriptorId, EServiceDescriptorPatchRequest body) {
+        return eservicesApi.updateDraftEServiceDescriptor(
+            eserviceId,
+            descriptorId,
+            new EServiceDescriptorDraftUpdateSeed()
+                .voucherLifespan(body.getVoucherLifespan())
+                .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
+                .dailyCallsTotal(body.getDailyCallsTotal())
+                .audience(body.getAudience())
+                .description(body.getDescription())
+                .agreementApprovalPolicy(body.getAgreementApprovalPolicy()));
     }
 
     @Override

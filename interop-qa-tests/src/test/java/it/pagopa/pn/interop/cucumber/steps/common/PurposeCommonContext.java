@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,8 @@ public class PurposeCommonContext {
 
     private List<PurposeSeed> createdPurposes = new ArrayList<>();
     private List<PurposeEServiceSeed> createdPurposesEService = new ArrayList<>();
+
+    private OffsetDateTime updateTime;
 
     public void addCreatedPurpose(PurposeSeed purposeSeed) {
         this.createdPurposes.add(purposeSeed);

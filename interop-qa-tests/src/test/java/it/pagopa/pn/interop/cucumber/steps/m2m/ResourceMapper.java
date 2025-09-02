@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.control.DeepClone;
 
 public interface ResourceMapper<PATCH_REQUEST, RESOURCE> {
     /* Generalmente il senso di un' op. PATCH è applicare solo le modifiche specificate; si
@@ -13,5 +14,6 @@ public interface ResourceMapper<PATCH_REQUEST, RESOURCE> {
 
     PATCH_REQUEST mapResourceToPatchRequest(RESOURCE resource);
 
+    @BeanMapping(mappingControl = DeepClone.class)
     RESOURCE copyResource(RESOURCE resource);
 }

@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
@@ -127,9 +128,15 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
 
     @Override
     public Purpose patchPurpose(UUID purposeId, PurposePatchRequest body) {
-        // TODO 05/08/2025: specifica OpenAPI non ancora disponibile, dunque non c'è ancora un
-        //  metodo nel client da chiamare
-        return null;
+        return purposesApi.updateDraftPurpose(
+            purposeId,
+            new PurposeDraftUpdateSeed()
+                .title(body.getTitle())
+                .description(body.getDescription())
+                .riskAnalysisForm(body.getRiskAnalysisForm())
+                .dailyCalls(body.getDailyCalls())
+                .isFreeOfCharge(body.getIsFreeOfCharge())
+                .freeOfChargeReason(body.getFreeOfChargeReason()));
     }
 
     @Override
