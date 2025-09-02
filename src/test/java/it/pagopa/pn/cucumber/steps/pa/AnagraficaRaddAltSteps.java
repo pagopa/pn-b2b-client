@@ -108,7 +108,7 @@ public class AnagraficaRaddAltSteps {
     @Given("l' utente con username {string} password {string} e clientId {string} richiede e riceve un token valido tramite cognito")
     public void getTokenCognito(String username, String password, String clientId) {
 
-        AuthenticatorCognito authenticator = new AuthenticatorCognito(username, password, clientId, Region.EU_SOUTH_1); // cambia regione
+        AuthenticatorCognito authenticator = new AuthenticatorCognito(username, password, clientId, Region.EU_SOUTH_1);
         this.tokenCognito = authenticator.generateJwtToken();
 
         assertNotNull(tokenCognito, "Il token JWT non deve essere nullo");
@@ -116,7 +116,6 @@ public class AnagraficaRaddAltSteps {
         System.out.println("Token ottenuto: " + tokenCognito);
 
         raddAltClientV2.selectRaddista(tokenCognito);
-
     }
 
     /*
@@ -130,6 +129,10 @@ public class AnagraficaRaddAltSteps {
         raddAltClientV2.selectRaddista(token);
     }
 
+    /*
+     * tipocontrollo= "tutti" : controllo su tutti i campi ;
+     * tipocontrollo= "obbligatori" : controllo sui soli campi mandatory"
+     * */
     @And("la response registry V2 della lettura deve avere i campi {string} valorizzati")
     public void validateMandatoryFieldsInRegistryRead(String tipocontrollo) {
 
@@ -167,9 +170,7 @@ public class AnagraficaRaddAltSteps {
                 .filter(x -> locationId.equals(x.getLocationId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Nessun RegistryV2 trovato con il locationId atteso: " + locationId));
-
     }
-
 
     @When("viene richiesta la lista degli sportelli Radd V2 con dati:")
     public void vieneRichiestolaListaDeiSportelliRaddV2(Map<String, String> dataSportello) {
@@ -212,10 +213,8 @@ public class AnagraficaRaddAltSteps {
     @Then("viene impostato un partenr Id non valido")
     public void setPartenIdNotValid() {
 
-       xPagopaPnCxId = PARTNER_ID_NOT_VALID;
+        xPagopaPnCxId = PARTNER_ID_NOT_VALID;
     }
-
-
 
     @Then("la response V2 deve contenere {int} items")
     public void checkNumberOfItems(int expectedCount) {
@@ -294,7 +293,6 @@ public class AnagraficaRaddAltSteps {
         }
     }
 
-
     @When("viene modificato uno sportello Radd V2 con dati:")
     public void vieneModificatoSportelloRaddDatiV2(@Transpose UpdateRegistryRequestV2 dataSportelloUpdate) {
         log.info("Upload Request: {}", createRegistryRequestV2);
@@ -303,7 +301,6 @@ public class AnagraficaRaddAltSteps {
             RegistryV2 response = Assertions.assertDoesNotThrow(
                     () -> raddAltClientV2.updateRegistry(this.xPagopaPnCxId, this.locationId, dataSportelloUpdate)
             );
-
             this.registryV2Response = response;
             this.updateRegistryRequestV2 = dataSportelloUpdate;
 
@@ -383,6 +380,10 @@ public class AnagraficaRaddAltSteps {
         }
     }
 
+    /*
+     * tipocontrollo= "ASSENTE" : verifica che il location id non sia restituito nella redsponse di lettura sedi (quindi cancellato correttamente)
+     * altrimenti ne verifica la presenza
+     * */
     @Then("verifica che il locationId oggetto della cancellazione è {string} nella response di lettura")
     public void responseDoesNotContainLocationId(String tipoControllo) {
 
@@ -458,33 +459,33 @@ public class AnagraficaRaddAltSteps {
     @Then("l'operazione Radd V2 ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
 
-            HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
 
-            String createRequestStr = (this.createRegistryRequestV2 != null)
-                    ? this.createRegistryRequestV2.toString()
-                    : "createRegistryRequestV2 is null";
+        String createRequestStr = (this.createRegistryRequestV2 != null)
+                ? this.createRegistryRequestV2.toString()
+                : "createRegistryRequestV2 is null";
 
-            String updateRequestStr = (this.updateRegistryRequestV2 != null)
-                    ? this.updateRegistryRequestV2.toString()
-                    : "updateRegistryRequestV2 is null";
+        String updateRequestStr = (this.updateRegistryRequestV2 != null)
+                ? this.updateRegistryRequestV2.toString()
+                : "updateRegistryRequestV2 is null";
 
-            String locationIdStr = (this.locationId != null)
-                    ? this.locationId.toString()
-                    : "locationId is null";
+        String locationIdStr = (this.locationId != null)
+                ? this.locationId.toString()
+                : "locationId is null";
 
-            assertThat(httpStatusCodeException)
-                    .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla. "
-                                    + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
-                            createRequestStr, updateRequestStr, locationIdStr)
-                    .isNotNull();
+        assertThat(httpStatusCodeException)
+                .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla. "
+                                + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
+                        createRequestStr, updateRequestStr, locationIdStr)
+                .isNotNull();
 
-            String actualStatusCode = httpStatusCodeException.getStatusCode().toString().substring(0, 3);
+        String actualStatusCode = httpStatusCodeException.getStatusCode().toString().substring(0, 3);
 
-            assertThat(actualStatusCode)
-                    .as("Il codice di stato HTTP non corrisponde a quello atteso. Atteso: %s, Ottenuto: %s. "
-                                    + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
-                            statusCode, actualStatusCode, createRequestStr, updateRequestStr, locationIdStr)
-                    .isEqualTo(statusCode);
+        assertThat(actualStatusCode)
+                .as("Il codice di stato HTTP non corrisponde a quello atteso. Atteso: %s, Ottenuto: %s. "
+                                + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
+                        statusCode, actualStatusCode, createRequestStr, updateRequestStr, locationIdStr)
+                .isEqualTo(statusCode);
     }
 
     @Then("la response V2 deve aver restiutito in automatico startValidity odierno in formato yyyy-MM-dd")
@@ -513,160 +514,160 @@ public class AnagraficaRaddAltSteps {
 
         assertSoftly(softly -> {
 
-        if (expectedData.get("partnerId") != null) {
-            log.info("Check partnerId: atteso={} ottenuto={}", expectedData.get("partnerId"), response.getPartnerId());
-            softly.assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
-        }
+            if (expectedData.get("partnerId") != null) {
+                log.info("Check partnerId: atteso={} ottenuto={}", expectedData.get("partnerId"), response.getPartnerId());
+                softly.assertThat(response.getPartnerId()).isEqualTo(expectedData.get("partnerId"));
+            }
 
-        //update
-        if (expectedData.get("description") != null) {
-            log.info("Check description: atteso={} ottenuto={}", expectedData.get("description"), response.getDescription());
-            softly.assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
-        }
+            //update
+            if (expectedData.get("description") != null) {
+                log.info("Check description: atteso={} ottenuto={}", expectedData.get("description"), response.getDescription());
+                softly.assertThat(response.getDescription()).isEqualTo(expectedData.get("description"));
+            }
 
-        //update
-        if (expectedData.get("email") != null) {
-            log.info("Check email: atteso={} ottenuto={}", expectedData.get("email"), response.getEmail());
-            softly.assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
-        }
+            //update
+            if (expectedData.get("email") != null) {
+                log.info("Check email: atteso={} ottenuto={}", expectedData.get("email"), response.getEmail());
+                softly.assertThat(response.getEmail()).isEqualTo(expectedData.get("email"));
+            }
 
-        //update
-        if (expectedData.get("appointmentRequired") != null) {
-            log.info("Check appointmentRequired: atteso={} ottenuto={}", expectedData.get("appointmentRequired"), response.getAppointmentRequired());
-            softly.assertThat(response.getAppointmentRequired())
-                    .isEqualTo(Boolean.valueOf(expectedData.get("appointmentRequired")));
-        }
+            //update
+            if (expectedData.get("appointmentRequired") != null) {
+                log.info("Check appointmentRequired: atteso={} ottenuto={}", expectedData.get("appointmentRequired"), response.getAppointmentRequired());
+                softly.assertThat(response.getAppointmentRequired())
+                        .isEqualTo(Boolean.valueOf(expectedData.get("appointmentRequired")));
+            }
 
-        //update
-        if (expectedData.get("externalCodes") != null) {
-            List<String> expectedCodes = Arrays.stream(expectedData.get("externalCodes").split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-            log.info("Check externalCodes: atteso={} ottenuto={}", expectedCodes, response.getExternalCodes());
-            softly.assertThat(response.getExternalCodes())
-                    .containsExactlyInAnyOrderElementsOf(expectedCodes);
-        }
+            //update
+            if (expectedData.get("externalCodes") != null) {
+                List<String> expectedCodes = Arrays.stream(expectedData.get("externalCodes").split(","))
+                        .map(String::trim)
+                        .collect(Collectors.toList());
+                log.info("Check externalCodes: atteso={} ottenuto={}", expectedCodes, response.getExternalCodes());
+                softly.assertThat(response.getExternalCodes())
+                        .containsExactlyInAnyOrderElementsOf(expectedCodes);
+            }
 
-        //update
-        if (expectedData.get("phoneNumbers") != null) {
-            List<String> expectedPhones = Arrays.stream(expectedData.get("phoneNumbers").split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-            log.info("Check phoneNumbers: atteso={} ottenuto={}", expectedPhones, response.getPhoneNumbers());
-            softly.assertThat(response.getPhoneNumbers())
-                    .containsExactlyInAnyOrderElementsOf(expectedPhones);
-        }
+            //update
+            if (expectedData.get("phoneNumbers") != null) {
+                List<String> expectedPhones = Arrays.stream(expectedData.get("phoneNumbers").split(","))
+                        .map(String::trim)
+                        .collect(Collectors.toList());
+                log.info("Check phoneNumbers: atteso={} ottenuto={}", expectedPhones, response.getPhoneNumbers());
+                softly.assertThat(response.getPhoneNumbers())
+                        .containsExactlyInAnyOrderElementsOf(expectedPhones);
+            }
 
-        //update
-        if (expectedData.get("openingTime") != null) {
-            log.info("Check openingTime: atteso={} ottenuto={}", expectedData.get("openingTime"), response.getOpeningTime());
-            softly.assertThat(response.getOpeningTime()).isEqualTo(expectedData.get("openingTime"));
-        }
+            //update
+            if (expectedData.get("openingTime") != null) {
+                log.info("Check openingTime: atteso={} ottenuto={}", expectedData.get("openingTime"), response.getOpeningTime());
+                softly.assertThat(response.getOpeningTime()).isEqualTo(expectedData.get("openingTime"));
+            }
 
-        //update
-        if (expectedData.get("endValidity") != null) {
-            log.info("Check endValidity: atteso={} ottenuto={}", expectedData.get("endValidity"), response.getEndValidity());
-            softly.assertThat(response.getEndValidity()).isEqualTo(expectedData.get("endValidity"));
-        }
+            //update
+            if (expectedData.get("endValidity") != null) {
+                log.info("Check endValidity: atteso={} ottenuto={}", expectedData.get("endValidity"), response.getEndValidity());
+                softly.assertThat(response.getEndValidity()).isEqualTo(expectedData.get("endValidity"));
+            }
 
-        //update
-        if (expectedData.get("website") != null) {
-            log.info("Check website: atteso={} ottenuto={}", expectedData.get("website"), response.getWebsite());
-            softly.assertThat(response.getWebsite()).isEqualTo(expectedData.get("website"));
-        }
+            //update
+            if (expectedData.get("website") != null) {
+                log.info("Check website: atteso={} ottenuto={}", expectedData.get("website"), response.getWebsite());
+                softly.assertThat(response.getWebsite()).isEqualTo(expectedData.get("website"));
+            }
 
-        if (expectedData.get("startValidity") != null) {
-            log.info("Check startValidity: atteso={} ottenuto={}", expectedData.get("startValidity"), response.getEndValidity());
-            softly.assertThat(response.getStartValidity()).isEqualTo(expectedData.get("startValidity"));
-        }
+            if (expectedData.get("startValidity") != null) {
+                log.info("Check startValidity: atteso={} ottenuto={}", expectedData.get("startValidity"), response.getEndValidity());
+                softly.assertThat(response.getStartValidity()).isEqualTo(expectedData.get("startValidity"));
+            }
 
             softly.assertThat(response.getNormalizedAddress())
-                .withFailMessage("normalizedAddress non deve essere null quando ci sono valori attesi")
-                .isNotNull();
+                    .withFailMessage("normalizedAddress non deve essere null quando ci sono valori attesi")
+                    .isNotNull();
 
-        NormalizedAddress address = response.getNormalizedAddress();
+            NormalizedAddress address = response.getNormalizedAddress();
 
-        if (expectedData.get("province") != null) {
-            log.info("Check province normalizzato: atteso={} ottenuto={}", expectedData.get("province"), address.getProvince());
-            softly.assertThat(address.getProvince())
-                    .withFailMessage("province normalizzato non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("province"), address.getProvince())
-                    .isEqualTo(expectedData.get("province"));
-        }
+            if (expectedData.get("province") != null) {
+                log.info("Check province normalizzato: atteso={} ottenuto={}", expectedData.get("province"), address.getProvince());
+                softly.assertThat(address.getProvince())
+                        .withFailMessage("province normalizzato non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("province"), address.getProvince())
+                        .isEqualTo(expectedData.get("province"));
+            }
 
-        if (expectedData.get("addressRow") != null) {
-            log.info("Check addressRow normalizzato: atteso={} ottenuto={}", expectedData.get("addressRow"), address.getAddressRow());
-            softly.assertThat(address.getAddressRow())
-                    .withFailMessage("addressRow normalizzato non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("addressRow"), address.getAddressRow())
-                    .isEqualTo(expectedData.get("addressRow"));
-        }
+            if (expectedData.get("addressRow") != null) {
+                log.info("Check addressRow normalizzato: atteso={} ottenuto={}", expectedData.get("addressRow"), address.getAddressRow());
+                softly.assertThat(address.getAddressRow())
+                        .withFailMessage("addressRow normalizzato non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("addressRow"), address.getAddressRow())
+                        .isEqualTo(expectedData.get("addressRow"));
+            }
 
-        if (expectedData.get("cap") != null) {
-            log.info("Check cap normalizzato: atteso={} ottenuto={}", expectedData.get("cap"), address.getCap());
-            softly.assertThat(address.getCap())
-                    .withFailMessage("CAP normalizzato non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("cap"), address.getCap())
-                    .isEqualTo(expectedData.get("cap"));
-        }
+            if (expectedData.get("cap") != null) {
+                log.info("Check cap normalizzato: atteso={} ottenuto={}", expectedData.get("cap"), address.getCap());
+                softly.assertThat(address.getCap())
+                        .withFailMessage("CAP normalizzato non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("cap"), address.getCap())
+                        .isEqualTo(expectedData.get("cap"));
+            }
 
-        if (expectedData.get("city") != null) {
-            log.info("Check city normalizzato: atteso={} ottenuto={}", expectedData.get("city"), address.getCity());
-            assertThat(address.getCity())
-                    .withFailMessage("city normalizzato non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("city"), address.getCity())
-                    .isEqualTo(expectedData.get("city"));
-        }
+            if (expectedData.get("city") != null) {
+                log.info("Check city normalizzato: atteso={} ottenuto={}", expectedData.get("city"), address.getCity());
+                assertThat(address.getCity())
+                        .withFailMessage("city normalizzato non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("city"), address.getCity())
+                        .isEqualTo(expectedData.get("city"));
+            }
 
-        if (expectedData.get("country") != null) {
-            log.info("Check country normalizzato: atteso={} ottenuto={}", expectedData.get("country"), address.getCountry());
-            softly.assertThat(address.getCountry())
-                    .withFailMessage("country normalizzato non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("country"), address.getCountry())
-                    .isEqualTo(expectedData.get("country"));
-        }
+            if (expectedData.get("country") != null) {
+                log.info("Check country normalizzato: atteso={} ottenuto={}", expectedData.get("country"), address.getCountry());
+                softly.assertThat(address.getCountry())
+                        .withFailMessage("country normalizzato non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("country"), address.getCountry())
+                        .isEqualTo(expectedData.get("country"));
+            }
 
-        AddressV2 addressV2 = response.getAddress();
+            AddressV2 addressV2 = response.getAddress();
 
-        if (expectedData.get("address_province") != null) {
-            log.info("Check province in input: atteso={} ottenuto={}", expectedData.get("address_province"), addressV2.getProvince());
-            softly.assertThat(addressV2.getProvince())
-                    .withFailMessage("province in input non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("address_province"), addressV2.getProvince())
-                    .isEqualTo(expectedData.get("address_province"));
-        }
+            if (expectedData.get("address_province") != null) {
+                log.info("Check province in input: atteso={} ottenuto={}", expectedData.get("address_province"), addressV2.getProvince());
+                softly.assertThat(addressV2.getProvince())
+                        .withFailMessage("province in input non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("address_province"), addressV2.getProvince())
+                        .isEqualTo(expectedData.get("address_province"));
+            }
 
-        if (expectedData.get("address_addressRow") != null) {
-            log.info("Check addressRow in input: atteso={} ottenuto={}", expectedData.get("address_addressRow"), addressV2.getAddressRow());
-            softly.assertThat(addressV2.getAddressRow())
-                    .withFailMessage("addressRow in input non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("address_addressRow"), addressV2.getAddressRow())
-                    .isEqualTo(expectedData.get("address_addressRow"));
-        }
+            if (expectedData.get("address_addressRow") != null) {
+                log.info("Check addressRow in input: atteso={} ottenuto={}", expectedData.get("address_addressRow"), addressV2.getAddressRow());
+                softly.assertThat(addressV2.getAddressRow())
+                        .withFailMessage("addressRow in input non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("address_addressRow"), addressV2.getAddressRow())
+                        .isEqualTo(expectedData.get("address_addressRow"));
+            }
 
-        if (expectedData.get("address_cap") != null) {
-            log.info("Check cap in input: atteso={} ottenuto={}", expectedData.get("address_cap"), addressV2.getCap());
-            softly.assertThat(addressV2.getCap())
-                    .withFailMessage("CAP in input non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("address_cap"), addressV2.getCap())
-                    .isEqualTo(expectedData.get("address_cap"));
-        }
+            if (expectedData.get("address_cap") != null) {
+                log.info("Check cap in input: atteso={} ottenuto={}", expectedData.get("address_cap"), addressV2.getCap());
+                softly.assertThat(addressV2.getCap())
+                        .withFailMessage("CAP in input non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("address_cap"), addressV2.getCap())
+                        .isEqualTo(expectedData.get("address_cap"));
+            }
 
-        if (expectedData.get("address_city") != null) {
-            log.info("Check city in input: atteso={} ottenuto={}", expectedData.get("address_city"), addressV2.getCity());
-            softly.assertThat(addressV2.getCity())
-                    .withFailMessage("city in input non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("address_city"), addressV2.getCity())
-                    .isEqualTo(expectedData.get("address_city"));
-        }
+            if (expectedData.get("address_city") != null) {
+                log.info("Check city in input: atteso={} ottenuto={}", expectedData.get("address_city"), addressV2.getCity());
+                softly.assertThat(addressV2.getCity())
+                        .withFailMessage("city in input non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("address_city"), addressV2.getCity())
+                        .isEqualTo(expectedData.get("address_city"));
+            }
 
-        if (expectedData.get("address_country") != null) {
-            log.info("Check country in input: atteso={} ottenuto={}", expectedData.get("address_country"), addressV2.getCountry());
-            softly.assertThat(addressV2.getCountry())
-                    .withFailMessage("country in input non corrisponde: atteso=%s ottenuto=%s",
-                            expectedData.get("address_country"), addressV2.getCountry())
-                    .isEqualTo(expectedData.get("address_country"));
-        }
+            if (expectedData.get("address_country") != null) {
+                log.info("Check country in input: atteso={} ottenuto={}", expectedData.get("address_country"), addressV2.getCountry());
+                softly.assertThat(addressV2.getCountry())
+                        .withFailMessage("country in input non corrisponde: atteso=%s ottenuto=%s",
+                                expectedData.get("address_country"), addressV2.getCountry())
+                        .isEqualTo(expectedData.get("address_country"));
+            }
         });
     }
 
@@ -691,6 +692,10 @@ public class AnagraficaRaddAltSteps {
         assertIterableEquals(req.getPhoneNumbers(), resp.getPhoneNumbers(), "PhoneNumbers diversi");
     }
 
+    /*
+     * tipocontrollo= "tutti" : controllo su tutti i campi ;
+     * tipocontrollo= "obbligatori" : controllo sui soli campi mandatory"
+     * */
     @Then("la response registry V2 deve avere i campi {string} valorizzati")
     public void checkFieldsRegistryResponseV2(String tipoControllo) {
         RegistryV2 response = registryV2Response;
@@ -756,179 +761,179 @@ public class AnagraficaRaddAltSteps {
 
         assertSoftly(softly -> {
 
-        // addressRow: lettere/numeri/spazi/punti/virgole/apostrofi/trattini, lunghezza 5-100
-        if (addr.getAddressRow() != null) {
-            softly.assertThat(addr.getAddressRow())
-                    .withFailMessage("addressRow non valido: deve contenere solo lettere/numeri/spazi/punti/virgole/apostrofi/trattini e avere lunghezza 5-100")
-                    .matches("^[a-zA-Z0-9 .,\\-'’]{5,100}$");
-        }
-
-        // cap: esattamente 5 cifre
-        if (addr.getCap() != null) {
-            softly.assertThat(addr.getCap())
-                    .withFailMessage("CAP non valido: deve contenere esattamente 5 cifre")
-                    .matches("^\\d{5}$");
-        }
-
-        // province: due lettere maiuscole
-        if (addr.getProvince() != null) {
-            softly.assertThat(addr.getProvince())
-                    .withFailMessage("Province non valida: deve contenere solo due lettere maiuscole (es. RM)")
-                    .matches("^[A-Z]{2}$");
-        }
-
-        // latitude: valore numerico tra -90 e 90
-        if (addr.getLatitude() != null) {
-            softly.assertThat(Double.parseDouble(addr.getLatitude()))
-                    .withFailMessage("Latitude non valida: deve essere compresa tra -90 e 90")
-                    .isBetween(-90.0, 90.0);
-        }
-
-        // longitude: valore numerico tra -180 e 180
-        if (addr.getLongitude() != null) {
-            softly.assertThat(Double.parseDouble(addr.getLongitude()))
-                    .withFailMessage("Longitude non valida: deve essere compresa tra -180 e 180")
-                    .isBetween(-180.0, 180.0);
-        }
-
-        // biasPoint
-        if (addr.getBiasPoint() != null) {
-            NormalizedAddressAllOfBiasPoint biasPoint = addr.getBiasPoint();
-
-            if (biasPoint.getCountry() != null) {
-                softly.assertThat(biasPoint.getCountry())
-                        .withFailMessage("biasPoint Country deve essere 0 o 1")
-                        .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+            // addressRow: lettere/numeri/spazi/punti/virgole/apostrofi/trattini, lunghezza 5-100
+            if (addr.getAddressRow() != null) {
+                softly.assertThat(addr.getAddressRow())
+                        .withFailMessage("addressRow non valido: deve contenere solo lettere/numeri/spazi/punti/virgole/apostrofi/trattini e avere lunghezza 5-100")
+                        .matches("^[a-zA-Z0-9 .,\\-'’]{5,100}$");
             }
 
-            if (biasPoint.getLocality() != null) {
-                softly.assertThat(biasPoint.getLocality())
-                        .withFailMessage("biasPoint Locality deve essere 0 o 1")
-                        .isIn(BigDecimal.ZERO, BigDecimal.ONE);
-            }
-            if (biasPoint.getOverall() != null) {
-                softly.assertThat(biasPoint.getOverall())
-                        .withFailMessage("biasPoint Overall deve essere 0 o 1")
-                        .isBetween(BigDecimal.ZERO, BigDecimal.ONE);
+            // cap: esattamente 5 cifre
+            if (addr.getCap() != null) {
+                softly.assertThat(addr.getCap())
+                        .withFailMessage("CAP non valido: deve contenere esattamente 5 cifre")
+                        .matches("^\\d{5}$");
             }
 
-            if (biasPoint.getAddressNumber() != null) {
-                softly.assertThat(biasPoint.getAddressNumber())
-                        .withFailMessage("biasPoint AddressNumber deve essere 0 o 1")
-                        .isIn(BigDecimal.ZERO, BigDecimal.ONE);
-            }
-            if (biasPoint.getSubRegion() != null) {
-                softly.assertThat(biasPoint.getSubRegion())
-                        .withFailMessage("biasPoint SubRegion deve essere 0 o 1")
-                        .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+            // province: due lettere maiuscole
+            if (addr.getProvince() != null) {
+                softly.assertThat(addr.getProvince())
+                        .withFailMessage("Province non valida: deve contenere solo due lettere maiuscole (es. RM)")
+                        .matches("^[A-Z]{2}$");
             }
 
-            if (biasPoint.getPostalCode() != null) {
-                softly.assertThat(biasPoint.getPostalCode())
-                        .withFailMessage("biasPoint PostCode deve essere 0 o 1")
-                        .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+            // latitude: valore numerico tra -90 e 90
+            if (addr.getLatitude() != null) {
+                softly.assertThat(Double.parseDouble(addr.getLatitude()))
+                        .withFailMessage("Latitude non valida: deve essere compresa tra -90 e 90")
+                        .isBetween(-90.0, 90.0);
             }
-        }
 
-        // description → lunghezza tra 0 e 200
-        if (response.getDescription() != null) {
-            int len = response.getDescription().length();
-            softly.assertThat(len > 0 || len < 200)
-                    .withFailMessage("Description deve avere lunghezza >0 o <200, trovata: %s", len)
-                    .isTrue();
-        }
+            // longitude: valore numerico tra -180 e 180
+            if (addr.getLongitude() != null) {
+                softly.assertThat(Double.parseDouble(addr.getLongitude()))
+                        .withFailMessage("Longitude non valida: deve essere compresa tra -180 e 180")
+                        .isBetween(-180.0, 180.0);
+            }
 
-        // phoneNumbers → massimo 2
-        if (response.getPhoneNumbers() != null) {
-            softly.assertThat(response.getPhoneNumbers())
-                    .as("phoneNumbers")
-                    .hasSizeLessThanOrEqualTo(2);
-        }
-        // partnerId → esattamente 11 cifre
-        if (response.getPartnerId() != null) {
-            softly.assertThat(response.getPartnerId())
-                    .withFailMessage("Il partnerId deve contenere esattamente 11 cifre numeriche")
-                    .matches("^\\d{11}$");
-        }
+            // biasPoint
+            if (addr.getBiasPoint() != null) {
+                NormalizedAddressAllOfBiasPoint biasPoint = addr.getBiasPoint();
 
-        // email → pattern
-        if (response.getEmail() != null) {
-            softly.assertThat(response.getEmail())
-                    .withFailMessage("Formato email non valido")
-                    .matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+                if (biasPoint.getCountry() != null) {
+                    softly.assertThat(biasPoint.getCountry())
+                            .withFailMessage("biasPoint Country deve essere 0 o 1")
+                            .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+                }
 
-        }
-        // website → pattern URL valido
-        if (response.getWebsite() != null) {
-            softly.assertThat(response.getWebsite())
-                    .withFailMessage("Formato URL non valido")
-                    .matches("^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$");
-        }
+                if (biasPoint.getLocality() != null) {
+                    softly.assertThat(biasPoint.getLocality())
+                            .withFailMessage("biasPoint Locality deve essere 0 o 1")
+                            .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+                }
+                if (biasPoint.getOverall() != null) {
+                    softly.assertThat(biasPoint.getOverall())
+                            .withFailMessage("biasPoint Overall deve essere 0 o 1")
+                            .isBetween(BigDecimal.ZERO, BigDecimal.ONE);
+                }
 
-        // startValidity → yyyy-MM-dd
-        if (response.getStartValidity() != null) {
-            softly.assertThat(response.getStartValidity())
-                    .withFailMessage("startValidity non deve essere nel formato yyyy-MM-dd")
-                    .matches("^\\d{4}-\\d{2}-\\d{2}$");
-        }
+                if (biasPoint.getAddressNumber() != null) {
+                    softly.assertThat(biasPoint.getAddressNumber())
+                            .withFailMessage("biasPoint AddressNumber deve essere 0 o 1")
+                            .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+                }
+                if (biasPoint.getSubRegion() != null) {
+                    softly.assertThat(biasPoint.getSubRegion())
+                            .withFailMessage("biasPoint SubRegion deve essere 0 o 1")
+                            .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+                }
 
-        // endValidity → formato yyyy-MM-dd e > startValidity
-        if (response.getEndValidity() != null && response.getStartValidity() != null) {
-            softly.assertThat(response.getEndValidity())
-                    .withFailMessage("endValidity deve essere nel formato yyyy-MM-dd")
-                    .matches("^\\d{4}-\\d{2}-\\d{2}$");
+                if (biasPoint.getPostalCode() != null) {
+                    softly.assertThat(biasPoint.getPostalCode())
+                            .withFailMessage("biasPoint PostCode deve essere 0 o 1")
+                            .isIn(BigDecimal.ZERO, BigDecimal.ONE);
+                }
+            }
 
-            try {
-                LocalDate end = LocalDate.parse(response.getEndValidity());
-                LocalDate start = LocalDate.parse(response.getStartValidity());
-                softly.assertThat(end.isAfter(start))
-                        .withFailMessage("endValidity (%s) deve essere successiva a startValidity (%s)", end, start)
+            // description → lunghezza tra 0 e 200
+            if (response.getDescription() != null) {
+                int len = response.getDescription().length();
+                softly.assertThat(len > 0 || len < 200)
+                        .withFailMessage("Description deve avere lunghezza >0 o <200, trovata: %s", len)
                         .isTrue();
-            } catch (DateTimeParseException e) {
-                fail("startValidity o endValidity non sono nel formato corretto: " + e.getMessage());
             }
-        }
 
-        // externalCodes → lunghezza > 4
-        if (response.getExternalCodes() != null && !response.getExternalCodes().isEmpty()) {
-            String firstCode = response.getExternalCodes().get(0);
-            softly.assertThat(firstCode)
-                    .withFailMessage("Il primo externalCode deve avere più di 4 caratteri")
-                    .isNotNull()
-                    .hasSizeGreaterThan(4);
-        }
+            // phoneNumbers → massimo 2
+            if (response.getPhoneNumbers() != null) {
+                softly.assertThat(response.getPhoneNumbers())
+                        .as("phoneNumbers")
+                        .hasSizeLessThanOrEqualTo(2);
+            }
+            // partnerId → esattamente 11 cifre
+            if (response.getPartnerId() != null) {
+                softly.assertThat(response.getPartnerId())
+                        .withFailMessage("Il partnerId deve contenere esattamente 11 cifre numeriche")
+                        .matches("^\\d{11}$");
+            }
 
-        // appointmentRequired → booleano
-        if (response.getAppointmentRequired() != null) {
-            softly.assertThat(response.getAppointmentRequired())
-                    .as("appointmentRequired deve essere booleano").isInstanceOf(Boolean.class);
-        }
+            // email → pattern
+            if (response.getEmail() != null) {
+                softly.assertThat(response.getEmail())
+                        .withFailMessage("Formato email non valido")
+                        .matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
 
-        // partnerType → deve essere "CAF"
-        if (response.getPartnerType() != null) {
-            softly.assertThat(response.getPartnerType())
-                    .withFailMessage("partnerType deve essere 'CAF'")
-                    .isEqualTo("CAF");
-        }
+            }
+            // website → pattern URL valido
+            if (response.getWebsite() != null) {
+                softly.assertThat(response.getWebsite())
+                        .withFailMessage("Formato URL non valido")
+                        .matches("^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$");
+            }
 
-        if (response.getCreationTimestamp() != null && response.getUpdateTimestamp() != null) {
-            softly.assertThat(response.getUpdateTimestamp().isAfter(response.getCreationTimestamp()) ||
-                    response.getUpdateTimestamp().isEqual(response.getCreationTimestamp()))
-                    .withFailMessage("updateTimestamp deve essere successivo o uguale a creationTimestamp")
-                    .isTrue();
-        }
+            // startValidity → yyyy-MM-dd
+            if (response.getStartValidity() != null) {
+                softly.assertThat(response.getStartValidity())
+                        .withFailMessage("startValidity non deve essere nel formato yyyy-MM-dd")
+                        .matches("^\\d{4}-\\d{2}-\\d{2}$");
+            }
 
-        // creationTimestamp → deve essere non null (già validato come OffsetDateTime)
-                    softly.assertThat(response.getCreationTimestamp())
-                .withFailMessage("creationTimestamp non deve essere null")
-                .isNotNull();
+            // endValidity → formato yyyy-MM-dd e > startValidity
+            if (response.getEndValidity() != null && response.getStartValidity() != null) {
+                softly.assertThat(response.getEndValidity())
+                        .withFailMessage("endValidity deve essere nel formato yyyy-MM-dd")
+                        .matches("^\\d{4}-\\d{2}-\\d{2}$");
 
-        // updateTimestamp → deve essere non null
-                    softly.assertThat(response.getUpdateTimestamp())
-                .withFailMessage("updateTimestamp non deve essere null")
-                .isNotNull();
+                try {
+                    LocalDate end = LocalDate.parse(response.getEndValidity());
+                    LocalDate start = LocalDate.parse(response.getStartValidity());
+                    softly.assertThat(end.isAfter(start))
+                            .withFailMessage("endValidity (%s) deve essere successiva a startValidity (%s)", end, start)
+                            .isTrue();
+                } catch (DateTimeParseException e) {
+                    fail("startValidity o endValidity non sono nel formato corretto: " + e.getMessage());
+                }
+            }
 
-        log.info("Controlli avanzati completati per RegistryV2: {}", response.toString());
+            // externalCodes → lunghezza > 4
+            if (response.getExternalCodes() != null && !response.getExternalCodes().isEmpty()) {
+                String firstCode = response.getExternalCodes().get(0);
+                softly.assertThat(firstCode)
+                        .withFailMessage("Il primo externalCode deve avere più di 4 caratteri")
+                        .isNotNull()
+                        .hasSizeGreaterThan(4);
+            }
+
+            // appointmentRequired → booleano
+            if (response.getAppointmentRequired() != null) {
+                softly.assertThat(response.getAppointmentRequired())
+                        .as("appointmentRequired deve essere booleano").isInstanceOf(Boolean.class);
+            }
+
+            // partnerType → deve essere "CAF"
+            if (response.getPartnerType() != null) {
+                softly.assertThat(response.getPartnerType())
+                        .withFailMessage("partnerType deve essere 'CAF'")
+                        .isEqualTo("CAF");
+            }
+
+            if (response.getCreationTimestamp() != null && response.getUpdateTimestamp() != null) {
+                softly.assertThat(response.getUpdateTimestamp().isAfter(response.getCreationTimestamp()) ||
+                                response.getUpdateTimestamp().isEqual(response.getCreationTimestamp()))
+                        .withFailMessage("updateTimestamp deve essere successivo o uguale a creationTimestamp")
+                        .isTrue();
+            }
+
+            // creationTimestamp → deve essere non null (già validato come OffsetDateTime)
+            softly.assertThat(response.getCreationTimestamp())
+                    .withFailMessage("creationTimestamp non deve essere null")
+                    .isNotNull();
+
+            // updateTimestamp → deve essere non null
+            softly.assertThat(response.getUpdateTimestamp())
+                    .withFailMessage("updateTimestamp non deve essere null")
+                    .isNotNull();
+
+            log.info("Controlli avanzati completati per RegistryV2: {}", response.toString());
         });
     }
 

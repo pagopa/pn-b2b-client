@@ -76,7 +76,7 @@ public class SettableAuthTokenRaddCognito {
                 token = getTokenCognito(username, password, clientId);
             }
             case "TOKEN_NON_VALIDO" -> {
-                token = "";
+                token = "eyJraWQiOiI3aEduaWtrNmNXNWNDeHQ4V2VtRnBTXC9EVUtoZUpVcGNkNlwvT3k2bmxxbTQ9IiwiYWxnIjoiUlMyNTYifQ";
             }
             default -> throw new IllegalArgumentException("Indice utente non valido: " + userIndex);
         }
