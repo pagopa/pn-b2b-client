@@ -726,7 +726,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m
-#    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare la modifica parziale della finalità con token non valido
     Then si ottiene lo status code 401
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
