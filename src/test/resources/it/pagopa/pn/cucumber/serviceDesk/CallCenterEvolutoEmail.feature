@@ -23,6 +23,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And viene atteso lo stato "OK" dell'operazione
 
   @CallCenterEvolutoViaMail
+    #BUG: https://pagopa.atlassian.net/browse/PN-16242
   Scenario Outline: [CCE_MAIL_CREATE_ACT_OPERATION] Chiamata createActOperation (Scenario 2, 3)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -45,6 +46,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     Examples:
       | ticketId | iun  | taxId            | addressType | addressValue | ticketDate | vrDate | statusCode |
       | auto     | auto | CLMCST42R12D969Z | EMAIL       | test@test.it | auto       | auto   | 201        |
+      | auto     | auto | CLMCST42R12D969Z | COURTESY    | test@test.it | auto       | auto   | 400        |
       | auto     | null | null             | null        | null         | null       | null   | 400        |
       | null     | auto | null             | null        | null         | null       | null   | 400        |
       | null     | null | CLMCST42R12D969Z | null        | null         | null       | null   | 400        |
