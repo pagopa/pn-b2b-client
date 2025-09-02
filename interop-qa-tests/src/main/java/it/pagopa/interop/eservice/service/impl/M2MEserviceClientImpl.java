@@ -144,12 +144,12 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     public EService patchEService(UUID eServiceId, EServicePatchRequest body) {
         return eservicesApi.updateDraftEService(eServiceId, new EServiceDraftUpdateSeed()
             .technology(body.getTechnology())
-            .isSignalHubEnabled(body.getIsSignalHubEnabled()))
+            .isSignalHubEnabled(body.getIsSignalHubEnabled())
             .mode(body.getMode())
             .description(body.getDescription())
             .name(body.getName())
             .isConsumerDelegable(body.getIsConsumerDelegable())
-            .isClientAccessDelegable(body.getIsClientAccessDelegable());
+            .isClientAccessDelegable(body.getIsClientAccessDelegable()));
     }
 
     @Override

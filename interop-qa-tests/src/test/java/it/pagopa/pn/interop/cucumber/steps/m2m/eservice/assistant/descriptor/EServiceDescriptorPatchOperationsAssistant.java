@@ -36,7 +36,7 @@ public class EServiceDescriptorPatchOperationsAssistant extends
             .dailyCallsPerConsumer(5)
             .voucherLifespan(1000)
             .description("patched description")
-            .audience(List.of("patched", "audience"))
+            .audience(List.of("patched audience"))
             .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL)
             .build();
     }
