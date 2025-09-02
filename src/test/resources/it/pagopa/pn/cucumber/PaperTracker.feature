@@ -66,7 +66,7 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | <physicalAddress> |
       | digitalDomicile         | NULL              |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>" e iun "<iun>"
     Examples:
