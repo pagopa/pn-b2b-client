@@ -22,12 +22,12 @@ public class LambdaInvoker {
         if (lambdaClient == null) {
             lambdaClient = LambdaClient.builder()
                     .httpClient(ApacheHttpClient.builder()
-                            .maxConnections(50) // o anche 100+
+                            .maxConnections(50)
                             .connectionTimeout(Duration.ofSeconds(10))
                             .socketTimeout(Duration.ofSeconds(30))
                             .build())
-                    .credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core")) // in locale
-                    //.credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
+                    //.credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core")) // in locale
+                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
