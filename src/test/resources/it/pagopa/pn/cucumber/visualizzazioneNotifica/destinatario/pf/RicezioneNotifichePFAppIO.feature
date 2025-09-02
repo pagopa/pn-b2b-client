@@ -55,28 +55,31 @@ Feature: recupero notifiche tramite api AppIO b2b
   #viene richiesto il codice QR per lo IUN {string}
 
   #[TC_1]
+  @appIo
   Scenario: [QR_CODE_1] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
 #    [TC_5]
-    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO
+    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO
     # [TC_8] SI PROVA A RIFIUTARE I TOS E RIACCEDERE SENZA SUCCESSO AL DETTAGLIO DELLA NOTIFICA
     And l'utente "Mario Cucumber" "NON ACCETTA" i termini di servizio di tipo: TOS
-    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
-    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO
     #[TC_3] SI PROVA A RIACCEDERE ALLA NOTIFICA SCANSIONANDO UN QR CODE NON VALIDO
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     And viene generato il QR Code "malformato" per la notifica appena creata
-    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And si verifica che la chiamata abbia ritornato uno status code: 404
 
     
   #[TC_2]
+  @appIo
   Scenario Outline: [QR_CODE_2] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     And viene chiamato l'endpoint "checkQRCode" con i seguenti params:
@@ -89,6 +92,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     | FRMTTR76M06B715E  |                                                                                                                                           |
 
   #[TC_6] [TC_7]
+  @appIo
   Scenario Outline: [QR_CODE_3] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     And viene chiamato l'endpoint "getReceivedNotification" con i seguenti params:
@@ -101,6 +105,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | ERRA-T000-0000-ERRATO-0-0   | FRMTTR76M06B715E  |
       | NAUZ-WNPH-WQZE-202508-Y-1   |                   |
 
+  @appIo
   Scenario: [QR_CODE_4]
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     Given viene generata una nuova notifica
@@ -109,10 +114,11 @@ Feature: recupero notifiche tramite api AppIO b2b
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
     Then a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO
 
   #[TC_11]
+  @appIo
   Scenario Outline: [QR_CODE_5]
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
@@ -127,6 +133,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | NAUZ-WNPH-WQZE-202508-Y-1   | 0           |                            |
 
   #[TC_12]
+  @appIo
   Scenario: [QR_CODE_6]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -142,11 +149,12 @@ Feature: recupero notifiche tramite api AppIO b2b
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
   #[TC_13] [TC_14]
+  @appIo
   Scenario Outline: [QR_CODE_7]
     And l'utente "Mario Cucumber" "ACCETTA" i termini di servizio di tipo: TOS
     And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
@@ -163,25 +171,33 @@ Feature: recupero notifiche tramite api AppIO b2b
       | NAUZ-WNPH-WQZE-202508-Y-1   | PAGOPA      |                            | 0        |
     #considera che PARAM_4 non è obbligatorio
 
+  @appIo
   Scenario: [QR_CODE_8] Lettura tramite AppIO di una notifica da parte di un delegato
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Root"
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
     Given viene generata una nuova notifica
-      | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di Aglientu         |
-    And destinatario Mario Gherkin
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente scansiona il QR Code per recuperare i dettagli della notifica
-    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: Mario Cucumber
 
-    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato: Mario Cucumber
     And il download non ha prodotto errori
 
-    Then a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO
+    Then a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Gherkin tramite AppIO
 #    [TC_18]
-    And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO senza passare l'id della delega
+    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO senza passare l'id della delega
 
 
 

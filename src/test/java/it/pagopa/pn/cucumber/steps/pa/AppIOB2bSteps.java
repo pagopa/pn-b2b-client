@@ -6,8 +6,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.RequestCheckAarMandateDto;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ResponseCheckAarMandateDto;
+import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.RequestCheckQrMandateDto;
+import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ResponseCheckQrMandateDto;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyAttachment;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
@@ -15,6 +15,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class AppIOB2bSteps {
     private final SharedSteps sharedSteps;
     private HttpStatusCodeException notificationServerError;
     private String sha256DocumentDownload;
-    private ResponseCheckAarMandateDto responseCheckAarMandateDto;
+    private ResponseCheckQrMandateDto responseCheckAarMandateDto;
 
     @Value("${pn.appIO.checkQrCode-bodyUrl}")
     private String qrCodeBodyUrl;
@@ -58,7 +59,7 @@ public class AppIOB2bSteps {
 
     @Given("viene generato il QR Code {string} per la notifica appena creata")
     public void vieneGeneratoIlCodiceQRPerLaNotificaCreata(String qrCodeType) {
-        sharedSteps.setNotificationIun("JAGL-QHWU-JZGE-202508-Y-1");
+//        sharedSteps.setNotificationIun("RPKN-NJQG-JXUX-202509-M-1");
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
@@ -66,10 +67,22 @@ public class AppIOB2bSteps {
         };
     }
 
-    @When("l'utente scansiona il QR Code per recuperare i dettagli della notifica")
-    public void userScanQRCode() {
-        RequestCheckAarMandateDto requestCheckAarMandateDto = new RequestCheckAarMandateDto().aarQrCodeValue(qrCodeBodyUrl + qrCode);
-        responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(sharedSteps.getSentNotificationLastVersion().getRecipients().get(0).getTaxId(), requestCheckAarMandateDto);
+    private String provideTaxId(Destinatario user) {
+        return switch (user) {
+            case DESTINATARIO_MARIO_CUCUMBER -> "FRMTTR76M06B715E";
+            case DESTINATARIO_MARIO_GHERKIN -> "CLMCST42R12D969Z";
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica")
+    public void userScanQRCode(Destinatario user) {
+        RequestCheckQrMandateDto requestCheckAarMandateDto = new RequestCheckQrMandateDto().aarQrCodeValue(qrCodeBodyUrl + qrCode);
+        try {
+            responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(provideTaxId(user), requestCheckAarMandateDto);
+        } catch (HttpStatusCodeException ex) {
+            notificationServerError = ex;
+        }
     }
 
     @When("viene chiamato l'endpoint {string} con i seguenti params:")
@@ -77,7 +90,7 @@ public class AppIOB2bSteps {
         Map<String, String> inputParams = dataTable.asMap();
         try {
             switch (endpoint) {
-                case "checkQRCode" -> iPnAppIOB2bClient.checkAarQrCodeIO(inputParams.get("taxId"), new RequestCheckAarMandateDto().aarQrCodeValue(inputParams.get("aarQrCodeValue")));
+                case "checkQRCode" -> iPnAppIOB2bClient.checkAarQrCodeIO(inputParams.get("taxId"), new RequestCheckQrMandateDto().aarQrCodeValue(inputParams.get("aarQrCodeValue")));
                 case "getReceivedNotification" -> iPnAppIOB2bClient.getReceivedNotification(inputParams.get("iun"), inputParams.get("taxId"), null);
                 case "getSentNotificationDocument" -> iPnAppIOB2bClient.getSentNotificationDocument(inputParams.get("iun"),
                         inputParams.get("docIdx") == null ? null : Integer.parseInt(inputParams.get("docIdx")), inputParams.get("taxId"), null);
@@ -94,15 +107,20 @@ public class AppIOB2bSteps {
         Assertions.assertEquals(statusCode, notificationServerError.getStatusCode().value());
     }
 
-    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO (senza passare l'id della delega)")
-    public void notificationCanBeRetrievedFromAppIOAfterQRCodeScan() {
-        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), responseCheckAarMandateDto.getRecipientInfo().getTaxId(), null);
+    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO")
+    public void notificationCanBeRetrievedFromAppIOAfterQRCodeScan(Destinatario user) {
+        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), null);
     }
 
-    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato")
-    public void delegateRetrievesNotificationFromAppIOAfterQRCodeScan() {
+    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO senza passare l'id della delega")
+    public void notificationCanBeRetrievedFromAppIOAfterQRCodeScanWithoutMandateId(Destinatario user) {
+        Assertions.assertThrows(HttpClientErrorException.class, () -> iPnAppIOB2bClient.getReceivedNotification(responseCheckAarMandateDto.getIun(), user.getTaxId(), null));
+    }
+
+    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: {destinatario}")
+    public void delegateRetrievesNotificationFromAppIOAfterQRCodeScan(Destinatario user) {
         Assertions.assertNotNull(responseCheckAarMandateDto.getMandateId(), "MandateId cannot be null!");
-        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), responseCheckAarMandateDto.getRecipientInfo().getTaxId(), UUID.fromString(responseCheckAarMandateDto.getMandateId()));
+        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), provideTaxId(user), UUID.fromString(responseCheckAarMandateDto.getMandateId()));
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
@@ -137,7 +155,7 @@ public class AppIOB2bSteps {
 
     private void assertNotificationDocumentCanBeRetrievedFromAppIO(String iun, Integer docIdx, String taxId, String mandateId) {
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getSentNotificationDocument(iun, docIdx, taxId, UUID.fromString(mandateId));
+                iPnAppIOB2bClient.getSentNotificationDocument(iun, docIdx, taxId, mandateId != null ? UUID.fromString(mandateId) : null);
         try {
             byte[] bytes = Assertions.assertDoesNotThrow(() -> B2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -172,11 +190,11 @@ public class AppIOB2bSteps {
         downloadPaymentDocument(typeDocument + "_FROM_QR", responseCheckAarMandateDto.getRecipientInfo().getTaxId(), null);
     }
 
-    @Then("a seguito della scansione del QR Code, il documento di pagamento {string} può essere recuperata tramite AppIO dal delegato")
-    public void paymentDocumentCanBeRetrievedAppIOAfterQRCodeScanFromDelegatee(String typeDocument) {
+    @Then("a seguito della scansione del QR Code, il documento di pagamento {string} può essere recuperata tramite AppIO dal delegato: {destinatario}")
+    public void paymentDocumentCanBeRetrievedAppIOAfterQRCodeScanFromDelegatee(String typeDocument, Destinatario user) {
         Assertions.assertNotNull(responseCheckAarMandateDto);
         Assertions.assertNotNull(responseCheckAarMandateDto.getMandateId());
-        downloadPaymentDocument(typeDocument + "_FROM_QR", responseCheckAarMandateDto.getRecipientInfo().getTaxId(), UUID.fromString(responseCheckAarMandateDto.getMandateId()));
+        downloadPaymentDocument(typeDocument + "_FROM_QR", user.getTaxId(), UUID.fromString(responseCheckAarMandateDto.getMandateId()));
     }
 
     @Then("il documento di pagamento {string} può essere recuperata tramite AppIO da {string}")
@@ -187,7 +205,7 @@ public class AppIOB2bSteps {
     private void downloadPaymentDocument(String typeDocument, String recipient, UUID mandateId) {
         switch (typeDocument.toUpperCase()) {
             case "F24_FROM_QR" -> downloadF24AppIoByAttachmentName(responseCheckAarMandateDto.getIun(), "F24", recipient, mandateId);
-            case "PAGOPA_FROM_QR" -> downloadPAGOPAAppIo("YJWR-ZMXT-DEXU-202508-Q-1", recipient, "PAGOPA", "0", mandateId);
+            case "PAGOPA_FROM_QR" -> downloadPAGOPAAppIo(responseCheckAarMandateDto.getIun(), recipient, "PAGOPA", "0", mandateId);
             case "F24" -> downloadF24AppIoByUrl("F24", recipient, mandateId);
             case "PAGOPA" -> {
                 FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
