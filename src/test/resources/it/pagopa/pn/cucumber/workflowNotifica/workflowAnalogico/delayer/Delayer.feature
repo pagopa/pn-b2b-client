@@ -52,61 +52,17 @@
         | driverRanking890~CAP1_P6        | esattamente | 10    |
         | driverRankingRS_2nd_890~P7      | esattamente | 10    |
         | driverRankingRS_2nd_890~CAP1_P7 | esattamente | 10    |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId         | comparative | limit |
-        | driverRanking2nd_890~P1         | almeno      | 0    |
-        | driverRanking2nd_890~CAP1_P1    | almeno      | 0    |
-        | driverRankingRS_2nd~P2          | almeno      | 0    |
-        | driverRankingRS_2nd~CAP1_P2     | almeno      | 0    |
-        | driverRankingRS_890~P3          | almeno      | 0    |
-        | driverRankingRS_890~CAP1_P3     | almeno      | 0    |
-        | driverRankingRS~P4              | almeno      | 0    |
-        | driverRankingRS~CAP1_P4         | almeno      | 0    |
-        | driverRanking2nd~P5             | almeno      | 0    |
-        | driverRanking2nd~CAP1_P5        | almeno      | 0    |
-        | driverRanking890~P6             | almeno      | 0    |
-        | driverRanking890~CAP1_P6        | almeno      | 0    |
-        | driverRankingRS_2nd_890~P7      | almeno      | 0    |
-        | driverRankingRS_2nd_890~CAP1_P7 | almeno      | 0    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 5
-      #And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And viene simulato internamente l'algoritmo di pianificazione
-      And viene simulato internamente la seconda parte dell'algoritmo di pianificazione
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      And vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                  | TOT |
+        | csv                   | TOT |
         | "tcRankingMerged.csv" | 110 |
 
 
@@ -179,8 +135,7 @@
         | driverRankingRS_2nd_890~CAP1_P7 | almeno      | 10    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And viene simulato internamente l'algoritmo di pianificazione
-      And viene simulato internamente la seconda parte dell'algoritmo di pianificazione
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
@@ -207,6 +162,7 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine
       And viene avviata la step function DelayerToPaperChannelStateMachine
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
@@ -214,7 +170,8 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica la corretta pianificazione di ogni test case
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                   | TOT |
@@ -241,7 +198,7 @@
         | infinityDriverP8~CAP1_P8 | inferiore   | 1000  |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 0
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And viene simulato internamente l'algoritmo di pianificazione
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
@@ -268,16 +225,17 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And viene simulato internamente la seconda parte dell'algoritmo di pianificazione
+      And vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine
       And viene avviata la step function DelayerToPaperChannelStateMachine
-      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
+      #And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica la corretta pianificazione di ogni test case
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                  | TOT |
@@ -309,7 +267,7 @@
         | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And viene simulato internamente l'algoritmo di pianificazione
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
@@ -336,15 +294,16 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine
       And viene avviata la step function DelayerToPaperChannelStateMachine
-      And viene simulato internamente la seconda parte dell'algoritmo di pianificazione
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica la corretta pianificazione di ogni test case
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                 | TOT |

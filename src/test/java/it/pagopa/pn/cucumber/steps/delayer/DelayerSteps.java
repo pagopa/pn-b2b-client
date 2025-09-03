@@ -212,14 +212,14 @@ public class DelayerSteps {
         if (context.printCapacity < 0) throw new IllegalArgumentException("Capacità di stampa non valida");
     }
 
-    @And("viene simulato internamente l'algoritmo di pianificazione")
+    @And("vengono simulate internamente le operazioni di BatchWorkflowStateMachine")
     public void runSimulation() {
         context.expectedPianification.replaceAll((seed, oldStepMap) ->
                 planner.simulateAlgorithm(SENT_TO_PREPARE_PHASE_2, seed)
         );
     }
 
-    @And("viene simulato internamente la seconda parte dell'algoritmo di pianificazione")
+    @And("vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine")
     public void runSimulation2() {
         planner.simulateAlgorithm2(context.expectedPianification);
     }
