@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum PaperTrackerErrorCategory {
     TRACKING_ID_NOT_FOUND("TrackingId non trovato"),
+    NOT_RETRYABLE_EVENT_ERROR("Evento not retryable ricevuto"),
     RENDICONTAZIONE_SCARTATA("Rendicontazione scartata"),
     DATE_ERROR("Errore nella validazione delle date della sequenza."),
     STATUS_CODE_ERROR("Errore nella validazione della presenza degli elementi della sequenza."),
@@ -14,8 +15,7 @@ public enum PaperTrackerErrorCategory {
     ATTACHMENTS_ERROR("Errore nella validazione degli allegati della sequenza"),
     MAX_RETRY_REACHED_ERROR("Numero massimo di retry raggiunto"),
     OCR_VALIDATION("Errore nella validazione OCR"),
-    DUPLICATED_EVENT("Errore nella validazione della presenza di eventi duplicati"),
-    EMPTY_STRING("");
+    DUPLICATED_EVENT("Errore nella validazione della presenza di eventi duplicati");
 
     private final String value;
 
