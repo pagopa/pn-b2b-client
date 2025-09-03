@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import io.cucumber.java.en.Given;
@@ -16,17 +17,23 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceInterfaceUp
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceNamePatchRequest;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -48,6 +55,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant;
     private final EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant;
 
+    private final DocumentMapper documentMapper;
+
     public EserviceSteps(
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator clientTokenConfigurator,
@@ -55,7 +64,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         EServicePatchOperationsAssistant eServicePatchAssistant,
         EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
         EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
-        EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant
+        EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant,
+        DocumentMapper documentMapper
     ) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -69,6 +79,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.eServiceDelegationPatchAssistant = eServiceDelegationPatchAssistant;
         this.eServiceNamePatchAssistant = eServiceNamePatchAssistant;
         this.eServiceDescriptionPatchAssistant = eServiceDescriptionPatchAssistant;
+        this.documentMapper = documentMapper;
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -152,6 +163,38 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     private void deleteInterface(UUID eServiceId, UUID descriptorId) {
         httpExecutor.performCall(() -> client.deleteInterface(eServiceId, descriptorId));
+    }
+
+    @When("l'utente tenta di recuperare i metadati dei documenti associati all'e-service")
+    public void getDocumentsMetadata() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        httpExecutor.performCall(() -> client.getDocuments(eServiceId, descriptorId));
+    }
+
+    @Then("i metadati dei documenti ottenuti sono coerenti con quelli caricati")
+    public void checkDocumentsMetadata() {
+        // TODO aggiungere delay, eventualmente a seguito di ampliamento del DelayService
+
+        List<Document> actualDocuments = ((Documents) httpExecutor.getResponse()).getResults();
+        List<DocumentMetadata> actualDocumentsMetadata = documentMapper.map(actualDocuments);
+        List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
+            .getDocumentsMetadata();
+
+        assertSoftly(softly -> softly.assertThat(actualDocumentsMetadata)
+            .as("Verifica che i metadati dei documenti caricati siano coerenti")
+            .usingFieldByFieldElementComparator()
+            .usingComparatorForElementFieldsWithType(
+                (timestamp1, timestamp2) -> {
+                    Duration actualAndExpectedDifference = Duration.between(timestamp1, timestamp2).abs();
+                    Duration acceptedDelay = Duration.ofSeconds(10);
+
+                    // Se i timestamp di creazione sono divisi da un delay ragionevole, allora
+                    // si considerano "uguali", per la riuscita del test
+                    return actualAndExpectedDifference.compareTo(acceptedDelay) < 0 ? 0 : 1;
+                },
+                OffsetDateTime.class)
+            .containsExactlyInAnyOrderElementsOf(expectedDocumentsMetadata));
     }
 
     @Then("è presente un'interfaccia per l'e-service")

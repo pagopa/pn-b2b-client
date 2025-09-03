@@ -143,3 +143,15 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     When l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
     Then si ottiene lo status code 400
     And è presente un'interfaccia per l'e-service
+
+  @m2m-parte2-agosto-rilascio2
+  Scenario Outline: [M2MG_DOCUMENTS_16] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 2 documenti già caricati
+    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
+    When l'utente tenta di recuperare i metadati dei documenti associati all'e-service
+    Then si ottiene lo status code 200
+    And i metadati dei documenti ottenuti sono coerenti con quelli caricati
+    Examples:
+      | ruolo     |
+      | m2m       |
+      | m2m-admin |

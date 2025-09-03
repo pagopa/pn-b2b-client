@@ -685,7 +685,3 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'e-service descriptor non ha subito modifiche
-
-  Scenario: Prova docs e-service
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 2 documenti già caricati
-    #And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

@@ -8,6 +8,7 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDelegationUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptionUpdateSeed;
@@ -166,6 +167,11 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         return eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription()));
+    }
+
+    @Override
+    public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
+        return this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50);
     }
 
     @Override

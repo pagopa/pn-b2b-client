@@ -54,6 +54,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchC
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDescriptionMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapperImpl;
@@ -130,6 +131,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDelegationMapperImpl.class,
         EServiceDescriptionMapperImpl.class,
         EServiceDescriptorMapperImpl.class,
+        DocumentMapperImpl.class,
         PurposeMapperImpl.class,
         EServicePatchContext.class,
         EServiceDescriptorPatchContext.class,

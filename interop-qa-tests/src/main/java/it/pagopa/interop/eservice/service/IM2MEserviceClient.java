@@ -2,6 +2,7 @@ package it.pagopa.interop.eservice.service;
 
 import it.pagopa.interop.common.client.IClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
@@ -31,8 +32,6 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
         Boolean isClientAccessDelegable;
     }
 
-    /* TODO 18/07/2025: astrazioni di oggetti non ancora rilasciati nella specifica OpenAPI,
-     *  adattare una volta ottenuta la specifica completa **********************************/
     @Data
     class EServiceInterfaceUploadRequest {
         private UUID eServiceId;
@@ -60,12 +59,6 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
             return this;
         }
     }
-
-    @Data
-    class EServiceInterfaceUploadResponse {
-        private UUID id;
-    }
-    /* *************************************************************************************/
 
     @Data
     @Builder
@@ -119,4 +112,6 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
 
     EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
+
+    Documents getDocuments(UUID eserviceId, UUID descriptorId);
 }
