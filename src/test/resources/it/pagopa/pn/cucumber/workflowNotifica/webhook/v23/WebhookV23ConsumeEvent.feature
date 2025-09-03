@@ -395,7 +395,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And l'apiKey viene cancellata
 
   @webhookV23 @webhookHeader @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_RETRY_AFTER] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
+  Scenario Outline: [B2B-STREAM_RETRY_AFTER_V23] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -406,18 +406,21 @@ Feature: avanzamento notifiche webhook b2b V23
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
-    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And Viene creata una nuova apiKey per il comune "<paName>" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "<paName>" con un gruppo disponibile "FIRST"
     When si effettua la consume dello stream versione "V23" salvando l'intera response
-    Then l'header della response della consume con versione "V23" contiene il parametro "retry-after" con valore pari a "60000"
-    Given la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then l'header della response della consume con versione "V23" contiene il parametro "retry-after" con valore pari a "<retryAfterValue>"
+    Given la notifica viene inviata tramite api b2b dal "<paName>" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     When si effettua la consume dello stream versione "V23" salvando l'intera response
     Then l'header della response della consume con versione "V23" contiene il parametro "retry-after" con valore pari a "0"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+    Examples:
+      | paName       | retryAfterValue |
+      | Comune_Multi | 60000           |
 
 
 
