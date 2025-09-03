@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,7 +26,7 @@ public class EServicesCommonContext {
 
     private UUID documentId;
     private UUID documentId2;
-    private List<UUID> documentIds;
+    private List<DocumentMetadata> documentsMetadata;
     private String documentNamesPrefix;
     private String documentPrettyNamesPrefix;
 

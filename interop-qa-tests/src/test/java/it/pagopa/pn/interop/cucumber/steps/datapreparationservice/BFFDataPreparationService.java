@@ -70,6 +70,7 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ArchiveAgreementOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
@@ -85,6 +86,7 @@ import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,11 +116,11 @@ public class BFFDataPreparationService {
     public static class MutateDescriptorResult {
         private UUID descriptorId;
         private UUID interfaceId;
-        private List<UUID> documentIds;
+        private List<DocumentMetadata> documentsMetadata;
 
         @Nullable
         public UUID getDocumentId(int index) {
-            return size(documentIds) > index ? documentIds.get(0) : null;
+            return size(documentsMetadata) > index ? documentsMetadata.get(0).getId() : null;
         }
     }
 
@@ -542,7 +544,7 @@ public class BFFDataPreparationService {
         MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
 
         // 1 add document to descriptor
-        List<UUID> documentIds = new ArrayList<>();
+        List<DocumentMetadata> documentsMetadata = new ArrayList<>();
 
         String namePrefix = requireNonNullElse(documentNamePrefix, "Document QA test name");
         String prettyNamePrefix = requireNonNullElse(documentPrettyNamePrefix, "Document QA test pretty name");
@@ -551,16 +553,25 @@ public class BFFDataPreparationService {
             String documentContent = """
                 Random document QA test - %s - %d""".formatted(uuid, i);
             int documentIndex = i + 1;
+            Resource tempFileResource = blobFileCreator.createBlobWithTempFile(
+                namePrefix + documentIndex + " - ", documentContent.getBytes());
+            String prettyName = prettyNamePrefix + " - " + documentIndex;
+
             UUID documentId = addDocumentToDescriptor(
                 eServiceId,
                 descriptorId,
-                prettyNamePrefix + documentIndex,
-                blobFileCreator.createBlobWithTempFile(namePrefix + documentIndex + " - ", documentContent.getBytes()));
-            documentIds.add(documentId);
+                prettyName,
+                tempFileResource);
+            documentsMetadata.add(DocumentMetadata.builder()
+                .id(documentId)
+                .name(tempFileResource.getFilename())
+                .prettyName(prettyName)
+                .createdAt(OffsetDateTime.now())
+                .build());
         }
 
         resultBuilder.descriptorId(descriptorId);
-        resultBuilder.documentIds(documentIds);
+        resultBuilder.documentsMetadata(documentsMetadata);
 
         if (descriptorState == EServiceDescriptorState.DRAFT) return resultBuilder.build();
 

@@ -90,7 +90,7 @@ public class CatalogCommonSteps {
         eServicesCommonContext.setDocumentNamesPrefix(documentNamePrefix);
         eServicesCommonContext.setDocumentPrettyNamesPrefix(documentPrettyNamePrefix);
 
-        eServicesCommonContext.setDocumentIds(result.getDocumentIds());
+        eServicesCommonContext.setDocumentsMetadata(result.getDocumentsMetadata());
         // necessari per mantenere compatibilità con test scritti secondo un assetto antecedente
         eServicesCommonContext.setDocumentId(result.getDocumentId(0));
         eServicesCommonContext.setDocumentId2(result.getDocumentId(1));

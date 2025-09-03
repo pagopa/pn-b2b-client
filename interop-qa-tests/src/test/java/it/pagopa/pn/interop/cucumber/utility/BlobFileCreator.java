@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 
 @Component
 public class BlobFileCreator {
-
     public Resource createBlobFile(String blobFilePath, String fileNameToCreate) {
         Path filePath = Paths.get(blobFilePath);
         byte[] fileContent = null;
