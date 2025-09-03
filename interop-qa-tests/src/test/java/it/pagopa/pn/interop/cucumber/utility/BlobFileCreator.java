@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.utility;
 
+import java.io.File;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -23,5 +24,16 @@ public class BlobFileCreator {
             throw new RuntimeException(e);
         }
         return new FileSystemResource(filePath);
+    }
+
+    public Resource createBlobWithTempFile(String prefix, byte[] fileContent) {
+        try {
+            File tempFile = File.createTempFile(prefix, null);
+            tempFile.deleteOnExit();
+            Files.write(tempFile.toPath(), fileContent);
+            return new FileSystemResource(tempFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Error occured during temp file creation", e);
+        }
     }
 }

@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNullElse;
+import static org.apache.commons.collections4.IterableUtils.size;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
@@ -83,6 +85,7 @@ import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +96,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -104,6 +109,19 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BFFDataPreparationService {
+    @Data
+    @Builder
+    public static class MutateDescriptorResult {
+        private UUID descriptorId;
+        private UUID interfaceId;
+        private List<UUID> documentIds;
+
+        @Nullable
+        public UUID getDocumentId(int index) {
+            return size(documentIds) > index ? documentIds.get(0) : null;
+        }
+    }
+
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
@@ -509,28 +527,55 @@ public class BFFDataPreparationService {
         }
     }
 
-    public Map<String, UUID> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
-        // 1 add document to descriptor
-        UUID documentId = null;
-        Map<String, UUID> result = new HashMap<>();
-        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId, null);
-        result.put("descriptorId", descriptorId);
-        result.put("documentId", documentId);
+    public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null);
+    }
 
-        if (descriptorState == EServiceDescriptorState.DRAFT) return result;
+    public MutateDescriptorResult bringDescriptorToGivenState(
+        UUID eServiceId,
+        UUID descriptorId,
+        EServiceDescriptorState descriptorState,
+        int documents,
+        @Nullable String documentNamePrefix,
+        @Nullable String documentPrettyNamePrefix
+    ) {
+        MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
+
+        // 1 add document to descriptor
+        List<UUID> documentIds = new ArrayList<>();
+
+        String namePrefix = requireNonNullElse(documentNamePrefix, "Document QA test name");
+        String prettyNamePrefix = requireNonNullElse(documentPrettyNamePrefix, "Document QA test pretty name");
+        UUID uuid = UUID.randomUUID();
+        for(int i = 0; i < documents; i++) {
+            String documentContent = """
+                Random document QA test - %s - %d""".formatted(uuid, i);
+            int documentIndex = i + 1;
+            UUID documentId = addDocumentToDescriptor(
+                eServiceId,
+                descriptorId,
+                prettyNamePrefix + documentIndex,
+                blobFileCreator.createBlobWithTempFile(namePrefix + documentIndex + " - ", documentContent.getBytes()));
+            documentIds.add(documentId);
+        }
+
+        resultBuilder.descriptorId(descriptorId);
+        resultBuilder.documentIds(documentIds);
+
+        if (descriptorState == EServiceDescriptorState.DRAFT) return resultBuilder.build();
 
         // 2. Add interface to descriptor
         UUID interfaceId = addInterfaceToDescriptor(eServiceId, descriptorId);
-        result.put("interfaceId", interfaceId);
+        resultBuilder.interfaceId(interfaceId);
 
         // 3. Publish Descriptor
         publishDescriptor(eServiceId, descriptorId);
-        if (descriptorState == EServiceDescriptorState.PUBLISHED) return result;
+        if (descriptorState == EServiceDescriptorState.PUBLISHED) return resultBuilder.build();
 
         // 4. Suspend Descriptor
         if (descriptorState == EServiceDescriptorState.SUSPENDED) {
             suspendDescriptor(eServiceId, descriptorId);
-            return result;
+            return resultBuilder.build();
         }
 
         if (descriptorState == EServiceDescriptorState.DEPRECATED) {
@@ -550,11 +595,11 @@ public class BFFDataPreparationService {
 
         // Check until the first descriptor is in desired state
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getState() == descriptorState,
-                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+            res -> res.getState() == descriptorState,
+            ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
-        return result;
+        return resultBuilder.build();
     }
 
     public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
@@ -605,10 +650,15 @@ public class BFFDataPreparationService {
     }
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
-        String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
+        return addDocumentToDescriptor(eServiceId, descriptorId, name, resource);
+    }
 
-        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
+    private UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name, Resource resource) {
+        String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
+
+        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId,
+            descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
         UUID documentId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
 

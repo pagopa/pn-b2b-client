@@ -13,9 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,14 +64,35 @@ public class CatalogCommonSteps {
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string} e un documento già caricato")
     public void createEServiceWithDescriptorAndDocument(String tenantType, String descriptorState) {
+        createEServiceWithDescriptorAndDocuments(tenantType, descriptorState, 1, null, null);
+    }
+
+    @Given("{string} ha già creato un e-service con un descrittore in stato {string} e {int} documenti già caricati")
+    public void createEServiceWithDescriptorAndDocument(String tenantType, String descriptorState, int documents) {
+        String documentNamePrefix = "Document QA test name";
+        String documentPrettyNamePrefix = "Document QA test pretty name";
+        createEServiceWithDescriptorAndDocuments(tenantType, descriptorState, documents, documentNamePrefix,
+            documentPrettyNamePrefix);
+    }
+
+    private void createEServiceWithDescriptorAndDocuments(String tenantType, String descriptorState, int documents,
+        String documentNamePrefix, String documentPrettyNamePrefix) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
-        Map<String, UUID> result = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
-                EServiceDescriptorState.valueOf(descriptorState), true);
+        MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(
+            eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+            EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
+            documentPrettyNamePrefix);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
-        eServicesCommonContext.setDocumentId(Optional.ofNullable(result).map(x -> x.get("documentId")).orElse(null));
+        eServicesCommonContext.setDocumentNamesPrefix(documentNamePrefix);
+        eServicesCommonContext.setDocumentPrettyNamesPrefix(documentPrettyNamePrefix);
+
+        eServicesCommonContext.setDocumentIds(result.getDocumentIds());
+        // necessari per mantenere compatibilità con test scritti secondo un assetto antecedente
+        eServicesCommonContext.setDocumentId(result.getDocumentId(0));
+        eServicesCommonContext.setDocumentId2(result.getDocumentId(1));
     }
 }

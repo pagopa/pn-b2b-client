@@ -22,8 +22,13 @@ public class EServicesCommonContext {
     private List<EServiceDescriptor> retrievedEservicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
+
     private UUID documentId;
     private UUID documentId2;
+    private List<UUID> documentIds;
+    private String documentNamesPrefix;
+    private String documentPrettyNamesPrefix;
+
     private UUID interfaceId;
     private String interfaceName;
     private UUID oldDescriptorId;
