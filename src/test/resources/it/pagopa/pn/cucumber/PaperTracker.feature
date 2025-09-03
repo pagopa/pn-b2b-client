@@ -17,7 +17,7 @@ Feature: Resa al mittente di una notifica
     Examples:
       | physicalAddress              |
       | Via@ok_AR                    |
-#      | Via@fail_AR                  |
+      | Via@fail_AR                  |
 #      | Via@OK-Giacenza_AR           |
 #      | Via@FAIL-Giacenza_AR         |
 #      | Via@FAIL-IRREPERIBILE_AR     |
