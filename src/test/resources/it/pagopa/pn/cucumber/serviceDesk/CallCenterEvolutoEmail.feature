@@ -99,7 +99,6 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And il servizio risponde con 401
 
   @CallCenterEvolutoViaMail
-    #BUG: https://pagopa.atlassian.net/browse/PN-16237
   Scenario Outline: [CCE_MAIL_1] Invio corretto della documentazione digitale (Scenario 7, 11)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -130,7 +129,39 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     Examples:
       | email                       |
       | stefano.netti@grupposcai.it |
-      | test@test.it                |
+
+  @CallCenterEvolutoViaMail @onlyDev
+    #BUG: https://pagopa.atlassian.net/browse/PN-16237
+  Scenario Outline: [CCE_MAIL_1_MOCK_DEV] Invio corretto della documentazione digitale (Scenario 7, 11)
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | auto             |
+      | iun               | auto             |
+      | ticketOperationId | auto             |
+      | taxId             | CLMCST42R12D969Z |
+      | addressType       | EMAIL            |
+      | addressValue      | <email>          |
+      | ticketDate        | auto             |
+      | vrDate            | auto             |
+    When viene invocata l'api "CREATE_ACT_OPERATION"
+    And il servizio risponde con 201
+    And viene atteso lo stato "CREATING" dell'operazione
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 200
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    And viene atteso lo stato "OK" dell'operazione
+
+    Examples:
+      | email        |
+      | test@test.it |
 
   @CallCenterEvolutoViaMail
   Scenario: [CCE_MAIL_2] Flusso avviato con CF differente rispetto la notifica di riferimento (Scenario 12)
@@ -142,14 +173,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | auto                        |
-      | iun               | auto                        |
-      | ticketOperationId | auto                        |
-      | taxId             | CLMCST42R12D969X            |
-      | addressType       | EMAIL                       |
-      | addressValue      | stefano.netti@grupposcai.it |
-      | ticketDate        | auto                        |
-      | vrDate            | auto                        |
+      | ticketId          | auto             |
+      | iun               | auto             |
+      | ticketOperationId | auto             |
+      | taxId             | CLMCST42R12D969X |
+      | addressType       | EMAIL            |
+      | addressValue      | test@test.it     |
+      | ticketDate        | auto             |
+      | vrDate            | auto             |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 400
 
@@ -193,6 +224,6 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And viene atteso lo stato "OK" dell'operazione
     Then viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
     And viene invocata l'api "UPLOAD_VIDEO"
-    And il servizio risponde con 400
+    And il servizio risponde con 409
 
 
