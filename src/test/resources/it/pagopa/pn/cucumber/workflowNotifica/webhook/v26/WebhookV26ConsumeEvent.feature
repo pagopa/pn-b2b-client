@@ -158,3 +158,4 @@ Feature: avanzamento notifiche webhook b2b V26
     Examples:
       | paName       | retryAfterValue |
       | Comune_Multi | 60000           |
+      | Comune_1     | 70000           |
