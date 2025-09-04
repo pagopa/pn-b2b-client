@@ -69,10 +69,8 @@ Feature: controlli su elementi diagnostici
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
-    And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then la category "SEND_ANALOG_TIMEOUT_CREATION_REQUEST" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
-    Then la category "SEND_ANALOG_TIMEOUT" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     Then la category "SEND_ANALOG_TIMEOUT_CREATION_REQUEST" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then la category "SEND_ANALOG_TIMEOUT" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then la category "ANALOG_FAILURE_WORKFLOW_TIMEOUT" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
