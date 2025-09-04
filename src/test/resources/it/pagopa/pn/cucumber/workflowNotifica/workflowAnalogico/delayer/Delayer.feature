@@ -170,7 +170,13 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
+      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
+      # Per verificarne il comportamento occorrerebbe quindi:
+      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
+      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
+      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
+      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -227,14 +233,20 @@
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine
       And viene avviata la step function DelayerToPaperChannelStateMachine
-      #And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
       And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
       And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
+      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
+      # Per verificarne il comportamento occorrerebbe quindi:
+      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
+      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
+      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
+      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -302,7 +314,13 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
+      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
+      # Per verificarne il comportamento occorrerebbe quindi:
+      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
+      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
+      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
+      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
