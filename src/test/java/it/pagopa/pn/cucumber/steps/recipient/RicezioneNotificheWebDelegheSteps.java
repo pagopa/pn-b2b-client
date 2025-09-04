@@ -18,6 +18,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
@@ -547,7 +548,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private TimelineElementV27 getTimelineElementWebRecipient(TimelineElementCategoryV27 timelineElementCategory) {
-        FullReceivedNotificationV26 result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
+        BundleFullReceivedNotificationV26 result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + result.getTimeline());
         return result
                 .getTimeline()

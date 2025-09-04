@@ -1,6 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.polling.dto;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +11,7 @@ import java.util.List;
 @Setter
 public class PnPollingWebhook {
 
-    //TODO TULLIO 2: Una volta che i dev sistemano il pom, rimuovere l'import di TimelineElementCategoryV20 (va benissimo quello di externalb2bwebhook.model.*)
-
-    private TimelineElementCategoryV20 timelineElementCategoryV20;
+    private TimelineElementCategoryV23 timelineElementCategoryV20;
     private TimelineElementCategoryV23 timelineElementCategoryV23;
     private TimelineElementCategoryV23 timelineElementCategoryV24;
     private TimelineElementCategoryV23 timelineElementCategoryV25;

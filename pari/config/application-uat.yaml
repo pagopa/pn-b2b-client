@@ -1,0 +1,29 @@
+rdb:
+  base-url: https://api-io.uat.cstar.pagopa.it/idpay-itn/register
+
+role:
+  productor-1:
+    uid: "e88fe25f-ccfa-4962-8f62-f1450fd78ad0"
+    name: Gianantonio
+    familyName: Grassi
+    orgId: 2d53b379-7ce6-48e6-9f02-83121f7c6826
+    orgRole: operatore
+    orgFc: "13123784124"
+
+  productor-2:
+    uid: e88fe25f-ccfa-4962-8f62-f1450fd78ad0
+    name: Gianantonio
+    familyName: Grassi
+    orgId: f18c091e-1b0d-47d6-ad20-0c73e994a95c
+    orgRole: operatore
+    orgFc: "13123784125"
+
+  invitalia:
+    uid: 563a592e-0dba-4d4a-85fe-5c2f56f4af76
+    name: Giuseppe
+    familyName: Polignano
+    orgId: 918692a6-dc2e-4f61-a36b-a8f003202f86
+    orgRole: invitalia
+    orgFc: "05678721001"
+
+removeTos.endpoint: https://idpay.itn.internal.uat.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent

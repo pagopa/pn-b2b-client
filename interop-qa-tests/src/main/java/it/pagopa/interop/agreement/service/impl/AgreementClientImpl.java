@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -91,9 +92,13 @@ public class AgreementClientImpl implements IAgreementClient {
         return new ResponseEntity<>(statusRef.get());
     }
 
+    public Agreement activateAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.activateAgreement(agreementId, delegationRef);
+    }
+
     @Override
     public Agreement activateAgreement(UUID agreementId) {
-        return agreementsApi.activateAgreement(agreementId);
+        return agreementsApi.activateAgreement(agreementId, null);
     }
 
     @Override
@@ -101,9 +106,13 @@ public class AgreementClientImpl implements IAgreementClient {
         return agreementsApi.submitAgreement(agreementId, agreementSubmissionPayload);
     }
 
+    public Agreement suspendAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.suspendAgreement(agreementId, delegationRef);
+    }
+
     @Override
     public Agreement suspendAgreement(UUID agreementId) {
-        return agreementsApi.suspendAgreement(agreementId);
+        return agreementsApi.suspendAgreement(agreementId, null);
     }
 
     @Override
@@ -209,8 +218,6 @@ public class AgreementClientImpl implements IAgreementClient {
     public ResponseEntity<Agreements> getProducerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> consumersIds, List<AgreementState> states, Boolean showOnlyUpgradeable) {
         return agreementsApi.getProducerAgreementsWithHttpInfo(offset, limit, eservicesIds, consumersIds, states, showOnlyUpgradeable);
     }
-
-
 
     @Override
     public void setBearerToken(String bearerToken) {

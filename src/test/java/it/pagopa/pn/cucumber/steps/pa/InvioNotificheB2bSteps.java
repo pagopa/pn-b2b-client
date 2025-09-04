@@ -7,6 +7,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachmentsInner;
@@ -154,7 +156,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
     public void notificationCanBeRetrievedWithIUNWebPA() {
-        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
 
         assertThat(sharedSteps.getSentNotificationLastVersion())
                 .as("La notifica inviata non deve essere nulla prima di recuperare il codice IUN")
@@ -290,23 +292,17 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paName) {
         sharedSteps.setPA(paName);
 
-        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26 notificationInternalStatus = switch (status) {
-            case "ACCEPTED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.ACCEPTED;
-            case "DELIVERING" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.DELIVERING;
-            case "DELIVERED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.DELIVERED;
-            case "CANCELLED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.CANCELLED;
-            case "EFFECTIVE_DATE" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.EFFECTIVE_DATE;
-            case "REFUSED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.REFUSED;
+        NotificationStatusV26 notificationInternalStatus = switch (status) {
+            case "ACCEPTED" -> NotificationStatusV26.ACCEPTED;
+            case "DELIVERING" -> NotificationStatusV26.DELIVERING;
+            case "DELIVERED" -> NotificationStatusV26.DELIVERED;
+            case "CANCELLED" -> NotificationStatusV26.CANCELLED;
+            case "EFFECTIVE_DATE" -> NotificationStatusV26.EFFECTIVE_DATE;
+            case "REFUSED" -> NotificationStatusV26.REFUSED;
             default -> throw new IllegalArgumentException();
         };
 
-        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
         try {
             assertThatCode(() ->
                     notificationByIun.set(
