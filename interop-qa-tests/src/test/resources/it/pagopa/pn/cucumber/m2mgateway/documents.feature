@@ -145,9 +145,15 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     And è presente un'interfaccia per l'e-service
 
   @m2m-parte2-agosto-rilascio2
-  Scenario Outline: [M2MG_DOCUMENTS_16] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED
+  Scenario Outline: [M2MG_DOCUMENTS_17] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 2 documenti già caricati
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
+    When l'utente tenta di recuperare i metadati dei documenti associati all'e-service
+    Then si ottiene lo status code 200
+    And i metadati dei documenti ottenuti sono coerenti con quelli caricati
+
+    # Verifica che possano essere recuperati anche da enti non proprietari dell'e-service
+    And l'utente è un "admin" di "PA2" con ruolo M2M <ruolo>
     When l'utente tenta di recuperare i metadati dei documenti associati all'e-service
     Then si ottiene lo status code 200
     And i metadati dei documenti ottenuti sono coerenti con quelli caricati
@@ -155,3 +161,19 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | ruolo     |
       | m2m       |
       | m2m-admin |
+
+  @m2m-parte2-agosto-rilascio2
+  Scenario: [M2MG_DOCUMENTS_18] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED usando un token non valido
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 2 documenti già caricati
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare i metadati dei documenti associati all'e-service
+    Then si ottiene lo status code 401
+
+  @m2m-parte2-agosto-rilascio2
+  Scenario: [M2MG_DOCUMENTS_19] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service o ad un descriptor inesistenti in stato PUBLISHED
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 2 documenti già caricati
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di recuperare i metadati dei documenti di un e-service inesistenti
+    Then si ottiene lo status code 404
+    When l'utente tenta di recuperare i metadati dei documenti di un descriptor inesistenti
+    Then si ottiene lo status code 404

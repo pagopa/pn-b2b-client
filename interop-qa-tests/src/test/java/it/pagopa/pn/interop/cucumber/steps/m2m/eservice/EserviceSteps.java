@@ -32,6 +32,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePa
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -49,6 +50,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final PollingService pollingService;
     private final IM2MEserviceClient client;
     private final BlobFileCreator blobFileCreator;
+    private final DelayService delayService;
 
     private final EServicePatchOperationsAssistant eServicePatchAssistant;
     private final EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant;
@@ -65,7 +67,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
         EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
         EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant,
-        DocumentMapper documentMapper
+        DocumentMapper documentMapper,
+        DelayService delayService
     ) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -80,6 +83,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.eServiceNamePatchAssistant = eServiceNamePatchAssistant;
         this.eServiceDescriptionPatchAssistant = eServiceDescriptionPatchAssistant;
         this.documentMapper = documentMapper;
+        this.delayService = delayService;
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -169,13 +173,28 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void getDocumentsMetadata() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        getDocuments(eServiceId, descriptorId);
+    }
+
+    @When("l'utente tenta di recuperare i metadati dei documenti di un e-service inesistenti")
+    public void getNonExistentEServiceDocumentsMetadata() {
+        UUID randomUUID = UUID.randomUUID();
+        getDocuments(randomUUID, sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+    }
+
+    @When("l'utente tenta di recuperare i metadati dei documenti di un descriptor inesistenti")
+    public void getNonExistentDescriptorDocumentsMetadata() {
+        UUID randomUUID = UUID.randomUUID();
+        getDocuments(sharedStepsContext.getEServicesCommonContext().getEserviceId(), randomUUID);
+    }
+
+    private void getDocuments(UUID eServiceId, UUID descriptorId) {
+        delayService.delay();
         httpExecutor.performCall(() -> client.getDocuments(eServiceId, descriptorId));
     }
 
     @Then("i metadati dei documenti ottenuti sono coerenti con quelli caricati")
     public void checkDocumentsMetadata() {
-        // TODO aggiungere delay, eventualmente a seguito di ampliamento del DelayService
-
         List<Document> actualDocuments = ((Documents) httpExecutor.getResponse()).getResults();
         List<DocumentMetadata> actualDocumentsMetadata = documentMapper.map(actualDocuments);
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
