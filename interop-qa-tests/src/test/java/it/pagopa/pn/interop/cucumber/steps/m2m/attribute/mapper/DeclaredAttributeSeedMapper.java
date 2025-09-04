@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute.mapper;
 
 import io.cucumber.java.DataTableType;
-import it.pagopa.interop.attribute.service.IM2MDeclaredAttributeClient.DeclaredAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttributeSeed;
 import java.util.Map;
 
 public class DeclaredAttributeSeedMapper {
@@ -16,7 +16,6 @@ public class DeclaredAttributeSeedMapper {
     private DeclaredAttributeSeed specificAttributeMapper(AttributePrototype prototype) {
         return new DeclaredAttributeSeed()
             .name(prototype.getName())
-            .description(prototype.getDescription())
-            .code(prototype.getCode());
+            .description(prototype.getDescription());
     }
 }

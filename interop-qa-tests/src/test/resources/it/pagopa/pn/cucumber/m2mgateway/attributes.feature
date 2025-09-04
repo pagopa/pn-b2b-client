@@ -109,7 +109,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
       | m2m       |
       | m2m-admin |
 
-  #@m2m-agreements-parte2-luglio 22/07/2025 API non ancora rilasciata
+  @m2m-agreements-parte2-luglio
   Scenario: [M2MG_DECLAREDATTRIBUTES_5] Creazione di un attributo dichiarato con utente M2M-ADMIN
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -120,7 +120,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     When l'utente tenta di recuperare il record di declaredAttribute creato
     Then declaredAttribute viene restituito e combacia con il record creato
 
-  #@m2m-agreements-parte2-luglio 22/07/2025 API non ancora rilasciata
+  @m2m-agreements-parte2-luglio
   Scenario: [M2MG_DECLAREDATTRIBUTES_6] Accesso negato alla creazione di un attributo dichiarato con utente M2M
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -163,7 +163,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
       | m2m       |
       | m2m-admin |
 
-  #@m2m-agreements-parte2-luglio 23/07/2025 API non ancora rilasciata
+  @m2m-agreements-parte2-luglio
   Scenario: [M2MG_VERIFIEDATTRIBUTES_5] Creazione di un attributo verificato con utente M2M-ADMIN
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -174,7 +174,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     When l'utente tenta di recuperare il record di verifiedAttribute creato
     Then verifiedAttribute viene restituito e combacia con il record creato
 
-  #@m2m-agreements-parte2-luglio 23/07/2025 API non ancora rilasciata
+  @m2m-agreements-parte2-luglio
   Scenario: [M2MG_VERIFIEDATTRIBUTES_6] Accesso negato alla creazione di un attributo verificato con utente M2M
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -234,6 +234,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 404
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7419
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_12] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno verificato un attributo associato ad un altro ente.
     Given "PA2" ha già creato un attributo verificato
@@ -258,6 +259,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 404
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7420
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_13] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno revocato un attributo associato ad un altro ente.
     Given "PA2" ha già creato un attributo verificato

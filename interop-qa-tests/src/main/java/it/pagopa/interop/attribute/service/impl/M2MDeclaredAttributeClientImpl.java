@@ -10,6 +10,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttributeSeed;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -50,8 +51,8 @@ public class M2MDeclaredAttributeClientImpl extends AbstractClient implements
     @Override
     public DeclaredAttribute get(UUID id) {
        return this.performOperation(SimpleOperation.of(
-               () -> this.attributesApi.getDeclaredAttribute(id),
-               identity()
+           () -> this.attributesApi.getDeclaredAttribute(id),
+           identity()
        )).orElse(null);
     }
 
@@ -77,9 +78,8 @@ public class M2MDeclaredAttributeClientImpl extends AbstractClient implements
     @Override
     public DeclaredAttribute create(DeclaredAttributeSeed agreementPayload) {
         return this.performOperation(SimpleOperation.of(
-                //() -> this.attributesApi.createDeclaredAttribute(agreementPayload), <-- TODO 09/07/2025 DECOMMENTARE una volta rilasciare in QA le apis in oggetto
-                DeclaredAttribute::new, // TODO 09/07/2025 placeholder, rimuovere una volta rilasciate le API in QA
-                res -> res
+            () -> this.attributesApi.createDeclaredAttribute(agreementPayload),
+            identity()
         )).orElse(null);
     }
 }

@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute.mapper;
 
 import io.cucumber.java.DataTableType;
-import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttributeSeed;
 import java.util.Map;
 
 public class VerifiedAttributeSeedMapper {
@@ -16,7 +16,6 @@ public class VerifiedAttributeSeedMapper {
     protected VerifiedAttributeSeed specificAttributeMapper(AttributePrototype prototype) {
         return new VerifiedAttributeSeed()
             .name(prototype.getName())
-            .description(prototype.getDescription())
-            .code(prototype.getCode());
+            .description(prototype.getDescription());
     }
 }

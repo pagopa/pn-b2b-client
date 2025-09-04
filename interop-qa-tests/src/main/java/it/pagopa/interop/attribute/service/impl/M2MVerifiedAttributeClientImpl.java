@@ -10,6 +10,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttributeSeed;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -50,8 +51,8 @@ public class M2MVerifiedAttributeClientImpl extends AbstractClient implements
     @Override
     public VerifiedAttribute get(UUID id) {
        return this.performOperation(SimpleOperation.of(
-               () -> this.attributesApi.getVerifiedAttribute(id),
-               identity()
+           () -> this.attributesApi.getVerifiedAttribute(id),
+           identity()
        )).orElse(null);
     }
 
@@ -77,9 +78,8 @@ public class M2MVerifiedAttributeClientImpl extends AbstractClient implements
     @Override
     public VerifiedAttribute create(VerifiedAttributeSeed agreementPayload) {
         return this.performOperation(SimpleOperation.of(
-                //() -> this.attributesApi.createVerifiedAttribute(agreementPayload), <-- TODO 09/07/2025 DECOMMENTARE una volta rilasciare in QA le apis in oggetto
-                VerifiedAttribute::new, // TODO 09/07/2025 placeholder, rimuovere una volta rilasciate le API in QA
-                res -> res
+            () -> this.attributesApi.createVerifiedAttribute(agreementPayload),
+            identity()
         )).orElse(null);
     }
 }

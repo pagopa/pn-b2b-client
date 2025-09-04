@@ -10,7 +10,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IM2MTenantClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
-import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient.VerifiedAttributeSeed;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevoker;
@@ -18,6 +17,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifier;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifiers;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
