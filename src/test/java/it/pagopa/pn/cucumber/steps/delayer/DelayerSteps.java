@@ -17,6 +17,7 @@ import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -32,9 +33,9 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 public class DelayerSteps {
 
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv"};
-    private static final String LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
     public static final int POLLING_MAX_MINUTES = 45;
 
+    private String LAMBDA_NAME = null;
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
     private final DelayerPlanner planner;
@@ -43,10 +44,18 @@ public class DelayerSteps {
     private final DelayerPaperDeliveryUtils utils;
 
     @Autowired
-    public DelayerSteps(LambdaInvoker lambdaInvoker) {
+    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${spring.profiles.active:default}") String environment) {
+
         this.context = new DelayerContext();
         this.csvLoader = new DelayerCsvLoader(context);
         this.planner = new DelayerPlanner(context);
+
+        if (environment.equals("dev")) {
+            LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
+        } else if (environment.equals("test")) {
+            LAMBDA_NAME = "arn:aws:lambda:eu-south-1:151559006927:function:pn-testDelayerLambda";
+        }
+
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, LAMBDA_NAME);
         this.utils = new DelayerPaperDeliveryUtils(context);
         this.validator = new DelayerValidator(context, lambdaClient, utils);
@@ -69,7 +78,7 @@ public class DelayerSteps {
     public void deleteDataFormTargetTable() {
         Arrays.stream(CSV_FILES).forEach(csv -> {
             try {
-                lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery","pn-PaperDeliveryDriverUsedCapacities",
+                lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverUsedCapacities",
                         "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csv);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -232,7 +241,7 @@ public class DelayerSteps {
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery","pn-PaperDeliveryCounters");
+        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")

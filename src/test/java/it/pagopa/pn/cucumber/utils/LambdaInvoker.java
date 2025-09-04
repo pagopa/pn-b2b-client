@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -17,6 +18,17 @@ import java.time.Duration;
 public class LambdaInvoker {
 
     private LambdaClient lambdaClient;
+    @Value("${spring.profiles.active}") private String activeProfile;
+
+    private String getUserRole(){
+        if(activeProfile.equals("dev")){
+            return "ROLE_dev_core";
+        } else if(activeProfile.equals("test")){
+            return "ROLE_test_core";
+        }
+
+        throw new RuntimeException("Invalid profile active");
+    }
 
     private LambdaClient getLambdaClient() {
         if (lambdaClient == null) {
@@ -26,8 +38,8 @@ public class LambdaInvoker {
                             .connectionTimeout(Duration.ofSeconds(10))
                             .socketTimeout(Duration.ofSeconds(30))
                             .build())
-                    //.credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core")) // in locale
-                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
+                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // in locale
+                    //.credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
