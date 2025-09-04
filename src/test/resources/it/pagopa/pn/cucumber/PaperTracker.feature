@@ -1,5 +1,4 @@
-Feature: Resa al mittente di una notifica
-
+Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
@@ -18,14 +17,13 @@ Feature: Resa al mittente di una notifica
       | physicalAddress              |
       | Via@ok_AR                    |
       | Via@fail_AR                  |
-#      | Via@OK-Giacenza_AR           |
-#      | Via@FAIL-Giacenza_AR         |
-#      | Via@FAIL-IRREPERIBILE_AR     |
-#      | Via@FAIL-CompiutaGiacenza_AR |
-#      | Via@fail-Discovery_AR        |
+      | Via@OK-Giacenza_AR           |
+      | Via@FAIL-Giacenza_AR         |
+      | Via@FAIL-IRREPERIBILE_AR     |
+      | Via@FAIL-CompiutaGiacenza_AR |
+      | Via@fail-Discovery_AR        |
 
-
-  #@paperTracker
+  @paperTracker
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
             si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
@@ -41,9 +39,7 @@ Feature: Resa al mittente di una notifica
     Then si verifica che gli elementi di timeline coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
 
 
-  # Questo test deve utilizzare sequence che devono generare degli errori specifici (che al momento ancora non esistono)
-  # dopodiché deve verificare che l'errore generato sia presente e recuperabile dalla nuova api
-  #@paperTracker
+  @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
