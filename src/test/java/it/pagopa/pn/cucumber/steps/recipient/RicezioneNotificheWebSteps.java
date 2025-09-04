@@ -1087,14 +1087,6 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV1(List.of(bffTosPrivacyBody)));
     }
 
-//    @Given("l'utente {string} {string} i tos per sercq v2")
-//    public void lUtenteAccettaITosv2(String user, String operation) {
-//        sharedSteps.selectUser(user);
-//        BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
-//        BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_SERCQ);
-//        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
-//    }
-
     @Given("l'utente {string} {string} i termini di servizio di tipo: {tosConsentType}")
     public void userAcceptConsensOfType(String user, String action, ConsentType consentType) {
         sharedSteps.selectUser(user);
