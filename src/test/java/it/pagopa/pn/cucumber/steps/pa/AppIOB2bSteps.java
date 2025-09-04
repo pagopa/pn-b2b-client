@@ -61,19 +61,10 @@ public class AppIOB2bSteps {
 
     @Given("viene generato il QR Code {string} per la notifica appena creata")
     public void vieneGeneratoIlCodiceQRPerLaNotificaCreata(String qrCodeType) {
-//        sharedSteps.setNotificationIun("RPKN-NJQG-JXUX-202509-M-1");
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
-        };
-    }
-
-    private String provideTaxId(Destinatario user) {
-        return switch (user) {
-            case DESTINATARIO_MARIO_CUCUMBER -> "FRMTTR76M06B715E";
-            case DESTINATARIO_MARIO_GHERKIN -> "CLMCST42R12D969Z";
-            default -> throw new IllegalArgumentException();
         };
     }
 
@@ -93,7 +84,7 @@ public class AppIOB2bSteps {
         try {
             switch (endpoint) {
                 case "checkQRCode" -> iPnAppIOB2bClient.checkAarQrCodeIO(inputParams.get("taxId"), new RequestCheckQrMandateDto().aarQrCodeValue(inputParams.get("aarQrCodeValue")));
-                case "getReceivedNotification" -> iPnAppIOB2bClient.getReceivedNotification(inputParams.get("iun"), inputParams.get("taxId"), null, null);
+                case "getReceivedNotification" -> iPnAppIOB2bClient.getReceivedNotification(inputParams.get("iun"), inputParams.get("taxId"), null);
                 case "getSentNotificationDocument" -> iPnAppIOB2bClient.getSentNotificationDocument(inputParams.get("iun"),
                         inputParams.get("docIdx") == null ? null : Integer.parseInt(inputParams.get("docIdx")), inputParams.get("taxId"), null);
                 case "getReceivedNotificationAttachment" -> iPnAppIOB2bClient.getReceivedNotificationAttachment(inputParams.get("iun"), inputParams.get("attachmentName"),
@@ -111,36 +102,31 @@ public class AppIOB2bSteps {
 
     @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO")
     public void notificationCanBeRetrievedFromAppIOAfterQRCodeScan(Destinatario user) {
-        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), null, null);
-    }
-
-    @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO passando l'header srcIo uguale a: {string}")
-    public void notificationCanBeRetrievedFromAppIOAfterQRCodeScanWithSrcIoHeader(Destinatario user, String headerValue) {
-        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), null, headerValue);
+        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), null);
     }
 
     @Then("a seguito della scansione del QR Code, la notifica non può essere recuperata da: {destinatario} tramite AppIO senza passare l'id della delega")
     public void notificationCanBeRetrievedFromAppIOAfterQRCodeScanWithoutMandateId(Destinatario user) {
-        Assertions.assertThrows(HttpClientErrorException.class, () -> iPnAppIOB2bClient.getReceivedNotification(responseCheckAarMandateDto.getIun(), user.getTaxId(), null, null));
+        Assertions.assertThrows(HttpClientErrorException.class, () -> iPnAppIOB2bClient.getReceivedNotification(responseCheckAarMandateDto.getIun(), user.getTaxId(), null));
     }
 
     @Then("a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: {destinatario}")
     public void delegateRetrievesNotificationFromAppIOAfterQRCodeScan(Destinatario user) {
         Assertions.assertNotNull(responseCheckAarMandateDto.getMandateId(), "MandateId cannot be null!");
-        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), UUID.fromString(responseCheckAarMandateDto.getMandateId()), null);
+        assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), UUID.fromString(responseCheckAarMandateDto.getMandateId()));
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
     public void notificationCanBeRetrievedAppIO() {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        assertNotificationCanBeRetrievedFromAppIO(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId(), null, null);
+        assertNotificationCanBeRetrievedFromAppIO(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId(), null);
     }
 
-    private void assertNotificationCanBeRetrievedFromAppIO(String iun, String taxId, UUID mandateId, String xPagopaPnIoSrc) {
+    private void assertNotificationCanBeRetrievedFromAppIO(String iun, String taxId, UUID mandateId) {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(iun, taxId, mandateId, xPagopaPnIoSrc)));
+                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(iun, taxId, mandateId)));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -149,7 +135,7 @@ public class AppIOB2bSteps {
 
     @Then("a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO")
     public void notifiedDocumentCanBeRetrievedAppIOAfterQRCodeScan() {
-        assertNotificationDocumentCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), 0, responseCheckAarMandateDto.getRecipientInfo().getTaxId(), null);
+        assertNotificationDocumentCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), 0, responseCheckAarMandateDto.getRecipientInfo().getTaxId());
     }
 
     @Then("il documento notificato può essere recuperata tramite AppIO")
@@ -157,12 +143,12 @@ public class AppIOB2bSteps {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<NotificationDocument> documents = fullSentNotification.getDocuments();
         assertNotificationDocumentCanBeRetrievedFromAppIO(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
-                fullSentNotification.getRecipients().get(0).getTaxId(), null);
+                fullSentNotification.getRecipients().get(0).getTaxId());
     }
 
-    private void assertNotificationDocumentCanBeRetrievedFromAppIO(String iun, Integer docIdx, String taxId, String mandateId) {
+    private void assertNotificationDocumentCanBeRetrievedFromAppIO(String iun, Integer docIdx, String taxId) {
         NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getSentNotificationDocument(iun, docIdx, taxId, mandateId != null ? UUID.fromString(mandateId) : null);
+                iPnAppIOB2bClient.getSentNotificationDocument(iun, docIdx, taxId, null);
         try {
             byte[] bytes = Assertions.assertDoesNotThrow(() -> B2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -172,8 +158,6 @@ public class AppIOB2bSteps {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
-
-
 
     @Then("il documento di pagamento {string} può essere recuperata tramite AppIO")
     public void notifiedDocumentPaymentCanBeRetrievedAppIO(String typeDocument) {
@@ -259,7 +243,7 @@ public class AppIOB2bSteps {
 
     public void downloadF24AppIoByUrl(String typeDocument, String recipient, UUID mandateId) {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        ThirdPartyMessage notificationByIun = iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId(), mandateId, null);
+        ThirdPartyMessage notificationByIun = iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId(), mandateId);
 
         assertThat(notificationByIun).as("La notifica deve essere recuperata da AppIO").isNotNull();
 
@@ -300,7 +284,7 @@ public class AppIOB2bSteps {
     @And("{string} tenta il recupero della notifica tramite AppIO")
     public void attemptsNotificationRetrievalAppIO(String recipient) {
         try {
-            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient), null, null);
+            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient), null);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             this.notificationServerError = e;
         }
@@ -327,7 +311,7 @@ public class AppIOB2bSteps {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient), null, null)));
+                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient), null)));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);

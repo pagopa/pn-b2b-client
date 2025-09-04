@@ -236,15 +236,3 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato: Mario Gherkin
     And il download non ha prodotto errori
 
-#  @appIo
-#  Scenario: [QR_CODE_10]
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica con cucumber |
-#      | senderDenomination | comune di milano            |
-#    And destinatario Mario Cucumber
-#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-#    And viene generato il QR Code "corretto" per la notifica appena creata
-#    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
-#    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO passando l'header srcIo uguale a: "QR_CODE"
-#    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" esista
-    #DA VERIFICARE MANUALMENTE SU DB CHE PER L'ELEMENTO NOTIFICATION_VIEWED_CREATION_REQUEST sourceChannel=IO e sourceChannelDetails = QR_CODE;
