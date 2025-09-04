@@ -44,6 +44,13 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1,test2,test3 |
       | global_singlevalue:test1            |
 
+  @pn-16132
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_EMPTY_FILE] GetTags SUCCESS
+    Given viene caricato un nuovo pdf di 0 byte
+    And La chiamata genera un errore con status code 422
+    And Il messaggio di errore riporta la dicitura "Empty or invalid file"
+
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_GET_TAGS_2] GetTags SUCCESS Empty Result
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
