@@ -33,10 +33,9 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     public PnPaperTrackerClientImpl(RestTemplate restTemplate, @Value("${pn.internal.delivery-push-base-url}") String paperTrackerBaseUrl) {
         this.restTemplate = restTemplate;
         this.paperTrackerBaseUrl = paperTrackerBaseUrl;
-        this.paperTrackerTrackingApi = new PaperTrackerTrackingApi(newApiClient(this.restTemplate, this.paperTrackerBaseUrl));
-        this.paperTrackerOutputApi = new PaperTrackerOutputApi(newApiClient(this.restTemplate, this.paperTrackerBaseUrl));
-        this.paperTrackerErrorApi = new PaperTrackerErrorApi(newApiClient(this.restTemplate, this.paperTrackerBaseUrl));
-        ;
+        this.paperTrackerTrackingApi = new PaperTrackerTrackingApi(newApiClient(restTemplate, paperTrackerBaseUrl));
+        this.paperTrackerOutputApi = new PaperTrackerOutputApi(newApiClient(restTemplate, paperTrackerBaseUrl));
+        this.paperTrackerErrorApi = new PaperTrackerErrorApi(newApiClient(restTemplate, paperTrackerBaseUrl));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
@@ -58,5 +57,10 @@ public class PnPaperTrackerClientImpl implements IPnPaperTrackerClient {
     @Override
     public TrackingErrorsResponse retrieveTrackerErrors(TrackingsRequest trackingsRequest) {
         return paperTrackerErrorApi.retrieveTrackingErrors(trackingsRequest);
+    }
+
+    @Override
+    public TrackingsResponse retrieveTrackingsByAttemptId(String attemptId, String pcRetry) {
+        return paperTrackerTrackingApi.retrieveTrackingsByAttemptId(attemptId, pcRetry);
     }
 }
