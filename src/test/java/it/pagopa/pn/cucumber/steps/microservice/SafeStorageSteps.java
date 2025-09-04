@@ -261,6 +261,25 @@ public class SafeStorageSteps {
         loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
     }
 
+    @Given("viene caricato un nuovo pdf di 0 byte")
+    public void uploadNewEmptyDocument() {
+        final String type = "PN_NOTIFICATION_ATTACHMENTS";
+        String resourcePath = "classpath:/vuoto.pdf";
+        String sha256 = computeAndSetSha(resourcePath);
+
+        FileCreationRequest request = new FileCreationRequest();
+        request.setContentType("application/pdf");
+        request.setStatus("SAVED");
+        request.setDocumentType(type);
+
+        try {
+            FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
+            loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
+        }catch (HttpClientErrorException httpExc) {
+            indicizzazioneStepsPojo.setHttpException(httpExc);
+        }
+    }
+
     @Given("Vengono caricati {int} nuovi documenti di tipo {string}")
     public void uploadNewPdfDocument(Integer times, String type) {
         for (int i = 0; i < times; i++) {
