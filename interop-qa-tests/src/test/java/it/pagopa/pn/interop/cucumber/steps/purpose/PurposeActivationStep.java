@@ -5,23 +5,24 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
-import it.pagopa.interop.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 
 @Slf4j
 public class PurposeActivationStep {
@@ -66,12 +67,24 @@ public class PurposeActivationStep {
     @When("l'utente (ri)attiva la finalità in stato {string} per quell'e-service")
     public void userActivatesPurposeInStateForThatEService(String state) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        activatePurposeInStateForThatEServiceWithDelegate(state, null);
+    }
+
+    @When("l'utente {delegationRole} (ri)attiva la finalità in stato {string} per quell'e-service")
+    public void userActivatesPurposeInStateForThatEServiceWithDelegate(DelegationRole delegationRole, String state) throws InterruptedException {
+        Thread.sleep(2000);
+        String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, null));
+        activatePurposeInStateForThatEServiceWithDelegate(state, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+    }
+
+    private void activatePurposeInStateForThatEServiceWithDelegate(String state, DelegationRef delegationRef) {
         String versionId = "WAITING_FOR_APPROVAL".equals(state) || "REJECTED".equals(state)
-                        ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
-                        : sharedStepsContext.getPurposeCommonContext().getVersionId();
+                ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
+                : sharedStepsContext.getPurposeCommonContext().getVersionId();
         if (versionId == null) throw new IllegalArgumentException("No versionId found!");
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(
-                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), UUID.fromString(versionId)));
+                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), UUID.fromString(versionId), delegationRef));
 //        pollingService.makePolling(() -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
 //                res -> Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).filter(status -> status == PurposeVersionState.ACTIVE).isPresent(),
 //                "There was an error while activating the purpose!");
@@ -106,6 +119,6 @@ public class PurposeActivationStep {
                 },
                 "Purpose with desired state not found!"
         );
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 }

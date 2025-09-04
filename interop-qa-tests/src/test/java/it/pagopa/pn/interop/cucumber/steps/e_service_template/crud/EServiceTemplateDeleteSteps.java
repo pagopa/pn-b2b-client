@@ -1,0 +1,73 @@
+package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import io.cucumber.java.en.Then;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.util.Objects;
+import java.util.UUID;
+import lombok.Data;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+/** Cucumber steps involving creation, editing, viewing or deletion
+ * of E-service template */
+/* DEV. NOTE 14/03/2025: non ci sono step che effettuano la cancellazione poiché la cancellazione
+* di un template avviene quando vengono cancellate tutte le VERSIONI di un template. Non ci
+* sopo APIs che effettuano la cancellazione di un template, ma solo delle sue versioni. */
+@Data
+public class EServiceTemplateDeleteSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final SharedStepsContext sharedStepsContext;
+    private final IEServiceTemplateClient eServiceTemplateClient;
+    private final IHttpExecutor httpCallExecutor;
+    private final PollingService pollingService;
+
+    private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
+
+    /* TODO 13/03/2025: molte di queste assegnazioni sono condivise da tutte la classi di step.
+    *   Provare a racchiudere il codice comune in un costruttore in una classe astratta da far
+    *   ereditare a questa e a tutte le altre. */
+    public EServiceTemplateDeleteSteps(ClientTokenConfigurator clientTokenConfigurator,
+        SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.sharedStepsContext = sharedStepsContext;
+        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
+    }
+
+    @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateDeleted() {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                Objects::isNull, // perché in caso di errore come 404 al momento HttpCallExecutor non valorizza la response
+                "L'e-service template non è stato cancellato correttamente"
+            );
+
+            HttpStatus expectedErrorCode = HttpStatus.NOT_FOUND;
+            assertThat(httpCallExecutor.getResponseStatus())
+                .as("Check assenza e-service template")
+                .withFailMessage(
+                    "Atteso errore %s, ma ottenuto %s. Ultimo messaggio d'errore noto: %s",
+                    expectedErrorCode,
+                    httpCallExecutor.getResponseStatus(),
+                    httpCallExecutor.getErrorMessage())
+                .isEqualTo(expectedErrorCode);
+        } catch (PollingPredicateException e) {
+            fail("L'e-service template non è stato cancellato correttamente");
+        }
+    }
+}

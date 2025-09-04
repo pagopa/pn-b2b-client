@@ -25,6 +25,9 @@ import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.eservice_template.impl.M2MEServiceTemplateClientImpl;
+import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
+import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
+import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -34,6 +37,9 @@ import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
@@ -77,6 +83,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         QAAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
+        EServiceTemplateApiClientImpl.class,
+        QAAbstractInteropTracingClient.class,
+        DescriptorAttributesMapperImpl.class,
+        EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,
+        EServiceTemplateTestAssistant.class,
+        EServiceTemplateStepContext.class,
+        RiskAnalysisMapperImpl.class,
         it.pagopa.interop.authorization.service.DataPreparationService.class,
         M2MAgreementClientImpl.class,
         M2MAttributeClientImpl.class,
