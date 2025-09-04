@@ -256,7 +256,7 @@ public class SharedSteps {
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
 
-    private NotificationStepsInterface getNotificationStepInterface() {
+    public NotificationStepsInterface getNotificationStepInterface() {
         NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
         return getNotificationStepInterface(notificationVersion);
     }
