@@ -2,8 +2,7 @@
 Feature: Gestione degli attributes attraverso APIs M2M V2
 
   Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_1] Recupero del dettaglio di un attributo certificato con utente autorizzato (Scenario 61)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato con successo
       | name | description | code |
       |      |             |      |
@@ -23,8 +22,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     And certifiedAttribute non restituito
 
   Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo certificato con attributeId inesistente (Scenario 64)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
+    Given l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
     When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 404
     And certifiedAttribute non restituito
@@ -34,8 +32,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
       | m2m-admin |
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_5] Creazione di un attributo certificato con utente M2M-ADMIN (Scenario 20)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
@@ -44,8 +41,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     Then certifiedAttribute viene restituito e combacia con il record creato
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_6] Accesso negato alla creazione di un attributo certificato con utente M2M (Scenario 41)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
@@ -56,8 +52,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_7] La lista degli attributi certificati può essere visionata da un utente con ruolo M2M o M2M-ADMIN (Parte2#Scenario 9)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato con successo
       | name | description | code |
       |      |             |      |
@@ -78,8 +73,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2MG_DECLAREDATTRIBUTES_1] Recupero del dettaglio di un attributo dichiarato con utente autorizzato (Parte2#Scenario 1)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And l'utente crea un attributo dichiarato
     When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
     And l'utente tenta di recuperare l'attributo dichiarato creato
@@ -99,8 +93,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2MG_DECLAREDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo dichiarato con attributeId inesistente (Parte2#Scenario 4)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
+    Given l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
     When l'utente tenta di recuperare declaredAttribute con un id inesistente
     Then si ottiene lo status code 404
     And declaredAttribute non restituito
@@ -111,8 +104,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_DECLAREDATTRIBUTES_5] Creazione di un attributo dichiarato con utente M2M-ADMIN
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene effettuata la creazione dell'attributo dichiarato
       | name | description | code |
       |      |             |      |
@@ -122,8 +114,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_DECLAREDATTRIBUTES_6] Accesso negato alla creazione di un attributo dichiarato con utente M2M
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When viene effettuata la creazione dell'attributo dichiarato
       | name | description | code |
       |      |             |      |
@@ -132,8 +123,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2MG_VERIFIEDATTRIBUTES_1] Recupero del dettaglio di un attributo verificato con utente autorizzato (Parte2#Scenario 5)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And l'utente crea un attributo verificato
     When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
     And l'utente tenta di recuperare l'attributo verificato creato
@@ -153,8 +143,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2MG_VERIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo verificato con attributeId inesistente (Parte2#Scenario 8)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
+    Given l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
     When l'utente tenta di recuperare verifiedAttribute con un id inesistente
     Then si ottiene lo status code 404
     And verifiedAttribute non restituito
@@ -165,8 +154,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_VERIFIEDATTRIBUTES_5] Creazione di un attributo verificato con utente M2M-ADMIN
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene effettuata la creazione dell'attributo verificato
       | name | description | code |
       |      |             |      |
@@ -176,8 +164,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_VERIFIEDATTRIBUTES_6] Accesso negato alla creazione di un attributo verificato con utente M2M
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When viene effettuata la creazione dell'attributo verificato
       | name | description | code |
       |      |             |      |
