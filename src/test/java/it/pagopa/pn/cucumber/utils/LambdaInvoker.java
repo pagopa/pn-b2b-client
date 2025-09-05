@@ -38,8 +38,8 @@ public class LambdaInvoker {
                             .connectionTimeout(Duration.ofSeconds(10))
                             .socketTimeout(Duration.ofSeconds(30))
                             .build())
-                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // in locale
-                    //.credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
+                    //.credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // in locale
+                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
