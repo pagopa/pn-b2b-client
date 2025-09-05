@@ -32,6 +32,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
@@ -769,6 +770,10 @@ public class BFFDataPreparationService {
     }
 
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null);
+    }
+
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -843,7 +848,7 @@ public class BFFDataPreparationService {
                     .build();
         }
         // 2. Activate the purpose version
-        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get()));
+        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get(), delegationRef));
         assertValidResponse();
 
         // 3. If the state required is WAITING_FOR_APPROVAL, we need to wait until the purpose version is in that state and return the purposeId
@@ -976,8 +981,8 @@ public class BFFDataPreparationService {
         );
     }
 
-    public void activateAgreement(UUID agreementId, ClientType reactivatedBy) {
-        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId));
+    public void activateAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
+        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId, delegationRef));
         assertValidResponse();
         pollingService.makePolling(
             () -> agreementClient.getAgreementById(agreementId),

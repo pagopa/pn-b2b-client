@@ -7,6 +7,7 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
@@ -15,6 +16,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +48,16 @@ public class AgreementActivateSteps {
     @Given("{string} ha già approvato quella richiesta di fruizione")
     public void tenantHasAlreadyAcceptedThatRequest(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, null);
+    }
+
+    @Given("l'ente {delegationRole} ha già approvato quella richiesta di fruizione")
+    public void tenantHasAlreadyAcceptedThatRequest(DelegationRole delegationRole) throws InterruptedException {
+        Thread.sleep(5000);
+        String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        String token = identityService.getToken(tenant, null);
+        clientTokenConfigurator.setBearerToken(token);
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
@@ -110,6 +122,16 @@ public class AgreementActivateSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .activateAgreement(sharedStepsContext.getAgreementId()));
+    }
+
+    @When("l'ente {delegationRole} richiede una operazione di attivazione di quella richiesta di fruizione")
+    public void userRequiresAgreementActivationWithDelegate(DelegationRole delegationRole) {
+        String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        String token = identityService.getToken(tenant, null);
+        clientTokenConfigurator.setBearerToken(token);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getAgreementClient()
+                        .activateAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
     @Given("due gruppi di due attributi certificati da {string}, dei quali {string} ne possiede uno per gruppo")
