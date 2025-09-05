@@ -87,8 +87,6 @@ public class CatalogCommonSteps {
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
-        eServicesCommonContext.setDocumentNamesPrefix(documentNamePrefix);
-        eServicesCommonContext.setDocumentPrettyNamesPrefix(documentPrettyNamePrefix);
 
         eServicesCommonContext.setDocumentsMetadata(result.getDocumentsMetadata());
         // necessari per mantenere compatibilità con test scritti secondo un assetto antecedente

@@ -27,8 +27,6 @@ public class EServicesCommonContext {
     private UUID documentId;
     private UUID documentId2;
     private List<DocumentMetadata> documentsMetadata;
-    private String documentNamesPrefix;
-    private String documentPrettyNamesPrefix;
 
     private UUID interfaceId;
     private String interfaceName;
