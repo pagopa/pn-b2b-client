@@ -71,7 +71,7 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ArchiveAgreementOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;

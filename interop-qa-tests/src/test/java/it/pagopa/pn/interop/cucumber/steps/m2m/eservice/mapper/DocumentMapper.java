@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper;
 
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.mapstruct.Mapper;

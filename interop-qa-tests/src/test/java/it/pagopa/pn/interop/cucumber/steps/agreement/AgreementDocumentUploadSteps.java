@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import java.time.OffsetDateTime;

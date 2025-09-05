@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.agreement;
+package it.pagopa.pn.interop.cucumber.steps;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

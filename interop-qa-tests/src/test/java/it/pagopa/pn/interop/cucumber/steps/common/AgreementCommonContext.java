@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;

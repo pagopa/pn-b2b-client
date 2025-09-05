@@ -24,7 +24,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDesc
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.agreement.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
