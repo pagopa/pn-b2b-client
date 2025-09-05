@@ -35,7 +35,6 @@ public class DelayerSteps {
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv"};
     public static final int POLLING_MAX_MINUTES = 45;
 
-    private String LAMBDA_NAME = null;
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
     private final DelayerPlanner planner;
@@ -44,19 +43,13 @@ public class DelayerSteps {
     private final DelayerPaperDeliveryUtils utils;
 
     @Autowired
-    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${spring.profiles.active:default}") String environment) {
+    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
 
         this.context = new DelayerContext();
         this.csvLoader = new DelayerCsvLoader(context);
         this.planner = new DelayerPlanner(context);
 
-        if (environment.equals("dev")) {
-            LAMBDA_NAME = "arn:aws:lambda:eu-south-1:830192246553:function:pn-testDelayerLambda";
-        } else if (environment.equals("test")) {
-            LAMBDA_NAME = "arn:aws:lambda:eu-south-1:151559006927:function:pn-testDelayerLambda";
-        }
-
-        this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, LAMBDA_NAME);
+        this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
         this.utils = new DelayerPaperDeliveryUtils(context);
         this.validator = new DelayerValidator(context, lambdaClient, utils);
     }
