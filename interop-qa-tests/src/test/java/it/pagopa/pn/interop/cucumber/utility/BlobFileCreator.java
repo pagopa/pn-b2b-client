@@ -27,7 +27,7 @@ public class BlobFileCreator {
 
     public Resource createBlobWithTempFile(String prefix, byte[] fileContent) {
         try {
-            File tempFile = File.createTempFile(prefix, null);
+            File tempFile = Files.createTempFile(prefix, null).toFile();
             tempFile.deleteOnExit();
             Files.write(tempFile.toPath(), fileContent);
             return new FileSystemResource(tempFile);
