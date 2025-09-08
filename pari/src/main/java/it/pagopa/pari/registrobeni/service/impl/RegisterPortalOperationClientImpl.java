@@ -11,6 +11,7 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionR
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionsResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.PortalConsentDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductStatus;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductsUpdateDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UpdateResponseDTO;
@@ -81,7 +82,7 @@ public class RegisterPortalOperationClientImpl {
         return productsUploadApi.verifyProductList(csv, category);
     }
 
-    public ProductListDTO getProducts(Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productFileId, String productName, String status, String organizationId) {
+    public ProductListDTO getProducts(Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productFileId, String productName, ProductStatus status, String organizationId) {
         return productsApi.getProducts(page, size, sort, category, eprelCode, gtinCode, productFileId, productName, status, organizationId);
     }
 
@@ -93,16 +94,16 @@ public class RegisterPortalOperationClientImpl {
         return institutionsApi.retrieveInstitutionById(institutionId);
     }
 
-    public UpdateResponseDTO updateProductStatusApproved(String xOrganizationSelected, ProductsUpdateDTO productsUpdateDTO) {
-        return productsApi.updateProductStatusApproved(xOrganizationSelected, productsUpdateDTO);
+    public UpdateResponseDTO updateProductStatusApproved(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusApproved(productsUpdateDTO);
     }
 
-    public UpdateResponseDTO updateProductStatusRejected(String xOrganizationSelected, ProductsUpdateDTO productsUpdateDTO) {
-        return productsApi.updateProductStatusRejected(xOrganizationSelected, productsUpdateDTO);
+    public UpdateResponseDTO updateProductStatusRejected(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusRejected(productsUpdateDTO);
     }
 
-    public UpdateResponseDTO updateProductStatusSupervisioned(String xOrganizationSelected, ProductsUpdateDTO productsUpdateDTO) {
-        return productsApi.updateProductStatusSupervisioned(xOrganizationSelected, productsUpdateDTO);
+    public UpdateResponseDTO updateProductStatusSupervised(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusSupervised(productsUpdateDTO);
     }
 
     public void setBearerToken(RdbRole role) {

@@ -13,7 +13,7 @@ Feature: PARI - Portale registro dei beni
     Examples:
       | utenza          |
       | PRODUTTORE_1    |
-      | INVITALIA       |
+      | INVITALIA_L1    |
 
     #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-163
   Scenario: [TC_1_TOS_KO] La sottomissione di un csv prodotti senza l'accettazione dei ToS deve essere proibita
@@ -107,14 +107,14 @@ Feature: PARI - Portale registro dei beni
     Given l'utente accetta i ToS con successo
     When viene caricato il csv con categoria: "<categoria_csv>" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2226586          | eiQINTWM149V2       | <codice_prodotto>      | <categoria>      | IT                   |
+      | 2310946          | AWM10014586GD       | <codice_prodotto>      | <categoria>      | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Then si verifica che la lista di prodotti caricati non sia nulla
     Then si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo
   Examples:
       | categoria_csv       | codice_prodotto     | categoria         |
-      | WASHERDRIERS        | EIQINTWM149         | Lavasciuga        |
+      | WASHERDRIERS        | AWM10014586GD       | Lavasciuga        |
       | OVENS               |                     | Forno             |
       | RANGEHOODS          |                     | Cappa da cucina   |
       | DISHWASHERS         |                     | Lavastoviglie     |

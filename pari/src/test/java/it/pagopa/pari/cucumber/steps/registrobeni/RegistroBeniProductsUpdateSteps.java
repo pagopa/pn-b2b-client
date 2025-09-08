@@ -19,7 +19,7 @@ public class RegistroBeniProductsUpdateSteps {
     @When("viene contrassegnato un prodotto tra quelli nella lista")
     public void markProductAsSupervisioned() {
         ProductsUpdateDTO productsUpdateDTO = new ProductsUpdateDTO().gtinCodes(List.of()).motivation("");
-        apiClientContext.getRegisterPortalOperationClient().updateProductStatusSupervisioned("", productsUpdateDTO);
+        apiClientContext.getRegisterPortalOperationClient().updateProductStatusSupervised(productsUpdateDTO);
     }
 
 

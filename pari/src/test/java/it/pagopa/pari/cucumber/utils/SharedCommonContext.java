@@ -1,6 +1,7 @@
 package it.pagopa.pari.cucumber.utils;
 
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.pari.cucumber.domain.JWTUserData;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.List;
 @Slf4j
 @ScenarioScope
 public class SharedCommonContext {
+    private JWTUserData userData;
     private List<ProductDTO> productDTO;
 
 }
