@@ -19,7 +19,7 @@ import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
-import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;

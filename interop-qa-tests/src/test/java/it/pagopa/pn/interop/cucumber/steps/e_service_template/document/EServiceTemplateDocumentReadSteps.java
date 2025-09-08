@@ -4,7 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;

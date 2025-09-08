@@ -5,7 +5,7 @@ import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.templat
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
-import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;

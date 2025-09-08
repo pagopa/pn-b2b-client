@@ -1,7 +1,7 @@
-package it.pagopa.interop.eservice_template.impl;
+package it.pagopa.interop.e_service_template.impl;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;

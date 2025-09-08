@@ -1,4 +1,4 @@
-package it.pagopa.interop.eservice_template;
+package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
