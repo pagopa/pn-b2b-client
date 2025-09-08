@@ -1,11 +1,12 @@
 Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatari di notifiche RADD, impossibilitati a recarsi in un CAF o ad accedere online, di prenotare un appuntamento in Virtual Room e ricevere copia digitale degli atti.
 
   @ignore
+    # i dati sono stati presi direttaente dal portale mittente
   Scenario: [UTILS_TEST_MANUALE_1] Verifica allegati di una notifica perfezionata da oltre 120 giorni (Scenario 13)
-    Given imposto lo iun di SharedSteps a "LNWV-GRMV-KPWV-202503-W-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "UTGP-ZRHR-XDNQ-202505-Q-1" e la pa a "Comune_Multi"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
       | ticketId          | auto                        |
-      | iun               | LNWV-GRMV-KPWV-202503-W-1   |
+      | iun               | UTGP-ZRHR-XDNQ-202505-Q-1   |
       | ticketOperationId | auto                        |
       | taxId             | CLMCST42R12D969Z            |
       | addressType       | EMAIL                       |
