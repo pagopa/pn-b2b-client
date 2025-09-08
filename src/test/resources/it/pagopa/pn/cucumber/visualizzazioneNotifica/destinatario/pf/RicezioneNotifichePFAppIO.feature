@@ -51,7 +51,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" tenta il recupero della notifica tramite AppIO
-    Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
+    Then il tentativo di recupero con appIO ha prodotto un errore con status code "400"
   #viene richiesto il codice QR per lo IUN {string}
 
   #[TC_1]
@@ -185,6 +185,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | ERRA-T000-0000-ERRATO-0-0   | F24         | FRMTTR76M06B715E           | 0        | 400     |
       | NAUZ-WNPH-WQZE-202508-Y-1   |             | FRMTTR76M06B715E           | 0        | 400     |
       | NAUZ-WNPH-WQZE-202508-Y-1   | PAGOPA      |                            | 0        | 400     |
+      | AAAA-AAAA-WQZE-202508-Y-1   | PAGOPA      | FRMTTR76M06B715E           | 0        | 400     |
       | AAAA-AAAA-WQZE-202508-Y-1   | PAGOPA      | FRMTTR76M06B715E           | 0        | 404     |
 
   @appIo
