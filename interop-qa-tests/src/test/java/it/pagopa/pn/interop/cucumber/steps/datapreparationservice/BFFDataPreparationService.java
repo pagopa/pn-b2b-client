@@ -70,8 +70,9 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ArchiveAgreementOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
@@ -84,6 +85,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.Upper
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreementState;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -98,6 +100,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
@@ -141,6 +144,8 @@ public class BFFDataPreparationService {
     private final BlobFileCreator blobFileCreator;
     private final it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService;
     private final DataPreparationServiceTemplate template;
+    private final DelayService delayService;
+
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
     public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
@@ -152,12 +157,15 @@ public class BFFDataPreparationService {
         DEFAULT_CLIENT_SEED.setMembers(List.of());
     }
 
-    public BFFDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
-                                  RiskAnalysisDataInitializer riskAnalysisDataInitializer,
-                                  SharedStepsContext sharedStepsContext,
-                                  BlobFileCreator blobFileCreator,
-                                  CommonUtils commonUtils,
-                                  it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService) {
+    public BFFDataPreparationService(
+        ClientTokenConfigurator clientTokenConfigurator,
+        RiskAnalysisDataInitializer riskAnalysisDataInitializer,
+        SharedStepsContext sharedStepsContext,
+        BlobFileCreator blobFileCreator,
+        CommonUtils commonUtils,
+        it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService,
+        DelayService delayService)
+    {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -180,6 +188,8 @@ public class BFFDataPreparationService {
             this.pollingService,
             this.commonUtils
         );
+
+        this.delayService = delayService;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -545,31 +555,21 @@ public class BFFDataPreparationService {
         MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
 
         // 1 add document to descriptor
-        List<DocumentMetadata> documentsMetadata = new ArrayList<>();
-
         String namePrefix = requireNonNullElse(documentNamePrefix, "Document QA test name");
         String prettyNamePrefix = requireNonNullElse(documentPrettyNamePrefix, "Document QA test pretty name");
         UUID uuid = UUID.randomUUID();
-        for(int i = 0; i < documents; i++) {
-            String documentContent = """
-                Random document QA test - %s - %d""".formatted(uuid, i);
-            int documentIndex = i + 1;
-            Resource tempFileResource = blobFileCreator.createBlobWithTempFile(
-                namePrefix + documentIndex + " - ", documentContent.getBytes());
-            String prettyName = prettyNamePrefix + " - " + documentIndex;
+        List<DocumentMetadata> documentsMetadata = addDocumentsToResource(uuid, documents, namePrefix, prettyNamePrefix,
+            (prettyName, resource) -> {
+                UUID docId = addDocumentToDescriptor(eServiceId, descriptorId, prettyName,
+                    resource);
 
-            UUID documentId = addDocumentToDescriptor(
-                eServiceId,
-                descriptorId,
-                prettyName,
-                tempFileResource);
-            documentsMetadata.add(DocumentMetadata.builder()
-                .id(documentId)
-                .name(tempFileResource.getFilename())
-                .prettyName(prettyName)
-                .createdAt(OffsetDateTime.now())
-                .build());
-        }
+                // 08/09/2025: si è osservato che aggiunte in rapida successione possono generare
+                // risposte 500, si aggiunge un delay per scongiurarlo
+                delayService.delay();
+
+                return docId;
+            }
+        ).stream().map(Document::getMetadata).toList();
 
         resultBuilder.descriptorId(descriptorId);
         resultBuilder.documentsMetadata(documentsMetadata);
@@ -612,6 +612,32 @@ public class BFFDataPreparationService {
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
         return resultBuilder.build();
+    }
+
+    /* Tentativo di generalizzare l'upload di documenti. Al momento funziona con e-service e
+     * e-services template. */
+    public List<Document> addDocumentsToResource(UUID uuid, int documentsQt,
+        String namePrefix, String prettyNamePrefix, BiFunction<String, Resource, UUID> documentUploader) {
+        List<Document> documents = new ArrayList<>();
+        for(int i = 0; i < documentsQt; i++) {
+            String documentContent = """
+                Random document QA test - %s - %d""".formatted(uuid, i);
+            int documentIndex = i + 1;
+            Resource tempFileResource = blobFileCreator.createBlobWithTempFile(
+                namePrefix + documentIndex + " - ", documentContent.getBytes());
+            String prettyName = prettyNamePrefix + " - " + documentIndex;
+
+            UUID documentId = documentUploader.apply(prettyName, tempFileResource);
+            DocumentMetadata metadata = DocumentMetadata.builder()
+                .id(documentId)
+                .name(tempFileResource.getFilename())
+                .prettyName(prettyName)
+                .createdAt(OffsetDateTime.now())
+                .build();
+            documents.add(Document.of(metadata, tempFileResource));
+        }
+
+        return documents;
     }
 
     public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {

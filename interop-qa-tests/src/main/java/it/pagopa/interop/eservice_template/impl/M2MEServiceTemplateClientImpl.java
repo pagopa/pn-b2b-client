@@ -81,4 +81,9 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     public CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload) {
         return bffEserviceTemplatesApi.createEServiceTemplate(payload);
     }
+
+    @Override
+    public Documents getDocuments(UUID eserviceId, UUID versionId) {
+        return null; // TODO 08/09/2025 sostituire con implementazione reale non appena disponibile
+    }
 }

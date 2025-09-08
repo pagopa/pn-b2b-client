@@ -4,6 +4,7 @@ import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionState;
@@ -31,4 +32,6 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     // API BFF
     // TODO: aggiornare ad API m2m appena disponibili
     CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload);
+
+    Documents getDocuments(UUID eserviceId, UUID versionId);
 }

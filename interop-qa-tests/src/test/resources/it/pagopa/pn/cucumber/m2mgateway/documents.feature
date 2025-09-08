@@ -177,3 +177,53 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Then si ottiene lo status code 404
     When l'utente tenta di recuperare i metadati dei documenti di un descriptor inesistenti
     Then si ottiene lo status code 404
+
+  @m2m-parte2-settembre
+  Scenario Outline: [M2MG_DOCUMENTS_20] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
+    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
+    When l'utente tenta di recuperare i metadati dei documenti associati all'e-service template
+    Then si ottiene lo status code 200
+
+    # NOTA 08/09/2025: avendo a che fare con le stesse identiche strutture usate nei test
+    # di documenti degli e-service, riutilizzare questo step non dovrebbe costituire problema
+    And i metadati dei documenti ottenuti sono coerenti con quelli caricati
+
+    # Verifica che possano essere recuperati anche da enti non proprietari dell'e-service template
+    And l'utente è un "admin" di "PA2" con ruolo M2M <ruolo>
+    When l'utente tenta di recuperare i metadati dei documenti associati all'e-service template
+    Then si ottiene lo status code 200
+    And i metadati dei documenti ottenuti sono coerenti con quelli caricati
+    Examples:
+      | ruolo     | mode        |
+      | m2m       | erogazione  |
+      | m2m-admin | erogazione  |
+      | m2m       | ricezione   |
+      | m2m-admin | ricezione   |
+
+  @m2m-parte2-settembre
+  Scenario Outline: [M2MG_DOCUMENTS_21] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED usando un token non valido
+    Given l'utente è un "admin" di "PA1"
+    And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare i metadati dei documenti associati all'e-service template
+    Then si ottiene lo status code 401
+    Examples:
+      | mode        |
+      | erogazione  |
+      | ricezione   |
+
+  @m2m-parte2-settembre
+  Scenario Outline: [M2MG_DOCUMENTS_22] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service o ad un descriptor inesistenti in stato PUBLISHED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di recuperare i metadati dei documenti di un e-service template inesistente
+    Then si ottiene lo status code 404
+    When l'utente tenta di recuperare i metadati dei documenti di una versione di un e-service template inesistente
+    Then si ottiene lo status code 404
+    Examples:
+      | mode        |
+      | erogazione  |
+      | ricezione   |

@@ -170,7 +170,7 @@ public class EServiceTemplateTestAssistant {
         }
     }
 
-    public void addDocumentToEserviceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+    public UUID addDocumentToEserviceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateDocumentKind kind, String prettyName, String userToken, Resource doc) {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
@@ -188,8 +188,11 @@ public class EServiceTemplateTestAssistant {
         if(!httpCallExecutor.getResponseStatus().isError()) {
             ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
             try {
-                sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
+                UUID id = response.getBody().getId();
+                sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(
+                    id, prettyName,
                     doc.getInputStream().readAllBytes()));
+                return id;
             } catch (IOException e) {
                 fail("Errore imprevisto: il body del documento costruito non restituisce correttamente un InputStream", e);
             }
@@ -197,6 +200,7 @@ public class EServiceTemplateTestAssistant {
             sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(null, null, null, httpCallExecutor.getErrorMessage()));
         }
 
+        return eServiceTemplateId;
     }
 
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {

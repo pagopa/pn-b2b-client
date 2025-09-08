@@ -2,10 +2,12 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
 import static java.util.Objects.nonNull;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
@@ -18,6 +20,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -80,6 +83,32 @@ public class EServiceTemplateCreateSteps {
         EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
             .name(lastTemplateNameUsed);
         createEServiceTemplate(sameNameTemplateSeed);
+    }
+
+    @Given("l'utente ha già creato un e-service template in modalità {eServiceMode}, stato {eServiceTemplateVersionState} e {int} DOCUMENTI già caricati")
+    public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, int documents) {
+        // creo il template
+        createEServiceTemplate(eServiceMode);
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+
+        // genero E carico i documenti
+        dataPreparationService.addDocumentsToResource(
+            UUID.randomUUID(),
+            documents,
+            "E-Service template document",
+            "EST doc",
+            (prettyName, resource) -> testAssistant.addDocumentToEserviceTemplateVersion(
+                lastTemplateManaged.id(),
+                lastTemplateManaged.lastVersionId(),
+                EServiceTemplateDocumentKind.DOCUMENT,
+                prettyName,
+                sharedStepsContext.getUserToken(),
+                resource
+            ));
+
+        // muto lo stato in quello atteso
+        testAssistant.mutateLastVersionState(desiredState);
     }
 
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
