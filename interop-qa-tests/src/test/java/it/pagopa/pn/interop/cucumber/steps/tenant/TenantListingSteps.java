@@ -41,7 +41,7 @@ public class TenantListingSteps {
     @Then("si ottiene status code {int} e la lista di {int} tenant")
     public void verifyStatusCodeAndConsumerListSize(int statusCode, int tenantNum) {
         Tenants compactOrganizations = (Tenants) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(tenantNum, compactOrganizations.getResults().size());
     }
 }

@@ -139,7 +139,7 @@ public class AgreementListingSteps {
     @Then("si ottiene status code {int} e la lista di {int} richiest(e)(a) di fruizione")
     public void verifyStatusCodeAndAgreementRequest(int statusCode, int count) {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
 

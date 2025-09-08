@@ -712,10 +712,7 @@ public class RaddAltSteps {
 
     @Given("viene richiesto il codice QR per lo IUN {string} per il destinatario {int} su radd alternative")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
-        HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
-        log.debug("quickAccessLink: {}", quickAccessLink.toString());
-        this.qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]);
-        log.debug("qrCode: {}", qrCode);
+        this.qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, destinatario);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")

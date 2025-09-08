@@ -54,7 +54,7 @@ public class M2MDelegationSteps {
                 .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
         ));
 
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             ConsumerDelegation createdDelegation = (ConsumerDelegation) httpCallExecutor.getResponse();
             delegationProxy.setDelegationId(createdDelegation.getId());
             delegationProxy.setDelegatorId(identityService.getOrganizationId(delegatorTenant));

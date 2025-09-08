@@ -43,7 +43,7 @@ public class AgreementUpgradeSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
         );
-        if (sharedStepsContext.getHttpCallExecutor().getClientResponse().is2xxSuccessful()) {
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
             Agreement agreement = ((Agreement) sharedStepsContext.getHttpCallExecutor().getResponse());
             sharedStepsContext.getAgreementCommonContext().setResponseAgreementId(agreement.getId());
         }
@@ -70,7 +70,7 @@ public class AgreementUpgradeSteps {
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service che richiede un attributo {string} che {string} non possiede")
     public void publishNewEServiceVersionWithNewAttribute(String tenantType, String kind, String consumer) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.valueOf(kind), null);
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.valueOf(kind), null).getId();
 
         List<List<DescriptorAttributeSeed>> seed = List.of(List.of(new DescriptorAttributeSeed().id(attributeId).explicitAttributeVerification(true)));
 
@@ -98,13 +98,13 @@ public class AgreementUpgradeSteps {
     @Then("si ottiene status code {int} ed è stata creata una nuova richiesta di fruizione in DRAFT")
     public void verifyStatusCodeAndAgreementStatus(int statusCode) {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
 
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(
                         () -> clientTokenConfigurator.getAgreementClient().getAgreementById(
                                 sharedStepsContext.getAgreementCommonContext().getResponseAgreementId())),
-                res -> httpCallExecutor.getClientResponse() != HttpStatus.NOT_FOUND,
+                res -> httpCallExecutor.getResponseStatus() != HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the agreement by id!"
         );
 
@@ -116,7 +116,7 @@ public class AgreementUpgradeSteps {
     @Then("si ottiene status code 200 e la nuova richiesta di fruizione è associata alla versione 3 dell'eservice")
     public void verifyStatusCodeAndAssociatedEServiceVersion() {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
 
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(

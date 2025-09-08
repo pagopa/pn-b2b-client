@@ -58,6 +58,6 @@ public class DescriptorDeletionSteps {
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(sharedStepsContext.getEServicesCommonContext().getEserviceId())
         );
-        Assertions.assertNotEquals(HttpStatus.NOT_FOUND, httpCallExecutor.getClientResponse());
+        Assertions.assertNotEquals(HttpStatus.NOT_FOUND, httpCallExecutor.getResponseStatus());
     }
 }
