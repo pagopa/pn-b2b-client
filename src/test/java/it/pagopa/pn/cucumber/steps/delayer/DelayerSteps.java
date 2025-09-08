@@ -221,7 +221,7 @@ public class DelayerSteps {
         );
     }
 
-    @And("vengono simulate internalmente le operazioni di DelayerToPaperChannelStateMachine")
+    @And("vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine")
     public void runSimulation2() {
         planner.simulateAlgorithm2(context.expectedPianification);
     }
