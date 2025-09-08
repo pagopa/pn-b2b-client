@@ -1,7 +1,7 @@
 Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatari di notifiche RADD, impossibilitati a recarsi in un CAF o ad accedere online, di prenotare un appuntamento in Virtual Room e ricevere copia digitale degli atti.
 
   @ignore
-    # i dati sono stati presi direttaente dal portale mittente
+    # BUG: https://pagopa.atlassian.net/browse/PN-16308
   Scenario: [UTILS_TEST_MANUALE_1] Verifica allegati di una notifica perfezionata da oltre 120 giorni (Scenario 13)
     Given imposto lo iun di SharedSteps a "UTGP-ZRHR-XDNQ-202505-Q-1" e la pa a "Comune_Multi"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
@@ -16,7 +16,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
@@ -120,7 +120,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
@@ -146,7 +146,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
@@ -176,7 +176,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
@@ -211,7 +211,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
   @CallCenterEvolutoViaMail
   Scenario Outline: [CCE_MAIL_UPLOAD_VIDEO_2] Verifica stato operazione con operationId inesistente (Scenario 8, 9)
     Given viene settato l'operationId a <operationId>
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con <statusCode>
     Examples:
@@ -220,7 +220,6 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | "null"                      | 400        |
 
   @CallCenterEvolutoViaMail
-  @provaSafeStorage
     #BUG: https://pagopa.atlassian.net/browse/PN-16241
   Scenario: [CCE_MAIL_UPLOAD_VIDEO_3] Upload secondo video riconoscimento utente (Scenario 10)
     Given viene generata una nuova notifica
@@ -241,7 +240,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | vrDate            | auto                        |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
