@@ -1,22 +1,26 @@
 package it.pagopa.pn.interop.cucumber.utility.delay_service;
 
 import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DelayServiceImpl implements DelayService {
+    private final Duration defaultDelay;
 
-    private static final Duration DEFAULT_DELAY = Duration.ofMillis(2500);
+    public DelayServiceImpl(@Value("${default.delay}") int delayInMillis) {
+        this.defaultDelay = Duration.ofMillis(delayInMillis);
+    }
 
     @Override
     public void delay() {
-        this.delayFor(DEFAULT_DELAY);
+        this.delayFor(defaultDelay);
     }
 
     // The result will be approximated down to the nearest nanosecond.
     @Override
     public void delayScaledBy(double factor) {
-        double effectiveDelayNanos = DEFAULT_DELAY.toNanos() * factor;
+        double effectiveDelayNanos = defaultDelay.toNanos() * factor;
         long finalDelayNanos = (long) Math.floor(effectiveDelayNanos);
         this.delayFor(Duration.ofNanos(finalDelayNanos));
     }
