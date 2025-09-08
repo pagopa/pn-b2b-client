@@ -513,6 +513,25 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         readStreamElement(version, version);
     }
 
+    @And("si effettua la consume dello stream versione {string} salvando l'intera response")
+    public void readStreamElementWithHttpInfo(String version) {
+        updateApiKeyForStream();
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
+        UUID streamId = webhookStepsInterface.getStreamId();
+        try {
+            webhookStepsInterface.consumeEventStreamWithHttpInfo(streamId);
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+            sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @Then("l'header della response della consume con versione {string} {contains} il parametro {string} con valore pari a {string}")
+    public void checkHeaderParameter(String version, boolean contains, String headerParameterName, String headerParameterValue) {
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
+        webhookStepsInterface.checkHeader(contains, headerParameterName, headerParameterValue);
+    }
+
     // Una sola occorrenza, in VisualizzazioneTimestampTecniciSla
     @When("vengono letti gli eventi dello stream con versione {string} creati dalla versione {string}")
     public void vengonoLettiGliEventiDelloStreamConVersioneCreatiDallaVersione(String versionRead, String versionCreate) {

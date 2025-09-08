@@ -16,6 +16,7 @@ import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Slf4j
 public class WebhookStepsV28 implements WebhookStepsInterface {
 
+    private ResponseEntity<List<ProgressResponseElementV28>> consumeResponseWithHttpInfo;
     private ProgressResponseElementV28 progressResponseElement;
     private List<ProgressResponseElementV28> progressResponseElementList;
     private List<StreamCreationRequestV28> streamCreationRequestList;
@@ -254,6 +256,38 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
         progressResponseElementList = webhookClient.consumeEventStreamV28(streamId, null);
         log.info("progressResponseElements" + streamVersion + " size: " + progressResponseElementList.size());
         log.info("progressResponseElements" + streamVersion + ": " + progressResponseElementList);
+    }
+
+    @Override
+    public void consumeEventStreamWithHttpInfo(UUID streamId) {
+        consumeResponseWithHttpInfo = webhookClient.consumeEventStreamHttpV28(streamId, null);
+        assertThat(consumeResponseWithHttpInfo).as("La response http della consume stream non dev'essere null").isNotNull();
+        progressResponseElementList = consumeResponseWithHttpInfo.getBody();
+        log.info("progressResponseElements" + streamVersion + " size: " + progressResponseElementList.size());
+        log.info("progressResponseElements" + streamVersion + ": " + progressResponseElementList);
+    }
+
+    @Override
+    public void checkHeader(boolean contains, String headerParameterName, String headerParameterValue) {
+        assertThat(consumeResponseWithHttpInfo.getHeaders()).as("Gli headers della response non devono essere null").isNotNull();
+        List<String> headerParameter = consumeResponseWithHttpInfo.getHeaders().get(headerParameterName);
+        if (contains) {
+            assertThat(headerParameter).as("L'header dovrebbe contenere il campo " + headerParameterName).isNotNull();
+            /*
+            Tranne l'header "Vary", tutti gli altri headers sono chiavi aventi come valore una lista di stringhe da un solo elemento.
+            Poichè non sono previsti controlli su di esso, prendiamo per buono che l'elemento 0 sia sempre il valore che ci interessa.
+            */
+            String value = headerParameter.get(0);
+            if (headerParameterValue.equalsIgnoreCase("NULL")) {
+                assertThat(value).as("Il valore dell'header " + headerParameterName + " dovrebbe essere null").isNull();
+            } else if (headerParameterValue.equalsIgnoreCase("NOT-NULL")) {
+                assertThat(value).as("Il valore dell'header " + headerParameterName + " dovrebbe essere diverso da null").isNotNull();
+            } else {
+                assertThat(value).as("Il valore dell'header " + headerParameterName + " non coincide con quanto atteso").isEqualTo(headerParameterValue);
+            }
+        } else {
+            assertThat(headerParameter).as("L'header non dovrebbe contenere il campo " + headerParameterName).isNull();
+        }
     }
 
     @Override
