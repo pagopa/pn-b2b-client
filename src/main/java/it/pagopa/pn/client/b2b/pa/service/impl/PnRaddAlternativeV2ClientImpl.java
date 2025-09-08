@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeV2Client;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD_V2.RegistryApi;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD_V2.RegistryV2Api;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.CreateRegistryRequestV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.GetRegistryResponseV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
@@ -20,7 +20,7 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
 
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
-    private final RegistryApi apiAnagraficaCRUDV2;
+    private final RegistryV2Api apiAnagraficaCRUDV2;
 
     private String tokenCognito;
 
@@ -28,7 +28,7 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
                                          @Value("${pn.radd.alt.external.base-url}") String basePath
 
     ) {
-        this.apiAnagraficaCRUDV2 = new RegistryApi(newApiClientExternal(restTemplate, basePath, null));
+        this.apiAnagraficaCRUDV2 = new RegistryV2Api(newApiClientExternal(restTemplate, basePath, null));
     }
 
     //todo t radd
