@@ -270,6 +270,11 @@ public class ApiServiceDeskSteps {
         createPreUploadVideoRequestDocumentSteps();
     }
 
+    @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video {string}")
+    public void createPreUploadVideoRequest(String video) throws Exception {
+        createPreUploadVideoRequestDocumentSteps(video);
+    }
+
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con formato non corretto")
     public void createPreUploadVideoRequestFormatVideoNotValid() throws Exception {
         notificationDocument = newDocument("classpath:/video.avi");
@@ -1167,6 +1172,17 @@ public class ApiServiceDeskSteps {
 
     private void createPreUploadVideoRequestDocumentSteps() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
+        String resourceName = notificationDocument.getRef().getKey();
+        log.info("Resource name:" + resourceName);
+        String sha256 = B2bUtils.computeSha256(ctx, resourceName);
+        log.info("sha:" + sha256);
+        videoUploadRequest.setPreloadIdx(getPrefixedRandomAlphaNumeric(5));
+        videoUploadRequest.setSha256(sha256);
+        videoUploadRequest.setContentType("application/octet-stream");
+    }
+
+    private void createPreUploadVideoRequestDocumentSteps(String name) throws Exception {
+        notificationDocument = newDocument("classpath:/"+name);
         String resourceName = notificationDocument.getRef().getKey();
         log.info("Resource name:" + resourceName);
         String sha256 = B2bUtils.computeSha256(ctx, resourceName);
