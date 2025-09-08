@@ -220,6 +220,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | "null"                      | 400        |
 
   @CallCenterEvolutoViaMail
+  @provaSafeStorage
     #BUG: https://pagopa.atlassian.net/browse/PN-16241
   Scenario: [CCE_MAIL_UPLOAD_VIDEO_3] Upload secondo video riconoscimento utente (Scenario 10)
     Given viene generata una nuova notifica
