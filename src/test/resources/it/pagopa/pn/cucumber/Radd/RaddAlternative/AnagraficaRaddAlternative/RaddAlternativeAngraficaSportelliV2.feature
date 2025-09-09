@@ -141,6 +141,14 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | via fiume22  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA21    | NULL                 | https://.com | NULL        |
       | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | ĄŁĽ         |
       | via fiume26  | 201 1  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | NULL        |
+      | via fiume27  | 20161  | MI        | MILANO | ITALIA | Test        | +39401234567  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume28  | 20161  | MI        | MILANO | ITALIA | Test        | 123456789  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume29  | 20161  | MI        | MILANO | ITALIA | Test        | 00112345678  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume30  | 20161  | MI        | MILANO | ITALIA | Test        | 00401234567  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume31  | 20161  | MI        | MILANO | ITALIA | Test        | +3903401234567  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+
+
+
       #| via fiume25  | 20161  | MI        | MILANO | ITALIA | 1           | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
       #| via fiume21  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | ĄŁĽŚŠŞSAFŤŹŽŻ1 | NULL                 | NULL         | NULL        |
 
