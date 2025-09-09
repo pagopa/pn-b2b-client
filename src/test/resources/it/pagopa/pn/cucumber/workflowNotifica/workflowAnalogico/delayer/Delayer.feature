@@ -4,26 +4,7 @@
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
-      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed          | quantita |
-        | tcZeroDriver_ | 15       |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId       | comparative | limit |
-        | unknow~RS~P10  | esattamente | 0     |
-        | unknow~AR~P10  | esattamente | 0     |
-        | unknow~890~P10 | esattamente | 0     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 0     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
-      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+      Given vengono puliti i dati dalle tabelle target
 
       Examples:
         | csv                | TOT |
@@ -293,6 +274,7 @@
     @delayer4
       #BUG: https://pagopa.atlassian.net/browse/PN-15504
     Scenario Outline: [DELAYER-TC4] Verifica la gestione di una capacity driver nulla
+      Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed          | quantita |
         | tcZeroDriver_ | 15       |
