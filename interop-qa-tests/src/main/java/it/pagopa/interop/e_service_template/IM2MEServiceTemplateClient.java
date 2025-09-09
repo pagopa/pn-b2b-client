@@ -33,5 +33,7 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     // TODO: aggiornare ad API m2m appena disponibili
     CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload);
 
-    Documents getDocuments(UUID eserviceId, UUID versionId);
+    Documents getDocuments(UUID templateId, UUID versionId);
+
+    void unsuspend(UUID templateId, UUID versionId);
 }

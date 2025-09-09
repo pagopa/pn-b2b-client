@@ -2,7 +2,7 @@
 Feature: Test API of e-service template
 
   @e-service-template-receive
-    @e-service-template-create
+  @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
@@ -15,7 +15,7 @@ Feature: Test API of e-service template
       | support  | ricezione  |
 
   @e-service-template-receive
-    @e-service-template-create
+  @e-service-template-create
   Scenario Outline: [INTEROP-EST-002] La creazione di un e-service template può essere fatta da un ente in veste di ADMIN o API portando ad un template in stato DRAFT
     Given l'utente è un "<ruolo>" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
@@ -29,7 +29,7 @@ Feature: Test API of e-service template
       | api   | ricezione  |
 
   @e-service-template-receive
-    @e-service-template-create
+  @e-service-template-create
   Scenario Outline: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
     Given l'utente è un "admin" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
@@ -248,7 +248,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-add
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -265,7 +265,7 @@ Feature: Test API of e-service template
       | support  | SUSPENDED |
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-add
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -280,7 +280,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-add
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -292,7 +292,7 @@ Feature: Test API of e-service template
       | SUSPENDED |
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-add
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -331,7 +331,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 409
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-delete
+  @e-service-template-riskAnalysis-delete
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6482
   Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template in stato DRAFT NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -346,7 +346,7 @@ Feature: Test API of e-service template
       | support  | DRAFT |
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-delete
+  @e-service-template-riskAnalysis-delete
   Scenario Outline: [INTEROP-EST-029] La cancellazione di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -389,7 +389,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-update
+  @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -406,7 +406,7 @@ Feature: Test API of e-service template
       | support  | SUSPENDED |
 
   @e-service-template-receive
-    @e-service-template-riskAnalysis-update
+  @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-034] La modifica di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -983,7 +983,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @e-service-template-receive
-    @e-service-template-version-publish
+  @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-068] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -997,7 +997,7 @@ Feature: Test API of e-service template
       | support  |
 
   @e-service-template-receive
-    @e-service-template-version-publish
+  @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-069] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT

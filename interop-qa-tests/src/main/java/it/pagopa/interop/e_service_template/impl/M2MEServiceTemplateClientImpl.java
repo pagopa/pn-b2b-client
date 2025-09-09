@@ -83,7 +83,12 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
-    public Documents getDocuments(UUID eserviceId, UUID versionId) {
+    public Documents getDocuments(UUID templateId, UUID versionId) {
         return null; // TODO 08/09/2025 sostituire con implementazione reale non appena disponibile
+    }
+
+    @Override
+    public void unsuspend(UUID templateId, UUID versionId) {
+        // TODO 09/09/2025 sostituire con implementazione reale non appena disponibile
     }
 }
