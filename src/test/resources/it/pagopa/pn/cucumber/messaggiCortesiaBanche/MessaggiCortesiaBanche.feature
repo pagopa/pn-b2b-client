@@ -51,7 +51,7 @@ Feature: Messaggi di cortesia Banche
   #     GET /bff/v1/notifications/received/{iun}
   #     GET /bff/v1/notifications/received/{iun}/documents/{documentType}
   #     GET /bff/v1/notifications/received/{iun}/payments/{attachmentName}
-  @bankCourtesyMessageEnabled
+  @bankCourtesyMessageEnabled @hotfix8849
   Scenario: [BANK_COURTESY_MESSAGE-5] Vengono invocati gli endpoint di recupero notifica, lettura AAR e recupero avviso di pagamento da API web (BFF)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -64,6 +64,10 @@ Feature: Messaggi di cortesia Banche
       | payment_pagoPaForm      | SI                          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+      | details                | NOT_NULL                          |
+      | details_recIndex       | 0                                 |
+      | details_digitalAddress | {"type": "TPP", "address": "APP"} |
     And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
     And lato destinatario viene recuperato AAR lato web dal destinatario "Mario Gherkin"
     And lato destinatario è possibile recuperare correttamente l'allegato "PAGOPA" dal destinatario "Mario Gherkin"
