@@ -64,7 +64,7 @@
       Examples:
         | csv                   | TOT |
         | "tcRankingMerged.csv" | 110 |
-      
+
     @delayer1
     Scenario Outline: [DELAYER-TC1] Verifica la coerenza dell'algoritmo valutando la corretta applicazione dei limiti mittente, recapitista, stampa e la pianificazione per priorità
       Given vengono puliti i dati dalle tabelle target
