@@ -175,6 +175,8 @@ public class DelayerPlanner {
 
     private List<DelayerPaperDelivery> applyDriverCapacity(List<DelayerPaperDelivery> passedSenderLimit, List<DelayerPaperDelivery> notPassedSenderLimit, Map<String, List<DelayerPaperDelivery>> groupedByStep, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
 
+        List<DelayerPaperDelivery> toFreeze = new ArrayList<>();
+
         // 1. Processa PRIMA le notifiche in passedSenderLimit
         List<DelayerPaperDelivery> toEvaluateDriverCapacity = new ArrayList<>();
         List<DelayerPaperDelivery> toEvaluateResidualCapacity = new ArrayList<>();
@@ -183,6 +185,11 @@ public class DelayerPlanner {
         for (DelayerPaperDelivery notification : passedSenderLimit) {
             String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(notification);
             String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
+
+            if (!utils.isDriverCensito(unifiedDeliveryDriverKey)) {
+                toFreeze.add(notification);
+                continue;
+            }
 
             int remainingProvincial = utils.getAvailableDriverCapacity(unifiedDeliveryDriverKey);
             int remainingCap = utils.getAvailableDriverCapacity(capDeliveryDriverKey);
@@ -196,13 +203,18 @@ public class DelayerPlanner {
         }
 
         // 2. Processa DOPO le notifiche in notPassedSenderLimit
-        List<DelayerPaperDelivery> toFreeze = new ArrayList<>();
         toEvaluateResidualCapacity.addAll(notPassedSenderLimit);
         toEvaluateResidualCapacity = sortByPriority(toEvaluateResidualCapacity);
 
         for (DelayerPaperDelivery notification : new ArrayList<>(toEvaluateResidualCapacity)) {
             String unifiedDeliveryDriverKey = getUnifiedDeliveryDriverKey(notification);
             String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
+
+            if (!utils.isDriverCensito(unifiedDeliveryDriverKey)) {
+                toEvaluateResidualCapacity.remove(notification);
+                toFreeze.add(notification);
+                continue;
+            }
 
             int remainingProvincial = utils.getAvailableDriverCapacity(unifiedDeliveryDriverKey);
             int remainingCap = utils.getAvailableDriverCapacity(capDeliveryDriverKey);
