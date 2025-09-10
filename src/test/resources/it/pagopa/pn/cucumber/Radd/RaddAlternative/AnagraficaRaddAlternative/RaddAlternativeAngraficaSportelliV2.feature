@@ -29,20 +29,20 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_1] Creazione nuova sede RADD con dati corretti
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
-      | address_radd_row      | via roma      |
-      | address_radd_cap      | 80133         |
-      | address_radd_province | NA            |
-      | address_radd_city     | NAPOLI        |
-      | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
-      | radd_externalCodes    | EXT01QA       |
+      | address_radd_row      | via roma    |
+      | address_radd_cap      | 80133       |
+      | address_radd_province | NA          |
+      | address_radd_city     | NAPOLI      |
+      | radd_description      | descrizione |
+      | radd_phoneNumbers     | 3201234567  |
+      | radd_externalCodes    | EXT01QA     |
     Then la response V2 a seguito del nuovo inserimento deve contenere i valori attesi
       | addressRow         | Via Roma, 80133 Napoli NA, Italia |
       | cap                | 80133                             |
       | province           | NA                                |
       | city               | Napoli                            |
       | description        | descrizione                       |
-      | phoneNumbers       | +399858425136                     |
+      | phoneNumbers       | 3201234567                        |
       | externalCodes      | EXT01QA                           |
       | address_addressRow | via roma                          |
       | address_cap        | 80133                             |
@@ -55,10 +55,10 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_2] Creazione nuova sede RADD con intero campo address mancante
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
-      | address_radd       | NULL          |
-      | radd_description   | descrizione   |
-      | radd_phoneNumbers  | +399858425136 |
-      | radd_externalCodes | EXT02QA       |
+      | address_radd       | NULL        |
+      | radd_description   | descrizione |
+      | radd_phoneNumbers  | 33312345678 |
+      | radd_externalCodes | EXT02QA     |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs
@@ -66,13 +66,13 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     Then viene impostato un partenr Id non valido
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
-      | address_radd_row      | via roma      |
-      | address_radd_cap      | 80133         |
-      | address_radd_province | NA            |
-      | address_radd_city     | NAPOLI        |
-      | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
-      | radd_externalCodes    | EXT11QA       |
+      | address_radd_row      | via roma    |
+      | address_radd_cap      | 80133       |
+      | address_radd_province | NA          |
+      | address_radd_city     | NAPOLI      |
+      | radd_description      | descrizione |
+      | radd_phoneNumbers     | 0812345678  |
+      | radd_externalCodes    | EXT11QA     |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 3-4-5-6-7-8-9
@@ -88,17 +88,17 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_externalCodes    | <externalCodes> |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
-      | via      | cap   | provincia | citta  | descrizione | telefono      | externalCodes |
-      | NULL     | 80133 | NA        | NAPOLI | descrizione | +399858425136 | EXT03QA       |
-      | via roma | NULL  | NA        | NAPOLI | descrizione | +399858425136 | EXT03QA       |
-      | via roma | 80133 | NULL      | NAPOLI | descrizione | +399858425136 | EXT03QA       |
-      | via roma | 80133 | NA        | NULL   | descrizione | +399858425136 | EXT03QA       |
-      | via roma | 80133 | NA        | NAPOLI | NULL        | +399858425136 | EXT03QA       |
-      | via roma | 80133 | NA        | NAPOLI | descrizione | NULL          | EXT03QA       |
-      | via roma | 80133 | NA        | NAPOLI | descrizione | +399858425136 | NULL          |
+      | via      | cap   | provincia | citta  | descrizione | telefono   | externalCodes |
+      | NULL     | 80133 | NA        | NAPOLI | descrizione | 3201234567 | EXT03QA       |
+      | via roma | NULL  | NA        | NAPOLI | descrizione | 3201234567 | EXT03QA       |
+      | via roma | 80133 | NULL      | NAPOLI | descrizione | 3201234567 | EXT03QA       |
+      | via roma | 80133 | NA        | NULL   | descrizione | 3201234567 | EXT03QA       |
+      | via roma | 80133 | NA        | NAPOLI | NULL        | 3201234567 | EXT03QA       |
+      | via roma | 80133 | NA        | NAPOLI | descrizione | NULL       | EXT03QA       |
+      | via roma | 80133 | NA        | NAPOLI | descrizione | 3201234567 | NULL          |
 
 
-  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs dal 10 al 28 + dal 30 al 36
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs dal 11 al 28 + dal 30 al 36
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_4] Creazione nuova sede con campi non validi
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
@@ -118,53 +118,52 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_partner_type     | <partnertype>       |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
-      | via          | cap    | provincia | citta  | stato  | descrizione | telefono      | aperturaSportello | startValidity | endValidity | externalCode | email                | website      | partnertype |
-      | Ciao@mondo#1 | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA1     | NULL                 | NULL         | NULL        |
-      | via fiume2   | 123456 | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA2     | NULL                 | NULL         | NULL        |
-      | via fiume3   | 8014   | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA3     | NULL                 | NULL         | NULL        |
-      | via fiume4   | 2016Z  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA4     | NULL                 | NULL         | NULL        |
-      | via fiume5   | 20161  | ITA       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA5     | NULL                 | NULL         | NULL        |
-      | via fiume6   | 20161  | na        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA6     | NULL                 | NULL         | NULL        |
-      | via fiume7   | 20161  | NAP       | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA7     | NULL                 | NULL         | NULL        |
-      | via fiume8   | 20161  | 10        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA8     | NULL                 | NULL         | NULL        |
-      | via fiume9   | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136 | NULL              | NULL          | NULL        | EXT04QA9     | NULL                 | NULL         | NULL        |
-      | via fiume10  | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-      | via fiume11  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA11    | https://exa_mple.com | NULL         | NULL        |
-      | via fiume12  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA12    | nome@dominio         | NULL         | NULL        |
-      | via fiume13  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA13    | @dominio.ext         | NULL         | NULL        |
-      | via fiume16  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 1998-01-01    | NULL        | EXT04QA16    | NULL                 | NULL         | NULL        |
-      | via fiume17  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 01-01-2030    | NULL        | EXT04QA17    | NULL                 | NULL         | NULL        |
-      | via fiume18  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 202-01-01     | NULL        | EXT04QA18    | NULL                 | NULL         | NULL        |
-      | via fiume19  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 01-01-2030  | EXT04QA19    | NULL                 | NULL         | NULL        |
-      | via fiume20  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | 2015-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
-      | via fiume24  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
-      | via fiume22  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA21    | NULL                 | https://.com | NULL        |
-      | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | ĄŁĽ         |
-      | via fiume26  | 201 1  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | NULL        |
-      | via fiume27  | 20161  | MI        | MILANO | ITALIA | Test        | +39401234567  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-      | via fiume28  | 20161  | MI        | MILANO | ITALIA | Test        | 123456789  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-      | via fiume29  | 20161  | MI        | MILANO | ITALIA | Test        | 00112345678  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-      | via fiume30  | 20161  | MI        | MILANO | ITALIA | Test        | 00401234567  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-      | via fiume31  | 20161  | MI        | MILANO | ITALIA | Test        | +3903401234567  | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-
-
-
-      #| via fiume25  | 20161  | MI        | MILANO | ITALIA | 1           | +399858425136 | NULL              | NULL          | NULL        | EXT04QA22      | NULL                 | NULL         | NULL        |
-      #| via fiume21  | 20161  | MI        | MILANO | ITALIA | Test        | +399858425136 | NULL              | NULL          | NULL        | ĄŁĽŚŠŞSAFŤŹŽŻ1 | NULL                 | NULL         | NULL        |
+      | via         | cap    | provincia | citta  | stato  | descrizione | telefono       | aperturaSportello | startValidity | endValidity | externalCode | email                | website      | partnertype |
+      | via fiume2  | 123456 | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA2     | NULL                 | NULL         | NULL        |
+      | via fiume3  | 8014   | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA3     | NULL                 | NULL         | NULL        |
+      | via fiume4  | 2016Z  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA4     | NULL                 | NULL         | NULL        |
+      | via fiume5  | 20161  | ITA       | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA5     | NULL                 | NULL         | NULL        |
+      | via fiume6  | 20161  | na        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA6     | NULL                 | NULL         | NULL        |
+      | via fiume7  | 20161  | NAP       | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA7     | NULL                 | NULL         | NULL        |
+      | via fiume8  | 20161  | 10        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA8     | NULL                 | NULL         | NULL        |
+      | via fiume9  | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136  | NULL              | NULL          | NULL        | EXT04QA9     | NULL                 | NULL         | NULL        |
+      | via fiume10 | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136   | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume11 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA11    | https://exa_mple.com | NULL         | NULL        |
+      | via fiume12 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA12    | nome@dominio         | NULL         | NULL        |
+      | via fiume13 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA13    | @dominio.ext         | NULL         | NULL        |
+      | via fiume17 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 01-01-2030    | NULL        | EXT04QA17    | NULL                 | NULL         | NULL        |
+      | via fiume18 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 202-01-01     | NULL        | EXT04QA18    | NULL                 | NULL         | NULL        |
+      | via fiume19 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | 01-01-2030  | EXT04QA19    | NULL                 | NULL         | NULL        |
+      | via fiume20 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | 2015-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
+      | via fiume24 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA14    | NULL                 | NULL         | NULL        |
+      | via fiume22 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA21    | NULL                 | https://.com | NULL        |
+      | via fiume23 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | ĄŁĽ         |
+      | via fiume26 | 201 1  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA23    | NULL                 | NULL         | NULL        |
+      | via fiume27 | 20161  | MI        | MILANO | ITALIA | Test        | +39401234567   | NULL              | NULL          | NULL        | EXT04QA24    | NULL                 | NULL         | NULL        |
+      | via fiume28 | 20161  | MI        | MILANO | ITALIA | Test        | 123456789      | NULL              | NULL          | NULL        | EXT04QA25    | NULL                 | NULL         | NULL        |
+      | via fiume29 | 20161  | MI        | MILANO | ITALIA | Test        | 00112345678    | NULL              | NULL          | NULL        | EXT04QA26    | NULL                 | NULL         | NULL        |
+      | via fiume30 | 20161  | MI        | MILANO | ITALIA | Test        | 00401234567    | NULL              | NULL          | NULL        | EXT04QA27    | NULL                 | NULL         | NULL        |
+      | via fiume32 | 20161  | MI        | MILANO | ITALIA | Test        | 1234567890     | NULL              | NULL          | NULL        | EXT04QA29    | NULL                 | NULL         | NULL        |
+      | via fiume33 | 20161  | MI        | MILANO | ITALIA | Test        | 03123456       | NULL              | NULL          | NULL        | EXT04QA30    | NULL                 | NULL         | NULL        |
+      | via fiume34 | 20161  | MI        | MILANO | ITALIA | Test        | 333123456      | NULL              | NULL          | NULL        | EXT04QA31    | NULL                 | NULL         | NULL        |
+      | via fiume31 | 20161  | MI        | MILANO | ITALIA | Test        | 3331234567890  | NULL              | NULL          | NULL        | EXT04QA32    | NULL                 | NULL         | NULL        |
+      | via fiume35 | 20161  | MI        | MILANO | ITALIA | Test        | 999333123456   | NULL              | NULL          | NULL        | EXT04QA33    | NULL                 | NULL         | NULL        |
+      | via fiume36 | 20161  | MI        | MILANO | ITALIA | Test        | 00390012345678 | NULL              | NULL          | NULL        | EXT04QA34    | NULL                 | NULL         | NULL        |
+      | via fiume37 | 20161  | MI        | MILANO | ITALIA | Test        | +393           | NULL              | NULL          | NULL        | EXT04QA35    | NULL                 | NULL         | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 29
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_5] Creazione nuova sede RADD con campo stratValidity vuoto e restituzione campo formattato correttamente
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
-      | address_radd_row      | via roma      |
-      | address_radd_cap      | 80133         |
-      | address_radd_province | NA            |
-      | address_radd_city     | NAPOLI        |
-      | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
-      | radd_externalCodes    | EXT05QA       |
-      | radd_start_validity   | NULL          |
+      | address_radd_row      | via roma       |
+      | address_radd_cap      | 80133          |
+      | address_radd_province | NA             |
+      | address_radd_city     | NAPOLI         |
+      | radd_description      | descrizione    |
+      | radd_phoneNumbers     | +3933312345678 |
+      | radd_externalCodes    | EXT05QA        |
+      | radd_start_validity   | NULL           |
     Then la response V2 deve aver restiutito in automatico startValidity odierno in formato yyyy-MM-dd
 
 
@@ -172,13 +171,13 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_6] Creazione nuova sede RADD con utente non abilitato alla scrittura
     Given Effettuo l'autenticazione per l' utente con permessi: "SOLO_LETTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
-      | address_radd_row      | via roma      |
-      | address_radd_cap      | 80133         |
-      | address_radd_province | NA            |
-      | address_radd_city     | NAPOLI        |
-      | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
-      | radd_externalCodes    | EXT06QA       |
+      | address_radd_row      | via roma       |
+      | address_radd_cap      | 80133          |
+      | address_radd_province | NA             |
+      | address_radd_city     | NAPOLI         |
+      | radd_description      | descrizione    |
+      | radd_phoneNumbers     | +3933312345678 |
+      | radd_externalCodes    | EXT06QA        |
     Then l'operazione ha prodotto un errore con status code "403"
 
 
@@ -191,7 +190,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province     | NA                      |
       | address_radd_city         | NAPOLI                  |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +399858425136           |
+      | radd_phoneNumbers         | +3933312345678          |
       | radd_externalCodes        | EXT07QA                 |
       | address_radd_country      | ITALIA                  |
       | radd_openingTime          | mon=9:00-10:00#         |
@@ -207,20 +206,20 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_8] Creazione nuova sede RADD con ExternalCode già esistente
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
-      | address_radd_row      | via roma      |
-      | address_radd_cap      | 80133         |
-      | address_radd_province | NA            |
-      | address_radd_city     | NAPOLI        |
-      | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
-      | radd_externalCodes    | EXT09QAA      |
+      | address_radd_row      | via roma       |
+      | address_radd_cap      | 80133          |
+      | address_radd_province | NA             |
+      | address_radd_city     | NAPOLI         |
+      | radd_description      | descrizione    |
+      | radd_phoneNumbers     | +3933312345678 |
+      | radd_externalCodes    | EXT09QAA       |
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
       | address_radd_row      | via roma       |
       | address_radd_cap      | 80133          |
       | address_radd_province | NA             |
       | address_radd_city     | NAPOLI         |
       | radd_description      | descrizione    |
-      | radd_phoneNumbers     | +399858425136  |
+      | radd_phoneNumbers     | +3933312345678 |
       | radd_externalCodes    | EXT09QAA,EXT11 |
     Then l'operazione Radd V2 ha prodotto un errore con status code "409"
 
@@ -238,7 +237,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +399858425136           |
+      | radd_phoneNumbers         | +3933312345678          |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -250,7 +249,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then viene modificato uno sportello Radd V2 con dati:
       | radd_description          | descrizione modificata     |
       | radd_openingTime          | tue=10:00-20:00#           |
-      | radd_phoneNumbers         | +399858425255              |
+      | radd_phoneNumbers         | +3933312345678             |
       | radd_email                | test@examplemodificato.com |
       | radd_end_validity         | 2030-10-10                 |
       | radd_externalCodes        | EXT09QA                    |
@@ -261,7 +260,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response V2 a seguito del nuovo inserimento deve contenere i valori attesi
       | description         | descrizione modificata     |
       | openingTime         | tue=10:00-20:00#           |
-      | phoneNumbers        | +399858425255              |
+      | phoneNumbers        | +3933312345678             |
       | email               | test@examplemodificato.com |
       | endValidity         | 2030-10-10                 |
       | externalCodes       | EXT09QA                    |
@@ -279,7 +278,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +399858425136           |
+      | radd_phoneNumbers         | +390212345678           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -298,7 +297,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_appointment_required | <appointment_required> |
       | radd_website              | <website>              |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
-    #Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
     Examples:
       | description | openingTime | phoneNumbers                        | email                    | end_validity             | externalCodes | appointment_required | website     |
       | NULL        | NULL        | +390123456789,3921573273,3333333333 | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
@@ -314,11 +312,17 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | NULL        | NULL        | NULL                                | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | ""                                  | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
-      #| 1  | NULL        | Mo-Fr 09:00-13:00,15:00-18:00 | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      #| 16 | A           | NULL                     | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      #| 2  | ""          | NULL        |NULL  | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      #| 11 | NULL        | !!"$%&/ASgSG(£%%£%'?^\s# | NULL                                | NULL                     | NULL                     | NULL                      | NULL                 | NULL        |
-      #| 14 | NULL        | NULL        | NULL                                | NULL                     | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s#l | NULL                 | NULL        |
+      | NULL        | NULL        | 1234567890                          | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +390123456789,333123456             | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 080123456789                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +390123456789,+394441234567         | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +390123456789,+39333123ABCD         | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +390123456789,03123456              | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 3331234567890                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39-333-1234567                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 999333123456                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 00390012345678                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +393                                | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 43-44
@@ -331,7 +335,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +399858425136           |
+      | radd_phoneNumbers         | +390212345678           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -344,7 +348,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | locationId                | <locationId>               |
       | radd_description          | descrizione modificata     |
       | radd_openingTime          | tue=10:00-20:00#           |
-      | radd_phoneNumbers         | +399858425255              |
+      | radd_phoneNumbers         | +390212345678              |
       | radd_email                | test@examplemodificato.com |
       | radd_end_validity         | 2030-10-10                 |
       | radd_appointment_required | false                      |
@@ -366,7 +370,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city         | OLIVETO LUCANO          |
       | address_radd_country      | ITALY                   |
       | radd_description          | descrizione             |
-      | radd_phoneNumbers         | +399858425136           |
+      | radd_phoneNumbers         | +390212345678           |
       | radd_openingTime          | mon=9:00-10:00#         |
       | radd_start_validity       | now                     |
       | radd_end_validity         | +10g                    |
@@ -379,7 +383,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then viene modificato uno sportello Radd V2 con dati errati:
       | radd_description          | descrizione modificata     |
       | radd_openingTime          | tue=10:00-20:00#           |
-      | radd_phoneNumbers         | +399858425255              |
+      | radd_phoneNumbers         | +390212345678              |
       | radd_email                | test@examplemodificato.com |
       | radd_end_validity         | 2030-10-10                 |
       | radd_appointment_required | false                      |
@@ -407,7 +411,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA            |
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
+      | radd_phoneNumbers     | +390212345678 |
       | radd_externalCodes    | EXT13QA       |
     Given Effettuo l'autenticazione per l' utente con permessi: "SOLO_LETTURA"
     Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId con errore
@@ -424,7 +428,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA            |
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
+      | radd_phoneNumbers     | +390212345678 |
       | radd_externalCodes    | EXT14QA       |
     Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId
     When viene richiesta la lista degli sportelli Radd V2 con dati:
@@ -442,7 +446,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA              |
       | address_radd_city     | NAPOLI          |
       | radd_description      | descrizione     |
-      | radd_phoneNumbers     | +399858425136   |
+      | radd_phoneNumbers     | +390212345678   |
       | radd_externalCodes    | <externalCodes> |
     Then viene cancellato lo sportello Radd V2 appena inserito tramite locationId: "<locationId>" con errore
     Then l'operazione Radd V2 ha prodotto un errore con status code "<statusCode>"
@@ -463,7 +467,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA            |
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
+      | radd_phoneNumbers     | +390212345678 |
       | radd_externalCodes    | EXT16QA       |
     And viene cancellato lo sportello Radd V2 appena inserito con partnerId: "77765432555" con errore
     Then l'operazione ha prodotto un errore con status code "404"
@@ -484,7 +488,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA            |
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
+      | radd_phoneNumbers     | +390212345678 |
       | radd_externalCodes    | EXT17AD       |
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
@@ -492,7 +496,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA            |
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +399858425136 |
+      | radd_phoneNumbers     | +390212345678 |
       | radd_externalCodes    | EXT17AC       |
     When viene richiesta la lista degli sportelli Radd V2 con dati:
       | radd_filter_limit   | 1    |
@@ -534,7 +538,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_province | NA                  |
       | address_radd_city     | NAPOLI              |
       | radd_description      | Test QA             |
-      | radd_phoneNumbers     | +399858425136       |
+      | radd_phoneNumbers     | +390212345678       |
       | radd_externalCodes    | EXT18QA             |
       | address_radd_country  | ITALY               |
       | radd_openingTime      | tue=10:00-20:00#    |
