@@ -6,10 +6,14 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
+import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
+import it.pagopa.pari.registrobeni.domain.ProductCategory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -24,6 +28,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,15 +43,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RegistroBeniProductsUploadSteps {
     private final ApiClientContext apiClientContext;
     private final ResourceLoader resourceLoader;
+    private final SharedCommonContext sharedCommonContext;
 
     private RegisterUploadResponseDTO uploadResponseDTO;
     private CsvDTO csvDTO;
     private UploadsListDTO uploadsListDTO;
     private UploadDTO lastUpload;
 
-    public RegistroBeniProductsUploadSteps(ApiClientContext apiClientContext, ResourceLoader resourceLoader) {
+    public RegistroBeniProductsUploadSteps(ApiClientContext apiClientContext, ResourceLoader resourceLoader,
+                                           SharedCommonContext sharedCommonContext) {
         this.apiClientContext = apiClientContext;
         this.resourceLoader = resourceLoader;
+        this.sharedCommonContext = sharedCommonContext;
     }
 
     @When("viene caricato un file NON csv con categoria: {string} e dati:")
@@ -181,7 +189,24 @@ public class RegistroBeniProductsUploadSteps {
                             Duration diff = Duration.between(uploadTime, now);
                             return !uploadTime.isAfter(now) && diff.toMinutes() < 1;
                         })
-        );    }
+        );
+    }
+
+    @Then("viene aggiunto di nuovo un prodotto già rifiutato")
+    public void uploadProductAlreadyRejected() throws Exception {
+        Assertions.assertNotNull(sharedCommonContext.getProductDTO());
+        Assertions.assertFalse(sharedCommonContext.getProductDTO().isEmpty());
+        ProductDTO rejectedProduct = sharedCommonContext.getProductDTO().get(0);
+        Map<String, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("Codice EPREL", rejectedProduct.getEprelCode());
+        linkedHashMap.put("Codice GTIN/EAN", rejectedProduct.getGtinCode());
+        linkedHashMap.put("Codice Prodotto", rejectedProduct.getProductCode());
+        linkedHashMap.put("Categoria", rejectedProduct.getCategory().getValue());
+        linkedHashMap.put("Paese di Produzione", rejectedProduct.getCountryOfProduction());
+
+        Resource csvFile = generaCsv(List.of(linkedHashMap),".csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, ProductCategory.getEnglishCategory(rejectedProduct.getCategory().getValue()));
+    }
 
 
 }
