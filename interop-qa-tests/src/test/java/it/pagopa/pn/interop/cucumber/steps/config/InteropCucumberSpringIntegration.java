@@ -27,11 +27,11 @@ import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.M2MDelegationClient;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
+import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
-import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -61,8 +61,10 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapperImp
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceNameMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.descriptor.EServiceDescriptorMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.PurposeMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.ReversePurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
@@ -133,6 +135,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorMapperImpl.class,
         DocumentMapperImpl.class,
         PurposeMapperImpl.class,
+        ReversePurposeMapperImpl.class,
         EServicePatchContext.class,
         EServiceDescriptorPatchContext.class,
         PurposePatchContext.class,
@@ -141,7 +144,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDelegationPatchOperationsAssistant.class,
         EServiceDescriptionPatchOperationsAssistant.class,
         EServiceDescriptorPatchOperationsAssistant.class,
-        PurposePatchOperationsAssistant.class
+        PurposePatchOperationsAssistant.class,
+        ReversePurposePatchOperationsAssistant.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

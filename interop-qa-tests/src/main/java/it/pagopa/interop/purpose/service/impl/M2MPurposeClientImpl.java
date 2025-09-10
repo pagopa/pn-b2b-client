@@ -140,6 +140,11 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     }
 
     @Override
+    public Purpose patchReversePurpose(UUID reversePurposeId, ReversePurposePatchRequest body) {
+        return null; // TODO 10/09/2025 collocare implementazione reale una volta che l'API sarà rilasciata
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.purposesApi.setApiClient(createApiClient(bearerToken));
     }
