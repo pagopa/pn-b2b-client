@@ -40,7 +40,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   @paperTracker
-  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2]
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3] Si verifica che i dati ritornati da /errors siano quelli attesi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -57,14 +57,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Examples:
       | physicalAddress                   | category                             | flowThrow                     |
       | Via@FAIL_CON996_PCRETRY_FURTO_AR  | NOT_RETRYABLE_EVENT_ERROR            |  NOT_RETRYABLE_EVENT_HANDLER  |
-      | Via@OK_AR_TIMESTAMP_ERR           | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
+      | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
-      | Via@OK_AR_NO_EVENT_B              | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
+      | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
   @paperTrackerNonDryRun
-  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_3]
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |

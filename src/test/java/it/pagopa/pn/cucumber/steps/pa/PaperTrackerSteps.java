@@ -56,8 +56,8 @@ public class PaperTrackerSteps {
     }
 
     private void assertSameElements(List<NotificationEvent> list1, List<NotificationEvent> list2, String errorMessage) {
-        list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode));
-        list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode));
+        list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
+        list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
         Assertions.assertEquals(list1, list2, errorMessage);
     }
 
@@ -112,7 +112,7 @@ public class PaperTrackerSteps {
         for (int j=0; j < responseTracking.getTrackings().size(); j++) {
             List<NotificationEvent> result2 = responseTracking.getTrackings().get(j).getEvents().stream()
                     .map(te -> new NotificationEvent(te.getStatusCode(), createAttachmentUrlTracking(te.getAttachments())))
-                    .toList();
+                    .collect(Collectors.toCollection(ArrayList::new));
             mapTracking.put(j, result2);
         }
 
@@ -132,7 +132,7 @@ public class PaperTrackerSteps {
         for (int j=0; j < responseOutput.getResults().size(); j++) {
             List<NotificationEvent> result2 = responseOutput.getResults().get(j).getOutputs().stream()
                     .map(te -> new NotificationEvent(te.getStatusDetail(), createAttachmentUrlTracking(te.getAttachments())))
-                    .toList();
+                    .collect(Collectors.toCollection(ArrayList::new));
             mapOutput.put(j, result2);
         }
 
@@ -273,6 +273,7 @@ public class PaperTrackerSteps {
 
     @Then("si controlla che siano presenti tutti gli eventi relativi alla sequence {string} e iun {string}")
     public void checkSequenceEventsOnPaperTracker(String sequenceName, String iun) {
+        log.info("Creata notifica con " + sequenceName + "e IUN: " + sharedSteps.getNotificationIun());
         Sequence sequence = Sequence.getByName(sequenceName);
         assertThat(sequence).as("Sequence inesistente: " + sequenceName).isNotNull();
 
