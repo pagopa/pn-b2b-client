@@ -15,6 +15,7 @@ import java.util.List;
 @ScenarioScope
 public class SharedCommonContext {
     private JWTUserData userData;
-    private List<ProductDTO> productDTO;
+    private List<ProductDTO> lastProductsUploaded;
+    private String category;
 
 }

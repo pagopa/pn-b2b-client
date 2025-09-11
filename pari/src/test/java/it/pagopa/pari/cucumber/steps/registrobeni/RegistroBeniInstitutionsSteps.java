@@ -69,12 +69,12 @@ public class RegistroBeniInstitutionsSteps {
                 .filter(list -> !list.isEmpty())
                 .findFirst()
                 .orElse(List.of());
-        sharedCommonContext.setProductDTO(productDTO);
+        sharedCommonContext.setLastProductsUploaded(productDTO);
     }
 
     @And("si verifica che il prodotto ritornato abbia tutti i campi validi")
     public void verifyProductsData() {
-        List<ProductDTO> productDTO = sharedCommonContext.getProductDTO();
+        List<ProductDTO> productDTO = sharedCommonContext.getLastProductsUploaded();
         assertNotNull(productDTO);
         productDTO.forEach(x -> {
             assertNotNull(x.getOrganizationId());

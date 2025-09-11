@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,10 +66,25 @@ public class RegistroBeniProductsUploadSteps {
 
     @When("viene caricato il csv con categoria: {string} e dati:")
     public void vieneGeneratoIlCsv(String categoria, List<Map<String, String>> dataCsv) throws Exception {
+        sharedCommonContext.setCategory(categoria);
         Resource csvFile = generaCsv(dataCsv, ".csv");
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, categoria);
+        sharedCommonContext.setLastProductsUploaded(dataCsv.stream()
+                .map(row -> new ProductDTO().eprelCode(row.get("Codice EPREL")).gtinCode(row.get("Codice GTIN/EAN"))
+                        .productCode(row.get("Codice Prodotto")).category(ProductDTO.CategoryEnum.fromValue(row.get("Categoria")))
+                        .countryOfProduction(row.get("Paese di Produzione"))).toList()
+        );
+
         // Viene aggiunto un delay per dare il tempo al csv di essere validato
         Thread.sleep(1000);
+    }
+
+    @When("viene caricato di nuovo lo stesso prodotto")
+    public void uploadSameProducts() throws Exception {
+        List<ProductDTO> productDTOList = sharedCommonContext.getLastProductsUploaded();
+        Resource csvFile = generaCsv(createProductMap(productDTOList), ".csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, sharedCommonContext.getCategory());
+
     }
 
     @When("viene verificato il csv con categoria: {string} e dati:")
@@ -194,18 +210,34 @@ public class RegistroBeniProductsUploadSteps {
 
     @Then("viene aggiunto di nuovo un prodotto già rifiutato")
     public void uploadProductAlreadyRejected() throws Exception {
-        Assertions.assertNotNull(sharedCommonContext.getProductDTO());
-        Assertions.assertFalse(sharedCommonContext.getProductDTO().isEmpty());
-        ProductDTO rejectedProduct = sharedCommonContext.getProductDTO().get(0);
-        Map<String, String> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("Codice EPREL", rejectedProduct.getEprelCode());
-        linkedHashMap.put("Codice GTIN/EAN", rejectedProduct.getGtinCode());
-        linkedHashMap.put("Codice Prodotto", rejectedProduct.getProductCode());
-        linkedHashMap.put("Categoria", rejectedProduct.getCategory().getValue());
-        linkedHashMap.put("Paese di Produzione", rejectedProduct.getCountryOfProduction());
+        Assertions.assertNotNull(sharedCommonContext.getLastProductsUploaded());
+        Assertions.assertFalse(sharedCommonContext.getLastProductsUploaded().isEmpty());
 
-        Resource csvFile = generaCsv(List.of(linkedHashMap),".csv");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, ProductCategory.getEnglishCategory(rejectedProduct.getCategory().getValue()));
+//        ProductDTO rejectedProduct = sharedCommonContext.getProductDTO().get(0);
+//        Map<String, String> linkedHashMap = new LinkedHashMap<>();
+//        linkedHashMap.put("Codice EPREL", rejectedProduct.getEprelCode());
+//        linkedHashMap.put("Codice GTIN/EAN", rejectedProduct.getGtinCode());
+//        linkedHashMap.put("Codice Prodotto", rejectedProduct.getProductCode());
+//        linkedHashMap.put("Categoria", rejectedProduct.getCategory().getValue());
+//        linkedHashMap.put("Paese di Produzione", rejectedProduct.getCountryOfProduction());
+
+        Resource csvFile = generaCsv(createProductMap(sharedCommonContext.getLastProductsUploaded()),".csv");
+        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, ProductCategory.getEnglishCategory(sharedCommonContext.getCategory()));
+    }
+
+    private List<Map<String, String>> createProductMap(List<ProductDTO> productDTOList) {
+        List<Map<String, String>> result = new ArrayList<>();
+        for (ProductDTO productDTO : productDTOList) {
+            Map<String, String> linkedHashMap = new LinkedHashMap<>();
+            linkedHashMap.put("Codice EPREL", productDTO.getEprelCode());
+            linkedHashMap.put("Codice GTIN/EAN", productDTO.getGtinCode());
+            linkedHashMap.put("Codice Prodotto", productDTO.getProductCode());
+            linkedHashMap.put("Categoria", productDTO.getCategory().getValue());
+            linkedHashMap.put("Paese di Produzione", productDTO.getCountryOfProduction());
+            result.add(linkedHashMap);
+        }
+        return result;
+
     }
 
 
