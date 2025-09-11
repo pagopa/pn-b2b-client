@@ -1,4 +1,4 @@
-@eservice
+@eservice @eservice_creation
 Feature: Creazione e-service
   Gli admin e gli operatori API di enti PA e GSP possono creare e-service
 

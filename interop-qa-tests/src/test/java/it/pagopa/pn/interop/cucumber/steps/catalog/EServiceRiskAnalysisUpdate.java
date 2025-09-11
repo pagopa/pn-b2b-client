@@ -43,7 +43,7 @@ public class EServiceRiskAnalysisUpdate {
     public void updateRiskAnanlysisToEService() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(
-                sharedStepsContext.getTenantType(), true);
+                sharedStepsContext.getTenantType(), false);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateEServiceRiskAnalysis(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

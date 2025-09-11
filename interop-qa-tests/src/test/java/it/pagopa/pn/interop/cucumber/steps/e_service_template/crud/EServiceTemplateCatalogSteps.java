@@ -1,0 +1,75 @@
+package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
+import java.util.List;
+import lombok.Data;
+import org.assertj.core.api.Condition;
+import org.springframework.http.ResponseEntity;
+
+/** Cucumber steps involving creation, editing, viewing or deletion
+ * of E-service template */
+@Data
+public class EServiceTemplateCatalogSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final SharedStepsContext sharedStepsContext;
+    private final IEServiceTemplateClient eServiceTemplateClient;
+    private final IHttpExecutor httpCallExecutor;
+    private final PollingService pollingService;
+
+    public EServiceTemplateCatalogSteps(ClientTokenConfigurator clientTokenConfigurator,
+        SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.sharedStepsContext = sharedStepsContext;
+        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
+    }
+
+    @When("l'utente tenta la visualizzazione del catalogo degli e-service template")
+    public void getEServiceTemplatesCatalog() {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getEServiceTemplatesCatalog(),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("sono stati aggiunti esattamente {int} e-service templates in catalogo in stato {eServiceTemplateVersionState}")
+    public void checkEServiceTemplatesCatalogContainsElementsInState(int expectedCount, EServiceTemplateVersionState expectedState) {
+        List<CatalogEServiceTemplate> templatesInCatalog = this.getFromCatalogBy(sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged());
+        Condition<CatalogEServiceTemplate> ofExpectedState = new Condition<>(
+            template -> template.getPublishedVersion().getState() == expectedState,
+            "of state %s", expectedState);
+        assertThat(templatesInCatalog)
+            .hasSize(expectedCount)
+            .are(ofExpectedState);
+    }
+
+    /* DEV. NOTE 25/03/2025: recupera tutti gli eservice template esistenti in catalogo
+    * indicati in input. Potendo specificare soltanto un nome per volta e potendo specificare un
+    * limite di risultati massimo di 50 non c'è altra opzione se non fare n chiamate diverse. */
+    private List<CatalogEServiceTemplate> getFromCatalogBy(List<EServiceTemplateInfo> templatesManaged) {
+        return templatesManaged.stream()
+            .map(t ->
+                eServiceTemplateClient.getEServiceTemplatesCatalog(
+                    0,
+                    50,
+                    t.name(),
+                    null))
+            .map(response -> response.getBody().getResults())
+            .flatMap(List::stream)
+            .toList();
+    }
+
+}

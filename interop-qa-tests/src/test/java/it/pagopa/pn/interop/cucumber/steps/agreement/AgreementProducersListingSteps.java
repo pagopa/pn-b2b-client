@@ -46,7 +46,7 @@ public class AgreementProducersListingSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} erogator(i)(e)")
     public void verifyStatusAndProducersList(int statusCode, int producersNumber) {
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(producersNumber,
                 ((ResponseEntity<CompactOrganizations>) sharedStepsContext.getHttpCallExecutor().getResponse()).getBody().getResults().size());
     }

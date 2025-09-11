@@ -2,6 +2,7 @@ package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
@@ -25,7 +26,9 @@ public interface IPurposeApiClient extends SettableBearerToken {
     PurposeVersionResource createPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed);
     CreatedResource createPurposeForReceiveEservice(PurposeEServiceSeed purposeEServiceSeed);
     Purpose getPurpose(UUID purposeId);
+    PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef);
     PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId);
+    PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef);
     PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId);
     PurposeVersionResource archivePurposeVersion(UUID purposeId, UUID versionId);
     void rejectPurposeVersion(UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload);

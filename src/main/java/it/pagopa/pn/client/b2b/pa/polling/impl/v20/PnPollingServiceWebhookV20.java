@@ -146,36 +146,14 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
         pnPollingParameter.setLastEventId(Objects.requireNonNull(lastProgress).getEventId());
     }
 
-    //TODO TULLIO 1
-    /*
-    Dopo aver aggiornato il pom di webhook (pom unico anziché tanti duplicati), ho notato che iniziavano a fallire i test del WebhookV10
-    Nel vecchio yaml del webhook V10
-    https://raw.githubusercontent.com/pagopa/pn-delivery-push/v2.3.2/docs/openapi/api-external-b2b-webhook.yaml
-    se cerchi ProgressResponseElement' (con l'apice alla fine) vedrai che utilizza la TimelineElementCategoryV20 (corretta).
-    Qua nel pom unico
-    https://raw.githubusercontent.com/pagopa/pn-delivery-push/56314229c57ea544dd0f7678ce61ba4e5de180f5/docs/openapi/api-external-b2b-webhook-bundle.yaml
-    facendo la stessa ricerca esce invece che utilizza la TimelineElementCategoryV23 (sbagliata).
-    Questo causava i fail delle PollingResponse (non erano ritardi).
-    Andrebbe segnalato ai dev che va cambiato lo yaml, in modo che webhookV20 restituisca una TimelineElementCategoryV20.
-    Una volta sistemato, i seguenti test dovrebbero andare in OK (vanno già in OK con la toppa che ho messo)
-    [B2B-STREAM_ES1.2_126]
-    [B2B-STREAM_ES1.3_162]
-    */
+    
     private Predicate<ProgressResponseElement> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElement ->
                 progressResponseElement.getIun() != null
                         && progressResponseElement.getIun().equals(iun)
                         && progressResponseElement.getTimelineEventCategory() != null
-                        //TODO: questo falliva
-//                        && progressResponseElement.getTimelineEventCategory().equals(
-//                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV23())
-                        //TODO: con questo ci mettiamo una toppa, ma non è del tutto corretto
-                        && pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20() != null
-                        && progressResponseElement.getTimelineEventCategory().getValue().equals(
-                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20().getValue())
-                        //TODO: questo è come dovrebbe essere (una volta sistemato il pom, scommentare e rimuovere quelli sopra)
-//                        && progressResponseElement.getTimelineEventCategory().equals(
-//                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20())
+                        && progressResponseElement.getTimelineEventCategory().equals(
+                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20())
                         || progressResponseElement.getIun() != null
                         && progressResponseElement.getIun().equals(iun)
                         && (progressResponseElement.getNewStatus() != null

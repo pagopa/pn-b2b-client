@@ -16,7 +16,7 @@ public class CommonUtils {
     }
 
     public void assertValidResponse() {
-        Assertions.assertFalse(httpCallExecutor.getClientResponse().isError(),
-            "Something went wrong: " + httpCallExecutor.getClientResponse().getReasonPhrase());
+        Assertions.assertFalse(httpCallExecutor.getResponseStatus().isError(),
+            "Something went wrong: " + httpCallExecutor.getResponseStatus().getReasonPhrase());
     }
 }

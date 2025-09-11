@@ -1,12 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.wrapper;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationDocument;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationFeePolicy;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationRecipientV24;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusHistoryElementV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.UsedServices;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +13,7 @@ public class BundleFullReceivedNotificationV26 {
     private String idempotenceToken;
     private String paProtocolNumber;
     private String subject;
+    @JsonProperty("abstract")
     private String _abstract;
     private List<NotificationRecipientV24> recipients;
     private List<NotificationDocument> documents;
@@ -46,7 +42,6 @@ public class BundleFullReceivedNotificationV26 {
     private String version;
     private UsedServices usedServices;
     private BundleNotificationStatusV26 notificationStatus;
-    private List<NotificationStatusHistoryElementV26> notificationStatusHistory;
     private List<TimelineElementV27> timeline;
 
     public enum BundleNotificationStatusV26 {

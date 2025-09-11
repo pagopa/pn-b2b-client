@@ -1,0 +1,133 @@
+package it.pagopa.pn.interop.cucumber.steps.e_service_template.quota;
+
+import static java.lang.Math.abs;
+import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.fail;
+
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.util.UUID;
+import lombok.Data;
+import org.jeasy.random.EasyRandom;
+import org.springframework.http.ResponseEntity;
+
+/** Cucumber steps involving quotas of E-service templates */
+@Data
+public class EServiceTemplateQuotaUpdateSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final SharedStepsContext sharedStepsContext;
+    private final IEServiceTemplateClient eServiceTemplateClient;
+    private final IHttpExecutor httpCallExecutor;
+    private final PollingService pollingService;
+    private final EasyRandom easyRandom;
+
+    private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
+
+    public EServiceTemplateQuotaUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
+        SharedStepsContext sharedStepsContext
+    ) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.sharedStepsContext = sharedStepsContext;
+        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
+    }
+
+    @When("l'utente tenta la modifica delle quote della versione dell'e-service template")
+    public void editEServiceTemplateVersionQuotas() {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+
+        lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
+        editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
+    }
+
+    private EServiceTemplateVersionQuotasUpdateSeed nextQuotasUpdateSeed() {
+        EServiceTemplateVersionQuotasUpdateSeed seed = easyRandom.nextObject(
+            EServiceTemplateVersionQuotasUpdateSeed.class);
+        seed.setVoucherLifespan(86400);
+        seed.setDailyCallsTotal(abs(seed.getDailyCallsPerConsumer() + 1));
+        seed.setDailyCallsPerConsumer(abs(seed.getDailyCallsPerConsumer()));
+        return seed;
+    }
+
+    @When("l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota")
+    public void editEServiceTemplateVersionQuotasWithEmptySpec() {
+        editEServiceTemplateVersionQuotas(
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            new EServiceTemplateVersionQuotasUpdateSeed());
+    }
+
+    @When("l'utente tenta la modifica delle quote della versione dell'e-service template specificando un \"dailyCallsTotal\" inferiore a \"dailyCallsPerConsumer\"")
+    public void editEServiceTemplateVersionQuotasWithDailyCallsTotalLessThanDailyCallsPerConsumer() {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+
+        lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
+        lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() - 1));
+
+        editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
+    }
+
+    @When("l'utente tenta la modifica delle quote della versione di un e-service template inesistente")
+    public void editNonExistentEServiceTemplateVersionQuotas() {
+        EServiceTemplateVersionQuotasUpdateSeed seed = nextQuotasUpdateSeed();
+        editEServiceTemplateVersionQuotas(UUID.randomUUID(), UUID.randomUUID(), seed);
+    }
+
+    @When("l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template")
+    public void editEServiceTemplateNonExistentVersionQuotas() {
+        editEServiceTemplateVersionQuotas(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), nextQuotasUpdateSeed());
+    }
+
+    @Then("la modifica delle quote della versione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionQuotasEdited() {
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
+                    ResponseEntity::getStatusCode),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        EServiceTemplateVersionDetails version = res.getBody();
+                        return this.areConsistent(version, lastTemplateVersionQuotasUpdateSeed);
+                    }
+                    return false;
+                },
+                "Le quote dell'e-service template non sono state modificate correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Le quote dell'e-service template non sono state modificate correttamente");
+        }
+    }
+
+    private void editEServiceTemplateVersionQuotas(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+        EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.updateEServiceTemplateVersionQuotasWithHttpInfo(
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                lastTemplateVersionQuotasUpdateSeed),
+            ResponseEntity::getStatusCode);
+    }
+
+    private boolean areConsistent(EServiceTemplateVersionDetails version, EServiceTemplateVersionQuotasUpdateSeed lastUpdate) {
+        return version.getDailyCallsPerConsumer().equals(lastUpdate.getDailyCallsPerConsumer()) &&
+            version.getDailyCallsTotal().equals(lastUpdate.getDailyCallsTotal()) &&
+            version.getVoucherLifespan().equals(lastUpdate.getVoucherLifespan());
+    }
+}

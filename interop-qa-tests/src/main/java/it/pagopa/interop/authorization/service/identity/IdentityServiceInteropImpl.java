@@ -51,4 +51,8 @@ public class IdentityServiceInteropImpl implements IdentityService {
         return defaultIdentityService.getOrganizationId(tenantType);
     }
 
+    @Override
+    public String getKind(String tenantType) {
+        return defaultIdentityService.getKind(tenantType);
+    }
 }

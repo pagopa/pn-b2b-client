@@ -13,6 +13,7 @@ userRoles:
   security: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
   "api,security": ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
   support: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
+kind: "GSP"
 ---
 name: "GSP2"
 externalId:
@@ -29,6 +30,7 @@ userRoles:
     security: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
     "api,security": ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
     support: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
+kind: "GSP"
 ---
 name: "PA1"
 externalId:
@@ -45,6 +47,7 @@ userRoles:
     security: ["17a84b7b-dce6-4b8f-a1ae-85926c55f02e"]
     "api,security": ["e0477bcc-3baf-4755-aa31-375c051acb44"]
     support: ["17a84b7b-dce6-4b8f-a1ae-85926c55f02e"]
+kind: "PA"
 ---
 name: "PA2"
 externalId:
@@ -61,6 +64,7 @@ userRoles:
     security: ["78b9aa62-a472-4c87-8173-3f73bb2e04b5"]
     "api,security": ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
     support: ["78b9aa62-a472-4c87-8173-3f73bb2e04b5"]
+kind: "PA"
 ---
 name: "Privato"
 externalId:
@@ -77,3 +81,4 @@ userRoles:
     security: ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
     "api,security": ["17a84b7b-dce6-4b8f-a1ae-85926c55f02e"]
     support: ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
+kind: "PRIVATE"
