@@ -64,6 +64,10 @@ Feature: Messaggi di cortesia Banche
       | payment_pagoPaForm      | SI                          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+      | details                | NOT_NULL                          |
+      | details_recIndex       | 0                                 |
+      | details_digitalAddress | {"type": "TPP", "address": "APP"} |
     And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
     And lato destinatario viene recuperato AAR lato web dal destinatario "Mario Gherkin"
     And lato destinatario è possibile recuperare correttamente l'allegato "PAGOPA" dal destinatario "Mario Gherkin"
