@@ -65,7 +65,7 @@ Feature: controlli su elementi diagnostici
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
-      | physicalAddress_address | via@OK_RIR_SLOW_DEMAT |
+      | physicalAddress_address | via@OK_RIR_NO_DEMAT |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
@@ -74,4 +74,4 @@ Feature: controlli su elementi diagnostici
     Then la category "SEND_ANALOG_TIMEOUT_CREATION_REQUEST" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then la category "SEND_ANALOG_TIMEOUT" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then la category "ANALOG_FAILURE_WORKFLOW_TIMEOUT" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
-
+    # alternative sequence :OK_RIR_SLOW_DEMAT
