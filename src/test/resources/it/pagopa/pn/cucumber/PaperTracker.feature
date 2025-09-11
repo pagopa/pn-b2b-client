@@ -7,21 +7,37 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | senderDenomination | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER     |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | <physicalAddress> |
+      | physicalAddress_address | Via@<physicalAddress> |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
     Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline
     Examples:
-      | physicalAddress              |
-      | Via@ok_AR                    |
-      | Via@fail_AR                  |
-      | Via@OK-Giacenza_AR           |
-      | Via@FAIL-Giacenza_AR         |
-      | Via@FAIL-IRREPERIBILE_AR     |
-      | Via@FAIL-CompiutaGiacenza_AR |
-      | Via@fail-Discovery_AR        |
+      | sequenceName              |
+      #EKYM-HPNU-URJQ-202509-G-1
+      | ok_AR |
+      | OK-Retry_AR |
+        #VWYT-DMJK-WRPH-202509-U-1
+      | FAIL-Discovery_AR |
+      | FAIL_AR |
+      | FAIL-Irreperibile_AR |
+      | OK-Giacenza_AR |
+      | FAIL-Giacenza_AR |
+      | FAIL-CompiutaGiacenza_AR |
+      | OK-NonRendicontabile_AR |
+      | OK-CausaForzaMaggiore_AR |
+      | FAIL_CON996_PCRETRY_FURTO_AR |
+      | OK_AR_INVALID_DATETIME |
+      | OK_AR_NO_EVENT_B |
+      | OK_AR_TIMESTAMP_ERR |
+      | OK_AR_NOT_ORDERED |
+      | OK_GIACENZA_AR_2 |
+      | OK_GIACENZA_AR_3 |
+      | OK_GIACENZA_AR_4 |
+      | OK_AR_BAD_EVENT |
+
 
   @paperTracker
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY

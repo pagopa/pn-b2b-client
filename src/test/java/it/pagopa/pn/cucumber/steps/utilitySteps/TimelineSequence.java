@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public enum Sequence {
+public enum TimelineSequence {
 
     //AR
     OK_AR("OK_AR", List.of("CON080", "CON020[DOC:7ZIP;PAGES:3]", "RECRN001A", "RECRN001B[DOC:AR]", "RECRN001C"), 0, 0),
@@ -49,23 +49,23 @@ public enum Sequence {
             "PNAG012", "RECAG012", "PNRN012",
             "RECRI003C", "RECRI004C");
 
-    private Sequence(String name, List<String> events, int pcRetry, int attempts) {
+    private TimelineSequence(String name, List<String> events, int pcRetry, int attempts) {
         this.name = name;
         this.events = events;
         this.pcRetry = pcRetry;
         this.attempts = attempts;
     }
 
-    public static Sequence getByName(String sequenceName) {
-        return Arrays.stream(Sequence.values()).filter(s -> s.name.equalsIgnoreCase(sequenceName)).findFirst().orElse(null);
+    public static TimelineSequence getByName(String sequenceName) {
+        return Arrays.stream(TimelineSequence.values()).filter(s -> s.name.equalsIgnoreCase(sequenceName)).findFirst().orElse(null);
     }
 
     public static boolean isFeedback(String eventCode) {
         return FEEDBACK_EVENTS.contains(eventCode);
     }
 
-    public static int getPcRetry(Sequence sequence) {
-        return sequence.getPcRetry();
+    public static int getPcRetry(TimelineSequence timelineSequence) {
+        return timelineSequence.getPcRetry();
     }
 
 }
