@@ -187,7 +187,9 @@ public class DelayerPlanner {
             String capDeliveryDriverKey = getCapDeliveryDriverKey(notification);
 
             if (!utils.isDriverCensito(unifiedDeliveryDriverKey)) {
-                toFreeze.add(notification);
+                // Provincia non censita => driver non censito
+                // In caso di provincia non censita le notifiche non devono essere congelate e ricaricate
+                //toFreeze.add(notification);
                 continue;
             }
 
@@ -212,7 +214,9 @@ public class DelayerPlanner {
 
             if (!utils.isDriverCensito(unifiedDeliveryDriverKey)) {
                 toEvaluateResidualCapacity.remove(notification);
-                toFreeze.add(notification);
+                // Provincia non censita => driver non censito
+                // In caso di provincia non censita le notifiche non devono essere congelate e ricaricate
+                //toFreeze.add(notification);
                 continue;
             }
 
