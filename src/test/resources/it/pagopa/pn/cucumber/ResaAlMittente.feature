@@ -614,7 +614,7 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
     And si crea il nuovo stream per il "Comune_1" con versione "più recente"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "più recente"
