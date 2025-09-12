@@ -7,7 +7,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | senderDenomination | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER     |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@<physicalAddress> |
+      | physicalAddress_address | Via@<sequenceName> |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
