@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
+package it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper;
 
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
