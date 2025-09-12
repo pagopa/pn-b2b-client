@@ -78,8 +78,8 @@ public class PaperTrackerSteps {
 
 
 
-    @Then("si verifica che gli elementi di timeline coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1")
-    public void verify() {
+    @Then("si verifica che gli elementi di timeline per la sequence {string} coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1")
+    public void verifyTrackingEventsForSequenceWithPCRetry(String sequenceName) {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV27::getElementId)
@@ -99,8 +99,9 @@ public class PaperTrackerSteps {
         List<NotificationEvent> outputsItems = responseOutput.getResults().stream().flatMap(item -> item.getOutputs().stream())
                 .map(te -> new NotificationEvent(te.getStatusDetail(), createAttachmentUrlTracking(te.getAttachments())))
                 .collect(Collectors.toCollection(ArrayList::new));
+        Map<Integer, List<NotificationEvent>> expectedEvents = parse(PaperTrackerTrackingSequence. getByName(sequenceName).getEvents());
 
-        assertSameElements(sanitizeList(timelineItems, List.of("PNRN012")), trackingItems, TRACKINGS_ELEMENT_NOT_FOUND);
+        assertRelaxedSameElements(trackingItems, expectedEvents.get(0), TRACKINGS_ELEMENT_NOT_FOUND);
         assertSameElements(sanitizeList(timelineItems, List.of("CON018")), outputsItems, OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
     }
 
@@ -147,6 +148,7 @@ public class PaperTrackerSteps {
         }*/
 
         Map<Integer, List<NotificationEvent>> mapOutput = new HashMap<>();
+        responseOutput.getResults().sort(Comparator.comparing(PaperTrackerOutputsResponseResultsInner::getTrackingId));
         for (int j=0; j < responseOutput.getResults().size(); j++) {
             List<NotificationEvent> result2 = responseOutput.getResults().get(j).getOutputs().stream()
                     .map(te -> new NotificationEvent(te.getStatusDetail(), createAttachmentUrlTracking(te.getAttachments())))

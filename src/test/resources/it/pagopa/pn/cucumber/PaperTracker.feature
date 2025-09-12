@@ -16,10 +16,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline
     Examples:
       | sequenceName              |
-      #EKYM-HPNU-URJQ-202509-G-1
       | ok_AR |
-      | OK-Retry_AR |
-        #VWYT-DMJK-WRPH-202509-U-1
       | FAIL-Discovery_AR |
       | FAIL_AR |
       | FAIL-Irreperibile_AR |
@@ -52,7 +49,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    Then si verifica che gli elementi di timeline coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    Then si verifica che gli elementi di timeline per la sequence "OK-Retry_AR" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
 
 
   @paperTracker
