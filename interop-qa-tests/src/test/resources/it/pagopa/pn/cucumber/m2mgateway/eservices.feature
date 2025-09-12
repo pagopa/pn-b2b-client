@@ -327,7 +327,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio2
   Scenario: [M2MG_ESERVICES_36] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service che non gli appartiene (Parte2#Scenario intorno a 77)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    #And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA2" con ruolo m2m-admin tenta di effettuare la modifica parziale dell'e-service
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

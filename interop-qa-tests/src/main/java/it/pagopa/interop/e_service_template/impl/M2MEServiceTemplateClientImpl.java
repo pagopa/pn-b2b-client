@@ -91,4 +91,16 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     public void unsuspend(UUID templateId, UUID versionId) {
         // TODO 09/09/2025 sostituire con implementazione reale non appena disponibile
     }
+
+    @Override
+    public EServiceTemplate patchEServiceTemplate(UUID templateId,
+        EServiceTemplatePatchRequest patchRequest) {
+        return null; // TODO 10/09/2025 sostituire con implementazione reale non appena disponibile
+    }
+
+    @Override
+    public EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId,
+        EServiceTemplateVersionPatchRequest patchRequest) {
+        return null; // TODO 10/09/2025 sostituire con implementazione reale non appena disponibile
+    }
 }

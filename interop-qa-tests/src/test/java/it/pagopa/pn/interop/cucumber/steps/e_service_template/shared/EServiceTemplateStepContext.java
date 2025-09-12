@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
@@ -36,7 +37,13 @@ public class EServiceTemplateStepContext {
      *  POJO con Lombok e collocarle all'esterno, in un package dedicato al context in cui
      *  spostare anche questa classe */
     /** Stores data on an e-service template useful for testing */
-    public record EServiceTemplateInfo(String name, String intendedTarget, String eServiceDescription, UUID id, UUID lastVersionId){}
+    public record EServiceTemplateInfo(
+        String name,
+        String intendedTarget,
+        String eServiceDescription,
+        EServiceMode mode,
+        UUID id,
+        UUID lastVersionId){}
 
     /** Stores data on an e-service template document useful for testing */
     public record EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body, String errorMessage){

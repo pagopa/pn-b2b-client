@@ -134,6 +134,7 @@ public class EServiceTemplateCreateSteps {
             templateSeed.getName(),
             templateSeed.getIntendedTarget(),
             templateSeed.getDescription(),
+            templateSeed.getMode(),
             creationResponse.getId(),
             creationResponse.getVersionId()));
     }
