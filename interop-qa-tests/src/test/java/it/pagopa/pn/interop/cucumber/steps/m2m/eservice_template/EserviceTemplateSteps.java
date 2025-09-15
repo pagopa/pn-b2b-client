@@ -8,6 +8,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplatePatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionPatchRequest;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionQuotasPatchRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
@@ -17,6 +18,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.Random;
 import java.util.UUID;
@@ -30,6 +32,7 @@ public class EserviceTemplateSteps {
     private final PollingService pollingService;
     private final EServiceTemplatePatchOperationsAssistant patchAssistant;
     private final EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant;
+    private final EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant;
 
     public EserviceTemplateSteps(
         SharedStepsContext sharedStepsContext,
@@ -37,7 +40,8 @@ public class EserviceTemplateSteps {
         ClientTokenConfigurator clientTokenConfigurator,
         DelayService delayService,
         EServiceTemplatePatchOperationsAssistant patchAssistant,
-        EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant
+        EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant,
+        EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant
     ) {
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
@@ -47,6 +51,7 @@ public class EserviceTemplateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.patchAssistant = patchAssistant;
         this.versionPatchAssistant = versionPatchAssistant;
+        this.versionQuotasPatchAssistant = versionQuotasPatchAssistant;
     }
 
     @And("viene effettuata la creazione dei template e-service:")
@@ -226,5 +231,30 @@ public class EserviceTemplateSteps {
     @Then("l'ultima versione dell'e-service template non ha subito modifiche")
     public void checkEServiceTemplateVersionAfterNonPatch() {
         versionPatchAssistant.checkUnpatchedResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale delle quote dell'ultima versione dell'e-service template")
+    public void patchEServiceTemplateVersionQuotas() {
+        EServiceTemplateVersionQuotasPatchRequest request = this.versionQuotasPatchAssistant.buildDefaultPatchRequest();
+        versionQuotasPatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale delle quote dell'ultima versione dell'e-service template specificando un sottoinsieme di informazioni")
+    public void patchEServiceTemplateVersionQuotasSubset() {
+        EServiceTemplateVersionQuotasPatchRequest request = EServiceTemplateVersionQuotasPatchRequest.builder()
+            .dailyCallsPerConsumer(13)
+            .build();
+        versionQuotasPatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale delle quote di una versione inesistente di un e-service template inesistente")
+    public void patchNonExistentEServiceTemplateVersionQuotas() {
+        versionQuotasPatchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale delle quote dell'ultima versione dell'e-service template con token non valido")
+    public void patchEServiceTemplateVersionQuotasWithNotValidToken() {
+        EServiceTemplateVersionQuotasPatchRequest request = versionQuotasPatchAssistant.buildDefaultPatchRequest();
+        versionQuotasPatchAssistant.patchResourceWithInvalidToken(request);
     }
 }

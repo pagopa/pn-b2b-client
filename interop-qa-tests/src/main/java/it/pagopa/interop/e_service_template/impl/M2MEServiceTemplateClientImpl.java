@@ -103,4 +103,10 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
         EServiceTemplateVersionPatchRequest patchRequest) {
         return null; // TODO 10/09/2025 sostituire con implementazione reale non appena disponibile
     }
+
+    @Override
+    public EServiceTemplateVersion patchEServiceTemplateVersionQuotas(UUID templateId,
+        UUID versionId, EServiceTemplateVersionQuotasPatchRequest patchRequest) {
+        return null; // TODO 15/09/2025 sostituire con implementazione reale non appena disponibile
+    }
 }

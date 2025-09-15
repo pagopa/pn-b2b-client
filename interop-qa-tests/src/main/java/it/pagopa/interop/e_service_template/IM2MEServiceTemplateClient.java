@@ -51,6 +51,13 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
         private Integer dailyCallsTotal;
         private AgreementApprovalPolicy agreementApprovalPolicy;
     }
+
+    @Data
+    @Builder
+    class EServiceTemplateVersionQuotasPatchRequest {
+        private Integer dailyCallsPerConsumer;
+        private Integer dailyCallsTotal;
+    }
     /* *******************************************************************************************/
 
     EServiceTemplate getEserviceTemplate(UUID templateId);
@@ -70,4 +77,6 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     EServiceTemplate patchEServiceTemplate(UUID templateId, EServiceTemplatePatchRequest patchRequest);
 
     EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId, EServiceTemplateVersionPatchRequest patchRequest);
+
+    EServiceTemplateVersion patchEServiceTemplateVersionQuotas(UUID templateId, UUID versionId, EServiceTemplateVersionQuotasPatchRequest patchRequest);
 }
