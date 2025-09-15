@@ -106,6 +106,14 @@ public class RegisterPortalOperationClientImpl {
         return productsApi.updateProductStatusSupervised(productsUpdateDTO);
     }
 
+    public UpdateResponseDTO updateProductStatusWaitApproved(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusWaitApproved(productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusRestored(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusRestored(productsUpdateDTO);
+    }
+
     public void setBearerToken(RdbRole role) {
         String bearerToken = rdBJWTProvider.provideJWT(role);
         portalConsentApi.setApiClient(createApiClient(bearerToken));

@@ -2,6 +2,7 @@ package it.pagopa.pari.cucumber.steps.registrobeni;
 
 import com.opencsv.CSVWriter;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,6 +10,7 @@ import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
@@ -76,7 +78,7 @@ public class RegistroBeniProductsUploadSteps {
         );
 
         // Viene aggiunto un delay per dare il tempo al csv di essere validato
-        Thread.sleep(1000);
+        Thread.sleep(2000);
     }
 
     @When("viene caricato di nuovo lo stesso prodotto")
@@ -84,6 +86,8 @@ public class RegistroBeniProductsUploadSteps {
         List<ProductDTO> productDTOList = sharedCommonContext.getLastProductsUploaded();
         Resource csvFile = generaCsv(createProductMap(productDTOList), ".csv");
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, sharedCommonContext.getCategory());
+        // Viene aggiunto un delay per dare il tempo al csv di essere validato
+        Thread.sleep(2000);
 
     }
 
@@ -98,6 +102,14 @@ public class RegistroBeniProductsUploadSteps {
         assertNotNull(uploadResponseDTO);
         assertNotNull(uploadResponseDTO.getProductFileId());
         csvDTO = apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(uploadResponseDTO.getProductFileId());
+    }
+
+    @And("si verifica che il report dell'ultimo prodotto aggiunto contenga la descrizione: {string}")
+    public void retrieveLastReport(String expectedValidationError) {
+        UploadsListDTO uploadList = apiClientContext.getRegisterPortalOperationClient().getProductFilesList(0, 10);
+        Assertions.assertNotNull(uploadList);
+        csvDTO = apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(uploadList.getContent().get(0).getProductFileId());
+        Assertions.assertTrue(csvDTO.getData().contains(expectedValidationError));
     }
 
     @Then("il report è correttamente popolato")
@@ -208,10 +220,10 @@ public class RegistroBeniProductsUploadSteps {
         );
     }
 
-    @Then("viene aggiunto di nuovo un prodotto già rifiutato")
-    public void uploadProductAlreadyRejected() throws Exception {
-        Assertions.assertNotNull(sharedCommonContext.getLastProductsUploaded());
-        Assertions.assertFalse(sharedCommonContext.getLastProductsUploaded().isEmpty());
+//    @Then("viene aggiunto di nuovo un prodotto già rifiutato")
+//    public void uploadProductAlreadyRejected() throws Exception {
+//        assertNotNull(sharedCommonContext.getLastProductsUploaded());
+//        assertFalse(sharedCommonContext.getLastProductsUploaded().isEmpty());
 
 //        ProductDTO rejectedProduct = sharedCommonContext.getProductDTO().get(0);
 //        Map<String, String> linkedHashMap = new LinkedHashMap<>();
@@ -221,9 +233,9 @@ public class RegistroBeniProductsUploadSteps {
 //        linkedHashMap.put("Categoria", rejectedProduct.getCategory().getValue());
 //        linkedHashMap.put("Paese di Produzione", rejectedProduct.getCountryOfProduction());
 
-        Resource csvFile = generaCsv(createProductMap(sharedCommonContext.getLastProductsUploaded()),".csv");
-        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, ProductCategory.getEnglishCategory(sharedCommonContext.getCategory()));
-    }
+//        Resource csvFile = generaCsv(createProductMap(sharedCommonContext.getLastProductsUploaded()),".csv");
+//        uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, ProductCategory.getEnglishCategory(sharedCommonContext.getCategory()));
+//    }
 
     private List<Map<String, String>> createProductMap(List<ProductDTO> productDTOList) {
         List<Map<String, String>> result = new ArrayList<>();
