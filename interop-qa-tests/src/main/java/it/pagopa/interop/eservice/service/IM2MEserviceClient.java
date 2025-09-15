@@ -2,13 +2,10 @@ package it.pagopa.interop.eservice.service;
 
 import it.pagopa.interop.common.client.IClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -93,17 +90,9 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     EServices getAll(EserviceListRequest payload);
 
-    EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId);
-
     void delete(UUID id);
 
-    void deleteInterface(UUID eServiceId, UUID descriptorId);
-
-    void unsuspendEService(UUID eServiceId, UUID descriptorId);
-
     Document uploadInterface(EServiceInterfaceUploadRequest body);
-
-    FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId, UUID descriptorId);
 
     EService patchEService(UUID eServiceId, EServicePatchRequest body);
 
@@ -112,6 +101,4 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
 
     EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
-
-    Documents getDocuments(UUID eserviceId, UUID descriptorId);
 }
