@@ -244,7 +244,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario Leonardo da Vinci e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_f24       | NO   |
@@ -252,8 +252,29 @@ Feature: recupero notifiche tramite api AppIO b2b
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    When imposto lo iun di SharedSteps a "MRTZ-QLWV-HZPM-202509-R-1" e la pa a "Comune_Multi"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop
+    And l'utente Leonardo da Vinci scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop
+    Then si verifica che la chiamata abbia ritornato uno status code: 403
+
+
+  #https://pagopa.atlassian.net/browse/PN-16249
+  @appIo
+  Scenario: [QR_CODE_11] Lettura tramite AppIO di una notifica da parte di un PF ma con header lollipop diverso da quello atteso del destinatario della notifica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Leonardo da Vinci e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente Leonardo da Vinci scansiona il QR Code per recuperare i dettagli della notifica
+    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Leonardo da Vinci tramite AppIO passando un header src non valido
     Then si verifica che la chiamata abbia ritornato uno status code: 403
 

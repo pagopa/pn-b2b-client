@@ -109,6 +109,15 @@ public class AppIOB2bSteps {
         Assertions.assertEquals(statusCode, notificationServerError.getStatusCode().value());
     }
 
+    @And("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO passando un header src non valido")
+    public void attemptsNotificationRetrievalAppIOWithInvalidHeader(Destinatario user) {
+        try {
+            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), user.getTaxId(), null, "TEST");
+        } catch (HttpStatusCodeException e) {
+            this.notificationServerError = e;
+        }
+    }
+
     @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO")
     public void notificationCanBeRetrievedFromAppIOAfterQRCodeScan(Destinatario user) {
         assertNotificationCanBeRetrievedFromAppIO(responseCheckAarMandateDto.getIun(), user.getTaxId(), null);

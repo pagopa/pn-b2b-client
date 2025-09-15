@@ -58,6 +58,10 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
         return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null,null, null, null,null,null,null,null,null, null);
     }
 
+    public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid, UUID mandateId, String xPagopaPnIoSrc) throws RestClientException {
+        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null,null, null, null,null,null,null,null,null, xPagopaPnIoSrc);
+    }
+
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String xPagopaCxTaxid, Integer attachmentIdx, UUID mandateId) throws RestClientException {
         return this.appIoPnPaymentsApi.getReceivedNotificationAttachment(iun, attachmentName, xPagopaCxTaxid, attachmentIdx, mandateId, null, null, null,  null, null, null, null, null, null, null);
     }
