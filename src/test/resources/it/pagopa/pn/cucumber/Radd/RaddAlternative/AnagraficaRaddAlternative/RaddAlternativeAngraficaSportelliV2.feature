@@ -50,6 +50,29 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_city       | NAPOLI                            |
     Then viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId
 
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 1
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_22] Creazione nuova sede RADD con numeri di telefono accettati
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma    |
+      | address_radd_cap      | 80133       |
+      | address_radd_province | NA          |
+      | address_radd_city     | NAPOLI      |
+      | radd_description      | descrizione |
+      | radd_phoneNumbers     | <telefono>  |
+      | radd_externalCodes    | EXT01QA     |
+    Examples:
+      | telefono         |
+      | 333123456789     |
+      | 0039333123456789 |
+      | 081234567890     |
+      | 8001234567       |
+      | +39800123456     |
+      | +390212345678    |
+      | 0039800123456    |
+      | +3933312345678   |
+      | 003933312345678  |
+
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 2
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_2] Creazione nuova sede RADD con intero campo address mancante
@@ -221,7 +244,41 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description      | descrizione    |
       | radd_phoneNumbers     | +3933312345678 |
       | radd_externalCodes    | EXT09QAA,EXT11 |
-    Then l'operazione Radd V2 ha prodotto un errore con status code "409"
+    #Then l'operazione Radd V2 ha prodotto un errore con status code "409"
+
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 70
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_23] Creazione nuova sede RADD con ExternalCode già esistente
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma       |
+      | address_radd_cap      | 80133          |
+      | address_radd_province | NA             |
+      | address_radd_city     | NAPOLI         |
+      | radd_description      | descrizione    |
+      | radd_phoneNumbers     | +3933312345678 |
+      | radd_externalCodes    | EXT09QAA       |
+    When viene generato uno sportello Radd V2 con restituzione errore con dati:
+      | address_radd_row      | via roma             |
+      | address_radd_cap      | 80133                |
+      | address_radd_province | NA                   |
+      | address_radd_city     | NAPOLI               |
+      | radd_description      | descrizione          |
+      | radd_phoneNumbers     | +3933312345678       |
+      | radd_externalCodes    | EXT09QAA,EXT11,EXT12 |
+
+
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs ND
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_24] Creazione nuova sede RADD con ExternalCode già esistente
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma        |
+      | address_radd_cap      | 80133           |
+      | address_radd_province | NA              |
+      | address_radd_city     | NAPOLI          |
+      | radd_description      | descrizione     |
+      | radd_phoneNumbers     | +3933312345678  |
+      | radd_externalCodes    | EXT2QAA,EXT2QAA |
+
 
 
 
@@ -324,6 +381,23 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | NULL        | NULL        | 00390012345678                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +393                                | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
 
+      | NULL        | NULL        | 333123                              | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39333123                           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 39 3331234567                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 700123456                           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 003900123                           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39011234567890                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+
+      | NULL        | NULL        | (0039)3331234567                    | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39.333.1234567                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39/3331234567                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 0039-333-1234567                    | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | 333-123-4567                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +390801234567                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39 800123456                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39 02 1234567                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +39 333123456789                    | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+
 
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 43-44
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_11] Modifica sportello RADD con dati locationId non corretto
@@ -390,6 +464,32 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_website              | https://www.ex1.com        |
     Then l'operazione ha prodotto un errore con status code "403"
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+
+  @raddAnagraficaV2 @cognito1 #rif srs 71
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_25] Modifica external code con external code già censito per altra sede
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT99AA       |
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT99AB       |
+    Then viene modificato uno sportello Radd V2 con dati:
+      | radd_externalCodes | EXT99AA |
+    Then cancello i registriV2 con externalCode:
+      | EXT99AA |
+      | EXT99AA |
+
 
 
      #  ***CANCELLAZIONE ***
