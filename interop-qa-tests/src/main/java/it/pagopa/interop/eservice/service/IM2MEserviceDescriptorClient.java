@@ -33,9 +33,19 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
         private AgreementApprovalPolicy agreementApprovalPolicy;
     }
 
+    /* TODO 15/09/2025: modella un DTO al momento assente nella specifica OpenAPI. Potrebbero
+    *   rendersi necessari adattamenti di qualche tipo a seguito del rilascio. */
+    @Data
+    @Builder
+    class EServiceDescriptorQuotasPatchRequest {
+        private Integer dailyCallsPerConsumer;
+        private Integer dailyCallsTotal;
+    }
+
     EServiceDescriptor get(UUID eserviceId, UUID descriptorId);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor getCompleteResource(UUID eserviceId, UUID descriptorId);
     List<EServiceDescriptor> getAll(EserviceDescriptorsListRequest eserviceDescriptorsListRequest);
     List<EServiceDescriptor> getAll(UUID eserviceId);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body);
+    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body);
 }

@@ -343,9 +343,9 @@ Feature: Test API M2M of e-service template
     Examples:
       | stato       | mode        |
       | DRAFT       | erogazione  |
-      | ARCHIVED    | erogazione  |
+      | DEPRECATED  | erogazione  |
       | DRAFT       | ricezione   |
-      | ARCHIVED    | ricezione   |
+      | DEPRECATED  | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch

@@ -145,4 +145,10 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
             default -> throw new IllegalStateException("Tipo di id non supportato: " + type.name());
         };
     }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(
+        UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body) {
+        return null; // TODO 15/09/2025 sostituire con implementazione reale non appena disponibile
+    }
 }
