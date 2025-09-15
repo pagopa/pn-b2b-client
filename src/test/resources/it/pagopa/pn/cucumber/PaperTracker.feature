@@ -13,7 +13,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName              |
       | ok_AR |
@@ -37,19 +37,23 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   @paperTracker
-  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
             si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER     |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK-Retry_AR   |
-      | digitalDomicile         | NULL              |
+      | physicalAddress_address | Via@<sequenceName>   |
+      | digitalDomicile         | NULL                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    Then si verifica che gli elementi di timeline per la sequence "OK-Retry_AR" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    Examples:
+      | sequenceName                        |
+      | OK-Retry_AR                         |
+      | OK-NonRendicontabile_AR             |
 
 
   @paperTracker
