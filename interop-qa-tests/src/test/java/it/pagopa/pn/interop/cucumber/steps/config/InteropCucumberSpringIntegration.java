@@ -52,8 +52,8 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescri
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.descriptor.EServiceDescriptorPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDescriptionMapperImpl;

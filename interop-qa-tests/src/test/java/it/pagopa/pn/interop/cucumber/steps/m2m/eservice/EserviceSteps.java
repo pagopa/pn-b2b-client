@@ -44,7 +44,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpExecutor;
     private final PollingService pollingService;
@@ -71,7 +70,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         DelayService delayService
     ) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
