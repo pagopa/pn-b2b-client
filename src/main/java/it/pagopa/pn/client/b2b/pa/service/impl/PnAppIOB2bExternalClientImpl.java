@@ -62,6 +62,10 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
         return this.appIoPnPaymentsApi.getReceivedNotificationAttachment(iun, attachmentName, xPagopaCxTaxid, attachmentIdx, mandateId, null, null, null,  null, null, null, null, null, null, null);
     }
 
+    public ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, String xPagopaLollipopUserId, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException {
+        return appIoPnNotificationApi.checkAarQrCodeIO(xPagopaCxTaxid, requestCheckQrMandateDto, null, null, null, null, null, null, xPagopaLollipopUserId, null, null, null);
+    }
+
     public ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException {
         return appIoPnNotificationApi.checkAarQrCodeIO(xPagopaCxTaxid, requestCheckQrMandateDto, null, null, null, null, null, null, null, null, null, null);
     }

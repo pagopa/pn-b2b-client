@@ -15,4 +15,5 @@ public interface IPnAppIOB2bClient {
     NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String xPagopaCxTaxid, Integer attachmentIdx, UUID mandateId) throws RestClientException ;
     NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachmentByUrl(String url, String xPagopaCxTaxid) throws RestClientException ;
     ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException;
+    ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, String xPagopaLollipopUserId, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException;
 }

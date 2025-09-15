@@ -69,10 +69,19 @@ public class AppIOB2bSteps {
     }
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica")
-    public void userScanQRCode(Destinatario user) {
+    public void userScanQRCodeWithoutLollipopHeader(Destinatario user) {
+        userScanQrCode(user, null);
+    }
+
+    @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop")
+    public void userScanQRCodeWithLollipopHeader(Destinatario user) {
+        userScanQrCode(user, "CLMCST42R12D969Z");
+    }
+
+    private void userScanQrCode(Destinatario user, String xPagopaLollipopUserId) {
         RequestCheckQrMandateDto requestCheckAarMandateDto = new RequestCheckQrMandateDto().aarQrCodeValue(qrCodeBodyUrl + qrCode);
         try {
-            responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), requestCheckAarMandateDto);
+            responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), xPagopaLollipopUserId, requestCheckAarMandateDto);
         } catch (HttpStatusCodeException ex) {
             notificationServerError = ex;
         }
