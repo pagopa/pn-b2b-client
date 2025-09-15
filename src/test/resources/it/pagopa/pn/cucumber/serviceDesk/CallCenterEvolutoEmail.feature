@@ -1,11 +1,12 @@
 Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatari di notifiche RADD, impossibilitati a recarsi in un CAF o ad accedere online, di prenotare un appuntamento in Virtual Room e ricevere copia digitale degli atti.
 
   @ignore
+    # BUG: https://pagopa.atlassian.net/browse/PN-16308
   Scenario: [UTILS_TEST_MANUALE_1] Verifica allegati di una notifica perfezionata da oltre 120 giorni (Scenario 13)
-    Given imposto lo iun di SharedSteps a "LNWV-GRMV-KPWV-202503-W-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "UTGP-ZRHR-XDNQ-202505-Q-1" e la pa a "Comune_Multi"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
       | ticketId          | auto                        |
-      | iun               | LNWV-GRMV-KPWV-202503-W-1   |
+      | iun               | UTGP-ZRHR-XDNQ-202505-Q-1   |
       | ticketOperationId | auto                        |
       | taxId             | CLMCST42R12D969Z            |
       | addressType       | EMAIL                       |
@@ -15,7 +16,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
@@ -99,7 +100,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And il servizio risponde con 401
 
   @CallCenterEvolutoViaMail
-  Scenario Outline: [CCE_MAIL_1] Invio corretto della documentazione digitale (Scenario 7, 11)
+  Scenario: [CCE_MAIL_1] Invio corretto della documentazione digitale con workflow analogico (Scenario 7, 11)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -108,27 +109,50 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation con i seguenti dati
-      | ticketId          | auto             |
-      | iun               | auto             |
-      | ticketOperationId | auto             |
-      | taxId             | CLMCST42R12D969Z |
-      | addressType       | EMAIL            |
-      | addressValue      | <email>          |
-      | ticketDate        | auto             |
-      | vrDate            | auto             |
+      | ticketId          | auto                        |
+      | iun               | auto                        |
+      | ticketOperationId | auto                        |
+      | taxId             | CLMCST42R12D969Z            |
+      | addressType       | EMAIL                       |
+      | addressValue      | stefano.netti@grupposcai.it |
+      | ticketDate        | auto                        |
+      | vrDate            | auto                        |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
     And il video viene caricato su SafeStorage
     And viene atteso lo stato "OK" dell'operazione
 
-    Examples:
-      | email                       |
-      | stefano.netti@grupposcai.it |
+  @CallCenterEvolutoViaMail
+  Scenario: [CCE_MAIL_1.2] Invio corretto della documentazione digitale con workflow digitale (Scenario 7, 11)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    When viene popolata una richiesta di creazione Act operation con i seguenti dati
+      | ticketId          | auto                        |
+      | iun               | auto                        |
+      | ticketOperationId | auto                        |
+      | taxId             | CLMCST42R12D969Z            |
+      | addressType       | EMAIL                       |
+      | addressValue      | stefano.netti@grupposcai.it |
+      | ticketDate        | auto                        |
+      | vrDate            | auto                        |
+    When viene invocata l'api "CREATE_ACT_OPERATION"
+    And il servizio risponde con 201
+    And viene atteso lo stato "CREATING" dell'operazione
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 200
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    And viene atteso lo stato "OK" dell'operazione
+
 
   @CallCenterEvolutoViaMail @onlyDev
     #BUG: https://pagopa.atlassian.net/browse/PN-16237
@@ -152,7 +176,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
@@ -187,7 +211,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
   @CallCenterEvolutoViaMail
   Scenario Outline: [CCE_MAIL_UPLOAD_VIDEO_2] Verifica stato operazione con operationId inesistente (Scenario 8, 9)
     Given viene settato l'operationId a <operationId>
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con <statusCode>
     Examples:
@@ -216,7 +240,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | vrDate            | auto                        |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
