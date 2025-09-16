@@ -408,8 +408,8 @@ public class PaperTrackerSteps {
      * 5) per ciascuno di essi invoco il metodo di b2bSteps "checkIfTimelineElementExists"
      */
 
-    @Then("si controlla che siano presenti tutti gli eventi relativi alla sequence {string} e iun {string}")
-    public void checkSequenceEventsOnPaperTracker(String sequenceName, String iun) {
+    @Then("si controlla che siano presenti tutti gli eventi relativi alla sequence {string}")
+    public void checkSequenceEventsOnPaperTracker(String sequenceName) {
         log.info("Creata notifica con " + sequenceName + "e IUN: " + sharedSteps.getNotificationIun());
         TimelineSequence timelineSequence = TimelineSequence.getByName(sequenceName);
         assertThat(timelineSequence).as("Sequence inesistente: " + sequenceName).isNotNull();
