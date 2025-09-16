@@ -1,7 +1,5 @@
 package it.pagopa.interop.authorization.service.identity;
 
-import it.pagopa.interop.authorization.service.DPoPTokenService;
-
 import java.util.UUID;
 
 public interface IdentityService {
@@ -15,5 +13,5 @@ public interface IdentityService {
 
     UUID getOrganizationId(String tenantType);
 
-    DPoPTokenService.PreparedClient getPreparedClient(UUID clientId);
+    String getKind(String tenantType);
 }

@@ -17,7 +17,6 @@ Feature: Gestione degli agreements
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "<ente>" ha un agreement m2m attivo per ciascun e-service di "PA1"
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare una lista di 1 agreements creati
     Then si ottiene lo status code 401
-

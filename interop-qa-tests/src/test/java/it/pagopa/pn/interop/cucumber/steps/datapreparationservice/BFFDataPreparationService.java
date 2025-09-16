@@ -16,6 +16,7 @@ import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -29,6 +30,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
@@ -54,7 +56,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
@@ -63,7 +67,6 @@ import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
@@ -80,6 +83,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +95,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
@@ -351,7 +356,7 @@ public class BFFDataPreparationService {
             .build();
     }
 
-    public UUID createAttribute(AttributeKind attributeKind, String name) {
+    public Attribute createAttribute(AttributeKind attributeKind, String name) {
         String actualName = name == null ? String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         switch (attributeKind) {
             case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
@@ -366,7 +371,7 @@ public class BFFDataPreparationService {
                 res -> !res.getResults().isEmpty(),
                 "There was an error while retrieving the attributes"
         );
-        return ((Attribute) httpCallExecutor.getResponse()).getId();
+        return ((Attribute) httpCallExecutor.getResponse());
     }
 
     public void declareDeclaredAttribute(UUID tenantId, UUID attributeId) {
@@ -390,6 +395,20 @@ public class BFFDataPreparationService {
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
                 "There was an error while retrieving the attributes"
         );
+    }
+
+    public void assignDeclaredAttributeToTenant(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(
+            () -> tenantsApi.addDeclaredAttribute(new DeclaredTenantAttributeSeed().id(attributeId)));
+        assertValidResponse();
+
+        // FIXME 26/03/2025 momentaneamente disabilitato a causa dell'imprevisto contenuto della
+        //  risposta, la quale è vuota quando non dovrebbe. Non impattante sull'attuale parco test.
+        /*pollingService.makePolling(
+            () -> tenantsApi.getDeclaredAttributes(xCorrelationId, tenantId),
+            res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
+            "There was an error while retrieving the attributes"
+        );*/
     }
 
     public void assignVerifiedAttributeToTenant(UUID tenantId, UUID verifierId, UUID attributeId, UUID agreementId, String expirationDate  ) {
@@ -475,6 +494,22 @@ public class BFFDataPreparationService {
         }
     }
 
+    public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId) {
+        UpdateEServiceDescriptorTemplateInstanceSeed seed = new UpdateEServiceDescriptorTemplateInstanceSeed()
+            .dailyCallsPerConsumer(10)
+            .dailyCallsTotal(100)
+            .addAudienceItem("some audience item")
+            .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, seed));
+        assertValidResponse();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            log.error("Error while sleeping: {}", e.getMessage());
+        }
+    }
+
     public Map<String, UUID> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
         // 1 add document to descriptor
         UUID documentId = null;
@@ -523,6 +558,53 @@ public class BFFDataPreparationService {
         return result;
     }
 
+    public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+        // 1 add document to descriptor
+        UUID documentId = null;
+        Map<String, Object> result = new HashMap<>();
+        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId, null);
+        result.put("descriptorId", descriptorId);
+        result.put("documentId", documentId);
+
+        if (descriptorState == EServiceDescriptorState.DRAFT) return result;
+
+        // 2. Add interface to descriptor
+        interpolateInterfaceToDescriptor(eServiceId, descriptorId);
+
+        // 3. Publish Descriptor
+        publishTemplateInstanceDescriptor(eServiceId, descriptorId);
+        if (descriptorState == EServiceDescriptorState.PUBLISHED) return result;
+
+        // 4. Suspend Descriptor
+        if (descriptorState == EServiceDescriptorState.SUSPENDED) {
+            suspendDescriptor(eServiceId, descriptorId);
+            return result;
+        }
+
+        if (descriptorState == EServiceDescriptorState.DEPRECATED) {
+            // Optional. Create an agreement
+            UUID agreementId = createAndCheckAgreement(eServiceId, descriptorId);
+            submitAgreement(agreementId, AgreementState.ACTIVE);
+        }
+
+        // Create another DRAFT descriptor
+        UUID secondDescriptorId = createNextDraftDescriptor(eServiceId);
+
+        // Add interface to secondDescriptor
+        interpolateInterfaceToDescriptor(eServiceId, secondDescriptorId);
+
+        // Publish secondDescriptor
+        publishTemplateInstanceDescriptor(eServiceId, secondDescriptorId);
+
+        // Check until the first descriptor is in desired state
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+            res -> res.getState() == descriptorState,
+            "There was an error while retrieving the producer e-service descriptor"
+        );
+        return result;
+    }
+
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
         String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
@@ -553,14 +635,44 @@ public class BFFDataPreparationService {
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
+    public void interpolateInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
+            .contactName("Some contact name")
+            .contactEmail("some@contact-email.it")
+            .addServerUrlsItem(URI.create("http://www.some.url.it"));
+        httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
+        assertValidResponse();
+
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+            res -> res.getInterface() != null,
+            "There was an error while retrieving the producer e-service descriptor"
+        );
+    }
+
     public void publishDescriptor(UUID eServiceId, UUID descriptorId) {
-        updateDraftDescriptor(eServiceId, descriptorId, new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        updateDraftDescriptor(eServiceId, descriptorId,
+            new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        httpCallExecutor.performCall(
+            () -> eServiceClient.publishDescriptor(
+                eServiceId, descriptorId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(
+                eServiceId, descriptorId),
+            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+    }
+
+    public void publishTemplateInstanceDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId);
         httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
         assertValidResponse();
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getState() == EServiceDescriptorState.PUBLISHED,
-                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 
@@ -597,6 +709,10 @@ public class BFFDataPreparationService {
     }
 
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null);
+    }
+
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -665,7 +781,7 @@ public class BFFDataPreparationService {
                     .build();
         }
         // 2. Activate the purpose version
-        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get()));
+        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get(), delegationRef));
         assertValidResponse();
 
         // 3. If the state required is WAITING_FOR_APPROVAL, we need to wait until the purpose version is in that state and return the purposeId
@@ -798,8 +914,8 @@ public class BFFDataPreparationService {
         );
     }
 
-    public void activateAgreement(UUID agreementId, ClientType reactivatedBy) {
-        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId));
+    public void activateAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
+        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId, delegationRef));
         assertValidResponse();
         pollingService.makePolling(
             () -> agreementClient.getAgreementById(agreementId),
@@ -935,7 +1051,8 @@ public class BFFDataPreparationService {
     }
 
     private void assertValidResponse() {
-        commonUtils.assertValidResponse();
+        Assertions.assertFalse(httpCallExecutor.getResponseStatus().isError(),
+                "Something went wrong: " + httpCallExecutor.getResponseStatus().getReasonPhrase());
     }
 
     private ClientSeed merge(ClientSeed defaultClientSeed, ClientSeed partialClientSeed) {

@@ -1,20 +1,18 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
+import static java.util.Objects.requireNonNull;
+
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Role;
-import it.pagopa.interop.authorization.enums.M2MRole;
-import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.M2MTokenService.M2MRole;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
-import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.Map;
 import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
 
 public class M2MAuthSteps {
     @ParameterType("m2m|m2m-admin")
@@ -25,35 +23,38 @@ public class M2MAuthSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final IHttpExecutor httpCallExecutor;
 
     public M2MAuthSteps(
-            ClientTokenConfigurator clientTokenConfigurator,
-            SharedStepsContext sharedStepsContext
+        ClientTokenConfigurator clientTokenConfigurator,
+        SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+    }
+
+    @Given("l'utente è un {m2mRole} dell'ente {delegationRole}")
+    public void authenticateM2MDelegationUser(M2MRole m2MRole, DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        authenticateM2MUser("admin", tenantType, m2MRole);
     }
 
     @Given("l'utente è un {string} di {string} con ruolo M2M {m2mRole}")
     public void authenticateM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
         String token = identityService.getToken(tenant, m2MRole.toString());
-        UUID clientId = getClientId(token);
-
-        DPoPTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
-        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(selfcareRole.toUpperCase()));
         sharedStepsContext.setTenantType(tenant);
+
+        UUID clientId = getClientId(token);
+        sharedStepsContext.getClientCommonContext().addClient(clientId);
     }
 
-    @Given("viene impostato per l'utente un token m2m scaduto")
+    @Given("viene impostato per l'utente un token m2m non valido")
     public void setExpiredM2MAuth() {
-        String expiredToken = "eyJhbGciOiJSUzI1NiIsInVzZSI6InNpZyIsInR5cCI6ImF0K2p3dCIsImtpZCI6IjE3ZDNmM2MwLTU3MzAtNDVhOS1iZThhLTY1NWU3N2JmMzU1NSJ9.ewogICJqdGkiOiAiZmEyMTkyMDMtYTgxNy00MzZjLWExYTktZWI2ZWFjYjk0Y2RhIiwKICAiaXNzIjogInFhLmludGVyb3AucGFnb3BhLml0IiwKICAiYXVkIjogInFhLmludGVyb3AucGFnb3BhLml0L20ybSIsCiAgImNsaWVudF9pZCI6ICJlOGU0YjAwNC1jNDUwLTRjOTEtYWQ3Yy1mZDQyZWU5YTAwNTUiLAogICJzdWIiOiAiZThlNGIwMDQtYzQ1MC00YzkxLWFkN2MtZmQ0MmVlOWEwMDU1IiwKICAiaWF0IjogMTc0ODkzNzE0MiwKICAibmJmIjogMTc0ODkzNzE0MiwKICAiZXhwIjogMTc0ODkzNzE0MSwKICAib3JnYW5pemF0aW9uSWQiOiAiZTc5YTI0Y2QtOGVkYy00NDFlLWFlOGQtZTg3YzNhZWEwMDU5IiwKICAicm9sZSI6ICJtMm0tYWRtaW4iLAogICJhZG1pbklkIjogImYwN2RkYjhmLTE3ZjktNDdkNC1iMzFlLTM1ZDFhYzEwZTUyMSIKfQ.HfhAKKu06x7uCGAYl7M8Pbzm6EfQFiqgFlKD-0bqraz0UFCJKRi91rFiaurWiRA-4lQiX5S6apuKcSvOZ6_DYGQcwgkrIhRCQ-dtohxRR_zyR-mTImkEfJow-t3eAkuKMRN8jxeNl8eWJ-lWbTKNkIxlzmmSaueH-ga-uDC6hNj6hOP6WukFCIN5yq-Gthr_NZzMcHZdHaHCKxcpIbjmrRvJJYTfztQZgJqC_N6Uv3_fKUzdJtZLswjqr5vUW1_DOYhEez2Iv5tOycMKQLn9N0Q474lPJ3TAiAHpOFpbSKZhj_IwWKjV5z37Gc04H6-csLYJrumvDyz6H0hf_ofNNA";
+        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
         clientTokenConfigurator.setBearerToken(expiredToken);
         sharedStepsContext.setUserToken(expiredToken);
     }
@@ -77,7 +78,8 @@ public class M2MAuthSteps {
         String clientIdField = "client_id";
         Object oClientId = jwtPayload.get(clientIdField);
         requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(clientIdField));
-        return UUID.fromString(oClientId.toString());
+        UUID clientId = UUID.fromString(oClientId.toString());
+        return clientId;
     }
 
 }

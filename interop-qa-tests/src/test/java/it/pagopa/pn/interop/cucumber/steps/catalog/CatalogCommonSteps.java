@@ -40,7 +40,7 @@ public class CatalogCommonSteps {
     @Then("si ottiene status code {int} e la lista di {int} e-service(s)")
     public void verifyReceivedResponse(int statusCode, int eServiceNumber) {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getClientResponse());
+        Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getResponseStatus());
         Assertions.assertEquals(eServiceNumber,
                 ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());
 

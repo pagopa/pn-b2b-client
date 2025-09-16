@@ -20,7 +20,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare una lista di 5 finalità create
     Then si ottiene status code 401
 
@@ -65,7 +65,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When viene impostato per l'utente un token m2m scaduto
+    When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di visualizzare la lista delle versioni della finalità
     Then si ottiene status code 401
 
@@ -95,7 +95,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When viene impostato per l'utente un token m2m scaduto
+    When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di visualizzare la nuova versione della finalità
     Then si ottiene status code 401
 
@@ -150,7 +150,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 401
 
@@ -229,7 +229,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 401
 
@@ -353,7 +353,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 401
 
@@ -470,7 +470,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 401
      # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
@@ -574,7 +574,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 401
      # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,

@@ -48,7 +48,7 @@ public class AttributeCommonSteps {
             int finalI = i;
             futures[i] = CompletableFuture.supplyAsync(() -> dataPreparationService.createAttribute(
                 attributeKind,
-                "attribute-%d-%d-%s".formatted(finalI, sharedStepsContext.getTestSeed(), attributeKind)));
+                "attribute-%d-%d-%s".formatted(finalI, sharedStepsContext.getTestSeed(), attributeKind)).getId());
         }
 
         CompletableFuture.allOf(futures).join();
@@ -69,7 +69,7 @@ public class AttributeCommonSteps {
             softly.assertThat(httpCallExecutor.getResponse())
                 .as("Attribute response NULL check")
                 .isNotNull();
-            softly.assertThat(httpCallExecutor.getClientResponse().value())
+            softly.assertThat(httpCallExecutor.getResponseStatus().value())
                 .as("Attribute response status code check")
                 .isEqualTo(statusCode);
             softly.assertThat(httpCallExecutor.getResponse())

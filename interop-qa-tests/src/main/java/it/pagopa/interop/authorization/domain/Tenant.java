@@ -11,4 +11,5 @@ public class Tenant {
     private String selfcareId;
     private Map<String, String> organizationId;
     private Map<String, List<String>> userRoles;
+    private String kind;
 }

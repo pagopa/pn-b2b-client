@@ -22,7 +22,7 @@ Feature: Gestione degli attributes
     And viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare il record di certifiedAttribute creato
     Then si ottiene lo status code 401
     And certifiedAttribute non restituito
