@@ -1,6 +1,7 @@
 package it.pagopa.interop.authorization.service.identity;
 
 import it.pagopa.interop.authorization.domain.Tenant;
+import it.pagopa.interop.authorization.service.M2MDPopTokenService;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import java.util.List;
@@ -68,12 +69,8 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     }
 
     @Override
-    public String getKind(String tenantType) {
-        return tenantList.stream()
-            .filter(tenant -> tenantType.equals(tenant.getName()))
-            .map(Tenant::getKind)
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+    public M2MDPopTokenService.PreparedClient getPreparedClient(UUID clientId) {
+        throw new RuntimeException("Not implemented yet");
     }
 
 }

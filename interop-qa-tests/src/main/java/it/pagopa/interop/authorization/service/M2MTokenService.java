@@ -42,7 +42,7 @@ public class M2MTokenService {
     private final DataPreparationService dataPreparationService;
     private final VoucherService voucherService;
     private final Map<TokenKey, String> tokenCache = new ConcurrentHashMap<>();
-    private final Map<UUID, DPoPTokenService.PreparedClient> preparedClientCache = new ConcurrentHashMap<>();
+    private final Map<UUID, M2MDPopTokenService.PreparedClient> preparedClientCache = new ConcurrentHashMap<>();
 
     public M2MTokenService(
             IdentityService identityService,
@@ -85,7 +85,7 @@ public class M2MTokenService {
             String keyType = "RSA";
             KeyPairDecorator keyPair = of(keyType, 2048);
             String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
-            KeySeed keySeed = KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0);
+            KeySeed keySeed = KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0);
             dataPreparationService.addPublicKeyToClient(clientId, keySeed);
 
             ClientAssertionOptions assertionOptions = ClientAssertionOptions.builder()
@@ -105,14 +105,14 @@ public class M2MTokenService {
             VoucherResponse voucherResponse = new ObjectMapper()
                     .convertValue(voucher, VoucherResponse.class);
 
-            this.preparedClientCache.put(clientId, new DPoPTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType)));
+            this.preparedClientCache.put(clientId, new M2MDPopTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType)));
             this.tokenCache.put(tokenKey, voucherResponse.getAccessToken());
         }
 
         return this.tokenCache.get(tokenKey);
     }
 
-    public DPoPTokenService.PreparedClient getPreparedClient(@NonNull UUID clientId) {
+    public M2MDPopTokenService.PreparedClient getPreparedClient(@NonNull UUID clientId) {
         return preparedClientCache.get(clientId);
     }
 }

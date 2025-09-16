@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.M2MDPopTokenService;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class ClientCommonContext {
     private List<UUID> clients = new ArrayList<>();
     private List<UUID> users = new ArrayList<>();
-    private List<DPoPTokenService.PreparedClient> preparedClients = new ArrayList<>();
+    private List<M2MDPopTokenService.PreparedClient> preparedClients = new ArrayList<>();
 
     //Represents the public key uploaded to the client
     private String clientPublicKey;
@@ -65,7 +65,7 @@ public class ClientCommonContext {
         return clients.get(clients.size() - 1);
     }
 
-    public DPoPTokenService.PreparedClient getLastPreparedClient() {
+    public M2MDPopTokenService.PreparedClient getLastPreparedClient() {
         Assertions.assertFalse(preparedClients == null || preparedClients.isEmpty());
         return preparedClients.get(preparedClients.size() - 1);
     }
@@ -77,7 +77,7 @@ public class ClientCommonContext {
         clients.add(clientId);
     }
 
-    public void addClient(DPoPTokenService.PreparedClient client){
+    public void addClient(M2MDPopTokenService.PreparedClient client){
         preparedClients.add(client);
         addClient(client.clientId());
     }

@@ -1,7 +1,7 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
 import it.pagopa.interop.authorization.service.DataPreparationService;
-import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.M2MDPopTokenService;
 import it.pagopa.interop.authorization.service.M2MTokenService;
 import it.pagopa.interop.authorization.service.factory.InteropTokenFactory;
 import it.pagopa.interop.authorization.service.factory.TracingTokenFactory;
@@ -10,7 +10,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityServiceInteropIm
 import it.pagopa.interop.authorization.service.identity.IdentityServiceSelfcareImpl;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.DpopProofService;
-import it.pagopa.interop.authorization.service.utils.voucher.DPoPVoucherService;
+import it.pagopa.interop.authorization.service.utils.voucher.DPopVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +77,10 @@ public class JwtTokenServiceConfiguration {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public DPoPVoucherService dPopVoucherService(
+    public DPopVoucherService dPopVoucherService(
             @Autowired RestTemplate restTemplate
     ) {
-        return new DPoPVoucherService(restTemplate);
+        return new DPopVoucherService(restTemplate);
     }
 
 
@@ -92,13 +92,13 @@ public class JwtTokenServiceConfiguration {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public DPoPTokenService m2mDpopTokenService(
+    public M2MDPopTokenService m2mDpopTokenService(
             @Qualifier("interopSelfcareIdentityService") IdentityService identityService,
             DataPreparationService dataPreparationService,
-            DPoPVoucherService dPopVoucherService,
+            DPopVoucherService dPopVoucherService,
             DpopProofService dpopProofService
     ) {
-        return new DPoPTokenService(identityService, dataPreparationService, dPopVoucherService, dpopProofService);
+        return new M2MDPopTokenService(identityService, dataPreparationService, dPopVoucherService, dpopProofService);
     }
 
 

@@ -1,6 +1,5 @@
 package it.pagopa.interop.authorization.service.utils;
 
-import com.nimbusds.jose.jwk.KeyType;
 import it.pagopa.interop.authorization.domain.KeyPairPEM;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
@@ -86,27 +85,18 @@ public class KeyPairGeneratorUtil {
         }
     }
 
-    public static List<KeySeed> createKeySeed(String key, KeyType keyType) {
-        return createKeySeed(key, getRandomInt(), keyType);
+    public static List<KeySeed> createKeySeed(String key) {
+        return createKeySeed(key, getRandomInt());
     }
 
-    public static List<KeySeed> createKeySeed(String key, int firstId, KeyType keyType) {
-        String alg = switch (keyType.getValue()) {
-            case "RSA" -> "RS256";
-            case "EC" -> "ES256";
-            case "OKP" -> "EdDSA"; // per Ed25519
-            default -> throw new IllegalArgumentException("Unsupported key type: " + keyType.getValue());
-        };
-
+    public static List<KeySeed> createKeySeed(String key, int firstId) {
         KeySeed keySeed = new KeySeed();
         keySeed.setUse(KeyUse.SIG);
-        keySeed.setAlg(alg);
+        keySeed.setAlg("RS256");
         keySeed.setName(String.format("key-%d-%d", firstId, getRandomInt()));
         keySeed.setKey(key);
-
         return List.of(keySeed);
     }
-
 
     private static int getRandomInt() {
         return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);

@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.M2MDPopTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -47,7 +47,7 @@ public class ClientKeyReadSteps {
 
         // TODO: valutare di far restare solo preparedClient
         UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
-        DPoPTokenService.PreparedClient preparedClient = new DPoPTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType));
+        M2MDPopTokenService.PreparedClient preparedClient = new M2MDPopTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType));
         sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);
@@ -57,41 +57,9 @@ public class ClientKeyReadSteps {
         sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(
                 clientId,
-                KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0));
+                KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
-
-    @Given("un {string} di {string} ha caricato una chiave pubblica nel client con algoritmo {string}")
-    public void clientPublicKeyUpload(String role, String tenantType, String kType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
-
-        int keySize;
-        KeyType keyType = KeyType.parse(kType);
-
-        if (keyType.equals(KeyType.RSA)) keySize = 2048;
-        else if (keyType.equals(KeyType.EC)) keySize = 256;
-        else throw new IllegalArgumentException("Unsupported key type: " + kType);
-
-        KeyPairDecorator keyPair = KeyPairDecorator.of(kType, keySize);
-        String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
-
-        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
-        DPoPTokenService.PreparedClient preparedClient = new DPoPTokenService.PreparedClient(clientId, keyPair, keyType);
-        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
-
-        sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);
-        sharedStepsContext.getClientCommonContext().setClientPublicKeyAsObj(keyPair.getPublic());
-        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivatePEM());
-        sharedStepsContext.getClientCommonContext().setClientPrivateKeyAsObj(keyPair.getPrivate());
-        sharedStepsContext.getClientCommonContext().setKeyType(keyType.getValue());
-
-        String keyId = dataPreparationService.addPublicKeyToClient(
-                clientId,
-                KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, keyType).get(0)
-        );
-        sharedStepsContext.getClientCommonContext().setKeyId(keyId);
-    }
-
 
     @When("l'utente richiede la lettura della chiave pubblica")
     public void userReadPublicKey() {

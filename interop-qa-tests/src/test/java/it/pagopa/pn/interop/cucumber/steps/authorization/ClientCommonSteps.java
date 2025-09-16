@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import static java.util.stream.Collectors.toList;
 
 import io.cucumber.java.en.Given;
@@ -78,7 +76,7 @@ public class ClientCommonSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} client(s)")
     public void verifyStatusCodeAndClientList(int statusCode, int count) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
         Assertions.assertEquals(count, ((CompactClients) httpCallExecutor.getResponse()).getResults().size());
     }
 
@@ -96,20 +94,8 @@ public class ClientCommonSteps {
 
     @Then("si ottiene status code {int}")
     public void verifyStatusCode(int statusCode) {
-        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
-        else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
-    }
-
-    /* DEV. NOTE 12/03/2025: si differenzia da verifyStatusCode(int statusCode) per la verifica
-    * accurata dello status anche in caso di esito positivo, bypassando quindi la normalizzazione
-    * su codice 200. Questo è reso possibile dalla recente aggiunta del metodo
-    * it.pagopa.interop.utils.HttpCallExecutor.performCall(java.util.function.Supplier<T>, java.util.function.Function<T,org.springframework.http.HttpStatus>)
-    * che dà modo di conservare lo status code originale. */
-    @Then("si ottiene response status code {int}")
-    public void accuratelyVerifyStatusCode(int statusCode) {
-        assertThat(httpCallExecutor.getResponseStatus().value())
-            .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", HttpCallExecutor.class.getSimpleName())
-            .isEqualTo(statusCode);
+        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        else Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
     }
 
     private ClientSeed createClientSeed(int index) {
@@ -117,4 +103,6 @@ public class ClientCommonSteps {
         clientSeed.setName(String.format("client-%d-%d-%s", index, sharedStepsContext.getTestSeed(), ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         return clientSeed;
     }
+
+
 }
