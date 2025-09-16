@@ -1,6 +1,7 @@
 @DPoPSuite
 Feature: Test di sicurezza e funzionalità dei token interop con DPoP
 
+
   Scenario Outline: [DP01] Il campo "token_type" restituito è "DPoP" e il campo "cnf.jkt" è presente e corretto (Scenario 1,6,7,12)
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -23,6 +24,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
       | EC      |
       | RSA     |
 
+
   Scenario: [DP02] La presenza di due header DPoP inibisce la creazione del token
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -39,6 +41,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
       | tokenType   | null |
       | accessToken | null |
       | expiresIn   | null |
+
 
   Scenario: [DP03] Access token generato senza header DPoP deve essere di tipo "Bearer"
     Given l'utente è un "admin" di "PA1"
@@ -95,6 +98,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
       | tokenType   | null |
       | accessToken | null |
       | expiresIn   | null |
+
 
   Scenario: [DP06] Richiesta access token con metodo HTM errato nel JWT DPoP restituisce errore 400
     Given l'utente è un "admin" di "PA1"
@@ -163,3 +167,4 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
       | tokenType   | null |
       | accessToken | null |
       | expiresIn   | null |
+
