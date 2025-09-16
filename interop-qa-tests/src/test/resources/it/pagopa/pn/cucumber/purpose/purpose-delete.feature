@@ -1,7 +1,8 @@
 @purpose
 Feature: Cancellazione finalità
   Tutti gli admin possono cancellare una propria finalità in stato DRAFT o WAITING_FOR_APPROVAL.
-  
+
+  @nrt-minimal
   @purpose_delete1
   Scenario Outline: [PURPOSE_DELETE_1] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -29,6 +30,7 @@ Feature: Cancellazione finalità
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+  @nrt-minimal
   @purpose_delete2
   Scenario Outline: [PURPOSE_DELETE_2] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -45,6 +47,7 @@ Feature: Cancellazione finalità
       | WAITING_FOR_APPROVAL |       204 |
       | ARCHIVED             |       409 |
 
+  @nrt-minimal
   @purpose_delete3
   Scenario: [PURPOSE_DELETE_3] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), che non è il fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"

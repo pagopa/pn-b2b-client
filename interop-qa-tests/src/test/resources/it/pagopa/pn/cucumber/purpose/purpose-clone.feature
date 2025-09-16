@@ -2,6 +2,7 @@
 Feature: Clonazione di una finalità
   Tutti gli utenti autorizzati di enti fruitori possono clonare una propria finalità
 
+  @nrt-minimal
   @purpose_clone1
   Scenario Outline: [CLONAZIONE_FINALITA_1] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato ACTIVE, per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -37,6 +38,7 @@ Feature: Clonazione di una finalità
       | PA1  | admin | WAITING_FOR_APPROVAL |       200 |
       | PA1  | admin | SUSPENDED            |       200 |
 
+  @nrt-minimal
   @purpose_clone2
   Scenario Outline: [CLONAZIONE_FINALITA_2] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT, o ARCHIVED per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. Ottiene un errore se la finalità è in stato DRAFT, successo se è in stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
@@ -54,6 +56,7 @@ Feature: Clonazione di una finalità
       | DRAFT         |  409   |
       | ARCHIVED      |  409   |
 
+  @nrt-minimal
   @purpose_clone3
   Scenario Outline: [CLONAZIONE_FINALITA_3] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato WAITING_FOR_APPROVAL, ACTIVE, o SUSPENDED per una versione di e-service, il quale ha mode = DELIVER, clona una finalità. La richiesta va a buon fine. Spiega: visto che ci sono problemi legati all’analisi del rischio in erogazione inversa, non è possibile clonare una finalità che faccia riferimento a un e-service in erogazione inversa.
     Given l'utente è un "admin" di "PA1"

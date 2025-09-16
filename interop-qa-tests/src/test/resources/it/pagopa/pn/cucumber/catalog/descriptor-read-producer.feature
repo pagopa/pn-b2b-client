@@ -2,6 +2,7 @@
 Feature: Lettura di un descrittore lato erogatore
   Tutti gli utenti autorizzati di enti erogatori possono leggere i propri descrittori
 
+  @nrt-minimal
   @descriptor_read_producer1
   Scenario Outline: [DESCRIPTOR_READ_PRODUCER_1] Per un e-service precedentemente creato dall’ente, il quale ha un solo descrittore in qualsiasi stato (DRAFT, PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), la richiesta per ottenere i dettagli della versione di e-service, da parte di un utente autorizzato, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -29,6 +30,7 @@ Feature: Lettura di un descrittore lato erogatore
       | PA1  | admin | DEPRECATED    |       200 |
       | PA1  | admin | ARCHIVED      |       200 |
 
+  @nrt-minimal
   @descriptor_read_producer2
   Scenario Outline: [DESCRIPTOR_READ_PRODUCER_2] Per un e-service precedentemente creato da un altro ente, il quale ha un solo descrittore in qualsiasi stato (DRAFT, PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), la richiesta per ottenere i dettagli della versione di e-service restituisce errore
     Given l'utente è un "admin" di "PA1"

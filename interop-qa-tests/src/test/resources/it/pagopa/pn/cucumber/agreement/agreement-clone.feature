@@ -2,6 +2,7 @@
 Feature: Clonazione di una richiesta di fruizione.
   Tutti gli utenti autorizzati possono clonare una richiesta di fruizione in stato REJECTED
 
+  @nrt-minimal
   @agreement_clone1
   Scenario Outline: [AGREEMENT_CLONE_01] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato REJECTED. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -29,6 +30,7 @@ Feature: Clonazione di una richiesta di fruizione.
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @nrt-minimal
   @agreement_clone2a
   Scenario Outline: [AGREEMENT_CLONE_02A] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato DRAFT, PENDING, ACTIVE, SUSPENDED, ARCHIVED. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
@@ -45,6 +47,7 @@ Feature: Clonazione di una richiesta di fruizione.
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @nrt-minimal
   @agreement_clone2b
   Scenario Outline: [AGREEMENT_CLONE_02B] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"

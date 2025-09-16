@@ -2,6 +2,7 @@
 Feature: Listing e-service producers
   Tutti gli utenti autenticati possono leggere la lista dei aderenti che erogano almeno un e-service
 
+  @nrt-minimal
   @tenant_e_service_producers_listing1
   Scenario Outline: [TENANT_E_SERVICE_PRODUCERS_LISTING_01] Restituisce tutti gli erogatori di e-service presenti in catalogo, compresi anche quelli in stato DRAFT, per qualsiasi livello di permesso e tipologia di ente.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -21,6 +22,7 @@ Feature: Listing e-service producers
       | PA1     | support      |
       | PA1     | api,security |
 
+  @nrt-minimal
   @tenant_e_service_producers_listing2
   Scenario: [TENANT_E_SERVICE_PRODUCERS_LISTING_02] A fronte di 3 o più aderenti in db, restituisce solo i primi 2 risultati (scopo del test è verificare il corretto funzionamento del parametro limit)
     Given l'utente è un "admin" di "PA1"
@@ -30,6 +32,7 @@ Feature: Listing e-service producers
     When l'utente richiede una operazione di listing degli erogatori con limit 2
     Then si ottiene status code 200 e la lista di 2 aderenti
 
+  @nrt-minimal
   @tenant_e_service_producers_listing3
   Scenario: [TENANT_E_SERVICE_PRODUCERS_LISTING_03] A fronte di più aderenti in db e una richiesta con offset, restituisce il corretto numero di risultati (scopo del test è verificare il corretto funzionamento del parametro offset)
     Given l'utente è un "admin" di "PA1"
@@ -39,6 +42,7 @@ Feature: Listing e-service producers
     When l'utente richiede una operazione di listing degli erogatori con offset 2
     Then si ottiene status code 200 e il giusto numero di erogatori in base all'offset richiesto
 
+  @nrt-minimal
   @tenant_e_service_producers_listing4
   Scenario: [TENANT_E_SERVICE_PRODUCERS_LISTING_04] Restituisce gli aderenti che contengono la keyword "PagoPA" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
     Given l'utente è un "admin" di "PA1"
@@ -46,6 +50,7 @@ Feature: Listing e-service producers
     When l'utente richiede una operazione di listing degli erogatori filtrando per nome aderente "PagoPA S.p.A."
     Then si ottiene status code 200 e la lista di 1 aderente
 
+  @nrt-minimal
   @tenant_e_service_producers_listing5
   Scenario: [TENANT_E_SERVICE_PRODUCERS_LISTING_05] Restituisce un insieme vuoto di aderenti per una ricerca che non porta risultati (scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
     Given l'utente è un "admin" di "PA1"

@@ -2,6 +2,7 @@
 Feature: Lettura di un documento allegato alla richiesta di fruizione
   Tutti gli utenti autorizzati possono leggere un documento allegato alla richiesta di fruizione
 
+  @nrt-minimal
   @agreement_document_read1
   Scenario Outline: [AGREEMENT_DOCUMENT_READ_01] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato DRAFT, relativa a un e-service pubblicato dallo stesso ente, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -23,6 +24,7 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | PA1  | support      |       200 |
       | PA1  | api,security |       403 |
 
+  @nrt-minimal
   @agreement_document_read2a
   Scenario Outline: [AGREEMENT_DOCUMENT_READ_02A] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "PA1"
@@ -38,6 +40,7 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @nrt-minimal
   @agreement_document_read2b
   Scenario Outline: [AGREEMENT_DOCUMENT_READ_02B] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "<enteFruitore>"

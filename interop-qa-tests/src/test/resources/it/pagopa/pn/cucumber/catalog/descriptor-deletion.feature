@@ -2,6 +2,7 @@
 Feature: Cancellazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono cancellare i propri descrittori e, potenzialmente, gli e-services
 
+  @nrt-minimal
   @descriptor_deletion1
   Scenario: [DESCRIPTOR_DELETION_1] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, la richiesta di cancellazione del descrittore cancella contestualmente anche l'e-service del quale fa parte
     Given l'utente è un "admin" di "PA1"
@@ -10,6 +11,7 @@ Feature: Cancellazione di un descrittore
     Then si ottiene status code 204
     Then il descrittore è stato cancellato, e anche l'eservice
 
+  @nrt-minimal
   @descriptor_deletion2
   Scenario: [DESCRIPTOR_DELETION_2] Per un e-service che ha più di un descrittore, l’ultimo dei quali è in stato DRAFT, la richiesta di cancellazione del descrittore cancella solo il descrittore stesso e non l’e-service del quale fa parte né nessuno degli altri descrittori dell’e-service
     Given l'utente è un "admin" di "PA1"
@@ -19,6 +21,7 @@ Feature: Cancellazione di un descrittore
     Then si ottiene status code 204
     Then quell'e-service non è stato cancellato
 
+  @nrt-minimal
   @descriptor_deletion3
   Scenario Outline: [DESCRIPTOR_DELETION_3] Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), la richiesta di cancellazione del descrittore restituisce errore
     Given l'utente è un "admin" di "PA1"

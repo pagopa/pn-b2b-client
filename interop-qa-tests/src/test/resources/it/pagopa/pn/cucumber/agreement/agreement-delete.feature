@@ -2,6 +2,7 @@
 Feature: Cancellazione richiesta di fruizione
   Tutti gli utenti autorizzati possono cancellare una richiesta di fruizione in stato DRAFT o MISSING_CERTIFIED_ATTRIBUTES
 
+  @nrt-minimal
   @agreement_delete1a
   Scenario Outline: [AGREEMENT_DELETE_01A] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -28,6 +29,7 @@ Feature: Cancellazione richiesta di fruizione
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @nrt-minimal
   @agreement_delete1b
   Scenario Outline: [AGREEMENT_DELETE_01B] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
@@ -43,6 +45,7 @@ Feature: Cancellazione richiesta di fruizione
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @nrt-minimal
   @agreement_delete2a
   Scenario Outline: [AGREEMENT_DELETE_02A] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato PENDING, ACTIVE, SUSPENDED o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -57,6 +60,7 @@ Feature: Cancellazione richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @nrt-minimal
   @agreement_delete2b
   Scenario: [AGREEMENT_DELETE_02B] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato REJECTED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"

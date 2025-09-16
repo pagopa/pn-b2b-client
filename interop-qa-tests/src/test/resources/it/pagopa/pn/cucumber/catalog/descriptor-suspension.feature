@@ -2,6 +2,7 @@
 Feature: Sospensione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono sospendere i propri descrittori
 
+  @nrt-minimal
   @descriptor_suspension1
   Scenario Outline: [DESCRIPTOR_SUSPENSION_1] Per un e-service che ha un descrittore in stato PUBLISHED o DEPRECATED, alla richiesta di sospensione da parte di un utente autorizzato, la sospensione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -24,6 +25,7 @@ Feature: Sospensione di un descrittore
       | ente | ruolo | statoVersione | risultato |
       | PA1  | admin | DEPRECATED    |       204 |
 
+  @nrt-minimal
   @descriptor_suspension2
   Scenario Outline: [DESCRIPTOR_SUSPENSION_2] Per un e-service che ha un descrittore in stato ARCHIVED, DRAFT o SUSPENDED, alla richiesta di sospensione, si ottiene un errore
     Given l'utente è un "admin" di "PA1"

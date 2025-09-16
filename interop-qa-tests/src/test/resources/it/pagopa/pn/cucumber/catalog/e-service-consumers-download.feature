@@ -2,6 +2,7 @@
 Feature: Download dei fruitori di un e-service
   Tutti gli utenti autenticati di enti erogatori possono scaricare l'elenco dei fruitori di un e-service
 
+  @nrt-minimal
   @eservice_consumers1
   Scenario Outline: [ESERVICE_CONSUMERS_1] Per un e-service precedentemente creato e pubblicato, è possibile scaricare il file contenente l'elenco dei fruitori
     Given l'utente è un "<ruolo>" di "<ente>"

@@ -2,6 +2,7 @@
 Feature: Cancellazione di un documento allegato alla richiesta di fruizione
   Tutti gli utenti autorizzati possono cancellare un documento allegato alla richiesta di fruizione in stato DRAFT
 
+  @nrt-minimal
   @agreement_document_delete1
   Scenario Outline: [AGREEMENT_DOCUMENT_DELETE_01] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato DRAFT, cancella un documento associato alla richiesta di fruizione. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -28,6 +29,7 @@ Feature: Cancellazione di un documento allegato alla richiesta di fruizione
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @nrt-minimal
   @agreement_document_delete2a @wait_for_fix @IMN-310
   Scenario Outline: [AGREEMENT_DOCUMENT_DELETE_02A] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, cancella un documento associato alla richiesta di fruizione. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
@@ -43,6 +45,7 @@ Feature: Cancellazione di un documento allegato alla richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @nrt-minimal
   @agreement_document_delete2b
   Scenario Outline: [AGREEMENT_DOCUMENT_DELETE_02B] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, cancella un documento associato alla richiesta di fruizione. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"

@@ -1,7 +1,8 @@
 @client
 Feature: Rimozione purpose dal client
-  Tutti gli utenti autenticati possono disassociare una finalità da un client 
+  Tutti gli utenti autenticati possono disassociare una finalità da un client
 
+  @nrt-minimal
   Scenario Outline: [CLIENT_PURPOSE_REMOVE_1] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER ed associato il client ad una finalità che si trova in stato ACTIVE, SUSPENDED o WAITING_FOR_APPROVAL, richiede la disassociazione del client dalla finalità. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -31,6 +32,7 @@ Feature: Rimozione purpose dal client
       | ente | ruolo | statoFinalità | statusCode |
       | PA1  | admin | SUSPENDED     |        204 |
 
+  @nrt-minimal
   Scenario: [CLIENT_PURPOSE_REMOVE_2] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER ed associato il client ad una finalità che si trova in stato ARCHIVED richiede la disassociazione del client dalla finalità. L'operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -42,6 +44,7 @@ Feature: Rimozione purpose dal client
     When l'utente richiede la disassociazione della finalità dal client
     Then si ottiene status code 204
 
+  @nrt-minimal
   @wait_for_fix
   Scenario: [CLIENT_PURPOSE_REMOVE_3] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client ed associato il client di tipo CONSUMER ad una finalità che si trova in stato DRAFT, richiede la disassociazione del client dalla finalità. Ottiene un errore. Chiarimento: è possibile modificare l’associazione/disassociazione dei client ad una finalità solo se questa è attiva
     Given l'utente è un "admin" di "PA1"
@@ -53,6 +56,7 @@ Feature: Rimozione purpose dal client
     When l'utente richiede la disassociazione della finalità dal client
     Then si ottiene status code 400
 
+  @nrt-minimal
   @wait_for_fix
   Scenario: [CLIENT_PURPOSE_REMOVE_4] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client ed associato il client di tipo CONSUMER ad una finalità che si trova in stato REJECTED, richiede la disassociazione del client dalla finalità. Ottiene un errore. Chiarimento: è possibile modificare l’associazione/disassociazione dei client ad una finalità solo se questa è attiva
     Given l'utente è un "admin" di "PA1"
@@ -65,6 +69,7 @@ Feature: Rimozione purpose dal client
     When l'utente richiede la disassociazione della finalità dal client
     Then si ottiene status code 400
 
+  @nrt-minimal
   Scenario: [CLIENT_PURPOSE_REMOVE_5] Un utente con sufficienti permessi (admin) non associato all'ente che ha creato il client di tipo CONSUMER ed associato il client ad una finalità che si trova in stato ACTIVE, richiede la disassociazione del client dalla finalità. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service

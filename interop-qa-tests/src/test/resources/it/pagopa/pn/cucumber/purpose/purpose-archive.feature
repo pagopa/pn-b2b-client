@@ -2,6 +2,7 @@
 Feature: Archiviazione di una finalità
   Tutti gli utenti autorizzati possono archiviare una propria finalità
 
+  @nrt-minimal
   @purpose_archive1
   Scenario Outline: [PURPOSE_ARCHIVE_1] Per una finalità precedentemente creata da un fruitore, la quale è in stato ACTIVE o SUSPENDED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -33,6 +34,7 @@ Feature: Archiviazione di una finalità
       | ente | ruolo | statoFinalita | risultato |
       | PA1  | admin | SUSPENDED     |       200 |
 
+  @nrt-minimal
   @purpose_archive2 @wait_for_fix @IMN-402
   Scenario Outline: [PURPOSE_ARCHIVE_2] Per una finalità precedentemente creata da un fruitore, la quale è in stato ACTIVE o SUSPENDED, con una versione di finalità successiva in stato WAITING_FOR_APPROVAL alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -48,6 +50,7 @@ Feature: Archiviazione di una finalità
       | ACTIVE        |
       | SUSPENDED     |
 
+  @nrt-minimal
   @purpose_archive3
   Scenario Outline: [PURPOSE_ARCHIVE_3] Per una finalità precedentemente creata da un fruitore, la quale è in stato ACTIVE o SUSPENDED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -62,6 +65,7 @@ Feature: Archiviazione di una finalità
       | ACTIVE        |
       | SUSPENDED     |
 
+  @nrt-minimal
   @purpose_archive4a @wait_for_fix @IMN-402
   Scenario Outline: [PURPOSE_ARCHIVE_4A] Per una finalità precedentemente creata da un fruitore, la quale è in stato WAITING_FOR_APPROVAL, DRAFT o ARCHIVED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -77,6 +81,7 @@ Feature: Archiviazione di una finalità
       | DRAFT                |
       | ARCHIVED             |
 
+  @nrt-minimal
   @purpose_archive4b @fixed_in_node
   Scenario: [PURPOSE_ARCHIVE_4B] Per una finalità precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"

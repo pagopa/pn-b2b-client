@@ -2,6 +2,7 @@
 Feature: Aggiornamento del nome di un documento
   Tutti gli utenti autorizzati di enti erogatori possono modificare il nome di un documento (non di interfaccia) già caricato
 
+  @nrt-minimal
   @document_update1
   Scenario Outline: [DESCRIPTOR_UPDATE_1] Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), e che ha almeno un documento già caricato, alla richiesta di aggiornamento del nome, l'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -28,6 +29,7 @@ Feature: Aggiornamento del nome di un documento
       | GSP  | admin | SUSPENDED        |       200 |
       | GSP  | admin | DEPRECATED       |       200 |
 
+  @nrt-minimal
   @document_update2
   Scenario: [DESCRIPTOR_UPDATE_2] Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED, e che ha almeno un documento già caricato, alla richiesta di aggiornamento del nome, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -35,6 +37,7 @@ Feature: Aggiornamento del nome di un documento
     When l'utente aggiorna il nome di quel documento
     Then si ottiene status code 400
 
+  @nrt-minimal
   @document_update3
   Scenario: [DESCRIPTOR_UPDATE_3] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e che ha almeno due documenti già caricati, alla richiesta di aggiornamento del nome di uno di quelli, se il nome aggiornato è già in uso da uno degli altri documenti si ottiene un errore
     Given l'utente è un "admin" di "PA1"

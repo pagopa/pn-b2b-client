@@ -2,6 +2,7 @@
 Feature: Lettura di un singolo aderente
   Tutti gli utenti autenticati possono leggere un singolo aderente
 
+  @nrt-minimal
   @tenant_read1
   Scenario Outline: [TENANT_READ_1] Per un aderente della piattaforma, alla richiesta di lettura da parte di qualsiasi livello di permesso associato a qualsiasi tipologia di ente, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"

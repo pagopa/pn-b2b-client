@@ -2,6 +2,7 @@
 Feature: Caricamento di un documento di interfaccia
   Tutti gli utenti autorizzati di enti erogatori possono caricare un documento di interfaccia ai propri descrittori
 
+  @nrt-minimal
   @document_upload1
   Scenario Outline: [DESCRIPTOR_UPLOAD_1] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo solo per lo stato DRAFT, altrimenti restituirà errore.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -29,6 +30,7 @@ Feature: Caricamento di un documento di interfaccia
       | PA1  | admin | DEPRECATED       |       400 |
       | PA1  | admin | ARCHIVED         |       400 |
 
+  @nrt-minimal
   @document_upload2
   Scenario Outline: [DESCRIPTOR_UPLOAD_2] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo altrimenti restituirà errore.
     Given l'utente è un "admin" di "PA1"
@@ -47,6 +49,7 @@ Feature: Caricamento di un documento di interfaccia
       | SOAP       | yaml     |       400 |
       | SOAP       | json     |       400 |
 
+  @nrt-minimal
   @document_upload3
   Scenario Outline: [DESCRIPTOR_UPLOAD_3] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, ma contenente il termine localhost, l'operazione restituirà errore.
     Given l'utente è un "admin" di "PA1"
@@ -61,6 +64,7 @@ Feature: Caricamento di un documento di interfaccia
       | SOAP       | wsdl     |
       | SOAP       | xml      |
 
+  @nrt-minimal
   @document_upload4
   Scenario: [DESCRIPTOR_UPLOAD_4] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale è già stato caricato un documento di interfaccia, alla richiesta di caricamento di un nuovo documento di interfaccia, l’operazione restituirà errore.
     Given l'utente è un "admin" di "PA1"
@@ -69,6 +73,7 @@ Feature: Caricamento di un documento di interfaccia
     When l'utente carica un documento di interfaccia di tipo "yaml"
     Then si ottiene status code 400
 
+  @nrt-minimal
   @document_upload5
   Scenario: [DESCRIPTOR_UPLOAD_5] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale è già stato caricato un documento, alla richiesta di caricamento di un nuovo documento con lo stesso nome, l’operazione restituirà errore.
     Given l'utente è un "admin" di "PA1"

@@ -2,6 +2,7 @@
 Feature: Lettura di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono leggere un proprio e-service
 
+  @nrt-minimal
   @eservice_read1
   Scenario Outline: [ESERVICE_READ_1] Per un e-service precedentemente creato dall’ente, il quale non ha descrittori, la richiesta per ottenere i dettagli dell'e-service va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"

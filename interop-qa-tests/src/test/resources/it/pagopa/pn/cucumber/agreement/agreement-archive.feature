@@ -2,6 +2,7 @@
 Feature: Archiviazione richiesta di fruizione
   Tutti gli utenti autorizzati possono archiviare una richiesta di fruizione in stato ACTIVE o SUSPENDED
 
+  @nrt-minimal
   @agreement_archive1a
   Scenario Outline: [AGREEMENT_ARCHIVE_01A] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE, alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -28,6 +29,7 @@ Feature: Archiviazione richiesta di fruizione
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @nrt-minimal
   @agreement_archive1b
   Scenario: [AGREEMENT_ARCHIVE_01B] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato SUSPENDED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -36,6 +38,7 @@ Feature: Archiviazione richiesta di fruizione
     When l'utente richiede una operazione di archiviazione della richiesta di fruizione
     Then si ottiene status code 204
 
+  @nrt-minimal
   @agreement_archive2
   Scenario Outline: [AGREEMENT_ARCHIVE_02] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
@@ -49,6 +52,7 @@ Feature: Archiviazione richiesta di fruizione
       | ACTIVE         |
       | SUSPENDED      |
 
+  @nrt-minimal
   @agreement_archive3a
   Scenario Outline: [AGREEMENT_ARCHIVE_03A] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato DRAFT o ARCHIVED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -62,6 +66,7 @@ Feature: Archiviazione richiesta di fruizione
       | DRAFT          |
       | ARCHIVED       |
 
+  @nrt-minimal
   @agreement_archive3b
   Scenario: [AGREEMENT_ARCHIVE_03B] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato PENDING alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -70,6 +75,7 @@ Feature: Archiviazione richiesta di fruizione
     When l'utente richiede una operazione di archiviazione della richiesta di fruizione
     Then si ottiene status code 400
 
+  @nrt-minimal
   @agreement_archive3c
   Scenario: [AGREEMENT_ARCHIVE_03C] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato REJECTED alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -79,6 +85,7 @@ Feature: Archiviazione richiesta di fruizione
     When l'utente richiede una operazione di archiviazione della richiesta di fruizione
     Then si ottiene status code 400
 
+  @nrt-minimal
   @agreement_archive3d @no-parallel
   Scenario Outline: [AGREEMENT_ARCHIVE_03D] Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"

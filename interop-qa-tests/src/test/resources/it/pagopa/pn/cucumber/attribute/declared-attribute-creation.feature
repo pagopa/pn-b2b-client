@@ -2,6 +2,7 @@
 Feature: Creazione attributo dichiarato
   Gli admin e gli operatori API di enti PA e GSP possono creare attributi dichiarati
 
+  @nrt-minimal
   @declared_attribute_creation1
   Scenario Outline: [DECLARED_ATTRIBUTE_CREATION_1] Un utente con sufficienti permessi di un ente autorizzato crea un attributo dichiarato
     Given l'utente è un "<ruolo>" di "<ente>"

@@ -2,6 +2,7 @@
 Feature: Listing catalogo e-services
   Tutti gli utenti autenticati di enti PA, GSP e privati possono ottenere la lista di e-services
 
+  @nrt-minimal
   @catalog_listing1
   Scenario Outline: [CATALOG_LISTING_1] Restituisce gli e-service a catalogo
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -27,6 +28,7 @@ Feature: Listing catalogo e-services
       | Privato | support      |
       | Privato | api,security |
 
+  @nrt-minimal
   @catalog_listing2
   Scenario: [CATALOG_LISTING_2] A fronte di 5 e-service in db e una richiesta di 3 e-service, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA1"
@@ -34,6 +36,7 @@ Feature: Listing catalogo e-services
     When l'utente richiede una operazione di listing sul catalogo limitata ai primi 3 e-services
     Then si ottiene status code 200 e la lista di 3 e-services
 
+  @nrt-minimal
   @catalog_listing3
   Scenario: [CATALOG_LISTING_3] A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
@@ -41,6 +44,7 @@ Feature: Listing catalogo e-services
     When l'utente richiede una operazione di listing sul catalogo con offset 2
     Then si ottiene status code 200 e la lista di 3 e-services
 
+  @nrt-minimal
   @catalog_listing4
   Scenario: [CATALOG_LISTING_4] Restituisce gli e-service a catalogo erogati da almeno uno degli erogatori specifici
     Given l'utente è un "admin" di "PA1"
@@ -49,6 +53,7 @@ Feature: Listing catalogo e-services
     When l'utente richiede una operazione di listing degli e-services dell'erogatore "PA2"
     Then si ottiene status code 200 e la lista di 2 e-services
 
+  @nrt-minimal
   @catalog_listing5
   Scenario: [CATALOG_LISTING_5] Restituisce gli e-service a catalogo per i quali lo specifico fruitore ha almeno un agreement in stato ACTIVE
     Given l'utente è un "admin" di "PA1"
@@ -57,6 +62,7 @@ Feature: Listing catalogo e-services
     When l'utente richiede la lista di e-services per i quali ha almeno un agreement attivo
     Then si ottiene status code 200 e la lista di 1 e-service
 
+  @nrt-minimal
   @catalog_listing6
   Scenario: [CATALOG_LISTING_6] Restituisce gli e-service a catalogo che contengono la keyword "test" all'interno del nome,
   con ricerca case insensitive
@@ -66,6 +72,7 @@ Feature: Listing catalogo e-services
     When l'utente richiede una operazione di listing sul catalogo filtrando per la keyword "test"
     Then si ottiene status code 200 e la lista di 1 e-service
 
+  @nrt-minimal
   @catalog_listing7
   Scenario: [CATALOG_LISTING_7] Restituisce un insieme vuoto di e-service a catalogo per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"

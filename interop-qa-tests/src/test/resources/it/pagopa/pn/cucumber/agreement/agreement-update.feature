@@ -2,6 +2,7 @@
 Feature: Aggiornamento di una richiesta di fruizione in bozza
   Tutti gli utenti autorizzati possono aggiornare una propria richiesta di fruizione in bozza con un messaggio
 
+  @nrt-minimal
   @agreement_update1
   Scenario Outline: [AGREEMENT_UPDATE_01] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -27,6 +28,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
       | Privato | security     |       403 |
       | Privato | support      |       403 |
 
+  @nrt-minimal
   @agreement_update2a
   Scenario: [AGREEMENT_UPDATE_02A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -36,6 +38,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
     When l'utente richiede una operazione di aggiornamento di quella richiesta di fruizione con messaggio
     Then si ottiene status code 400
 
+  @nrt-minimal
   @agreement_update2b
   Scenario Outline: [AGREEMENT_UPDATE_02B] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
@@ -51,6 +54,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @nrt-minimal
   @agreement_update2c
   Scenario Outline: [AGREEMENT_UPDATE_02C] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato NON DRAFT (PENDING, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "PA1"

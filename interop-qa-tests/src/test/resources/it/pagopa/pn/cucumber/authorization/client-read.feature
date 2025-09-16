@@ -2,6 +2,7 @@
 Feature: Lettura client singolo
   Tutti gli utenti autenticati possono leggere un singolo client
 
+  @nrt-minimal
   Scenario Outline: [CLIENT_READ_1] Tutti gli utenti possono leggere un client appartenente al proprio ente. La richiesta va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -26,12 +27,14 @@ Feature: Lettura client singolo
       | Privato | support      |        200 |
       | Privato | api,security |        200 |
 
+  @nrt-minimal
   Scenario: [CLIENT_READ_2] Un utente admin legge un client appartenente al proprio ente. La richiesta va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 200
 
+  @nrt-minimal
   Scenario: [CLIENT_READ_3] Un utente security legge un client del quale è membro. La richiesta va a buon fine
     Given l'utente è un "security" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -39,6 +42,7 @@ Feature: Lettura client singolo
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 200
 
+  @nrt-minimal
   @wait_for_fix
   Scenario: [CLIENT_READ_4] Un utente security legge un client di un ente al quale è stato associato, ma del quale non è membro. Ottiene un errore
     Given l'utente è un "security" di "PA1"
@@ -46,18 +50,21 @@ Feature: Lettura client singolo
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 400
 
+  @nrt-minimal
   Scenario: [CLIENT_READ_5] Un utente support legge un client di un ente per il quale sta operando. La richiesta va a buon fine
     Given l'utente è un "support" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 200
 
+  @nrt-minimal
   Scenario: [CLIENT_READ_6] Un utente api legge un client dell'ente al quale è associato. Ottiene un errore
     Given l'utente è un "api" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 403
 
+  @nrt-minimal
   Scenario: [CLIENT_READ_7] A fronte di una richiesta di lettura da parte di un ente, di un client creato da un altro ente, la richiesta va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 1 client "CONSUMER"

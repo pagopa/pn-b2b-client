@@ -2,6 +2,7 @@
 Feature: Aggiornamento di un e-service non pubblicato
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare un proprio e-service non pubblicato
 
+  @nrt-minimal
   @eservice_updating1
   Scenario Outline: [ESERVICE_UPDATING_01] Per un e-service precedentemente creato, il quale non ha descrittori, l'aggiornamento dei campi dell'e-service avviene correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -22,6 +23,7 @@ Feature: Aggiornamento di un e-service non pubblicato
       | PA1  | api,security |       200 |
       | PA1  | support      |       403 |
 
+  @nrt-minimal
   @eservice_updating2
   Scenario: [ESERVICE_UPDATING_02] Per un e-service precedentemente creato, il quale ha un solo descrittore in stato DRAFT, l’aggiornamento dei campi dell’e-service avviene correttamente
     Given l'utente è un "admin" di "PA1"
@@ -29,6 +31,7 @@ Feature: Aggiornamento di un e-service non pubblicato
     When l'utente aggiorna quell'e-service
     Then si ottiene status code 200
 
+  @nrt-minimal
   @eservice_updating3
   Scenario Outline: [ESERVICE_UPDATING_03] Per un e-service precedentemente creato, il quale ha un solo descrittore in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), l’aggiornamento dei campi dell’e-service restituisce errore
     Given l'utente è un "admin" di "PA1"

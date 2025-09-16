@@ -2,6 +2,7 @@
 Feature: Attivazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono attivare un descrittore in stato SUSPENDED
 
+  @nrt-minimal
   @descriptor_activation1
   Scenario Outline: [DESCRIPTOR_ACTIVATION_1] Per un e-service che ha un solo descrittore, il quale è in stato SUSPENDED, all'attivazione del descrittore, torna allo stato PUBLISHED
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -22,6 +23,7 @@ Feature: Attivazione di un descrittore
       | PA1  | api,security |       204 |
       | PA1  | support      |       403 |
 
+  @nrt-minimal
   @descriptor_activation2
   Scenario Outline: [DESCRIPTOR_ACTIVATION_2] Per un e-service che ha un solo descrittore, il quale non si trova in stato SUSPENDED, alla riattivazione del descrittore, si ottiene un errore
     Given l'utente è un "admin" di "PA1"

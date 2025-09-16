@@ -2,6 +2,7 @@
 Feature: Creazione attributo verificato
   Gli admin e gli operatori API di enti PA e GSP possono creare attributi verificati
 
+  @nrt-minimal
   @verified_attribute_creation1
   Scenario Outline: [VERIFIED_ATTRIBUTE_CREATION_1] Un utente con sufficienti permessi di un ente autorizzato crea un attributo verificato
     Given l'utente è un "<ruolo>" di "<ente>"

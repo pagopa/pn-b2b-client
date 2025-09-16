@@ -2,6 +2,7 @@
 Feature: Pubblicazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono pubblicare i propri descrittori
 
+  @nrt-minimal
   @descriptor_publication1
   Scenario Outline: [DESCRIPTOR_PUBBLICATION_1] Per un e-service creato in modalità "DELIVER" che ha un solo descrittore, il quale è in stato DRAFT, con tutti i parametri richiesti inseriti e formattati correttamente, alla richiesta di pubblicazione, la bozza viene pubblicata correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -23,6 +24,7 @@ Feature: Pubblicazione di un descrittore
       | PA1  | api,security |       204 |
       | PA1  | support      |       403 |
 
+  @nrt-minimal
   @descriptor_publication2
   Scenario Outline: [DESCRIPTOR_PUBBLICATION_2] Per un e-service creato in modalità "DELIVER" che ha un solo descrittore, il quale non è in stato DRAFT, alla richiesta di pubblicazione, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -37,6 +39,7 @@ Feature: Pubblicazione di un descrittore
       | DEPRECATED    |
       | ARCHIVED      |
 
+  @nrt-minimal
   @descriptor_publication3
   Scenario: [DESCRIPTOR_PUBBLICATION_3] Per un e-service creato in modalità "RECEIVE" che ha un solo descrittore, il quale è in stato DRAFT, con tutti i parametri richiesti inseriti e formattati correttamente, senza nessuna analisi del rischio inserita, alla richiesta di pubblicazione, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -45,6 +48,7 @@ Feature: Pubblicazione di un descrittore
     When l'utente pubblica quel descrittore
     Then si ottiene status code 400
 
+  @nrt-minimal
   @descriptor_publication4 @to_fix
   Scenario: [DESCRIPTOR_PUBBLICATION_4] Per un e-service creato in modalità "RECEIVE" che ha un solo descrittore, il quale è in stato DRAFT, con tutti i parametri richiesti inseriti e formattati correttamente, e con un’analisi del rischio compilata solo parzialmente, alla richiesta di pubblicazione, ottiene un errore
     Given l'utente è un "admin" di "PA1"

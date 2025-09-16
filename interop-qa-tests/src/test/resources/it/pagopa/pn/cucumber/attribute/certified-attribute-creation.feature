@@ -2,6 +2,7 @@
 Feature: Creazione attributo certificato
   Gli enti certificatori possono creare attributi certificati
 
+  @nrt-minimal
   @certified_attribute_creation1
   Scenario Outline: [ATTRIBUTE_CREATION_1] Un utente admin di un ente certificatore può creare un attributo certificato
     Given l'utente è un "<ruolo>" di "<ente>"

@@ -2,6 +2,7 @@
 Feature: Cancellazione delle chiavi di un client
   Tutti gli utenti autorizzati possono cancellare le chiavi del proprio client, security solo le proprie
 
+  @nrt-minimal
   Scenario Outline: [CLIENT_KEY_DELETE_1] Un utente con sufficienti permessi (admin o security); appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica caricata da lui stesso richiede la cancellazione della chiave. L'operazione va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -19,6 +20,7 @@ Feature: Cancellazione delle chiavi di un client
       | Privato | admin    |        204 |
       | Privato | security |        204 |
 
+  @nrt-minimal
   @wait_for_fix
   Scenario Outline: [CLIENT_KEY_DELETE_2] Un utente con sufficienti permessi (admin o security); appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica caricata da un altro utente con qualsiasi livello di permesso autorizzato a caricare una chiave (admin o security); richiede la cancellazione della chiave. L'operazione va a buon fine solo per admin.
     Given l'utente è un "<ruoloCancellatore>" di "PA1"
@@ -36,6 +38,7 @@ Feature: Cancellazione delle chiavi di un client
       | security          | admin           |        403 |
       | security          | api,security    |        403 |
 
+  @nrt-minimal
   @wait_for_fix
   Scenario Outline: [CLIENT_KEY_DELETE_3] Un utente con sufficienti permessi (admin o security); appartenente all'ente che ha creato il client; il quale utente non è membro del client; nel quale client c'è una chiave pubblica caricata da lui stesso richiede la cancellazione della chiave. L'operazione va a buon fine solo per admin.
     Given l'utente è un "<ruolo>" di "PA1"
@@ -51,6 +54,7 @@ Feature: Cancellazione delle chiavi di un client
       | admin    |        204 |
       | security |        403 |
 
+  @nrt-minimal
   @wait_for_fix
   Scenario Outline: [CLIENT_KEY_DELETE_4] Un utente con sufficienti permessi (admin o security); appartenente all'ente che ha creato il client; il quale utente non è membro del client; nel quale client c'è una chiave pubblica caricata da un altro utente con qualsiasi livello di permesso autorizzato a caricare una chiave (admin o security); richiede la cancellazione della chiave. L'operazione va a buon fine solo per admin.
     Given l'utente è un "<ruoloCancellatore>" di "PA1"

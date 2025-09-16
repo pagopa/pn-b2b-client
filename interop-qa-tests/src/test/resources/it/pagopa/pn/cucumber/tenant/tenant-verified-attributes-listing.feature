@@ -2,6 +2,7 @@
 Feature: Listing attributi verificati posseduti da uno specifico ente
   Tutti gli utenti autenticati possono leggere la lista degli attributi verificati posseduti da uno specifico ente
 
+  @nrt-minimal
   @tenant_verified_attributes_listing1a
   Scenario Outline: [TENANT_VERIFIED_ATTRIBUTES_LISTING_1A] Per un attributo precedentemente verificato da un altro aderente, alla richiesta di lettura, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -25,7 +26,8 @@ Feature: Listing attributi verificati posseduti da uno specifico ente
       | Privato | security     |
       | Privato | support      |
       | Privato | api,security |
-    
+
+  @nrt-minimal
   @tenant_verified_attributes_listing1b
   Scenario: [TENANT_VERIFIED_ATTRIBUTES_LISTING_1B] Per un attributo precedentemente verificato da un altro aderente, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "PA1"
