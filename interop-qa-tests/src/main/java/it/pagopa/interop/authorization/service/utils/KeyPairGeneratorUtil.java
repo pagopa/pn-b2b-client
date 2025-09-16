@@ -7,7 +7,6 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,20 +38,16 @@ public class KeyPairGeneratorUtil {
     public static KeyPair createKeyPair(String keyType, int modulusLength) {
         try {
             KeyPairGenerator keyPairGenerator;
-            if ("RSA".equalsIgnoreCase(keyType)) {
+            if ("RSA".equals(keyType)) {
                 keyPairGenerator = KeyPairGenerator.getInstance("RSA");
                 keyPairGenerator.initialize(modulusLength);
-            } else if ("EC".equalsIgnoreCase(keyType)) {
-                keyPairGenerator = KeyPairGenerator.getInstance("EC");
-                keyPairGenerator.initialize(new ECGenParameterSpec("secp256r1")); // P-256
             } else {
-                // Default fallback: Ed25519
                 keyPairGenerator = KeyPairGenerator.getInstance("Ed25519");
-                // throw new IllegalArgumentException("Unsupported key type: " + keyType);
             }
             return keyPairGenerator.generateKeyPair();
         } catch (Exception e) {
-            throw new IllegalArgumentException("There was an error while creating the %s".formatted(KeyPair.class.getName()), e);
+            throw new IllegalArgumentException("There was an error while crating the %s".formatted(KeyPair.class.getName()), e);
+
         }
     }
 
