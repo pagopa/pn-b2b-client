@@ -187,7 +187,7 @@ public class AnagraficaRaddAltSteps {
                 if (this.getRegistryResponseV2 == null) {
                     throw new AssertionFailedError("La response è nulla", null, "Response valorizzata");
                 }
-                log.info("GetRegistryResponseV2 response: {}", sportello.toString());
+                log.info("GetRegistryResponseV2 response: {}", sportello);
             });
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +

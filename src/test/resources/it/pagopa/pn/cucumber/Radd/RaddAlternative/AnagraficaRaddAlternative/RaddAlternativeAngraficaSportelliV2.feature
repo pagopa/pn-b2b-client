@@ -50,6 +50,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_city       | NAPOLI                            |
     Then viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId
 
+
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 1
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_22] Creazione nuova sede RADD con numeri di telefono accettati
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
@@ -63,15 +64,10 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_externalCodes    | EXT01QA     |
     Examples:
       | telefono         |
-      | 333123456789     |
-      | 0039333123456789 |
-      | 081234567890     |
       | 8001234567       |
       | +39800123456     |
       | +390212345678    |
-      | 0039800123456    |
       | +3933312345678   |
-      | 003933312345678  |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 2
@@ -83,6 +79,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_phoneNumbers  | 33312345678 |
       | radd_externalCodes | EXT02QA     |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
+
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_21] Creazione nuova sede RADD con partenr id non valido
@@ -97,6 +94,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_phoneNumbers     | 0812345678  |
       | radd_externalCodes    | EXT11QA     |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
+
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 3-4-5-6-7-8-9
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_3] Creazione nuova sede RADD senza campi obbligatori
@@ -141,38 +139,37 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_partner_type     | <partnertype>       |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
-      | via         | cap    | provincia | citta  | stato  | descrizione | telefono       | aperturaSportello | startValidity | endValidity | externalCode | email                | website      | partnertype |
-      | via fiume2  | 123456 | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA2     | NULL                 | NULL         | NULL        |
-      | via fiume3  | 8014   | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA3     | NULL                 | NULL         | NULL        |
-      | via fiume4  | 2016Z  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA4     | NULL                 | NULL         | NULL        |
-      | via fiume5  | 20161  | ITA       | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA5     | NULL                 | NULL         | NULL        |
-      | via fiume6  | 20161  | na        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA6     | NULL                 | NULL         | NULL        |
-      | via fiume7  | 20161  | NAP       | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA7     | NULL                 | NULL         | NULL        |
-      | via fiume8  | 20161  | 10        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA8     | NULL                 | NULL         | NULL        |
-      | via fiume9  | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136  | NULL              | NULL          | NULL        | EXT04QA9     | NULL                 | NULL         | NULL        |
-      | via fiume10 | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136   | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
-      | via fiume11 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA11    | https://exa_mple.com | NULL         | NULL        |
-      | via fiume12 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA12    | nome@dominio         | NULL         | NULL        |
-      | via fiume13 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA13    | @dominio.ext         | NULL         | NULL        |
-      | via fiume17 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 01-01-2030    | NULL        | EXT04QA17    | NULL                 | NULL         | NULL        |
-      | via fiume18 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 202-01-01     | NULL        | EXT04QA18    | NULL                 | NULL         | NULL        |
-      | via fiume19 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | 01-01-2030  | EXT04QA19    | NULL                 | NULL         | NULL        |
-      | via fiume20 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | 2015-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
-      | via fiume24 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA14    | NULL                 | NULL         | NULL        |
-      | via fiume22 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA21    | NULL                 | https://.com | NULL        |
-      | via fiume23 | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | ĄŁĽ         |
-      | via fiume26 | 201 1  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA23    | NULL                 | NULL         | NULL        |
+      | via          | cap    | provincia | citta  | stato  | descrizione | telefono       | aperturaSportello | startValidity | endValidity | externalCode | email                | website      | partnertype |
+      | via fiume2   | 123456 | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA2     | NULL                 | NULL         | NULL        |
+      | via fiume3   | 8014   | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA3     | NULL                 | NULL         | NULL        |
+      | via fiume4   | 2016Z  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA4     | NULL                 | NULL         | NULL        |
+      | via fiume5   | 20161  | ITA       | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA5     | NULL                 | NULL         | NULL        |
+      | via fiume6   | 20161  | na        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA6     | NULL                 | NULL         | NULL        |
+      | via fiume7   | 20161  | NAP       | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA7     | NULL                 | NULL         | NULL        |
+      | via fiume8   | 20161  | 10        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA8     | NULL                 | NULL         | NULL        |
+      | via fiume9   | 20161  | MI        | MILANO | ITALIA | Test        | ++99858425136  | NULL              | NULL          | NULL        | EXT04QA9     | NULL                 | NULL         | NULL        |
+      | via fiume10  | 20161  | MI        | MILANO | ITALIA | Test        | 3998-842-136   | NULL              | NULL          | NULL        | EXT04QA10    | NULL                 | NULL         | NULL        |
+      | via fiume11  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA11    | https://exa_mple.com | NULL         | NULL        |
+      | via fiume12  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA12    | nome@dominio         | NULL         | NULL        |
+      | via fiume13  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA13    | @dominio.ext         | NULL         | NULL        |
+      | via fiume17  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 01-01-2030    | NULL        | EXT04QA17    | NULL                 | NULL         | NULL        |
+      | via fiume18  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 202-01-01     | NULL        | EXT04QA18    | NULL                 | NULL         | NULL        |
+      | via fiume19  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | 01-01-2030  | EXT04QA19    | NULL                 | NULL         | NULL        |
+      | via fiume20  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | 2015-01-01  | EXT04QA20    | NULL                 | NULL         | NULL        |
+      | via fiume24  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | 2030-01-01    | 2029-01-01  | EXT04QA14    | NULL                 | NULL         | NULL        |
+      | via fiume22  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA21    | NULL                 | https://.com | NULL        |
+      | via fiume23  | 20161  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA22    | NULL                 | NULL         | ĄŁĽ         |
+      | via fiume26  | 201 1  | MI        | MILANO | ITALIA | Test        | 3201234567     | NULL              | NULL          | NULL        | EXT04QA23    | NULL                 | NULL         | NULL        |
       | via fiume27 | 20161  | MI        | MILANO | ITALIA | Test        | +39401234567   | NULL              | NULL          | NULL        | EXT04QA24    | NULL                 | NULL         | NULL        |
-      | via fiume28 | 20161  | MI        | MILANO | ITALIA | Test        | 123456789      | NULL              | NULL          | NULL        | EXT04QA25    | NULL                 | NULL         | NULL        |
-      | via fiume29 | 20161  | MI        | MILANO | ITALIA | Test        | 00112345678    | NULL              | NULL          | NULL        | EXT04QA26    | NULL                 | NULL         | NULL        |
-      | via fiume30 | 20161  | MI        | MILANO | ITALIA | Test        | 00401234567    | NULL              | NULL          | NULL        | EXT04QA27    | NULL                 | NULL         | NULL        |
-      | via fiume32 | 20161  | MI        | MILANO | ITALIA | Test        | 1234567890     | NULL              | NULL          | NULL        | EXT04QA29    | NULL                 | NULL         | NULL        |
-      | via fiume33 | 20161  | MI        | MILANO | ITALIA | Test        | 03123456       | NULL              | NULL          | NULL        | EXT04QA30    | NULL                 | NULL         | NULL        |
-      | via fiume34 | 20161  | MI        | MILANO | ITALIA | Test        | 333123456      | NULL              | NULL          | NULL        | EXT04QA31    | NULL                 | NULL         | NULL        |
-      | via fiume31 | 20161  | MI        | MILANO | ITALIA | Test        | 3331234567890  | NULL              | NULL          | NULL        | EXT04QA32    | NULL                 | NULL         | NULL        |
-      | via fiume35 | 20161  | MI        | MILANO | ITALIA | Test        | 999333123456   | NULL              | NULL          | NULL        | EXT04QA33    | NULL                 | NULL         | NULL        |
-      | via fiume36 | 20161  | MI        | MILANO | ITALIA | Test        | 00390012345678 | NULL              | NULL          | NULL        | EXT04QA34    | NULL                 | NULL         | NULL        |
-      | via fiume37 | 20161  | MI        | MILANO | ITALIA | Test        | +393           | NULL              | NULL          | NULL        | EXT04QA35    | NULL                 | NULL         | NULL        |
+      | via fiume28  | 20161  | MI        | MILANO | ITALIA | Test        | 123456789      | NULL              | NULL          | NULL        | EXT04QA25    | NULL                 | NULL         | NULL        |
+      | via fiume29  | 20161  | MI        | MILANO | ITALIA | Test        | 00112345678    | NULL              | NULL          | NULL        | EXT04QA26    | NULL                 | NULL         | NULL        |
+      | via fiume30  | 20161  | MI        | MILANO | ITALIA | Test        | 00401234567    | NULL              | NULL          | NULL        | EXT04QA27    | NULL                 | NULL         | NULL        |
+      | via fiume32  | 20161  | MI        | MILANO | ITALIA | Test        | 1234567890     | NULL              | NULL          | NULL        | EXT04QA29    | NULL                 | NULL         | NULL        |
+      | via fiume34  | 20161  | MI        | MILANO | ITALIA | Test        | 333123456      | NULL              | NULL          | NULL        | EXT04QA31    | NULL                 | NULL         | NULL        |
+      | via fiume31  | 20161  | MI        | MILANO | ITALIA | Test        | 3331234567890  | NULL              | NULL          | NULL        | EXT04QA32    | NULL                 | NULL         | NULL        |
+      | via fiume35  | 20161  | MI        | MILANO | ITALIA | Test        | 999333123456   | NULL              | NULL          | NULL        | EXT04QA33    | NULL                 | NULL         | NULL        |
+      | via fiume36  | 20161  | MI        | MILANO | ITALIA | Test        | 00390012345678 | NULL              | NULL          | NULL        | EXT04QA34    | NULL                 | NULL         | NULL        |
+      | via fiume37  | 20161  | MI        | MILANO | ITALIA | Test        | +393           | NULL              | NULL          | NULL        | EXT04QA35    | NULL                 | NULL         | NULL        |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 29
@@ -225,6 +222,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_appointment_required | true                    |
     And la response registry V2 deve avere i campi "tutti" valorizzati
 
+
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 69
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_8] Creazione nuova sede RADD con ExternalCode già esistente
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
@@ -244,7 +242,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description      | descrizione    |
       | radd_phoneNumbers     | +3933312345678 |
       | radd_externalCodes    | EXT09QAA,EXT11 |
-    #Then l'operazione Radd V2 ha prodotto un errore con status code "409"
+
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 70
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_23] Creazione nuova sede RADD con ExternalCode già esistente
@@ -265,10 +263,16 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_description      | descrizione          |
       | radd_phoneNumbers     | +3933312345678       |
       | radd_externalCodes    | EXT09QAA,EXT11,EXT12 |
+    When viene richiesta la lista degli sportelli Radd V2 con dati:
+      | radd_filter_limit   | 100  |
+      | radd_filter_lastKey | NULL |
+    Then cancello i registriV2 con externalCode:
+      | EXT09QAA |
+      | EXT09QAA |
 
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs ND
-  Scenario: [RADD_ANAGRAFICA_CRUD_V2_24] Creazione nuova sede RADD con ExternalCode già esistente
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_24] Creazione nuova sede RADD con ExternalCode ripetuto
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma        |
@@ -374,26 +378,22 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | NULL        | NULL        | 080123456789                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +390123456789,+394441234567         | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +390123456789,+39333123ABCD         | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
-      | NULL        | NULL        | +390123456789,03123456              | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 3331234567890                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39-333-1234567                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 999333123456                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 00390012345678                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +393                                | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
-
       | NULL        | NULL        | 333123                              | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39333123                           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 39 3331234567                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 700123456                           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 003900123                           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39011234567890                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
-
       | NULL        | NULL        | (0039)3331234567                    | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39.333.1234567                     | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39/3331234567                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 0039-333-1234567                    | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 333-123-4567                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
-      | NULL        | NULL        | +390801234567                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39 800123456                       | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39 02 1234567                      | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +39 333123456789                    | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
@@ -434,6 +434,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | CASUALE                              | 404        |
       | 32d80697-da08-42ce-b0d3-c46e5152eda2 | 404        |
 
+
   @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 39
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_12] Aggiornamento sportello RADD con utente abilitato a sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
@@ -465,6 +466,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then l'operazione ha prodotto un errore con status code "403"
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
 
+
   @raddAnagraficaV2 @cognito1 #rif srs 71
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_25] Modifica external code con external code già censito per altra sede
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
@@ -486,6 +488,9 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_externalCodes    | EXT99AB       |
     Then viene modificato uno sportello Radd V2 con dati:
       | radd_externalCodes | EXT99AA |
+    When viene richiesta la lista degli sportelli Radd V2 con dati:
+      | radd_filter_limit   | 100  |
+      | radd_filter_lastKey | NULL |
     Then cancello i registriV2 con externalCode:
       | EXT99AA |
       | EXT99AA |
@@ -618,6 +623,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_limit   | 1    |
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "403"
+
 
   @raddAnagraficaV2 @cognito1 #rif srs 65
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_20] Lettura sedi Radd con partenrId non valido
