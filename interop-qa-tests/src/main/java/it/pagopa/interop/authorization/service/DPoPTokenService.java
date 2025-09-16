@@ -67,7 +67,7 @@ public class DPoPTokenService extends AbstractClient {
         this.dpopProofService = dpopProofService;
     }
 
-    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessToken(@NonNull String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
         TokenKey tokenKey = TokenKey.of(tenantType, M2MRole.M2M_ADMIN);
 
         return tokenCache.computeIfAbsent(tokenKey, key -> {
@@ -76,7 +76,7 @@ public class DPoPTokenService extends AbstractClient {
         });
     }
 
-    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(@NonNull String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
         log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, client.clientId());
         return retrieveAccessToken(client, purposeId, dpopProof);
     }
