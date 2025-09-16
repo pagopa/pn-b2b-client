@@ -1,4 +1,3 @@
-@DPoPSuite
 Feature: Test di sicurezza e funzionalità dei token interop con DPoP
 
 
@@ -151,7 +150,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
       | accessToken | null |
       | expiresIn   | null |
 
-  Scenario: [DP09] La DPoP proof è firmata con una chiave privata non corrispondente alla chiave pubblica dell’ente legittimo
+  Scenario: [DP08] La DPoP proof è firmata con una chiave privata non corrispondente alla chiave pubblica dell’ente legittimo
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
