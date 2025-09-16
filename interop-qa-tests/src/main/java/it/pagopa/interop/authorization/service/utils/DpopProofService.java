@@ -117,7 +117,7 @@ public class DpopProofService {
                 throw new IllegalArgumentException("Invalid 'htm' claim: expected POST");
             }
 
-            // 8. Verifica htu = expected URL
+            // 8. Verifica htu = expected URL (può essere parametrizzato per ambiente)
             String htu = (String) claims.getClaim("htu");
             String expectedHtu = dpopHtu;
             if (!expectedHtu.equalsIgnoreCase(htu)) {
