@@ -1,4 +1,4 @@
-package it.pagopa.interop.authorization.service.utils;
+package it.pagopa.interop.authorization.service;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
