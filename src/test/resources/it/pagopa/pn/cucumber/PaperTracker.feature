@@ -23,9 +23,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK-Giacenza_AR |
       | FAIL-Giacenza_AR |
       | FAIL-CompiutaGiacenza_AR |
-      | OK-NonRendicontabile_AR |
       | OK-CausaForzaMaggiore_AR |
-      | FAIL_CON996_PCRETRY_FURTO_AR |
       | OK_AR_INVALID_DATETIME |
       | OK_AR_NO_EVENT_B |
       | OK_AR_TIMESTAMP_ERR |

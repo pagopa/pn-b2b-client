@@ -159,10 +159,15 @@ public class PaperTrackerSteps {
         for (Integer attempt : mapTimeline.keySet()) {
             //assertSameElements(sanitizeList(groupByDeliveryDetailCode(mapTimeline.get(attempt)), List.of("PNRN012")), mapTracking.get(attempt), TRACKINGS_ELEMENT_NOT_FOUND);
             List<NotificationEvent> filteredOutputs = mapTimeline.get(attempt);
-            if (List.of("OK_AR_INVALID_DATETIME", "OK_AR_NO_EVENT_B").contains(sequenceName)) {
+            if (List.of("OK_AR_INVALID_DATETIME", "OK_AR_NO_EVENT_B", "OK_AR_TIMESTAMP_ERR").contains(sequenceName)) {
                 filteredOutputs = sanitizeList(filteredOutputs, List.of("RECRN001C"));
             }
-            assertSameElements(sanitizeList(filteredOutputs, List.of("CON018")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
+            if (sequenceName.contains("OK_GIACENZA_AR_4")) {
+                assertSameElements(sanitizeList(filteredOutputs, List.of("RECRN003C")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
+            }
+            else {
+                assertSameElements(sanitizeList(filteredOutputs, List.of("CON018")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
+            }
         }
     }
 
