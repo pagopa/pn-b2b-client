@@ -60,18 +60,13 @@ public class DPopVoucherService {
     public String createClientAssertion(ClientAssertionOptions options) {
         long issuedAt = Instant.now().getEpochSecond();
 
-        // Se viene fornito un TTL valido (> 0), calcola exp in base a esso
-        long expiration = options.getAssertionTtlSeconds() > 0
-                ? issuedAt + options.getAssertionTtlSeconds()
-                : issuedAt + 43200 * 60; // Default: 30 giorni in secondi
-
         JwtBuilder builder = Jwts.builder()
                 .claim("iss", options.getClientId())
                 .claim("sub", options.getClientId())
                 .claim("aud", jwtAudience)
                 .claim("jti", UUID.randomUUID().toString())
                 .claim("iat", issuedAt)
-                .claim("exp", expiration);
+                .claim("exp", issuedAt + 43200 * 60); // 30 giorni in minuti
 
         if (options.getClientType() == ClientAssertionOptions.ClientType.CONSUMER) {
             builder.claim("purposeId", options.getPurposeId());
@@ -84,6 +79,7 @@ public class DPopVoucherService {
             ));
         }
 
+        // Aggiunto per supporto DPoP (RFC 9449)
         if (options.getConfirmationKeyThumbprint() != null) {
             builder.claim("cnf", Map.of(
                     "jkt", options.getConfirmationKeyThumbprint()
@@ -97,7 +93,6 @@ public class DPopVoucherService {
 
         return builder.signWith(options.getPrivateKey()).compact();
     }
-
 
     /**
      * Calcola il "kid" per la chiave pubblica fornita secondo RFC7638.

@@ -24,9 +24,6 @@ public class ClientAssertionOptions {
     private PrivateKey privateKey;
     private String purposeId;
 
-    // Supporto DPoP (RFC 9449)
+    // Aggiunto per supporto DPoP (RFC 9449)
     private String confirmationKeyThumbprint; // cnf.jkt (Base64URL string)
-
-    // Se non valorizzato o <= 0, verrà usato il default (30 giorni)
-    private Integer assertionTtlSeconds;
 }
