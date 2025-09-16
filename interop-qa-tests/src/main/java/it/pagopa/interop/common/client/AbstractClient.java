@@ -9,11 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
-@Getter
 @Slf4j
 public abstract class AbstractClient  {
 
-    @Setter
+    @Getter @Setter
     protected IHttpExecutor httpCallExecutor;
 
     public <E, R> Optional<R> performOperation(IOperation<E, R> operation) {
