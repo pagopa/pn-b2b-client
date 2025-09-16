@@ -61,7 +61,7 @@ public class ClientKeyReadSteps {
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
-    @Given("un {string} di {string} ha caricato una chiave {string} pubblica nel client")
+    @Given("un {string} di {string} ha caricato una chiave pubblica nel client con algoritmo {string}")
     public void clientPublicKeyUpload(String role, String tenantType, String kType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
 
