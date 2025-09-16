@@ -1,19 +1,18 @@
 package it.pagopa.interop.authorization.service.identity;
 
-import it.pagopa.interop.authorization.enums.M2MRole;
+import static it.pagopa.interop.authorization.service.M2MTokenService.M2MRole.fromValue;
+import static it.pagopa.interop.authorization.service.M2MTokenService.M2MRole.isM2MRole;
+
 import it.pagopa.interop.authorization.service.M2MTokenService;
+import it.pagopa.interop.authorization.service.M2MTokenService.M2MRole;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.UUID;
-
-import static it.pagopa.interop.authorization.enums.M2MRole.fromValue;
-import static it.pagopa.interop.authorization.enums.M2MRole.isM2MRole;
-
 /* 29/05/2025 classe orchestratrice: se il token è di tipo m2m ripiega sul relativo servizio,
- * altrimenti segue il flusso di auth usuale */
+* altrimenti segue il flusso di auth usuale */
 @Slf4j
 @ToString
 @EqualsAndHashCode
@@ -29,7 +28,7 @@ public class IdentityServiceInteropImpl implements IdentityService {
 
     @Override
     public String getToken(String tenantType, String userRole, int userIndex) {
-        if (isM2MRole(userRole)) {
+        if(isM2MRole(userRole)) {
             M2MRole m2mRole = fromValue(userRole);
             return this.m2mService.getToken(tenantType, m2mRole, userIndex);
         } else {
