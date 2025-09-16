@@ -1,8 +1,16 @@
 package it.pagopa.pn.interop.cucumber;
 
-import org.junit.platform.suite.api.*;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
-import static io.cucumber.junit.platform.engine.Constants.*;
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.ConfigurationParameters;
+import org.junit.platform.suite.api.ExcludeTags;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.IncludeTags;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -15,7 +23,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix"})
-@IncludeTags({"agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
-        "purpose_latest_risk_analysis", "purpose_risk_analysis"})
+@IncludeTags({
+    // BFF
+    "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
+    "purpose_latest_risk_analysis", "purpose_risk_analysis", "e-service-template", "incaricato", "capofila",
+
+    // M2M
+    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices"
+})
 public class NrtTest {
 }
