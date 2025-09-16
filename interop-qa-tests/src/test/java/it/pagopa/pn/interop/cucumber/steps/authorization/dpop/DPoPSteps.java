@@ -75,9 +75,9 @@ public class DPoPSteps {
         }
     }
 
-    @When("{string} genera una dpop proof usando la chiave pubblica {string} di una key pair legittima ma firmando con una chiave privata diversa")
-    public void getMaliciousDPoP(String tenantType, String keyType) {
-        this.dpopProofJwt = this.generateMaliciousDpopProof(keyType);
+    @When("{string} genera una dpop proof usando la chiave pubblica RSA associata al client ma firmando con una chiave privata RSA diversa")
+    public void getMaliciousDPoP(String tenantType) {
+        this.dpopProofJwt = this.generateMaliciousDpopProof();
     }
 
     @And("{string} cerca di ottenere un access token usando il dpop proof creato")
@@ -184,13 +184,13 @@ public class DPoPSteps {
                 : dPoPTokenService.buildDpopProof(keyPair);
     }
 
-    private String generateMaliciousDpopProof(String keyType){
-        var legittimPair = dPoPTokenService.generateKeyPair(keyType);
-        var maliciousPair = dPoPTokenService.generateKeyPair(keyType);
+    private String generateMaliciousDpopProof(){
+        var preparedClient = resolvePreparedClient();
+        var publicKey = preparedClient.keyPair().getPublic();
 
-        var keyPair = new KeyPair(legittimPair.getKeyPair().getPublic(), maliciousPair.getKeyPair().getPrivate());
-        var keyPairDecorator = KeyPairDecorator.of(keyPair);
+        var maliciousPrivate =  dPoPTokenService.generateKeyPair(KeyType.RSA.getValue()).getPrivate();
+        KeyPair maliciousPair = new KeyPair(publicKey, maliciousPrivate);
 
-        return dPoPTokenService.buildDpopProof(keyPairDecorator);
+        return dPoPTokenService.buildDpopProof(KeyPairDecorator.of(maliciousPair));
     }
 }

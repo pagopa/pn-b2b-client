@@ -156,7 +156,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
     And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
-    When "PA1" genera una dpop proof usando la chiave pubblica "EC" di una key pair legittima ma firmando con una chiave privata diversa
+    When "PA1" genera una dpop proof usando la chiave pubblica RSA associata al client ma firmando con una chiave privata RSA diversa
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 400
     And la response contiene:
