@@ -590,10 +590,6 @@ public class InvioNotificheB2bSteps {
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
-
-
-
-
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         assertThat(httpStatusCodeException)
                 .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla")

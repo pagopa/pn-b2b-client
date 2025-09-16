@@ -31,8 +31,6 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
         this.apiAnagraficaCRUDV2 = new RegistryV2Api(newApiClientExternal(restTemplate, basePath, null));
     }
 
-    //todo t radd
-
     @Override
     public void deleteRegistry(String partnerId, String locationId) throws RestClientException {
         this.apiAnagraficaCRUDV2.deleteRegistry(partnerId, locationId);

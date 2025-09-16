@@ -15,7 +15,6 @@ public enum RaddAltValue {
     ADDRESS_RADD_COUNTRY("address_radd_country","ITALIA",false),
 
     RADD_DESCRIPTION("radd_description","sportello RADD",false),
-    //RADD_DESCRIPTION("radd_description",null,false),
     RADD_PHONE_NUMBER("radd_phoneNumber",null,false),
     RADD_PHONE_NUMBERS("radd_phoneNumbers",null,false),
     RADD_GEO_LOCATION("radd_geoLocation","SI",false),

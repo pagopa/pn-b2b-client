@@ -17,7 +17,6 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class SettableAuthTokenRaddCognito {
 
-
     private final String raddCognitoUser1;
     private final String raddCognitoPasswordUser1;
     private final String raddCognitoClientIdUser1;
@@ -53,7 +52,7 @@ public class SettableAuthTokenRaddCognito {
      * @param userIndex LETTURA_SCRITTURA = usa credenziali user1, SOLO_LETTURA = usa credenziali user2
      */
     public String generateToken(String userIndex) {
-        // Se il token è già stato generato, lo restituisco subito
+
         if (tokenCache.containsKey(userIndex)) {
             return tokenCache.get(userIndex);
         }
@@ -86,12 +85,10 @@ public class SettableAuthTokenRaddCognito {
         return token;
     }
 
-
-
     private String getTokenCognito(String username, String password, String clientId) {
 
         AuthenticatorCognito authenticator =
-                new AuthenticatorCognito(username, password, clientId, Region.EU_SOUTH_1); // cambia regione se serve
+                new AuthenticatorCognito(username, password, clientId, Region.EU_SOUTH_1);
 
         String token = authenticator.generateJwtToken();
 
