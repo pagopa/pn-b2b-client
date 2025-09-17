@@ -16,6 +16,7 @@ public enum RaddAltValue {
 
     RADD_DESCRIPTION("radd_description","sportello RADD",false),
     RADD_PHONE_NUMBER("radd_phoneNumber",null,false),
+    RADD_PHONE_NUMBERS("radd_phoneNumbers",null,false),
     RADD_GEO_LOCATION("radd_geoLocation","SI",false),
     RADD_GEO_LOCATION_LATITUDINE("radd_geoLocation_latitudine","40.0000",false),
     RADD_GEO_LOCATION_LONGITUDINE("radd_geoLocation_longitudine","20.0221",false),
@@ -23,16 +24,23 @@ public enum RaddAltValue {
     RADD_START_VALIDITY("radd_start_validity",null,false),
     RADD_END_VALIDITY("radd_end_validity",null,false),
     RADD_CAPACITY("radd_capacity",null,false),
+    RADD_EMAIL("radd_email",null,false),
+    RADD_LOCATION_ID("radd_location_id",null,false),
+    RADD_APPOINTMENT_REQUIRED("radd_appointment_required",null,false),
+    RADD_WEBSITE("radd_website",null,false),
+    RADD_PARTNER_TYPE("radd_partner_type","CAF",false),
 
     //valori filtro per ricerca sportello
     RADD_FILTER_LIMIT("radd_filter_limit","5",false),
     RADD_FILTER_LASTKEY("radd_filter_lastKey",null,false),
     RADD_EXTERNAL_CODE("radd_externalCode","testRadd",false),
+    RADD_EXTERNAL_CODES("radd_externalCodes","testRadd",false),
 
     RADD_REQUESTID("radd_requestId","corretto",false),
     RADD_REGISTRYID("radd_registryId","corretto",false),
 
-    RADD_UID("radd_uid","",true);
+    RADD_UID("radd_uid","",true),
+    RADD_PN_CX_ID("radd_pn_cx_id","",true);//todo t radd default?
 
 
     private static final String NULL_VALUE = "NULL";

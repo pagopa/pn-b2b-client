@@ -99,7 +99,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MDataPreparationService.class,
         M2MEserviceDescriptorClientImpl.class,
         CucumberScopedBeans.class,
-        M2MDelegationClient.class
+        M2MDelegationClient.class,
+        SettableAuthTokenRaddCognito.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
