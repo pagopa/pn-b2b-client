@@ -10,24 +10,30 @@ Feature: Sospensione richiesta di fruizione
     When l'utente richiede una operazione di sospensione di quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | GSP     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | GSP     | admin        |       200 |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @happy-path
   @agreement_suspension2
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE, alla richiesta di sospensione da parte di un utente con sufficienti permessi dell’ente erogatore, che non coincide con l’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -36,6 +42,7 @@ Feature: Sospensione richiesta di fruizione
     When l'utente richiede una operazione di sospensione di quella richiesta di fruizione
     Then si ottiene status code 200
 
+  @happy-path
   @agreement_suspension3
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE, alla richiesta di sospensione da parte di un utente con sufficienti permessi dell’ente erogatore, che coincide con l’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -52,13 +59,19 @@ Feature: Sospensione richiesta di fruizione
     When l'utente richiede una operazione di sospensione di quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
-    Examples: 
+    @happy-path
+    Examples:
+      | statoAgreement | tipoApprovazione | risultato |
+      | SUSPENDED      | AUTOMATIC        |       200 |
+
+    @sad-path
+    Examples:
       | statoAgreement | tipoApprovazione | risultato |
       | DRAFT          | AUTOMATIC        |       400 |
       | PENDING        | MANUAL           |       400 |
-      | SUSPENDED      | AUTOMATIC        |       200 |
       | ARCHIVED       | AUTOMATIC        |       400 |
 
+  @sad-path
   @agreement_suspension4b
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di sospensione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -68,6 +81,7 @@ Feature: Sospensione richiesta di fruizione
     When l'utente richiede una operazione di sospensione di quella richiesta di fruizione
     Then si ottiene status code 400
 
+  @sad-path
   @agreement_suspension4c
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di sospensione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"

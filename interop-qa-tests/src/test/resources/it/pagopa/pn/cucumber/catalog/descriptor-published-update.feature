@@ -2,6 +2,7 @@
 Feature: Aggiornamento di un descrittore già pubblicato
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare la durata voucher e le soglie di carico di un descrittore già punlicato.
 
+  @sad-path
   @descriptor_published_update1
   Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, all’aggiornamento da parte di un utente autorizzato della durata del voucher e delle soglie di carico del descrittore, la bozza viene aggiornata correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -29,10 +30,15 @@ Feature: Aggiornamento di un descrittore già pubblicato
     When l'utente aggiorna la durata del voucher e le soglie di carico di quel descrittore
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | statoVersione | risultato |
       | PUBLISHED     |       200 |
       | SUSPENDED     |       200 |
       | DEPRECATED    |       200 |
+
+    @sad-path
+    Examples:
+      | statoVersione | risultato |
       | ARCHIVED      |       400 |
       | DRAFT         |       400 |

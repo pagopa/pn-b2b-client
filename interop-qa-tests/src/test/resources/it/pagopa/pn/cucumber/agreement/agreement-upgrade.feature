@@ -11,24 +11,30 @@ Feature: Upgrade di una richiesta di fruizione
     When l'utente richiede un'operazione di upgrade di quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       200 |
+      | PA1     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | PA1     | admin        |       200 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @happy-path
   @agreement_upgrade1b
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato SUSPENDED, e associata ad una versione di e-service antecedente all’ultima versione pubblicata, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -38,6 +44,7 @@ Feature: Upgrade di una richiesta di fruizione
     When l'utente richiede un'operazione di upgrade di quella richiesta di fruizione
     Then si ottiene status code 200
 
+  @sad-path
   @agreement_upgrade2
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata all’ultima versione di e-service pubblicata, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -51,6 +58,7 @@ Feature: Upgrade di una richiesta di fruizione
       | ACTIVE         |
       | SUSPENDED      |
 
+  @sad-path
   @agreement_upgrade3a
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato REJECTED, e associata ad una versione di e-service antecedente all’ultima versione di e-service pubblicata, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -61,6 +69,7 @@ Feature: Upgrade di una richiesta di fruizione
     When l'utente richiede un'operazione di upgrade di quella richiesta di fruizione
     Then si ottiene status code 400
 
+  @sad-path
   @agreement_upgrade3b
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES e associata ad una versione di e-service antecedente all’ultima versione di e-service pubblicata, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
@@ -77,6 +86,7 @@ Feature: Upgrade di una richiesta di fruizione
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @sad-path
   @agreement_upgrade3c
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato PENDING, DRAFT o ARCHIVED, e associata ad una versione di e-service antecedente all’ultima versione di e-service pubblicata, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -92,6 +102,7 @@ Feature: Upgrade di una richiesta di fruizione
       | DRAFT          | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @sad-path
   @agreement_upgrade4 @wait_for_fix @IMN-351
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata ad una versione di e-service antecedente all’ultima versione pubblicata, all'interno della nuova versione SONO cambiati gli attributi rispetto alla versione precedente, ed il fruitore non ne possegga uno o più tra quelli CERTIFICATI, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -107,6 +118,7 @@ Feature: Upgrade di una richiesta di fruizione
       | ACTIVE         |
       | SUSPENDED      |
 
+  @happy-path
   @agreement_upgrade5a
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata ad una versione di e-service antecedente all’ultima versione pubblicata, all'interno della nuova versione SONO cambiati gli attributi rispetto alla versione precedente, ed il fruitore non ne possegga uno o più tra quelli DICHIARATI, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -121,6 +133,7 @@ Feature: Upgrade di una richiesta di fruizione
       | ACTIVE         |
       | SUSPENDED      |
 
+  @happy-path
   @agreement_upgrade5b
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata ad una versione di e-service antecedente all’ultima versione pubblicata, all'interno della nuova versione SONO cambiati gli attributi rispetto alla versione precedente, ed il fruitore non ne possegga uno o più tra quelli VERIFICATI, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -135,6 +148,7 @@ Feature: Upgrade di una richiesta di fruizione
       | ACTIVE         |
       | SUSPENDED      |
 
+  @happy-path
   @agreement_upgrade6
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata ad una versione di e-service due indietro rispetto all’ultima versione pubblicata, nella quale nuova versione non sono cambiati gli attributi rispetto alle versioni precedenti, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine.
     Given l'utente è un "admin" di "PA1"
@@ -150,6 +164,7 @@ Feature: Upgrade di una richiesta di fruizione
       | ACTIVE         |
       | SUSPENDED      |
 
+  @sad-path
   @agreement_upgrade7
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata ad una versione di e-service due indietro rispetto all’ultima versione pubblicata, all'interno della versione 2 non sono sono cambiati gli attributi rispetto alla versione 1; all'interno della versione 3 sono cambiati gli attributi rispetto alla versione 2 e il fruitore NON possiede almeno uno dei CERTIFICATI; alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, dà errore
     Given l'utente è un "admin" di "PA1"

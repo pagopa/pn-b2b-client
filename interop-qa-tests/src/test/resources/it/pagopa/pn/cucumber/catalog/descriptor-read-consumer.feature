@@ -2,6 +2,7 @@
 Feature: Lettura di un descrittore lato fruitore
   Tutti gli utenti autenticati di enti fruitori possono leggere i descrittori degli e-service a catalogo
 
+  @happy-path
   @descriptor_read_consumer1
   Scenario Outline: Per un e-service precedentemente creato da qualsiasi ente, il quale ha un solo descrittore in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), la richiesta per ottenere i dettagli della versione di e-service va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -33,6 +34,7 @@ Feature: Lettura di un descrittore lato fruitore
       | PA1  | admin | DEPRECATED    |
       | PA1  | admin | ARCHIVED      |
 
+  @sad-path
   @descriptor_read_consumer2
   Scenario: Per un e-service precedentemente creato da qualsiasi ente, il quale ha un solo descrittore in stato DRAFT, la richiesta per ottenere i dettagli della versione di e-service restituisce errore
     Given l'utente è un "admin" di "PA1"

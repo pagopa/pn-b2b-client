@@ -12,19 +12,25 @@ Feature: Rifiuto di una richiesta di fruizione
     When l'utente richiede una operazione di rifiuto di quella richiesta di fruizione con messaggio
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
+      | PA1  | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | risultato |
       | GSP  | api          |       403 |
       | GSP  | security     |       403 |
       | GSP  | support      |       403 |
       | GSP  | api,security |       403 |
-      | PA1  | admin        |       200 |
       | PA1  | api          |       403 |
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
       | PA1  | api,security |       403 |
 
+  @sad-path
   @agreement_rejection2
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di rifiuto SENZA messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
@@ -33,6 +39,7 @@ Feature: Rifiuto di una richiesta di fruizione
     When l'utente richiede una operazione di rifiuto di quella richiesta di fruizione senza messaggio
     Then si ottiene status code 400
 
+  @sad-path
   @agreement_rejection3a
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, SUSPENDED o ARCHIVED,alla richiesta di rifiuto con messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
@@ -47,6 +54,7 @@ Feature: Rifiuto di una richiesta di fruizione
       | SUSPENDED      |
       | ARCHIVED       |
 
+  @sad-path
   @agreement_rejection3b
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED,alla richiesta di rifiuto con messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"

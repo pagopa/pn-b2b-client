@@ -2,6 +2,7 @@
 Feature: Lettura richiesta di fruizione
   Tutti gli utenti autorizzati possono leggere le richieste di fruizione che hanno creato
 
+  @happy-path
   @agreement_read1
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato REJECTED, alla richiesta di lettura, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -24,6 +25,7 @@ Feature: Lettura richiesta di fruizione
       | GSP     | api,security |
       | GSP     | support      |
 
+  @sad-path
   @agreement_read1a
   Scenario Outline: Per una richiesta di fruizione, la quale è in stato REJECTED, precedentemente creata da un ente diverso da quello richiedente la lettura, non va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -40,6 +42,7 @@ Feature: Lettura richiesta di fruizione
       | Privato | security     |
       | Privato | api,security |
 
+  @happy-path
   @agreement_read2
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato DRAFT, PENDING, ACTIVE, SUSPENDED o ARCHIVED, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -56,6 +59,7 @@ Feature: Lettura richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @happy-path
   @agreement_read3
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
@@ -71,6 +75,7 @@ Feature: Lettura richiesta di fruizione
       | enteFruitore | enteCertificatore | enteErogatore |
       | GSP          | PA2               | PA1           |
 
+  @sad-path
   @agreement_read4
   Scenario: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato ACTIVE, alla richiesta di lettura da parte di un ente nè fruitore nè erogatore, non va a buon fine
     Given l'utente è un "admin" di "PA1"

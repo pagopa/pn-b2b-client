@@ -9,25 +9,36 @@ Feature: Aggiornamento della descrizione di un e-service
     When l'utente aggiorna la descrizione di quell'e-service
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statoDescrittore | risultato |
       | PA1  | admin        | PUBLISHED        |       200 |
       | PA1  | api          | PUBLISHED        |       200 |
-      | PA1  | security     | PUBLISHED        |       403 |
       | PA1  | api,security | PUBLISHED        |       200 |
-      | PA1  | support      | PUBLISHED        |       403 |
       | GSP  | admin        | PUBLISHED        |       200 |
       | GSP  | api          | PUBLISHED        |       200 |
-      | GSP  | security     | PUBLISHED        |       403 |
       | GSP  | api,security | PUBLISHED        |       200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statoDescrittore | risultato |
+      | PA1  | security     | PUBLISHED        |       403 |
+      | PA1  | support      | PUBLISHED        |       403 |
+      | GSP  | security     | PUBLISHED        |       403 |
       | GSP  | support      | PUBLISHED        |       403 |
 
+    @happy-path
     Examples: # ARCHIVED non viene testato in quanto non è possibile avere un eservice con un singolo descrittore in stato ARCHIVED
       | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | SUSPENDED        |       200 |
       | PA1  | admin | DEPRECATED       |       200 |
+
+    @sad-path
+    Examples: # ARCHIVED non viene testato in quanto non è possibile avere un eservice con un singolo descrittore in stato ARCHIVED
+      | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | DRAFT            |       409 |
 
+  @sad-path
   @eservice_description_update2
   Scenario: A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell’ente che lo eroga, per un e-service con un descrittore in DRAFT, ottiene un errore
     Given l'utente è un "admin" di "PA1"
