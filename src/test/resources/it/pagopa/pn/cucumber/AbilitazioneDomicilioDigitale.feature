@@ -43,7 +43,7 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
@@ -62,7 +62,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_2] Attivazione del servizio SERCQ SEND per recapito principale e presenza del recapito legale PEC
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
@@ -87,7 +87,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_3] Disattivazione del servizio SERCQ SEND per recapito principale
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
@@ -127,7 +127,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
@@ -151,7 +151,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
@@ -176,7 +176,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_7] Attivazione del servizio SERCQ SEND per recapito specifico per ente  e accettazione dei TOS
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
@@ -198,7 +198,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_8] Attivazione del servizio SERCQ SEND per recapito specifico per ente
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
@@ -226,7 +226,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_9] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
@@ -267,7 +267,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
@@ -367,7 +367,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_15] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
@@ -397,7 +397,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_16] Attivazione servizio SERCQ e aggiunta recapito di cortesia email
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per la PA "default"
@@ -447,7 +447,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_59] Creazione notifica digitale con servizio SERCQ attivo e verifica cambiamento workflow della notifica
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
@@ -468,7 +468,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @precondition @addressBook1 @webhook1 @cleanWebhook @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V10] Creazione di un nuovo stream con versione V10 e controllo che SERCQ non è presente
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -493,7 +493,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1 @webhookV23 @precondition @cleanWebhook @webhook2 @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V23] Creazione di un nuovo stream con versione V23 e controllo che SERCQ è presente
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -536,7 +536,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene inserito un recapito legale "example3@pecSuccess.it"
@@ -576,7 +576,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -629,7 +629,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_61_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -660,7 +660,7 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook4
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Mario Gherkin"
-    Then l'utente "Mario Gherkin" "ACCETTA" i tos per sercq v2
+    Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
     And viene disabilitato il servizio SERCQ SEND per la PA "Comune_1"
@@ -690,7 +690,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -726,7 +726,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_80] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e indirizzo PEC speciale per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Given si predispone addressbook per l'utente "CucumberSpa"
@@ -748,7 +748,7 @@ Feature: Abilitazione domicilio digitale
   #@addressBook1 @addressBook2 @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_81] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e indirizzo PEC di piattaforma per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -771,7 +771,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_82] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e workflow analogico per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galileii" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
