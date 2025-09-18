@@ -44,6 +44,7 @@ Feature: Caricamento di un documento allegato alla richiesta di fruizione
       | ARCHIVED       | AUTOMATIC        |
 
   @agreement_document_upload2b
+    #BUG: https://pagopa.atlassian.net/browse/PIN-7747
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, carica un documento associando un nome al documento (prettyName). Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
