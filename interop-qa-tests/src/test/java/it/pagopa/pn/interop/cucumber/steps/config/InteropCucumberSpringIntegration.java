@@ -100,7 +100,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MEserviceDescriptorClientImpl.class,
         CucumberScopedBeans.class,
         M2MDelegationClient.class,
-        SettableAuthTokenRaddCognito.class
+        //SettableAuthTokenRaddCognito.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

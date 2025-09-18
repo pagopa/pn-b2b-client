@@ -56,6 +56,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddFsuClientImpl.class,
         PnRaddAlternativeClientImpl.class,
         PnRaddAlternativeV2ClientImpl.class,
+        PnRaddCapCoverageClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
