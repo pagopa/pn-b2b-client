@@ -254,6 +254,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
+        delayService.delay();
         String fileName = String.format("interface.%s", "yaml");
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
