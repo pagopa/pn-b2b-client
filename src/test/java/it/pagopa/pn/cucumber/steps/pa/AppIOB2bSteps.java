@@ -69,19 +69,10 @@ public class AppIOB2bSteps {
     }
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica")
-    public void userScanQRCodeWithoutLollipopHeader(Destinatario user) {
-        userScanQrCode(user, null);
-    }
-
-    @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop")
-    public void userScanQRCodeWithLollipopHeader(Destinatario user) {
-        userScanQrCode(user, "CLMCST42R12D969Z");
-    }
-
-    private void userScanQrCode(Destinatario user, String xPagopaLollipopUserId) {
+    public void userScanQRCode(Destinatario user) {
         RequestCheckQrMandateDto requestCheckAarMandateDto = new RequestCheckQrMandateDto().aarQrCodeValue(qrCodeBodyUrl + qrCode);
         try {
-            responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), xPagopaLollipopUserId, requestCheckAarMandateDto);
+            responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), requestCheckAarMandateDto);
         } catch (HttpStatusCodeException ex) {
             notificationServerError = ex;
         }
@@ -107,15 +98,6 @@ public class AppIOB2bSteps {
     @Then("si verifica che la chiamata abbia ritornato uno status code: {int}")
     public void verifyStatusCodeResponse(int statusCode) {
         Assertions.assertEquals(statusCode, notificationServerError.getStatusCode().value());
-    }
-
-    @And("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO passando un header src non valido")
-    public void attemptsNotificationRetrievalAppIOWithInvalidHeader(Destinatario user) {
-        try {
-            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), user.getTaxId(), null, "TEST");
-        } catch (HttpStatusCodeException e) {
-            this.notificationServerError = e;
-        }
     }
 
     @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO")
