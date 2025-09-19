@@ -690,7 +690,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
     And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
+    #And il delegante ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
