@@ -9,19 +9,25 @@ Feature: Aggiornamento di un descrittore in bozza
     When l'utente aggiorna alcuni parametri di quel descrittore
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
       | GSP  | api          |       200 |
-      | GSP  | security     |       403 |
       | GSP  | api,security |       200 |
-      | GSP  | support      |       403 |
       | PA1  | admin        |       200 |
       | PA1  | api          |       200 |
-      | PA1  | security     |       403 |
       | PA1  | api,security |       200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | security     |       403 |
+      | GSP  | support      |       403 |
+      | PA1  | security     |       403 |
       | PA1  | support      |       403 |
 
+  @sad-path
   @descriptor_draft_update2
   Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), all’aggiornamento di alcuni parametri del descrittore, ben formattati, l’aggiornamento della bozza restituisce errore
     Given l'utente è un "admin" di "PA1"
