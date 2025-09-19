@@ -122,6 +122,7 @@ Feature: Attivazione richiesta di fruizione
 
 
   @agreement_activate4b @no-parallel
+    #BUG: https://pagopa.atlassian.net/browse/PIN-7747
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -154,6 +155,7 @@ Feature: Attivazione richiesta di fruizione
     Then si ottiene status code 403
 
   @agreement_activate6 @no-parallel
+    #BUG: https://pagopa.atlassian.net/browse/PIN-7750
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con uno o più attributi richiesti non posseduti dal fruitore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine ma la richiesta di fruizione resta in stato "SUSPENDED"
     Given l'utente è un "admin" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
