@@ -255,3 +255,6 @@ Feature: recupero notifiche tramite api AppIO b2b
     And viene generato il QR Code "corretto" per la notifica appena creata
     And l'utente Leonardo da Vinci scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop
     Then si verifica che la chiamata abbia ritornato uno status code: 403
+    #https://pagopa.atlassian.net/browse/PN-16249
+    And a seguito della scansione del QR Code, la notifica può essere recuperata da: Leonardo da Vinci tramite AppIO passando un header src non valido
+    Then si verifica che la chiamata abbia ritornato uno status code: 403
