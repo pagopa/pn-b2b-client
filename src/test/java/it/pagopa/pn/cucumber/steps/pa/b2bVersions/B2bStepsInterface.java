@@ -24,6 +24,8 @@ public interface B2bStepsInterface {
 
     void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory);
 
+    void checkFullSentNotificationRelatedElementWithVersion(String timelineEventCategory);
+
     /**
      * Per notifiche andate in ACCEPTED usare questo metodo (lettura timeline da b2b)
      */
