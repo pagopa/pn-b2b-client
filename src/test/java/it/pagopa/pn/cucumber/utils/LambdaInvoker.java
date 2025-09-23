@@ -26,6 +26,9 @@ public class LambdaInvoker {
         } else if(activeProfile.equals("test")){
             return "ROLE_test_core";
         }
+        else if(activeProfile.equals("uat")){
+            return "ROLE_uat_core";
+        }
 
         throw new RuntimeException("Invalid profile active");
     }
