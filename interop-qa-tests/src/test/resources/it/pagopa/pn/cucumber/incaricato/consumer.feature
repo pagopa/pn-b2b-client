@@ -440,7 +440,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "admin" dell'ente delegante
+#    And l'utente è un "admin" dell'ente delegante
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" dell'ente delegato
     And il delegato ha già creato 1 client "CONSUMER"
@@ -460,7 +460,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "admin" dell'ente delegante
+#    And l'utente è un "admin" dell'ente delegante
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" dell'ente delegato
     And il delegato ha già creato 1 client "CONSUMER"
@@ -480,7 +480,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "admin" dell'ente delegante
+#    And l'utente è un "admin" dell'ente delegante
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" dell'ente delegato
     When l'utente richiede l'associazione della finalità a un client inesistente

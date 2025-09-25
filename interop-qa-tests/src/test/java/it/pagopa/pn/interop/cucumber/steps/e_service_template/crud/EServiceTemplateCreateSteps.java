@@ -88,7 +88,7 @@ public class EServiceTemplateCreateSteps {
 
         httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(templateSeed));
         if (httpCallExecutor.getResponseStatus().isError()) {
-            return; // a questo punto si prevede che i passi successivi riconoscano l'errore
+            throw new IllegalArgumentException(httpCallExecutor.getErrorMessage()); // a questo punto si prevede che i passi successivi riconoscano l'errore
         }
 
         CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();
