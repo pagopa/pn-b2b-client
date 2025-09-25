@@ -11,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
@@ -180,6 +181,13 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(
         UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body) {
-        return null; // TODO 15/09/2025 sostituire con implementazione reale non appena disponibile
+        return eservicesApi.updatePublishedEServiceDescriptorQuotas(
+            eserviceId,
+            descriptorId,
+            new EServiceDescriptorQuotasUpdateSeed()
+                .voucherLifespan(body.getVoucherLifespan())
+                .dailyCallsTotal(body.getDailyCallsTotal())
+                .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
+        );
     }
 }

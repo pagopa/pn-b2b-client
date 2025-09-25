@@ -30,6 +30,7 @@ public class EServiceTemplateVersionQuotasPatchOperationsAssistant extends
         return EServiceTemplateVersionQuotasPatchRequest.builder()
             .dailyCallsTotal(40)
             .dailyCallsPerConsumer(4)
+            .voucherLifespan(1000)
             .build();
     }
 

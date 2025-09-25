@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant;
 
-import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.DELIVER;
-
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplatePatchRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
@@ -37,15 +35,10 @@ public class EServiceTemplatePatchOperationsAssistant extends
             .name("some patched name - " + uuid)
             .description("some patched description - " + uuid)
             .technology(EServiceTechnology.SOAP)
-            .mode(toggle(this.context.getLastTemplateManaged().mode()))
+            .mode(EServiceMode.DELIVER)
             .intendedTarget("some patched intended target - " + uuid)
             .isSignalHubEnabled(true)
             .build();
-    }
-
-    private EServiceMode toggle(
-        it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode mode) {
-        return mode.equals(DELIVER) ? EServiceMode.RECEIVE : EServiceMode.DELIVER;
     }
 
     @Override

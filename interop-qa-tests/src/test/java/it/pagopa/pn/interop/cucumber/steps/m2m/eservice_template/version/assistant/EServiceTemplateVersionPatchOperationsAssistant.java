@@ -32,7 +32,7 @@ public class EServiceTemplateVersionPatchOperationsAssistant extends
         UUID uuid = UUID.randomUUID();
         return EServiceTemplateVersionPatchRequest.builder()
             .description("some patched description - " + uuid)
-            .voucherLifespan(100000)
+            .voucherLifespan(50000)
             .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL)
             .dailyCallsTotal(40)
             .dailyCallsPerConsumer(4)

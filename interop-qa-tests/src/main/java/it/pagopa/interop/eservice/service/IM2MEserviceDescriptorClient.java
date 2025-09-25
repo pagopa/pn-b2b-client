@@ -35,13 +35,12 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
         private AgreementApprovalPolicy agreementApprovalPolicy;
     }
 
-    /* TODO 15/09/2025: modella un DTO al momento assente nella specifica OpenAPI. Potrebbero
-    *   rendersi necessari adattamenti di qualche tipo a seguito del rilascio. */
     @Data
     @Builder
     class EServiceDescriptorQuotasPatchRequest {
         private Integer dailyCallsPerConsumer;
         private Integer dailyCallsTotal;
+        private Integer voucherLifespan;
     }
 
     EServiceDescriptor get(UUID eserviceId, UUID descriptorId);

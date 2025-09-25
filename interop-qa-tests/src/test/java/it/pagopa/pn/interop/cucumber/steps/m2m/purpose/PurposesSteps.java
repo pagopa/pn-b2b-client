@@ -10,6 +10,7 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.M2MTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -403,6 +404,13 @@ public class PurposesSteps {
         purposePatchAssistant.patchResource(request);
     }
 
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità")
+    public void patchPurpose(String tenant, M2MTokenService.M2MRole m2mRole) {
+        PurposePatchRequest request = purposePatchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        purposePatchAssistant.patchResource(request, token);
+    }
+
     @When("l'utente tenta di effettuare la modifica parziale della finalità con token non valido")
     public void patchPurposeWithNotValidToken() {
         purposePatchAssistant.patchResourceWithInvalidToken(purposePatchAssistant.buildDefaultPatchRequest());
@@ -440,6 +448,13 @@ public class PurposesSteps {
     public void patchReversePurpose() {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
         reversePurposePatchAssistant.patchResource(request);
+    }
+
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
+    public void patchReversePurposeUsing(String tenant, M2MTokenService.M2MRole m2mRole) {
+        ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        reversePurposePatchAssistant.patchResource(request, token);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa con token non valido")

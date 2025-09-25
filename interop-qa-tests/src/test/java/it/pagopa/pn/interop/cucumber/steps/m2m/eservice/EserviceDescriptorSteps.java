@@ -113,7 +113,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
     }
 
     @When("l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service")
-    public void patchEServiceDescriptorQuotas(String tenant, M2MTokenService.M2MRole m2mRole) {
+    public void patchEServiceDescriptorQuotas() {
         quotasPatchAssistant.patchResource();
     }
 

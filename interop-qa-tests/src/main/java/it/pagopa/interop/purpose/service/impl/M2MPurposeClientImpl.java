@@ -12,6 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -141,7 +142,13 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
 
     @Override
     public Purpose patchReversePurpose(UUID reversePurposeId, ReversePurposePatchRequest body) {
-        return null; // TODO 10/09/2025 collocare implementazione reale una volta che l'API sarà rilasciata
+        return purposesApi.updateDraftReversePurpose(reversePurposeId, new ReversePurposeDraftUpdateSeed()
+            .dailyCalls(body.getDailyCalls())
+            .title(body.getTitle())
+            .isFreeOfCharge(body.getIsFreeOfCharge())
+            .freeOfChargeReason(body.getFreeOfChargeReason())
+            .description(body.getDescription())
+        );
     }
 
     @Override

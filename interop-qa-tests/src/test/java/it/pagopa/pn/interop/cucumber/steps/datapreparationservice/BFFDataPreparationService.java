@@ -620,6 +620,7 @@ public class BFFDataPreparationService {
         String namePrefix, String prettyNamePrefix, BiFunction<String, Resource, UUID> documentUploader) {
         List<Document> documents = new ArrayList<>();
         for(int i = 0; i < documentsQt; i++) {
+            delayService.delayForSeconds(1);
             String documentContent = """
                 Random document QA test - %s - %d""".formatted(uuid, i);
             int documentIndex = i + 1;

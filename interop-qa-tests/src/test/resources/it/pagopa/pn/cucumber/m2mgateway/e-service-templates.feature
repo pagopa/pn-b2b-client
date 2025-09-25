@@ -115,7 +115,7 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -129,7 +129,7 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -151,7 +151,7 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -167,25 +167,26 @@ Feature: Test API M2M of e-service template
       | PUBLISHED   | erogazione  |
       | DEPRECATED  | erogazione  |
       | SUSPENDED   | erogazione  |
-      | PUBLISHED   | ricezione   |
-      | DEPRECATED  | ricezione   |
-      | SUSPENDED   | ricezione   |
+      #| PUBLISHED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| DEPRECATED  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| SUSPENDED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
   Scenario Outline: [INTEROP-EST-M2M-PATCH_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service template che non gli appartiene (Parte2#Scenario intorno a 151)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente tenta di effettuare la modifica parziale dell'e-service template
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA2" con ruolo m2m-admin tenta di effettuare la modifica parziale dell'e-service template
     Then si ottiene lo status code 403
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'e-service template non ha subito modifiche
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7803
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-M2M-PATCH_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di una versione di un e-service template in stato DRAFT (Parte2#Scenario intorno a 152)
@@ -203,7 +204,7 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -217,7 +218,7 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -239,7 +240,7 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -255,17 +256,17 @@ Feature: Test API M2M of e-service template
       | PUBLISHED   | erogazione  |
       | DEPRECATED  | erogazione  |
       | SUSPENDED   | erogazione  |
-      | PUBLISHED   | ricezione   |
-      | DEPRECATED  | ricezione   |
-      | SUSPENDED   | ricezione   |
+      #| PUBLISHED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| DEPRECATED  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| SUSPENDED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario: [INTEROP-EST-VERSION-M2M-PATCH_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 158)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA2" con ruolo m2m-admin tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template
     Then si ottiene lo status code 403
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
@@ -287,9 +288,9 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        | state     |
       | erogazione  | PUBLISHED |
-      | ricezione   | PUBLISHED |
+      #| ricezione   | PUBLISHED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
       | erogazione  | SUSPENDED |
-      | ricezione   | SUSPENDED |
+      #| ricezione   | SUSPENDED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -303,9 +304,9 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        | state     |
       | erogazione  | PUBLISHED |
-      | ricezione   | PUBLISHED |
+      #| ricezione   | PUBLISHED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
       | erogazione  | SUSPENDED |
-      | ricezione   | SUSPENDED |
+      #| ricezione   | SUSPENDED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -327,9 +328,9 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        | state     |
       | erogazione  | PUBLISHED |
-      | ricezione   | PUBLISHED |
+      #| ricezione   | PUBLISHED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
       | erogazione  | SUSPENDED |
-      | ricezione   | SUSPENDED |
+      #| ricezione   | SUSPENDED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -344,8 +345,8 @@ Feature: Test API M2M of e-service template
       | stato       | mode        |
       | DRAFT       | erogazione  |
       | DEPRECATED  | erogazione  |
-      | DRAFT       | ricezione   |
-      | DEPRECATED  | ricezione   |
+      #| DRAFT       | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| DEPRECATED  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch

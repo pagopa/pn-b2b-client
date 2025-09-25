@@ -32,6 +32,7 @@ public class EServiceDescriptorQuotasPatchOperationsAssistant extends
         return EServiceDescriptorQuotasPatchRequest.builder()
             .dailyCallsTotal(10)
             .dailyCallsPerConsumer(5)
+            .voucherLifespan(1000)
             .build();
     }
 

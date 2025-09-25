@@ -176,7 +176,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Then si ottiene lo status code 404
 
   @m2m-parte2-settembre
-  Scenario Outline: [M2MG_DOCUMENTS_20] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED
+  Scenario Outline: [M2MG_DOCUMENTS_20] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service template in stato PUBLISHED
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
@@ -196,11 +196,11 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | ruolo     | mode        |
       | m2m       | erogazione  |
       | m2m-admin | erogazione  |
-      | m2m       | ricezione   |
-      | m2m-admin | ricezione   |
+      #| m2m       | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| m2m-admin | ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
-  Scenario Outline: [M2MG_DOCUMENTS_21] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED usando un token non valido
+  Scenario Outline: [M2MG_DOCUMENTS_21] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service template in stato PUBLISHED usando un token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
     And viene impostato per l'utente un token m2m non valido
@@ -209,10 +209,11 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+      #| ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7799
   @m2m-parte2-settembre
-  Scenario Outline: [M2MG_DOCUMENTS_22] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service o ad un descriptor inesistenti in stato PUBLISHED
+  Scenario Outline: [M2MG_DOCUMENTS_22] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service template o ad una sua versione inesistenti
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -223,4 +224,4 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+      #| ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati

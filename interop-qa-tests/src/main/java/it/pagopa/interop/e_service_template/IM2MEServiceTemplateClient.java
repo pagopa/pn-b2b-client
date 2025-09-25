@@ -57,6 +57,7 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     class EServiceTemplateVersionQuotasPatchRequest {
         private Integer dailyCallsPerConsumer;
         private Integer dailyCallsTotal;
+        private Integer voucherLifespan;
     }
     /* *******************************************************************************************/
 

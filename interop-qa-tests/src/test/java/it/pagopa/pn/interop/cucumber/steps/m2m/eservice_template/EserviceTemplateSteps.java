@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.M2MTokenService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
@@ -94,9 +95,9 @@ public class EserviceTemplateSteps {
         getDocuments(eServiceTemplateId, randomUUID);
     }
 
-    private void getDocuments(UUID eServiceId, UUID descriptorId) {
+    private void getDocuments(UUID eServiceId, UUID versionId) {
         delayService.delay();
-        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getDocuments(eServiceId, descriptorId));
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getDocuments(eServiceId, versionId));
     }
 
     @When("l'utente tenta di effettuare la riattivazione dell'e-service template")
@@ -154,12 +155,19 @@ public class EserviceTemplateSteps {
         patchAssistant.patchResource(request);
     }
 
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service template")
+    public void patchEService(String tenant, M2MTokenService.M2MRole m2mRole) {
+        EServiceTemplatePatchRequest request = this.patchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        patchAssistant.patchResource(request, token);
+    }
+
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service template specificando un sottoinsieme di informazioni")
     public void patchEServiceTemplateSubset() {
         UUID uuid = UUID.randomUUID();
         EServiceTemplatePatchRequest request = EServiceTemplatePatchRequest.builder()
-            .name("some minimal patched name - " + uuid)
-            .description("some minimal patched description - " + uuid)
+            .name("minimal patched name - " + uuid)
+            .description("minimal patched descr - " + uuid)
             .technology(EServiceTechnology.REST)
             .build();
         patchAssistant.patchResource(request);
@@ -195,6 +203,13 @@ public class EserviceTemplateSteps {
     public void patchEServiceTemplateVersion() {
         EServiceTemplateVersionPatchRequest request = this.versionPatchAssistant.buildDefaultPatchRequest();
         versionPatchAssistant.patchResource(request);
+    }
+
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template")
+    public void patchEServiceTemplateVersion(String tenant, M2MTokenService.M2MRole m2mRole) {
+        EServiceTemplateVersionPatchRequest request = this.versionPatchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        versionPatchAssistant.patchResource(request, token);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template specificando un sottoinsieme di informazioni")
