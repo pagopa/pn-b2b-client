@@ -31,6 +31,7 @@ public class ConfirmEmailBodyStrategy implements ITemplateEngineStrategy {
             return null;
 
         return new MailVerificationCodeBody()
-                .verificationCode(context.getVerificationCode());
+                .verificationCode(context.getVerificationCode())
+                .recipientType("PF");
     }
 }

@@ -352,7 +352,7 @@ public class BFFDataPreparationService {
                 "documento-test-qa",
                 new FileSystemResource(params.getDoc())))
             .checkerApiCaller(id -> UpperAgreement.from(agreementClient.getAgreementById(id)))
-            .documentListExtractor(res -> ((Agreement) res).getConsumerDocuments())
+            .documentListExtractor(res -> ((UpperAgreement) res).getConsumerDocuments())
             .build();
     }
 
