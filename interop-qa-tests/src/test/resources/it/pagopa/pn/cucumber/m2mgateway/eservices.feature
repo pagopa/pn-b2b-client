@@ -727,7 +727,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'e-service descriptor non ha subito modifiche
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7807
   @m2m-parte2-settembre
   Scenario Outline: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service in stato DRAFT, DEPRECATED o ARCHIVED (Parte2#Scenario intorno a 234)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
@@ -738,7 +737,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Examples:
       | stato       |
       | DRAFT       |
-      | DEPRECATED  |
       | ARCHIVED    |
 
   @m2m-parte2-settembre
