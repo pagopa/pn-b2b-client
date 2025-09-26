@@ -12,11 +12,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 @Slf4j
 public class DelegationDenyStep {
+
+    public static final String REJECTION_REASON = "Missing all required data!";
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
@@ -51,6 +55,15 @@ public class DelegationDenyStep {
         rejectProducerDelegation();
     }
 
+    @And("l'ente {string} rifiuta la delega con successo")
+    public void delegationIsRejectedByTenantSuccessfully(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        rejectProducerDelegation();
+
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        delegationApiClient.waitForState(delegationId, DelegationState.REJECTED);
+    }
+
     @And("l'ente {delegationRole} rifiuta la delega in fruizione")
     public void delegationIsRejectedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
@@ -59,10 +72,13 @@ public class DelegationDenyStep {
     }
 
     private void rejectProducerDelegation() {
+        OffsetDateTime now = OffsetDateTime.now();
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.rejectProducerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
-                        new RejectDelegationPayload().rejectionReason("Missing all required data!")));
+                        new RejectDelegationPayload().rejectionReason(REJECTION_REASON)));
+        sharedStepsContext.getDelegationCommonContext().setRejectedAt(now);
+        sharedStepsContext.getDelegationCommonContext().setRejectionReason(REJECTION_REASON);
     }
 
     @And("l'ente fruitore {string} rifiuta la delega")
@@ -71,16 +87,29 @@ public class DelegationDenyStep {
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.rejectConsumerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
-                        new RejectDelegationPayload().rejectionReason("Missing all required data!")));
+                        new RejectDelegationPayload().rejectionReason(REJECTION_REASON)));
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REJECTED);
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega")
     public void delegationIsRevokedByTenantWithRole(String tenantType, String role) {
+        revokeDelegation(tenantType, role);
+    }
+
+    @And("l'ente {string} con ruolo {string} revoca la delega con successo")
+    public void delegationIsRevokedSuccessfullyByTenantWithRole(String tenantType, String role) {
+        revokeDelegation(tenantType, role);
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        delegationApiClient.waitForState(delegationId, DelegationState.REVOKED);
+    }
+
+    private void revokeDelegation(String tenantType, String role) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
+        OffsetDateTime now = OffsetDateTime.now();
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.revokeProducerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+        sharedStepsContext.getDelegationCommonContext().setRevokedAt(now);
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega in fruizione")

@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.DelegationsApi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.ConsumerDelegation;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.ConsumerDelegations;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.ProducerDelegation;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -53,6 +54,11 @@ public class M2MDelegationClient implements IM2MDelegationClient {
             delegateIds,
             eserviceIds
         );
+    }
+
+    @Override
+    public ProducerDelegation getProducerDelegation(UUID delegationId) {
+        return this.delegationsApi.getProducerDelegation(delegationId);
     }
 
     @Override

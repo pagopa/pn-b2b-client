@@ -103,6 +103,7 @@ public class DelegationCommonStep {
 
         // Il delegante inoltra la richiesta di delega all'ente delegato
         DelegationCreateStep.createDelegate(
+            producer,
             delegate,
             clientTokenConfigurator.getProducerDelegationsApiClient()::createProducerDelegation,
             DelegationProxy.ofMainDelegation(sharedStepsContext.getDelegationCommonContext()),
