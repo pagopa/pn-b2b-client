@@ -430,7 +430,7 @@ Feature: Test API Availability in Use of E-Service
     @sad-path
     Scenario: [TC_INCARICATO_64_BIS] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegante
     Given l'utente è un "admin" di "GSP"
-    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
+    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione

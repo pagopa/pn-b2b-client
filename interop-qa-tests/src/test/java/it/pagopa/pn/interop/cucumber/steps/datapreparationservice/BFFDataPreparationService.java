@@ -607,7 +607,12 @@ public class BFFDataPreparationService {
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
         String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
+        Resource resource;
+        if (prettyName.equals("test 2")) {
+            resource = blobFileCreator.createBlobFile("src/main/resources/interface1.yaml", "documento-test2-qa.pdf");
+        } else {
+            resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
+        }
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
