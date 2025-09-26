@@ -157,7 +157,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/cstar-securehub-infra-api-spec/6d1b9f7d943ae4051cf977f02b98b8fe012be390/src/idpay/apim/api/idpay_asset_register/openapi.register.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/cstar-securehub-infra-api-spec/8016c4429d430b65868e277f9ea2083b0558070f/src/idpay/apim/api/idpay_asset_register/openapi.register.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
