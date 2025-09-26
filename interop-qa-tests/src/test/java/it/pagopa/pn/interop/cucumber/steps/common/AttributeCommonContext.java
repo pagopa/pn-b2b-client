@@ -35,6 +35,7 @@ public class AttributeCommonContext {
     }
 
     public void addCreatedAttribute(Attribute attribute) {
+        this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
 
