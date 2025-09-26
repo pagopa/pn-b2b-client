@@ -26,7 +26,7 @@ import org.junit.platform.suite.api.Suite;
 @IncludeTags({
     // BFF
     "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
-    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "e-service-template",
+    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila",
 
     // M2M
     "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices"
