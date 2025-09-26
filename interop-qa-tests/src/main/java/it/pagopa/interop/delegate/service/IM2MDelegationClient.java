@@ -18,4 +18,5 @@ public interface IM2MDelegationClient extends SettableBearerToken {
         @Nullable List<UUID> eserviceIds);
 
     ProducerDelegation getProducerDelegation(UUID delegationId);
+    ConsumerDelegation getConsumerDelegation(UUID delegationId);
 }

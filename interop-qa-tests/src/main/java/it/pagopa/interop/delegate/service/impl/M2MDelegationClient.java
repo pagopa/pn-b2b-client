@@ -62,6 +62,11 @@ public class M2MDelegationClient implements IM2MDelegationClient {
     }
 
     @Override
+    public ConsumerDelegation getConsumerDelegation(UUID delegationId) {
+        return this.delegationsApi.getConsumerDelegation(delegationId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.delegationsApi.setApiClient(createApiClient(bearerToken));
     }

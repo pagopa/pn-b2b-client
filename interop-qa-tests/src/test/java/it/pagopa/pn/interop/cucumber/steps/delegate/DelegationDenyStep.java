@@ -65,6 +65,7 @@ public class DelegationDenyStep {
     }
 
     @And("l'ente {delegationRole} rifiuta la delega in fruizione")
+    @And("l'ente {delegationRole} rifiuta la delega in fruizione con successo")
     public void delegationIsRejectedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -133,7 +134,7 @@ public class DelegationDenyStep {
                 () -> delegationApiClient.getDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()),
                 res ->  res.getState().equals(delegationState),
-                "There was an error while revoking the delegation!"
+                "There was an error while mutating delegation state to '%s'".formatted(delegationState)
         );
     }
 

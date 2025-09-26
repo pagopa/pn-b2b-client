@@ -111,6 +111,7 @@ public class DelegationCreateStep {
     }
 
     @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato")
+    @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo")
     public void givenConsumerDelegatingTenantHasRequestedDelegation() {
         String delegatorTenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATING);
         String delegateTenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATE);

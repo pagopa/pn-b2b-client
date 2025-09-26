@@ -84,6 +84,7 @@ public class DelegationAcceptStep {
     }
 
     @And("l'ente {delegationRole} accetta la delega in fruizione")
+    @And("l'ente {delegationRole} accetta la delega in fruizione con successo")
     public void consumerDelegationIsAcceptedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

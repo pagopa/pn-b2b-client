@@ -3,10 +3,8 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.delegate;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.within;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IM2MDelegationClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.ProducerDelegation;
@@ -18,12 +16,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import org.assertj.core.api.SoftAssertions;
 
-public class DelegationReadStep {
-    @ParameterType("WAITING_FOR_APPROVAL|ACTIVE|REJECTED|REVOKED")
-    public DelegationState delegationState(String delegationState) {
-        return DelegationState.valueOf(delegationState);
-    }
-
+public class DelegationProducerStep {
     private final SharedStepsContext sharedStepsContext;
     private final DelegationCommonContext delegationContext;
     private final IHttpExecutor httpCallExecutor;
@@ -31,8 +24,7 @@ public class DelegationReadStep {
 
     private ProducerDelegation producerDelegation;
 
-    public DelegationReadStep(ClientTokenConfigurator clientTokenConfigurator,
-        IDelegationApiClient delegationApiClient,
+    public DelegationProducerStep(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext) {
         this.sharedStepsContext = sharedStepsContext;
         this.delegationContext = sharedStepsContext.getDelegationCommonContext();
