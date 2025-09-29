@@ -6,7 +6,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import org.springframework.http.HttpStatus;
 
 public class AgreementSuspensionSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -37,7 +36,7 @@ public class AgreementSuspensionSteps {
                 () -> clientTokenConfigurator.getAgreementClient().suspendAgreement(sharedStepsContext.getAgreementId(), delegationRef)
         );
 
-        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus() != HttpStatus.FORBIDDEN) {
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getPollingService().makePolling(
                     () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
                     res -> res.getState() == AgreementState.SUSPENDED,

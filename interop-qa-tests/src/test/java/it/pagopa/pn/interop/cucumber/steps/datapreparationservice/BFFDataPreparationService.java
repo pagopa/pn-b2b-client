@@ -626,6 +626,22 @@ public class BFFDataPreparationService {
         return documentId;
     }
 
+    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name, Resource resource) {
+        String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
+
+        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId,
+            descriptorId, "DOCUMENT", prettyName, resource));
+        assertValidResponse();
+        UUID documentId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
+
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+            res -> res.getDocs().stream().anyMatch(doc -> doc.getPrettyName().equals(prettyName)),
+            ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+        return documentId;
+    }
+
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
