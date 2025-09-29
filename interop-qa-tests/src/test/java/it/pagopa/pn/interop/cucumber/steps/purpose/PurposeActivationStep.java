@@ -67,7 +67,8 @@ public class PurposeActivationStep {
     @When("l'utente (ri)attiva la finalità in stato {string} per quell'e-service")
     public void userActivatesPurposeInStateForThatEService(String state) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        activatePurposeInStateForThatEServiceWithDelegate(state, null);
+        DelegationRef delegationRef = new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId());
+        activatePurposeInStateForThatEServiceWithDelegate(state, delegationRef);
     }
 
     @When("l'utente {delegationRole} (ri)attiva la finalità in stato {string} per quell'e-service")
