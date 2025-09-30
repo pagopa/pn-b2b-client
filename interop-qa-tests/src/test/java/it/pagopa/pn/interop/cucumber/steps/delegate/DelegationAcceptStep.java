@@ -88,8 +88,11 @@ public class DelegationAcceptStep {
     public void consumerDelegationIsAcceptedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        OffsetDateTime activatedAt = OffsetDateTime.now();
         approveConsumerDelegation();
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getDelegationCommonContext().setActivatedAt(activatedAt);
             waitUntilDelegationIsApproved(
                 delegationApiClient,
                 pollingService,

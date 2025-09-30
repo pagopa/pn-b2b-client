@@ -211,7 +211,6 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | erogazione  |
       #| ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7799
   @m2m-parte2-settembre
   Scenario Outline: [M2MG_DOCUMENTS_22] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service template o ad una sua versione inesistenti
     Given l'utente è un "admin" di "PA1"

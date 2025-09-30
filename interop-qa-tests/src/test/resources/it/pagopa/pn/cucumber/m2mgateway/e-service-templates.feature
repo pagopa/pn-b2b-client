@@ -65,6 +65,7 @@ Feature: Test API M2M of e-service template
       | erogazione  |
     #  | ricezione   | <-- 30/09/2025 modalità receive non supportata
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7827
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
   Scenario Outline: [INTEROP-EST-M2M-UNSUSPEND_05] Un utente con ruolo m2m-admin NON può effettuare la riattivazione di un e-service template in stato diverso da SUSPENDED
@@ -186,7 +187,6 @@ Feature: Test API M2M of e-service template
       | erogazione  |
     #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7803
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-M2M-PATCH_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di una versione di un e-service template in stato DRAFT (Parte2#Scenario intorno a 152)

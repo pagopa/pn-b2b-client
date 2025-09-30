@@ -19,14 +19,17 @@ Feature: Gestione delle deleghe in fruizione M2M
     And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato WAITING_FOR_APPROVAL
 
     ## Delega in stato REJECTED
-    Given l'ente delegato rifiuta la delega in fruizione con successo
+    Given l'utente è un "admin" dell'ente delegato
+    And l'ente delegato rifiuta la delega in fruizione con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
     And l'utente tenta di reperire i dettagli della delega in fruizione
     Then si ottiene lo status code 200
     And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato REJECTED
 
     # Delega in stato ACTIVE
-    Given l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    Given l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
     And l'utente tenta di reperire i dettagli della delega in fruizione
@@ -34,7 +37,8 @@ Feature: Gestione delle deleghe in fruizione M2M
     And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato ACTIVE
 
     # Delega in stato REVOKED
-    Given l'ente delegante con ruolo "admin" revoca la delega in fruizione
+    Given l'utente è un "admin" dell'ente delegante
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
     And l'utente tenta di reperire i dettagli della delega in fruizione
     Then si ottiene lo status code 200

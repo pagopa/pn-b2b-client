@@ -85,11 +85,17 @@ public class DelegationDenyStep {
     @And("l'ente fruitore {string} rifiuta la delega")
     public void rejectConsumerDelegation(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        OffsetDateTime rejectedAt = OffsetDateTime.now();
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.rejectConsumerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason(REJECTION_REASON)));
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REJECTED);
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getDelegationCommonContext().setRejectedAt(rejectedAt);
+            sharedStepsContext.getDelegationCommonContext().setRejectionReason(REJECTION_REASON);
+            waitForDelegationState(DelegationState.REJECTED);
+        }
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega")
@@ -116,13 +122,19 @@ public class DelegationDenyStep {
     @And("l'ente {string} con ruolo {string} revoca la delega in fruizione")
     public void consumerDelegationIsRevokedByTenantWithRole(String tenantType, String role) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
+
+        OffsetDateTime revokedAt = OffsetDateTime.now();
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.revokeConsumerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getDelegationCommonContext().setRevokedAt(revokedAt);
+            waitForDelegationState(DelegationState.REVOKED);
+        }
     }
 
     @And("l'ente {delegationRole} con ruolo {string} revoca la delega in fruizione")
+    @And("l'ente {delegationRole} con ruolo {string} revoca la delega in fruizione con successo")
     public void consumerDelegationIsRevokedByTenantWithRole(DelegationRole delegationRole, String role) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         consumerDelegationIsRevokedByTenantWithRole(tenantType, role);
