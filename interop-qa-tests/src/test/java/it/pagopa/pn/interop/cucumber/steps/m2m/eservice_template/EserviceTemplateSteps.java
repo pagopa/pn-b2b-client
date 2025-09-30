@@ -120,7 +120,7 @@ public class EserviceTemplateSteps {
         unsuspendEServiceTemplate(randomUUID, versionId);
     }
 
-    @When("l'utente tenta di effettuare la riattivazione della versione di une-service template inesistente")
+    @When("l'utente tenta di effettuare la riattivazione della versione di un e-service template inesistente")
     public void unsuspendNonExistentTemplateVersion() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
