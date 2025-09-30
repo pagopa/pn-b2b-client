@@ -1,6 +1,7 @@
 package it.pagopa.pari.cucumber.steps.registrobeni;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
@@ -48,10 +49,40 @@ public class RegistroBeniProductsUpdateSteps {
         searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusSupervised(productsUpdateDTO));
     }
 
+    @When("viene contrassegnato il prodotto con codice eprel: {string}")
+    public void superviseByEprelCode(String eprelCode) {
+        ProductListDTO productListDTO = getProductByEprelCode(eprelCode);
+        ProductDTO productFound = productListDTO.getContent().get(0);
+        ProductsUpdateDTO productsUpdateDTO = new ProductsUpdateDTO().gtinCodes(List.of(productFound.getGtinCode())).currentStatus(productFound.getStatus()).motivation(PRODUCT_MOTIVATION);
+        apiClientContext.getRegisterPortalOperationClient().updateProductStatusSupervised(productsUpdateDTO);
+    }
+
     @When("viene escluso il prodotto appena aggiunto")
     public void markProductAsRejected() {
-        searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusRejected(productsUpdateDTO));
+        try {
+            searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusRejected(productsUpdateDTO));
+        } catch (HttpStatusCodeException ex) {
+            httpStatus = ex.getStatusCode();
+        }
     }
+
+    @When("viene escluso il prodotto con codice eprel: {string}")
+    public void rejectByEprelCode(String eprelCode) {
+        ProductListDTO productListDTO = getProductByEprelCode(eprelCode);
+        ProductDTO productFound = productListDTO.getContent().get(0);
+        ProductsUpdateDTO productsUpdateDTO = new ProductsUpdateDTO().gtinCodes(List.of(productFound.getGtinCode())).currentStatus(productFound.getStatus()).motivation(PRODUCT_MOTIVATION);
+        apiClientContext.getRegisterPortalOperationClient().updateProductStatusRejected(productsUpdateDTO);
+    }
+
+    @And("si verifica che lo stato del prodotto con codice eprel: {string} sia: {string}")
+    public void verifyProductState(String eprelCode, String status) {
+        ProductListDTO productListDTO = getProductByEprelCode(eprelCode);
+        ProductDTO productFound = productListDTO.getContent().get(0);
+        assertEquals(ProductStatus.fromValue(status), productFound.getStatus());
+
+    }
+
+
 
     @When("viene iniziato l'iter di approvazione del prodotto")
     public void markProductAsWaitApproved() {
@@ -62,9 +93,13 @@ public class RegistroBeniProductsUpdateSteps {
         }
     }
 
-    @When("viene approvato il prodotto appena aggiunto da L2")
+    @When("viene approvato il prodotto appena aggiunto")
     public void markProductAsApproved() {
-        searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusApproved(productsUpdateDTO));
+        try {
+            searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusApproved(productsUpdateDTO));
+        } catch (HttpStatusCodeException ex) {
+            httpStatus = ex.getStatusCode();
+        }
     }
 
     @When("viene ripristinato il prodotto appena aggiunto da L2")
@@ -81,6 +116,12 @@ public class RegistroBeniProductsUpdateSteps {
             ProductsUpdateDTO productsUpdateDTO = new ProductsUpdateDTO().gtinCodes(gtinCodes).currentStatus(productStatus).motivation(PRODUCT_MOTIVATION);
             updateResponseDTO = operation.apply(productsUpdateDTO);
         }
+    }
+
+    private ProductListDTO getProductByEprelCode(String eprelCode) {
+        String gtinCode = sharedCommonContext.getLastProductsUploaded().stream().filter(product -> product.getEprelCode().equals(eprelCode)).map(ProductDTO::getGtinCode).findFirst().orElse(null);
+        Assertions.assertNotNull(gtinCode, "Product with the desired eprelCode not found!");
+        return apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null, null, gtinCode, null, null, null, null);
     }
 
     @Then("si verifica che la chiamata abbia ritornato uno status code: {int}")
