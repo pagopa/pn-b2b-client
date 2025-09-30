@@ -9,6 +9,8 @@ import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.merchant.root.model.ListPointOfSaleDTO;
 import it.pagopa.pari.generated.openapi.clients.merchant.root.model.PointOfSaleDTO;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class MerchantRootSteps {
     private final ApiClientContext apiClientContext;
     private final SharedCommonContext sharedCommonContext;
 
-    private HttpStatusCodeException httpStatusCodeException;
+    private HttpStatusCodeException httpStatusCodeException = new HttpClientErrorException(HttpStatus.OK);
     private ListPointOfSaleDTO listPointOfSaleDTO;
     private PointOfSaleDTO pointOfSaleDTO;
 
@@ -72,7 +74,7 @@ public class MerchantRootSteps {
         }
     }
 
-    @When("la chiamata ritorna un errore con status code: {int}")
+    @When("la chiamata ritorna status code: {int}")
     public void verifyErrorStatusCode(int expectedStatusCode) {
         Assertions.assertEquals(expectedStatusCode, httpStatusCodeException.getStatusCode().value());
     }
@@ -80,7 +82,7 @@ public class MerchantRootSteps {
     @Given("viene censito un nuovo punto vendita con i seguenti parametri:")
     public void addPos(DataTable dataTable) {
         Map<String, String> dataTableMap = dataTable.asMap();
-        String merchantId = Optional.ofNullable(getData(dataTableMap, "merchantId")).orElse(sharedCommonContext.getUserData().getMerchantId());
+        String merchantId = getData(dataTableMap, "merchantId", sharedCommonContext.getUserData().getMerchantId());
         try {
             apiClientContext.getMerchantOperationClient().putPointOfSales(merchantId, List.of(createNewPointOfSaleDTO(dataTableMap)));
         } catch (HttpStatusCodeException ex) {
@@ -91,19 +93,23 @@ public class MerchantRootSteps {
     private PointOfSaleDTO createNewPointOfSaleDTO(Map<String, String> dataTableMap) {
         String contactEmail = String.format("test.p%d@prova.com", new Random().nextInt(100000));
         return new PointOfSaleDTO().type(PointOfSaleDTO.TypeEnum.ONLINE)
-                .id(getData(dataTableMap, "id"))
-                .franchiseName(getData(dataTableMap, "franchiseName")).region(getData(dataTableMap, "region")).province(getData(dataTableMap, "province"))
-                .city(getData(dataTableMap, "city")).zipCode(getData(dataTableMap, "zipCode")).address(getData(dataTableMap, "address"))
-                .streetNumber(getData(dataTableMap, "streetNumber"))
-                .webSite(getData(dataTableMap, "webSite")).contactEmail(contactEmail)
-                .contactName(getData(dataTableMap, "contactName"))
-                .contactSurname(getData(dataTableMap, "contactSurname")).channelEmail(getData(dataTableMap, "channelEmail"))
-                .channelPhone(getData(dataTableMap, "channelPhone"))
-                .channelGeolink(getData(dataTableMap, "channelGeoLink")).channelWebsite(getData(dataTableMap, "channelWebiste"));
+                .id(getData(dataTableMap, "id", "688cb2c22fb2709e4ba6d18d"))
+                .franchiseName(getData(dataTableMap, "franchiseName", "Test8"))
+                .region(getData(dataTableMap, "region", "Lombardia")).province(getData(dataTableMap, "province", "MI"))
+                .city(getData(dataTableMap, "city", "Milano")).zipCode(getData(dataTableMap, "zipCode", "20100"))
+                .address(getData(dataTableMap, "address", "Via Trieste, 65015 Montesilvano PE, Italia"))
+                .streetNumber(getData(dataTableMap, "streetNumber", "12"))
+                .webSite(getData(dataTableMap, "webSite", "https://www.mediaworld.it/")).contactEmail(contactEmail)
+                .contactName(getData(dataTableMap, "contactName", "Mario"))
+                .contactSurname(getData(dataTableMap, "contactSurname", "Rossi")).channelEmail(getData(dataTableMap, "channelEmail", "support@superstore.it"))
+                .channelPhone(getData(dataTableMap, "channelPhone", "+39021234567"))
+                .channelGeolink(getData(dataTableMap, "channelGeoLink", "https://maps.app.goo.gl/abc123"))
+                .channelWebsite(getData(dataTableMap, "channelWebiste", "https://channel.superstore.it"));
     }
 
-    private String getData(Map<String, String> dataTableMap, String property) {
-        return Optional.ofNullable(dataTableMap.get(property)).orElse(null);
+    private String getData(Map<String, String> dataTableMap, String property, String defaultValue) {
+        String value = dataTableMap.get(property);
+        return "NULL".equals(value) ? null : Optional.ofNullable(value).orElse(defaultValue);
     }
 
 }
