@@ -46,7 +46,7 @@ public class LambdaInvoker {
                             .build())
                     .overrideConfiguration(c -> c
                             .apiCallAttemptTimeout(Duration.ofSeconds(180))
-                            .apiCallTimeout(Duration.ofMinutes(3)))
+                            .apiCallTimeout(Duration.ofMinutes(6)))
                     .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
                     //.credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
