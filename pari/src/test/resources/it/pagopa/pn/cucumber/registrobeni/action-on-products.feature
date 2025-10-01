@@ -1,0 +1,129 @@
+@upload-csv
+Feature: PARI - Portale registro dei beni
+
+  Background:
+    Given vengono generati tutti i token JWT necessari
+
+    #[TC_13]
+  #[TC_57]
+  Scenario: [TC_ACTION_ON_PRODUCT_1]
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2310946          | AWM10014586GD       | AWM10014586GD          | Lavasciuga       | IT                   |
+    Given viene usata l'utenza: INVITALIA_L1
+    And viene escluso il prodotto appena aggiunto
+    Given viene usata l'utenza: PRODUTTORE_2
+    Then viene caricato di nuovo lo stesso prodotto
+    Then si verifica che la risposta abbia:
+      | status      | OK |
+    Then si verifica che il prodotto sia marcato come: "UPLOADED"
+
+    #[TC_14]
+    #[TC_54]
+  Scenario: [TC_ACTION_ON_PRODUCT_2]
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2310946          | AWM10014586GD       | AWM10014586GD          | Lavasciuga       | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Given viene usata l'utenza: INVITALIA_L1
+    Then viene contrassegnato il prodotto appena aggiunto
+    #si verifica che tutti gli operatori Invitalia possono leggere la motivazione del prodotto contrassegnato
+    And si verifica che ci siano 1 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
+    And viene usata l'utenza: INVITALIA_L2
+    And si verifica che ci siano 1 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
+    #lato produttore si verifica che il prodotto sia marcato come contrassegnato e che il ricarimento dello stesso non ne cambia lo stato
+    Given viene usata l'utenza: PRODUTTORE_2
+    Then si verifica che il prodotto sia marcato come: "SUPERVISED"
+    Then viene caricato di nuovo lo stesso prodotto
+    Then si verifica che la risposta abbia:
+      | status      | OK |
+    # [TC_58]
+    # Recupero del report generato:
+    And si verifica che il report dell'ultimo prodotto aggiunto contenga la descrizione: "Prodotto in stato diverso da ESCLUSO o DA REVISIONARE"
+    Then il report è correttamente popolato
+    Then si verifica che il prodotto sia marcato come: "SUPERVISED"
+    #lato INVITALIA escludo il prodotto dopo la contrassegnazione
+    Given viene usata l'utenza: INVITALIA_L1
+    When viene escluso il prodotto appena aggiunto
+    Then si verifica che ci siano 2 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
+
+  #[TC_56]
+  Scenario: [TC_ACTION_ON_PRODUCT_3] Si verifica che lato INVITALIA le vecchie motivazioni non siano più visibili quando un prodotto viene caricato di nuovo dal produttore
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2310946          | AWM10014586GD       | AWM10014586GD          | Lavasciuga       | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Given viene usata l'utenza: INVITALIA_L1
+    And viene escluso il prodotto appena aggiunto
+    And si verifica che ci siano 1 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
+    Given viene usata l'utenza: PRODUTTORE_2
+    Then viene caricato di nuovo lo stesso prodotto
+    Then si verifica che la risposta abbia:
+      | status      | OK |
+    Given viene usata l'utenza: INVITALIA_L1
+    And si verifica che ci siano 0 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
+    Given viene usata l'utenza: INVITALIA_L2
+    And si verifica che ci siano 0 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
+
+      #[TC_60]
+  Scenario: [TC_ACTION_ON_PRODUCT_3] Sis
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2310946          | AWM10014586GD       | AWM10014586GD          | Lavasciuga       | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Given viene usata l'utenza: INVITALIA_L1
+    And viene escluso il prodotto appena aggiunto
+    #POSSIBILE BUG DA CONTROLLARE: L'openApi di questa risposta gestisce soltanto: product.update.error e ora che arriva product.invalid.update.email l'oggetto viene popolato con errorKey null
+    Then si verifica che l'operazione di aggiornamento ritorni i seguenti valori:
+      | status      | OK |
+    And viene iniziato l'iter di approvazione del prodotto
+    # POSSIBILE BUG POICHé RITORNA OK INVECE CHE KO (Lo stato rimane ESCLUSO però lo statusCode della risposta non sembra corretto)
+    Then si verifica che l'operazione di aggiornamento ritorni i seguenti valori:
+      | status      | KO |
+
+          #[TC_61]
+  Scenario: [TC_ACTION_ON_PRODUCT_4] SisSA
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2310946          | AWM10014586GD       | AWM10014586GD          | Lavasciuga       | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Given viene usata l'utenza: INVITALIA_L2
+    And viene iniziato l'iter di approvazione del prodotto
+    Then si verifica che la chiamata abbia ritornato uno status code: 403
+    Given viene usata l'utenza: PRODUTTORE_2
+    And viene iniziato l'iter di approvazione del prodotto
+    Then si verifica che la chiamata abbia ritornato uno status code: 403
+
+      #[TC_62]
+  Scenario: [TC_ACTION_ON_PRODUCT_5] L'avvio del iter di approvazione del prodotto cambio lo stato in "WAIT_APPROVED" che è però visibile soltanto lato INVITALIA
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 1589211           | WF5V843BWSIT       | WF5V843BWSIT          | Lavatrice        | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Then si verifica che il prodotto sia marcato come: "UPLOADED"
+    Given viene usata l'utenza: INVITALIA_L1
+    And viene iniziato l'iter di approvazione del prodotto
+    Then si verifica che il prodotto sia marcato come: "WAIT_APPROVED"
+    Given viene usata l'utenza: PRODUTTORE_2
+    Then si verifica che il prodotto sia marcato come: "UPLOADED"
+    Given viene usata l'utenza: INVITALIA_L2
+    And viene ripristinato il prodotto appena aggiunto da L2
+    Then si verifica che il prodotto sia marcato come: "UPLOADED"
+
+
+
+
+
+
+

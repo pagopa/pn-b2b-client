@@ -5,7 +5,7 @@ Feature: PARI - Portale registro dei beni
     Given vengono generati tutti i token JWT necessari
 
   Scenario: [TC-INSTITUTION-1] Lato INVITALIA viene recuperata la lista di produttori abilitati al caricamento di prodotti
-    Given viene usata l'utenza: INVITALIA
+    Given viene usata l'utenza: INVITALIA_L1
 #    Given l'utente "ACCETTA" i TOS
     When viene recuperata la lista di istituzioni
     Then si controlla che la lista ritornata sia popolata correttamente
@@ -25,7 +25,7 @@ Feature: PARI - Portale registro dei beni
     Then la chiamata ha restituito status code: 403
 
   Scenario: [TC-INSTITUTION-3] Lato INVITALIA viene recuperata la lista prodotti e le informazioni relative ad uno specifico prodotto
-    Given viene usata l'utenza: INVITALIA
+    Given viene usata l'utenza: INVITALIA_L1
     When viene recuperata la lista di istituzioni
     Then viene recuperata la lista prodotti di una specifica istituzione tra quelle recuperate precedentemente
     And si verifica che il prodotto ritornato abbia tutti i campi validi

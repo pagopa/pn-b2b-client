@@ -14,6 +14,9 @@ public class JWTUserData {
     private String name;
     private String familyName;
     private String orgId;
-    private String orgRole;
+    private String orgVat;
     private String orgFc;
+    private String orgName;
+    private String orgPartyRole;
+    private String orgRole;
 }

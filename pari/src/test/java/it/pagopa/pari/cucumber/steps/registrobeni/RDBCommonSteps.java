@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import it.pagopa.pari.cucumber.domain.JWTUserData;
 import it.pagopa.pari.cucumber.domain.JWTUserDataRegistry;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
+import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.registrobeni.domain.RdbRole;
 import it.pagopa.pari.utils.RdBJWTProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,14 +21,17 @@ public class RDBCommonSteps {
     private final RestTemplate restTemplate;
     private final RdBJWTProvider jWTUserRoleProvider;
     private final JWTUserDataRegistry jwtUserDataRegistry;
+    private final SharedCommonContext sharedCommonContext;
 
     public RDBCommonSteps(ApiClientContext apiClientContext, RestTemplate restTemplate, RdBJWTProvider rdBJWTProvider,
-                          JWTUserDataRegistry jwtUserDataRegistry, @Value("${rdb.base-url}") String baseUrl) {
+                          JWTUserDataRegistry jwtUserDataRegistry, @Value("${rdb.base-url}") String baseUrl,
+                          SharedCommonContext sharedCommonContext) {
         this.baseUrl = baseUrl;
         this.apiClientContext = apiClientContext;
         this.restTemplate = restTemplate;
         this.jWTUserRoleProvider = rdBJWTProvider;
         this.jwtUserDataRegistry = jwtUserDataRegistry;
+        this.sharedCommonContext = sharedCommonContext;
     }
 
     @Given("vengono generati tutti i token JWT necessari")
@@ -46,6 +50,7 @@ public class RDBCommonSteps {
 
     @Given("viene usata l'utenza: {rdbRole}")
     public void setUser(RdbRole user) {
+        sharedCommonContext.setUserData(jwtUserDataRegistry.getUserData(user));
         apiClientContext.setBearerToken(user);
     }
 
