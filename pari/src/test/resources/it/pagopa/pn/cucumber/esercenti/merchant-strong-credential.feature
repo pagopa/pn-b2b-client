@@ -55,32 +55,12 @@ Feature: PARI - Portale Esercenti Credenziali Forti (Sede legale)
 
 
   #[TC-23]
-  Scenario Outline: [TC_MERCHANT_8] Viene censito un nuovo punto vendita utilizzando un pointOfSaleId non valido - KO
+  Scenario: [TC_MERCHANT_8] Viene censito un nuovo punto vendita utilizzando un pointOfSaleId non valido - KO
     Given viene usata l'utenza: MERCHANT_ROOT
     When viene censito un nuovo punto vendita con i seguenti parametri:
-      | id             | <id>             |
-      | type           | <type>           |
-      | franchiseName  | <franchiseName>  |
-      | region         | <region>         |
-      | province       | <province>       |
-      | city           | <city>           |
-      | zipCode        | <zipCode>        |
-      | address        | <address>        |
-      | streetNumber   | <streetNumber>   |
-      | webSite        | <webSite>        |
-#      | contactEmail   | <contactEmail>   |
-      | contactName    | <contactName>    |
-      | contactSurname | <contactSurname> |
-      | channelEmail   | <channelEmail>   |
-      | channelPhone   | <channelPhone>   |
-      | channelGeolink | <channelGeolink> |
-      | channelWebsite | <channelWebsite> |
+      | id             | 00000             |
     Then la chiamata ritorna status code: 404
-    Examples:
-      | id                          | type     | franchiseName  | region   | province | city       | zipCode | address                                            | streetNumber | webSite                          | contactEmail          | contactName | contactSurname | channelEmail         | channelPhone | channelGeolink                     | channelWebsite              |
-      | 00000    | Retail   | Test8          | Lombardia| MI       | Milano     | 20100   | Via Trieste, 65015 Montesilvano PE, Italia         | 12           | https://www.mediaworld.it/       | test.p8@prova.com     | Mario       | Rossi          | support@superstore.it | +39021234567 | https://maps.app.goo.gl/abc123      | https://channel.superstore.it|
-#      | 688cb2c22fb2709e4ba6d18d    | Retail   | Test8\|è+ù=          | Lombardia| MI       | Milano     | 20100   | Via Trieste, 65015 Montesilvano PE, Italia         | 12           | https://www.mediaworld.it/       | test.p8@prova.com     | Mario       | Rossi          | support@superstore.it | +39021234567 | https://maps.app.goo.gl/abc123      | https://channel.superstore.it|
-#      | 688cb2c22fb2709e4ba6d18d    | Retail   | Test8          | Lombardia\|è+ù=| MI       | 123     | 20100   | Via Trieste, 65015 Montesilvano PE, Italia         | 12           | https://www.mediaworld.it/       | test.p8@prova.com     | Mario       | Rossi          | support@superstore.it | +39021234567 | https://maps.app.goo.gl/abc123      | https://channel.superstore.it|
+
 
 
 
