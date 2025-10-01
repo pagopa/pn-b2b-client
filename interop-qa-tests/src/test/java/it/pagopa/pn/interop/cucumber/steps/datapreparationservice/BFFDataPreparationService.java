@@ -699,7 +699,7 @@ public class BFFDataPreparationService {
         return addDocumentToDescriptor(eServiceId, descriptorId, name, resource);
     }
 
-    private UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name, Resource resource) {
+    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name, Resource resource) {
         String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId,
