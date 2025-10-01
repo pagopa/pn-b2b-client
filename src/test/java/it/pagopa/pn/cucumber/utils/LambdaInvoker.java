@@ -20,15 +20,14 @@ public class LambdaInvoker {
     private LambdaClient lambdaClient;
     @Value("${spring.profiles.active}") private String activeProfile;
 
-    private String getUserRole(){
-        if(activeProfile.equals("dev")){
-            return "ROLE_dev_core";
-        } else if(activeProfile.equals("test")){
-            return "ROLE_test_core";
-        }
-        else if(activeProfile.equals("uat")){
-            return "ROLE_uat_core";
-        }
+    private String getUserRole() {
+        return switch (activeProfile) {
+            case "dev" -> "ROLE_dev_core";
+            case "test" -> "ROLE_test_core";
+            case "uat" -> "ROLE_uat_core";
+            case "hotfix" -> "ROLE_hotfix_core";
+            default -> throw new RuntimeException("Invalid profile active");
+        };
 
         throw new RuntimeException("Invalid profile active");
     }
