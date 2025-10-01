@@ -16,6 +16,7 @@ public class RdbUserRoleConfiguration {
     private Role productor2;
     private Role invitaliaL1;
     private Role invitaliaL2;
+    private Role merchantRoot;
 
     @Getter
     @Setter
@@ -29,6 +30,9 @@ public class RdbUserRoleConfiguration {
         private String uid;
         private String name;
         private String familyName;
+        private String email;
+        private String acquirerId;
+        private String merchantId;
         private String orgId;
         private String orgVat;
         private String orgFc;

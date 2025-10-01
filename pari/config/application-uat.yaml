@@ -1,6 +1,9 @@
 rdb:
   base-url: https://api-io.uat.cstar.pagopa.it/idpay-itn/register
 
+merchant:
+  base-url: https://api-io.uat.cstar.pagopa.it/idpay-itn/merchant
+
 role:
   productor-1:
     uid: "e88fe25f-ccfa-4962-8f62-f1450fd78ad0"
@@ -45,5 +48,18 @@ role:
     orgName: Ag.Naz.Attrazione Investimenti Sviluppo Impresa Spa
     orgPartyRole: Admin Invitalia
     orgRole: invitalia_admin
+
+  merchant-root:
+    uid: "330f7958-e839-494c-a114-64fea26b8e85"
+    name: esercente
+    familyName: test
+    email: esercenteTest@test.email.it
+    acquirerId: PAGOPA
+    merchantId: d90f0d01-1efd-3e4f-a7a7-3c22f5cca0dd
+    orgId: f06ce6ee-9605-4327-89a6-0fb9f22b3a06
+    orgVat: "33444433488"
+    orgName: Esercente di test IdPay
+    orgPartyRole: MANAGER
+    orgRole: admin
 
 removeTos.endpoint: https://idpay.itn.internal.uat.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent

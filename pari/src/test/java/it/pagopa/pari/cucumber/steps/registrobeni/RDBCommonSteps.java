@@ -16,7 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 public class RDBCommonSteps {
-    private final String baseUrl;
+    private final String rdbBaseUrl;
+    private final String merchantBaseUrl;
     private final ApiClientContext apiClientContext;
     private final RestTemplate restTemplate;
     private final RdBJWTProvider jWTUserRoleProvider;
@@ -24,9 +25,12 @@ public class RDBCommonSteps {
     private final SharedCommonContext sharedCommonContext;
 
     public RDBCommonSteps(ApiClientContext apiClientContext, RestTemplate restTemplate, RdBJWTProvider rdBJWTProvider,
-                          JWTUserDataRegistry jwtUserDataRegistry, @Value("${rdb.base-url}") String baseUrl,
+                          JWTUserDataRegistry jwtUserDataRegistry,
+                          @Value("${rdb.base-url}") String rdbBaseUrl,
+                          @Value("${merchant.base-url}") String merchantBaseUrl,
                           SharedCommonContext sharedCommonContext) {
-        this.baseUrl = baseUrl;
+        this.rdbBaseUrl = rdbBaseUrl;
+        this.merchantBaseUrl = merchantBaseUrl;
         this.apiClientContext = apiClientContext;
         this.restTemplate = restTemplate;
         this.jWTUserRoleProvider = rdBJWTProvider;
@@ -36,8 +40,15 @@ public class RDBCommonSteps {
 
     @Given("vengono generati tutti i token JWT necessari")
     public void generateJWTToken() {
-        URI uri = URI.create(baseUrl + "/token/test");
+        callTokenGenerator(URI.create(rdbBaseUrl + "/token/test"));
+    }
 
+    @Given("vengono generati tutti i token JWT necessari per esercenti")
+    public void generateJWTMerchantToken() {
+        callTokenGenerator(URI.create(merchantBaseUrl + "/token/test"));
+    }
+
+    private void callTokenGenerator(URI uri) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -46,6 +57,7 @@ public class RDBCommonSteps {
             String jwtToken = restTemplate.postForEntity(uri, requestBody, String.class).getBody();
             jWTUserRoleProvider.storeJwt(role, jwtToken);
         }
+
     }
 
     @Given("viene usata l'utenza: {rdbRole}")
