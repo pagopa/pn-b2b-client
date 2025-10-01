@@ -13,9 +13,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 

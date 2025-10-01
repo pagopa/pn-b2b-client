@@ -108,12 +108,12 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
 
     @Override
     public String pecbodyconfirm(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.pecValidationContactsSuccessBody(xLanguage);
+        return templateApi.pecValidationContactsSuccessBody(xLanguage, new PecValidationContactsBody().recipientType("PF"));
     }
 
     @Override
     public String pecbodyreject(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.pecValidationContactsRejectBody(xLanguage);
+        return templateApi.pecValidationContactsRejectBody(xLanguage, new PecValidationContactsBody().recipientType("PF"));
     }
 
     @Override

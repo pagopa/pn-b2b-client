@@ -57,6 +57,7 @@ import static org.awaitility.Awaitility.await;
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,
+        PnRaddAlternativeV2ClientImpl.class,
         PnRaddAlternativeClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,

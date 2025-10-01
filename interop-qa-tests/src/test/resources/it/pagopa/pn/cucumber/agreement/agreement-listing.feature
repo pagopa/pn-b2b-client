@@ -3,6 +3,7 @@ Feature: Listing richieste di fruizione
   Tutti gli utenti autorizzati di enti PA, GSP e privati possono ottenere la lista delle richieste di fruizione
   NB: Gli e-service creati devono essere il minimo numero sufficiente per far passare il test, in caso contrario il sistema potrebbe sovraccaricarsi e non rispondere nei tempi attesi
 
+  @happy-path
   @agreement_listing1 @no-parallel
   Scenario Outline: A fronte di 5 richieste di fruizione in db, restituisce solo i primi 3 risultati
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -29,6 +30,7 @@ Feature: Listing richieste di fruizione
       | Privato | support      |
       | Privato | api,security |
 
+  @happy-path
   @agreement_listing2
   Scenario: A fronte di 5 richieste di fruizione in db e una richiesta di offset 3, restituisce solo 2 risultati
     Given l'utente è un "admin" di "GSP"
@@ -37,6 +39,7 @@ Feature: Listing richieste di fruizione
     When l'utente richiede una operazione di listing con offset 3
     Then si ottiene status code 200 e la lista di 2 richieste di fruizione
 
+  @happy-path
   @agreement_listing3 @no-parallel
   Scenario: Restituisce le richieste di fruizione che un erogatore si trova create dai fruitori dei propri e-service
     Given l'utente è un "admin" di "PA1"
@@ -46,6 +49,7 @@ Feature: Listing richieste di fruizione
     When l'utente richiede una operazione di listing delle richieste di fruizione ai propri e-service
     Then si ottiene status code 200 e la lista di 10 richieste di fruizione
 
+  @happy-path
   @agreement_listing4
   Scenario: Restituisce le richieste di fruizione che un fruitore ha creato
     Given l'utente è un "admin" di "PA2"
@@ -55,6 +59,7 @@ Feature: Listing richieste di fruizione
     When l'utente richiede una operazione di listing delle richieste di fruizione che ha creato
     Then si ottiene status code 200 e la lista di 5 richieste di fruizione
 
+  @happy-path
   @agreement_listing5
   Scenario: Restituisce le richieste di fruizione associate ad alcuni specifici e-service
     Given l'utente è un "admin" di "PA1"
@@ -64,6 +69,7 @@ Feature: Listing richieste di fruizione
     When l'utente richiede una operazione di listing delle richieste di fruizione per 3 specifici e-service
     Then si ottiene status code 200 e la lista di 6 richieste di fruizione
 
+  @happy-path
   @agreement_listing6
   Scenario: Restituisce le richieste di fruizione di uno specifico fruitore che sono in uno o più specifici stati
     Given l'utente è un "admin" di "PA1"
@@ -75,6 +81,7 @@ Feature: Listing richieste di fruizione
     When l'utente richiede una operazione di listing delle richieste di fruizione di "GSP" che sono in stato "ACTIVE" e "DRAFT"
     Then si ottiene status code 200 e la lista di 2 richiesta di fruizione
 
+  @happy-path
   @agreement_listing7
   Scenario: Restituisce le richieste di fruizione di uno specifico fruitore che possono essere aggiornate ad una nuova versione di e-service
     Given l'utente è un "admin" di "GSP"
@@ -84,6 +91,7 @@ Feature: Listing richieste di fruizione
     When l'utente richiede una operazione di listing delle richieste di fruizione aggiornabili
     Then si ottiene status code 200 e la lista di 2 richieste di fruizione
 
+  @happy-path
   @agreement_listing8
   Scenario: Restituisce un insieme vuoto di richieste di fruizione per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"

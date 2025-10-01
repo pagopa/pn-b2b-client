@@ -16,14 +16,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.IterableUtils;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Data
+@Getter
+@Setter
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateStepContext {
     @Mapper(componentModel = "spring")
     public interface EServiceTemplateInfoMapper {
