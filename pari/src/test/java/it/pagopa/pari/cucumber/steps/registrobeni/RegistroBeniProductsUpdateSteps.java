@@ -83,10 +83,7 @@ public class RegistroBeniProductsUpdateSteps {
         ProductListDTO productListDTO = getProductByEprelCode(eprelCode);
         ProductDTO productFound = productListDTO.getContent().get(0);
         assertEquals(ProductStatus.fromValue(status), productFound.getStatus());
-
     }
-
-
 
     @When("viene iniziato l'iter di approvazione del prodotto")
     public void markProductAsWaitApproved() {

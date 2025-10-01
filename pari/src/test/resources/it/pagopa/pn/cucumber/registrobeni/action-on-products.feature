@@ -219,16 +219,3 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: INVITALIA_L2
     And viene ripristinato il prodotto appena aggiunto da L2
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
-
-
-
-
-
-
-
-
-
-
-
-
-
