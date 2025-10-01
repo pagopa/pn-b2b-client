@@ -46,7 +46,11 @@ public class RegistroBeniProductsUpdateSteps {
 
     @When("viene contrassegnato il prodotto appena aggiunto")
     public void markProductAsSupervisioned() {
-        searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusSupervised(productsUpdateDTO));
+        try {
+            searchAndmarkProduct(productsUpdateDTO -> apiClientContext.getRegisterPortalOperationClient().updateProductStatusSupervised(productsUpdateDTO));
+        } catch (HttpStatusCodeException ex) {
+            httpStatus = ex.getStatusCode();
+        }
     }
 
     @When("viene contrassegnato il prodotto con codice eprel: {string}")
