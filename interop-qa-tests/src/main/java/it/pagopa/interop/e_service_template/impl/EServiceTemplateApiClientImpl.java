@@ -28,13 +28,20 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /* TODO considerato che le varianti con HTTP info conservano lo stato di errore potrebbe essere
     preferibile utilizzare solo quelle, rimuovere le altre e adattare gli utilizzi di conseguenza */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     private final EserviceTemplatesApi eserviceTemplatesApi;
     private final RestTemplate restTemplate;

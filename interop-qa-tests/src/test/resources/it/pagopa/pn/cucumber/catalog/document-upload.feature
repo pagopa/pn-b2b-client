@@ -22,12 +22,13 @@ Feature: Caricamento di un documento di interfaccia
     @sad-path
     Examples:
       | ente | ruolo        | statoDescrittore | risultato |
-      | GSP  | security     | DRAFT            |       404 |
+      | GSP  | security     | DRAFT            |       403 |
       | GSP  | support      | DRAFT            |       403 |
-      | PA1  | security     | DRAFT            |       404 |
+      | PA1  | security     | DRAFT            |       403 |
       | PA1  | support      | DRAFT            |       403 |
 
     @sad-path
+    #BUG: https://pagopa.atlassian.net/browse/PIN-7757
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | PUBLISHED        |       400 |

@@ -31,6 +31,7 @@ public class ConfirmPecBodyStrategy implements ITemplateEngineStrategy {
             return null;
 
         return new PecVerificationCodeBody()
-                .verificationCode(context.getVerificationCode());
+                .verificationCode(context.getVerificationCode())
+                .recipientType("PF");
     }
 }

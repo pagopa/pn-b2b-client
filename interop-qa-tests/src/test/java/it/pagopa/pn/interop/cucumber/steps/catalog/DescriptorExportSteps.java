@@ -8,16 +8,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +19,19 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class DescriptorExportSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
+    private final BlobFileCreator blobFileCreator;
     private final BFFDataPreparationService dataPreparationService;
     private JsonObject configJson = null;
     private final List<String> zipEntries = new ArrayList<>();
@@ -37,11 +39,13 @@ public class DescriptorExportSteps {
 
     public DescriptorExportSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext,
-                                 BFFDataPreparationService dataPreparationService) {
+                                 BFFDataPreparationService dataPreparationService,
+                                 BlobFileCreator blobFileCreator) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.dataPreparationService = dataPreparationService;
+        this.blobFileCreator = blobFileCreator;
     }
 
     @When("l'utente effettua una richiesta di export del descrittore")
@@ -102,10 +106,15 @@ public class DescriptorExportSteps {
     @Given("l'utente ha già aggiunto un documento al descrittore")
     public void userAddDocumentDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID uuid = UUID.randomUUID();
+        Resource textDoc = blobFileCreator.createBlobWithTempFile("Document " + uuid,
+            "Some random text - %s".formatted(uuid).getBytes(
+                StandardCharsets.UTF_8));
         dataPreparationService.addDocumentToDescriptor(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-                null
+                null,
+                textDoc
         );
     }
 

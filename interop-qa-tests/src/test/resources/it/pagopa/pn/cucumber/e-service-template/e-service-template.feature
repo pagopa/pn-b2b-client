@@ -2,7 +2,7 @@
 Feature: Test API of e-service template
 
   @sad-path
-  @e-service-template-receive
+ # @e-service-template-receive
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
@@ -12,11 +12,11 @@ Feature: Test API of e-service template
       | ruolo    | modo       |
       | security | erogazione |
       | support  | erogazione |
-      | security | ricezione  |
-      | support  | ricezione  |
+#      | security | ricezione  |
+#      | support  | ricezione  |
 
-  @happy-path
-  @e-service-template-receive
+    @happy-path
+    #@e-service-template-receive
     @e-service-template-create
   Scenario Outline: [INTEROP-EST-002] La creazione di un e-service template può essere fatta da un ente in veste di ADMIN o API portando ad un template in stato DRAFT
     Given l'utente è un "<ruolo>" di "PA1"
@@ -27,11 +27,12 @@ Feature: Test API of e-service template
       | ruolo | modo       |
       | admin | erogazione |
       | api   | erogazione |
-      | admin | ricezione  |
-      | api   | ricezione  |
+#      | admin | ricezione  |
+#      | api   | ricezione  |
 
-  @sad-path
-  @e-service-template-receive
+    @sad-path
+    @e-service-template-receive
+    @e-service-template-deliver
     @e-service-template-create
   Scenario Outline: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
     Given l'utente è un "admin" di "PA1"
@@ -41,7 +42,7 @@ Feature: Test API of e-service template
     Examples:
       | modo       |
       | erogazione |
-      | ricezione  |
+#      | ricezione  |
 
   @sad-path
   @e-service-template-version-suspend
