@@ -14,14 +14,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.IterableUtils;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Data
+@Getter
+@Setter
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateStepContext {
     @Mapper(componentModel = "spring")
     public interface EServiceTemplateInfoMapper {
@@ -29,19 +41,6 @@ public class EServiceTemplateStepContext {
          *  semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
         @Mapping(source = "newVersionId", target = "lastVersionId")
         EServiceTemplateInfo withVersionId(EServiceTemplateInfo templateInfo, UUID newVersionId);
-    }
-
-    /* TODO 13/03/2025 i record non si stanno prestando bene come previsto, convertirli in classi
-     *  POJO con Lombok e collocarle all'esterno, in un package dedicato al context in cui
-     *  spostare anche questa classe */
-    /** Stores data on an e-service template useful for testing */
-    public record EServiceTemplateInfo(String name, String intendedTarget, String eServiceDescription, UUID id, UUID lastVersionId){}
-
-    /** Stores data on an e-service template document useful for testing */
-    public record EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body, String errorMessage){
-        public EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body) {
-            this(id, prettyName, body, null);
-        }
     }
 
     private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();

@@ -10,19 +10,25 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
     When l'utente richiede una operazione di lettura del documento allegato a quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
+      | GSP  | support      |       200 |
+      | PA1  | admin        |       200 |
+      | PA1  | support      |       200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | risultato |
       | GSP  | api          |       403 |
       | GSP  | security     |       403 |
-      | GSP  | support      |       200 |
       | GSP  | api,security |       403 |
-      | PA1  | admin        |       200 |
       | PA1  | api          |       403 |
       | PA1  | security     |       403 |
-      | PA1  | support      |       200 |
       | PA1  | api,security |       403 |
 
+  @happy-path
   @agreement_document_read2a
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "PA1"
@@ -38,6 +44,7 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @happy-path
   @agreement_document_read2b
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "<enteFruitore>"

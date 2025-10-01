@@ -11,8 +11,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemp
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import java.util.List;
+
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
 import org.assertj.core.api.Condition;
 import org.springframework.http.ResponseEntity;
