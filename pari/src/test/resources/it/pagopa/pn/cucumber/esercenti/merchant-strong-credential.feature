@@ -60,12 +60,3 @@ Feature: PARI - Portale Esercenti Credenziali Forti (Sede legale)
     When viene censito un nuovo punto vendita con i seguenti parametri:
       | id             | 00000             |
     Then la chiamata ritorna status code: 404
-
-
-
-
-
-
-
-
-

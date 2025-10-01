@@ -18,8 +18,6 @@ public class MerchantOperationClientImpl implements IMerchantOperationClient {
     private final RdBJWTProvider rdBJWTProvider;
     private final String basePath;
 
-
-
     public MerchantOperationClientImpl(RestTemplate restTemplate,
                                        RdBJWTProvider rdBJWTProvider,
                                        @Value("${merchant.base-url}") String basePath) {
@@ -27,7 +25,6 @@ public class MerchantOperationClientImpl implements IMerchantOperationClient {
         this.basePath = basePath + "/portal/";
         this.rdBJWTProvider = rdBJWTProvider;
         this.pointOfSalesApi = new PointOfSalesApi(createApiClient("dummy"));
-
     }
 
     private ApiClient createApiClient(String bearerToken) {
