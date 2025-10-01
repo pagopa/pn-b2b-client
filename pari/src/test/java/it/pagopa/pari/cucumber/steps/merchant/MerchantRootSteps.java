@@ -49,15 +49,15 @@ public class MerchantRootSteps {
     @When("la lista dei punti vendita è correttamente popolata")
     public void verifyPoSList() {
         Assertions.assertNotNull(listPointOfSaleDTO);
-        Assertions.assertNotNull(listPointOfSaleDTO.getPointsOfSale());
-        Assertions.assertFalse(listPointOfSaleDTO.getPointsOfSale().isEmpty());
+        Assertions.assertNotNull(listPointOfSaleDTO.getContent());
+        Assertions.assertFalse(listPointOfSaleDTO.getContent().isEmpty());
     }
 
     @When("si recupera il dettaglio di uno specifico punto vendita")
     public void getPosDetails() {
         verifyPoSList();
         pointOfSaleDTO = apiClientContext.getMerchantOperationClient().getPointOfSale(sharedCommonContext.getUserData().getMerchantId(),
-                listPointOfSaleDTO.getPointsOfSale().get(0).getId());
+                listPointOfSaleDTO.getContent().get(0).getId());
         Assertions.assertNotNull(pointOfSaleDTO);
     }
 
@@ -65,7 +65,7 @@ public class MerchantRootSteps {
     public void getPosDetails(DataTable dataTable) {
         Map<String, String> dataTableMap = dataTable.asMap();
         String merchantId = Optional.ofNullable(dataTableMap.get("merchantId")).orElse(sharedCommonContext.getUserData().getMerchantId());
-        String pointOfSaleId = Optional.ofNullable(dataTableMap.get("pointOfSaleId")).orElse(listPointOfSaleDTO.getPointsOfSale().get(0).getId());
+        String pointOfSaleId = Optional.ofNullable(dataTableMap.get("pointOfSaleId")).orElse(listPointOfSaleDTO.getContent().get(0).getId());
         verifyPoSList();
         try {
             pointOfSaleDTO = apiClientContext.getMerchantOperationClient().getPointOfSale(merchantId, pointOfSaleId);
