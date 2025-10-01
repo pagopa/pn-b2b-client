@@ -4,29 +4,90 @@
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
+      #Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed                 | quantita |
-        | tcProvCapNonCensite_ | 15       |
+        | seed      | quantita |
+        | tcMassivo_ | 3000     |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId       | comparative | limit |
-        | unknow~RS~P01  | esattamente | 0     |
-        | unknow~AR~01   | esattamente | 0     |
-        | unknow~890~P01 | esattamente | 0     |
-        | unknow~RS~P11  | esattamente | 0     |
-        | unknow~AR~11   | esattamente | 0     |
-        | unknow~890~P11 | esattamente | 0     |
+        | senderId      | comparative | limit |
+        | unknow~RS~NA  | almeno      | 0     |
+        | unknow~AR~NA  | almeno      | 0     |
+        | unknow~890~NA | almeno      | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId | comparative | limit |
-        | unknow~P01              | esattamente | 0     |
-        | unknow~CAP1_P01         | esattamente | 0     |
-        | unknow~CAP2_P01         | esattamente | 0     |
-        | unknow~CAP11_P01        | esattamente | 0     |
-        | unknow~P11              | esattamente | 0     |
-        | unknow~CAP1_P11         | esattamente | 0     |
-        | unknow~CAP2_P11         | esattamente | 0     |
-        | unknow~CAP11_P11        | esattamente | 0     |
+        | driverSconosciuto~NA    | esattamente | 0     |
+        | driverSconosciuto~80010 | esattamente | 0     |
+        | driverSconosciuto~80011 | esattamente | 0     |
+        | driverSconosciuto~80012 | esattamente | 0     |
+        | driverSconosciuto~80013 | esattamente | 0     |
+        | driverSconosciuto~80016 | esattamente | 0     |
+        | driverSconosciuto~80017 | esattamente | 0     |
+        | driverSconosciuto~80018 | esattamente | 0     |
+        | driverSconosciuto~80019 | esattamente | 0     |
+        | driverSconosciuto~80020 | esattamente | 0     |
+        | driverSconosciuto~80021 | esattamente | 0     |
+        | driverSconosciuto~80022 | esattamente | 0     |
+        | driverSconosciuto~80023 | esattamente | 0     |
+        | driverSconosciuto~80024 | esattamente | 0     |
+        | driverSconosciuto~80026 | esattamente | 0     |
+        | driverSconosciuto~80028 | esattamente | 0     |
+        | driverSconosciuto~80029 | esattamente | 0     |
+        | driverSconosciuto~80030 | esattamente | 0     |
+        | driverSconosciuto~80035 | esattamente | 0     |
+        | driverSconosciuto~80036 | esattamente | 0     |
+        | driverSconosciuto~80038 | esattamente | 0     |
+        | driverSconosciuto~80039 | esattamente | 0     |
+        | driverSconosciuto~80040 | esattamente | 0     |
+        | driverSconosciuto~80041 | esattamente | 0     |
+        | driverSconosciuto~80044 | esattamente | 0     |
+        | driverSconosciuto~80045 | esattamente | 0     |
+        | driverSconosciuto~80046 | esattamente | 0     |
+        | driverSconosciuto~80047 | esattamente | 0     |
+        | driverSconosciuto~80049 | esattamente | 0     |
+        | driverSconosciuto~80050 | esattamente | 0     |
+        | driverSconosciuto~80053 | esattamente | 0     |
+        | driverSconosciuto~80054 | esattamente | 0     |
+        | driverSconosciuto~80055 | esattamente | 0     |
+        | driverSconosciuto~80056 | esattamente | 0     |
+        | driverSconosciuto~80057 | esattamente | 0     |
+        | driverSconosciuto~80058 | esattamente | 0     |
+        | driverSconosciuto~80059 | esattamente | 0     |
+        | driverSconosciuto~80062 | esattamente | 0     |
+        | driverSconosciuto~80063 | esattamente | 0     |
+        | driverSconosciuto~80065 | esattamente | 0     |
+        | driverSconosciuto~80067 | esattamente | 0     |
+        | driverSconosciuto~80069 | esattamente | 0     |
+        | driverSconosciuto~80070 | esattamente | 0     |
+        | driverSconosciuto~80072 | esattamente | 0     |
+        | driverSconosciuto~80073 | esattamente | 0     |
+        | driverSconosciuto~80075 | esattamente | 0     |
+        | driverSconosciuto~80077 | esattamente | 0     |
+        | driverSconosciuto~80078 | esattamente | 0     |
+        | driverSconosciuto~80081 | esattamente | 0     |
+        | driverSconosciuto~80122 | esattamente | 0     |
+        | driverSconosciuto~80123 | esattamente | 0     |
+        | driverSconosciuto~80124 | esattamente | 0     |
+        | driverSconosciuto~80125 | esattamente | 0     |
+        | driverSconosciuto~80126 | esattamente | 0     |
+        | driverSconosciuto~80128 | esattamente | 0     |
+        | driverSconosciuto~80129 | esattamente | 0     |
+        | driverSconosciuto~80131 | esattamente | 0     |
+        | driverSconosciuto~80132 | esattamente | 0     |
+        | driverSconosciuto~80134 | esattamente | 0     |
+        | driverSconosciuto~80135 | esattamente | 0     |
+        | driverSconosciuto~80136 | esattamente | 0     |
+        | driverSconosciuto~80137 | esattamente | 0     |
+        | driverSconosciuto~80139 | esattamente | 0     |
+        | driverSconosciuto~80141 | esattamente | 0     |
+        | driverSconosciuto~80143 | esattamente | 0     |
+        | driverSconosciuto~80144 | esattamente | 0     |
+        | driverSconosciuto~80145 | esattamente | 0     |
+        | driverSconosciuto~80146 | esattamente | 0     |
+        | driverSconosciuto~80147 | esattamente | 0     |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -34,47 +95,124 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
-      And verifica che non esistano notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY" per il seed "tcProvCapNonCensite_"
       And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      And verifica che non esistano notifiche al workflow step "EVALUATE_DRIVER_CAPACITY" per il seed "tcProvCapNonCensite_"
-      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcProvCapNonCensite_"
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcProvCapNonCensite_"
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
-      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
-      # Per verificarne il comportamento occorrerebbe quindi:
-      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
-      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
-      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                       | TOT |
-        | "tcProvCapNonCensite.csv" | 15  |
+        | csv                   | TOT  |
+        | "spedizioni_3000.csv" | 3000 |
+
+
+      @delayer6
+      #Lo scenario testa il corretto funzionamento della prima parte della lambda, pertanto si utilizzano mittenti non censiti e, non conoscendo a priori il driver,
+      #il confronto tra actual ed expected per lo stato EVALUATE_RESIDUAL_CAPACITY non considererà il campo unifiedDriverDelivery
+      #BUG: https://pagopa.atlassian.net/browse/PN-16640
+    Scenario Outline: [VALIDATION_PN-16640] Validazione dell'uso della cache nel job mittenti
+      #Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed      | quantita |
+        | tcMassivo_ | 3000     |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId      | comparative | limit |
+        | unknow~RS~NA  | almeno      | 0     |
+        | unknow~AR~NA  | almeno      | 0     |
+        | unknow~890~NA | almeno      | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | driverSconosciuto~NA    | esattamente | 0     |
+        | driverSconosciuto~80010 | esattamente | 0     |
+        | driverSconosciuto~80011 | esattamente | 0     |
+        | driverSconosciuto~80012 | esattamente | 0     |
+        | driverSconosciuto~80013 | esattamente | 0     |
+        | driverSconosciuto~80016 | esattamente | 0     |
+        | driverSconosciuto~80017 | esattamente | 0     |
+        | driverSconosciuto~80018 | esattamente | 0     |
+        | driverSconosciuto~80019 | esattamente | 0     |
+        | driverSconosciuto~80020 | esattamente | 0     |
+        | driverSconosciuto~80021 | esattamente | 0     |
+        | driverSconosciuto~80022 | esattamente | 0     |
+        | driverSconosciuto~80023 | esattamente | 0     |
+        | driverSconosciuto~80024 | esattamente | 0     |
+        | driverSconosciuto~80026 | esattamente | 0     |
+        | driverSconosciuto~80028 | esattamente | 0     |
+        | driverSconosciuto~80029 | esattamente | 0     |
+        | driverSconosciuto~80030 | esattamente | 0     |
+        | driverSconosciuto~80035 | esattamente | 0     |
+        | driverSconosciuto~80036 | esattamente | 0     |
+        | driverSconosciuto~80038 | esattamente | 0     |
+        | driverSconosciuto~80039 | esattamente | 0     |
+        | driverSconosciuto~80040 | esattamente | 0     |
+        | driverSconosciuto~80041 | esattamente | 0     |
+        | driverSconosciuto~80044 | esattamente | 0     |
+        | driverSconosciuto~80045 | esattamente | 0     |
+        | driverSconosciuto~80046 | esattamente | 0     |
+        | driverSconosciuto~80047 | esattamente | 0     |
+        | driverSconosciuto~80049 | esattamente | 0     |
+        | driverSconosciuto~80050 | esattamente | 0     |
+        | driverSconosciuto~80053 | esattamente | 0     |
+        | driverSconosciuto~80054 | esattamente | 0     |
+        | driverSconosciuto~80055 | esattamente | 0     |
+        | driverSconosciuto~80056 | esattamente | 0     |
+        | driverSconosciuto~80057 | esattamente | 0     |
+        | driverSconosciuto~80058 | esattamente | 0     |
+        | driverSconosciuto~80059 | esattamente | 0     |
+        | driverSconosciuto~80062 | esattamente | 0     |
+        | driverSconosciuto~80063 | esattamente | 0     |
+        | driverSconosciuto~80065 | esattamente | 0     |
+        | driverSconosciuto~80067 | esattamente | 0     |
+        | driverSconosciuto~80069 | esattamente | 0     |
+        | driverSconosciuto~80070 | esattamente | 0     |
+        | driverSconosciuto~80072 | esattamente | 0     |
+        | driverSconosciuto~80073 | esattamente | 0     |
+        | driverSconosciuto~80075 | esattamente | 0     |
+        | driverSconosciuto~80077 | esattamente | 0     |
+        | driverSconosciuto~80078 | esattamente | 0     |
+        | driverSconosciuto~80081 | esattamente | 0     |
+        | driverSconosciuto~80122 | esattamente | 0     |
+        | driverSconosciuto~80123 | esattamente | 0     |
+        | driverSconosciuto~80124 | esattamente | 0     |
+        | driverSconosciuto~80125 | esattamente | 0     |
+        | driverSconosciuto~80126 | esattamente | 0     |
+        | driverSconosciuto~80128 | esattamente | 0     |
+        | driverSconosciuto~80129 | esattamente | 0     |
+        | driverSconosciuto~80131 | esattamente | 0     |
+        | driverSconosciuto~80132 | esattamente | 0     |
+        | driverSconosciuto~80134 | esattamente | 0     |
+        | driverSconosciuto~80135 | esattamente | 0     |
+        | driverSconosciuto~80136 | esattamente | 0     |
+        | driverSconosciuto~80137 | esattamente | 0     |
+        | driverSconosciuto~80139 | esattamente | 0     |
+        | driverSconosciuto~80141 | esattamente | 0     |
+        | driverSconosciuto~80143 | esattamente | 0     |
+        | driverSconosciuto~80144 | esattamente | 0     |
+        | driverSconosciuto~80145 | esattamente | 0     |
+        | driverSconosciuto~80146 | esattamente | 0     |
+        | driverSconosciuto~80147 | esattamente | 0     |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And verifica la corretta pianificazione di ogni test case
+
+      Examples:
+        | csv                   | TOT  |
+        | "spedizioni_3000.csv" | 3000 |
 
 
     @delayer1
