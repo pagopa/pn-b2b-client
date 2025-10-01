@@ -29,7 +29,8 @@ import org.junit.platform.suite.api.Suite;
     "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila",
 
     // M2M
-    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices"
+    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
+    "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2"
 })
 public class NrtTest {
 }
