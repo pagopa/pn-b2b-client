@@ -244,6 +244,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 401
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7410
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato PUBLISHED (Parte2#Scenario intorno a 44)
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -529,6 +530,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7526
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_49] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 84)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
@@ -619,6 +621,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7526
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_50] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 98)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"

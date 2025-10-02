@@ -151,10 +151,7 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
 
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId) {
-        return this.performOperation(SimpleOperation.of(
-            () -> eservicesApi.getEServiceDescriptor(eserviceId, descriptorId),
-            res -> res
-        )).orElse(null);
+        return eservicesApi.getEServiceDescriptor(eserviceId, descriptorId);
     }
 
     @Override

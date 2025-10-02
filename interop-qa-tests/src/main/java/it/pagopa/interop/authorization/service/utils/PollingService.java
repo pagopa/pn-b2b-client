@@ -28,7 +28,7 @@ public class PollingService {
             log.error("Unexpected thread interruption  during polling: {}", e.getMessage());
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error during shouldStop polling logic evaluation: " + e.getMessage());
+            throw new IllegalArgumentException("Error during polling: " + e.getMessage());
         }
 
         throw new PollingPredicateException("Eventual consistency error: " + errorMessage);
