@@ -19,6 +19,36 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 #todo t cap
 
 
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_1] Creazione nuova copertura Radd tutti i campi compilati
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_2] Creazione nuova copertura Radd solo campi obbligatori
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_3] Errore Creazione nuova copertura Radd campi inesistenti
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_4] Errore Creazione nuova copertura Radd campi cap e locality vuoti
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_5] Errore Creazione nuova copertura Radd utente solo lettura
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_6] Errore Creazione nuova copertura Radd sede già creata
+
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_7] Verifica copertura Radd con tutti i campi compilati - light mode
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_8] Verifica copertura Radd con tutti i campi compilati - complete mode
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_9A] Verifica copertura Radd campi obbligatori - light mode
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_9B] Verifica copertura Radd campi obbligatori - complete mode
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_10] Errore Verifica copertura Radd cap e city inesistenti - complete/light mode
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_11] Errore Verifica copertura Radd search_mode inesistente
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_12] Errore Verifica copertura Radd cap e city vuoti - complete/light mode
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_13] Errore Verifica copertura Radd search_mode vuoto
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_14] Errore Verifica copertura Radd utente ruolo diverso  *** token casuale?
+
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_15A] Modifica copertura Radd tutti i campi compilati
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_15B] Modifica copertura Radd tutti i campi compilati e endValidity = startValidity
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_16] Modifica copertura Radd solo campi obbligatori
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_17] Modifica copertura Radd cap e locality inesistenti
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_18] Errore Modifica copertura Radd  campi opzionali inesistenti
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_19] Errore Modifica copertura Radd cap e locality vuoti
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_20] Errore Modifica copertura Radd startValidity maggiore di una endValidity
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_21] Errore Modifica copertura Radd endValidity minore di una startValidity
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_22] Errore Modifica copertura Radd utente solo lettura
+
+
+
+
   Scenario: [RADD_ANAGRAFICA] Testing Autenticazione con parametri
     Given l' utente con username "test@test.com" password "Test_Cognito_1.!" e clientId "77j22r1r812dt3vo8d4s985ap4" richiede e riceve un token valido tramite cognito
 
