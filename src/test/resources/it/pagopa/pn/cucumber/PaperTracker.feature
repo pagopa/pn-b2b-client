@@ -1,6 +1,6 @@
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
-  @paperTracker
+  @paperTracker1
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -16,22 +16,30 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName              |
-      | ok_AR |
-      | FAIL-Discovery_AR |
-      | FAIL_AR |
-      | FAIL-Irreperibile_AR |
-      | OK-Giacenza_AR |
-      | FAIL-Giacenza_AR |
-      | FAIL-CompiutaGiacenza_AR |
-      | OK-CausaForzaMaggiore_AR |
-      | OK_AR_INVALID_DATETIME |
-      | OK_AR_NO_EVENT_B |
-      | OK_AR_TIMESTAMP_ERR |
-      | OK_AR_NOT_ORDERED |
-      | OK_GIACENZA_AR_2 |
-      | OK_GIACENZA_AR_3 |
-      | OK_GIACENZA_AR_4 |
-      | OK_AR_BAD_EVENT |
+#      | ok_AR |
+#      | FAIL-Discovery_AR |
+#      | FAIL_AR |
+#      | FAIL-Irreperibile_AR |
+#      | OK-Giacenza_AR |
+#      | FAIL-Giacenza_AR |
+#      | FAIL-CompiutaGiacenza_AR |
+#      | OK-CausaForzaMaggiore_AR |
+#      | OK_AR_INVALID_DATETIME |
+#      | OK_AR_NO_EVENT_B |
+#      | OK_AR_TIMESTAMP_ERR |
+#      | OK_AR_NOT_ORDERED |
+#      | OK_GIACENZA_AR_2 |
+#      | OK_GIACENZA_AR_3 |
+#      | OK_GIACENZA_AR_4 |
+#      | OK_AR_BAD_EVENT |
+
+      | OK_RIR |
+      | FAIL_RIR |
+      | OK-Retry_RIR |
+      | OK_RIR_NO_DEMAT |
+      | OK_RIR_INVALID_DATETIME |
+      | OK_RIR_TIMESTAMP_ERR |
+      | OK_RIR_NOT_ORDERED |
 
 
   @paperTracker
@@ -74,7 +82,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | Via@FAIL_CON996_PCRETRY_FURTO_AR  | NOT_RETRYABLE_EVENT_ERROR            |  NOT_RETRYABLE_EVENT_HANDLER  |
       | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
-      | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
+      | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
