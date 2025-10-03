@@ -84,7 +84,7 @@ jobs:
 
           echo "Using Spring profile: ${SPRING_PROFILE}"          
           echo "Running tests..."
-          cd ./pari && mvn $SPRING_PROFILE -Dtest=it.pagopa.pari.cucumber.${{ inputs.javaTestSuite }} clean verify
+          cd ./pari && mvn $SPRING_PROFILE -Dtest=it.pagopa.pari.cucumber.${{ inputs.testSuite }} clean verify
 
       - name: Upload Cucumber Report
         if: always()
