@@ -4,6 +4,7 @@ Feature: PARI - Portale registro dei beni
   Background:
     Given vengono generati tutti i token JWT necessari
 
+  @produttore1 @invitalia1
   Scenario Outline: [TC_1_TOS_OK] Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore in seguito all’accettazione dei ToS
     Given viene rimossa l'accettazione dei ToS per l'utente: <utenza>
     Given viene usata l'utenza: <utenza>
@@ -15,7 +16,7 @@ Feature: PARI - Portale registro dei beni
       | PRODUTTORE_1    |
       | INVITALIA_L1    |
 
-    #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-163
+  @produttore1
   Scenario: [TC_1_TOS_KO] La sottomissione di un csv prodotti senza l'accettazione dei ToS deve essere proibita
     Given viene usata l'utenza: PRODUTTORE_1
     Given viene rimossa l'accettazione dei ToS per l'utente: PRODUTTORE_1
@@ -25,7 +26,7 @@ Feature: PARI - Portale registro dei beni
     Then si verifica che la risposta abbia:
       | status      | KO |
 
-
+  @produttore1
   Scenario: [TC_UPLOAD_2] Inserimento di un nuovo file CSV con category errata
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -36,6 +37,7 @@ Feature: PARI - Portale registro dei beni
       | status      | KO |
       | errorKey    | product.invalid.file.category |
 
+  @produttore1
   Scenario: [TC_UPLOAD_3] Inserimento di un nuovo file con estensione errata poiché diversa da csv
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -46,7 +48,7 @@ Feature: PARI - Portale registro dei beni
       | status      | KO |
       | errorKey    | product.invalid.file.extension |
 
-
+  @produttore1
   Scenario Outline: [TC_UPLOAD_4] Inserimento di un nuovo file CSV non valido con alcune colonne non popolate o popolate in modo non corretto
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -85,7 +87,7 @@ Feature: PARI - Portale registro dei beni
     | 2226586      | eiQINTWM149V2          | EIQINTWM149       | LAV\|ATRIC&S     | IT                    |
 
 
-  #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-162
+  @produttore1
   Scenario: [TC_UPLOAD_5] Inserimento di un nuovo file csv che supera il peso massimo (>2MB)
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -94,6 +96,7 @@ Feature: PARI - Portale registro dei beni
       | status      | KO |
       | errorKey    | product.invalid.file.maxsize |
 
+  @produttore1
   Scenario: [TC_UPLOAD_6] Inserimento di un nuovo file csv che supera il numero di righe massimo (> 100 righe)
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -102,6 +105,7 @@ Feature: PARI - Portale registro dei beni
       | status      | KO |
       | errorKey    | product.invalid.file.maxrow |
 
+  @produttore1
   Scenario Outline: [TC_UPLOAD_7] Recupero lista dei caricamenti e prodotti precedentemente caricati
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -121,6 +125,7 @@ Feature: PARI - Portale registro dei beni
       | TUMBLEDRYERS        |                     | Asciugatrice      |
       | REFRIGERATINGAPPL   |                     | Frigorifero       |
 
+  @produttore1
   Scenario: [TC_UPLOAD_8] Inserimento di un nuovo file CSV non valido (Paese errato) e contestuale recupero del report
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -135,15 +140,17 @@ Feature: PARI - Portale registro dei beni
     When viene recuperato il report di errore appena generato
     Then il report è correttamente popolato
 
-    Scenario Outline: [TC_UPLOAD_9] Si tenta di recuperare un report di errore con id non presente o non valido
-      Given viene usata l'utenza: PRODUTTORE_1
-      Given l'utente accetta i ToS con successo
-      When si tenta di recuperare un report di errore "<productFileId>" e si ottiene status code 404
-      Examples:
-        | productFileId |
-        | NOT_VALID     |
-        | NOT_PRESENT   |
+  @produttore1
+  Scenario Outline: [TC_UPLOAD_9] Si tenta di recuperare un report di errore con id non presente o non valido
+    Given viene usata l'utenza: PRODUTTORE_1
+    Given l'utente accetta i ToS con successo
+    When si tenta di recuperare un report di errore "<productFileId>" e si ottiene status code 404
+    Examples:
+      | productFileId |
+      | NOT_VALID     |
+      | NOT_PRESENT   |
 
+  @produttore1
   Scenario Outline: [TC_UPLOAD_10] Inserimento di un nuovo file CSV per Piani Cottura non valido con alcune colonne non popolate o popolate in modo non corretto
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -176,7 +183,7 @@ Feature: PARI - Portale registro dei beni
        | 8016361967656       | 33801è99          | Piano cottura       | IT        | Candy    | x100    |
        | 8016361967656       | 33801199          | COOKINGHOBS         | IT        | Candy    | x100    |
 
-    @rdbTest
+  @produttore1
   Scenario Outline: [TC_UPLOAD_11] Inserimento di un nuovo file CSV valido per Piani Cottura
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -191,7 +198,7 @@ Feature: PARI - Portale registro dei beni
       | 8016361967658       | 33801999          | Piano cottura       | IT        | Candy    | x100    |
       | 8016361967659       |                   | Piano cottura       | IT        | Candy    | x100    |
 
-
+  @produttore1
   Scenario Outline: [TC_UPLOAD_12] Verifica di un nuovo file CSV valido per Cappe da cucina
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
@@ -225,7 +232,7 @@ Feature: PARI - Portale registro dei beni
       | 2226586       | eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM11          | EIQINTWM149       | Cappa da cucina     | IT          |
       | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa\|Cucina&S     | IT      |
 
-    #BUG APERTO: https://pagopa.atlassian.net/browse/RDB-164
+  @produttore1
   Scenario Outline: [TC_UPLOAD_13] Inserimento di un nuovo file CSV con intestazione colonne errate
     Given viene usata l'utenza: PRODUTTORE_1
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
@@ -249,6 +256,7 @@ Feature: PARI - Portale registro dei beni
       | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           | PaesediProduzione    |
       | Codice EPREL    | Codice GTIN/EAN        | Codice Prodotto    | Categoria           |                      |
 
+  @produttore1 @produttore2
   Scenario: [TC_UPLOAD_14] Un secondo Produttore prova a caricare dei prodotti che sono stati caricati precedentemente da un altro Produttore e riceve errore
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo

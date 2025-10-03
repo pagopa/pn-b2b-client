@@ -17,7 +17,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pari.cucumber.steps")
-@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
-@IncludeTags({"upload-csv"})
+@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
+@IncludeTags({"action-on-products", "institution-list", "upload-csv"})
 public class RegistroBeniTest {
 }
