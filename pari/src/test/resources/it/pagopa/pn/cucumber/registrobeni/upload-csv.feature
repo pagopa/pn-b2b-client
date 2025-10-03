@@ -176,6 +176,7 @@ Feature: PARI - Portale registro dei beni
        | 8016361967656       | 33801è99          | Piano cottura       | IT        | Candy    | x100    |
        | 8016361967656       | 33801199          | COOKINGHOBS         | IT        | Candy    | x100    |
 
+    @rdbTest
   Scenario Outline: [TC_UPLOAD_11] Inserimento di un nuovo file CSV valido per Piani Cottura
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
