@@ -1,4 +1,4 @@
-@upload-csv
+@action-on-products
 Feature: PARI - Portale registro dei beni
 
   Background:
