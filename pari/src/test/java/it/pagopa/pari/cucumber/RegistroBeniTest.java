@@ -18,6 +18,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pari.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
-@IncludeTags({"rdbTest"})
-public class RegistroBeniProducts {
+@IncludeTags({"upload-csv"})
+public class RegistroBeniTest {
 }
