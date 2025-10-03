@@ -6,15 +6,15 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +39,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.CUCUMBER_SPA_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_CUCUMBER_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_GENERATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_GENERATO;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
 @Slf4j
@@ -50,7 +50,6 @@ public class RaddAltSteps {
     private final PnRaddAlternativeClientImpl raddAltClient;
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils pnPaB2bUtils;
     private String qrCode;
     private String iun;
     private String fileZip;
@@ -71,7 +70,7 @@ public class RaddAltSteps {
     private AORInquiryResponse aorInquiryResponse;
     private final String uid = "1234556";
     private CompleteTransactionResponse completeTransactionResponse;
-    private PnPaB2bUtils.Pair<String, String> documentUploadResponse;
+    private B2bUtils.Pair<String, String> documentUploadResponse;
     private AbortTransactionResponse abortActTransaction;
     private HttpStatusCodeException documentUploadError;
     private HttpStatusCodeException expectedStartTransactionException;
@@ -79,12 +78,10 @@ public class RaddAltSteps {
 
 
     @Autowired
-    public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient,
-                        PnPaB2bUtils pnPaB2bUtils, SharedSteps sharedSteps) {
+    public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps) {
         this.raddAltClient = raddAltClient;
         this.externalServiceClient = externalServiceClient;
         this.sharedSteps = sharedSteps;
-        this.pnPaB2bUtils = pnPaB2bUtils;
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
@@ -261,7 +258,7 @@ public class RaddAltSteps {
     private void uploadDocumentRaddAlternative(boolean usePresignedUrl) {
         try {
             creazioneZip();
-            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRaddAlternativeDocument("classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
+            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddAlternativeDocument(sharedSteps.getContext(), raddAltClient, null, "classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
             log.info("documentUploadResponse: {}", documentUploadResponse);
@@ -273,7 +270,7 @@ public class RaddAltSteps {
     private void uploadDocumentRaddOperatorAlternative(boolean usePresignedUrl, RaddOperator raddOperator) {
         try {
             creazioneZip();
-            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRaddOperatoreAlternativeDocument("classpath:/" + this.fileZip, usePresignedUrl, this.operationId, raddOperator);
+            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddAlternativeDocument(sharedSteps.getContext(), raddAltClient, raddOperator, "classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
             log.info("documentUploadResponse: {}", documentUploadResponse);
@@ -389,7 +386,6 @@ public class RaddAltSteps {
     }
 
     private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode) {
-        //return StartTransactionResponseStatus.CodeEnum.valueOf("NUMBER_"+errorCode);
         switch (errorCode) {
             case 0 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_0;
@@ -619,7 +615,7 @@ public class RaddAltSteps {
     public void vengonoCaricatiIDocumentoDiIdentitaDelCittadinoSenza(String without) {
         String sha256;
         try {
-            sha256 = pnPaB2bUtils.computeSha256("");
+            sha256 = B2bUtils.computeSha256(sharedSteps.getContext(), "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -673,8 +669,9 @@ public class RaddAltSteps {
         this.recipientType = destinatario.getRecipientType();
     }
 
+    //TODO, c'è un metodo ad hoc per il taxId in SharedSteps
     private String getRecipientZeroTaxId() {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 
@@ -715,10 +712,7 @@ public class RaddAltSteps {
 
     @Given("viene richiesto il codice QR per lo IUN {string} per il destinatario {int} su radd alternative")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
-        HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
-        log.debug("quickAccessLink: {}", quickAccessLink.toString());
-        this.qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]);
-        log.debug("qrCode: {}", qrCode);
+        this.qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, destinatario);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")
@@ -789,7 +783,7 @@ public class RaddAltSteps {
                 operationId,
                 attachmentId);
         Assertions.assertNotNull(download);
-        pnPaB2bUtils.stampaPdfTramiteByte(download, "target/classes/frontespizio" + generateRandomNumber() + ".pdf");
+        B2bUtils.stampaPdfTramiteByte(download, "target/classes/frontespizio" + generateRandomNumber() + ".pdf");
     }
 
     public void creazioneZip() throws IOException {
@@ -834,8 +828,8 @@ public class RaddAltSteps {
     @After("@raddAlt")
     public void deleteZip() {
         if (fileZip != null) {
-            URI zip_disk = URI.create("target/classes/" + this.fileZip);
-            File file = new File(zip_disk.getPath());
+            URI zipDisk = URI.create("target/classes/" + this.fileZip);
+            File file = new File(zipDisk.getPath());
             boolean deleted = file.delete();
             System.out.println("delete " + deleted);
         }

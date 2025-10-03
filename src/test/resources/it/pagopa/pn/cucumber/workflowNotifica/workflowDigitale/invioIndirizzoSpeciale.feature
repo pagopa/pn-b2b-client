@@ -84,7 +84,7 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And "Mario Cucumber" legge la notifica ricevuta
-    Then si verifica che la notifica abbia lo stato VIEWED
+    Then si verifica che la notifica abbia lo stato "VIEWED"
 
   @workflowDigitale
   #[B2B_TIMELINE_8]
@@ -121,7 +121,7 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And "Mario Gherkin" legge la notifica ricevuta
-    Then si verifica che la notifica abbia lo stato VIEWED
+    Then si verifica che la notifica abbia lo stato "VIEWED"
     And gli eventi di timeline ricevuti sono i seguenti
       | NOTIFICATION_VIEWED |
 
@@ -256,9 +256,6 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
       | digitalDomicile_address | test1@OK-pecSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-
-
-    #TODO Chiedere se conviene spostare...
 
   @workflowDigitale
    #[B2B-PA-PAY_1]

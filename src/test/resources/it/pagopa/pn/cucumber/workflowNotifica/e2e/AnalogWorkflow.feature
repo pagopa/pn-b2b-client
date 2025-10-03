@@ -15,10 +15,10 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                     |
-      | details                 | NOT_NULL                                                                                                                                                                                 |
-      | details_recIndex        | 0                                                                                                                                                                                        |
-      | details_sentAttemptMade | 0                                                                                                                                                                                        |
+      | loadTimeline            | true                                                                                                                                                                                            |
+      | details                 | NOT_NULL                                                                                                                                                                                        |
+      | details_recIndex        | 0                                                                                                                                                                                               |
+      | details_sentAttemptMade | 0                                                                                                                                                                                               |
       | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -117,10 +117,10 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK-Retry_890  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline            | true                                                                                                                                                                                           |
-      | details                 | NOT_NULL                                                                                                                                                                                       |
-      | details_recIndex        | 0                                                                                                                                                                                              |
-      | details_sentAttemptMade | 0                                                                                                                                                                                              |
+      | loadTimeline            | true                                                                                                                                                                                                  |
+      | details                 | NOT_NULL                                                                                                                                                                                              |
+      | details_recIndex        | 0                                                                                                                                                                                                     |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                     |
       | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
       | details                    | NOT_NULL |
@@ -147,12 +147,12 @@ Feature: Workflow analogico
       | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments        | [{"documentType": "23L"}]         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL                                                                                                                                                                                       |
-      | details_recIndex           | 0                                                                                                                                                                                              |
-      | details_sentAttemptMade    | 0                                                                                                                                                                                              |
-      | details_deliveryDetailCode | RECAG001C                                                                                                                                                                                      |
-      | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_responseStatus     | OK                                                                                                                                                                                             |
+      | details                    | NOT_NULL                                                                                                                                                                                              |
+      | details_recIndex           | 0                                                                                                                                                                                                     |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                     |
+      | details_deliveryDetailCode | RECAG001C                                                                                                                                                                                             |
+      | details_physicalAddress    | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus     | OK                                                                                                                                                                                                    |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline     | true     |
       | pollingTime      | 30000    |
@@ -176,11 +176,11 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@ok_RS         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
-      | loadTimeline            | true                                                                                                                                                         |
-      | details                 | NOT_NULL                                                                                                                                                     |
-      | details_recIndex        | 0                                                                                                                                                            |
+      | loadTimeline            | true                                                                                                                                                                                           |
+      | details                 | NOT_NULL                                                                                                                                                                                       |
+      | details_recIndex        | 0                                                                                                                                                                                              |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost      | 195                                                                                                                                                          |
+      | details_analogCost      | 195                                                                                                                                                                                            |
     And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -192,15 +192,15 @@ Feature: Workflow analogico
       | details_recIndex        | 0                                  |
       | details_sentAttemptMade | 0                                  |
       | legalFactsIds           | [{"category": "DIGITAL_DELIVERY"}] |
-   # And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate più 3"m" per il destinatario 0 rispetto ell'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
+   # And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate più 3"m" per il destinatario 0 rispetto all'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
 #      | details_digitalAddressSource | SPECIAL                            |
 #      | details_sentAttemptMade | 0                                  |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
-      | details                 | NOT_NULL                                                                                                                                                                                |
-      | details_recIndex        | 0                                                                                                                                                                                       |
+      | details                 | NOT_NULL                                                                                                                                                                                       |
+      | details_recIndex        | 0                                                                                                                                                                                              |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
 
@@ -273,7 +273,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade    | 0        |
       | details_deliveryDetailCode | CON080   |
 
-  @e2e @giacenza890Complex
+  @e2e @giacenza890Complex @esposizioneCadArcad
   Scenario: [E2E-WF-ANALOG-7] Invio notifica con percorso analogico. Successo giacenza lte 890 (OK-Giacenza-lte10_890).
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -286,11 +286,11 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline            | true                                                                                                                                                                                                    |
-      | details                 | NOT_NULL                                                                                                                                                                                                |
-      | details_recIndex        | 0                                                                                                                                                                                                       |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                       |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | loadTimeline            | true                                                                                                                                                                                                           |
+      | details                 | NOT_NULL                                                                                                                                                                                                       |
+      | details_recIndex        | 0                                                                                                                                                                                                              |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                              |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -314,6 +314,13 @@ Feature: Workflow analogico
       | details_recIndex           | 0         |
       | details_sentAttemptMade    | 0         |
       | details_deliveryDetailCode | RECAG005C |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_sentAttemptMade    | 0                                 |
+      | details_deliveryDetailCode | RECAG005B                         |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline     | true     |
       | pollingTime      | 30000    |
@@ -538,10 +545,9 @@ Feature: Workflow analogico
       | details_digitalAddress  | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex        | 0                                                  |
       | details_sentAttemptMade | 0                                                  |
-    And viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
-      | NULL | NULL |
-    And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
-      | NULL | NULL |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
+    And il timestamp dell'evento "SEND_ANALOG_DOMICILE" è successivo a quello dell'evento "SEND_COURTESY_MESSAGE"
+
 
   @e2e  @giacenza890Complex
   Scenario: [E2E-WF-ANALOG-12] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
@@ -675,6 +681,13 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG011B                         |
       | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments        | [{"documentType": "23L"}]         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_sentAttemptMade    | 0                                 |
+      | details_deliveryDetailCode | RECAG011B                         |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -764,6 +777,13 @@ Feature: Workflow analogico
       | details                    | NOT_NULL                          |
       | details_recIndex           | 0                                 |
       | details_sentAttemptMade    | 0                                 |
+      | details_deliveryDetailCode | RECAG011B                         |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_sentAttemptMade    | 0                                 |
       | details_deliveryDetailCode | RECAG008B                         |
       | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments        | [{"documentType": "Plico"}]       |
@@ -802,12 +822,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                             |
-      | pollingTime             | 30000                                                                                                                                                                                            |
-      | numCheck                | 30                                                                                                                                                                                               |
-      | details                 | NOT_NULL                                                                                                                                                                                         |
-      | details_recIndex        | 0                                                                                                                                                                                                |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                |
+      | loadTimeline            | true                                                                                                                                                                                                    |
+      | pollingTime             | 30000                                                                                                                                                                                                   |
+      | numCheck                | 30                                                                                                                                                                                                      |
+      | details                 | NOT_NULL                                                                                                                                                                                                |
+      | details_recIndex        | 0                                                                                                                                                                                                       |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                       |
       | details_physicalAddress | {"address": "VIA@OK-GIACENZA_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -860,10 +880,10 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                    |
-      | details                 | NOT_NULL                                                                                                                                                                                |
-      | details_recIndex        | 0                                                                                                                                                                                       |
-      | details_sentAttemptMade | 0                                                                                                                                                                                       |
+      | loadTimeline            | true                                                                                                                                                                                           |
+      | details                 | NOT_NULL                                                                                                                                                                                       |
+      | details_recIndex        | 0                                                                                                                                                                                              |
+      | details_sentAttemptMade | 0                                                                                                                                                                                              |
       | details_physicalAddress | {"address": "VIA@OK_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -884,7 +904,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade    | 0         |
       | details_deliveryDetailCode | RECRN001C |
 
-  @e2e
+  @e2e @esposizioneCadArcad
   Scenario: [E2E-WF-ANALOG-19] Invio notifica con percorso analogico. Fallimento giacenza lte 890 (FAIL-Giacenza-lte10_890).
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -897,15 +917,13 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@FAIL-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-
-      | loadTimeline            | true                                                                                                                                                                                                      |
-      | pollingTime             | 30000                                                                                                                                                                                                     |
-      | numCheck                | 30                                                                                                                                                                                                        |
-      | details                 | NOT_NULL                                                                                                                                                                                                  |
-      | details_recIndex        | 0                                                                                                                                                                                                         |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                         |
+      | loadTimeline            | true                                                                                                                                                                                                             |
+      | pollingTime             | 30000                                                                                                                                                                                                            |
+      | numCheck                | 30                                                                                                                                                                                                               |
+      | details                 | NOT_NULL                                                                                                                                                                                                         |
+      | details_recIndex        | 0                                                                                                                                                                                                                |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                                |
       | details_physicalAddress | {"address": "VIA@FAIL-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -918,6 +936,13 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG007B                         |
       | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments        | [{"documentType": "Plico"}]       |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_sentAttemptMade    | 0                                 |
+      | details_deliveryDetailCode | RECAG007B                         |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
@@ -952,12 +977,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                               |
-      | pollingTime             | 30000                                                                                                                                                                                              |
-      | numCheck                | 30                                                                                                                                                                                                 |
-      | details                 | NOT_NULL                                                                                                                                                                                           |
-      | details_recIndex        | 0                                                                                                                                                                                                  |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                  |
+      | loadTimeline            | true                                                                                                                                                                                                      |
+      | pollingTime             | 30000                                                                                                                                                                                                     |
+      | numCheck                | 30                                                                                                                                                                                                        |
+      | details                 | NOT_NULL                                                                                                                                                                                                  |
+      | details_recIndex        | 0                                                                                                                                                                                                         |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                         |
       | details_physicalAddress | {"address": "VIA@FAIL-GIACENZA_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1011,10 +1036,10 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                      |
-      | details                 | NOT_NULL                                                                                                                                                                                  |
-      | details_recIndex        | 0                                                                                                                                                                                         |
-      | details_sentAttemptMade | 0                                                                                                                                                                                         |
+      | loadTimeline            | true                                                                                                                                                                                             |
+      | details                 | NOT_NULL                                                                                                                                                                                         |
+      | details_recIndex        | 0                                                                                                                                                                                                |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                |
       | details_physicalAddress | {"address": "VIA@FAIL_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1108,12 +1133,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                                    |
-      | pollingTime             | 30000                                                                                                                                                                                                   |
-      | numCheck                | 30                                                                                                                                                                                                      |
-      | details                 | NOT_NULL                                                                                                                                                                                                |
-      | details_recIndex        | 0                                                                                                                                                                                                       |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                       |
+      | loadTimeline            | true                                                                                                                                                                                                           |
+      | pollingTime             | 30000                                                                                                                                                                                                          |
+      | numCheck                | 30                                                                                                                                                                                                             |
+      | details                 | NOT_NULL                                                                                                                                                                                                       |
+      | details_recIndex        | 0                                                                                                                                                                                                              |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                              |
       | details_physicalAddress | {"address": "VIA@FAIL-GIACENZA-GT10_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1282,12 +1307,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                                      |
-      | pollingTime             | 40000                                                                                                                                                                                                     |
-      | numCheck                | 30                                                                                                                                                                                                        |
-      | details                 | NOT_NULL                                                                                                                                                                                                  |
-      | details_recIndex        | 0                                                                                                                                                                                                         |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                         |
+      | loadTimeline            | true                                                                                                                                                                                                             |
+      | pollingTime             | 40000                                                                                                                                                                                                            |
+      | numCheck                | 30                                                                                                                                                                                                               |
+      | details                 | NOT_NULL                                                                                                                                                                                                         |
+      | details_recIndex        | 0                                                                                                                                                                                                                |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                                |
       | details_physicalAddress | {"address": "VIA@OK-NONRENDICONTABILE_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
@@ -1341,12 +1366,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                                       |
-      | pollingTime             | 40000                                                                                                                                                                                                      |
-      | numCheck                | 30                                                                                                                                                                                                         |
-      | details                 | NOT_NULL                                                                                                                                                                                                   |
-      | details_recIndex        | 0                                                                                                                                                                                                          |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                          |
+      | loadTimeline            | true                                                                                                                                                                                                              |
+      | pollingTime             | 40000                                                                                                                                                                                                             |
+      | numCheck                | 30                                                                                                                                                                                                                |
+      | details                 | NOT_NULL                                                                                                                                                                                                          |
+      | details_recIndex        | 0                                                                                                                                                                                                                 |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                                 |
       | details_physicalAddress | {"address": "VIA@OK-CAUSAFORZAMAGGIORE_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1400,12 +1425,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                       |
-      | pollingTime             | 30000                                                                                                                                                                                      |
-      | numCheck                | 30                                                                                                                                                                                         |
-      | details                 | NOT_NULL                                                                                                                                                                                   |
-      | details_recIndex        | 0                                                                                                                                                                                          |
-      | details_sentAttemptMade | 0                                                                                                                                                                                          |
+      | loadTimeline            | true                                                                                                                                                                                              |
+      | pollingTime             | 30000                                                                                                                                                                                             |
+      | numCheck                | 30                                                                                                                                                                                                |
+      | details                 | NOT_NULL                                                                                                                                                                                          |
+      | details_recIndex        | 0                                                                                                                                                                                                 |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                 |
       | details_physicalAddress | {"address": "VIA@FAIL_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1479,13 +1504,13 @@ Feature: Workflow analogico
       | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments        | [{"documentType": "Plico"}]       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                      | NOT_NULL                                                                                                                                                                                                |
-      | details_recIndex             | 0                                                                                                                                                                                                       |
-      | details_sentAttemptMade      | 0                                                                                                                                                                                                       |
-      | details_deliveryDetailCode   | RECAG003F                                                                                                                                                                                               |
-      | details_deliveryFailureCause | M03                                                                                                                                                                                                     |
-      | details_physicalAddress | {"address": "VIA@FAIL-IRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_responseStatus       | KO                                                                                                                                                                                                      |
+      | details                      | NOT_NULL                                                                                                                                                                                                       |
+      | details_recIndex             | 0                                                                                                                                                                                                              |
+      | details_sentAttemptMade      | 0                                                                                                                                                                                                              |
+      | details_deliveryDetailCode   | RECAG003F                                                                                                                                                                                                      |
+      | details_deliveryFailureCause | M03                                                                                                                                                                                                            |
+      | details_physicalAddress      | {"address": "VIA@FAIL-IRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus       | KO                                                                                                                                                                                                             |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |
@@ -1516,12 +1541,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                        |
-      | pollingTime             | 30000                                                                                                                                                                       |
-      | numCheck                | 30                                                                                                                                                                          |
-      | details                 | NOT_NULL                                                                                                                                                                    |
-      | details_recIndex        | 0                                                                                                                                                                           |
-      | details_sentAttemptMade | 1                                                                                                                                                                           |
+      | loadTimeline            | true                                                                                                                                                                                                    |
+      | pollingTime             | 30000                                                                                                                                                                                                   |
+      | numCheck                | 30                                                                                                                                                                                                      |
+      | details                 | NOT_NULL                                                                                                                                                                                                |
+      | details_recIndex        | 0                                                                                                                                                                                                       |
+      | details_sentAttemptMade | 1                                                                                                                                                                                                       |
       | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1658,12 +1683,12 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK-NonRendicontabile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline            | true                                                                                                                                                                                                       |
-      | pollingTime             | 30000                                                                                                                                                                                                      |
-      | numCheck                | 30                                                                                                                                                                                                         |
-      | details                 | NOT_NULL                                                                                                                                                                                                   |
-      | details_recIndex        | 0                                                                                                                                                                                                          |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                          |
+      | loadTimeline            | true                                                                                                                                                                                                              |
+      | pollingTime             | 30000                                                                                                                                                                                                             |
+      | numCheck                | 30                                                                                                                                                                                                                |
+      | details                 | NOT_NULL                                                                                                                                                                                                          |
+      | details_recIndex        | 0                                                                                                                                                                                                                 |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                                 |
       | details_physicalAddress | {"address": "VIA@OK-NONRENDICONTABILE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
       | details                    | NOT_NULL |
@@ -1716,12 +1741,12 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                                        |
-      | pollingTime             | 30000                                                                                                                                                                                                       |
-      | numCheck                | 30                                                                                                                                                                                                          |
-      | details                 | NOT_NULL                                                                                                                                                                                                    |
-      | details_recIndex        | 0                                                                                                                                                                                                           |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                           |
+      | loadTimeline            | true                                                                                                                                                                                                               |
+      | pollingTime             | 30000                                                                                                                                                                                                              |
+      | numCheck                | 30                                                                                                                                                                                                                 |
+      | details                 | NOT_NULL                                                                                                                                                                                                           |
+      | details_recIndex        | 0                                                                                                                                                                                                                  |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                                  |
       | details_physicalAddress | {"address": "VIA@OK-CAUSAFORZAMAGGIORE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1841,10 +1866,10 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-      | loadTimeline            | true                                                                                                                                                                                     |
-      | details                 | NOT_NULL                                                                                                                                                                                 |
-      | details_recIndex        | 0                                                                                                                                                                                        |
-      | details_sentAttemptMade | 0                                                                                                                                                                                        |
+      | loadTimeline            | true                                                                                                                                                                                            |
+      | details                 | NOT_NULL                                                                                                                                                                                        |
+      | details_recIndex        | 0                                                                                                                                                                                               |
+      | details_sentAttemptMade | 0                                                                                                                                                                                               |
       | details_physicalAddress | {"address": "VIA@OK_RIR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -1895,10 +1920,10 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@FAIL_RIR      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline            | true                                                                                                                                                                                       |
-      | details                 | NOT_NULL                                                                                                                                                                                   |
-      | details_recIndex        | 0                                                                                                                                                                                          |
-      | details_sentAttemptMade | 0                                                                                                                                                                                          |
+      | loadTimeline            | true                                                                                                                                                                                              |
+      | details                 | NOT_NULL                                                                                                                                                                                          |
+      | details_recIndex        | 0                                                                                                                                                                                                 |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                 |
       | details_physicalAddress | {"address": "VIA@FAIL_RIR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |

@@ -1,14 +1,17 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import static java.util.List.of;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +21,12 @@ public class ClientListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final BFFDataPreparationService dataPreparationService;
+    private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
     public ClientListingSteps(ClientTokenConfigurator clientTokenConfigurator,
-                              DataPreparationService dataPreparationService,
+                              BFFDataPreparationService dataPreparationService,
                               SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
@@ -42,7 +45,7 @@ public class ClientListingSteps {
             clientSeed.setName(String.format("client-%d-%d-%s", i, sharedStepsContext.getTestSeed(), keyword));
             result.add(dataPreparationService.createClient(clientKind, clientSeed));
         }
-        sharedStepsContext.getClientCommonContext().setClients(List.of(result.get(0)));
+        sharedStepsContext.getClientCommonContext().setClients(new ArrayList<>(of(result.get(0)))); // si usa il costr. di ArrayList per non avere una lista immutabile
     }
 
     @When("l'utente richiede una operazione di listing dei client con offset {int}")
@@ -67,7 +70,7 @@ public class ClientListingSteps {
     public void retrieveClientsListByFilterForUserAndRole(String role) {
         UUID userId = identityService.getUserId(sharedStepsContext.getTenantType(), role);
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients(0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(userId), null));
+                authorizationClient.getClients(0, 12, String.valueOf(sharedStepsContext.getTestSeed()), of(userId), null));
     }
 
     @When("l'utente richiede una operazione di listing dei client")

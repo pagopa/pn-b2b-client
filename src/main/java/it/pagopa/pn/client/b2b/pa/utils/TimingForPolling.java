@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 //TODO: Usare ovunque è necessario il timing e verificare se parametrizzare da propertiesFile
 
 @Component
@@ -140,8 +139,13 @@ public class TimingForPolling {
         //TIMING FOR TRACING
         INTEROP_TRACING(3, 1),
 
-        RETURNED_TO_SENDER(12,1),
-        ANALOG_WORKFLOW_RECIPIENT_DECEASED(12,1);
+        //V26
+        RETURNED_TO_SENDER(12, 1),
+        ANALOG_WORKFLOW_RECIPIENT_DECEASED(12, 1),
+
+        //V27
+        PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
+        PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1);
 
 
         private final int numCheck;

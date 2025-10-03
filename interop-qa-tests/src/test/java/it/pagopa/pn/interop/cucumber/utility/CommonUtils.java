@@ -1,0 +1,22 @@
+package it.pagopa.pn.interop.cucumber.utility;
+
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class CommonUtils {
+    private final IHttpExecutor httpCallExecutor;
+
+    private CommonUtils(SharedStepsContext sharedStepsContext) {
+        httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+    }
+
+    public void assertValidResponse() {
+        Assertions.assertFalse(httpCallExecutor.getResponseStatus().isError(),
+            "Something went wrong: " + httpCallExecutor.getResponseStatus().getReasonPhrase());
+    }
+}

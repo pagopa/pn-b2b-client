@@ -1,14 +1,19 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import static java.util.stream.Collectors.toList;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
@@ -28,16 +33,16 @@ import java.util.stream.IntStream;
 @Slf4j
 public class ClientCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
     private PurposeAdditionDetailsSeed purposeAdditionDetailsSeed;
 
     @Autowired
     public ClientCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
-                             DataPreparationService dataPreparationService,
+                             BFFDataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
@@ -56,9 +61,10 @@ public class ClientCommonSteps {
     public void createClientsForTenants(String tenantType, int numClient, String clientKind) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
+        @SuppressWarnings("java:S6204") // si evita volutamente il metodo diretto toList() perché produrrebbe una lista immutabile
         List<UUID> clientIds = IntStream.range(0, numClient)
                 .mapToObj(i -> dataPreparationService.createClient(clientKind, createClientSeed(i)))
-                .toList();
+                .collect(toList());
         sharedStepsContext.getClientCommonContext().setClients(clientIds);
     }
 
@@ -72,15 +78,17 @@ public class ClientCommonSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} client(s)")
     public void verifyStatusCodeAndClientList(int statusCode, int count) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(count, ((CompactClients) httpCallExecutor.getResponse()).getResults().size());
     }
 
     @Given("un {string} di {string} ha caricato una chiave pubblica in quel client")
     public void roleOfTenantHasAlreadyUploadClientPublicKey(String role, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
-        String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
+        String keyType = "RSA";
+        String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
             userPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
@@ -88,8 +96,20 @@ public class ClientCommonSteps {
 
     @Then("si ottiene status code {int}")
     public void verifyStatusCode(int statusCode) {
-        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
-        else Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
+        else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
+    }
+
+    /* DEV. NOTE 12/03/2025: si differenzia da verifyStatusCode(int statusCode) per la verifica
+    * accurata dello status anche in caso di esito positivo, bypassando quindi la normalizzazione
+    * su codice 200. Questo è reso possibile dalla recente aggiunta del metodo
+    * it.pagopa.interop.utils.HttpCallExecutor.performCall(java.util.function.Supplier<T>, java.util.function.Function<T,org.springframework.http.HttpStatus>)
+    * che dà modo di conservare lo status code originale. */
+    @Then("si ottiene response status code {int}")
+    public void accuratelyVerifyStatusCode(int statusCode) {
+        assertThat(httpCallExecutor.getResponseStatus().value())
+            .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", HttpCallExecutor.class.getSimpleName())
+            .isEqualTo(statusCode);
     }
 
     private ClientSeed createClientSeed(int index) {
@@ -97,6 +117,4 @@ public class ClientCommonSteps {
         clientSeed.setName(String.format("client-%d-%d-%s", index, sharedStepsContext.getTestSeed(), ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         return clientSeed;
     }
-
-
 }

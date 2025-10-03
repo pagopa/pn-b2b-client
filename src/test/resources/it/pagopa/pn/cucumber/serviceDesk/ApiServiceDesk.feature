@@ -853,7 +853,7 @@ Feature: Api Service Desk
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto all'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
 
    # And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
@@ -921,7 +921,7 @@ Feature: Api Service Desk
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto all'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
 
     And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
@@ -1002,3 +1002,4 @@ Feature: Api Service Desk
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+

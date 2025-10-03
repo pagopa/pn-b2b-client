@@ -2,10 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
@@ -13,15 +14,13 @@ import org.junit.jupiter.api.Assertions;
 import java.util.List;
 
 public class ClientKeyListingSteps {
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public ClientKeyListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -35,7 +34,7 @@ public class ClientKeyListingSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} chiavi")
     public void verifyStatusCodeAndListLength(int statusCode, int keyListSize) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(keyListSize, ((PublicKeys) httpCallExecutor.getResponse()).getKeys().size());
     }
 

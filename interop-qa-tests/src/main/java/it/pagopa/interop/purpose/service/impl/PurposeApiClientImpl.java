@@ -4,22 +4,38 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class PurposeApiClientImpl implements IPurposeApiClient {
     private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
@@ -44,8 +60,18 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
+    public RiskAnalysisFormConfig retrieveRiskAnalysisConfigurationByVersion(String riskAnalysisVersion, UUID eserviceId) {
+        return purposesApi.retrieveRiskAnalysisConfigurationByVersion(riskAnalysisVersion, eserviceId);
+    }
+
+    @Override
     public CreatedResource createPurpose(PurposeSeed purposeSeed) {
         return purposesApi.createPurpose(purposeSeed);
+    }
+
+    @Override
+    public PurposeVersionResource createPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed) {
+        return purposesApi.createPurposeVersion(purposeId, purposeVersionSeed);
     }
 
     @Override
@@ -58,14 +84,22 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
         return purposesApi.getPurpose(purposeId);
     }
 
+    public PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef) {
+        return purposesApi.activatePurposeVersion(purposeId, versionId, delegationRef);
+    }
+
     @Override
     public PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId) {
-        return purposesApi.activatePurposeVersion(purposeId, versionId);
+        return purposesApi.activatePurposeVersion(purposeId, versionId, null);
+    }
+
+    public PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef) {
+        return purposesApi.suspendPurposeVersion(purposeId, versionId, delegationRef);
     }
 
     @Override
     public PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId) {
-        return purposesApi.suspendPurposeVersion(purposeId, versionId);
+        return purposesApi.suspendPurposeVersion(purposeId, versionId, null);
     }
 
     @Override
@@ -76,6 +110,46 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public void rejectPurposeVersion(UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload) {
         purposesApi.rejectPurposeVersion(purposeId, versionId, rejectPurposeVersionPayload);
+    }
+
+    @Override
+    public PurposeVersionResource clonePurpose(UUID purposeId, PurposeCloneSeed purposeCloneSeed) {
+        return purposesApi.clonePurpose(purposeId, purposeCloneSeed);
+    }
+
+    @Override
+    public void deletePurposeVersion(UUID purposeId, UUID versionId) {
+        purposesApi.deletePurposeVersion(purposeId, versionId);
+    }
+
+    @Override
+    public void deletePurpose(UUID purposeId) {
+        purposesApi.deletePurpose(purposeId);
+    }
+
+    @Override
+    public Purposes getConsumerPurposes(Integer offset, Integer limit, String q, List<UUID> eservicesIds, List<UUID> producersIds, List<PurposeVersionState> states) {
+        return purposesApi.getConsumerPurposes(offset, limit, q, eservicesIds, producersIds, states);
+    }
+
+    @Override
+    public Purposes getProducerPurposes(Integer offset, Integer limit, String q, List<UUID> eservicesIds, List<UUID> consumersIds, List<PurposeVersionState> states) {
+        return purposesApi.getProducerPurposes(offset, limit, q, eservicesIds, consumersIds, states);
+    }
+
+    @Override
+    public File getRiskAnalysisDocument(UUID purposeId, UUID versionId, UUID documentId) {
+        return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId);
+    }
+
+    @Override
+    public PurposeVersionResource updatePurpose(UUID purposeId, PurposeUpdateContent purposeUpdateContent) {
+        return purposesApi.updatePurpose(purposeId, purposeUpdateContent);
+    }
+
+    @Override
+    public PurposeVersionResource updateReversePurpose(UUID purposeId, ReversePurposeUpdateContent reversePurposeUpdateContent) {
+        return purposesApi.updateReversePurpose(purposeId, reversePurposeUpdateContent);
     }
 
     @Override

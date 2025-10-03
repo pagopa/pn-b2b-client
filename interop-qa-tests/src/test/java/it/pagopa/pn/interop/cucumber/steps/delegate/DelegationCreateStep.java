@@ -7,8 +7,9 @@ import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole.DELEGA
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,7 +45,7 @@ public class DelegationCreateStep {
     private final IdentityService identityService;
     private final PollingService pollingService;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     @Value
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -169,7 +171,7 @@ public class DelegationCreateStep {
     private <T, U> void setDelegationAvailability(
         String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, Boolean isDelegatedProducer, Boolean isDelegatedConsumer) {
         httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(isDelegatedProducer, isDelegatedConsumer));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK)
             pollingService.makePolling(() -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
                         .orElse(List.of())
@@ -214,7 +216,7 @@ public class DelegationCreateStep {
         UUID organizationId = identityService.getOrganizationId(tenantType);
         httpCallExecutor.performCall(() -> delegationCreator.apply(
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) {
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
             delegationProxy.setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(

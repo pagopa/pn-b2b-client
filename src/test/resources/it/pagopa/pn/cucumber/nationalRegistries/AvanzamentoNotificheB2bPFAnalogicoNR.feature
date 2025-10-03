@@ -35,7 +35,7 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
 
 
   @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_76]  Invio notifica  mono destinatario a PF analogica  con restituzione indirizzo fisico italiano da ANPR - Mock
+  Scenario: [B2B_TIMELINE_ANALOG_76]  Invio notifica mono destinatario a PF analogica con restituzione indirizzo fisico italiano da ANPR - Mock (successo al secondo tentativo)
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -46,6 +46,20 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 0        |
+      | details_responseStatus  | KO       |
+      | details_physicalAddress | {}       |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 1        |
+      | details_responseStatus  | OK       |
+      | details_physicalAddress | {}       |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 

@@ -7,8 +7,6 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-
 @Component
 public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
 
@@ -52,6 +50,7 @@ public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
                 .endDate(context.getEndDate())
                 .startDate(context.getStartDate())
                 .timeReferenceStartDate(context.getTimeReferenceStartDate())
-                .timeReferenceEndDate(context.getTimeReferenceEndDate());
+                .timeReferenceEndDate(context.getTimeReferenceEndDate())
+                .htmlDescription(context.getHtmlDescription());
     }
 }
