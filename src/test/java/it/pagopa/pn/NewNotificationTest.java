@@ -1,16 +1,19 @@
 package it.pagopa.pn;
 
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,11 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.Base64Utils;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
@@ -32,7 +40,6 @@ import static org.awaitility.Awaitility.await;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
-        PnPaB2bUtils.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -43,27 +50,31 @@ import static org.awaitility.Awaitility.await;
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClient.class,
-        PnWebPaClientImpl.class,
+        PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,
+        PnRaddAlternativeV2ClientImpl.class,
         PnRaddAlternativeClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
-        PnPollingFactory.class
+        PnPollingFactory.class,
+        //TODO: al variare della versione di notifica utilizzata nel test, aggiornare questi due valori
+        NotificationUtilsV24.class,
+        PnPollingServiceValidationStatusV26.class,
 })
 
 
+@Slf4j
 @TestPropertySource(properties = {"spring.profiles.active=test"})
 @EnableConfigurationProperties
 public class NewNotificationTest {
 
     @Autowired
-    private PnPaB2bUtils utils;
-
+    private NotificationUtilsV24 utils;
 
     @Test
     void insertNewNotification() {
@@ -96,18 +107,14 @@ public class NewNotificationTest {
                         "DVNLRD52D15M059P",
                         "classpath:/sample.pdf",
                         enableF24Attachment ? (policy == NotificationFeePolicy.FLAT_RATE ? "classpath:/f24_flat.json" : "classpath:/f24_deliverymode.json") : null,
-                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
-                //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
-                //        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
-                //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
-                ;
+                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = utils.waitForRequestAcceptationV26(newNotificationRequest);
+            NewNotificationResponse newNotificationResponse = sendAndLogNewNotification(request);
+            FullSentNotificationV26 newNotification = utils.waitForEvent(newNotificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_ACCEPTED).getNotification();
             await().atMost(10, SECONDS);
-            utils.verifyNotification(newNotification);
+            utils.verifyNotification(newNotification.getIun());
         });
     }
 
@@ -127,14 +134,26 @@ public class NewNotificationTest {
                 .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
                 .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
-                .addRecipientsItem(newRecipient(false, "Leo ", "CNCGPP80A01H501J", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
-                .addRecipientsItem(newRecipient(false, "Fiera", "FRMTTR76M06B715E", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
+                .addRecipientsItem(newRecipient(
+                        false,
+                        "Leo ",
+                        "CNCGPP80A01H501J",
+                        "classpath:/sample.pdf",
+                        "classpath:/f24_flat.json",
+                        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
+                .addRecipientsItem(newRecipient(
+                        false,
+                        "Fiera",
+                        "FRMTTR76M06B715E",
+                        "classpath:/sample.pdf",
+                        "classpath:/f24_flat.json",
+                        RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = utils.waitForRequestAcceptationV26(newNotificationRequest);
+            NewNotificationResponse newNotificationResponse = sendAndLogNewNotification(request);
+            FullSentNotificationV26 newNotification = utils.waitForEvent(newNotificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_ACCEPTED).getNotification();
             await().atMost(10, SECONDS);
-            utils.verifyNotification(newNotification);
+            utils.verifyNotification(newNotification.getIun());
         });
     }
 
@@ -239,5 +258,19 @@ public class NewNotificationTest {
 
         await().atMost(10, SECONDS);
         return recipient;
+    }
+
+    private NewNotificationResponse sendAndLogNewNotification(NewNotificationRequestV24 request) throws IOException {
+        log.info(NEW_NOTIFICATION_REQUEST, request);
+        NewNotificationResponse response = utils.uploadNotification(request, null);
+        log.info(NEW_NOTIFICATION_RESPONSE, response);
+        if (response != null) {
+            try {
+                log.info(NEW_NOTIFICATION_IUN, new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
+            } catch (Exception e) {
+                throw new PnB2bException(e.getMessage());
+            }
+        }
+        return response;
     }
 }

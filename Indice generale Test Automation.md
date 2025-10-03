@@ -7215,7 +7215,7 @@
 7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
 8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 9. lettura amount posizione debitoria di `Mario Gherkin`
-10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del pagamento `0`
+10. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del pagamento `0`
 11. viene cancellata la posizione debitoria del pagamento `0`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
@@ -7256,7 +7256,7 @@
 7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
 8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `ATTEMPT_0`
 9. lettura amount posizione debitoria di `Mario Gherkin`
-10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` utente `0` al tentativo `0`
+10. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_ANALOG_DOMICILE` utente `0` al tentativo `0`
 11. viene cancellata la posizione debitoria di `Mario Gherkin`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
@@ -7278,10 +7278,10 @@
 7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
 8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `ATTEMPT_0`
 9. lettura amount posizione debitoria di `Mario Gherkin`
-10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` utente `0` al tentativo `0`
+10. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_ANALOG_DOMICILE` utente `0` al tentativo `0`
 11. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `ATTEMPT_1`
 12. lettura amount posizione debitoria di `Mario Gherkin`
-13. viene effettuato il controllo del cambiamento del amount nella timeline`SEND_ANALOG_DOMICILE` utente `0` al tentativo `1`
+13. viene effettuato il controllo del cambiamento dell'amount nella timeline`SEND_ANALOG_DOMICILE` utente `0` al tentativo `1`
 14. viene cancellata la posizione debitoria di `Mario Gherkin`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
@@ -7303,7 +7303,7 @@
 7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
 8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 9. lettura amount posizione debitoria di `Mario Gherkin`
-10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del utente `0`
+10. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del utente `0`
 11. viene cancellata la posizione debitoria di `Mario Gherkin`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
@@ -7325,7 +7325,7 @@
 7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
 8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 9. lettura amount posizione debitoria di `Mario Gherkin`
-10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del utente `0`
+10. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del utente `0`
 11. viene cancellata la posizione debitoria di `Mario Gherkin`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
@@ -7527,10 +7527,10 @@
 11. viene effettuato il controllo dell'aggiornamento del costo totale del utente `1`
 12. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0`
 13. lettura amount posizione debitoria di `Mario Gherkin`
-14. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0` al tentativo `0`
+14. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0` al tentativo `0`
 15. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `1` 
 16. lettura amount posizione debitoria di `Gherkin Analogic`
-17. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `1` al tentativo `1`
+17. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `1` al tentativo `1`
 18. vengono cancellate le posizioni debitorie
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
@@ -12118,10 +12118,10 @@ Dati destinatario
 7. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
 8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `0`
 9. lettura amount posizione debitoria di `Gherkin Analogic`
-10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` del utente `0` al tentativo `0`
+10. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_ANALOG_DOMICILE` del utente `0` al tentativo `0`
 11. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `1`
 12. lettura amount posizione debitoria di "Gherkin Analogic"
-13. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` del utente `0` al tentativo `1`
+13. viene effettuato il controllo del cambiamento dell'amount nella timeline `SEND_ANALOG_DOMICILE` del utente `0` al tentativo `1`
 14. vengono cancellate la posizione debitoria di "Gherkin Analogic"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheAsyncB2bPG.feature)

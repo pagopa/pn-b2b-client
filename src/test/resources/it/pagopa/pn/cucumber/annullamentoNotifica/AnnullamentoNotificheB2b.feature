@@ -325,7 +325,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
-  @Annullamento
+  @Annullamento @uat #In test l' ingestion è disabilitata, non si riceverà nessun audit-log
   Scenario Outline: [B2B-PA-ANNULLAMENTO_15] AuditLog: verifica presenza evento post annullamento notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -656,7 +656,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #And si verifica la coretta cancellazione da tabella pn-NotificationsCost
-    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 
@@ -669,7 +669,7 @@ Feature: annullamento notifiche b2b
     And destinatario GherkinSpa e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 
@@ -785,6 +785,7 @@ Feature: annullamento notifiche b2b
         #Valutare lo step
     #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
@@ -843,32 +844,20 @@ Feature: annullamento notifiche b2b
     And il download ha prodotto un errore con status code "404"
 
   @Annullamento @webhook1 @cleanWebhook
-  Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLATION_REQUEST stream v2_scenario positivo
+  Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLATION_REQUEST e NOTIFICATION_CANCELLED stream v2_scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLATION_REQUEST"
-    #And si crea il nuovo stream per il "Comune_1" con versione "V10"
+    And si crea il nuovo stream per il "Comune_1" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST" con la versione "V10"
-
-  @Annullamento @webhook1 @cleanWebhook
-  Scenario: [B2B-STREAM_TIMELINE_24_1]Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLED stream v2_scenario positivo
-    #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
-   # And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V10"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    And si invoca l'api Webhook versione "V10" per ottenere gli elementi di timeline di tale notifica
+    Then la category "NOTIFICATION_CANCELLATION_REQUEST" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V10"
+    Then la category "NOTIFICATION_CANCELLED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V10"
 
   @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo

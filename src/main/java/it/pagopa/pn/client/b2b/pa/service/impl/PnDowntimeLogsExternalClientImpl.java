@@ -27,7 +27,6 @@ public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsClient {
 
     public PnDowntimeLogsExternalClientImpl(RestTemplate restTemplate,
                                             @Value("${pn.delivery.base-url}") String basePath,
-                                            @Value("${pn.external.bearer-token-pa-1}") String bearerToken,
                                             @Value("${pn.webapi.external.user-agent}")String userAgent) {
         this.statusApi = new StatusApi( newApiClient(restTemplate, basePath, userAgent));
         this.internalApi = new DowntimeInternalApi(newApiClient(restTemplate, basePath, userAgent));

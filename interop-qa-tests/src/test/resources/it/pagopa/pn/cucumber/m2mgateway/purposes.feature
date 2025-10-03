@@ -1,0 +1,678 @@
+@m2m-purposes
+Feature: Gestione purposes
+
+  @happy-path
+  Scenario Outline: [M2M_PURPOSES_LIST_1] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m_2>
+    When l'utente tenta di recuperare una lista di 5 finalità create
+    Then si ottiene status code 200
+    And sono state visualizzate correttamente 5 finalità create
+    Examples:
+      | ruolo-m2m_2 |
+      | m2m         |
+      | m2m-admin   |
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_LIST_2] Accesso negato alla lista delle finalità con token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare una lista di 5 finalità create
+    Then si ottiene status code 401
+
+  @happy-path
+  Scenario: [M2M_PURPOSES_VERSIONS_1] La creazione di una nuova versione di una finalità può essere effettuata solo da un utente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
+    Then si ottiene status code 200
+    And la nuova versione della finalità è stata creata correttamente
+
+  @sad-path
+  @m2m-false-negative
+  Scenario: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
+    Then si ottiene status code 403
+
+  @happy-path
+  Scenario Outline: [M2M_PURPOSES_VERSIONS_3] La lista delle versioni di una finalità può essere visualizzata da un utente con ruolo M2M o M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico
+    When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo_m2m>
+    And l'utente tenta di visualizzare la lista delle versioni della finalità
+    Then si ottiene status code 200
+    And sono state visualizzate correttamente 2 versioni della finalità
+    Examples:
+      | ruolo_m2m |
+      | m2m       |
+      | m2m-admin |
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_VERSIONS_4] La lista delle versioni di una finalità NON può essere visualizzata indicando un auth token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When viene impostato per l'utente un token m2m non valido
+    And l'utente tenta di visualizzare la lista delle versioni della finalità
+    Then si ottiene status code 401
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_VERSIONS_5] La lista delle versioni di una finalità inesistente NON può essere visualizzata
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di visualizzare la lista delle versioni di una finalità inesistente
+    Then si ottiene status code 404
+
+  @happy-path
+  Scenario Outline: [M2M_PURPOSES_VERSIONS_6] Una determinata versione di una finalità può essere visualizzata da un utente con ruolo M2M o M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico
+    When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo_m2m>
+    And l'utente tenta di visualizzare la nuova versione della finalità
+    Then si ottiene status code 200
+    And la nuova versione della finalità è stata visualizzata correttamente
+    Examples:
+      | ruolo_m2m |
+      | m2m       |
+      | m2m-admin |
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_VERSIONS_7] Una determinata versione di una finalità NON può essere visualizzata indicando un auth token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When viene impostato per l'utente un token m2m non valido
+    And l'utente tenta di visualizzare la nuova versione della finalità
+    Then si ottiene status code 401
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_VERSIONS_8] Una versione inesistente di una finalità inesistente NON può essere visualizzata
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di visualizzare una versione inesistente di una finalità inesistente
+    Then si ottiene status code 404
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_VERSIONS_9] Una versione inesistente di una finalità esistente NON può essere visualizzata
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di visualizzare una versione inesistente della finalità esistente
+    Then si ottiene status code 404
+
+  @happy-path
+  Scenario: [M2M_PURPOSES_ACTIVATE_1] Una finalità in stato DRAFT può essere attivata da un utente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è stata attivata correttamente
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_ACTIVATE_2] Una finalità in stato DRAFT NON può essere attivata da un utente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 403
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_ACTIVATE_3] Una finalità inesistente NON può essere attivata
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione di una finalità inesistente
+    Then si ottiene status code 404
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_ACTIVATE_4] Una finalità in stato DRAFT NON può essere attivata specificando un auth token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 401
+
+  @sad-path
+  Scenario Outline: [M2M_PURPOSES_ACTIVATE_5] Una finalità in uno stato diverso da DRAFT NON può essere attivata
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<state>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 409
+    Examples:
+      | state                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | REJECTED             |
+      | WAITING_FOR_APPROVAL |
+      | ARCHIVED             |
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_ACTIVATE_6] Una finalità in stato DRAFT NON può essere attivata da parte di un ente diverso dal creatore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 403
+
+  @happy-path
+  Scenario: [M2M_PURPOSES_SUSPEND_1] Una finalità in stato ACTIVE può essere sospesa da un utente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato SUSPENDED
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_SUSPEND_2] Una finalità in stato ACTIVE NON può essere sospesa da un utente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_SUSPEND_3] Sospensione fallita di una finalità con purposeId inesistente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta la sospensione di una finalità inesistente
+    Then si ottiene lo status code 404
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_SUSPEND_4] Una finalità NON può essere sospesa specificando un token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code 401
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ACTIVE
+
+  @m2m-false-negative
+  # Ticket associati (a cui si deve l'eterogeneità dei codici di risposta previsti)
+    # https://pagopa.atlassian.net/browse/PIN-6999
+    # https://pagopa.atlassian.net/browse/PIN-7024
+  Scenario Outline: [M2M_PURPOSES_SUSPEND_5_A] Una finalità in stato diverso da ACTIVE NON può essere sospesa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<state>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code <code>
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato <state>
+
+    @happy-path
+    Examples:
+      | state                | code |
+      | SUSPENDED            | 200  |
+
+    @sad-path
+    Examples:
+      | state                | code |
+      | DRAFT                | 400  |
+      | WAITING_FOR_APPROVAL | 409  |
+      | ARCHIVED             | 400  |
+
+  @sad-path
+  @m2m-false-negative
+  Scenario: [M2M_PURPOSES_SUSPEND_5_B] Una finalità in stato REJECTED NON può essere sospesa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code 409
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato REJECTED
+
+  @sad-path
+  Scenario: [M2M_PURPOSES_SUSPEND_6] Una finalità NON può essere sospesa da utente che non è né erogatore né fruitore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  Scenario Outline: [M2MG_PURPOSES_33] Archiviazione di una finalità non consentita con ruolo M2M (Scenario 52)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di archiviare purpose
+    Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And purpose in stato <stato>
+    Examples:
+      | stato     |
+      | ACTIVE    |
+      | SUSPENDED |
+
+  @happy-path
+  Scenario Outline: [M2MG_PURPOSES_34] Archiviazione di una finalità in stato <stato> con utente autorizzato (Scenario 119)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di archiviare purpose
+    Then si ottiene lo status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ARCHIVED
+    Examples:
+      | stato     |
+      | ACTIVE    |
+      | SUSPENDED |
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_36] Archiviazione fallita di una finalità inesistente (Scenario 121)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di archiviare purpose con un id inesistente
+    Then si ottiene lo status code 404
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_37] Archiviazione fallita di una finalità con token non valido (Scenario 122)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di archiviare purpose
+    Then si ottiene lo status code 401
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  @m2m-false-negative
+  Scenario Outline: [M2MG_PURPOSES_39_A] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di archiviare purpose
+    Then si ottiene lo status code <code>
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And purpose in stato <stato>
+
+    Examples:
+      | stato                | code |
+      | DRAFT                | 400  |
+      | ARCHIVED             | 400  |
+      | WAITING_FOR_APPROVAL | 409  |
+
+  @sad-path
+  @m2m-false-negative
+  Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato REJECTED (Scenario 124)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di archiviare purpose
+    Then si ottiene lo status code 409
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And purpose in stato REJECTED
+
+  @sad-path
+  Scenario Outline: [M2MG_PURPOSES_40] Archiviazione negata da utente non creatore (Scenario 125)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
+    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    When l'utente tenta di archiviare purpose
+    Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And purpose in stato <stato>
+    Examples:
+      | stato     |
+      | ACTIVE    |
+      | SUSPENDED |
+
+  @sad-path
+  @m2m-false-negative
+  Scenario: [M2MG_PURPOSES_42] Approvazione negata per utente con ruolo M2M (Scenario 53)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di approvare purpose
+    Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato WAITING_FOR_APPROVAL
+
+  @happy-path
+  Scenario: [M2MG_PURPOSES_43] Approvazione di una finalità in stato waiting for approval con utente autorizzato (Scenario 126)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di approvare purpose
+    Then si ottiene lo status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_45] Errore approvazione finalità con purposeId inesistente (Scenario 128)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di approvare purpose con un id inesistente
+    Then si ottiene lo status code 404
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato WAITING_FOR_APPROVAL
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_46] Approvazione fallita di una finalità con token non valido (Scenario 129)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di approvare purpose
+    Then si ottiene lo status code 401
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato WAITING_FOR_APPROVAL
+
+  @sad-path
+  @m2m-false-negative
+  Scenario Outline: [M2MG_PURPOSES_48_A] Approvazione fallita di una finalità in stato non valido (Scenario 131)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di approvare purpose
+    Then si ottiene lo status code 409
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And purpose in stato <stato>
+    Examples:
+      | stato     |
+      | ACTIVE    |
+      | SUSPENDED |
+      | ARCHIVED  |
+      | DRAFT     |
+
+  @sad-path
+  @m2m-false-negative
+  Scenario: [M2MG_PURPOSES_48_B] Approvazione fallita di una finalità in stato REJECTED (Scenario 131)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di approvare purpose
+    Then si ottiene lo status code 409
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And purpose in stato REJECTED
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_49] Approvazione negata da utente non erogatore (Scenario 132)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di approvare purpose
+    Then si ottiene lo status code 403
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato WAITING_FOR_APPROVAL
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_51] Riattivazione negata per utente con ruolo M2M (Scenario 55)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di riattivare purpose
+    Then si ottiene lo status code 403
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato SUSPENDED
+
+  @happy-path
+  Scenario: [M2MG_PURPOSES_52] Riattivazione di una finalità in stato sospeso con utente autorizzato (Scenario 133)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di riattivare purpose
+    Then si ottiene lo status code 200
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato ACTIVE
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_54] Riattivazione fallita di una finalità con purposeId inesistente (Scenario 135)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di riattivare purpose con un id inesistente
+    Then si ottiene lo status code 404
+
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato SUSPENDED
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_55] Riattivazione fallita di una finalità con token non valido (Scenario 136)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di riattivare purpose
+    Then si ottiene lo status code 401
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato SUSPENDED
+
+  @sad-path
+  Scenario Outline: [M2MG_PURPOSES_57_A] Riattivazione fallita di una finalità in stato non sospeso (Scenario 138)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di riattivare purpose
+    Then si ottiene lo status code 409
+      # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And purpose in stato <stato>
+    Examples:
+      | stato                |
+      | ACTIVE               |
+      | DRAFT                |
+      | ARCHIVED             |
+      | WAITING_FOR_APPROVAL |
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_57_B] Riattivazione fallita di una finalità in stato REJECTED (Scenario 138)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di riattivare purpose
+    Then si ottiene lo status code 409
+      # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And purpose in stato REJECTED
+
+  @sad-path
+  Scenario: [M2MG_PURPOSES_58] Riattivazione negata da utente non erogatore e non fruitore (Scenario 139)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    When l'utente tenta di riattivare purpose
+    Then si ottiene lo status code 403
+      # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+    And la finalità è in stato SUSPENDED

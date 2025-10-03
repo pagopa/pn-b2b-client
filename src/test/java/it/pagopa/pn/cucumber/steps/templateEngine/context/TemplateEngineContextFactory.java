@@ -1,12 +1,10 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.context;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +36,7 @@ public class TemplateEngineContextFactory {
         context.setEndWorkflowTime(getParameter(parameters, "context_endWorkflowTime"));
         context.setTimeReferenceStartDate(getParameter(parameters, "context_timeReferenceStartDate"));
         context.setTimeReferenceEndDate(getParameter(parameters, "context_timeReferenceEndDate"));
+        context.setHtmlDescription(getParameter(parameters, "context_htmlDescription"));
         context.setNotificationCancelledDate(getParameter(parameters, "context_NotificationCancelledDate"));
         context.setQrCodeQuickAccessLink(getParameter(parameters, "context_qrCodeQuickAccessLink"));
         context.setPiattaformaNotificheURL(getParameter(parameters, "context_piattaformaNotificheURL"));

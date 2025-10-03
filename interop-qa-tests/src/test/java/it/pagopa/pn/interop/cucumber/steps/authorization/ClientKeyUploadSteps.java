@@ -1,8 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -12,8 +12,7 @@ public class ClientKeyUploadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
-    private final IdentityService identityService;
+    private final IHttpExecutor httpCallExecutor;
 
     public ClientKeyUploadSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
@@ -21,7 +20,6 @@ public class ClientKeyUploadSteps {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string}")

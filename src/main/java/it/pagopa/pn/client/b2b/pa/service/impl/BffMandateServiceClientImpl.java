@@ -38,7 +38,7 @@ public class BffMandateServiceClientImpl implements IBffMandateServiceApi {
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 

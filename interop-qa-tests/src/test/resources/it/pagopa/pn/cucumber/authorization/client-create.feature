@@ -1,4 +1,4 @@
-@client_create
+@client
 Feature: Creazione di un client
   Tutti gli admin possono creare un client
 
@@ -7,14 +7,19 @@ Feature: Creazione di un client
     When l'utente richiede la creazione di un client "CONSUMER"
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | admin        |        200 |
+      | PA1  | admin        |        200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
-      | PA1  | admin        |        200 |
       | PA1  | api          |        403 |
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
@@ -25,14 +30,19 @@ Feature: Creazione di un client
     When l'utente richiede la creazione di un client "API"
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | admin        |        200 |
+      | PA1  | admin        |        200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
-      | PA1  | admin        |        200 |
       | PA1  | api          |        403 |
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |

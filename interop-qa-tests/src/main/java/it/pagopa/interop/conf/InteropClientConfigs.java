@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @Getter
@@ -12,6 +11,9 @@ import org.springframework.context.annotation.PropertySource;
 public class InteropClientConfigs {
     @Value("${bff.base-url}")
     private String baseUrl;
+
+    @Value("${m2m.base-url}")
+    private String m2mBaseUrl;
 
     @Value("${remote-wellknown-url}")
     private String remoteWellknownUrl;

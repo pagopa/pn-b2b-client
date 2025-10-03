@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
@@ -71,6 +73,7 @@ public abstract class SessionTokenFactory {
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("jti", "uuid");
     }
 
+    @Getter
     private final InteropClientConfigs interopClientConfigs;
     private final ConfigFileReader configFileReader;
     private final KmsClient kmsClient;

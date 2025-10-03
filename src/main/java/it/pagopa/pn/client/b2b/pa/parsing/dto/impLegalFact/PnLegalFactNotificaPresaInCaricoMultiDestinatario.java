@@ -1,13 +1,12 @@
 package it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact;
 
-import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserRecord;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAnalogico;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 
 @Getter
@@ -42,11 +41,6 @@ public class PnLegalFactNotificaPresaInCaricoMultiDestinatario extends PnLegalFa
                 tipoDomicilioDigitale,
                 indirizzoFisico);
         this.destinatariAnalogici.add(pnDestinatarioAnalogico);
-    }
-
-    @Override
-    public PnParserRecord.PnParserFieldValues getAllLegalFactValues() {
-        return super.getAllLegalFactValues();
     }
 
     @Override

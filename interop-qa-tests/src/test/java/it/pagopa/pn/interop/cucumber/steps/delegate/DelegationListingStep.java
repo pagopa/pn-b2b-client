@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegation;
@@ -33,7 +34,7 @@ public class DelegationListingStep {
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
     private final PollingService pollingService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final List<CompactDelegations> delegationList;
     private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
 
