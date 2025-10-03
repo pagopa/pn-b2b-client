@@ -14,24 +14,30 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
     When l'utente aggiorna quella finalità per quell'e-service in erogazione inversa
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | GSP     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
-      | GSP     | admin        |       200 |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | api,security |       403 |
       | GSP     | support      |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+  @sad-path
   @purpose_update_draft_mode_receive2
   Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato NON DRAFT (ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED) per una versione di e-service, il quale ha mode = RECEIVE, aggiorna una finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore
     Given l'utente è un "admin" di "PA1"

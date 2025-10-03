@@ -256,7 +256,7 @@ public class SharedSteps {
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
 
-    private NotificationStepsInterface getNotificationStepInterface() {
+    public NotificationStepsInterface getNotificationStepInterface() {
         NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
         return getNotificationStepInterface(notificationVersion);
     }
@@ -1228,6 +1228,14 @@ public class SharedSteps {
             log.error("Await error exception");
             throw exception;
         }
+    }
+
+    public String vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
+        HashMap<String, String> quickAccessLink = pnExternalServiceClient.getQuickAccessLink(iun);
+        log.debug("quickAccessLink: {}", quickAccessLink.toString());
+        String qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]);
+        log.debug("qrCode: {}", qrCode);
+        return qrCode;
     }
 
 }

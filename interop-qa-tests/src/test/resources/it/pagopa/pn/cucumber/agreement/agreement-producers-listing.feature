@@ -2,6 +2,7 @@
 Feature: Listing erogatori con richieste di fruizione
   Tutti gli utenti autorizzati possono ottenere la lista degli erogatori degli e-service per cui hanno una richiesta di fruizione
 
+  @happy-path
   @agreement_producers_listing1
   Scenario Outline: A fronte di 3 erogatori, restituisce solo i primi 2 risultati
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -32,6 +33,7 @@ Feature: Listing erogatori con richieste di fruizione
       | Privato | support      |
       | Privato | api,security |
 
+  @happy-path
   @agreement_producers_listing2
   Scenario: A fronte di 3 erogatori con i quali il fruitore ha almeno una richiesta di fruizione e una richiesta di offset 2, restituisce solo 1 risultato
     Given l'utente è un "admin" di "PA1"
@@ -44,6 +46,7 @@ Feature: Listing erogatori con richieste di fruizione
     When l'utente richiede una operazione di listing degli erogatori degli e-service per cui ha una richiesta di fruizione con offset 2
     Then si ottiene status code 200 con la corretta verifica dell'offset
 
+  @happy-path
   @agreement_producers_listing3
   Scenario: Restituisce gli erogatori il cui nome dell’ente contiene la keyword "Comune di Milano" all'interno del nome, con ricerca case insensitive. In questo scenario il nome di PA1 è "Comune di Milano"
     Given l'utente è un "admin" di "GSP"
@@ -54,6 +57,7 @@ Feature: Listing erogatori con richieste di fruizione
     When l'utente richiede una operazione di listing degli erogatori degli e-service per cui ha una richiesta di fruizione filtrando per la keyword "Comune di Milano"
     Then si ottiene status code 200 e la lista di 1 erogatore
 
+  @happy-path
   @agreement_producers_listing4
   Scenario: Restituisce un insieme vuoto di erogatori per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"

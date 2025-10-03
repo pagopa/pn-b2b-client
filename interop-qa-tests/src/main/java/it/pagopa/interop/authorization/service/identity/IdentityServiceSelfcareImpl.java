@@ -67,4 +67,13 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
             .orElse(null);
     }
 
+    @Override
+    public String getKind(String tenantType) {
+        return tenantList.stream()
+            .filter(tenant -> tenantType.equals(tenant.getName()))
+            .map(Tenant::getKind)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+    }
+
 }

@@ -1,0 +1,49 @@
+rdb:
+  base-url:  https://api-io.dev.cstar.pagopa.it/idpay-itn/register
+
+role:
+  productor-1:
+    uid: "195da70f-d3f0-4c57-b62e-ef471348e920"
+    name: Lorenzo
+    familyName: Lollo
+    orgId: 72c2c5f8-1c71-4614-a4b3-95e3aee71c3d
+    orgVat: "CHE-123.456.712"
+    orgFc: "CHE-123.456.712"
+    orgName: Produttore SvenVath
+    orgPartyRole: OPERATOR
+    orgRole: operatore
+
+  productor-2:
+    uid: "195da70f-d3f0-4c57-b62e-ef471348e920"
+    name: Lorenzo
+    familyName: Lollo
+    orgId: 84c863ad-119c-4df1-898a-e1fd3058466a
+    orgVat: "CHE-123.456.789"
+    orgFc: "CHE-123.456.789"
+    orgName: Produttore Tech
+    orgPartyRole: OPERATOR
+    orgRole: operatore
+
+  invitalia-l1:
+    uid: "99457865-8a65-467f-aeec-7ce9f71c361a"
+    name: Giuseppe
+    familyName: Polignano
+    orgId: b5ae0b41-b854-414e-8295-078595ee1da1
+    orgVat: "87003290159"
+    orgFc: "05678721001"
+    orgName: Ag.Naz.Attrazione Investimenti Sviluppo Impresa Spa
+    orgPartyRole: Operatore Invitalia
+    orgRole: invitalia
+
+  invitalia-l2:
+    uid: "ff049c69-c7b6-4bb3-8084-8404f5bb7c13"
+    name: Rino
+    familyName: Frassica
+    orgId: b5ae0b41-b854-414e-8295-078595ee1da1
+    orgVat: "87003290159"
+    orgFc: "05678721001"
+    orgName: Ag.Naz.Attrazione Investimenti Sviluppo Impresa Spa
+    orgPartyRole: Admin Invitalia
+    orgRole: invitalia_admin
+
+removeTos.endpoint: https://idpay.itn.internal.dev.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent

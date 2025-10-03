@@ -142,9 +142,9 @@ public class DataPreparationService {
     }
 
     private void assertValidResponse() {
-        if (!httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (!httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             throw new RuntimeException("Invalid response %s: %s".formatted(
-                httpCallExecutor.getClientResponse(),
+                httpCallExecutor.getResponseStatus(),
                 httpCallExecutor.getResponse()
             ));
         }

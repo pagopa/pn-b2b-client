@@ -106,6 +106,21 @@ public class B2bStepsV25 implements B2bStepsInterface {
     }
 
     @Override
+    public void checkFullSentNotificationRelatedElementWithVersion(String relatedTimelineElement) {
+        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
+
+        boolean found = fullSentNotification.getNotificationStatusHistory().stream()
+                .filter(history -> history.getRelatedTimelineElements() != null)
+                .flatMap(history -> history.getRelatedTimelineElements().stream())
+                .anyMatch(element -> element.contains(relatedTimelineElement));
+
+        assertThat(found)
+                    .as("Il controllo sulla fullSentNotification V27 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement +", IUN: "+sharedSteps.getNotificationIun())
+                    .isFalse();
+
+    }
+
+    @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();

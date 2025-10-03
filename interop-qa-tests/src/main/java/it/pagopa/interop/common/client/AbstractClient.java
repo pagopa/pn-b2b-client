@@ -2,11 +2,9 @@ package it.pagopa.interop.common.client;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.Optional;
@@ -24,7 +22,7 @@ public abstract class AbstractClient  {
         // Recupera la risposta e l'esito della chiamata (cast se necessario)
         @SuppressWarnings("unchecked")
         E rawResponse = (E) httpCallExecutor.getResponse();
-        var response = httpCallExecutor.getClientResponse();
+        var response = httpCallExecutor.getResponseStatus();
 
         // Se la risposta è positiva, estrae e restituisce il risultato
         if (response.is2xxSuccessful()) {

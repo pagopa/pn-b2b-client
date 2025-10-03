@@ -35,7 +35,7 @@ public class VoucherGenerationAgreementSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         dataPreparationService.activateAgreement(
             sharedStepsContext.getAgreementId(),
-            clientType
+            clientType, null
         );
     }
 
@@ -159,7 +159,7 @@ public class VoucherGenerationAgreementSteps {
     @Given("{string} approva quella richiesta di fruizione")
     public void approveAgreement(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, null);
     }
 
     private static void handleUnknownAttributeKind(String attributeKind) {

@@ -62,10 +62,7 @@ public class RaddFsuSteps {
 
     @Given("viene richiesto il codice QR per lo IUN {string}")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun) {
-        HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
-        log.debug("quickAccessLink: {}", quickAccessLink.toString());
-        this.qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[0]);
-        log.debug("qrCode: {}", qrCode);
+        this.qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, 0);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti")

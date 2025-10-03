@@ -20,7 +20,6 @@ import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
@@ -71,7 +70,7 @@ public class PurposesSteps {
 
     @Then("sono state visualizzate correttamente {int} finalità create")
     public void purposesSuccessfullyGot(int expectedSize) {
-        HttpStatus clientResponse = httpCallExecutor.getClientResponse();
+        HttpStatus clientResponse = httpCallExecutor.getResponseStatus();
         if(clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }
@@ -97,7 +96,7 @@ public class PurposesSteps {
             )
         );
 
-        if(httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             PurposeVersion createdVersion = (PurposeVersion) httpCallExecutor.getResponse();
             purposeCommonContext.addCurrentVersionId(createdVersion.getId());
         }
@@ -109,7 +108,7 @@ public class PurposesSteps {
             sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
             sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()));
 
-        assertThat(httpCallExecutor.getClientResponse().is2xxSuccessful())
+        assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
             .as("Check GET created purpose response status")
             .withFailMessage("Non è stato possibile reperire la purpose version creata. "
                 + "Visionare i log delle chiamate per maggiori dettagli.")
@@ -138,7 +137,7 @@ public class PurposesSteps {
 
     @Then("sono state visualizzate correttamente {int} versioni della finalità")
     public void purposeVersionsSuccessfullyGot(int expectedSize) {
-        HttpStatus clientResponse = httpCallExecutor.getClientResponse();
+        HttpStatus clientResponse = httpCallExecutor.getResponseStatus();
         if(clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }
@@ -239,7 +238,7 @@ public class PurposesSteps {
     @Then("la finalità è in stato {m2mPurposeVersionState}")
     @Then("purpose in stato {m2mPurposeVersionState}")
     public void purposeStateSuccessfullyChanged(PurposeVersionState expectedState) {
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             Purpose purpose = (Purpose) httpCallExecutor.getResponse();
             PurposeVersionState returnedState;
 

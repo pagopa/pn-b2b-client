@@ -9,25 +9,32 @@ Feature: Aggiornamento del nome di un documento
     When l'utente aggiorna il nome di quel documento
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statoDescrittore | risultato |
       | GSP  | admin        | DRAFT            |       200 |
       | GSP  | api          | DRAFT            |       200 |
-      | GSP  | security     | DRAFT            |       403 |
       | GSP  | api,security | DRAFT            |       200 |
-      | GSP  | support      | DRAFT            |       403 |
       | PA1  | admin        | DRAFT            |       200 |
       | PA1  | api          | DRAFT            |       200 |
-      | PA1  | security     | DRAFT            |       403 |
       | PA1  | api,security | DRAFT            |       200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statoDescrittore | risultato |
+      | GSP  | security     | DRAFT            |       403 |
+      | GSP  | support      | DRAFT            |       403 |
+      | PA1  | security     | DRAFT            |       403 |
       | PA1  | support      | DRAFT            |       403 |
 
+    @happy-path
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
       | GSP  | admin | PUBLISHED        |       200 |
       | GSP  | admin | SUSPENDED        |       200 |
       | GSP  | admin | DEPRECATED       |       200 |
 
+  @sad-path
   @document_update2
   Scenario: Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED, e che ha almeno un documento già caricato, alla richiesta di aggiornamento del nome, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -35,6 +42,7 @@ Feature: Aggiornamento del nome di un documento
     When l'utente aggiorna il nome di quel documento
     Then si ottiene status code 400
 
+  @sad-path
   @document_update3
   Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e che ha almeno due documenti già caricati, alla richiesta di aggiornamento del nome di uno di quelli, se il nome aggiornato è già in uso da uno degli altri documenti si ottiene un errore
     Given l'utente è un "admin" di "PA1"

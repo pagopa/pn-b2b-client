@@ -187,9 +187,9 @@ Feature: Template engine
     Examples:
       | language | notificationType  |
       | italiana | multidestinatario |
-      | tedesca  | monodestinatario  |
-      | slovena  | semplice          |
-      | francese | semplice          |
+      | tedesca  | multidestinatario  |
+      | slovena  | monodestinatario  |
+      | francese | monodestinatario  |
 
   @templateEngine #43 /templates-engine-private/v1/templates/notification-cancelled-legal-fact
   Scenario: [TEMPLATE-ENGINE_10] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - lingua errata
