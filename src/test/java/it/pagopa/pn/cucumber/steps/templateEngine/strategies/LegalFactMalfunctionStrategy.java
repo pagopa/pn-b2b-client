@@ -50,6 +50,7 @@ public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
                 .endDate(context.getEndDate())
                 .startDate(context.getStartDate())
                 .timeReferenceStartDate(context.getTimeReferenceStartDate())
-                .timeReferenceEndDate(context.getTimeReferenceEndDate());
+                .timeReferenceEndDate(context.getTimeReferenceEndDate())
+                .htmlDescription(context.getHtmlDescription());
     }
 }

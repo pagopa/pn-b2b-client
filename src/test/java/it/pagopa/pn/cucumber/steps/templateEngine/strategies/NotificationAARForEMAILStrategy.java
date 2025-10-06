@@ -30,10 +30,10 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "Se non hai una PEC e visualizzi i documenti entro 5 giorni (120 ore) dall&apos;invio del messaggio, non riceverai la notifica tramite raccomandata.";
+                yield "Se accedi alla comunicazione entro 5 giorni dall’invio di questa email, eviterai una raccomandata cartacea e gli eventuali costi.";
             }
             case "TEDESCA" -> {
-                yield "olltest du keine PEC-Adresse haben und die Dokumente innerhalb von 5 Tagen (120 Stunden) nach Versand der Nachricht einsehen, erhältst du keine Zustellung mittels Einschreibebrief.";
+                yield "Solltest du keine PEC-Adresse haben und die Dokumente innerhalb von 5 Tagen (120 Stunden) nach Versand der Nachricht einsehen, erh&#228;ltst du keine Zustellung mittels Einschreibebrief.";
             }
             case "SLOVENA" -> {
                 yield "e nimate certificiranega elektronskega naslova PEC in si dokumente ogledate v roku 5 dni (120 ur) od po&#353;iljanja sporo&#269;ila, ne boste prejeli obvestila po priporo";

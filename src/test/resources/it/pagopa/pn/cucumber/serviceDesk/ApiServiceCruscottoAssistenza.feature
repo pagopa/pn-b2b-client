@@ -645,7 +645,7 @@ Feature: Api Service Cruscotto Assistenza
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_6] Recupero del profilo destinatario che ha rimosso il Domicilio Digitale come recapito legale
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"

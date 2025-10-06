@@ -17,8 +17,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -117,7 +117,7 @@ public class EServiceTemplateCreateSteps {
 
         httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(templateSeed));
         if (httpCallExecutor.getResponseStatus().isError()) {
-            return; // a questo punto si prevede che i passi successivi riconoscano l'errore
+            throw new IllegalArgumentException(httpCallExecutor.getErrorMessage()); // a questo punto si prevede che i passi successivi riconoscano l'errore
         }
 
         CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();

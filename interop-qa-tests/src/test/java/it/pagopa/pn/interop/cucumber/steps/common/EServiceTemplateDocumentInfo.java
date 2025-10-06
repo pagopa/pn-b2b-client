@@ -1,0 +1,30 @@
+package it.pagopa.pn.interop.cucumber.steps.common;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+@Getter
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Data
+@AllArgsConstructor
+@Accessors(fluent = true)
+public class EServiceTemplateDocumentInfo {
+    private UUID id;
+    private String prettyName;
+    private byte[] body;
+    private String errorMessage;
+
+    public EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body) {
+        this.id = id;
+        this.prettyName = prettyName;
+        this.body = body;
+    }
+}

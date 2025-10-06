@@ -28,8 +28,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateDocumentInfo;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;

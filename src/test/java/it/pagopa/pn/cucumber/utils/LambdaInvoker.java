@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -17,22 +18,43 @@ import java.time.Duration;
 public class LambdaInvoker {
 
     private LambdaClient lambdaClient;
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
+    private String getUserRole() {
+        return switch (activeProfile) {
+            case "dev" -> "ROLE_dev_core";
+            case "test" -> "ROLE_test_core";
+            case "uat" -> "ROLE_uat_core";
+            case "hotfix" -> "ROLE_hotfix_core";
+            default -> throw new RuntimeException("Invalid profile active");
+        };
+
+
+    }
 
     private LambdaClient getLambdaClient() {
         if (lambdaClient == null) {
             lambdaClient = LambdaClient.builder()
                     .httpClient(ApacheHttpClient.builder()
                             .maxConnections(50)
-                            .connectionTimeout(Duration.ofSeconds(10))
-                            .socketTimeout(Duration.ofSeconds(30))
+                            .connectionTimeout(Duration.ofSeconds(20))      // connessione iniziale
+                            .socketTimeout(Duration.ofSeconds(180))         // attesa risposta
+                            .connectionAcquisitionTimeout(Duration.ofSeconds(60))
+                            .connectionMaxIdleTime(Duration.ofSeconds(300)) // evita chiusura a 60s
+                            .tcpKeepAlive(true)
                             .build())
-                    //.credentialsProvider(ProfileCredentialsProvider.create("ROLE_dev_core")) // in locale
+                    .overrideConfiguration(c -> c
+                            .apiCallAttemptTimeout(Duration.ofSeconds(180))
+                            .apiCallTimeout(Duration.ofMinutes(6)))
+                    //.credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
                     .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
         return lambdaClient;
     }
+
 
     public String invokeMyLambda(String functionName, String payload) {
         InvokeRequest request = InvokeRequest.builder()

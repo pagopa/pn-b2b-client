@@ -382,7 +382,7 @@ public class BFFDataPreparationService {
                 "documento-test-qa",
                 new FileSystemResource(params.getDoc())))
             .checkerApiCaller(id -> UpperAgreement.from(agreementClient.getAgreementById(id)))
-            .documentListExtractor(res -> ((Agreement) res).getConsumerDocuments())
+            .documentListExtractor(res -> ((UpperAgreement) res).getConsumerDocuments())
             .build();
     }
 
@@ -688,7 +688,13 @@ public class BFFDataPreparationService {
     }
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
+        String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
+        Resource resource;
+        if (prettyName.equals("test 2")) {
+            resource = blobFileCreator.createBlobFile("src/main/resources/interface1.yaml", "documento-test2-qa.pdf");
+        } else {
+            resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
+        }
         return addDocumentToDescriptor(eServiceId, descriptorId, name, resource);
     }
 

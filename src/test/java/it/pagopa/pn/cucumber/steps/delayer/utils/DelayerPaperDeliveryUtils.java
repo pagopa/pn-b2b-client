@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 public class DelayerPaperDeliveryUtils {
 
+    private static final String UNIFIED_DRIVER_SCONOSCIUTO = "driverSconosciuto";
     private final DelayerContext context;
 
     public DelayerPaperDeliveryUtils(DelayerContext context) {
@@ -334,6 +335,26 @@ public class DelayerPaperDeliveryUtils {
         return !paId.equalsIgnoreCase("unknow");
     }
 
+    public boolean isDriverCensito(String driverKey){
+
+        if (driverKey == null || driverKey.isBlank()) {
+            throw new IllegalStateException("SenderKey mancante o vuoto: " + driverKey);
+        }
+
+        String[] parts = driverKey.split("~");
+        if (parts.length == 0) {
+            throw new IllegalStateException("Formato driverKey non valido: " + driverKey);
+        }
+
+        String driver = parts[0];
+
+        if (driver == null || driver.isBlank()) {
+            throw new AssertionError(String.format("La driverKey (%s) ha una identificativo vuoto: %s", driverKey, driver));
+        }
+
+        return !driver.equalsIgnoreCase("unknow");
+    }
+
     public static List<DelayerPaperDelivery> sortByPriority(List<DelayerPaperDelivery> notifiche) {
         List<DelayerPaperDelivery> rs = new ArrayList<>();
         List<DelayerPaperDelivery> secondi = new ArrayList<>();
@@ -494,7 +515,7 @@ public class DelayerPaperDeliveryUtils {
                     map.put("cap", n.getCap());
                     map.put("attempt", n.getAttempt());
                     map.put("iun", n.getIun());
-                    if (step.getIndex() > 0)
+                    if (step.getIndex() > 0 && !n.getUnifiedDeliveryDriver().equals(UNIFIED_DRIVER_SCONOSCIUTO))
                         map.put("unifiedDeliveryDriver", n.getUnifiedDeliveryDriver());
 
                     return map;

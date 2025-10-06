@@ -124,6 +124,12 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 
+    @Then("recuperando la fullSentNotification con la versione b2b {string} controllo che non sia presente l'elementoto {string} nei relatedTimelineElements")
+    public void checkPresenceOfTimelineRelatedElement(String version, String timelineEventCategory) {
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
+        getB2bStepsInterface(notificationVersion).checkFullSentNotificationRelatedElementWithVersion(timelineEventCategory);
+    }
+
     /**
      * Poiché il metodo non era usato da alcuno scenario, sono stati parametrizzati i due
      * metodi che richiamavano questo controllo unicamente per lo stato VIEWED ed è stato aggiunto il

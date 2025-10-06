@@ -27,6 +27,7 @@ public class TemplateRequestContext {
     private String timeReferenceStartDate;
     private String endDate;
     private String timeReferenceEndDate;
+    private String htmlDescription;
     private String notificationCancelledDate;
     private String qrCodeQuickAccessLink;
     private String piattaformaNotificheURL;

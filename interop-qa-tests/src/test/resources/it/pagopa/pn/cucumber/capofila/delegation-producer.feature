@@ -14,9 +14,14 @@ Feature: Creazione di una delega in erogazione
     When l'utente richiede la creazione di una delega per l'ente "PA2"
     Then si ottiene lo status code <statusCode>
 
+    @happy-path
     Examples:
       | ruolo        | statusCode |
       | admin        |        200 |
+
+    @sad-path
+    Examples:
+      | ruolo        | statusCode |
       | api          |        403 |
       | security     |        403 |
       | api,security |        403 |
@@ -31,11 +36,17 @@ Feature: Creazione di una delega in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
     When l'utente rifiuta la delega
     Then si ottiene lo status code <statusCode>
+
+    @happy-path
     Examples:
       | ruolo        | funzione  | statusCode  |
       # Scenario: 26
       # Esito: coerente
       | admin        | delegato  | 200         |
+
+    @sad-path
+    Examples:
+      | ruolo        | funzione  | statusCode  |
       # Scenario: 6
       # Esito: coerente
       | api          | delegato  | 403         |
@@ -64,6 +75,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
+  @sad-path
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -107,6 +119,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
+  @sad-path
   Scenario: [TC_CAPOFILA_33] La creazione di una delega in erogazione NON può essere compiuto da un utente ADMIN se l’aderente non si è reso disponibile ad accettare deleghe
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -126,15 +139,22 @@ Feature: Creazione di una delega in erogazione
     Then si ottiene lo status code <statusCode>
     When l'ente "PA1" con ruolo "<ruolo>" revoca la delega
     Then si ottiene lo status code <statusCode>
+
+    @happy-path
     Examples:
       | ruolo        | statusCode |
       | admin        |        200 |
+
+    @sad-path
+    Examples:
+      | ruolo        | statusCode |
       | api          |        403 |
       | security     |        403 |
       | api,security |        403 |
       | support      |        403 |
 
   #TC-21: Delegato con ruolo admin non può revocare la delega
+  @sad-path
   Scenario: [TC_CAPOFILA_DELEGATO_REVOCA] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -146,6 +166,7 @@ Feature: Creazione di una delega in erogazione
     Then si ottiene lo status code 403
 
   #TC-12: L'API di disponibilità NON puà essere invocata da un utente admin di un tenant NON PA
+  @sad-path
   Scenario: [TC_CAPOFILA_PRIVATO] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "Privato"
@@ -159,14 +180,21 @@ Feature: Creazione di una delega in erogazione
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'utente concede la disponibilità a ricevere le deleghe
     Then si ottiene lo status code <statusCode>
+
+    @happy-path
     Examples:
       | ruolo        | statusCode |
       | admin        |        200 |
+
+    @sad-path
+    Examples:
+      | ruolo        | statusCode |
       | api          |        403 |
       | security     |        403 |
       | api,security |        403 |
       | support      |        403 |
 
+  @sad-path
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
     Given l'utente è un "admin" di "PA1"
     Given l'ente "GSP" rimuove la disponibilità a ricevere deleghe
@@ -178,11 +206,13 @@ Feature: Creazione di una delega in erogazione
     When l'utente richiede la creazione di una delega per l'ente "GSP"
     Then si ottiene lo status code 409
 
+  @happy-path
   Scenario: [TC_CAPOFILA_LISTA_DELEGHE_1] Viene recuperata la lista delle deleghe di un ente
     Given l'utente è un "admin" di "PA2"
     Given l'utente recupera le prime 5 pagine con la lista delle deleghe
     Then viene verificato che sono state ritornate le prime 5 pagine
 
+  @happy-path
   Scenario: [TC_CAPOFILA_LISTA_DELEGHE_2] Viene recuperata la lista delle deleghe di un ente
     Given l'utente è un "admin" di "PA2"
     Given l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL

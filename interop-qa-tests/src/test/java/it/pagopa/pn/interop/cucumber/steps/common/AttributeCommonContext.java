@@ -30,6 +30,7 @@ public class AttributeCommonContext {
         return lastOf(createdAttributes);
     }
     public void addCreatedAttribute(Attribute attribute) {
+        this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
 
