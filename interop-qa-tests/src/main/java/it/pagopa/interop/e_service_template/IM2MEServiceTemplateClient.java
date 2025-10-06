@@ -27,10 +27,6 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
         private EServiceTemplateVersionState state;
     }
 
-    /* TODO 10/09/2025: modellano DTO le cui specifiche non sono state ancora rilasciate, per cui
-    *   dovranno essere sottoposte a tutti gli adattamenti del caso. Si consiglia di reperire
-    *   tutti i punti in cui queste strutture sono state utilizzate per verificare ed eventualmente
-    *   modificare l'utilizzo fatto. */
     @Data
     @Builder
     class EServiceTemplatePatchRequest {
@@ -59,7 +55,6 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
         private Integer dailyCallsTotal;
         private Integer voucherLifespan;
     }
-    /* *******************************************************************************************/
 
     EServiceTemplate getEserviceTemplate(UUID templateId);
 
