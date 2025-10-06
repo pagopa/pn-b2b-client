@@ -6,6 +6,7 @@ import it.pagopa.pari.cucumber.config.RdbUserRoleConfiguration;
 import it.pagopa.pari.cucumber.domain.JWTUserDataRegistry;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.cucumber.utils.SharedCommonContext;
+import it.pagopa.pari.merchant.service.impl.MerchantOperationClientImpl;
 import it.pagopa.pari.registrobeni.service.impl.RegisterPortalOperationClientImpl;
 import it.pagopa.pari.utils.RdBJWTProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +22,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         SharedCommonContext.class,
         RegisterPortalOperationClientImpl.class,
         JWTUserDataRegistry.class,
-        RdbUserRoleConfiguration.class
+        RdbUserRoleConfiguration.class,
+        MerchantOperationClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
