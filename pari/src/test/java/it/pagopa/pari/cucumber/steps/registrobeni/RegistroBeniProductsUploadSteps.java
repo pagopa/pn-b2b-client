@@ -73,7 +73,8 @@ public class RegistroBeniProductsUploadSteps {
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, categoria);
         sharedCommonContext.setLastProductsUploaded(dataCsv.stream()
                 .map(row -> new ProductDTO().eprelCode(row.get("Codice EPREL")).gtinCode(row.get("Codice GTIN/EAN"))
-                        .productCode(row.get("Codice Prodotto")).category(ProductDTO.CategoryEnum.fromValue(row.get("Categoria")))
+                        .productCode(row.get("Codice Prodotto"))
+                        .category(Optional.ofNullable(row.get("Categoria")).map(ProductDTO.CategoryEnum::fromValue).orElse(null))
                         .countryOfProduction(row.get("Paese di Produzione"))).toList()
         );
 

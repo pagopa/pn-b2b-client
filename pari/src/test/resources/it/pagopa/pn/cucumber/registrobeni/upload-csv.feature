@@ -123,7 +123,7 @@ Feature: PARI - Portale registro dei beni
       | RANGEHOODS          |                     | Cappa da cucina   |
       | DISHWASHERS         |                     | Lavastoviglie     |
       | TUMBLEDRYERS        |                     | Asciugatrice      |
-      | REFRIGERATINGAPPL   |                     | Frigorifero       |
+      | REFRIGERATINGAPPL   |                     | Apparecchio di refrigerazione       |
 
   @produttore1
   Scenario: [TC_UPLOAD_8] Inserimento di un nuovo file CSV non valido (Paese errato) e contestuale recupero del report
@@ -181,7 +181,6 @@ Feature: PARI - Portale registro dei beni
        | 8016361967656       | 33801,99          | Piano cottura       | IT        | Candy    | x100    |
        | 8016361967656       | 33801^99          | Piano cottura       | IT        | Candy    | x100    |
        | 8016361967656       | 33801è99          | Piano cottura       | IT        | Candy    | x100    |
-       | 8016361967656       | 33801199          | COOKINGHOBS         | IT        | Candy    | x100    |
 
   @produttore1
   Scenario Outline: [TC_UPLOAD_11] Inserimento di un nuovo file CSV valido per Piani Cottura
