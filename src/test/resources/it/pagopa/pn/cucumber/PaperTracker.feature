@@ -1,6 +1,6 @@
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
-  @paperTracker1
+  @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
