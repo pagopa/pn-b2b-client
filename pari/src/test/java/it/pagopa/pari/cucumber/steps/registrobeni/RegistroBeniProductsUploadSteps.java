@@ -27,6 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -214,10 +216,10 @@ public class RegistroBeniProductsUploadSteps {
                 uploadsListDTO.getContent().stream()
                         .anyMatch(x -> {
                             LocalDateTime uploadTime = LocalDateTime.parse(x.getDateUpload());
-                            LocalDateTime now = LocalDateTime.now();
+                            ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Rome"));
                             Duration diff = Duration.between(uploadTime, now);
                             timestamp.addAll(Arrays.asList(now.toString(), diff.toString()));
-                            return !uploadTime.isAfter(now) && diff.toMinutes() < 2;
+                            return diff.toMinutes() < 1;
                         })
         , "I timestamp errati sono questi: " + timestamp);
     }
