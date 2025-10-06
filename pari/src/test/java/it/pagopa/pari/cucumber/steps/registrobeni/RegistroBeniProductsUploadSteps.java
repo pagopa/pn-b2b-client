@@ -10,11 +10,9 @@ import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
-import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
-import it.pagopa.pari.registrobeni.domain.ProductCategory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -30,6 +28,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -210,15 +209,17 @@ public class RegistroBeniProductsUploadSteps {
         assertNotNull(uploadsListDTO);
         assertNotNull(uploadsListDTO.getTotalElements());
         assertTrue(uploadsListDTO.getTotalElements() > 0);
+        List<String> timestamp = new ArrayList<>();
         assertTrue(
                 uploadsListDTO.getContent().stream()
                         .anyMatch(x -> {
                             LocalDateTime uploadTime = LocalDateTime.parse(x.getDateUpload());
                             LocalDateTime now = LocalDateTime.now();
                             Duration diff = Duration.between(uploadTime, now);
+                            timestamp.addAll(Arrays.asList(now.toString(), diff.toString()));
                             return !uploadTime.isAfter(now) && diff.toMinutes() < 2;
                         })
-        );
+        , "I timestamp errati sono questi: " + timestamp);
     }
 
 //    @Then("viene aggiunto di nuovo un prodotto già rifiutato")
