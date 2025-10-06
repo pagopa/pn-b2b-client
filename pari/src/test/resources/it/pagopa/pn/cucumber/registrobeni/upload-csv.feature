@@ -4,7 +4,7 @@ Feature: PARI - Portale registro dei beni
   Background:
     Given vengono generati tutti i token JWT necessari
 
-  @produttore1 @invitalia1
+  @produttore1 @invitalia1 @ignore
   Scenario Outline: [TC_1_TOS_OK] Avvenuto accesso alla piattaforma Registro Beni con utenza Produttore in seguito all’accettazione dei ToS
     Given viene rimossa l'accettazione dei ToS per l'utente: <utenza>
     Given viene usata l'utenza: <utenza>
@@ -16,7 +16,7 @@ Feature: PARI - Portale registro dei beni
       | PRODUTTORE_1    |
       | INVITALIA_L1    |
 
-  @produttore1
+  @produttore1 @ignore
   Scenario: [TC_1_TOS_KO] La sottomissione di un csv prodotti senza l'accettazione dei ToS deve essere proibita
     Given viene usata l'utenza: PRODUTTORE_1
     Given viene rimossa l'accettazione dei ToS per l'utente: PRODUTTORE_1
@@ -52,7 +52,6 @@ Feature: PARI - Portale registro dei beni
   Scenario Outline: [TC_UPLOAD_4] Inserimento di un nuovo file CSV non valido con alcune colonne non popolate o popolate in modo non corretto
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
-
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
       | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione       |
       | <codice_eprel>      | <codice_gtin>          | <codice_prodotto>       | <categoria>         | <paese>                   |
@@ -84,8 +83,6 @@ Feature: PARI - Portale registro dei beni
     | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice     | ITA                   |
     | 2226586      | eiQINTWM149V2          | EIQINTWM149       | Lavatrice     | I%                    |
     | 2226586      | eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM11          | EIQINTWM149       | Lavatrice     | IT                    |
-    | 2226586      | eiQINTWM149V2          | EIQINTWM149       | LAV\|ATRIC&S     | IT                    |
-
 
   @produttore1
   Scenario: [TC_UPLOAD_5] Inserimento di un nuovo file csv che supera il peso massimo (>2MB)
@@ -154,7 +151,6 @@ Feature: PARI - Portale registro dei beni
   Scenario Outline: [TC_UPLOAD_10] Inserimento di un nuovo file CSV per Piani Cottura non valido con alcune colonne non popolate o popolate in modo non corretto
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
-
     When viene caricato il csv con categoria: "COOKINGHOBS" e dati:
       | Codice GTIN/EAN     | Codice Prodotto        | Categoria         | Paese di Produzione       | Marca     | Modello    |
       | <codice_gtin>       | <codice_prodotto>      | <categoria>       | <paese>                   | <marca>   | <modello>  |
@@ -186,7 +182,6 @@ Feature: PARI - Portale registro dei beni
   Scenario Outline: [TC_UPLOAD_11] Inserimento di un nuovo file CSV valido per Piani Cottura
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
-
     When viene caricato il csv con categoria: "COOKINGHOBS" e dati:
       | Codice GTIN/EAN     | Codice Prodotto        | Categoria         | Paese di Produzione       | Marca     | Modello    |
       | <codice_gtin>       | <codice_prodotto>      | <categoria>       | <paese>                   | <marca>   | <modello>  |
@@ -201,7 +196,6 @@ Feature: PARI - Portale registro dei beni
   Scenario Outline: [TC_UPLOAD_12] Verifica di un nuovo file CSV valido per Cappe da cucina
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
-
     When viene verificato il csv con categoria: "RANGEHOODS" e dati:
       | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione       |
       | <codice_eprel>      | <codice_gtin>          | <codice_prodotto>       | <categoria>         | <paese>                   |

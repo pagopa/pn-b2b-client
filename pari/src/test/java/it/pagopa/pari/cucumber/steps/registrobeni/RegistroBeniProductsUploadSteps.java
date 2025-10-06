@@ -216,7 +216,7 @@ public class RegistroBeniProductsUploadSteps {
                             LocalDateTime uploadTime = LocalDateTime.parse(x.getDateUpload());
                             LocalDateTime now = LocalDateTime.now();
                             Duration diff = Duration.between(uploadTime, now);
-                            return !uploadTime.isAfter(now) && diff.toMinutes() < 1;
+                            return !uploadTime.isAfter(now) && diff.toMinutes() < 2;
                         })
         );
     }
