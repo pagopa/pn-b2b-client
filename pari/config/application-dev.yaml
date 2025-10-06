@@ -46,4 +46,17 @@ role:
     orgPartyRole: Admin Invitalia
     orgRole: invitalia_admin
 
+  merchant-root:
+    uid: "2f9d970d-31fb-4393-8721-2ca921bb2bbc"
+    name: esercente
+    familyName: test
+    email: esercenteTest@test.email.it
+    acquirerId: PAGOPA
+    merchantId: bb7b4183-2a38-3243-8cdd-218fec0c5258
+    orgId: 2b48bf96-fd74-477e-a70a-286b410f020a
+    orgVat: "33444433488"
+    orgName: Esercente di test IdPay
+    orgPartyRole: MANAGER
+    orgRole: admin
+
 removeTos.endpoint: https://idpay.itn.internal.dev.cstar.pagopa.it/idpayassetregisterbackend/idpay/consent
