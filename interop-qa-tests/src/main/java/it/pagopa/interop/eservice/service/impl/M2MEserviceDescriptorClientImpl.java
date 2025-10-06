@@ -9,7 +9,10 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorQuotasUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -144,5 +147,44 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
             case NON_EXISTENT_ID -> Pair.of(eserviceId, descriptorId);
             default -> throw new IllegalStateException("Tipo di id non supportato: " + type.name());
         };
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId) {
+        return eservicesApi.getEServiceDescriptor(eserviceId, descriptorId);
+    }
+
+    @Override
+    public void deleteInterface(UUID eServiceId, UUID descriptorId) {
+        this.eservicesApi.deleteEServiceDescriptorInterface(eServiceId, descriptorId);
+    }
+
+    @Override
+    public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
+        this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
+    }
+
+    @Override
+    public FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId,
+        UUID descriptorId) {
+        return eservicesApi.downloadEServiceDescriptorInterface(eserviceId, descriptorId);
+    }
+
+    @Override
+    public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
+        return this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50);
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(
+        UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body) {
+        return eservicesApi.updatePublishedEServiceDescriptorQuotas(
+            eserviceId,
+            descriptorId,
+            new EServiceDescriptorQuotasUpdateSeed()
+                .voucherLifespan(body.getVoucherLifespan())
+                .dailyCallsTotal(body.getDailyCallsTotal())
+                .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
+        );
     }
 }

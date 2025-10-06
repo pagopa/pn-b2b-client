@@ -14,4 +14,5 @@ public interface IDelegationApiClient extends SettableBearerToken {
     CompactDelegations getDelegation(Integer offset, Integer limit, List<DelegationState> states, List<UUID> delegatorIds, List<UUID> delegateIds, DelegationKind kind, List<UUID> eserviceIds);
     Delegation getDelegation(UUID delegationId);
     File getDelegationContract(UUID delegationId, UUID contractId);
+    void waitForState(UUID delegationId, DelegationState state);
 }

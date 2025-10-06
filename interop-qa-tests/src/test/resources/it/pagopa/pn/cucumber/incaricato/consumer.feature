@@ -427,6 +427,7 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 200
 
+    # Ticket aperto https://pagopa.atlassian.net/browse/QA-9269
     @sad-path
     Scenario: [TC_INCARICATO_64_BIS] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegante
     Given l'utente è un "admin" di "GSP"
@@ -465,7 +466,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And il delegato ha già creato 1 client "CONSUMER"
     When l'utente richiede l'associazione della finalità al client
-    Then si ottiene status code 403
+    Then si ottiene status code 400
 
     @sad-path
     Scenario: [TC_INCARICATO_66] Il delegato richiama l’API di associazione di un client NON precedentemente creato
@@ -664,6 +665,7 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante con ruolo "admin" revoca la delega in fruizione
     Then si ottiene status code 200
 
+    # Ticket aperto https://pagopa.atlassian.net/browse/QA-9270
     @happy-path
     Scenario: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
       Given l'utente è un "admin" di "GSP"
@@ -710,6 +712,7 @@ Feature: Test API Availability in Use of E-Service
         | api,security |
         | support      |
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/QA-9270
   @happy-path
   Scenario: [TC_INCARICATO_78] Richiamare l’API di verifica richiesta di fruizione precedentemente creata da parte del delegato, a fronte della revoca della delega - lato delegante
     Given l'utente è un "admin" di "GSP"

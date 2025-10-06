@@ -10,8 +10,7 @@ import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject6;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
@@ -38,7 +37,7 @@ public class ClientUserAddStep {
     public void addUsersToClient(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID userId = identityService.getUserId(tenantType, "admin");
-        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
+        InlineObject6 inlineObject = new InlineObject6().addUserIdsItem(userId);
         httpCallExecutor.performCall(
                 () -> authorizationClient.addUsersToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), inlineObject));
     }

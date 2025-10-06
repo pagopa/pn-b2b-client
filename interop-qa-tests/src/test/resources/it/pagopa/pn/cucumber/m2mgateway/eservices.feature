@@ -244,6 +244,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 401
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7410
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato PUBLISHED (Parte2#Scenario intorno a 44)
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -529,6 +530,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7526
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_49] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 84)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
@@ -619,6 +621,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7526
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_50] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service indicando le informazioni già presenti (Parte2#Scenario intorno a 98)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
@@ -632,7 +635,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
-  ## EService Patch Descriptor
+  # EService Patch Descriptor
   @m2m-parte2-agosto-rilascio2
   Scenario: [M2MG_ESERVICES_DESCRIPTORS_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale del descriptor di un e-service in stato DRAFT (Parte2#Scenario intorno a 99)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -698,5 +701,75 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA2" con ruolo m2m-admin tenta di effettuare la modifica parziale del descriptor dell'e-service
     Then si ottiene lo status code 403
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'e-service descriptor non ha subito modifiche
+
+  # EService Patch Quotas
+  @m2m-parte2-settembre
+  Scenario Outline: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale delle quote di un descriptor di un e-service in stato PUBLISHED o SUSPENDED (Parte2#Scenario intorno a 229)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<state>"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service
+    Then si ottiene lo status code 200
+    And l'e-service descriptor restituito è coerente con le modifiche effettuate
+    And l'e-service descriptor è stato parzialmente modificato correttamente
+    When l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And l'e-service descriptor restituito è coerente con le modifiche effettuate
+    And l'e-service descriptor è stato parzialmente modificato correttamente
+    Examples:
+      | state     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  @m2m-parte2-settembre
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_02] Un utente con ruolo M2M NON può effettuare una modifica parziale delle quote di un descriptor di un e-service (Parte2#Scenario intorno a 231)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service
+    Then si ottiene lo status code 403
+    And l'e-service descriptor non ha subito modifiche
+
+  @m2m-parte2-settembre
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_03] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service inesistente (Parte2#Scenario intorno a 232)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale delle quote di un descriptor di un e-service inesistente
+    Then si ottiene lo status code 404
+
+  @m2m-parte2-settembre
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_04] Un utente NON può effettuare una modifica parziale delle quote di un descriptor di un e-service indicando un token non valido (Parte2#Scenario intorno a 233)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service con token non valido
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service descriptor non ha subito modifiche
+
+  @m2m-parte2-settembre
+  Scenario Outline: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service in stato DRAFT, DEPRECATED o ARCHIVED (Parte2#Scenario intorno a 234)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service descriptor non ha subito modifiche
+    Examples:
+      | stato       |
+      | DRAFT       |
+      | ARCHIVED    |
+
+  @m2m-parte2-settembre
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_05_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 234)
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service
+    Then si ottiene lo status code 400
+    And l'e-service descriptor non ha subito modifiche
+
+  @m2m-parte2-settembre
+  Scenario: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service che non gli appartiene (Parte2#Scenario intorno a 235)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA2" con ruolo m2m-admin tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service
+    Then si ottiene lo status code 404
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'e-service descriptor non ha subito modifiche

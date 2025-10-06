@@ -8,15 +8,12 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDelegationUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -69,15 +66,6 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
         )).orElse(null);
     }
 
-
-    @Override
-    public EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId) {
-        return this.performOperation(SimpleOperation.of(
-                () -> eservicesApi.getEServiceDescriptor(eserviceId, descriptorId),
-                res -> res
-        )).orElse(null);
-    }
-
     @Override
     public EService get(UUID id) {
         return this.performOperation(SimpleOperation.of(
@@ -116,16 +104,6 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
-    public void deleteInterface(UUID eServiceId, UUID descriptorId) {
-        this.eservicesApi.deleteEServiceDescriptorInterface(eServiceId, descriptorId);
-    }
-
-    @Override
-    public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
-        this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
-    }
-
-    @Override
     public Document uploadInterface(EServiceInterfaceUploadRequest body) {
         return this.eservicesApi.uploadEServiceDescriptorInterface(
             body.getEServiceId(),
@@ -133,12 +111,6 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
             body.getFile(),
             body.getPrettyName()
         );
-    }
-
-    @Override
-    public FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId,
-        UUID descriptorId) {
-        return eservicesApi.downloadEServiceDescriptorInterface(eserviceId, descriptorId);
     }
 
     @Override
@@ -167,11 +139,6 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         return eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription()));
-    }
-
-    @Override
-    public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
-        return this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50);
     }
 
     @Override

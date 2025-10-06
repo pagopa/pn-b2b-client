@@ -11,8 +11,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject5;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject6;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
@@ -124,13 +124,13 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject) {
+    public CreatedResource addUsersToClient(UUID clientId, InlineObject6 inlineObject) {
         return clientsApi.addUsersToClient(clientId, inlineObject);
     }
 
     @Override
     public Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
-        InlineObject3 inlineObject3 = new InlineObject3()
+        InlineObject5 inlineObject3 = new InlineObject5()
             .adminId(adminConfig.getAdminId());
         return clientsApi.setAdminToClient(clientId, inlineObject3);
     }

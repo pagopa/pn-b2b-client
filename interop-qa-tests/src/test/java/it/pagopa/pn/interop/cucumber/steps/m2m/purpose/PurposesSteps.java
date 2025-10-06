@@ -10,6 +10,7 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.M2MTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -27,11 +28,13 @@ import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
+import it.pagopa.interop.purpose.service.IM2MPurposeClient.ReversePurposePatchRequest;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.time.OffsetDateTime;
@@ -56,10 +59,13 @@ public class PurposesSteps {
     private final DelayService delayService;
     private final int newDailyCalls = 50;
 
-    private PurposePatchOperationsAssistant purposePatchAssistant;
+    private final PurposePatchOperationsAssistant purposePatchAssistant;
+    private final ReversePurposePatchOperationsAssistant reversePurposePatchAssistant;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext, PurposePatchOperationsAssistant purposePatchAssistant) {
+        SharedStepsContext sharedStepsContext,
+        PurposePatchOperationsAssistant purposePatchAssistant,
+        ReversePurposePatchOperationsAssistant reversePurposePatchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -69,6 +75,7 @@ public class PurposesSteps {
         this.bffPurposeClient = clientTokenConfigurator.getPurposeApiClient();
         this.delayService = sharedStepsContext.getDelayService();
         this.purposePatchAssistant = purposePatchAssistant;
+        this.reversePurposePatchAssistant = reversePurposePatchAssistant;
     }
 
     @SuppressWarnings("java:S6204")
@@ -397,6 +404,13 @@ public class PurposesSteps {
         purposePatchAssistant.patchResource(request);
     }
 
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità")
+    public void patchPurpose(String tenant, M2MTokenService.M2MRole m2mRole) {
+        PurposePatchRequest request = purposePatchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        purposePatchAssistant.patchResource(request, token);
+    }
+
     @When("l'utente tenta di effettuare la modifica parziale della finalità con token non valido")
     public void patchPurposeWithNotValidToken() {
         purposePatchAssistant.patchResourceWithInvalidToken(purposePatchAssistant.buildDefaultPatchRequest());
@@ -428,6 +442,38 @@ public class PurposesSteps {
     @Then("la finalità restituita è coerente con le modifiche effettuate")
     public void checkPatchResult() {
         purposePatchAssistant.checkPatchOperationResult();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
+    public void patchReversePurpose() {
+        ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
+        reversePurposePatchAssistant.patchResource(request);
+    }
+
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
+    public void patchReversePurposeUsing(String tenant, M2MTokenService.M2MRole m2mRole) {
+        ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        reversePurposePatchAssistant.patchResource(request, token);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa con token non valido")
+    public void patchReversePurposeWithNotValidToken() {
+        ReversePurposePatchRequest patchRequest = reversePurposePatchAssistant.buildDefaultPatchRequest();
+        reversePurposePatchAssistant.patchResourceWithInvalidToken(patchRequest);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale di una finalità ad erogazione inversa inesistente")
+    public void patchNonExistentReversePurpose() {
+        reversePurposePatchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa specificando un sottoinsieme di informazioni")
+    public void patchReversePurposeSubset() {
+        ReversePurposePatchRequest request = ReversePurposePatchRequest.builder()
+            .title("patched title - " + UUID.randomUUID())
+            .build();
+        reversePurposePatchAssistant.patchResource(request);
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {

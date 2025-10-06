@@ -736,6 +736,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
+  @purpose-m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di una finalità in stato DRAFT (Parte2#Scenario intorno a 127)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -752,6 +753,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
+  @purpose-m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_2] Un utente con ruolo M2M NON può effettuare una modifica parziale di una finalità (Parte2#Scenario intorno a 129)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -763,6 +765,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
+  @purpose-m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_3] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità inesistente (Parte2#Scenario intorno a 130)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale di una finalità inesistente
@@ -770,6 +773,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
+  @purpose-m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_4] Un utente NON può effettuare una modifica parziale di una finalità indicando un token non valido (Parte2#Scenario intorno a 131)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -782,6 +786,8 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
+  @purpose-m2m-patch
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7527
   Scenario Outline: [M2M_PURPOSES_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità in stato diverso da DRAFT (Parte2#Scenario intorno a 132)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -800,11 +806,87 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
+  @purpose-m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità che non gli appartiene (Parte2#Scenario intorno a 133)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When "GSP" con ruolo m2m-admin tenta di effettuare la modifica parziale della finalità
+    Then si ottiene lo status code 403
+    And la finalità non ha subito modifiche
+
+  @m2m-parte2-settembre
+  Scenario: [M2M_REVERSE_PURPOSE_PATCH_1] Un utente con ruolo M2M-ADMIN può effettuare la modifica parziale di una finalità associata ad un e-service ad erogazione inversa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
+    Then si ottiene status code 200
+    And la finalità restituita è coerente con le modifiche effettuate
+    And la finalità è stata parzialmente modificata correttamente
+    When l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa specificando un sottoinsieme di informazioni
+    Then si ottiene lo status code 200
+    And la finalità restituita è coerente con le modifiche effettuate
+    And la finalità è stata parzialmente modificata correttamente
+
+  @m2m-parte2-settembre
+  Scenario: [M2M_REVERSE_PURPOSE_PATCH_2] Un utente con ruolo M2M NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
+    Then si ottiene lo status code 403
+    And la finalità non ha subito modifiche
+
+  @m2m-parte2-settembre
+  Scenario: [M2M_REVERSE_PURPOSE_PATCH_3] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità inesistente associabile ad un e-service ad erogazione inversa inesistente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale di una finalità ad erogazione inversa inesistente
+    Then si ottiene lo status code 404
+
+  @m2m-parte2-settembre
+  Scenario: [M2M_REVERSE_PURPOSE_PATCH_4] Un utente NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa indicando un token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di effettuare la modifica parziale della finalità
+    When l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa con token non valido
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    Then la finalità non ha subito modifiche
+
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7808
+  @m2m-parte2-settembre
+  Scenario Outline: [M2M_REVERSE_PURPOSE_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa in stato diverso da DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "<stato>" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
+    Then si ottiene lo status code 400
+    And la finalità non ha subito modifiche
+    Examples:
+      | stato                 |
+      | ACTIVE                |
+      | SUSPENDED             |
+      | REJECTED              |
+      | ARCHIVED              |
+      | WAITING_FOR_APPROVAL  |
+
+  @m2m-parte2-settembre
+  Scenario: [M2M_REVERSE_PURPOSE_PATCH_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa che non gli appartiene
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When "GSP" con ruolo m2m-admin tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
     Then si ottiene lo status code 403
     And la finalità non ha subito modifiche

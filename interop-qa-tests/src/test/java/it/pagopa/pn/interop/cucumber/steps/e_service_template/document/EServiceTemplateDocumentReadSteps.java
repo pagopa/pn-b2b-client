@@ -4,7 +4,6 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -21,11 +20,9 @@ public class EServiceTemplateDocumentReadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IEServiceTemplateClient eServiceTemplateClient;
-    private final IM2MEServiceTemplateClient m2mEServiceTemplateClient;
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final DelayService delayService;
 
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
 
@@ -37,11 +34,9 @@ public class EServiceTemplateDocumentReadSteps {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
-        this.m2mEServiceTemplateClient = clientTokenConfigurator.getM2mEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.delayService = delayService;
     }
 
     @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template")
@@ -73,40 +68,6 @@ public class EServiceTemplateDocumentReadSteps {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, UUID.randomUUID());
-    }
-
-    @When("l'utente tenta di recuperare i metadati dei documenti associati all'e-service template")
-    public void getDocumentsMetadata() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
-            .getLastTemplateManaged()
-            .id();
-        UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
-            .getLastTemplateManaged()
-            .lastVersionId();
-        getDocuments(eServiceTemplateId, versionId);
-    }
-
-    @When("l'utente tenta di recuperare i metadati dei documenti di un e-service template inesistente")
-    public void getNonExistentEServiceDocumentsMetadata() {
-        UUID randomUUID = UUID.randomUUID();
-        UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
-            .getLastTemplateManaged()
-            .lastVersionId();
-        getDocuments(randomUUID, versionId);
-    }
-
-    @When("l'utente tenta di recuperare i metadati dei documenti di una versione di un e-service template inesistente")
-    public void getNonExistentDescriptorDocumentsMetadata() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
-            .getLastTemplateManaged()
-            .id();
-        UUID randomUUID = UUID.randomUUID();
-        getDocuments(eServiceTemplateId, randomUUID);
-    }
-
-    private void getDocuments(UUID eServiceId, UUID descriptorId) {
-        delayService.delay();
-        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getDocuments(eServiceId, descriptorId));
     }
 
     private void getDocumentFromEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UUID documentId) {

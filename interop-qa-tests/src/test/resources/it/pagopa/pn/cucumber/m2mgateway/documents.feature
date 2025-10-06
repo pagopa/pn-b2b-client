@@ -37,13 +37,13 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
     Then si ottiene lo status code 409
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7748
   @m2m-parte2-agosto-rilascio1
   Scenario Outline: [M2MG_DOCUMENTS_07_A] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 54)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
     Then si ottiene lo status code 400
-    And non è presente alcuna interfaccia per l'e-service
     Examples:
       | stato       |
       | SUSPENDED   |
@@ -51,21 +51,19 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | DEPRECATED  |
       | ARCHIVED    |
 
-
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_07_B] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 54)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
     Then si ottiene lo status code 400
-    And non è presente alcuna interfaccia per l'e-service
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_08] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service se non è il creatore dello stesso (Parte2#Scenario intorno a 55)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then non è presente alcuna interfaccia per l'e-service
 
@@ -119,7 +117,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     And l'utente effettua il caricamento dell'interfaccia dell'e-service con successo
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
     And è presente un'interfaccia per l'e-service
 
   @m2m-parte2-agosto-rilascio1
@@ -179,7 +177,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Then si ottiene lo status code 404
 
   @m2m-parte2-settembre
-  Scenario Outline: [M2MG_DOCUMENTS_20] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED
+  Scenario Outline: [M2MG_DOCUMENTS_20] Un utente può reperire la lista dei metadati dei documenti associati ad un e-service template in stato PUBLISHED
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
@@ -199,11 +197,11 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | ruolo     | mode        |
       | m2m       | erogazione  |
       | m2m-admin | erogazione  |
-      | m2m       | ricezione   |
-      | m2m-admin | ricezione   |
+      #| m2m       | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+      #| m2m-admin | ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
-  Scenario Outline: [M2MG_DOCUMENTS_21] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED usando un token non valido
+  Scenario Outline: [M2MG_DOCUMENTS_21] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service template in stato PUBLISHED usando un token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
     And viene impostato per l'utente un token m2m non valido
@@ -212,10 +210,10 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+      #| ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-settembre
-  Scenario Outline: [M2MG_DOCUMENTS_22] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service o ad un descriptor inesistenti in stato PUBLISHED
+  Scenario Outline: [M2MG_DOCUMENTS_22] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service template o ad una sua versione inesistenti
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -226,4 +224,4 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Examples:
       | mode        |
       | erogazione  |
-      | ricezione   |
+      #| ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati

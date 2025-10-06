@@ -8,6 +8,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRis
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -15,9 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
-import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

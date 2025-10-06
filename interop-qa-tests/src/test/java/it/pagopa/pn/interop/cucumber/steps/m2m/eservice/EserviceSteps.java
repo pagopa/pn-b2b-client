@@ -16,6 +16,7 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceDescription
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceInterfaceUploadRequest;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceNamePatchRequest;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
+import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
@@ -23,8 +24,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
@@ -44,11 +45,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpExecutor;
     private final PollingService pollingService;
     private final IM2MEserviceClient client;
+    private final IM2MEserviceDescriptorClient descriptorClient;
     private final BlobFileCreator blobFileCreator;
     private final DelayService delayService;
 
@@ -71,11 +72,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         DelayService delayService
     ) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.client  = clientTokenConfigurator.getM2meServiceClient();
+        this.descriptorClient  = clientTokenConfigurator.getM2mEServiceDescriptorClient();
         this.blobFileCreator = blobFileCreator;
         client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.eServicePatchAssistant = eServicePatchAssistant;
@@ -112,14 +113,14 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void unsuspendEService() {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
+        httpExecutor.performCall(() -> descriptorClient.unsuspendEService(eserviceId, descriptorId));
     }
 
     @When("l'utente tenta di effettuare la riattivazione di un e-service inesistente")
     public void unsuspendNonExistentEService() {
         UUID eserviceId = UUID.randomUUID();
         UUID descriptorId = UUID.randomUUID();
-        httpExecutor.performCall(() -> client.unsuspendEService(eserviceId, descriptorId));
+        httpExecutor.performCall(() -> descriptorClient.unsuspendEService(eserviceId, descriptorId));
     }
 
     @Then("l'e-service è stato riattivato con successo")
@@ -127,7 +128,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         pollingService.makePolling(() -> httpExecutor.performCall(
-            () ->client.getDescriptor(eserviceId, descriptorId)),
+            () -> descriptorClient.getDescriptor(eserviceId, descriptorId)),
             status -> status.is2xxSuccessful() && ((it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor) httpExecutor.getResponse()).getState().equals(EServiceDescriptorState.PUBLISHED),
             "Il servizio non è stato riattivato come previsto.");
     }
@@ -166,7 +167,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void deleteInterface(UUID eServiceId, UUID descriptorId) {
-        httpExecutor.performCall(() -> client.deleteInterface(eServiceId, descriptorId));
+        httpExecutor.performCall(() -> descriptorClient.deleteInterface(eServiceId, descriptorId));
     }
 
     @When("l'utente tenta di recuperare i metadati dei documenti associati all'e-service")
@@ -190,7 +191,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     private void getDocuments(UUID eServiceId, UUID descriptorId) {
         delayService.delay();
-        httpExecutor.performCall(() -> client.getDocuments(eServiceId, descriptorId));
+        httpExecutor.performCall(() -> descriptorClient.getDocuments(eServiceId, descriptorId));
     }
 
     @Then("i metadati dei documenti ottenuti sono coerenti con quelli caricati")
@@ -232,7 +233,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         pollingService.makePolling(
-            () -> httpExecutor.performCall(() -> client.downloadEServiceDescriptorInterface(eServiceId, descriptorId)),
+            () -> httpExecutor.performCall(() -> descriptorClient.downloadEServiceDescriptorInterface(eServiceId, descriptorId)),
             interfaceUploaded,
             "L'interfaccia dell'e-service non sottostà alle condizioni attese. Visionare logs per maggiori dettagli");
     }
@@ -253,6 +254,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
+        delayService.delay();
         String fileName = String.format("interface.%s", "yaml");
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);

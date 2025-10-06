@@ -29,12 +29,14 @@ import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -85,19 +87,37 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
-        Runnable publisher = () -> {
-            this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
-            publishEServiceTemplate();
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+        BiConsumer<UUID, UUID> publisher = (templateId, versionId) -> {
+            this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
+            publishEServiceTemplate(templateId, versionId);
         };
         switch (desiredState) {
             case DRAFT -> { /* no-op: una versione appena creata è automaticamente in questo stato */ }
-            case PUBLISHED -> publisher.run();
+            case PUBLISHED -> publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
             case SUSPENDED -> {
-                publisher.run();    // perché prima di essere sospesa deve essere pubblicata
+                publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());    // perché prima di essere sospesa deve essere pubblicata
                 suspendEServiceTemplate();
+            }
+            case DEPRECATED -> {
+                publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
+                UUID newVersionId = this.createNewVersion(lastTemplateManaged.id());
+                publisher.accept(lastTemplateManaged.id(), newVersionId);
             }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
         }
+    }
+
+    private UUID createNewVersion(UUID templateId) {
+        CreatedResource createdVersion = this.eServiceTemplateClient.createEServiceTemplateVersion(
+            templateId);
+        pollingService.makePolling(
+            () -> this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(templateId, createdVersion.getId()),
+            httpResponse -> httpResponse.getStatusCode().is2xxSuccessful(),
+            "Non è stata rilevata la versione dell'e-service creata entro il timeout. Consultare logs HTTP per maggiori dettagli."
+        );
+        return createdVersion.getId();
     }
 
     public void publishEServiceTemplate() {
@@ -124,6 +144,14 @@ public class EServiceTemplateTestAssistant {
     public void addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind, int fileIndex) {
         addDocumentToEServiceTemplateVersion(kind, fileIndex);
         checkDocumentAddedToEServiceTemplateVersion(kind);
+    }
+
+    public void addDocumentToEServiceTemplateVersionSuccessfully(
+        UUID templateId, UUID versionId, EServiceTemplateDocumentKind kind,
+        int fileIndex
+    ) {
+        addDocumentToEServiceTemplateVersion(templateId, versionId, kind, fileIndex);
+        checkDocumentAddedToEServiceTemplateVersion(templateId, versionId, kind);
     }
 
     public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind, int fileIndex) {
@@ -206,6 +234,12 @@ public class EServiceTemplateTestAssistant {
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        checkDocumentAddedToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId,
+            kind);
+    }
+
+    private void checkDocumentAddedToEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind) {
         EServiceTemplateDocumentInfo lastAddedDocument = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument();
 
         if(isNotEmpty(lastAddedDocument.errorMessage())) {

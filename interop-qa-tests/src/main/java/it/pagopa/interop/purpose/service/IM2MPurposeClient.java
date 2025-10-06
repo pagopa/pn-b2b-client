@@ -31,6 +31,16 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     }
 
     @Data
+    @Builder
+    class ReversePurposePatchRequest {
+        private String title;
+        private String description;
+        private Boolean isFreeOfCharge;
+        private String freeOfChargeReason;
+        private Integer dailyCalls;
+    }
+
+    @Data
     @EqualsAndHashCode(callSuper = true)
     @SuperBuilder
     class PurposesListRequest extends ListRequest {
@@ -77,4 +87,6 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     Purpose archivePurpose(UUID purposeId);
 
     Purpose patchPurpose(UUID purposeId, PurposePatchRequest body);
+
+    Purpose patchReversePurpose(UUID reversePurposeId, ReversePurposePatchRequest body);
 }

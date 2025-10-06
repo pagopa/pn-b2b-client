@@ -11,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
+import java.time.OffsetDateTime;
 import org.springframework.http.HttpStatus;
 
 public class DelegationAcceptStep {
@@ -49,6 +50,7 @@ public class DelegationAcceptStep {
     }
 
     @And("l'ente {string} accetta la delega")
+    @And("l'ente {string} accetta la delega con successo")
     public void producerDelegationIsAcceptedByTenant(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         approveProducerDelegation(
@@ -67,10 +69,12 @@ public class DelegationAcceptStep {
         DelegationCommonContext context,
         PollingService pollingService
     ) {
+        OffsetDateTime now = OffsetDateTime.now();
         httpExecutor.performCall(
             () -> producerClient.approveProducerDelegation(
                 context.getDelegationId()));
         if (httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            context.setActivatedAt(now);
             waitUntilDelegationIsApproved(
                 delegationClient,
                 pollingService,
@@ -80,11 +84,15 @@ public class DelegationAcceptStep {
     }
 
     @And("l'ente {delegationRole} accetta la delega in fruizione")
+    @And("l'ente {delegationRole} accetta la delega in fruizione con successo")
     public void consumerDelegationIsAcceptedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        OffsetDateTime activatedAt = OffsetDateTime.now();
         approveConsumerDelegation();
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getDelegationCommonContext().setActivatedAt(activatedAt);
             waitUntilDelegationIsApproved(
                 delegationApiClient,
                 pollingService,

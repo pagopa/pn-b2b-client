@@ -620,6 +620,7 @@ public class BFFDataPreparationService {
         String namePrefix, String prettyNamePrefix, BiFunction<String, Resource, UUID> documentUploader) {
         List<Document> documents = new ArrayList<>();
         for(int i = 0; i < documentsQt; i++) {
+            delayService.delayForSeconds(1);
             String documentContent = """
                 Random document QA test - %s - %d""".formatted(uuid, i);
             int documentIndex = i + 1;
@@ -698,7 +699,7 @@ public class BFFDataPreparationService {
         return addDocumentToDescriptor(eServiceId, descriptorId, name, resource);
     }
 
-    private UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name, Resource resource) {
+    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name, Resource resource) {
         String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId,

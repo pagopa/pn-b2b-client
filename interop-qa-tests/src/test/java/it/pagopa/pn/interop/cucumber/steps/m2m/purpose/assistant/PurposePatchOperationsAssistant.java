@@ -1,9 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
@@ -14,8 +10,7 @@ import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.PurposeMapper;
-import java.time.OffsetDateTime;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapper;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -27,7 +22,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ScenarioScope
 public class PurposePatchOperationsAssistant extends PurposeGenericPatchOperationsAssistant<PurposePatchRequest> {
-
     private final BFFDataPreparationService dataPreparationService;
     private final RiskAnalysisMapper riskAnalysisMapper;
     private final IdentityService identityService;
@@ -77,26 +71,5 @@ public class PurposePatchOperationsAssistant extends PurposeGenericPatchOperatio
     @Override
     protected Purpose patchResource(UUID uuid, PurposePatchRequest eServicePatchRequest) {
         return this.client.patchPurpose(uuid, eServicePatchRequest);
-    }
-
-    @Override
-    protected void assertImpl(Purpose actual, Purpose expected, String assertDescription) {
-        assertSoftly(softly -> {
-            softly.assertThat(actual)
-                .as(assertDescription)
-                .usingRecursiveComparison()
-                .ignoringFields("updatedAt", "currentVersion.updatedAt", "currentVersion.dailyCalls")
-                .isEqualTo(expected);
-
-            softly.assertThat(actual.getCurrentVersion().getDailyCalls())
-                .as("Verifica che l'attributo 'dailyCalls' sia coerente con le modifiche effettuate")
-                .isNotNull()
-                .isEqualTo(expected.getCurrentVersion().getDailyCalls());
-
-            softly.assertThat(OffsetDateTime.parse(actual.getUpdatedAt()))
-                .as("Verifica timestamp di modifica della finalità restituita")
-                .isNotNull()
-                .isCloseTo(this.context.getUpdateTime(), within(15, SECONDS));
-        });
     }
 }
