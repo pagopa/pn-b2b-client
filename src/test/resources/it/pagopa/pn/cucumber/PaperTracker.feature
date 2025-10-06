@@ -12,8 +12,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>" iun "iun"
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>" iun "iun"
     Examples:
       | sequenceName              |
 #      | ok_AR |
@@ -35,11 +35,17 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | OK_RIR |
       | FAIL_RIR |
-      | OK-Retry_RIR |
       | OK_RIR_NO_DEMAT |
       | OK_RIR_INVALID_DATETIME |
       | OK_RIR_TIMESTAMP_ERR |
       | OK_RIR_NOT_ORDERED |
+
+
+      | FAIL_CON996_PCRETRY_FURTO_RIR |
+      | OK_PCRETRY_CON996_RIR |
+      | FAIL_CON996_PCRETRY_FURTO_AR |
+      | OK_PCRETRY_CON996_AR |
+
 
 
   @paperTracker
@@ -56,10 +62,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                        |
       | OK-Retry_AR                         |
       | OK-NonRendicontabile_AR             |
+      | OK-Retry_RIR |
+      #EGEY-JQJU-HPJZ-202510-A-1
 
 
   @paperTracker
@@ -76,13 +85,17 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
    #da aggiungere anche controllo della timeline e questo test diventa permanente
     #Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>"
+    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>"
     Examples:
       | physicalAddress                   | category                             | flowThrow                     |
-      | Via@FAIL_CON996_PCRETRY_FURTO_AR  | NOT_RETRYABLE_EVENT_ERROR            |  NOT_RETRYABLE_EVENT_HANDLER  |
-      | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
-      | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
-      | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
+#      | Via@FAIL_CON996_PCRETRY_FURTO_AR  | NOT_RETRYABLE_EVENT_ERROR            |  NOT_RETRYABLE_EVENT_HANDLER  |
+#      | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
+#      | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
+#      | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
+
+
+      | Via@FAIL_CON996_PCRETRY_RIR       | NOT_RETRYABLE_EVENT_ERROR             |  NOT_RETRYABLE_EVENT_ERROR          |
+      | Via@FAIL_CON996_PCRETRY_AR       | NOT_RETRYABLE_EVENT_ERROR             |  NOT_RETRYABLE_EVENT_ERROR          |
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale

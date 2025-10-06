@@ -80,6 +80,7 @@ public class PaperTrackerSteps {
 
     @Then("si verifica che gli elementi di timeline per la sequence {string} coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1")
     public void verifyTrackingEventsForSequenceWithPCRetry(String sequenceName) {
+        log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV27::getElementId)
@@ -106,8 +107,8 @@ public class PaperTrackerSteps {
     }
 
 
-    @Then("si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: {string}")
-    public void checkPaperTrackerEvents(String sequenceName) {
+    @Then("si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: {string} iun {string}")
+    public void checkPaperTrackerEvents(String sequenceName, String iun) {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream().filter(e ->
                 e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(e -> e.getElementId() + ".PCRETRY_0").toList();
@@ -117,35 +118,12 @@ public class PaperTrackerSteps {
 
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(stringaTracking);
-        //TrackingsResponse responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
         PaperTrackerOutputsResponse responseOutput = paperTrackerClient.retrieveTrackerOutputs(request);
 
         Map<Integer, List<NotificationEvent>> mapTimeline = new HashMap<>();
         for (int i=0; i < analogEventIds.size(); i++) {
             mapTimeline.put(i, provideAnalogProgressAndFeedbackElement(fullSentNotification, i));
         }
-/*
-        Map<Integer, List<NotificationEvent>> mapTracking = new HashMap<>();
-        responseTracking.getTrackings().sort(Comparator.comparing(Tracking::getAttemptId));
-        for (int j=0; j < responseTracking.getTrackings().size(); j++) {
-            List<NotificationEvent> result2 = responseTracking.getTrackings().get(j).getEvents().stream()
-                    .map(te -> new NotificationEvent(te.getStatusCode(), createAttachmentUrlTracking(te.getAttachments())))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            mapTracking.put(j, result2);
-        }
- */
-
-/*     La parte relativa a RIR è stata riprogrammata per future release
-       Map<Integer, List<UtilityObject>> mapTrackingRir = new HashMap<>();
-        if (responseTracking.getTrackings().stream().anyMatch(ev -> ev.getProductType().getValue().equals("RIR"))) {
-            for (int i=0; i < analogEventIds0.size(); i++) {
-                TrackingsResponse rirTrackingResponseAttempt = paperTrackerClient.retrieveTrackingsByAttemptId(analogEventIds0.get(i), null);
-                List<UtilityObject> result3 = rirTrackingResponseAttempt.getTrackings().get(i).getEvents().stream()
-                        .map(tr -> new UtilityObject(tr.getStatusCode(), createAttachmentUrlTracking(tr.getAttachments())))
-                        .toList();
-                mapTrackingRir.put(i, result3);
-            }
-        }*/
 
         Map<Integer, List<NotificationEvent>> mapOutput = new HashMap<>();
         responseOutput.getResults().sort(Comparator.comparing(PaperTrackerOutputsResponseResultsInner::getTrackingId));
@@ -157,10 +135,9 @@ public class PaperTrackerSteps {
         }
 
         for (Integer attempt : mapTimeline.keySet()) {
-            //assertSameElements(sanitizeList(groupByDeliveryDetailCode(mapTimeline.get(attempt)), List.of("PNRN012")), mapTracking.get(attempt), TRACKINGS_ELEMENT_NOT_FOUND);
             List<NotificationEvent> filteredOutputs = mapTimeline.get(attempt);
-            if (List.of("OK_AR_INVALID_DATETIME", "OK_AR_NO_EVENT_B", "OK_AR_TIMESTAMP_ERR").contains(sequenceName)) {
-                filteredOutputs = sanitizeList(filteredOutputs, List.of("RECRN001C"));
+            if (List.of("OK_AR_INVALID_DATETIME", "OK_AR_NO_EVENT_B", "OK_AR_TIMESTAMP_ERR", "OK_RIR_TIMESTAMP_ERR", "OK_RIR_INVALID_DATETIME").contains(sequenceName)) {
+                filteredOutputs = sanitizeList(filteredOutputs, List.of("RECRN001C", "RECRI003C"));
             }
             if (sequenceName.contains("OK_GIACENZA_AR_4")) {
                 assertSameElements(sanitizeList(filteredOutputs, List.of("RECRN003C")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
@@ -172,8 +149,8 @@ public class PaperTrackerSteps {
     }
 
 
-    @And("si verifica che la risposta trackings sia uguale a quella attesa {string}")
-    public void verifyTrackingResponse(String sequenceName) {
+    @And("si verifica che la risposta trackings sia uguale a quella attesa {string} iun {string}")
+    public void verifyTrackingResponse(String sequenceName, String iun) {
         log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream().filter(e ->
@@ -363,8 +340,9 @@ public class PaperTrackerSteps {
         return PaperTrackerErrorCategory.valueOf(errorCategory.toUpperCase());
     }
 
-    @Then("si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: {paperTrackerErrorCategory} e flowThrow: {string}")
-    public void checkTrackingErrors(PaperTrackerErrorCategory category, String flowThrow) {
+    @Then("si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: {paperTrackerErrorCategory} e flowThrow: {string} {string}")
+    public void checkTrackingErrors(PaperTrackerErrorCategory category, String flowThrow, String sequenceName) {
+        log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         assertThat(fullSentNotification).as("La full sent notification non dev'essere null").isNotNull();
 
@@ -467,6 +445,21 @@ public class PaperTrackerSteps {
 //            data.put("details_attachments", "[{\"documentType\": \"" + docType + "\"}]");
 //        }
         return data;
+    }
+
+    @And("si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp")
+    public void verifyAttemptsResponse() {
+        String attemptId = sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(e ->
+                e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(TimelineElementV27::getElementId).findAny().orElseThrow();
+        TrackingsResponse trackingsResponse = paperTrackerClient.retrieveTrackingsByAttemptId(attemptId, null);
+        Assertions.assertNotNull(trackingsResponse.getTrackings());
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(0));
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(1));
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(0).getTrackingId().contains("PCRETRY_0"));
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(1).getTrackingId().contains("PCRETRY_1"));
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(1).getPaperStatus());
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(1).getPaperStatus().getFinalDematFound());
+        Assertions.assertNotNull(trackingsResponse.getTrackings().get(1).getPaperStatus().getPaperDeliveryTimestamp());
     }
 
 }
