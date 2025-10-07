@@ -5,7 +5,6 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.api.InstitutionsAp
 import it.pagopa.pari.generated.openapi.clients.registro.beni.api.PortalConsentApi;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.api.ProductsApi;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.api.ProductsUploadApi;
-import it.pagopa.pari.generated.openapi.clients.registro.beni.model.BatchList;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionsResponse;
@@ -23,6 +22,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -66,7 +67,7 @@ public class RegisterPortalOperationClientImpl {
         return productsUploadApi.downloadErrorReport(productFileId);
     }
 
-    public BatchList getBatchNameList(String xOrganizationSelected) {
+    public List<Object> getBatchNameList(String xOrganizationSelected) {
         return productsUploadApi.getBatchNameList(xOrganizationSelected);
     }
 
