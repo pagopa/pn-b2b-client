@@ -141,11 +141,13 @@ Feature: PARI - Portale registro dei beni
   Scenario Outline: [TC_UPLOAD_9] Si tenta di recuperare un report di errore con id non presente o non valido
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
-    When si tenta di recuperare un report di errore "<productFileId>" e si ottiene status code 404
+    When si tenta di recuperare un report di errore "<productFileId>" e si ottiene status code <statusCode>
     Examples:
-      | productFileId |
-      | NOT_VALID     |
-      | NOT_PRESENT   |
+      | productFileId              | statusCode  |
+      #NON PRESENTE
+      | 5f2b9c8a4d3e1f6b7a9d2c4e   | 404         |
+      #NON VALIDO
+      | invalid_product_file       | 500         |
 
   @produttore1
   Scenario Outline: [TC_UPLOAD_10] Inserimento di un nuovo file CSV per Piani Cottura non valido con alcune colonne non popolate o popolate in modo non corretto

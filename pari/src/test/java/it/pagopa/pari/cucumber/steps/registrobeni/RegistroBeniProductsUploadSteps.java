@@ -122,10 +122,9 @@ public class RegistroBeniProductsUploadSteps {
 
     @When("si tenta di recuperare un report di errore {string} e si ottiene status code {int}")
     public void verifyReportError(String productFileId, int expectedStatusCode) {
-        String reportId = "NOT_VALID".equals(productFileId) ? UUID.randomUUID().toString() : "invalid_product_file";
         HttpStatus httpStatus = null;
         try {
-            apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(reportId);
+            apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(productFileId);
         } catch (HttpStatusCodeException e) {
             httpStatus = e.getStatusCode();
         }
