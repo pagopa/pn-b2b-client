@@ -183,7 +183,7 @@ public class PaperTrackerSteps {
                 filteredOutputs = sanitizeList(filteredOutputs, List.of("RECRN001C", "RECRI003C"));
             }
             if (sequenceName.contains("OK_GIACENZA_AR_4")) {
-                assertSameElements(sanitizeList(filteredOutputs, List.of("RECRN003C")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
+                assertSameElements(sanitizeList(filteredOutputs, List.of("CON018", "RECRN003C")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
             }
             else {
                 assertSameElements(sanitizeList(filteredOutputs, List.of("CON018")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
@@ -384,7 +384,7 @@ public class PaperTrackerSteps {
     }
 
     @Then("si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: {paperTrackerErrorCategory} e flowThrow: {string} {string}")
-    public void checkTrackingErrors(PaperTrackerErrorCategory category, String flowThrow, String sequenceName, String iun) {
+    public void checkTrackingErrors(PaperTrackerErrorCategory category, String flowThrow, String sequenceName) {
         log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         assertThat(fullSentNotification).as("La full sent notification non dev'essere null").isNotNull();

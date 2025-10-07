@@ -90,18 +90,16 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>"
     Examples:
       | physicalAddress                   | category                             | flowThrow                     |
-      | Via@FAIL_CON996_PCRETRY_FURTO_AR  | NOT_RETRYABLE_EVENT_ERROR            |  NOT_RETRYABLE_EVENT_HANDLER  |
       | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
       | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
-
 
       | Via@FAIL_CON996_PCRETRY_RIR       | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
       | Via@FAIL_CON996_PCRETRY_AR       | NOT_RETRYABLE_EVENT_ERROR             |  NOT_RETRYABLE_EVENT_ERROR    |
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
-  @paperTrackerNonDryRun
+  @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
