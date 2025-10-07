@@ -220,7 +220,7 @@ public class RegistroBeniProductsUploadSteps {
                             timestamp.addAll(Arrays.asList(now.toString(), diff.toString()));
                             return diff.toMinutes() < 1;
                         })
-        , "I timestamp errati sono questi: " + timestamp);
+        );
     }
 
 //    @Then("viene aggiunto di nuovo un prodotto già rifiutato")
