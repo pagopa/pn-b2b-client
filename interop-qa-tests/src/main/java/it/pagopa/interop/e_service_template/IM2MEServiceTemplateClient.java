@@ -75,4 +75,6 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId, EServiceTemplateVersionPatchRequest patchRequest);
 
     EServiceTemplateVersion patchEServiceTemplateVersionQuotas(UUID templateId, UUID versionId, EServiceTemplateVersionQuotasPatchRequest patchRequest);
+
+    void deleteEServiceTemplate(UUID templateId);
 }

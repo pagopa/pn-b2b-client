@@ -23,6 +23,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assista
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.Random;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
 
 public class EserviceTemplateSteps {
     private final SharedStepsContext sharedStepsContext;
@@ -271,5 +272,41 @@ public class EserviceTemplateSteps {
     public void patchEServiceTemplateVersionQuotasWithNotValidToken() {
         EServiceTemplateVersionQuotasPatchRequest request = versionQuotasPatchAssistant.buildDefaultPatchRequest();
         versionQuotasPatchAssistant.patchResourceWithInvalidToken(request);
+    }
+
+    @When("l'utente tenta di effettuare la cancellazione dell'e-service template")
+    public void deleteEServiceTemplate() {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        m2mEServiceTemplateClient.deleteEServiceTemplate(templateId);
+    }
+
+    @When("l'utente tenta di effettuare la cancellazione di un e-service template inesistente")
+    public void deleteNonExistentEServiceTemplate() {
+        UUID templateId = UUID.randomUUID();
+        m2mEServiceTemplateClient.deleteEServiceTemplate(templateId);
+    }
+
+    @Then("l'e-service template non esiste( più)")
+    public void checkEServiceTemplateNotFound() {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        HttpStatus notFound = HttpStatus.NOT_FOUND;
+        checkEServiceTemplateExistence(templateId, notFound);
+    }
+
+    @Then("l'e-service template esiste( ancora)")
+    public void checkEServiceTemplateFound() {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        HttpStatus notFound = HttpStatus.OK;
+        checkEServiceTemplateExistence(templateId, notFound);
+    }
+
+    private void checkEServiceTemplateExistence(UUID templateId, HttpStatus notFound) {
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getEserviceTemplate(
+                templateId)),
+            responseStatus -> responseStatus.equals(notFound),
+            "Risultato atteso '%s', ottenuto invece '%s'. Visualizzare logs per maggiori dettagli.".formatted(
+                notFound, httpCallExecutor.getResponseStatus())
+        );
     }
 }

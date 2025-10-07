@@ -137,4 +137,9 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
                 .dailyCallsTotal(patchRequest.getDailyCallsTotal())
         );
     }
+
+    @Override
+    public void deleteEServiceTemplate(UUID templateId) {
+        // TODO 06/10/2025 da completare una volta disponibili le APIs V2 di ottobre
+    }
 }
