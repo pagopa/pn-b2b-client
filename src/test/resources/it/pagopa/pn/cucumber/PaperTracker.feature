@@ -12,8 +12,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>" iun "<iun>"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>" iun "<iun>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>" iun "iun"
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>" iun "iun"
     Examples:
       | sequenceName              |
       | ok_AR |

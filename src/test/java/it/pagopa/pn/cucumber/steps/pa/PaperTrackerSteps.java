@@ -82,7 +82,7 @@ public class PaperTrackerSteps {
     @Then("si verifica che gli elementi di timeline per la sequence {string} coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1")
     public void verifyTrackingEventsForSequenceWithPCRetry(String sequenceName) {
         log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun("XQEP-DGTY-ARDG-202510-T-1");
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV27::getElementId)
                 .filter(id -> id.contains(PREPARE_ANALOG_DOMICILE))
@@ -152,7 +152,7 @@ public class PaperTrackerSteps {
 
     @Then("si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: {string} iun {string}")
     public void checkPaperTrackerEvents(String sequenceName, String iun) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(iun);
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream().filter(e ->
                 e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(e -> e.getElementId() + ".PCRETRY_0").toList();
 
@@ -195,7 +195,7 @@ public class PaperTrackerSteps {
     @And("si verifica che la risposta trackings sia uguale a quella attesa {string} iun {string}")
     public void verifyTrackingResponse(String sequenceName, String iun) {
         log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(iun);
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream().filter(e ->
                 e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(e -> e.getElementId() + ".PCRETRY_0").toList();
         TrackingsRequest request = new TrackingsRequest();
@@ -492,7 +492,7 @@ public class PaperTrackerSteps {
 
     @And("si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp")
     public void verifyAttemptsResponse() {
-        String attemptId = sharedSteps.getSentNotificationLastVersionByIun("XQEP-DGTY-ARDG-202510-T-1").getTimeline().stream().filter(e ->
+        String attemptId = sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(e ->
                 e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(TimelineElementV27::getElementId).findAny().orElseThrow();
         TrackingsResponse trackingsResponse = paperTrackerClient.retrieveTrackingsByAttemptId(attemptId, null);
         trackingsResponse.getTrackings().sort(Comparator.comparing(Tracking::getTrackingId));
