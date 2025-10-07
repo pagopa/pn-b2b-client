@@ -1,6 +1,9 @@
 rdb:
   base-url:  https://api-io.dev.cstar.pagopa.it/idpay-itn/register
 
+merchant:
+  base-url: https://api-io.dev.cstar.pagopa.it/idpay-itn/merchant
+
 role:
   productor-1:
     uid: "195da70f-d3f0-4c57-b62e-ef471348e920"
