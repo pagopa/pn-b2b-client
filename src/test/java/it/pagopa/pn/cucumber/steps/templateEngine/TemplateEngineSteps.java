@@ -1,7 +1,5 @@
 package it.pagopa.pn.cucumber.steps.templateEngine;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,7 +8,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextF
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
-import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdfparser.PDFParser;
@@ -29,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class TemplateEngineSteps {
@@ -210,5 +210,15 @@ public class TemplateEngineSteps {
             }
             default -> throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
         }
+    }
+
+    @And("il corpo del messaggio contiene il testo {string}")
+    public void checkMessageContents(String message) {
+        Assertions.assertNotNull(result.getFileTextRetrieved(), "Nessun testo recuperato");
+
+        String formattedText = result.retrieveFormattedText();
+
+        Assertions.assertTrue(formattedText.contains(message),
+                "Il corpo del messaggio non contiene il testo atteso: " + message);
     }
 }

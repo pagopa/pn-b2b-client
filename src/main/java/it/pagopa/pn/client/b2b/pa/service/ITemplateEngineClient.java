@@ -17,9 +17,13 @@ public interface ITemplateEngineClient {
 
     String notificationAARForEMAIL(LanguageEnum xLanguage, NotificationAarForEmail notificationAARForEMAIL) throws RestClientException;
 
+    String notificationAARForEMAILDigital(LanguageEnum xLanguage, NotificationAarForEmail notificationAARForEMAIL) throws RestClientException;
+
     String notificationAARForPEC(LanguageEnum xLanguage, NotificationAarForPec notificationAARForPEC) throws RestClientException;
 
     String notificationAARForSMS(LanguageEnum xLanguage, NotificationAarForSms notificationAARForSMS) throws RestClientException;
+
+    String notificationAARForSMSDigital(LanguageEnum xLanguage, NotificationAarForSms notificationAARForSMS) throws RestClientException;
 
     Resource notificationAARRADDalt(LanguageEnum xLanguage, NotificationAarRaddAlt notificationAARRADDalt) throws RestClientException;
 
