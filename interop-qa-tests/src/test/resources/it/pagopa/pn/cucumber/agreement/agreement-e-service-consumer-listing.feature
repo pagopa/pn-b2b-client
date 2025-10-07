@@ -2,6 +2,7 @@
 Feature: Listing e-service con richieste di fruizione attive lato fruitore
   Tutti gli utenti autorizzati possono ottenere la lista degli e-service per i quali hanno almeno una richiesta di fruizione attiva
 
+  @happy-path
   @agreement_e_service_consumer_listing1
   Scenario Outline: Restituisce gli e-service per i quali il fruitore ha almeno una richiesta di fruizione in qualsiasi stato
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -28,6 +29,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
       | Privato | support      |
       | Privato | api,security |
 
+  @happy-path
   @agreement_e_service_consumer_listing2
   Scenario: A fronte di 5 e-service, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA2"
@@ -36,6 +38,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
     When l'utente richiede una operazione di listing degli e-services per cui ha una richiesta di fruizione limitata a 3
     Then si ottiene status code 200 e la lista di 3 e-service
 
+  @happy-path
   @agreement_e_service_consumer_listing3
   Scenario: A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA2"
@@ -44,6 +47,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
     When l'utente richiede una operazione di listing degli e-services per cui ha una richiesta di fruizione con offset 2
     Then si ottiene status code 200 e la lista di 3 e-service
 
+  @happy-path
   @agreement_e_service_consumer_listing4
   Scenario: Restituisce gli e-service il cui nome contiene la keyword "test" all'interno del nome, con ricerca case insensitive
     Given l'utente è un "admin" di "PA2"
@@ -52,6 +56,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
     When l'utente richiede una operazione di listing degli e-services per cui ha una richiesta di fruizione con keyword "test"
     Then si ottiene status code 200 e la lista di 1 e-service
 
+  @happy-path
   @agreement_e_service_consumer_listing5
   Scenario: Restituisce un insieme vuoto di e-service per una ricerca che non porta risultati (es. stringa “disosfdio sjfjods” all’interno del nome. Scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
     Given l'utente è un "admin" di "PA2"

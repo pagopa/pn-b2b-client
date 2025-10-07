@@ -10,24 +10,30 @@ Feature: Caricamento di un documento allegato alla richiesta di fruizione
     When l'utente carica un documento allegato a quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       200 |
+      | PA1     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | PA1     | admin        |       200 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @sad-path
   @agreement_document_upload2a @wait_for_fix @IMN-311
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, carica un documento associando un nome al documento (prettyName). Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
@@ -43,6 +49,7 @@ Feature: Caricamento di un documento allegato alla richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @sad-path
   @agreement_document_upload2b
     #BUG: https://pagopa.atlassian.net/browse/PIN-7747
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, carica un documento associando un nome al documento (prettyName). Ottiene un errore.

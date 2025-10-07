@@ -10,19 +10,25 @@ Feature: Aggiornamento di un'analisi del rischio ad un e-service
     When l'utente aggiorna l'analisi del rischio di quell'e-service
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente | ruolo        | risultato |
       | GSP  | admin        |       204 |
       | GSP  | api          |       204 |
-      | GSP  | security     |       403 |
       | GSP  | api,security |       204 |
-      | GSP  | support      |       403 |
       | PA1  | admin        |       204 |
       | PA1  | api          |       204 |
-      | PA1  | security     |       403 |
       | PA1  | api,security |       204 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | security     |       403 |
+      | GSP  | support      |       403 |
+      | PA1  | security     |       403 |
       | PA1  | support      |       403 |
 
+  @happy-path
   @eservice_risk_analysis_update2
   Scenario: Per un e-service creato in modalità "RECEIVE", il quale ha un solo descrittore in stato DRAFT, è possibile aggiornare un'analisi del rischio precedentemente creata. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine
     Given l'utente è un "admin" di "PA1"

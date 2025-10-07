@@ -5,6 +5,7 @@ Feature: Gestione delle deleghe
     And l'ente "PA1" rimuove la disponibilità a ricevere deleghe in fruizione
     And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe in fruizione
 
+  @happy-path
   Scenario: [M2M_DELEGATIONS_CONSUMER_1] Una delega in fruizione può essere creata da un utente con ruolo M2M-ADMIN (Scenario 37)
     Given "GSP" ha già creato e pubblicato 1 e-services delegabile in fruizione
     And l'ente delegante "PA1"

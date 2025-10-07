@@ -10,19 +10,25 @@ Feature: Clonazione di un e-service
     When l'utente clona quell'e-service
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: # Test sui ruoli
       | ente | ruolo        | statoDescrittore | risultato |
       | GSP  | admin        | PUBLISHED        |       200 |
       | GSP  | api          | PUBLISHED        |       200 |
-      | GSP  | security     | PUBLISHED        |       403 |
       | GSP  | api,security | PUBLISHED        |       200 |
-      | GSP  | support      | PUBLISHED        |       403 |
       | PA1  | admin        | PUBLISHED        |       200 |
       | PA1  | api          | PUBLISHED        |       200 |
-      | PA1  | security     | PUBLISHED        |       403 |
       | PA1  | api,security | PUBLISHED        |       200 |
+
+    @sad-path
+    Examples: # Test sui ruoli
+      | ente | ruolo        | statoDescrittore | risultato |
+      | GSP  | security     | PUBLISHED        |       403 |
+      | GSP  | support      | PUBLISHED        |       403 |
+      | PA1  | security     | PUBLISHED        |       403 |
       | PA1  | support      | PUBLISHED        |       403 |
-    
+
+    @happy-path
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | SUSPENDED       |       200 |
