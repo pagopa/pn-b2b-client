@@ -1,5 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -8,24 +12,37 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplatePatchRequest;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionCreationRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionPatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionQuotasPatchRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 
 public class EserviceTemplateSteps {
+    public enum EServiceTemplateVersionsSnapshotType { VECCHIO, NUOVO }
+
+    @ParameterType("vecchio|nuovo")
+    public EServiceTemplateVersionsSnapshotType eServiceTemplateVersionsSnapshotType(String type) {
+        return EServiceTemplateVersionsSnapshotType.valueOf(type.toUpperCase());
+    }
+
     private final SharedStepsContext sharedStepsContext;
     private final M2MDataPreparationService dataPreparationService;
     private final IM2MEServiceTemplateClient m2mEServiceTemplateClient;
@@ -35,6 +52,11 @@ public class EserviceTemplateSteps {
     private final EServiceTemplatePatchOperationsAssistant patchAssistant;
     private final EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant;
     private final EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant;
+    private final EServiceTemplateMapper templateMapper;
+
+    private EServiceTemplateVersions oldVersionsSnapshot;
+    private EServiceTemplateVersions newVersionsSnapshot;
+    private EServiceTemplateVersionCreationRequest lastVersionCreationRequest;
 
     public EserviceTemplateSteps(
         SharedStepsContext sharedStepsContext,
@@ -43,7 +65,8 @@ public class EserviceTemplateSteps {
         DelayService delayService,
         EServiceTemplatePatchOperationsAssistant patchAssistant,
         EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant,
-        EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant
+        EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant,
+        EServiceTemplateMapper templateMapper
     ) {
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
@@ -54,6 +77,7 @@ public class EserviceTemplateSteps {
         this.patchAssistant = patchAssistant;
         this.versionPatchAssistant = versionPatchAssistant;
         this.versionQuotasPatchAssistant = versionQuotasPatchAssistant;
+        this.templateMapper = templateMapper;
     }
 
     @And("viene effettuata la creazione dei template e-service:")
@@ -308,5 +332,103 @@ public class EserviceTemplateSteps {
             "Risultato atteso '%s', ottenuto invece '%s'. Visualizzare logs per maggiori dettagli.".formatted(
                 notFound, httpCallExecutor.getResponseStatus())
         );
+    }
+
+    /* DEV. NOTE 07/10/2025: questo step ha solo utilità tecnica, per poter permettere futuri
+     * confronti attuati negli step successivi. */
+    @And("[si prende nota del {eServiceTemplateVersionsSnapshotType} stato delle versioni dell'e-service template]")
+    public void getEServiceTemplateVersions(EServiceTemplateVersionsSnapshotType type) {
+        delayService.delay();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        EServiceTemplateVersions eserviceTemplateVersions = m2mEServiceTemplateClient.getEserviceTemplateVersions(
+            templateId);
+        switch (type) {
+            case VECCHIO -> this.oldVersionsSnapshot = eserviceTemplateVersions;
+            case NUOVO -> this.newVersionsSnapshot = eserviceTemplateVersions;
+            default -> throw new IllegalArgumentException("Non previsto un comportamento per il valore " + type);
+        }
+    }
+
+    @When("l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template")
+    public void createEServiceTemplateVersion() {
+        EServiceTemplateVersionCreationRequest request = EServiceTemplateVersionCreationRequest.builder()
+            .dailyCallsTotal(10)
+            .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
+            .dailyCallsPerConsumer(5)
+            .description("A description for this new version - " + UUID.randomUUID())
+            .voucherLifespan(100)
+            .build();
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.createEserviceTemplateVersion(request));
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            this.lastVersionCreationRequest = request;
+        }
+    }
+
+    @Then("la nuova versione dell'e-service template è stata restituita correttamente")
+    public void checkReturnedEServiceTemplateVersion() {
+        EServiceTemplateVersion returnedVersion = (EServiceTemplateVersion) httpCallExecutor.getResponse();
+        Integer previousVersionNumber = getLastVersionNumber(this.oldVersionsSnapshot);
+        checkEServiceTemplateVersionConsistency(returnedVersion, this.lastVersionCreationRequest, previousVersionNumber);
+    }
+
+    @Then("l'ultima versione dell'e-service template è stata creata correttamente")
+    public void checkCreatedEServiceTemplateVersion() {
+        List<EServiceTemplateVersion> currentVersions = this.newVersionsSnapshot.getResults();
+        EServiceTemplateVersion createdVersion = currentVersions.get(currentVersions.size() - 1);
+
+        Integer previousVersionNumber = getLastVersionNumber(this.oldVersionsSnapshot);
+
+        checkEServiceTemplateVersionConsistency(createdVersion, this.lastVersionCreationRequest, previousVersionNumber);
+    }
+
+    private static Integer getLastVersionNumber(EServiceTemplateVersions oldVersionsSnapshot1) {
+        List<EServiceTemplateVersion> previousVersions = oldVersionsSnapshot1.getResults();
+        EServiceTemplateVersion previousVersion = previousVersions.get(previousVersions.size() - 1);
+        return previousVersion.getVersion();
+    }
+
+    private void checkEServiceTemplateVersionConsistency(
+        EServiceTemplateVersion version,
+        EServiceTemplateVersionCreationRequest creationRequest,
+        Integer previousVersionNumber
+    ) {
+        EServiceTemplateVersionCreationRequest versionMapped = templateMapper.mapToRequest(
+            version);
+
+        assertSoftly(softly -> {
+            softly.assertThat(versionMapped)
+                .as("Verifica che la versione dell'e-service template sia coerente con le specifiche")
+                .isEqualTo(creationRequest);
+
+            EServiceTemplateVersionState expectedState = EServiceTemplateVersionState.DRAFT;
+            softly.assertThat(version.getState())
+                .as("Verifica che lo stato della versionesia " + expectedState)
+                .isEqualTo(expectedState);
+
+            softly.assertThat(version.getVersion())
+                .as("Verifica che il numero di versione della versione sia immediatamente successivo a quello della precedente")
+                .isEqualTo(previousVersionNumber + 1);
+        });
+    }
+
+    @Then("la versione {int} dell'e-service template non ha subito modifiche")
+    public void checkPreviousEServiceTemplateVersion(int versionIndex) {
+        int oldSnapshotSize = oldVersionsSnapshot.getResults().size();
+        int newSnapshotSize = newVersionsSnapshot.getResults().size();
+        if(oldSnapshotSize < versionIndex || newSnapshotSize < versionIndex) {
+            throw new IllegalArgumentException("L'indice di versione indicata eccede una delle "
+                + "snapshot a disposizione. Old snapshot size: %d. New snapshot size: %d"
+                .formatted(oldSnapshotSize, newSnapshotSize));
+        }
+
+        assertThat(newVersionsSnapshot.getResults().get(versionIndex - 1))
+            .as("Verifica che la versione di indice %d dell'e-service template non abbia subito modifiche")
+            .isEqualTo(oldVersionsSnapshot.getResults().get(versionIndex - 1));
+    }
+    @Then("le versioni dell'e-service template sono un totale di {int}")
+    public void checkEServiceTemplateVersionsQuantity(int versionsQuantity) {
+        assertThat(newVersionsSnapshot.getResults())
+            .as("Verifica che il numero di versioni totali dell'e-service template sia %d".formatted(versionsQuantity))
+            .hasSize(versionsQuantity);
     }
 }

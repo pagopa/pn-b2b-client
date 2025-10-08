@@ -83,6 +83,15 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
+    public EServiceTemplateVersions getEserviceTemplateVersions(UUID templateId) {
+        return this.getEserviceTemplateVersions(EserviceTemplateListRequest.builder()
+            .templateId(templateId)
+            .offset(0)
+            .limit(30)
+            .build());
+    }
+
+    @Override
     public EServiceTemplateVersion getEserviceTemplateVersion(UUID templateId, UUID versionId) {
         return eserviceTemplatesApi.getEServiceTemplateVersion(templateId, versionId);
     }
@@ -90,6 +99,13 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     @Override
     public CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload) {
         return bffEserviceTemplatesApi.createEServiceTemplate(payload);
+    }
+
+    @Override
+    public EServiceTemplateVersion createEserviceTemplateVersion(
+        EServiceTemplateVersionCreationRequest request) {
+        // TODO 07/10/2025 riempitivo per un API la cui specifica non è ancora nota. Adattare una volta rilasciata.
+        return new EServiceTemplateVersion();
     }
 
     @Override
