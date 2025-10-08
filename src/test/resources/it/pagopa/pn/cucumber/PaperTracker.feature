@@ -130,6 +130,21 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_GIACENZA_AR_4                  | Via@OK_GIACENZA_AR_4              |
       | OK_AR_BAD_EVENT                   | Via@OK_AR_BAD_EVENT               |
 
+      | OK_RIR                            |Via@OK_RIR                         |
+      | FAIL_RIR                          |Via@FAIL_RIR                       |
+      | OK-Retry_RIR                      |Via@OK-Retry_RIR                   |
+      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                |
+      | OK_RIR_TIMESTAMP_ERR              |Via@OK_RIR_TIMESTAMP_ERR           |
+      | OK_RIR_NOT_ORDERED                |Via@OK_RIR_NOT_ORDERED             |
+      | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR         |
+      | FAIL_CON996_PCRETRY_FURTO_RIR     |Via@FAIL_CON996_PCRETRY_FURTO_RIR  |
+      | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          |
+      | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   |
+      | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           |
+
+
+
+
   #TODO: questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5]
@@ -147,3 +162,5 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | sequence                          | physicalAddress                   | deliveryDetailCode |
       | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        | RECRN001B          |
       | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B              | RECRN001A          |
+      | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME        | RECRI003B          |
+
