@@ -363,41 +363,34 @@ Feature: Test API M2M of e-service template
   @e-service-template-m2m-delete
   Scenario Outline: [INTEROP-EST-M2M-DELETE_01] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service template
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service template
     Then si ottiene lo status code 204
     And l'e-service template non esiste più
+
+    # si verifica che il tentativo di eliminarlo nuovamente si concluda negativamente
+    When l'utente tenta di effettuare la cancellazione dell'e-service template
+    Then si ottiene lo status code 404
+
     Examples:
-      | mode        | state       |
-      | erogazione  | DRAFT       |
-      | erogazione  | PUBLISHED   |
-      | erogazione  | SUSPENDED   |
-      | erogazione  | DEPRECATED  |
-    #  | ricezione  | DRAFT       | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | PUBLISHED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | SUSPENDED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | DEPRECATED  | <-- 10/2025 e-service template in mod. receive non ancora supportati
+      | mode        |
+      | erogazione  |
+    #  | ricezione  | <-- 10/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
   Scenario Outline: [INTEROP-EST-M2M-DELETE_02] Un utente con ruolo M2M NON può effettuare la cancellazione di un e-service template
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And l'utente tenta di effettuare la cancellazione dell'e-service template
     Then si ottiene lo status code 403
     And l'e-service template esiste ancora
     Examples:
-      | mode        | state       |
-      | erogazione  | DRAFT       |
-      | erogazione  | PUBLISHED   |
-      | erogazione  | SUSPENDED   |
-      | erogazione  | DEPRECATED  |
-    #  | ricezione  | DRAFT       | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | PUBLISHED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | SUSPENDED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | DEPRECATED  | <-- 10/2025 e-service template in mod. receive non ancora supportati
+      | mode        |
+      | erogazione  |
+    #  | ricezione  | <-- 10/2025 e-service template in mod. receive non ancora supportati
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -495,3 +488,21 @@ Feature: Test API M2M of e-service template
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta la creazione di una ulteriore versione in un e-service template inesistente
     Then si ottiene response status code 401
+
+  @m2m-parte2-ottobre
+  @e-service-template-m2m-delete
+  Scenario Outline: [INTEROP-EST-M2M-DELETE_07] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato non-DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la cancellazione dell'e-service template
+    Then si ottiene lo status code 403
+    And l'e-service template esiste ancora
+    Examples:
+      | mode        | state       |
+      | erogazione  | PUBLISHED   |
+      | erogazione  | SUSPENDED   |
+      | erogazione  | DEPRECATED  |
+    #  | ricezione  | PUBLISHED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
+    #  | ricezione  | SUSPENDED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
+    #  | ricezione  | DEPRECATED  | <-- 10/2025 e-service template in mod. receive non ancora supportati
