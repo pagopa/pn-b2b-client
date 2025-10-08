@@ -204,10 +204,18 @@ public class PaperTrackerSteps {
         Map<Integer, List<NotificationEvent>> mapTracking = new HashMap<>();
         responseTracking.getTrackings().sort(Comparator.comparing(Tracking::getAttemptId));
         for (int j=0; j < responseTracking.getTrackings().size(); j++) {
-            List<NotificationEvent> result2 = responseTracking.getTrackings().get(j).getEvents().stream()
+            Tracking tracking = responseTracking.getTrackings().get(j);
+            //REMOVE DUPLICATED EVENTS
+            List<PaperEvent> paperEventList = new ArrayList<>(tracking.getEvents().stream()
+                    .collect(Collectors.toMap(
+                            PaperEvent::getRequestTimestamp,
+                            pe -> pe,
+                            (pe1, pe2) -> pe1
+                    )).values());
+            List<NotificationEvent> notificationEventList = paperEventList.stream()
                     .map(te -> new NotificationEvent(te.getStatusCode(), createAttachmentUrlTracking(te.getAttachments())))
                     .collect(Collectors.toCollection(ArrayList::new));
-            mapTracking.put(j, result2);
+            mapTracking.put(j, notificationEventList);
         }
         Map<Integer, List<NotificationEvent>> expectedEvents = parse(PaperTrackerTrackingSequence. getByName(sequenceName).getEvents());
         for (Integer attempt : mapTracking.keySet()) {

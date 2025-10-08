@@ -123,11 +123,27 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL-CompiutaGiacenza_AR          | Via@FAIL-CompiutaGiacenza_AR      |
       | OK-NonRendicontabile_AR           | Via@OK-NonRendicontabile_AR       |
       | OK-CausaForzaMaggiore_AR          | Via@OK-CausaForzaMaggiore_AR      |
-      | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        |
-      | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B              |
       | OK_AR_TIMESTAMP_ERR               | Via@OK_AR_TIMESTAMP_ERR           |
       | OK_AR_NOT_ORDERED                 | Via@OK_AR_NOT_ORDERED             |
       | OK_GIACENZA_AR_2                  | Via@OK_GIACENZA_AR_2              |
       | OK_GIACENZA_AR_3                  | Via@OK_GIACENZA_AR_3              |
       | OK_GIACENZA_AR_4                  | Via@OK_GIACENZA_AR_4              |
       | OK_AR_BAD_EVENT                   | Via@OK_AR_BAD_EVENT               |
+
+  #TODO: questo scenario andrà incluso nell'NRT totale
+  @paperTrackerRunMode
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5]
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | <physicalAddress> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    Examples:
+      | sequence                          | physicalAddress                   | deliveryDetailCode |
+      | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        | RECRN001B          |
+      | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B              | RECRN001A          |
