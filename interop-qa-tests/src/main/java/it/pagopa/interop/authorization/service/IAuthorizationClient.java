@@ -22,7 +22,7 @@ public interface IAuthorizationClient extends SettableBearerToken {
     CompactClients getClients(Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind);
     Client getClient(UUID clientId);
     void removeClientPurpose(UUID clientId, UUID purposeId);
-    CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject);
+    CreatedResource addUsersToClient(UUID clientId, InlineObject6 inlineObject);
     Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig);
     void deleteClientAdmin(UUID clientId, UUID adminId);
 }
