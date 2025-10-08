@@ -351,17 +351,29 @@ public class EserviceTemplateSteps {
 
     @When("l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template")
     public void createEServiceTemplateVersion() {
-        EServiceTemplateVersionCreationRequest request = EServiceTemplateVersionCreationRequest.builder()
+        EServiceTemplateVersionCreationRequest request = buildVersionCreationRequest();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.createEserviceTemplateVersion(templateId, request));
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            this.lastVersionCreationRequest = request;
+        }
+    }
+
+    private static EServiceTemplateVersionCreationRequest buildVersionCreationRequest() {
+        return EServiceTemplateVersionCreationRequest.builder()
             .dailyCallsTotal(10)
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
             .dailyCallsPerConsumer(5)
             .description("A description for this new version - " + UUID.randomUUID())
             .voucherLifespan(100)
             .build();
-        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.createEserviceTemplateVersion(request));
-        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            this.lastVersionCreationRequest = request;
-        }
+    }
+
+    @When("l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente")
+    public void createEServiceTemplateVersionInUnexistentTemplate() {
+        EServiceTemplateVersionCreationRequest request = buildVersionCreationRequest();
+        httpCallExecutor.performCall(
+            () -> m2mEServiceTemplateClient.createEserviceTemplateVersion(UUID.randomUUID(), request));
     }
 
     @Then("la nuova versione dell'e-service template è stata restituita correttamente")

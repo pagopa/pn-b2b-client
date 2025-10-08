@@ -103,6 +103,7 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
 
     @Override
     public EServiceTemplateVersion createEserviceTemplateVersion(
+        UUID templateId,
         EServiceTemplateVersionCreationRequest request) {
         // TODO 07/10/2025 riempitivo per un API la cui specifica non è ancora nota. Adattare una volta rilasciata.
         return new EServiceTemplateVersion();

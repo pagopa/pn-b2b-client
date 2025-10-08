@@ -84,6 +84,7 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload);
 
     EServiceTemplateVersion createEserviceTemplateVersion(
+        UUID templateId,
         EServiceTemplateVersionCreationRequest request);
 
     Documents getDocuments(UUID templateId, UUID versionId);
