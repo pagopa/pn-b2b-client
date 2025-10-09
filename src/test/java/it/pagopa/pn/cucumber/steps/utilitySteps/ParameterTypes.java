@@ -87,5 +87,10 @@ public class ParameterTypes {
         return paName;
     }
 
+    @ParameterType("corretto|malformato")
+    public static boolean isValidQrCode(String value) {
+        return value.equals("corretto");
+    }
+
 
 }
