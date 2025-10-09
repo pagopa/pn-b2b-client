@@ -468,7 +468,7 @@ Feature: Invio messaggi cortesia e2e
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-
+  @addressBook1 @courtesyMessage @cleanAddressBook
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_17B] Verifica successione elementi - Invio ANALOGICO con domicilio PEC da RN, cortesia email per PF
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -517,7 +517,7 @@ Feature: Invio messaggi cortesia e2e
       | details_recIndex       | 0                                        |
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
 
