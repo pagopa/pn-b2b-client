@@ -109,38 +109,74 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | physicalAddress_address | <physicalAddress> |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
+    Then si controlla che non ci siano eventi duplicati
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     Examples:
-      | sequence                          | physicalAddress                   |
-      | OK_AR                             | Via@ok_AR                         |
-      | OK-Retry_AR                       | Via@OK-Retry_AR                   |
-      | FAIL-Discovery_AR                 | Via@fail-Discovery_AR             |
-      | FAIL_AR                           | Via@fail_AR                       |
-      | FAIL-Irreperibile_AR              | Via@FAIL-IRREPERIBILE_AR          |
-      | OK-Giacenza_AR                    | Via@OK-Giacenza_AR                |
-      | FAIL-Giacenza_AR                  | Via@FAIL-Giacenza_AR              |
-      | FAIL-CompiutaGiacenza_AR          | Via@FAIL-CompiutaGiacenza_AR      |
-      | OK-NonRendicontabile_AR           | Via@OK-NonRendicontabile_AR       |
-      | OK-CausaForzaMaggiore_AR          | Via@OK-CausaForzaMaggiore_AR      |
-      | OK_AR_TIMESTAMP_ERR               | Via@OK_AR_TIMESTAMP_ERR           |
-      | OK_AR_NOT_ORDERED                 | Via@OK_AR_NOT_ORDERED             |
-      | OK_GIACENZA_AR_2                  | Via@OK_GIACENZA_AR_2              |
-      | OK_GIACENZA_AR_3                  | Via@OK_GIACENZA_AR_3              |
-      | OK_GIACENZA_AR_4                  | Via@OK_GIACENZA_AR_4              |
-      | OK_AR_BAD_EVENT                   | Via@OK_AR_BAD_EVENT               |
+      | sequence                          | physicalAddress                   | waitUntil               |
+      | OK_AR                             | Via@ok_AR                         | ANALOG_SUCCESS_WORKFLOW |
+      | OK-Retry_AR                       | Via@OK-Retry_AR                   | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-Discovery_AR                 | Via@fail-Discovery_AR             | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_AR                           | Via@fail_AR                       | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-Irreperibile_AR              | Via@FAIL-IRREPERIBILE_AR          | ANALOG_SUCCESS_WORKFLOW |
+      | OK-Giacenza_AR                    | Via@OK-Giacenza_AR                | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-Giacenza_AR                  | Via@FAIL-Giacenza_AR              | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-CompiutaGiacenza_AR          | Via@FAIL-CompiutaGiacenza_AR      | ANALOG_SUCCESS_WORKFLOW |
+      | OK-NonRendicontabile_AR           | Via@OK-NonRendicontabile_AR       | ANALOG_SUCCESS_WORKFLOW |
+      | OK-CausaForzaMaggiore_AR          | Via@OK-CausaForzaMaggiore_AR      | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR_TIMESTAMP_ERR               | Via@OK_AR_TIMESTAMP_ERR           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR_NOT_ORDERED                 | Via@OK_AR_NOT_ORDERED             | ANALOG_SUCCESS_WORKFLOW |
+      | OK_GIACENZA_AR_2                  | Via@OK_GIACENZA_AR_2              | ANALOG_SUCCESS_WORKFLOW |
+      | OK_GIACENZA_AR_3                  | Via@OK_GIACENZA_AR_3              | ANALOG_SUCCESS_WORKFLOW |
+      | OK_GIACENZA_AR_4                  | Via@OK_GIACENZA_AR_4              | ANALOG_SUCCESS_WORKFLOW |
 
-      | OK_RIR                            |Via@OK_RIR                         |
-      | FAIL_RIR                          |Via@FAIL_RIR                       |
-      | OK-Retry_RIR                      |Via@OK-Retry_RIR                   |
-      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                |
-      | OK_RIR_TIMESTAMP_ERR              |Via@OK_RIR_TIMESTAMP_ERR           |
-      | OK_RIR_NOT_ORDERED                |Via@OK_RIR_NOT_ORDERED             |
-      | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR         |
-      | FAIL_CON996_PCRETRY_FURTO_RIR     |Via@FAIL_CON996_PCRETRY_FURTO_RIR  |
-      | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          |
-      | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   |
-      | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           |
+      | OK_AR_BAD_EVENT                   | Via@OK_AR_BAD_EVENT               | ANALOG_SUCCESS_WORKFLOW |
+
+
+
+      | FAIL_IndirizzoInesistenteAR                 | Via@FAIL_IndirizzoInesistenteAR                 | ANALOG_FAILURE_WORKFLOW |
+      | FAIL-DiscoveryIrreperibile_AR               | Via@FAIL-DiscoveryIrreperibile_AR               | ANALOG_FAILURE_WORKFLOW |
+      | OK-Giacenza-gt10_AR                         | Via@OK-Giacenza-gt10_AR                         | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-Giacenza-gt10_AR                       | Via@FAIL-Giacenza-gt10_AR                       | ANALOG_SUCCESS_WORKFLOW |
+
+
+      | FAIL_Consolidatore-AR                       | Via@FAIL_Consolidatore-AR                       | ANALOG_FAILURE_WORKFLOW |
+      | FAIL_ConsolidatoreIndirizzo-AR              | Via@FAIL_ConsolidatoreIndirizzo-AR              | ANALOG_FAILURE_WORKFLOW |
+      | FAIL-WO_AR                                  | Via@FAIL-WO_AR                                  | ANALOG_SUCCESS_WORKFLOW |
+      | OK-WO-Giacenza_AR                           | Via@OK-WO-Giacenza_AR                           | ANALOG_SUCCESS_WORKFLOW |
+      | OK-M_AR                                     | Via@OK-M_AR                                     | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-Irreperibile_AR_SLOW                   | Via@FAIL-Irreperibile_AR_SLOW                   | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR-CON020-7Z1P                           | Via@OK_AR-CON020-7Z1P                           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR-CON020-ZIP1P                          | Via@OK_AR-CON020-ZIP1P                          | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR-CON020-7Z2P                           | Via@OK_AR-CON020-7Z2P                           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR-CON020-ZIP2P                          | Via@OK_AR-CON020-ZIP2P                          | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR-CON020-7Z3P                           | Via@OK_AR-CON020-7Z3P                           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR-CON020-ZIP3P                          | Via@OK_AR-CON020-ZIP3P                          | ANALOG_SUCCESS_WORKFLOW |
+      | OK-Giacenza_AR_ZIP                          | Via@OK-Giacenza_AR_ZIP                          | ANALOG_SUCCESS_WORKFLOW |
+
+
+
+      | FAIL_DECEDUTO_SLOW_AR                       | Via@FAIL_DECEDUTO_SLOW_AR                       | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_DECEDUTO_AR                            | Via@FAIL_DECEDUTO_AR                            | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_CompiutaGiacenza_AR_ERR                | Via@FAIL_CompiutaGiacenza_AR_ERR                | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL-CON996_PCRETRY_DECEDUTO-AR             | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR             | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_CompiutaGiacenza_AR_ERR_2              | Via@FAIL_CompiutaGiacenza_AR_ERR_2              | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR_OCR_FAIL                              | Via@OK_AR_OCR_FAIL                              | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR_OCR_PENDING                           | Via@OK_AR_OCR_PENDING                           | ANALOG_SUCCESS_WORKFLOW |
+
+
+
+      | OK_RIR                            |Via@OK_RIR                         | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_RIR                          |Via@FAIL_RIR                       | ANALOG_SUCCESS_WORKFLOW |
+      | OK-Retry_RIR                      |Via@OK-Retry_RIR                   | ANALOG_SUCCESS_WORKFLOW |
+      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                | ANALOG_SUCCESS_WORKFLOW |
+      | OK_RIR_TIMESTAMP_ERR              |Via@OK_RIR_TIMESTAMP_ERR           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_RIR_NOT_ORDERED                |Via@OK_RIR_NOT_ORDERED             | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR         | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_CON996_PCRETRY_FURTO_RIR     |Via@FAIL_CON996_PCRETRY_FURTO_RIR  | ANALOG_SUCCESS_WORKFLOW |
+      | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          | ANALOG_SUCCESS_WORKFLOW |
+      | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   | ANALOG_SUCCESS_WORKFLOW |
+      | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           | ANALOG_SUCCESS_WORKFLOW |
 
 
 
@@ -163,4 +199,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        | RECRN001B          |
       | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B              | RECRN001A          |
       | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME        | RECRI003B          |
+      | OK_AR_BLOCKED                       | Via@OK_AR_BLOCKED              | CON018 |
+
 

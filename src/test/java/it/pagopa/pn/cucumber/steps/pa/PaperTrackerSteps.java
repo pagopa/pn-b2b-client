@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperTrackerClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -424,6 +425,50 @@ public class PaperTrackerSteps {
         Assertions.assertTrue(flowThrows.contains(flowThrow), String.format("FlowThrow non trovato:\n%s\nFlowThrow presenti:\n%s", flowThrow, flowThrows));
     }
 
+    @Then("si controlla che non ci siano eventi duplicati")
+    public void verifyNotDuplicatedEventArePresent() {
+        FullSentNotificationV27 fullSentNotificationV27 = sharedSteps.getSentNotificationLastVersion();
+        List<TimelineElementV27> timelineElementV27 = fullSentNotificationV27.getTimeline();
+        long result = 0;
+        for (TimelineElementV27 timelineElement : timelineElementV27) {
+            result = timelineElementV27.stream()
+                    .filter(te -> Objects.equals(te.getElementId(), timelineElement.getElementId()))
+                    .filter(te -> Objects.equals(te.getTimestamp(), timelineElement.getTimestamp()))
+                    .filter(te -> Objects.equals(te.getCategory().getValue(), timelineElement.getCategory().getValue()))
+                    .filter(te -> Objects.equals(
+                            Optional.ofNullable(te.getDetails()).map(TimelineElementDetailsV27::getDeliveryDetailCode).orElse(null),
+                            Optional.ofNullable(timelineElement.getDetails()).map(TimelineElementDetailsV27::getDeliveryDetailCode).orElse(null))
+                    )
+                    .filter(te -> Objects.equals(
+                            Optional.ofNullable(te.getDetails()).map(TimelineElementDetailsV27::getAttachments).map(List::size).orElse(null),
+                            Optional.ofNullable(timelineElement.getDetails()).map(TimelineElementDetailsV27::getAttachments).map(List::size).orElse(null))
+                    )
+                    .filter(te -> Objects.equals(
+                            Optional.ofNullable(te.getDetails()).map(TimelineElementDetailsV27::getAttachments).map(List::size).orElse(null),
+                            Optional.ofNullable(timelineElement.getDetails()).map(TimelineElementDetailsV27::getAttachments).map(List::size).orElse(null))
+                    )
+                    .filter(te -> verifySameAttachments(
+                            Optional.ofNullable(te.getDetails()).map(TimelineElementDetailsV27::getAttachments).orElse(null),
+                            Optional.ofNullable(timelineElement.getDetails()).map(TimelineElementDetailsV27::getAttachments).orElse(null))
+                    )
+                    .filter(te -> Objects.equals(
+                            Optional.ofNullable(te.getDetails()).map(TimelineElementDetailsV27::getDeliveryFailureCause).orElse(null),
+                            Optional.ofNullable(timelineElement.getDetails()).map(TimelineElementDetailsV27::getDeliveryFailureCause).orElse(null))
+                    )
+                    .count();
+            assertThat(result).as("Nella timeline sono stati riscontrati dei duplicati per l'elemento " + timelineElement.getElementId())
+                    .isLessThanOrEqualTo(1);
+        }
+    }
+
+    private boolean verifySameAttachments(List<AttachmentDetails> list1, List<AttachmentDetails> list2) {
+        if (list1 == null && list2 == null) return true;
+        if (list1 == null || list2 == null) return false;
+        Comparator<AttachmentDetails> comparator = Comparator.comparing(AttachmentDetails::getId);
+        list1.sort(comparator);
+        list2.sort(comparator);
+        return list1.equals(list2);
+    }
 
 
     /**
