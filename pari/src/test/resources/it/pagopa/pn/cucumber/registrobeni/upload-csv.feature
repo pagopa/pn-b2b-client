@@ -242,6 +242,7 @@ Feature: PARI - Portale registro dei beni
       | REFRIGERATINGAPPL | 1059484       | eiQINTWM149V2       | HWF90Elica          | Cappa da cucina                    |  IT       |
       | REFRIGERATINGAPPL | 2413086       |                     | RC382BSC0EU         | Apparecchio di refrigerazione                    |  IT       |
       | REFRIGERATINGAPPL | 2413086       | RC382BSC0EU         | RC382BSC0EU                    | Apparecchio di refrigerazione                    |         |
+      | RANGEHOODS | 2413086       | RC382BSC0EU         | RC382BSC0EU                    | Apparecchio di refrigerazione                    |  IT      |
 
   @produttore1
   Scenario Outline: [TC_UPLOAD_13] Inserimento di un nuovo file CSV con intestazione colonne errate
