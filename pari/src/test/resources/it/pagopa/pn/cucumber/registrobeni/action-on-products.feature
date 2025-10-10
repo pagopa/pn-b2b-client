@@ -227,3 +227,18 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: INVITALIA_L2
     And viene ripristinato il prodotto appena aggiunto da L2
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
+
+
+  @produttore2 @invitalia1
+  Scenario: [TC_ACTION_ON_PRODUCT_11] Un utente INVITALIA_L1 esclude più prodotto insieme e si verifica che per ogni prodotto ci sia una sola motivazione
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "REFRIGERATINGAPPL" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria                           | Paese di Produzione  |
+      | 2390281          | KG36NVIAG           | KG36NVIAG              | Apparecchio di refrigerazione       | IT                   |
+      | 2312227          | KGN36VIDB           | KGN36VIDB              | Apparecchio di refrigerazione       | IT                   |
+    Given viene usata l'utenza: INVITALIA_L1
+    And vengono esclusi i prodotti appena aggiunti
+    Then si verifica che lo stato del prodotto con codice eprel: "2390281" sia: "REJECTED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2312227" sia: "REJECTED"
+    Then si verifica che per il prodotto "2390281" ci sia 1 motivazione
+    Then si verifica che per il prodotto "2312227" ci sia 1 motivazione
