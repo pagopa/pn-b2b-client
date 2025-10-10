@@ -192,13 +192,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si controlla che non ci siano eventi duplicati
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     Examples:
-      | sequence                          | physicalAddress                   | deliveryDetailCode |
-      | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME        | RECRN001B          |
-      | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B              | RECRN001A          |
-      | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME        | RECRI003B          |
-      | OK_AR_BLOCKED                     | Via@OK_AR_BLOCKED              | CON018 |
-      | FAIL_Consolidatore-AR             | Via@FAIL_Consolidatore-AR                       | CON996 |
-      | FAIL_ConsolidatoreIndirizzo-AR              | Via@FAIL_ConsolidatoreIndirizzo-AR              | CON997 |
-      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                | RECRI003A |
-      | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR         | CON996 |
+      | sequence                          | physicalAddress                     | deliveryDetailCode |
+      | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME          | RECRN001B          |
+      | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B                | RECRN001A          |
+      | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME          | RECRI003B          |
+      | OK_AR_BLOCKED                     | Via@OK_AR_BLOCKED                   | CON020 |
+      | FAIL_Consolidatore-AR             | Via@FAIL_Consolidatore-AR           | CON996 |
+      | FAIL_ConsolidatoreIndirizzo-AR    | Via@FAIL_ConsolidatoreIndirizzo-AR  | CON997 |
+      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                  | RECRI003A |
+      | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR           | CON996 |
 
