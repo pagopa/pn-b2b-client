@@ -19,6 +19,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | ok_AR |
       | FAIL-Discovery_AR |
       | FAIL_AR |
+      | FAIL_IndirizzoInesistenteAR |
       | FAIL-Irreperibile_AR |
       | OK-Giacenza_AR |
       | FAIL-Giacenza_AR |
@@ -40,6 +41,20 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_TIMESTAMP_ERR |
       | OK_RIR_NOT_ORDERED |
 
+  @paperTracker
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_B] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequenceName> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-DiscoveryIrreperibile_AR" iun "iun"
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR" iun "iun"
 
   @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
@@ -134,7 +149,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
 
-      | FAIL_IndirizzoInesistenteAR                 | Via@FAIL_IndirizzoInesistenteAR                 | ANALOG_FAILURE_WORKFLOW |
+      | FAIL_IndirizzoInesistenteAR                 | Via@FAIL_IndirizzoInesistenteAR                 | ANALOG_SUCCESS_WORKFLOW |
       | FAIL-DiscoveryIrreperibile_AR               | Via@FAIL-DiscoveryIrreperibile_AR               | ANALOG_FAILURE_WORKFLOW |
 
 
