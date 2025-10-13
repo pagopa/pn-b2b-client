@@ -6,6 +6,7 @@ Feature: PARI - Portale registro dei beni
 
     #[TC_13]
   #[TC_57]
+  @produttore2 @invitalia1
   Scenario: [TC_ACTION_ON_PRODUCT_1] Viene caricato un prodotto, escluso e poi caricato di nuovo
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -22,6 +23,7 @@ Feature: PARI - Portale registro dei beni
 
     #[TC_14]
     #[TC_54]
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_2] Si verifica che ci sia il corretto numero di motivazioni a seguito delle operazioni di contrassegnazione / esclusione
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -54,6 +56,7 @@ Feature: PARI - Portale registro dei beni
 
 
   #[TC_56]
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_3] Si verifica che lato INVITALIA le vecchie motivazioni non siano più visibili quando un prodotto viene caricato di nuovo dal produttore
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
@@ -75,6 +78,7 @@ Feature: PARI - Portale registro dei beni
     And si verifica che ci siano 0 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
 
       #[TC_60]
+  @produttore2 @invitalia1
   Scenario: [TC_ACTION_ON_PRODUCT_3] Viene escluso un prodotto e poi si prova ad iniziare l'iter di approvazione di un prodotto
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -89,6 +93,7 @@ Feature: PARI - Portale registro dei beni
     Then si verifica che il prodotto sia marcato come: "REJECTED"
 
           #[TC_61]
+  @produttore2 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_4] L2 o un produttore non possono iniziare la fase di approvazione di un prodotto che deve partire da L1
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -104,6 +109,7 @@ Feature: PARI - Portale registro dei beni
     Then si verifica che la chiamata abbia ritornato uno status code: 403
 
       #[TC_62]
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_5] L'avvio del iter di approvazione del prodotto cambio lo stato in "WAIT_APPROVED" che è però visibile soltanto lato INVITALIA
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
@@ -121,7 +127,7 @@ Feature: PARI - Portale registro dei beni
     And viene ripristinato il prodotto appena aggiunto da L2
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
 
-
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_6] L'approvazione di un prodotto da parte di un operatore L2 che non è stato ancora approvato da L1 non ne cambia lo stato
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -138,7 +144,7 @@ Feature: PARI - Portale registro dei beni
     And viene approvato il prodotto appena aggiunto
     Then si verifica che la chiamata abbia ritornato uno status code: 403
 
-
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_7] L'API di esclusione di un prodotto non può essere chiamata da un ente Invitalia L2.
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
@@ -162,6 +168,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: INVITALIA_L1
     And viene escluso il prodotto appena aggiunto
 
+  @produttore2 @invitalia1
   Scenario: [TC_ACTION_ON_PRODUCT_8] L'API di esclusione di un prodotto ritorna un KO se i prodotti non sono nello stesso stato.
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -175,6 +182,7 @@ Feature: PARI - Portale registro dei beni
       | status      | KO |
     And viene escluso il prodotto con codice eprel: "2365216"
 
+  @produttore2 @invitalia1
   Scenario: [TC_ACTION_ON_PRODUCT_8] L'API di contrassegnazione di un prodotto ritorna un KO se i prodotti non sono nello stesso stato.
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -189,7 +197,7 @@ Feature: PARI - Portale registro dei beni
     And viene escluso il prodotto con codice eprel: "2365216"
     And viene escluso il prodotto con codice eprel: "2423604"
 
-
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_9] Un prodotto non può essere contrassegnato da un operatore Invitalia L2
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
@@ -205,7 +213,7 @@ Feature: PARI - Portale registro dei beni
     And viene escluso il prodotto appena aggiunto
     Then si verifica che lo stato del prodotto con codice eprel: "2365216" sia: "REJECTED"
 
-
+  @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_10] Un prodotto portato in WAIT_APPROVED da L1 non può più essere escluso da L1 e quindi lo stato non cambia
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
