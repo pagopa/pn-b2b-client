@@ -109,7 +109,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'ultimo tentativo effettuato abbia indice 0
 
-  @dev @workflowAnalogico
+  @dev @workflowAnalogico @paperTrackerRunMode
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_ERR_1] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR_ERR
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -131,6 +131,54 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECRN010 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECRN011 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECRN005A|
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_deliveryDetailCode | RECRN005B                   |
+      | details_recIndex           | 0                           |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "Plico"}] |
+    And viene verificato che l'ultimo tentativo effettuato abbia indice 0
+
+  @dev @workflowAnalogico @paperTrackerRunMode
+  Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_ERR_1] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR_ERR
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                             |
+      | physicalAddress_address | Via@FAIL_CompiutaGiacenza_AR_ERR_2 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005B"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON080   |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON020   |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECRN010 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
       | details_deliveryDetailCode | RECRN011 |
       | details_recIndex           | 0        |
       | details_sentAttemptMade    | 0        |
@@ -142,7 +190,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_attachments        | [{"documentType": "Plico"}] |
     And viene verificato che l'ultimo tentativo effettuato abbia indice 0
 
-  @dev @workflowAnalogico
+  @dev @workflowAnalogico @paperTrackerRunMode
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_4] Invio Notifica Mono destinatario workflow cartaceo - Caso OK-Giacenza-gt10_AR PN-5927
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -164,9 +212,19 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECRN010 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
       | details_deliveryDetailCode | RECRN011 |
       | details_recIndex           | 0        |
       | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                 |
+      | details_deliveryDetailCode | RECRN003A                |
+      | details_recIndex           | 0                        |
+      | details_sentAttemptMade    | 0                        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                 |
       | details_deliveryDetailCode | RECRN003B                |
@@ -180,7 +238,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_sentAttemptMade    | 0         |
 #  @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECRN010.5s-RECRN011.80s-RECRN003A.5s-RECRN003B[DOC:AR].5s-RECRN003C"
 
-  @dev @workflowAnalogico
+  @dev @workflowAnalogico @paperTrackerRunMode
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_5] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-Giacenza-gt10_AR PN-5927
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -202,9 +260,19 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECRN010 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
       | details_deliveryDetailCode | RECRN011 |
       | details_recIndex           | 0        |
       | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_deliveryDetailCode | RECRN004A                   |
+      | details_recIndex           | 0                           |
+      | details_sentAttemptMade    | 0                           |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                    |
       | details_deliveryDetailCode | RECRN004B                   |

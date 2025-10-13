@@ -136,8 +136,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | FAIL_IndirizzoInesistenteAR                 | Via@FAIL_IndirizzoInesistenteAR                 | ANALOG_FAILURE_WORKFLOW |
       | FAIL-DiscoveryIrreperibile_AR               | Via@FAIL-DiscoveryIrreperibile_AR               | ANALOG_FAILURE_WORKFLOW |
-      | OK-Giacenza-gt10_AR                         | Via@OK-Giacenza-gt10_AR                         | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-Giacenza-gt10_AR                       | Via@FAIL-Giacenza-gt10_AR                       | ANALOG_SUCCESS_WORKFLOW |
 
 
       | FAIL-WO_AR                                  | Via@FAIL-WO_AR                                  | ANALOG_SUCCESS_WORKFLOW |
@@ -156,9 +154,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | FAIL_DECEDUTO_SLOW_AR                       | Via@FAIL_DECEDUTO_SLOW_AR                       | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
       | FAIL_DECEDUTO_AR                            | Via@FAIL_DECEDUTO_AR                            | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
-      | FAIL_CompiutaGiacenza_AR_ERR                | Via@FAIL_CompiutaGiacenza_AR_ERR                | ANALOG_SUCCESS_WORKFLOW |
       | FAIL-CON996_PCRETRY_DECEDUTO-AR             | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
-      | FAIL_CompiutaGiacenza_AR_ERR_2              | Via@FAIL_CompiutaGiacenza_AR_ERR_2              | ANALOG_SUCCESS_WORKFLOW |
       | OK_AR_OCR_FAIL                              | Via@OK_AR_OCR_FAIL                              | ANALOG_SUCCESS_WORKFLOW |
       | OK_AR_OCR_PENDING                           | Via@OK_AR_OCR_PENDING                           | ANALOG_SUCCESS_WORKFLOW |
 
