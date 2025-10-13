@@ -23,6 +23,9 @@ public class EServicesCommonContext {
     private List<EServiceDescriptor> retrievedEservicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
+    private int groupId; // id dell'ultimo gruppo di attributi creato
+
+    private List<UUID> certifiedAttributesIds = new ArrayList<>();
 
     private UUID documentId;
     private UUID documentId2;
@@ -33,4 +36,7 @@ public class EServicesCommonContext {
     private UUID oldDescriptorId;
     private String name;
 
+    public void addCertifiedAttributes(List<UUID> attributesIds) {
+        this.certifiedAttributesIds.addAll(attributesIds);
+    }
 }

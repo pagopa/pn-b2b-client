@@ -31,6 +31,7 @@ import it.pagopa.interop.e_service_template.impl.EServiceTemplateMainMapperImpl;
 import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
+import it.pagopa.interop.eservice.service.impl.M2MEserviceAttributeClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
@@ -138,6 +139,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MVerifiedAttributeClientImpl.class,
         M2MClientsClientImpl.class,
         M2MTenantClientImpl.class,
+        M2MEserviceAttributeClientImpl.class,
         DelayServiceImpl.class,
         EServiceMapperImpl.class,
         EServiceNameMapperImpl.class,
