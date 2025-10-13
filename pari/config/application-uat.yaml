@@ -55,7 +55,7 @@ role:
     familyName: test
     email: esercenteTest@test.email.it
     acquirerId: PAGOPA
-    merchantId: d90f0d01-1efd-3e4f-a7a7-3c22f5cca0dd
+    merchantId: 3a602b17-ac1c-3029-9e78-0a4bbb8693d4
     orgId: f06ce6ee-9605-4327-89a6-0fb9f22b3a06
     orgVat: "33444433488"
     orgName: Esercente di test IdPay

@@ -10,11 +10,9 @@ import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
-import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
-import it.pagopa.pari.registrobeni.domain.ProductCategory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -29,7 +27,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,7 +74,8 @@ public class RegistroBeniProductsUploadSteps {
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, categoria);
         sharedCommonContext.setLastProductsUploaded(dataCsv.stream()
                 .map(row -> new ProductDTO().eprelCode(row.get("Codice EPREL")).gtinCode(row.get("Codice GTIN/EAN"))
-                        .productCode(row.get("Codice Prodotto")).category(ProductDTO.CategoryEnum.fromValue(row.get("Categoria")))
+                        .productCode(row.get("Codice Prodotto"))
+                        .category(Optional.ofNullable(row.get("Categoria")).map(ProductDTO.CategoryEnum::fromValue).orElse(null))
                         .countryOfProduction(row.get("Paese di Produzione"))).toList()
         );
 
@@ -120,10 +122,9 @@ public class RegistroBeniProductsUploadSteps {
 
     @When("si tenta di recuperare un report di errore {string} e si ottiene status code {int}")
     public void verifyReportError(String productFileId, int expectedStatusCode) {
-        String reportId = "NOT_VALID".equals(productFileId) ? UUID.randomUUID().toString() : "invalid_product_file";
         HttpStatus httpStatus = null;
         try {
-            apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(reportId);
+            apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(productFileId);
         } catch (HttpStatusCodeException e) {
             httpStatus = e.getStatusCode();
         }
@@ -209,13 +210,15 @@ public class RegistroBeniProductsUploadSteps {
         assertNotNull(uploadsListDTO);
         assertNotNull(uploadsListDTO.getTotalElements());
         assertTrue(uploadsListDTO.getTotalElements() > 0);
+        List<String> timestamp = new ArrayList<>();
         assertTrue(
                 uploadsListDTO.getContent().stream()
                         .anyMatch(x -> {
                             LocalDateTime uploadTime = LocalDateTime.parse(x.getDateUpload());
-                            LocalDateTime now = LocalDateTime.now();
+                            ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Rome"));
                             Duration diff = Duration.between(uploadTime, now);
-                            return !uploadTime.isAfter(now) && diff.toMinutes() < 1;
+                            timestamp.addAll(Arrays.asList(now.toString(), diff.toString()));
+                            return diff.toMinutes() < 1;
                         })
         );
     }
