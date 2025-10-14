@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class DelegheTemporaneeSteps {
     private String qrCode;
 
     @Autowired
-    public DelegheTemporaneeSteps(SharedSteps sharedSteps, IPnMandateAppIoClient mandateAppIoClient) {
+    public DelegheTemporaneeSteps(SharedSteps sharedSteps, PnMandateAppIoClientImpl mandateAppIoClient) {
         this.sharedSteps = sharedSteps;
         this.mandateAppIoClient = mandateAppIoClient;
     }

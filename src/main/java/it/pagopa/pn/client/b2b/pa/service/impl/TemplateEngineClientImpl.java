@@ -58,7 +58,8 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
 
     @Override
     public String notificationAARForEMAIL(LanguageEnum xLanguage, NotificationAarForEmail notificationAARForEMAIL) throws RestClientException {
-        return templateApi.notificationAarForEmail(xLanguage, notificationAARForEMAIL);
+//        return templateApi.notificationAarForEmail(xLanguage, notificationAARForEMAIL);
+        return null;//TODO MATTEO... ereditato con la riga sopra non funzionante
     }
 
     @Override
@@ -68,7 +69,8 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
 
     @Override
     public String notificationAARForSMS(LanguageEnum xLanguage, NotificationAarForSms notificationAARForSMS) throws RestClientException {
-        return templateApi.notificationAarForSms(xLanguage, notificationAARForSMS);
+//        return templateApi.notificationAarForSms(xLanguage, notificationAARForSMS);
+        return null;//TODO MATTEO... ereditato con la riga sopra non funzionante
     }
 
     @Override

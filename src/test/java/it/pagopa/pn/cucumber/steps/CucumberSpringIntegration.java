@@ -174,6 +174,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,
         SettableAuthTokenRaddCognito.class,
+        PnMandateAppIoClientImpl.class,
 
         LambdaInvoker.class,
 })

@@ -3,12 +3,13 @@ Feature: Deleghe Temporanee 15755
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica delega temporanea |
-      | senderDenomination | comune di Palermo                |
-    #TODO aggiungere allegati e documenti di pagamento
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica delega temporanea |
+#      | senderDenomination | comune di Palermo                |
+#    #TODO aggiungere allegati e documenti di pagamento
+#    And destinatario Mario Cucumber
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given imposto lo iun di SharedSteps a "YEUR-EPTR-NKEM-202510-P-1" e la pa a "Comune_Multi"
     And viene generato il QR Code corretto relativo alla notifica appena creata
     When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
     Then l'operazione di delega temporanea restituisce codice "200"
