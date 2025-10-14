@@ -1086,3 +1086,25 @@ Feature: Abilitazione domicilio digitale
     And viene cancellata l'email di cortesia per il comune "default"
     Then l'operazione ha prodotto un errore con status code "400"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+  @sercqF2 @sercq @addressBook2
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_13] Negata disattivazione email cortesia con SercQ per ente attivo
+    Given si predispone addressbook per l'utente "CucumberSpa"
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    Then l'utente "CucumberSpa" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And viene attivato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
+
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "Comune_2"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
