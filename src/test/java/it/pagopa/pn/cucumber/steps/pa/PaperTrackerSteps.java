@@ -55,7 +55,7 @@ public class PaperTrackerSteps {
          return fullSentNotification.getTimeline().stream()
                  .filter(te -> te.getElementId().contains("ATTEMPT_" + attempt) && (te.getElementId().contains("SEND_ANALOG_PROGRESS") || te.getElementId().contains("SEND_ANALOG_FEEDBACK")))
                  .map(te -> te.getDetails())
-                 .map(td -> new NotificationEvent(td.getDeliveryDetailCode(), createAttachmentUrl(td.getAttachments())))
+                 .map(td -> new NotificationEvent(td.getDeliveryDetailCode(), createAttachmentUrl(td.getAttachments()), td.getDeliveryFailureCause()))
                  .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -102,7 +102,7 @@ public class PaperTrackerSteps {
                             return Integer.parseInt(att.getAttemptId().substring(index + 1));
                         },
                         t -> t.getEvents().stream()
-                                .map(pe -> new NotificationEvent(pe.getStatusCode(), createAttachmentUrlTracking(pe.getAttachments())))
+                                .map(pe -> new NotificationEvent(pe.getStatusCode(), createAttachmentUrlTracking(pe.getAttachments()), pe.getDeliveryFailureCause()))
                                 .collect(Collectors.toList()),
                         (existing, newList) -> {
                             existing.addAll(newList);
@@ -121,7 +121,7 @@ public class PaperTrackerSteps {
                             return Integer.parseInt(numberStr);
                         },
                         t -> t.getOutputs().stream()
-                                .map(pe -> new NotificationEvent(pe.getStatusDetail(), createAttachmentUrlTracking(pe.getAttachments())))
+                                .map(pe -> new NotificationEvent(pe.getStatusDetail(), createAttachmentUrlTracking(pe.getAttachments()), pe.getDeliveryFailureCause()))
                                 .collect(Collectors.toList()),
                         (existing, newList) -> {
                             existing.addAll(newList);
@@ -173,7 +173,7 @@ public class PaperTrackerSteps {
         responseOutput.getResults().sort(Comparator.comparing(PaperTrackerOutputsResponseResultsInner::getTrackingId));
         for (int j=0; j < responseOutput.getResults().size(); j++) {
             List<NotificationEvent> result2 = responseOutput.getResults().get(j).getOutputs().stream()
-                    .map(te -> new NotificationEvent(te.getStatusDetail(), createAttachmentUrlTracking(te.getAttachments())))
+                    .map(te -> new NotificationEvent(te.getStatusDetail(), createAttachmentUrlTracking(te.getAttachments()), te.getDeliveryFailureCause()))
                     .collect(Collectors.toCollection(ArrayList::new));
             mapOutput.put(j, result2);
         }
@@ -214,7 +214,7 @@ public class PaperTrackerSteps {
                             (pe1, pe2) -> pe1
                     )).values());
             List<NotificationEvent> notificationEventList = paperEventList.stream()
-                    .map(te -> new NotificationEvent(te.getStatusCode(), createAttachmentUrlTracking(te.getAttachments())))
+                    .map(te -> new NotificationEvent(te.getStatusCode(), createAttachmentUrlTracking(te.getAttachments()), te.getDeliveryFailureCause()))
                     .collect(Collectors.toCollection(ArrayList::new));
             mapTracking.put(j, notificationEventList);
         }
@@ -236,6 +236,7 @@ public class PaperTrackerSteps {
 
         for (String raw : rawList) {
             List<String> tags = new ArrayList<>();
+            String deliveryFailureCause = null;
 
             // 1. estrai info opzionali tra []
             Matcher optionalMatcher = optionalPattern.matcher(raw);
@@ -247,6 +248,9 @@ public class PaperTrackerSteps {
                         if (value.equalsIgnoreCase("7ZIP")) tags.add("safestorage://PN_PRINTED");
                         else if (value.equalsIgnoreCase("Plico") || value.equalsIgnoreCase("Indagine") || value.equalsIgnoreCase("AR"))
                             tags.add("safestorage://PN_EXTERNAL_LEGAL_FACTS-");
+                    }
+                    if (part.startsWith("FAILCAUSE:")) {
+                        deliveryFailureCause = part.substring(10).trim();
                     }
                 }
             }
@@ -270,7 +274,7 @@ public class PaperTrackerSteps {
             }
 
             // 5. crea NotificationEvent
-            NotificationEvent event = new NotificationEvent(base, tags);
+            NotificationEvent event = new NotificationEvent(base, tags, deliveryFailureCause);
 
             // 6. aggiungi duplicati nella mappa
             result.computeIfAbsent(attempt, k -> new ArrayList<>())
@@ -285,7 +289,7 @@ public class PaperTrackerSteps {
 
 
 
-
+/*
     private List<NotificationEvent> groupByDeliveryDetailCode(List<NotificationEvent> list) {
         return list.stream()
                 .collect(Collectors.toMap(
@@ -298,11 +302,11 @@ public class PaperTrackerSteps {
                 ))
                 .entrySet()
                 .stream()
-                .map(e -> new NotificationEvent(e.getKey(), e.getValue()))
+                .map(e -> new NotificationEvent(e.getKey(), e.getValue(), null))
                 .sorted()
                 .toList();
 
-    }
+    }*/
 
     private List<NotificationEvent> sanitizeList(List<NotificationEvent> list, List<String> deliveryDetailsList) {
         return list.stream().filter(item -> !deliveryDetailsList.contains(item.getDeliveryDetailCode())).collect(Collectors.toCollection(ArrayList::new));
@@ -328,6 +332,7 @@ public class PaperTrackerSteps {
     private static class NotificationEvent implements Comparable<NotificationEvent> {
         private String deliveryDetailCode;
         private List<String> attachmentUrlName;
+        private String failureCause;
 
         @Override
         public boolean equals(Object o) {
@@ -336,6 +341,10 @@ public class PaperTrackerSteps {
             NotificationEvent that = (NotificationEvent) o;
 
             if (!Objects.equals(deliveryDetailCode, that.deliveryDetailCode)) {
+                return false;
+            }
+
+            if (!Objects.equals(failureCause, that.failureCause)) {
                 return false;
             }
 
@@ -356,6 +365,10 @@ public class PaperTrackerSteps {
             }
 
             if (this.attachmentUrlName.size() != other.attachmentUrlName.size()) {
+                return false;
+            }
+
+            if (!Objects.equals(failureCause, other.failureCause)) {
                 return false;
             }
 
