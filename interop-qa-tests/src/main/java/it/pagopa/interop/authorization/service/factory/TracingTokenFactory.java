@@ -7,6 +7,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.services.kms.KmsClient;
 
 @Slf4j
 @Getter
@@ -15,8 +16,12 @@ public class TracingTokenFactory extends SessionTokenFactory {
     private static final String WELLKNOWN_URL = "https://tracing-qa-only-well-known-qa.s3.eu-south-1.amazonaws.com/.well-known/jwks.json";
     private Map<String, Map<String, List<String>>> cachedTokens = null;
 
-    public TracingTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
-        super(interopClientConfigs, configFileReader);
+    public TracingTokenFactory(
+        InteropClientConfigs interopClientConfigs,
+        ConfigFileReader configFileReader,
+        KmsClient kmsClient
+    ) {
+        super(interopClientConfigs, configFileReader, kmsClient);
     }
 
     @Override

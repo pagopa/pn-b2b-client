@@ -287,7 +287,7 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-receive
-    @e-service-template-riskAnalysis-add
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
