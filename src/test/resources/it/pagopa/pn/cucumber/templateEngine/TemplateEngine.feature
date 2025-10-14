@@ -532,9 +532,9 @@ Feature: Template engine
 
   @templateEngine # con flag courtesy message:ON - templates-engine-private/v1/templates/notification-aar-for-sms-digital
   Scenario: [TEMPLATE-ENGINE_38] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
-    When recupero il template per "avviso di cortesia SMS digitale" in lingua "italiana"
+    When recupero il template per "AVVISO DI CORTESIA SMS DIGITALE" in lingua "tedesca"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia SMS digitale" il file "text" sia in lingua "italiana"
+    And controllo che per il template "AVVISO DI CORTESIA SMS DIGITALE" il file "text" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "accedi a SEND"
 
   @templateEngine # con flag courtesy message:ON - templates-engine-private/v1/templates/notification-aar-for-email-digital

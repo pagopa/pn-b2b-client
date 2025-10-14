@@ -30,16 +30,16 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "Se accedi alla comunicazione entro 5 giorni dall’invio di questa email, eviterai una raccomandata cartacea e gli eventuali costi.";
+                yield "ll termine per il pagamento, se previsto, e per eventuali impugnazioni &egrave; indicato nei documenti.";
             }
             case "TEDESCA" -> {
-                yield "Solltest du keine PEC-Adresse haben und die Dokumente innerhalb von 5 Tagen (120 Stunden) nach Versand der Nachricht einsehen, erh&#228;ltst du keine Zustellung mittels Einschreibebrief.";
+                yield "Sie haben ab dem Zeitpunkt der Zustellung der Mitteilung 120 Tage Zeit, um die Dokumente online einzusehen.";
             }
             case "SLOVENA" -> {
-                yield "e nimate certificiranega elektronskega naslova PEC in si dokumente ogledate v roku 5 dni (120 ur) od po&#353;iljanja sporo&#269;ila, ne boste prejeli obvestila po priporo";
+                yield "Od trenutka, ko se obvestilo &scaron;teje za vro&ccaron;eno, imate na voljo 120 dni za ogled dokumentov na spletu. Kasneje ne bodo ve&ccaron;";
             }
             case "FRANCESE" -> {
-                yield "avez pas d&apos;adresse de courrier &eacute;lectronique certifi&eacute; (PEC) et que vous consultez les documents dans les 5 jours (120 heures) suivant l&apos;envoi du message, vous ne recevrez pas la notification par courrier recommand&eacute";
+                yield "Vous disposez de 120 jours &agrave; compter du moment où la communication est consid&eacute;r&eacute;e d&eacute;livr&eacute;e pour consulter les documents en ligne.";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
