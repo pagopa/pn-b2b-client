@@ -19,38 +19,339 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 #todo t cap
 
 
-  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_1] Creazione nuova copertura Radd tutti i campi compilati
-  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_2] Creazione nuova copertura Radd solo campi obbligatori
-  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_3] Errore Creazione nuova copertura Radd campi inesistenti
-  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_4] Errore Creazione nuova copertura Radd campi cap e locality vuoti
-  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_5] Errore Creazione nuova copertura Radd utente solo lettura
-  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_6] Errore Creazione nuova copertura Radd sede già creata
-
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_7] Verifica copertura Radd con tutti i campi compilati - light mode
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_8] Verifica copertura Radd con tutti i campi compilati - complete mode
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_9A] Verifica copertura Radd campi obbligatori - light mode
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_9B] Verifica copertura Radd campi obbligatori - complete mode
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_10] Errore Verifica copertura Radd cap e city inesistenti - complete/light mode
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_11] Errore Verifica copertura Radd search_mode inesistente
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_12] Errore Verifica copertura Radd cap e city vuoti - complete/light mode
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_13] Errore Verifica copertura Radd search_mode vuoto
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_14] Errore Verifica copertura Radd utente ruolo diverso  *** token casuale?
-
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_15A] Modifica copertura Radd tutti i campi compilati
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_15B] Modifica copertura Radd tutti i campi compilati e endValidity = startValidity
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_16] Modifica copertura Radd solo campi obbligatori
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_17] Modifica copertura Radd cap e locality inesistenti
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_18] Errore Modifica copertura Radd  campi opzionali inesistenti
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_19] Errore Modifica copertura Radd cap e locality vuoti
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_20] Errore Modifica copertura Radd startValidity maggiore di una endValidity
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_21] Errore Modifica copertura Radd endValidity minore di una startValidity
-  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_22] Errore Modifica copertura Radd utente solo lettura
-
-
-
 
   Scenario: [RADD_ANAGRAFICA] Testing Autenticazione con parametri
     Given l' utente con username "test@test.com" password "Test_Cognito_1.!" e clientId "77j22r1r812dt3vo8d4s985ap4" richiede e riceve un token valido tramite cognito
+
+
+  #                 *** CREAZIONE ***
+
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_CREAZIONE_1] Creazione nuova copertura Radd tutti i campi compilati
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "<cap>" attesi
+    Examples:
+      | cap   | locality | cadastralCode | province |
+      | 00100 | Roma     | H501          | RM       |
+#      | 20100 | Milano   | F205          | MI       |
+#      | 80100 | Napoli   | F839          | NA       |
+
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_CREAZIONE_2] Creazione nuova copertura Radd solo campi obbligatori
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "<cap>" attesi
+    Examples:
+      | cap   | locality | cadastralCode | province |
+      | 00100 | Roma     | null          | null     |
+
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_CREAZIONE_3] Errore Creazione nuova copertura Radd campi inesistenti o vuoti
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd con Errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+    Examples:
+      | cap    | cadastralCode | province |
+      | 80A00  | H501          | RM       |
+      | 80#00  | H501          | RM       |
+      | 001001 | H501          | RM       |
+      | 0 0100 | H5011         | RM       |
+      | NULL   | H5011         | RM       |
+
+      | 00100  | H5011         | RM       |
+      | 00100  | H50 1         | RM       |
+      | 00100  | H5            | RM       |
+
+      | 00100  | H501          | R M      |
+      | 00100  | H501          | RMA      |
+      | 00100  | H501          | R        |
+
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_CREAZIONE_4] Errore Creazione nuova copertura Radd locality vuoto
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd:
+      | cap   | locality   | cadastralCode   | province   |
+      | <cap> | <locality> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd con Errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+    Examples:
+      | cap   | locality | cadastralCode | province |
+      | 80100 | null     | H501          | RM       |
+
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_CREAZIONE_5] Errore Creazione nuova copertura Radd utente solo lettura
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | locality   | cadastralCode   | province   |
+      | <cap> | <locality> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd con Errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "403"
+    Examples:
+      | cap   | cadastralCode | province |
+      | 80100 | H501          | RM       |
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_6] Errore Creazione nuova copertura Radd sede già creata
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 80100 | H501          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "80100" attesi
+    And creo una nuova copertura Radd con Errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "409"
+
+  @capCoverageRadd # passare campi non obbligatori a null
+  Scenario: [RADD_API_COPERTURA_CAP_CREAZIONE_6B] Errore Creazione nuova copertura Radd sede già creata
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 80100 | H501          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "80100" attesi
+    And creo una nuova copertura Radd con Errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "409"
+
+
+#
+#
+#
+#
+#
+#
+#                       *** MODIFICA ***
+
+  @capCoverageRadd #rif 15A-15B-16
+  Scenario Outline: [RADD_API_COPERTURA_CAP_MODIFICA_15A] Modifica copertura Radd tutti i campi compilati
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 80100 | H501          | RM       |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+#And la risposta deve contenere la località aggiornata {string}
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  |
+      | 20100 | Milano   | null          | MI       | null          | null        |
+  #*Modifica copertura Radd tutti i campi compilati e endValidity = startValidity
+#*Modifica copertura Radd solo obbligatori
+
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_MODIFICA_18] Errore Modifica copertura Radd  campi opzionali inesistenti,
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap | cadastralCode | province |
+      | z   | z             | z        |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  |
+      | 20100 | Milano   | null          | MI       | null          | null        |
+  #campi opzionali inesistenti
+  #cap e locality vuoti
+  #startValidity maggiore di una endValidity
+  #endValidity minore di una startValidity
+
+  @capCoverageRadd
+  Scenario Outline: [RADD_API_COPERTURA_CAP_MODIFICA_22] Errore Modifica copertura Radd utente solo lettura
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap | cadastralCode | province |
+      | z   | z             | z        |
+    And creo una nuova copertura Radd
+
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "403"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  |
+      | 20100 | Milano   | null          | MI       | null          | null        |
+
+
+#                    *** VERIFICA ***
+
+# valutare se creare una random e lavorare su quella , o fare un inserimento iniziale e ignorare il 200 o 409
+
+  # valuta test dove inseriamo, cambiamo data e valutiamo la copertura più volte
+
+
+
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_7] Verifica copertura Radd con tutti i campi compilati - light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 00100 | H502          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "00100" attesi
+
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode | province | startValidity | endValidity |
+      | 00100 | H502          | RM       | 2025-10-13    | 2035-10-13  |
+    And invoco l'API di aggiornamento copertura cap Radd
+
+
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2    | addressRow | addressRow2 | cap   | city | city2 | pr | country |
+      | Mario Rossi | Via Roma 1 | null        | 00100 | /    | null  | RM | IT      |
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_8] Verifica copertura Radd con tutti i campi compilati - complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 00100 | H502          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "00100" attesi
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode | province | startValidity | endValidity |
+      | 00100 | H502          | RM       | 2025-10-13    | 2035-10-13  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2    | addressRow | addressRow2 | cap   | city | city2 | pr | country |
+      | Mario Rossi | Via Roma 1 | null        | 00100 | /    | null  | RM | IT      |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_9A] Verifica copertura Radd campi obbligatori - light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 00100 | H502          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "00100" attesi
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode | province | startValidity | endValidity |
+      | 00100 | H502          | RM       | 2025-10-13    | 2035-10-13  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | 00100 | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_9B] Verifica copertura Radd campi obbligatori - complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 00100 | H502          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "00100" attesi
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode | province | startValidity | endValidity |
+      | 00100 | H502          | RM       | 2025-10-13    | 2035-10-13  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | 00100 | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+
+
+  @capCoverageRadd #rif 10 - 12
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_10] Errore Verifica copertura Radd cap e city inesistenti - complete/light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 00100 | H502          | RM       |
+    And creo una nuova copertura Radd
+    And la response deve contenere la località e il cap "00100" attesi
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | cadastralCode | province | startValidity | endValidity |
+      | 00100 | H502          | RM       | 2025-10-13    | 2035-10-13  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2    | addressRow | addressRow2 | cap     | city     | city2 | pr | country |
+      | Mario Rossi | Via Roma 1 | null        | "<cap>" | "<city>" | null  | RM | IT      |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+#Verifica copertura Radd cap e city vuoti - complete/light mode
+    Examples:
+      | cap   | city |
+      | A12   | /    |
+      | 00100 | 123  |
+      | null  | /    |
+      | 00100 | null |
+
+
+
+#serch mode è un enum , valutare.....
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_11] Errore Verifica copertura Radd search_mode inesistente
+
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_13] Errore Verifica copertura Radd search_mode vuoto
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | 00100 | 123   | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd mode: NULL con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "404"
+
+
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_14] Errore Verifica copertura Radd utente ruolo diverso  *** token casuale?
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "TOKEN_NON_VALIDO"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2    | addressRow | addressRow2 | cap   | city | city2 | pr | country |
+      | Mario Rossi | Via Roma 1 | null        | 00100 | Roma | /  | RM | IT      |
+    And invoco l'API di verifica copertura cap Radd Complete mode con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "403"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   #  *** INSERIMENTO ***
@@ -112,7 +413,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_externalCodes    | EXT01QA       |
     Then l'operazione Radd V2 ha prodotto un errore con status code "400"
     Examples:
-      | descrizione                                                                      |
+      | descrizione                                                                                                                                                                                               |
       | "Ogni giorno porta con sé nuove opportunità, anche se spesso si nascondono dietro piccole sfide. Con pazienza e fiducia, ogni passo diventa crescita, e il percorso si riempie di significato autentico." |
 
 
