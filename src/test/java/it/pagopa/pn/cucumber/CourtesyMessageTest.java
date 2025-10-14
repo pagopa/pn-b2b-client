@@ -12,7 +12,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@ExcludeTags({"CM_FlagOFF","uat"})
-@IncludeTags({"courtesyMessage"})
+@ExcludeTags({"uat"})
+@IncludeTags({"courtesyMessage","CM_FlagOFF"})
 public class CourtesyMessageTest {
 }
