@@ -3,7 +3,9 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
@@ -74,12 +76,20 @@ public class DescriptorPublicationSteps {
     }
 
     @When("l'utente pubblica quel descrittore")
+    @When("l'utente pubblica l'e-service")
     public void userPublishDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getEServiceClient().publishDescriptor(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        publishDescriptor(
+            sharedStepsContext.getHttpCallExecutor(),
+            clientTokenConfigurator.getEServiceClient(),
+            sharedStepsContext.getEServicesCommonContext());
+    }
+
+    public static void publishDescriptor(IHttpExecutor httpExecutor, IEServiceClient client, EServicesCommonContext context) {
+        httpExecutor.performCall(
+                () -> client.publishDescriptor(
+                    context.getEserviceId(),
+                    context.getDescriptorId()
                 )
         );
     }

@@ -1,14 +1,18 @@
 package it.pagopa.interop.attribute.service.impl;
 
-import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import static java.util.function.Function.identity;
+
+import it.pagopa.interop.attribute.service.IM2MDeclaredAttributeClient;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttributeSeed;
+import java.util.List;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -16,19 +20,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.UUID;
-
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MAttributeClientImpl extends AbstractClient implements IM2MAttributeClient {
+public class M2MDeclaredAttributeClientImpl extends AbstractClient implements
+    IM2MDeclaredAttributeClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public M2MDeclaredAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.attributesApi = new AttributesApi(createApiClient("dummyBearer"));
@@ -47,20 +49,20 @@ public class M2MAttributeClientImpl extends AbstractClient implements IM2MAttrib
     }
 
     @Override
-    public CertifiedAttribute get(UUID id) {
+    public DeclaredAttribute get(UUID id) {
        return this.performOperation(SimpleOperation.of(
-               () -> this.attributesApi.getCertifiedAttribute(id),
-               res -> res
+           () -> this.attributesApi.getDeclaredAttribute(id),
+           identity()
        )).orElse(null);
     }
 
     @Override
-    public List<CertifiedAttribute> getAll() {
+    public List<DeclaredAttribute> getAll() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public UUID getId(CertifiedAttribute entity) {
+    public UUID getId(DeclaredAttribute entity) {
         return entity == null ? null : entity.getId();
     }
 
@@ -74,10 +76,10 @@ public class M2MAttributeClientImpl extends AbstractClient implements IM2MAttrib
     }
 
     @Override
-    public CertifiedAttribute create(CertifiedAttributeSeed agreementPayload) {
+    public DeclaredAttribute create(DeclaredAttributeSeed agreementPayload) {
         return this.performOperation(SimpleOperation.of(
-                () -> this.attributesApi.createCertifiedAttribute(agreementPayload),
-                res -> res
+            () -> this.attributesApi.createDeclaredAttribute(agreementPayload),
+            identity()
         )).orElse(null);
     }
 }

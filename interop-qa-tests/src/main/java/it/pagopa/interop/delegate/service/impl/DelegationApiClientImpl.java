@@ -1,5 +1,6 @@
 package it.pagopa.interop.delegate.service.impl;
 
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -27,11 +28,13 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     private final DelegationsApi delegationsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
+    private final PollingService pollingService;
 
-    public DelegationApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public DelegationApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, PollingService pollingService) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.delegationsApi = new DelegationsApi(createApiClient("dummyBearer"));
+        this.pollingService = pollingService;
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -47,13 +50,22 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     }
 
     @Override
-    public Delegation getDelegation(String delegationId) {
-        return delegationsApi.getDelegation(UUID.fromString(delegationId));
+    public Delegation getDelegation(UUID delegationId) {
+        return delegationsApi.getDelegation(delegationId);
     }
 
     @Override
     public File getDelegationContract(UUID delegationId, UUID contractId) {
         return delegationsApi.getDelegationContract(delegationId, contractId);
+    }
+
+    @Override
+    public void waitForState(UUID delegationId, DelegationState state) {
+        pollingService.makePolling(
+            () -> delegationsApi.getDelegationWithHttpInfo(delegationId),
+            res ->  res.getStatusCode().is2xxSuccessful() || res.getBody().getState().equals(state),
+            "La delega non è nello stato atteso '%s'".formatted(state)
+        );
     }
 
     @Override

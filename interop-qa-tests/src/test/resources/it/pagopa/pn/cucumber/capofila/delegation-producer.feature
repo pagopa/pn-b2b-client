@@ -78,7 +78,7 @@ Feature: Creazione di una delega in erogazione
       | support      | delegante | 403         |
 
   @sad-path @deleghe2
-  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
+  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
@@ -221,3 +221,85 @@ Feature: Creazione di una delega in erogazione
     Given l'utente è un "admin" di "PA2"
     Given l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL
     Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
+
+  # NOTA 30/07/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  @deleghe2
+  Scenario: [TC_CAPOFILA_PUB_1] La pubblicazione di un e-service da parte di un ente delegato all'erogazione conduce l'e-service allo stato WAITING_FOR_APPROVAL
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'ente "PA2" accetta la delega
+    And l'utente è un "admin" di "PA2"
+    When l'utente pubblica l'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+  # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  Scenario: [TC_CAPOFILA_APPROVE_1] Un utente ADMIN dell'ente delegante è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    When l'utente è un "admin" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 200
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "PUBLISHED"
+
+  # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
+  @deleghe2
+  Scenario: [TC_CAPOFILA_APPROVE_2] Un utente dell'ente delegante di livello inappropriato NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+
+    When l'utente è un "api" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "security" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "api,security" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "support" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+  # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
+  @deleghe2
+  Scenario: [TC_CAPOFILA_APPROVE_3] Un ente diverso dal delegante NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+
+    When l'utente è un "api" di "PA2"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "api" di "GSP"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+  # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  @deleghe2
+  Scenario: [TC_CAPOFILA_APPROVE_3_B] Il delegante NON può sospendere l'e-service se una delega è in corso
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    When l'utente sospende quel descrittore
+    Then si ottiene lo status code 403
+    And l'e-service è in stato "PUBLISHED"

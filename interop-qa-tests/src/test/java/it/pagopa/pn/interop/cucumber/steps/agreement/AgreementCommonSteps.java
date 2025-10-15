@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import static java.time.OffsetDateTime.now;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
@@ -78,6 +80,7 @@ public class AgreementCommonSteps {
             delegationId,
             null);
         sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementCreationTime(now());
     }
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")

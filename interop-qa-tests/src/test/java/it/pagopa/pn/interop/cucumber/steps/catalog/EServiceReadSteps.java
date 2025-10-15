@@ -19,6 +19,7 @@ public class EServiceReadSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId())
+
         );
     }
 }

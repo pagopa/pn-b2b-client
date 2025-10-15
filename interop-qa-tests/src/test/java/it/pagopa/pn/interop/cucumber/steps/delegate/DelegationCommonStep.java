@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -7,9 +9,11 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.catalog.CatalogCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.catalog.DescriptorPublicationSteps;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +28,19 @@ public class DelegationCommonStep {
     private final IdentityService identityService;
     private final IHttpExecutor httpCallExecutor;
     private final ITenantsApi tenantsApi;
+    private final BFFDataPreparationService dataPreparationService;
 
     public DelegationCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext,
-                                PollingService pollingService) {
+                                PollingService pollingService,
+                                BFFDataPreparationService dataPreparationService) {
         this.sharedStepsContext = sharedStepsContext;
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.pollingService = pollingService;
+        this.dataPreparationService = dataPreparationService;
     }
 
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
@@ -66,6 +73,64 @@ public class DelegationCommonStep {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /* Questo step è un condensato di molti degli step del test [TC_CAPOFILA_PUB_1] */
+    @Given("{string} ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando {string} come delegato")
+    public void createWFAEService(String producer, String delegate) {
+        // Il delegato dà la disponibilità a ricevere deleghe in erogazione
+        clientTokenConfigurator.setBearerToken(identityService.getToken(delegate, null));
+        DelegationCreateStep.setDelegationAvailability(
+            delegate,
+            producerStrategyUsing(tenantsApi),
+            true,
+            false,
+            identityService,
+            httpCallExecutor,
+            tenantsApi,
+            pollingService);
+
+        // Il delegante crea l'e-service e vi associa un'interfaccia
+        clientTokenConfigurator.setBearerToken(identityService.getToken(producer, null));
+        CatalogCommonSteps.createEServiceWithDescriptor(
+            "DRAFT",
+            dataPreparationService,
+            sharedStepsContext.getEServicesCommonContext());
+        dataPreparationService.addInterfaceToDescriptor(
+            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+            sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+
+        // Il delegante inoltra la richiesta di delega all'ente delegato
+        DelegationCreateStep.createDelegate(
+            producer,
+            delegate,
+            clientTokenConfigurator.getProducerDelegationsApiClient()::createProducerDelegation,
+            DelegationProxy.ofMainDelegation(sharedStepsContext.getDelegationCommonContext()),
+            identityService,
+            httpCallExecutor,
+            sharedStepsContext.getEServicesCommonContext(),
+            pollingService,
+            clientTokenConfigurator.getDelegationApiClient()
+        );
+
+        // Il delegato accetta la delega
+        clientTokenConfigurator.setBearerToken(identityService.getToken(delegate, null));
+        DelegationAcceptStep.approveProducerDelegation(
+            httpCallExecutor,
+            clientTokenConfigurator.getProducerDelegationsApiClient(),
+            clientTokenConfigurator.getDelegationApiClient(),
+            sharedStepsContext.getDelegationCommonContext(),
+            pollingService
+        );
+
+        // Il delegato pubblica l'e-service
+        DescriptorPublicationSteps.publishDescriptor(
+            httpCallExecutor,
+            clientTokenConfigurator.getEServiceClient(),
+            sharedStepsContext.getEServicesCommonContext());
+
+        // A questo punto l'e-service sarà in stato WAITING_FOR_APPROVAL
     }
 
     @Then("si ottiene lo status code {int}")
