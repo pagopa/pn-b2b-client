@@ -26,3 +26,13 @@ Feature: Lettura di un e-service
       | ente | ruolo        | risultato |
       | GSP  | security     |       404 |
       | PA1  | security     |       404 |
+
+  Scenario: [ES-READ-02] Un e-service può essere visionato anche da un ente diverso dal creatore
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+
+    When l'utente richiede la lettura di quell'e-service
+    Then si ottiene status code 200
+
+    When l'utente richiede la lettura di quel descrittore
+    Then si ottiene status code 200

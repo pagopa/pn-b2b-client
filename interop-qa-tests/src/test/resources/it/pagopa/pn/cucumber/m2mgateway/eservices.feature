@@ -176,3 +176,13 @@ Feature: Gestione degli eServices
       | ruolo-m2m |
       | m2m       |
       | m2m-admin |
+
+    Scenario: [M2M_ESERVICES_18] Un e-service può essere visionato anche da un ente diverso dal creatore
+      Given "PA1" ha già creato e pubblicato 1 e-services
+      And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+
+      When l'utente tenta di recuperare il record di eService creato
+      Then si ottiene lo status code 200
+
+      When l'utente tenta di recuperare il record di descriptor creato
+      Then si ottiene lo status code 200
