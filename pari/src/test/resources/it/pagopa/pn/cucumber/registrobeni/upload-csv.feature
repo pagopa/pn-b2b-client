@@ -111,7 +111,7 @@ Feature: PARI - Portale registro dei beni
       | 2310946          | AWM10014586GD       | <codice_prodotto>      | <categoria>      | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
-    Then si verifica che la lista di prodotti caricati non sia nulla e che sia ordinata in modo "asc"
+    Then si verifica che la lista di prodotti caricati non sia nulla e che sia ordinata in modo "brand,asc"
     Then si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo
   Examples:
       | categoria_csv       | codice_prodotto     | categoria         |
@@ -203,10 +203,12 @@ Feature: PARI - Portale registro dei beni
       | <codice_eprel>      | <codice_gtin>          | <codice_prodotto>       | <categoria>         | <paese>                   |
     Then si verifica che la risposta abbia:
       | status           | <status_res> |
+      | errorKey           | <errorKey> |
+      | productFileId           | <productFileId> |
     Examples:
-      | codice_eprel  | codice_gtin         | codice_prodotto     | categoria                          | paese     | status_res |
-      | 2413086       | RC382BSC0EU         | RC382BSC0EU         | Apparecchio di refrigerazione      | IT        | OK         |
-      | 1059484       | eiQINTWM149V2       | HWF90Elica          | Cappa da cucina                    |  IT       | KO         |
+      | codice_eprel  | codice_gtin         | codice_prodotto     | categoria                          | paese     | status_res | errorKey                    | productFileId |
+      | 2413086       | RC382BSC0EU         | RC382BSC0EU         | Apparecchio di refrigerazione      | IT        | OK         | NULL                        | NULL          |
+      | 1059484       | eiQINTWM149V2       | HWF90Elica          | Cappa da cucina                    |  IT       | KO         | product.invalid.file.report | NOT_NULL      |
 
   @produttore1
   Scenario Outline: [TC_UPLOAD_12] Verifica di un nuovo file CSV valido per Cappe da cucina
