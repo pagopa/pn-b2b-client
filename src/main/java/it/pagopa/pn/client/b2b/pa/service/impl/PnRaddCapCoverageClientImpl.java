@@ -28,7 +28,7 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
 
     public PnRaddCapCoverageClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.radd.alt.external.base-url}") String basePath,
-                                       @Value("${pn.externalChannels.base-url.pagopa}") String basePathPrivate
+                                       @Value("${pn.externalChannels.base-url}") String basePathPrivate
     ) {
         this.apiCapCoverage = new CoverageApi(newApiClientExternal(restTemplate, basePath, null));
         this.apiPrivateCoverage = new CoveragePrivateApi(newApiClientPrivate(restTemplate, basePathPrivate, null));
