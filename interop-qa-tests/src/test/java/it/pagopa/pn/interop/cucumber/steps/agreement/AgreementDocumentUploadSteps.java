@@ -22,8 +22,20 @@ public class AgreementDocumentUploadSteps {
         this.blobFileCreator = blobFileCreator;
     }
 
-    @When("l'utente carica un documento allegato a quella richiesta di fruizione con successo")
+    @When("l'utente carica un documento allegato a quella richiesta di fruizione")
     public void uploadAgreementAttachment() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String prettyName = "documento-test-qa";
+        Resource doc = new FileSystemResource("src/main/resources/dummy.pdf");
+        String name = FilenameUtils.getName(doc.getFilename());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
+                name, prettyName, doc)
+        );
+    }
+
+    @When("l'utente carica un documento allegato a quella richiesta di fruizione con successo")
+    public void successfullyUploadAgreementAttachment() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String prettyName = "documento-test-qa";
         OffsetDateTime now = OffsetDateTime.now();
