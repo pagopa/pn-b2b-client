@@ -20,8 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.time.LocalDate;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -52,7 +56,7 @@ public class CoperturaCapRaddSteps {
     private UpdateCoverageRequest updateRequest;
     private CheckCoverageResponse checkCoverageResponse;
 
-    private String tokenCognito;
+    private Map<String, Boolean> coverageMap = new HashMap<>();
 
     @Autowired
     public CoperturaCapRaddSteps(PnRaddCapCoverageClientImpl raddCapCoverageClient, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt, SettableAuthTokenRaddCognito settableAuthTokenRaddCognito) {
@@ -139,41 +143,22 @@ public class CoperturaCapRaddSteps {
         Map<String, String> data = dataTable.asMaps().get(0);
 
         this.cap = data.get("cap");
-        this.locality = this.randomLocality;
+
+        if (data.get("locality").equalsIgnoreCase("/"))
+            this.locality = this.randomLocality;
+        else
+            this.locality = toNullable(data.get("locality"));
 
         updateRequest = new UpdateCoverageRequest()
                 .cadastralCode(toNullable(data.get("cadastralCode")))
                 .province(toNullable(data.get("province")))
-//                .startValidity(toLocalDateNullable(data.get("startValidity")))
-//                .endValidity(toLocalDateNullable(data.get("endValidity")));
-                .startValidity(LocalDate.parse(data.get("startValidity")))
-                .endValidity(LocalDate.parse(data.get("endValidity")));
+                .startValidity(toNullable(data.get("startValidity")) != null
+                        ? toNullable(data.get("startValidity")).toString()
+                        : null)
+                .endValidity(toNullable(data.get("endValidity")) != null
+                        ? toNullable(data.get("endValidity")).toString()
+                        : null);
 
-    }
-
-//    @Then("setto i dati per aggiornare una copertura Radd:")
-//    public void setUpdateCoverageRequest(DataTable dataTable) {
-//        Map<String, String> data = dataTable.asMaps().get(0);
-//
-//        this.cap = data.get("cap");
-//        this.locality = this.randomLocality;
-//
-//        // Converto le date in stringhe ISO
-//        String start = LocalDate.parse(data.get("startValidity")).toString();
-//        String end   = LocalDate.parse(data.get("endValidity")).toString();
-//
-//        // Creo il DTO temporaneo
-//        updateRequestDTO = new UpdateCoverageRequestDTO(
-//                toNullable(data.get("cadastralCode")),
-//                toNullable(data.get("province")),
-//                start,
-//                end
-//        );
-//    }
-
-    private LocalDate toLocalDateNullable(String value) {
-        String val = toNullable(value);
-        return val != null ? LocalDate.parse(val, DATE_FORMAT) : null;
     }
 
     @Then("creo una nuova copertura Radd")
@@ -186,16 +171,6 @@ public class CoperturaCapRaddSteps {
         }, "Errore durante l'aggiornamento della copertura Radd");
     }
 
-//    @And("invoco l'API di aggiornamento copertura cap Radd")
-//    public void invokeUpdateCoverageApi() {
-//        Assertions.assertDoesNotThrow(() -> {
-//            response = raddCapCoverageClient.updateCoverageWithHttpInfo(cap, locality, updateRequest);
-//
-//            assertNotNull(response, "La response non deve essere null");
-//            assertTrue(response.getStatusCode().is2xxSuccessful(),
-//                    "La chiamata non ha restituito un codice 2xx. Codice ricevuto: " + response.getStatusCodeValue());
-//        }, "Errore durante l'aggiornamento della copertura Radd");
-//    }
 
     @And("invoco l'API di aggiornamento copertura cap Radd")
     public void invokeUpdateCoverageApi() {
@@ -213,6 +188,7 @@ public class CoperturaCapRaddSteps {
     @And("invoco l'API di aggiornamento copertura cap Radd con errore")
     public void invokeUpdateCoverageApiError() {
         try {
+            System.out.println("Request JSON per updateCoverage: " + updateRequest);
             response = raddCapCoverageClient.updateCoverageWithHttpInfo(cap, locality, updateRequest);
 
         } catch (HttpStatusCodeException e) {
@@ -251,12 +227,10 @@ public class CoperturaCapRaddSteps {
         String pr = toNullable(data.get("pr"));
         String country = toNullable(data.get("country"));
 
-
-        if(data.get("city").equalsIgnoreCase("/"))
+        if (data.get("city").equalsIgnoreCase("/"))
             city = this.locality;
         else
-             city = toNullable(data.get("city"));
-
+            city = toNullable(data.get("city"));
 
         checkCoverageRequest = new CheckCoverageRequest()
                 .nameRow2(nameRow2)
@@ -286,7 +260,7 @@ public class CoperturaCapRaddSteps {
             assertNotNull(checkCoverageResponse, "La response non deve essere null");
 //            assertTrue(checkCoverageResponse.getStatusCode().is2xxSuccessful(),
 //                    "La chiamata non ha restituito un codice 2xx. Codice ricevuto: " + response.getStatusCodeValue());
-        }, "Errore durante l'aggiornamento della copertura Radd");
+        }, "Errore durante la verifica della copertura Radd");
     }
 
     @And("invoco l'API di verifica copertura cap Radd Light mode con errore")
@@ -339,4 +313,80 @@ public class CoperturaCapRaddSteps {
         }
 
     }
+
+    @Given("leggo il file csv e calcolo la copertura attuale")
+    public void getCoverageFromFile() throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/TEST-cop-cap-radd.csv"))) {
+            String line;
+            boolean isHeader = true;
+
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+            OffsetDateTime now = OffsetDateTime.now();
+
+            while ((line = br.readLine()) != null) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+
+                String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                if (values.length < 4) continue;
+
+                String configKey = values[0].replace("\"", "").trim();
+                String startValidityStr = values[1].replace("\"", "").trim();
+                String endValidityStr = values[3].replace("\"", "").trim();
+
+                String zip = configKey.startsWith("ZIP##") ? configKey.substring(5) : configKey;
+
+                try {
+                    OffsetDateTime start = OffsetDateTime.parse(startValidityStr, formatter);
+                    OffsetDateTime end = endValidityStr.isEmpty()
+                            ? OffsetDateTime.parse("9999-12-31T00:00:00Z", formatter)
+                            : OffsetDateTime.parse(endValidityStr, formatter);
+
+                    boolean isActive = (now.isEqual(start) || now.isAfter(start)) &&
+                            (now.isEqual(end) || now.isBefore(end));
+
+                    coverageMap.put(zip, isActive);
+                } catch (Exception e) {
+                    System.err.println("Errore parsing per riga: " + configKey + " → " + e.getMessage());
+                }
+            }
+        }
+
+        System.out.println("Mappa copertura creata con " + coverageMap.size() + " elementi.");
+        coverageMap.forEach((k, v) -> System.out.println(k + " = " + v));
+    }
+
+    @Then("verifico la copertura Radd dai dati del csv")
+    public void setCheckCoverageRequest() {
+
+        Map<String, String> report = new HashMap<>();
+
+        coverageMap.forEach((cap, expectedCoverage) -> {
+
+            CheckCoverageRequest checkCoverageRequest = new CheckCoverageRequest()
+                    .cap(cap);
+                    //.city("CITY");
+
+            CheckCoverageResponse response = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest);
+
+            boolean actualCoverage = response.getHasCoverage() != null && response.getHasCoverage();
+
+            if (expectedCoverage && actualCoverage) {
+                report.put(cap, "OK");
+            } else {
+                report.put(cap, "KO");
+            }
+        });
+        System.out.println("===== REPORT COPERTURA RADD =====");
+        report.forEach((cap, status) -> System.out.println(cap + " -> " + status));
+
+        boolean hasKO = report.values().stream().anyMatch(status -> "KO".equals(status));
+        if (hasKO) {
+            throw new AssertionError("Almeno un CAP non ha la copertura prevista. Report: " + report);
+        }
+
+    }
+
 }

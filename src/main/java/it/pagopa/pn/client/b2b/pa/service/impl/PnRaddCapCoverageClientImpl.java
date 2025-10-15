@@ -24,17 +24,14 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
     private final CoverageApi apiCapCoverage;
-
     private final CoveragePrivateApi apiPrivateCoverage;
 
-    private String tokenCognito;
-
     public PnRaddCapCoverageClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.radd.alt.external.base-url}") String basePath
-
+                                       @Value("${pn.radd.alt.external.base-url}") String basePath,
+                                       @Value("${pn.externalChannels.base-url.pagopa}") String basePathPrivate
     ) {
         this.apiCapCoverage = new CoverageApi(newApiClientExternal(restTemplate, basePath, null));
-        this.apiPrivateCoverage = new CoveragePrivateApi(newApiClientPrivate(restTemplate, basePath, null));
+        this.apiPrivateCoverage = new CoveragePrivateApi(newApiClientPrivate(restTemplate, basePathPrivate, null));
     }
 
 
@@ -45,10 +42,9 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.ApiClient newApiClientPrivate(RestTemplate restTemplate, String basePath, String token) {
+    private static it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.ApiClient newApiClientPrivate(RestTemplate restTemplate, String basePathPrivate, String token) {
         it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.ApiClient newApiClient = new it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + token);
+        newApiClient.setBasePath(basePathPrivate);
         return newApiClient;
     }
 
@@ -56,7 +52,7 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
     public void selectRaddista(String token) {
 
         this.apiCapCoverage.getApiClient().addDefaultHeader("Authorization", "Bearer " + token);
-        this.apiPrivateCoverage.getApiClient().addDefaultHeader("Authorization", "Bearer " + token);
+
     }
 
     @Override
@@ -66,12 +62,12 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
 
     @Override
     public Coverage updateCoverage(String cap, String locality, UpdateCoverageRequest updateCoverageRequest) throws RestClientException {
-        return this.apiCapCoverage.updateCoverage(cap,locality,updateCoverageRequest);
+        return this.apiCapCoverage.updateCoverage(cap, locality, updateCoverageRequest);
     }
 
     @Override
     public CheckCoverageResponse checkCoverage(SearchMode searchMode, CheckCoverageRequest checkCoverageRequest) throws RestClientException {
-        return apiPrivateCoverage.checkCoverage(searchMode, checkCoverageRequest)  ;
+        return apiPrivateCoverage.checkCoverage(searchMode, checkCoverageRequest);
     }
 
     @Override

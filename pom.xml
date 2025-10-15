@@ -392,6 +392,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                                 <typeMapping>Object=byte[]</typeMapping>
+                                <typeMapping>LocalDate=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/10c07296a990e16b3e7265b6370a65a66488cd2b/docs/openapi/pn-radd-alt-coverage-external.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
