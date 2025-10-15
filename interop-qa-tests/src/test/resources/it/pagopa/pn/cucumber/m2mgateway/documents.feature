@@ -118,6 +118,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
     Then si ottiene lo status code 404
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And è presente un'interfaccia per l'e-service
 
   @m2m-parte2-agosto-rilascio1
