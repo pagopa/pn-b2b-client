@@ -6,7 +6,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject6;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject7;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
@@ -70,7 +70,7 @@ public class DataPreparationService {
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject6 inlineObject = new InlineObject6().addUserIdsItem(userId);
+        InlineObject7 inlineObject = new InlineObject7().addUserIdsItem(userId);
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, inlineObject)),
                 res -> !res.is5xxServerError(),
