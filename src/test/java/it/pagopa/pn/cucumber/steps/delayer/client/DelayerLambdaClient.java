@@ -2,8 +2,11 @@ package it.pagopa.pn.cucumber.steps.delayer.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -14,6 +17,12 @@ public class DelayerLambdaClient {
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String lambdaName;
+
+    @Data
+    public static class SenderLimitResult {
+        private final List<DelayerSenderLimit> items;
+        private final String lastEvaluatedKey;
+    }
 
     public DelayerLambdaClient(LambdaInvoker lambdaInvoker, String lambdaName) {
         this.lambdaInvoker = lambdaInvoker;
@@ -129,6 +138,73 @@ public class DelayerLambdaClient {
         }
 
         return new ArrayList<>(found);
+    }
+
+    public SenderLimitResult getSenderLimit(String deliveryDate, String province, String lastEvaluatedKey) {
+        try {
+            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
+                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
+                    : new String[]{deliveryDate, province};
+
+            String response = invoke("GET_SENDER_LIMIT", params);
+            JsonNode body = extractBody(response);
+
+            List<DelayerSenderLimit> items = new ArrayList<>();
+            if (body.has("items") && body.get("items").isArray()) {
+                for (JsonNode node : body.get("items")) {
+                    items.add(new DelayerSenderLimit(node));
+                }
+            }
+
+            JsonNode lekNode = body.path("lastEvaluatedKey");
+            String lek = lekNode.isMissingNode() || lekNode.isEmpty() ? null : lekNode.toString();
+
+            return new SenderLimitResult(items, lek);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante GET_SENDER_LIMIT per provincia %s e data %s"
+                    .formatted(province, deliveryDate), e);
+        }
+    }
+
+    public List<DelayerSenderLimit> pollSenderLimit(String deliveryDate, String province, String lastEvaluatedKey, int maxAttempts, int sleepMillis) throws Exception {
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            SenderLimitResult result = getSenderLimit(deliveryDate, province, lastEvaluatedKey);
+
+            if (!result.getItems().isEmpty()) {
+                return result.getItems();
+            }
+
+            Thread.sleep(sleepMillis);
+        }
+
+        log.debug("Polling esaurito per GET_SENDER_LIMIT su provincia {} e data {}", province, deliveryDate);
+        return Collections.emptyList();
+    }
+
+    public List<DelayerSenderLimit> pollSenderLimitUntilCondition(String deliveryDate, String province, String lastEvaluatedKey, int maxAttempts, int sleepMillis, SenderLimitCondition condition) throws Exception {
+
+        long startTime = System.currentTimeMillis();
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            List<DelayerSenderLimit> items = getSenderLimit(deliveryDate, province, lastEvaluatedKey).getItems();
+
+            log.info("Tentativo {} - Recuperati {} senderLimit per provincia {} e data {}",
+                    attempt, items.size(), province, deliveryDate);
+
+            if (condition.test(items)) {
+                long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+                log.info("Condizione soddisfatta dopo {} tentativi ({} secondi)", attempt, elapsedSeconds);
+                return items;
+            }
+
+            if (attempt < maxAttempts) {
+                Thread.sleep(sleepMillis);
+            }
+        }
+
+        throw new RuntimeException("Condizione non soddisfatta dopo %d tentativi (sleep=%d ms)"
+                .formatted(maxAttempts, sleepMillis));
     }
 
     private String buildPayload(String operationType, String... parameters) {

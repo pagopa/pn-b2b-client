@@ -1,5 +1,9 @@
 package it.pagopa.pn.cucumber.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -138,4 +142,62 @@ public class FileUtils {
             writeCsv(pathRelativo, righeModificate);
         }
     }
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Legge un file JSON dal classpath (src/test/resources) e lo restituisce come JsonNode.
+     * @param pathRelativo path relativo all'interno di src/test/resources (es. "data/miofile.json")
+     * @return JsonNode radice del JSON
+     */
+    public static JsonNode readJson(String pathRelativo) {
+        File file = new File("src/test/resources/" + pathRelativo);
+
+        try (InputStream in = new FileInputStream(file)) {
+            return objectMapper.readTree(in);
+        } catch (Exception e) {
+            System.err.println("Errore durante la lettura del file JSON: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Legge un file JSON in modo thread-safe dal classpath (src/test/resources).
+     * @param pathRelativo path relativo all'interno di src/test/resources (es. "data/miofile.json")
+     * @return JsonNode radice del JSON
+     */
+    public static JsonNode readJsonSafe(String pathRelativo) {
+        synchronized (getFileLock(pathRelativo)) {
+            return readJson(pathRelativo);
+        }
+    }
+
+    /**
+     * Legge un file JSON dal classpath e lo deserializza in una classe Java.
+     * @param pathRelativo path relativo a src/test/resources
+     * @param valueType classe target
+     * @return istanza della classe deserializzata
+     */
+    public static <T> T readJsonAs(String pathRelativo, Class<T> valueType) {
+        File file = new File("src/test/resources/" + pathRelativo);
+
+        try (InputStream in = new FileInputStream(file)) {
+            return objectMapper.readValue(in, valueType);
+        } catch (Exception e) {
+            System.err.println("Errore durante la deserializzazione del file JSON: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Versione thread-safe di readJsonAs.
+     */
+    public static <T> T readJsonAsSafe(String pathRelativo, Class<T> valueType) {
+        synchronized (getFileLock(pathRelativo)) {
+            return readJsonAs(pathRelativo, valueType);
+        }
+    }
+
 }
