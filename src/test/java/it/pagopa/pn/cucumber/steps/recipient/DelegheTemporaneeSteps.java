@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.Mandate
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,12 @@ public class DelegheTemporaneeSteps {
 
 
     //TODO delegante potrebbe essere superfluo
-    @When("{string} viene temporaneamente delegato da {string} passando {string}")
-    public void creaDelegaTemporanea(String delegate, String delegator, String inputParamsType) {
+    @When("{destinatario} viene temporaneamente delegato da {string} passando {string}")
+    public void creaDelegaTemporanea(Destinatario delegate, String delegator, String inputParamsType) {
 
         MandateCreationRequest mandateCreationRequest = new MandateCreationRequest();
         mandateCreationRequest.setAarQrCodeValue(getQrCodeCreationRequest(inputParamsType));
-        String taxId = "RSSMRA95A58H501Z";//TODO, cambiare in base a nome delegato
+        String taxId = delegate.getTaxId();
         mandateAppIoClient.createIOMandate(
                 taxId, null, null, null, null,
                 null, null, null, null, null,
@@ -57,32 +58,4 @@ public class DelegheTemporaneeSteps {
             default -> qrCode;
         };
     }
-//        setBearerToken(delegator);
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        MandateDto mandate = new MandateDto()
-//                .delegator(getUserDtoByUser(delegator))
-//                .delegate(getUserDtoByUser(delegate))
-//                .verificationCode(verificationCode)
-//                .datefrom(sdf.format(new Date()))
-//                .visibilityIds(new LinkedList<>())
-//                .status(MandateDto.StatusEnum.PENDING)
-//                .dateto(sdf.format(DateUtils.addDays(new Date(), 1)));
-//
-//        System.out.println("MANDATE: " + mandate);
-//        try {
-//            webMandateClient.createMandate(mandate);
-//        } catch (HttpStatusCodeException e) {
-//            this.notificationError = e;
-//        }
-//    }
-//
-//    private boolean setBearerToken(String user) {
-//        return switch (user.trim()) {
-//            case MARIO_CUCUMBER -> mandateIoClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-//            case MARIO_GHERKIN -> mandateIoClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-//            case GHERKIN_SRL -> mandateIoClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-//            case CUCUMBER_SPA -> mandateIoClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-//            default -> throw new IllegalArgumentException();
-//        };
-//    }
 }

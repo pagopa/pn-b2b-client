@@ -11,7 +11,7 @@ Feature: Deleghe Temporanee 15755
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Given imposto lo iun di SharedSteps a "YEUR-EPTR-NKEM-202510-P-1" e la pa a "Comune_Multi"
     And viene generato il QR Code corretto relativo alla notifica appena creata
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
     Then l'operazione di delega temporanea restituisce codice "200"
     When la delega temporanea viene accettata da "Mario Gherkin"
     Then "Mario Gherkin" può visualizzare il dettaglio della notifica
@@ -39,7 +39,7 @@ Feature: Deleghe Temporanee 15755
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code corretto relativo alla notifica appena creata
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
     Then l'operazione di delega temporanea restituisce codice "200"
     When la delega temporanea viene accettata da "Mario Gherkin"
     #TODO scrivere meglio, il senso è che l'api /mandate/api/v1/mandates-by-delegate deve mostrare solo quelle permanenti
@@ -61,28 +61,28 @@ Feature: Deleghe Temporanee 15755
     #/mandate/api/v1/io/mandate
     And viene generato il QR Code corretto relativo alla notifica appena creata
     #3
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "QRCODE NON VALIDO"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "QRCODE NON VALIDO"
     Then l'operazione di delega temporanea restituisce codice "400"
     #4
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "QRCODE INESISTENTE"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "QRCODE INESISTENTE"
     Then l'operazione di delega temporanea restituisce codice "400"
     #5
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "HEADER E BODY VUOTI"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "HEADER E BODY VUOTI"
     Then l'operazione di delega temporanea restituisce codice "401"
     #6
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "HEADER CON PARAMETRI OPZIONALI VUOTI"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "HEADER CON PARAMETRI OPZIONALI VUOTI"
     Then l'operazione di delega temporanea restituisce codice "400"
     #7 TODO (DELEGA TEMP GIA' ESISTENTE)
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber""
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber""
     Then l'operazione di delega temporanea restituisce codice "400"
     #8 (DELEGATO COINCIDE CON DESTINATARIO)
     When "Mario Cucumber" viene temporaneamente delegato da "Mario Cucumber"
     Then l'operazione di delega temporanea restituisce codice "409"
     #9 TODO (PRIMA SETTARE TOKEN NON VALIDO)...inoltre, perchè 401 e non 403 ?
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber"
     Then l'operazione di delega temporanea restituisce codice "401"
     #38
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber" passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
     Then l'operazione di delega temporanea restituisce codice "403"
 
   @delegheTemporanee
@@ -92,7 +92,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When "Mario Gherkin" viene temporaneamente delegato da "Mario Cucumber"
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber"
     And l'operazione di delega temporanea restituisce codice "200"
     #14
     And la delega temporanea viene accettata da "Mario Gherkin" passando "MANDATE ID INESISTENTE"

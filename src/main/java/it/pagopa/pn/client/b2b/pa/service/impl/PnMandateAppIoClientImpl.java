@@ -32,7 +32,7 @@ public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
     private final AppIoPnMandateCreateApi appIoMandateApi;
 
     public PnMandateAppIoClientImpl(RestTemplate restTemplate,
-                                    @Value("${pn.external.dest.base-url}") String basePath,
+                                    @Value("${pn.appio.externa.base-url.pagopa}") String basePath,
                                     @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                     @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                     @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
