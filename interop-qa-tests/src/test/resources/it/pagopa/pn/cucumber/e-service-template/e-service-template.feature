@@ -221,7 +221,7 @@ Feature: Test API of e-service template
   # TODO accorpabile allo scenario precedente facendo in modo che le modifiche alla versione includano gli attributi
     # e che la verifica finale delle modifiche fatta includa gli attributi
   @happy-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-017-ATT] La modifica degli attributi di una versione di un e-service template in stato DRAFT può essere effettuata da un ente in veste di ADMIN o API usando l'API generica
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1762,7 +1762,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @happy-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-128-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1782,7 +1782,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @happy-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-128-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1803,7 +1803,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1821,7 +1821,7 @@ Feature: Test API of e-service template
       | support  |
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1840,7 +1840,7 @@ Feature: Test API of e-service template
       | support  |
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-130] La modifica degli attributi di una versione di un e-service template in stato DRAFT non può essere effettuata
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1851,7 +1851,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-131-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1864,7 +1864,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-131-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1878,7 +1878,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-132-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente diverso dal creatore del template
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1891,7 +1891,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-132-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1912,7 +1912,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-134] La modifica degli attributi di una versione inesistente di un e-service template non può essere effettuata
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
