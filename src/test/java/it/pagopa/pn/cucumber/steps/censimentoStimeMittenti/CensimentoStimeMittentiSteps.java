@@ -9,9 +9,14 @@ import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
 import it.pagopa.pn.cucumber.utils.FileUtils;
+import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -20,13 +25,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
 public class CensimentoStimeMittentiSteps {
     public static final int MAX_ATTEMPTS = 10;
     public static final int SLEEP_MILLIS = 500;
+
     private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
+
+    @Autowired
+    public CensimentoStimeMittentiSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
+        this.context = new StimeMittentiContext();
+        this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
+    }
 
     @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia {string}")
     public void fetchSenderLimitUntilCondition(String province) {
@@ -43,7 +56,7 @@ public class CensimentoStimeMittentiSteps {
                     }
                     return ok;
                 });
-            }  catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {
                 Assertions.assertThat(missing).as("Stime mittenti mancanti").isEmpty();
             } catch (Exception e) {
                 throw new RuntimeException("Errore inatteso durante il polling", e);
@@ -66,7 +79,7 @@ public class CensimentoStimeMittentiSteps {
 
         List<LocalDate> mondays = DelayerSenderLimitUtils.getMondaysBetween(da, a, false, false);
 
-        for(LocalDate monday : mondays) {
+        for (LocalDate monday : mondays) {
             List<DelayerSenderLimit> limits = lambdaClient.pollSenderLimit(monday.toString(), provincia, null, attempt, sleepMillis);
             context.actual.senderLimits.addAll(limits);
         }
@@ -74,6 +87,7 @@ public class CensimentoStimeMittentiSteps {
 
     @When("vengono applicati localmente i seguenti moduli commessa per la provincia {string}:")
     public void calculateSenderLimitByCommessa(String provincia, DataTable paths) {
+        var provaPaths = paths.asList();
         List<ModuloCommessa> commesse = paths.asList().stream()
                 .map(path -> FileUtils.readJsonAsSafe(path, ModuloCommessa.class))
                 .toList();
