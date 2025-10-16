@@ -295,6 +295,9 @@ Feature: Invio messaggi cortesia e2e
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_12] Verifica successione elementi - Invio DIGITALE con SEND, cortesia TPP solo PF
     Given si predispone addressbook per l'utente "Mario Gherkin"
     Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -423,7 +426,7 @@ Feature: Invio messaggi cortesia e2e
     Given si predispone addressbook per l'utente "Dino Sauro"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Dino Sauro"
     Then viene generata una nuova notifica
       | subject | invio notifica a Sauro Dino |
 
@@ -474,13 +477,14 @@ Feature: Invio messaggi cortesia e2e
 
 
   #@courtesyMessage #rif srs 41 TODO ottenere l'idirizzo cf@pec.it
-  @addressBook1 @courtesyMessage @cleanAddressBook #in-test
+  #@addressBook1 @courtesyMessage @cleanAddressBook #in-test
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_19] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC da RN, cortesia APPIO per PF UAT
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
     And destinatario
       | denomination    | Matteo Rossi     |
-      | taxId           | EEEEEE00E00E000B  |
+      | taxId           | AAAAAA00A00A000C  |
+      | recipientType   | PF                 |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
       #| physicalAddress_address | Via@ok_AR        |
