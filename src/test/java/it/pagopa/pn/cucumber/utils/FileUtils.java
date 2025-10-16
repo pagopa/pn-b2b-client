@@ -2,6 +2,8 @@ package it.pagopa.pn.cucumber.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 
 import java.io.*;
@@ -15,6 +17,9 @@ import java.util.function.Function;
 public class FileUtils {
 
     private static final Map<String, Object> fileLocks = new ConcurrentHashMap<>();
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule()) // supporto per Instant, LocalDate, ecc.
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private static Object getFileLock(String pathRelativo) {
         return fileLocks.computeIfAbsent(pathRelativo, k -> new Object());
@@ -143,8 +148,6 @@ public class FileUtils {
         }
     }
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
     /**
      * Legge un file JSON dal classpath (src/test/resources) e lo restituisce come JsonNode.
      * @param pathRelativo path relativo all'interno di src/test/resources (es. "data/miofile.json")
@@ -180,14 +183,27 @@ public class FileUtils {
      * @return istanza della classe deserializzata
      */
     public static <T> T readJsonAs(String pathRelativo, Class<T> valueType) {
-        File file = new File("src/test/resources/" + pathRelativo);
-
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = resolveInputStream(pathRelativo)) {
+            if (in == null) {
+                throw new FileNotFoundException("File non trovato: " + pathRelativo);
+            }
             return objectMapper.readValue(in, valueType);
         } catch (Exception e) {
-            System.err.println("Errore durante la deserializzazione del file JSON: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Errore durante la deserializzazione del file JSON: " + pathRelativo, e);
+        }
+    }
+
+    private static InputStream resolveInputStream(String path) throws FileNotFoundException {
+        if (path.startsWith("classpath:")) {
+            // rimuovo il prefisso "classpath:" e l'eventuale "/" iniziale
+            String cleanPath = path.replace("classpath:", "").replaceFirst("^/", "");
+            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(cleanPath);
+            if (in == null) {
+                throw new FileNotFoundException("Risorsa non trovata sul classpath: " + cleanPath);
+            }
+            return in;
+        } else {
+            return new FileInputStream(new File(path));
         }
     }
 
