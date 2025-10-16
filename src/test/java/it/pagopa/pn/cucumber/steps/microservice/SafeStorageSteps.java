@@ -278,7 +278,7 @@ public class SafeStorageSteps {
             loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
 
         } catch (HttpClientErrorException httpExc) {
-            indicizzazioneStepsPojo.setHttpException(httpExc);
+           throw new RuntimeException(httpExc);
         }
     }
 

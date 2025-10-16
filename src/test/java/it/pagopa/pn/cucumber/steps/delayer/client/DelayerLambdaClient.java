@@ -182,7 +182,7 @@ public class DelayerLambdaClient {
         return Collections.emptyList();
     }
 
-    public List<DelayerSenderLimit> pollSenderLimitUntilCondition(String deliveryDate, String province, String lastEvaluatedKey, int maxAttempts, int sleepMillis, SenderLimitCondition condition) throws Exception {
+    public void pollSenderLimitUntilCondition(String deliveryDate, String province, String lastEvaluatedKey, int maxAttempts, int sleepMillis, SenderLimitCondition condition) throws Exception {
 
         long startTime = System.currentTimeMillis();
 
@@ -195,7 +195,7 @@ public class DelayerLambdaClient {
             if (condition.test(items)) {
                 long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
                 log.info("Condizione soddisfatta dopo {} tentativi ({} secondi)", attempt, elapsedSeconds);
-                return items;
+                return;
             }
 
             if (attempt < maxAttempts) {
@@ -203,7 +203,7 @@ public class DelayerLambdaClient {
             }
         }
 
-        throw new RuntimeException("Condizione non soddisfatta dopo %d tentativi (sleep=%d ms)"
+        throw new NoSuchElementException("Condizione non soddisfatta dopo %d tentativi (sleep=%d ms)"
                 .formatted(maxAttempts, sleepMillis));
     }
 

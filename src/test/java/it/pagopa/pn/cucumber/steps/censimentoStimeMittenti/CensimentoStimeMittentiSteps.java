@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
@@ -10,11 +11,14 @@ import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -24,14 +28,26 @@ public class CensimentoStimeMittentiSteps {
     private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
 
-    @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti")
-    public void fetchSenderLimitUntilCondition() throws Exception {
+    @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia {string}")
+    public void fetchSenderLimitUntilCondition(String province) {
+        List<DelayerSenderLimit> missing = new ArrayList<>();
+        Assertions.assertThat(context.province).as("Confronto di actual ed expected su province diverse").isEqualTo(province);
+
         for (DelayerSenderLimit senderLimit : context.expected.senderLimits) {
-            lambdaClient.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), context.province, null, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
-                boolean ok = actual.contains(senderLimit);
-                if (!ok) log.info("SenderLimit mancante: {}", senderLimit);
-                return ok;
-            });
+            try {
+                lambdaClient.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), province, null, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
+                    boolean ok = actual.contains(senderLimit);
+                    if (!ok) {
+                        log.info("SenderLimit mancante: {}", senderLimit);
+                        missing.add(senderLimit);
+                    }
+                    return ok;
+                });
+            }  catch (NoSuchElementException e) {
+                Assertions.assertThat(missing).as("Stime mittenti mancanti").isEmpty();
+            } catch (Exception e) {
+                throw new RuntimeException("Errore inatteso durante il polling", e);
+            }
         }
     }
 
@@ -43,6 +59,7 @@ public class CensimentoStimeMittentiSteps {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-yyyy");
         YearMonth da = YearMonth.parse(meseAnnoDa, formatter);
         YearMonth a = YearMonth.parse(meseAnnoA, formatter);
+        context.actual.senderLimits.clear();
         context.da = da;
         context.a = a;
         context.province = provincia;
@@ -55,20 +72,13 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
+    @When("vengono applicati localmente i seguenti moduli commessa per la provincia {string}:")
+    public void calculateSenderLimitByCommessa(String provincia, DataTable paths) {
+        List<ModuloCommessa> commesse = paths.asList().stream()
+                .map(path -> FileUtils.readJsonAsSafe(path, ModuloCommessa.class))
+                .toList();
 
-    @When("viene applicato localmente il nuovo modulo commessa {string}")
-    public void calculateSenderLimitByCommessa(String path) {
-        ModuloCommessa mc = FileUtils.readJsonAsSafe(path, ModuloCommessa.class);
-        YearMonth periodoRiferimento = YearMonth.parse(mc.getPeriodoRiferimento());
-
-        if(periodoRiferimento.isBefore(context.da) || periodoRiferimento.isAfter(context.a))
-            throw new IllegalArgumentException("Periodo di riferimento nel modulo commessa invalido");
-
-        context.moduloCommessa = mc;
-
-        List<DelayerSenderLimit> newMonthSenderLimits = DelayerSenderLimitUtils.calculateSenderLimitByCommessa(mc);
-
-        // Bisogna concatenare le nuove stime mittenti per questo mese con le actual
-        context.expected.senderLimits = DelayerSenderLimitUtils.calculateSenderLimitByCommessa(mc);
+        context.applyCommesseInExpected(provincia, commesse.toArray(new ModuloCommessa[0]));
     }
+
 }

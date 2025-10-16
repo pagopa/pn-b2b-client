@@ -1,10 +1,17 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import lombok.Data;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils.countDaysInMonthWeek;
 
 @Data
 public class ModuloCommessa {
@@ -19,6 +26,39 @@ public class ModuloCommessa {
     private Instant lastUpdate;
 
     private List<Prodotto> prodotti;
+
+    public List<DelayerSenderLimit> generateSenderLimits(List<LocalDate> mondays, String provincia) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-yyyy");
+        YearMonth yearMonth = YearMonth.parse(this.periodoRiferimento, formatter);
+        int giorniMeseTarget = yearMonth.lengthOfMonth();
+
+        List<DelayerSenderLimit> results = new ArrayList<>();
+
+        for (LocalDate lunedi : mondays) {
+            int giorniValidi = countDaysInMonthWeek(lunedi, yearMonth);
+            if (giorniValidi == 0) continue;
+
+            this.prodotti.stream()
+                    .filter(p -> !"digitale".equalsIgnoreCase(p.getId()))
+                    .forEach(prodotto -> {
+                        int valoreTotale = prodotto.getValoreTotale();
+                        int valorePerGiorno = valoreTotale / giorniMeseTarget;
+                        int weeklyEstimate = valorePerGiorno * giorniValidi;
+
+                        DelayerSenderLimit limit = new DelayerSenderLimit();
+                        limit.setProductType(prodotto.getId());
+                        limit.setDeliveryDate(lunedi.toString());
+                        limit.setMonthlyEstimate(valoreTotale);
+                        limit.setWeeklyEstimate(weeklyEstimate);
+                        limit.setPaId(this.idEnte);
+                        limit.setPk(this.idEnte + "~" + provincia + "~" + prodotto.getId());
+
+                        results.add(limit);
+                    });
+        }
+
+        return results;
+    }
 
     @Data
     public static class Prodotto {

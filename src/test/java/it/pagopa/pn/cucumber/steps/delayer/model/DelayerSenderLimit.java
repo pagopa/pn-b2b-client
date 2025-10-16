@@ -26,4 +26,15 @@ public class DelayerSenderLimit {
         this.productType = node.path("productType").asText();
         this.province = node.path("province").asText();
     }
+
+    public DelayerSenderLimit(DelayerSenderLimit original) {
+        this.pk = original.pk;
+        this.deliveryDate = original.deliveryDate;
+        this.weeklyEstimate = original.weeklyEstimate;
+        this.monthlyEstimate = original.monthlyEstimate;
+        this.originalEstimate = original.originalEstimate;
+        this.paId = original.paId;
+        this.productType = original.productType;
+        this.province = original.province;
+    }
 }
