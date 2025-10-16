@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Slf4j
 public class CensimentoStimeMittentiSteps {
-    public static final int MAX_ATTEMPTS = 10;
+    public static final int MAX_ATTEMPTS = 72;
     public static final int SLEEP_MILLIS = 500;
 
     private final DelayerLambdaClient lambdaClient;
@@ -66,8 +66,8 @@ public class CensimentoStimeMittentiSteps {
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
     public void getSenderLimits(String meseAnnoDa, String meseAnnoA, String provincia) throws Exception {
-        int attempt = 2;
-        int sleepMillis = 1000;
+        int attempt = 18;
+        int sleepMillis = 500;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-yyyy");
         YearMonth da = YearMonth.parse(meseAnnoDa, formatter);
@@ -87,7 +87,6 @@ public class CensimentoStimeMittentiSteps {
 
     @When("vengono applicati localmente i seguenti moduli commessa per la provincia {string}:")
     public void calculateSenderLimitByCommessa(String provincia, DataTable paths) {
-        var provaPaths = paths.asList();
         List<ModuloCommessa> commesse = paths.asList().stream()
                 .map(path -> FileUtils.readJsonAsSafe(path, ModuloCommessa.class))
                 .toList();

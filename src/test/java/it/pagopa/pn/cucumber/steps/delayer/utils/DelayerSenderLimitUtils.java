@@ -36,19 +36,30 @@ public class DelayerSenderLimitUtils {
             boolean isBeforeStart = monday.isBefore(start);
             boolean isAfterEnd = monday.isAfter(end);
 
-            if ((isBeforeStart && !includeStartOverlap) || (isAfterEnd && !includeEndOverlap)) {
-                if (weekIntersectsRange(monday, start, end)) {
-                    mondays.add(monday);
-                }
-            } else {
+            boolean inside = weekInsideRange(monday, start, end);
+            boolean intersects = weekIntersectsRange(monday, start, end);
+
+            if (inside) {
+                // settimana completamente dentro → sempre includi
+                mondays.add(monday);
+            } else if (isBeforeStart && includeStartOverlap && intersects) {
+                mondays.add(monday);
+            } else if (isAfterEnd && includeEndOverlap && intersects) {
                 mondays.add(monday);
             }
+            // altrimenti non aggiungere
 
             monday = monday.plusWeeks(1);
         }
 
         return mondays;
     }
+
+    private static boolean weekInsideRange(LocalDate monday, LocalDate start, LocalDate end) {
+        LocalDate sunday = monday.plusDays(6);
+        return !monday.isBefore(start) && !sunday.isAfter(end);
+    }
+
 
     private static boolean weekIntersectsRange(LocalDate monday, LocalDate start, LocalDate end) {
         LocalDate sunday = monday.plusDays(6);
