@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
+import static org.apache.commons.lang3.ObjectUtils.allNull;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -48,6 +49,12 @@ public class DelegationCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         try {
             tenantsApi.updateTenantDelegatedFeatures(false, false);
+            pollingService.makePolling(
+                () -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
+                res -> res.getFeatures()
+                    .stream()
+                    .allMatch(feature -> allNull(feature.getDelegatedConsumer(), feature.getDelegatedProducer())),
+                "L'ente non dovrebbe risultare disponibile a ricevere deleghe, ma risulta altrimenti. Visionare logs per maggiori dettagli.");
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {

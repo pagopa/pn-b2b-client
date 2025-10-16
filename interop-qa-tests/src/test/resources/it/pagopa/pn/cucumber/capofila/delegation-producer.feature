@@ -223,6 +223,7 @@ Feature: Creazione di una delega in erogazione
     Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
 
   # NOTA 30/07/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7927
   @deleghe2
   Scenario: [TC_CAPOFILA_PUB_1] La pubblicazione di un e-service da parte di un ente delegato all'erogazione conduce l'e-service allo stato WAITING_FOR_APPROVAL
     Given l'ente delegante "PA1"
@@ -238,6 +239,7 @@ Feature: Creazione di una delega in erogazione
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
 
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7927
   @deleghe2
   Scenario: [TC_CAPOFILA_APPROVE_1] Un utente ADMIN dell'ente delegante è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
@@ -249,6 +251,7 @@ Feature: Creazione di una delega in erogazione
 
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
   # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7927
   @deleghe2
   Scenario: [TC_CAPOFILA_APPROVE_2] Un utente dell'ente delegante di livello inappropriato NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
