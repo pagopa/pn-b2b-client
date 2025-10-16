@@ -36,10 +36,24 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | OK_RIR |
       | FAIL_RIR |
-      | OK_RIR_NO_DEMAT |
       | OK_RIR_INVALID_DATETIME |
       | OK_RIR_TIMESTAMP_ERR |
       | OK_RIR_NOT_ORDERED |
+
+  @paperTracker
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_RIR_NO_DEMAT |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK_RIR_NO_DEMAT" iun "iun"
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "OK_RIR_NO_DEMAT" iun "iun"
 
   @paperTracker
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_B] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
@@ -110,7 +124,20 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
 
       | Via@FAIL_CON996_PCRETRY_RIR       | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
-      | Via@FAIL_CON996_PCRETRY_AR       | NOT_RETRYABLE_EVENT_ERROR             |  NOT_RETRYABLE_EVENT_ERROR    |
+
+  @paperTracker
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_A] Si verifica che i dati ritornati da /errors siano quelli attesi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL_CON996_PCRETRY_AR |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
+    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: NOT_RETRYABLE_EVENT_ERROR e flowThrow: "NOT_RETRYABLE_EVENT_ERROR" "Via@FAIL_CON996_PCRETRY_AR"
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
