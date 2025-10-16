@@ -302,32 +302,6 @@ public class SafeStorageSteps {
         }
     }
 
-    @Given("viene caricato un nuovo pdf di 0 byte")
-    public void uploadNewJson() {
-        final String type = "PN_SERVICE_ORDER";
-        // Supponiamo tu abbia un file JSON (anche vuoto)
-        String resourcePath = "classpath:/vuoto.json";
-        String sha256 = computeAndSetSha(resourcePath);
-
-        FileCreationRequest request = new FileCreationRequest();
-        request.setContentType("application/json"); // <--- cambia MIME type
-        request.setStatus("SAVED");                 // <--- come nel curl
-        request.setDocumentType(type);              // <--- PN_SERVICE_ORDER
-
-        try {
-            // crea il "record" file su Safe Storage
-            FileCreationResponse fileCreationResponse =
-                    safeStorageClient.createFile(sha256, "SHA256", request);
-
-            // opzionale: se vuoi anche caricare subito il JSON, altrimenti puoi togliere questa riga
-            loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
-
-        } catch (HttpClientErrorException httpExc) {
-            indicizzazioneStepsPojo.setHttpException(httpExc);
-        }
-    }
-
-
     @Given("Vengono caricati {int} nuovi documenti di tipo {string}")
     public void uploadNewPdfDocument(Integer times, String type) {
         for (int i = 0; i < times; i++) {
