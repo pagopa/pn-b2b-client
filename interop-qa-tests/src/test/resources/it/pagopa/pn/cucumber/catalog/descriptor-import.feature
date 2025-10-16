@@ -19,11 +19,11 @@ Feature: Import di un descrittore
     Examples:
       | ente | ruolo        |
       | PA1  | admin        |
-#      | PA1  | api          |
-#      | PA1  | api,security |
-#      | GSP  | admin        |
-#      | GSP  | api          |
-#      | GSP  | api,security |
+      | PA1  | api          |
+      | PA1  | api,security |
+      | GSP  | admin        |
+      | GSP  | api          |
+      | GSP  | api,security |
 
   @sad-path
   @descriptor_import2 @no-parallel
