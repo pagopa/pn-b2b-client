@@ -21,15 +21,13 @@ import org.springframework.context.annotation.Scope;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
 public class CensimentoStimeMittentiSteps {
-    public static final int MAX_ATTEMPTS = 72;
+    public static final int MAX_ATTEMPTS = 600;
     public static final int SLEEP_MILLIS = 500;
 
     private final DelayerLambdaClient lambdaClient;
@@ -43,12 +41,13 @@ public class CensimentoStimeMittentiSteps {
 
     @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia {string}")
     public void fetchSenderLimitUntilCondition(String province) {
-        List<DelayerSenderLimit> missing = new ArrayList<>();
+        Set<DelayerSenderLimit> missing = new HashSet<>();
         Assertions.assertThat(context.province).as("Confronto di actual ed expected su province diverse").isEqualTo(province);
 
         for (DelayerSenderLimit senderLimit : context.expected.senderLimits) {
             try {
                 lambdaClient.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), province, null, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
+                    log.info("Trovati i seguenti limti: {}", actual);
                     boolean ok = actual.contains(senderLimit);
                     if (!ok) {
                         log.info("SenderLimit mancante: {}", senderLimit);

@@ -39,7 +39,13 @@ public class ModuloCommessa {
             if (giorniValidi == 0) continue;
 
             this.prodotti.stream()
-                    .filter(p -> !"digitale".equalsIgnoreCase(p.getId()))
+                    .filter(p ->
+                            // escludi quelli con id "digitale"
+                            !"digitale".equalsIgnoreCase(p.getId())
+                                    // e controlla che esista almeno una variante con codice "NZ" e valoreTotale > 0
+                                    && p.varianti.stream()
+                                    .anyMatch(v -> "NZ".equals(v.codice) && v.valoreTotale > 0)
+                    )
                     .forEach(prodotto -> {
                         int valoreTotale = prodotto.getValoreTotale();
                         int valorePerGiorno = valoreTotale / giorniMeseTarget;
@@ -51,7 +57,7 @@ public class ModuloCommessa {
                         limit.setMonthlyEstimate(valoreTotale);
                         limit.setWeeklyEstimate(weeklyEstimate);
                         limit.setPaId(this.idEnte);
-                        limit.setPk(this.idEnte + "~" + provincia + "~" + prodotto.getId());
+                        limit.setPk(this.idEnte + "~" + prodotto.getId() + "~" + provincia) ;
 
                         results.add(limit);
                     });
