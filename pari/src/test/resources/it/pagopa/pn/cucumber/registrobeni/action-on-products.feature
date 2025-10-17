@@ -34,6 +34,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: INVITALIA_L1
     Then viene contrassegnato il prodotto appena aggiunto
     #si verifica che tutti gli operatori Invitalia possono leggere la motivazione del prodotto contrassegnato
+    And viene recuperata la lista iniziale di motivazioni
     And si verifica che ci siano 1 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
     And viene usata l'utenza: INVITALIA_L2
     And si verifica che ci siano 1 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
@@ -61,7 +62,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHINGMACHINES" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 1589211           | WF5V843BWSIT       | WF5V843BWSIT          | Lavatrice        | IT                   |
+      | 2219972           | WAN2827NPL       | WAN2827NPL          | Lavatrice        | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Given viene usata l'utenza: INVITALIA_L1
@@ -79,7 +80,7 @@ Feature: PARI - Portale registro dei beni
 
       #[TC_60]
   @produttore2 @invitalia1
-  Scenario: [TC_ACTION_ON_PRODUCT_3] Viene escluso un prodotto e poi si prova ad iniziare l'iter di approvazione di un prodotto
+  Scenario: [TC_ACTION_ON_PRODUCT_3_B] Viene escluso un prodotto e poi si prova ad iniziare l'iter di approvazione di un prodotto
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
