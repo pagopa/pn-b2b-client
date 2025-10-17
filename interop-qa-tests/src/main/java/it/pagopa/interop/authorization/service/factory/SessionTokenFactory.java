@@ -75,11 +75,17 @@ public abstract class SessionTokenFactory {
 
     @Getter
     private final InteropClientConfigs interopClientConfigs;
-    private ConfigFileReader configFileReader;
+    private final ConfigFileReader configFileReader;
+    private final KmsClient kmsClient;
 
-    public SessionTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
+    public SessionTokenFactory(
+        InteropClientConfigs interopClientConfigs,
+        ConfigFileReader configFileReader,
+        KmsClient kmsClient
+    ) {
         this.interopClientConfigs = interopClientConfigs;
         this.configFileReader = configFileReader;
+        this.kmsClient = kmsClient;
     }
 
     public abstract Map<String, Map<String, List<String>>> loadToken();
@@ -308,16 +314,14 @@ public abstract class SessionTokenFactory {
                 .signingAlgorithm(CONFIG.get("kms").get("alg"))
                 .build();
 
-        try(KmsClient kmsClient = KmsClient.create()) {
-            SignResponse response = kmsClient.sign(signRequest);
-            if (response == null) {
-                throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
-            }
-
-            String kmsSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(response.signature().asByteArray());
-            return Map.of("signedToken", serializedToken + "." + kmsSignature,
-                    "signature", response);
+        SignResponse response = this.kmsClient.sign(signRequest);
+        if (response == null) {
+            throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
         }
+
+        String kmsSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(response.signature().asByteArray());
+        return Map.of("signedToken", serializedToken + "." + kmsSignature,
+                "signature", response);
     }
 
     private boolean kmsVerify(String unsignedToken, SignResponse signature) {
@@ -333,13 +337,11 @@ public abstract class SessionTokenFactory {
                 .signature(signature.signature())
                 .build();
 
-        try(KmsClient kmsClient = KmsClient.create()) {
-            VerifyResponse response = kmsClient.verify(verifyRequest);
-            if (isNotTrue(response.signatureValid())) {
-                throw new IllegalArgumentException("JWT Verify Signature failed");
-            }
-            return response.signatureValid();
+        VerifyResponse response = this.kmsClient.verify(verifyRequest);
+        if (isNotTrue(response.signatureValid())) {
+            throw new IllegalArgumentException("JWT Verify Signature failed");
         }
+        return response.signatureValid();
     }
 
     public Map<String, Object> getSessionTokenPayloadTemplate() {
