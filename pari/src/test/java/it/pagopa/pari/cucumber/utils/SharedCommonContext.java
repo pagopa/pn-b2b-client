@@ -19,5 +19,5 @@ public class SharedCommonContext {
     private JWTUserData userData;
     private List<ProductDTO> lastProductsUploaded;
     private String category;
-    private Map<String, List<StatusChangeChronology>> initialMotivationByRole;
+    private Map<String, List<StatusChangeChronology>> motivationByRole;
 }

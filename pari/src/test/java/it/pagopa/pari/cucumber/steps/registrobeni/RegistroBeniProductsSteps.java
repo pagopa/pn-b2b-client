@@ -8,13 +8,8 @@ import it.pagopa.pari.cucumber.utils.ApiClientContext;
 import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
-import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductStatus;
 import it.pagopa.pari.registrobeni.domain.RdbRole;
 import it.pagopa.pari.registrobeni.domain.StatusChangeChronology;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
@@ -95,7 +90,7 @@ public class RegistroBeniProductsSteps {
         }
     }
 
-    @And("si verifica che ci siano {int} motivazioni a seguito delle operazioni di (esclusione)(contrassegnazione) fatte da {rdbRole}")
+    @And("si verifica che ci siano {int} motivazioni in più a seguito delle operazioni di (esclusione)(contrassegnazione) fatte da {rdbRole}")
     public void readMotivation(int expectedMotivation, RdbRole role) {
         String motivationRole = switch (role) {
             case INVITALIA_L1 -> "L1";
@@ -104,16 +99,16 @@ public class RegistroBeniProductsSteps {
         };
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Map<String, List<StatusChangeChronology>> initialMotivationByRoleMap = sharedCommonContext.getInitialMotivationByRole();
+        Map<String, List<StatusChangeChronology>> initialMotivationByRoleMap = sharedCommonContext.getMotivationByRole();
         //aggiorno la mappa con le motivazioni attuali
         retrieveMotivationList();
-        Map<String, List<StatusChangeChronology>> currentMotivationByRoleMap = sharedCommonContext.getInitialMotivationByRole();
+        Map<String, List<StatusChangeChronology>> currentMotivationByRoleMap = sharedCommonContext.getMotivationByRole();
 
         assertEquals(initialMotivationByRoleMap.get(motivationRole).size() + expectedMotivation, currentMotivationByRoleMap.get(motivationRole).size());
     }
 
-    @And("viene recuperata la lista iniziale di motivazioni")
-    private void retrieveMotivationList() {
+    @And("viene recuperata la lista di motivazioni")
+    public void retrieveMotivationList() {
         ObjectMapper objectMapper = new ObjectMapper();
 
         ProductDTO productDTO = sharedCommonContext.getLastProductsUploaded().get(0);
@@ -127,7 +122,7 @@ public class RegistroBeniProductsSteps {
                 .map(obj -> objectMapper.convertValue(obj, StatusChangeChronology.class))
                 .filter(item -> !item.getMotivation().isEmpty())
                 .collect(Collectors.groupingBy(StatusChangeChronology::getRole));
-        sharedCommonContext.setInitialMotivationByRole(motivationByRole);
+        sharedCommonContext.setMotivationByRole(motivationByRole);
     }
 
 

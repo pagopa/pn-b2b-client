@@ -32,12 +32,12 @@ Feature: PARI - Portale registro dei beni
     Then si verifica che la risposta abbia:
       | status           | OK |
     Given viene usata l'utenza: INVITALIA_L1
+    And viene recuperata la lista di motivazioni
     Then viene contrassegnato il prodotto appena aggiunto
     #si verifica che tutti gli operatori Invitalia possono leggere la motivazione del prodotto contrassegnato
-    And viene recuperata la lista iniziale di motivazioni
-    And si verifica che ci siano 1 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
+    And si verifica che ci siano 1 motivazioni in più a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
     And viene usata l'utenza: INVITALIA_L2
-    And si verifica che ci siano 1 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
+    And si verifica che ci siano 0 motivazioni in più a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
     #lato produttore si verifica che il prodotto sia marcato come contrassegnato e che il ricarimento dello stesso non ne cambia lo stato
     Given viene usata l'utenza: PRODUTTORE_2
     Then si verifica che il prodotto sia marcato come: "SUPERVISED"
@@ -51,8 +51,9 @@ Feature: PARI - Portale registro dei beni
     Then si verifica che il prodotto sia marcato come: "SUPERVISED"
     #lato INVITALIA escludo il prodotto dopo la contrassegnazione
     Given viene usata l'utenza: INVITALIA_L1
+    And viene recuperata la lista di motivazioni
     When viene escluso il prodotto appena aggiunto
-    Then si verifica che ci siano 2 motivazioni a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
+    Then si verifica che ci siano 1 motivazioni in più a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
     Then si verifica che il prodotto sia marcato come: "REJECTED"
 
 
@@ -67,16 +68,17 @@ Feature: PARI - Portale registro dei beni
       | status           | OK |
     Given viene usata l'utenza: INVITALIA_L1
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
+    And viene recuperata la lista di motivazioni
     And viene escluso il prodotto appena aggiunto
-    And si verifica che ci siano 1 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
+    And si verifica che ci siano 1 motivazioni in più a seguito delle operazioni di esclusione fatte da INVITALIA_L1
     Given viene usata l'utenza: PRODUTTORE_2
     Then viene caricato di nuovo lo stesso prodotto
     Then si verifica che la risposta abbia:
       | status      | OK |
     Given viene usata l'utenza: INVITALIA_L1
-    And si verifica che ci siano 0 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
+    And si verifica che ci siano 0 motivazioni in più a seguito delle operazioni di esclusione fatte da INVITALIA_L1
     Given viene usata l'utenza: INVITALIA_L2
-    And si verifica che ci siano 0 motivazioni a seguito delle operazioni di esclusione fatte da INVITALIA_L1
+    And si verifica che ci siano 0 motivazioni in più a seguito delle operazioni di esclusione fatte da INVITALIA_L1
 
       #[TC_60]
   @produttore2 @invitalia1
