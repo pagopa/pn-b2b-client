@@ -117,13 +117,14 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
-
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
 
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_1"
@@ -759,6 +760,7 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Mario Gherkin"
     Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
     And viene disabilitato il servizio SERCQ SEND per la PA "Comune_1"
