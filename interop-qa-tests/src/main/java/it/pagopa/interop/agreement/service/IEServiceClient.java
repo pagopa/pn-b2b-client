@@ -1,6 +1,7 @@
 package it.pagopa.interop.agreement.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.generated.openapi.clients.bff.auth.Authentication;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
@@ -30,11 +31,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 
 public interface IEServiceClient extends SettableBearerToken {
-
+    public Map<String, Authentication> getAuthToken();
     CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed);
     void deleteEService(UUID eServiceId);
     void deleteEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);

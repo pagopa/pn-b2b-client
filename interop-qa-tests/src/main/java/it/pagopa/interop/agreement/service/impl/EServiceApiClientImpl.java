@@ -6,6 +6,7 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.auth.Authentication;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
@@ -36,6 +37,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -68,6 +70,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
         apiClient.setBasePath(basePath);
         apiClient.setBearerToken(bearerToken);
         return apiClient;
+    }
+
+    public Map<String, Authentication> getAuthToken() {
+        return eservicesApi.getApiClient().getAuthentications();
     }
 
     @Override

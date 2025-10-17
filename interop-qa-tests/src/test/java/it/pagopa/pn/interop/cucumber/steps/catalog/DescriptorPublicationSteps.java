@@ -1,11 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.auth.HttpBearerAuth;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
@@ -16,9 +18,12 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
+@Slf4j
 public class DescriptorPublicationSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -41,6 +46,60 @@ public class DescriptorPublicationSteps {
         dataPreparationService.addInterfaceToDescriptor(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+    }
+
+    @And("stampo il bearer token utilizzato {string} {string} {string}")
+    public void printAuth(String tenantType, String mode, String eServiceDescriptorState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+
+        HttpBearerAuth bearer = (HttpBearerAuth) clientTokenConfigurator.getEServiceClient().getAuthToken()
+                .get("bearerAuth");
+
+        try {
+            Field tokenField = HttpBearerAuth.class.getDeclaredField("bearerToken");
+            tokenField.setAccessible(true);  // permette di leggere il campo privato
+            String token = (String) tokenField.get(bearer);
+
+            Field schemeField = HttpBearerAuth.class.getDeclaredField("scheme");
+            schemeField.setAccessible(true);
+            String scheme = (String) schemeField.get(bearer);
+
+            System.out.println("Bearer token utilizzato nel test: " + token);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                new EServiceSeed().mode(EServiceMode.fromValue(mode)),
+                new UpdateEServiceDescriptorSeed()
+        );
+        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+        eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
+        eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
+
+        // If descriptorState is not DRAFT we have to add a completed risk analysis in order to correctly publish the descriptor
+        if ("RECEIVE".equalsIgnoreCase(mode) && !"DRAFT".equalsIgnoreCase(eServiceDescriptorState)) {
+            RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+            UUID riskAnalysisId = dataPreparationService.addRiskAnalysisToEService(
+                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                    new EServiceRiskAnalysisSeed()
+                            .name(riskAnalysis.getName())
+                            .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
+            );
+            sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
+        }
+
+        dataPreparationService.bringDescriptorToGivenState(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                EServiceDescriptorState.valueOf(eServiceDescriptorState),
+                false
         );
     }
 
