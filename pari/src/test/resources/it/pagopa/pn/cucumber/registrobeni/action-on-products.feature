@@ -40,7 +40,7 @@ Feature: PARI - Portale registro dei beni
     And si verifica che ci siano 0 motivazioni in più a seguito delle operazioni di contrassegnazione fatte da INVITALIA_L1
     #lato produttore si verifica che il prodotto sia marcato come contrassegnato e che il ricarimento dello stesso non ne cambia lo stato
     Given viene usata l'utenza: PRODUTTORE_2
-    Then si verifica che il prodotto sia marcato come: "SUPERVISED"
+    Then si verifica che il prodotto sia marcato come: "UPLOADED"
     Then viene caricato di nuovo lo stesso prodotto
     Then si verifica che la risposta abbia:
       | status      | OK |
@@ -48,7 +48,7 @@ Feature: PARI - Portale registro dei beni
     # Recupero del report generato:
     And si verifica che il report dell'ultimo prodotto aggiunto contenga la descrizione: "Il prodotto è sottoposto alle verifiche previste"
     Then il report è correttamente popolato
-    Then si verifica che il prodotto sia marcato come: "SUPERVISED"
+    Then si verifica che il prodotto sia marcato come: "UPLOADED"
     #lato INVITALIA escludo il prodotto dopo la contrassegnazione
     Given viene usata l'utenza: INVITALIA_L1
     And viene recuperata la lista di motivazioni
