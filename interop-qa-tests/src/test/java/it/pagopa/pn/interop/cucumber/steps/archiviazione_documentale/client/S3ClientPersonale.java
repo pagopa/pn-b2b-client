@@ -23,9 +23,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @RequiredArgsConstructor
-public class S3Client {
+public class S3ClientPersonale {
 
-    private final S3Client s3Client;
+    private final S3ClientPersonale s3Client;
     private final String bucketName;
     private static final DateTimeFormatter ZIP_TS_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(ZoneOffset.UTC);
 
