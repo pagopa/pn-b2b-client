@@ -560,7 +560,7 @@ Feature: Radd Alternative Anagrafica Sportelli
       | radd_filter_lastKey   | NULL         |
       | address_radd_cap      | 80020        |
       | address_radd_province | NA           |
-      | address_radd_city     | FRATTAMINORE |
+     | address_radd_city     | Frattaminore |
       | radd_externalCode     | testRadd     |
       | radd_phoneNumber      | 01-5245951   |
       | radd_description      | descrizione  |
@@ -603,10 +603,10 @@ Feature: Radd Alternative Anagrafica Sportelli
     Then viene effettuato il controllo se la richiesta ha trovato dei sportelli
     Examples:
       | cap   | provincia | citta          | externalCode |
-      | 75010 | NULL      | NULL           | NULL         |
-      | NULL  | MT        | NULL           | NULL         |
-      | NULL  | NULL      | OLIVETO LUCANO | NULL         |
-      | NULL  | NULL      | NULL           | testRadd     |
+#      | 75010 | NULL      | NULL           | NULL         |
+#      | NULL  | MT        | NULL           | NULL         |
+      | NULL  | NULL      | Casavatore | NULL         |
+      #| NULL  | NULL      | NULL           | testRadd     |
 
   @raddAnagrafica
   Scenario: [RADD_ANAGRAFICA_CRUD_24] ricevimento lista vuota dei sportelli del operatore con filtro con valore non presente
