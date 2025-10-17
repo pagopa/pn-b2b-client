@@ -275,7 +275,7 @@ public class SafeStorageSteps {
             FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
 
             // Upload vero e proprio sulla presigned URL
-            loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
+            loadToPresignedUrl(fileCreationResponse, sha256, resourcePath, B2bUtils.APPLICATION_JSON);
 
         } catch (HttpClientErrorException httpExc) {
            throw new RuntimeException(httpExc);
@@ -362,6 +362,18 @@ public class SafeStorageSteps {
         String url = fileCreationResponse.getUploadUrl();
 
         B2bUtils.loadToPresigned(context, url, secret, sha256, resourcePath, B2bUtils.APPLICATION_PDF);
+        log.info("FILEKEY: " + fileKey);
+
+        indicizzazioneStepsPojo.getCreatedFiles().add(fileCreationResponse);
+        log.info("File successfully created");
+    }
+
+    private void loadToPresignedUrl(FileCreationResponse fileCreationResponse, String sha256, String resourcePath, String contentType) {
+        String fileKey = fileCreationResponse.getKey();
+        String secret = fileCreationResponse.getSecret();
+        String url = fileCreationResponse.getUploadUrl();
+
+        B2bUtils.loadToPresigned(context, url, secret, sha256, resourcePath, contentType);
         log.info("FILEKEY: " + fileKey);
 
         indicizzazioneStepsPojo.getCreatedFiles().add(fileCreationResponse);
