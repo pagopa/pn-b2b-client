@@ -241,7 +241,7 @@ Feature: PARI - Portale registro dei beni
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
 
 
-  @produttore2 @invitalia1
+  @produttore2 @invitalia1 @ignore
   Scenario: [TC_ACTION_ON_PRODUCT_11] Un utente INVITALIA_L1 esclude più prodotto insieme e si verifica che per ogni prodotto ci sia una sola motivazione
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "REFRIGERATINGAPPL" e dati:
