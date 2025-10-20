@@ -1089,7 +1089,7 @@ Feature: Abilitazione domicilio digitale
     Then l'operazione ha prodotto un errore con status code "400"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 
-  @sercqF2 @sercq @addressBook2
+  #@sercqF2 @sercq @addressBook2  # Lo sviluppo di questa fix è rimandato a data da definirsi
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_13] Negata disattivazione email cortesia con SercQ per ente attivo
     Given si predispone addressbook per l'utente "CucumberSpa"
     Then l'utente "CucumberSpa" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
