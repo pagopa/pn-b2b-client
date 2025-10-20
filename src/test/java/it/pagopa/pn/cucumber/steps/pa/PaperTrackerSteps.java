@@ -184,7 +184,7 @@ public class PaperTrackerSteps {
                 filteredOutputs = sanitizeList(filteredOutputs, List.of("RECRN001C", "RECRI003C"));
             }
             if (sequenceName.contains("OK_GIACENZA_AR_4")) {
-                assertSameElements(sanitizeList(filteredOutputs, List.of("CON018", "RECRN003C")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
+                assertSameElements(sanitizeList(filteredOutputs, List.of("CON018")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
             }
             else {
                 assertSameElements(sanitizeList(filteredOutputs, List.of("CON018")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
