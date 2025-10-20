@@ -386,7 +386,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
 
 
-  Scenario: [RADD_API_ONLY_TESTING] Verifica copertura Radd
+  Scenario: [RADD_API_ONLY_TESTING] Verifica copertura Radd vedi da tabella : pn-RaddCoverage
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
 
     Then setto i dati per verificare la copertura Radd:
