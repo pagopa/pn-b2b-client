@@ -405,14 +405,14 @@ public class PaperTrackerSteps {
         return PaperTrackerErrorCategory.valueOf(errorCategory.toUpperCase());
     }
 
-    @Then("si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: {paperTrackerErrorCategory} e flowThrow: {string} {string}")
-    public void checkTrackingErrors(PaperTrackerErrorCategory category, String flowThrow, String sequenceName) {
+    @Then("si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: {paperTrackerErrorCategory} e flowThrow: {string} {string} {string}")
+    public void checkTrackingErrors(PaperTrackerErrorCategory category, String flowThrow, String sequenceName, String pcRetry) {
         log.info("Creata notifica con sequence " + sequenceName + "e iun: " + sharedSteps.getNotificationIun());
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         assertThat(fullSentNotification).as("La full sent notification non dev'essere null").isNotNull();
 
         List<String> analogEventIds = fullSentNotification.getTimeline().stream().filter(e ->
-                e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(e -> e.getElementId() + ".PCRETRY_0").toList();
+                e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(e -> e.getElementId() + ".PCRETRY_" + pcRetry).toList();
 
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(analogEventIds);

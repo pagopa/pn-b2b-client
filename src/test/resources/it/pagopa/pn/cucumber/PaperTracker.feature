@@ -116,7 +116,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
    #da aggiungere anche controllo della timeline e questo test diventa permanente
     #Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>"
+    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>" "0"
     Examples:
       | physicalAddress                   | category                             | flowThrow                     |
       | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
@@ -137,7 +137,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
-    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: NOT_RETRYABLE_EVENT_ERROR e flowThrow: "NOT_RETRYABLE_EVENT_ERROR" "Via@FAIL_CON996_PCRETRY_AR"
+    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: NOT_RETRYABLE_EVENT_ERROR e flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" "Via@FAIL_CON996_PCRETRY_AR" "1"
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
