@@ -749,7 +749,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                                |
       | details                | NOT_NULL                                            |
-      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
+      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex       | 0                                                   |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
