@@ -128,7 +128,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     Then setto i dati per creare una nuova copertura Radd con locality random:
       | cap   | cadastralCode | province |
-      | 80100 | null          | null       |
+      | 80100 | null          | null     |
     And creo una nuova copertura Radd
     And la response deve contenere la località e il cap "80100" attesi
     And creo una nuova copertura Radd con Errore
@@ -155,7 +155,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 80100 | /        | H501          | MI       | 2025-11-01    | 2025-11-01  |
       | 80100 | /        | null          | null     | 2025-10-01    | 2025-12-31  |
       | 80100 | /        | null          | null     | null          | null        |
-
 
 
   @capCoverageRadd @cognito2
@@ -286,8 +285,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And creo una nuova copertura Radd
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
-      | cap   |locality| cadastralCode | province | startValidity | endValidity |
-      | 00100 | /      |H502          | RM       | 2025-10-13    | 2035-10-13  |
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | /        | H502          | RM       | 2025-10-13    | 2035-10-13  |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -312,7 +311,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 00100 | 123  |
       | null  | /    |
       | 00100 | null |
-      | 00 00 | /  |
+      | 00 00 | /    |
 
   @capCoverageRadd @cognito2
   Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_13] Errore Verifica copertura Radd search_mode vuoto
@@ -332,8 +331,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And creo una nuova copertura Radd
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
-      | cap   |locality| cadastralCode | province | startValidity | endValidity |
-      | 00100 | /      |H502          | RM       | 2035-10-13    | 2036-10-13  |
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | /        | H502          | RM       | 2035-10-13    | 2036-10-13  |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -342,8 +341,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
 
     And setto i dati per aggiornare una copertura Radd:
-      | cap   |locality| cadastralCode | province | startValidity | endValidity |
-      | 00100 | /      |H502          | RM       | 2035-10-13    | 2035-10-13  |
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | /        | H502          | RM       | 2035-10-13    | 2035-10-13  |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -352,8 +351,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
 
     And setto i dati per aggiornare una copertura Radd:
-      | cap   |locality| cadastralCode | province | startValidity | endValidity |
-      | 00100 | /      |H502          | RM       | 2020-10-13    | 2035-10-13  |
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | /        | H502          | RM       | 2020-10-13    | 2035-10-13  |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -362,8 +361,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
 
     And setto i dati per aggiornare una copertura Radd:
-      | cap   |locality| cadastralCode | province | startValidity | endValidity |
-      | 00100 | /      |H502          | RM       | 2020-10-13    | 2020-10-13  |
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 00100 | /        | H502          | RM       | 2020-10-13    | 2020-10-13  |
     And invoco l'API di aggiornamento copertura cap Radd
 
     Then Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
@@ -384,5 +383,20 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
 
 
+
+
+
+  Scenario: [RADD_API_ONLY_TESTING] Verifica copertura Radd
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | 00100 | BF-APJJ    | null  | null | null    |
+
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
 
 
