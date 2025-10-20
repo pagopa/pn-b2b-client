@@ -68,7 +68,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And "PA1" porta il descrittore dell'e-service in stato "ARCHIVED"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 400
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
@@ -81,7 +81,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 404
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
@@ -95,17 +95,17 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
 
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service indicando un e-service id inesistente
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service indicando un descriptor id inesistente
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service indicando un descriptor id inesistente
     Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service indicando un group index inesistente
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service indicando un group index inesistente
     Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
@@ -123,7 +123,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And viene impostato per l'utente un token m2m non valido
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 401
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
@@ -137,7 +137,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
