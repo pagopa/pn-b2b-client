@@ -12,12 +12,13 @@ import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IM2MDelegationClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
-import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,6 +47,7 @@ public class ClientTokenConfigurator {
     private IM2MEServiceTemplateClient m2mEServiceTemplateClient;
     private IM2MEserviceDescriptorClient m2mEServiceDescriptorClient;
     private IM2MDelegationClient m2mDelegationClient;
+    private IPurposeTemplateClient purposeTemplateClient;
 
     public void setBearerToken(String token) {
         authorizationClient.setBearerToken(token);
@@ -66,6 +68,7 @@ public class ClientTokenConfigurator {
         m2mEServiceTemplateClient.setBearerToken(token);
         m2mEServiceDescriptorClient.setBearerToken(token);
         m2mDelegationClient.setBearerToken(token);
+        purposeTemplateClient.setBearerToken(token);
     }
 
 }

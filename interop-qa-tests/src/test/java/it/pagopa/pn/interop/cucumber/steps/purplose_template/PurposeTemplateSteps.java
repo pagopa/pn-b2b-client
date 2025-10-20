@@ -4,6 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
@@ -33,14 +34,12 @@ public class PurposeTemplateSteps {
 
     private final IHttpExecutor httpCallExecutor;
 
-    public PurposeTemplateSteps(IPurposeTemplateClient purposeTemplateClient,
-                                ClientTokenConfigurator clientTokenConfigurator,
-                                SharedStepsContext sharedStepsContext) {
-        this.purposeTemplateClient = purposeTemplateClient;
-        this.clientTokenConfigurator = clientTokenConfigurator;
+    public PurposeTemplateSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.purposeTemplateClient = clientTokenConfigurator.getPurposeTemplateClient();
     }
 
     @When("viene creato un nuovo purpose template")
@@ -79,6 +78,35 @@ public class PurposeTemplateSteps {
         }
         if (success) {
             assertThat(createdTemplate).as("").isNotNull();
+        }
+    }
+
+    @When("si aggiorna il purpose template {string}")
+    public void updatePurposeTemplate(String ptType) {
+        PurposeTemplateSeed updateRequest = new PurposeTemplateSeed();
+        updateRequest.setPurposeDescription("Updated description");
+        updateRequest.setPurposeTitle("Updated title");
+
+        UUID ptId;
+        switch (ptType.toUpperCase()) {
+            case "CREATO" -> ptId = createdTemplate.getId();
+            case "INESISTENTE" -> ptId = UUID.randomUUID();
+            default -> throw new IllegalArgumentException("Invalid purposeTemplateId type");
+        }
+        boolean success = false;
+        PurposeTemplate updatedPurposeTemplate = null;
+        try {
+            updatedPurposeTemplate = purposeTemplateClient.updatePurposeTemplate(ptId, updateRequest);
+        } catch (HttpStatusCodeException e) {
+            this.error = e;
+        }
+        if (success) {
+            assertThat(updatedPurposeTemplate).as("Il template aggiornato non dev'essere null").isNotNull();
+            assertThat(updatedPurposeTemplate.getPurposeDescription()).as("La descrizione deve risultare aggiornata").contains("Updated description");
+            assertThat(updatedPurposeTemplate.getPurposeTitle()).as("Il titolo deve risultare aggiornato").contains("Updated title");
+        } else {
+            assertThat(updatedPurposeTemplate).as("Il template aggiornato dev'essere null").isNull();
+            assertThat(error).as("L'operazione di update deve aver generato un errore").isNotNull();
         }
     }
 }
