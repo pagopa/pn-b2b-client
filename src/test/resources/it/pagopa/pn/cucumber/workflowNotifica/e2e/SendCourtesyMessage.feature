@@ -92,6 +92,9 @@ Feature: Invio messaggi cortesia e2e
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_4] Verifica successione elementi - Invio DIGITALE con TPP di cortesia solo PF
     Given si predispone addressbook per l'utente "Mario Gherkin"
     Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
