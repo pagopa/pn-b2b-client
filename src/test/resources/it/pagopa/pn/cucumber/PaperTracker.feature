@@ -82,18 +82,18 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL                                                                                                                                                                                                  |
-      | details_recIndex           | 0                                                                                                                                                                                                         |
-      | details_sentAttemptMade    | 0                                                                                                                                                                                                         |
-      | details_deliveryDetailCode | RECRN002C                                                                                                                                                                                                 |
-      | details_responseStatus     | KO
-      | details_deliveryFailureCause | M07
+      | details                    | NOT_NULL       |
+      | details_recIndex           | 0              |
+      | details_sentAttemptMade    | 0              |
+      | details_deliveryDetailCode | RECRN002C      |
+      | details_responseStatus     | KO             |
+      | details_deliveryFailureCause | M07          |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL                                                                                                                                                                                                  |
-      | details_recIndex           | 0                                                                                                                                                                                                         |
-      | details_sentAttemptMade    | 1                                                                                                                                                                                                         |
-      | details_deliveryDetailCode | RECRN001C                                                                                                                                                                                                 |
-      | details_responseStatus     | OK
+      | details                    | NOT_NULL        |
+      | details_recIndex           | 0               |
+      | details_sentAttemptMade    | 1               |
+      | details_deliveryDetailCode | RECRN001C       |
+      | details_responseStatus     | OK              |
     And si verifica che la risposta trackings sia uguale a quella attesa "FAIL_IndirizzoInesistenteAR" iun "iun"
     Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "FAIL_IndirizzoInesistenteAR" iun "iun"
 
