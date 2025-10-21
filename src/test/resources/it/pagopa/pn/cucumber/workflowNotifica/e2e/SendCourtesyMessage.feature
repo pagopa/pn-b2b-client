@@ -111,12 +111,6 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "TPP", "address": "APP"} |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK"
 
-#  @e2e @addressBook1 @courtesyMessage #rif srs 44 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2] Verifica successione elementi - Invio DIGITALE con SMS di cortesia per PF
-
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 44 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2] Verifica successione elementi - Invio DIGITALE con SMS di cortesia per PG
 
 
  #                         ****  Flag OFF Analogico ***
@@ -217,15 +211,6 @@ Feature: Invio messaggi cortesia e2e
 
 
 
-#  @e2e @addressBook1 @courtesyMessage #rif srs 45 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio ANALOGICO con SMS di cortesia per PF
-#
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 45 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio ANALOGICO con SMS di cortesia per PG
-
-
-
 #                                         FLAG ON - DIGITALE
 
 
@@ -317,14 +302,6 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "TPP", "address": "APP"} |
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-#  @e2e @addressBook1 @courtesyMessage #rif srs 39 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale SEND, cortesia sms per PF
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 39 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale SEND, cortesia sms per PG
-
-
-
 
 
   # DOMICILIO DIGITALE PEC di PIATTAFORMA
@@ -406,13 +383,6 @@ Feature: Invio messaggi cortesia e2e
       | details_recIndex       | 0                                 |
       | details_digitalAddress | {"type": "TPP", "address": "APP"} |
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-
-#  @e2e @addressBook1 @courtesyMessage #rif srs 40 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia sms per PF
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 40 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia sms per PG
-
 
 
 
@@ -502,12 +472,6 @@ Feature: Invio messaggi cortesia e2e
 
   #@courtesyMessage #rif srs 41
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_20] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC da RN, cortesia TPP solo PF
-
-#  @e2e @addressBook1 @courtesyMessage #rif srs 41 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC da RN, cortesia sms per PF
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 41 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC da RN, cortesia sms per PG
 
 
 
@@ -605,11 +569,6 @@ Feature: Invio messaggi cortesia e2e
 
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-#  @e2e @addressBook1 @courtesyMessage #rif srs 42 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC SPECIALE, cortesia sms per PF
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 42 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC SPECIALE, cortesia sms per PG
 
 
 #           FLAG ON - ANALOGICO
@@ -707,11 +666,6 @@ Feature: Invio messaggi cortesia e2e
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
 
-#  @e2e @addressBook1 @courtesyMessage #rif srs 43 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio ANALOGICO, cortesia sms per PF
-#
-#  @e2e @addressBook1 @courtesyMessage #rif srs 43 TODO: Attualmente non si riesce ad ottenre i TOS per la configurazione dell'SMS
-#  Scenario: [COURTESY_MESSAGE_SERCQ_F2_SMS] Verifica successione elementi - Invio ANALOGICO, cortesia sms per PG
 
 
 
