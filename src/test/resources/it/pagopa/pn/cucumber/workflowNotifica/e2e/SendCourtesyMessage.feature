@@ -390,7 +390,7 @@ Feature: Invio messaggi cortesia e2e
 
 
   #@courtesyMessage #rif srs 41
-  @courtesyMessage @cleanAddressBook  #in-test
+  #@courtesyMessage @cleanAddressBook  #in-test
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_17] Verifica successione elementi - Invio DIGITALE con domicilio PEC da RN, cortesia email per PF
   #TODO serve un utente censito per AddressBook che ritorni una pec dai RN
     Given si predispone addressbook per l'utente "Dino Sauro"
@@ -416,7 +416,7 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-  @addressBook1 @courtesyMessage @cleanAddressBook
+  @addressBook1 @courtesyMessage @cleanAddressBook #OK
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_17B] Verifica successione elementi - Invio ANALOGICO con domicilio PEC da RN, cortesia email per PF
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
