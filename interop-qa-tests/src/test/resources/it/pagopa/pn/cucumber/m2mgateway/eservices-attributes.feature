@@ -168,6 +168,11 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
     And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
     Examples:
       | stato       |
       | DRAFT       |
@@ -191,6 +196,11 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
 
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
     And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
