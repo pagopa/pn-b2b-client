@@ -6,6 +6,8 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceD
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttributes;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -73,8 +75,19 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
 
     @Override
     public List<EServiceAttribute<CertifiedAttribute>> getCertifiedAttributes(
-        UUID eServiceId, UUID descriptorId, int groupId) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<CertifiedAttribute>builder().build());
+        UUID eServiceId, UUID descriptorId) {
+        EServiceDescriptorCertifiedAttributes attributes = this.eservicesApi.getEServiceDescriptorCertifiedAttributes(
+            eServiceId, descriptorId, 0, 30);
+
+        return attributes.getResults().stream()
+            .map(this::mapToEServiceAttribute)
+            .toList();
+    }
+
+    private EServiceAttribute<CertifiedAttribute> mapToEServiceAttribute(EServiceDescriptorCertifiedAttribute attribute) {
+        return EServiceAttribute.<CertifiedAttribute>builder()
+            .attribute(attribute.getAttribute())
+            .groupIndex(attribute.getGroupIndex())
+            .build();
     }
 }

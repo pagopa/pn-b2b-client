@@ -11,5 +11,11 @@ import lombok.With;
 public class EServiceAttributesKey {
     private UUID eServiceId;
     private UUID descriptorId;
-    private int groupIndex;
+
+    public static EServiceAttributesKey from(EServiceAttributesGroupKey groupKey) {
+        return EServiceAttributesKey.builder()
+            .eServiceId(groupKey.getEServiceId())
+            .descriptorId(groupKey.getDescriptorId())
+            .build();
+    }
 }
