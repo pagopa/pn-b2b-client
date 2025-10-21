@@ -19,7 +19,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | ok_AR |
       | FAIL-Discovery_AR |
       | FAIL_AR |
-      | FAIL_IndirizzoInesistenteAR |
+#      | FAIL_IndirizzoInesistenteAR |
       | FAIL-Irreperibile_AR |
       | OK-Giacenza_AR |
       | FAIL-Giacenza_AR |
@@ -69,6 +69,33 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-DiscoveryIrreperibile_AR" iun "iun"
     Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR" iun "iun"
+
+  @paperTracker
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_C] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL_IndirizzoInesistenteAR |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                                                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                                                         |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                         |
+      | details_deliveryDetailCode | RECRN002C                                                                                                                                                                                                 |
+      | details_responseStatus     | KO
+      | details_deliveryFailureCause | M07
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                                                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                                                         |
+      | details_sentAttemptMade    | 1                                                                                                                                                                                                         |
+      | details_deliveryDetailCode | RECRN001C                                                                                                                                                                                                 |
+      | details_responseStatus     | OK
+    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL_IndirizzoInesistenteAR" iun "iun"
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "FAIL_IndirizzoInesistenteAR" iun "iun"
 
   @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
