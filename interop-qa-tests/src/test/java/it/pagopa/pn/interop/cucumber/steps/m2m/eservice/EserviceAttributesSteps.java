@@ -21,6 +21,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 public class EserviceAttributesSteps {
+
     private final IM2MEServiceAttributeClient eServiceClient;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpExecutor;
@@ -40,38 +41,56 @@ public class EserviceAttributesSteps {
     public void createCertifiedAttributeGroup(int attributesQt) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        List<UUID> attributesIds = sharedStepsContext.getAttributeCommonContext().getCreatedAttributes()
+        List<UUID> attributesIds = sharedStepsContext.getAttributeCommonContext()
+            .getCreatedAttributes()
             .stream()
             .limit(attributesQt)
             .map(Attribute::getId)
             .toList();
 
         int actualAttributesQt = attributesIds.size();
-        if(actualAttributesQt != attributesQt) {
-            throw new IllegalStateException("E' prevista l'esistenza di almeno %d attributi certificati, ma ne sono stati rilevati %d".formatted(attributesQt, actualAttributesQt));
+        if (actualAttributesQt != attributesQt) {
+            throw new IllegalStateException(
+                "E' prevista l'esistenza di almeno %d attributi certificati, ma ne sono stati rilevati %d".formatted(
+                    attributesQt, actualAttributesQt));
         }
 
-        httpExecutor.performCall(() -> eServiceClient.createCertifiedAttributesGroup(eServiceId, descriptorId, attributesIds));
+        httpExecutor.performCall(
+            () -> eServiceClient.createCertifiedAttributesGroup(eServiceId, descriptorId,
+                attributesIds));
         List<EServiceAttribute<CertifiedAttribute>> response = (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            sharedStepsContext.getEServicesCommonContext().setGroupId(response.get(0).getGroupIndex());
+            sharedStepsContext.getEServicesCommonContext()
+                .setGroupId(response.get(0).getGroupIndex());
             sharedStepsContext.getEServicesCommonContext().addCertifiedAttributes(attributesIds);
         }
     }
 
     @And("[si prende nota dello stato degli attributi certificati del gruppo dell'e-service]")
     public void storeEServiceCertifiedAttribute() {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        int groupIndex = sharedStepsContext.getEServicesCommonContext().getGroupId();
-
-        httpExecutor.performCall(() -> eServiceClient.getCertifiedAttributes(eServiceId, descriptorId, groupIndex));
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey();
+        performGetEServiceCertifiedAttributes(attributesKey);
         List<EServiceAttribute<CertifiedAttribute>> certifiedAttributes = (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
         List<EServiceAttribute<CertifiedAttribute>> certifiedAttributeInGroup = certifiedAttributes.stream()
-            .filter(attr -> attr.getGroupIndex().equals(groupIndex))
+            .filter(attr -> attr.getGroupIndex().equals(attributesKey.getGroupIndex()))
             .toList();
         certifiedAttributeSnapshots.addSnapshot(certifiedAttributeInGroup);
+    }
+
+    private void performGetEServiceCertifiedAttributes(EServiceAttributesKey key) {
+        httpExecutor.performCall(() -> eServiceClient.getCertifiedAttributes(
+            key.getEServiceId(),
+            key.getDescriptorId(),
+            key.getGroupIndex()));
+    }
+
+    private EServiceAttributesKey getEServiceAttributesKey() {
+        return EServiceAttributesKey.builder()
+            .eServiceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+            .descriptorId(sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+            .groupIndex(sharedStepsContext.getEServicesCommonContext().getGroupId())
+            .build();
     }
 
     @When("l'utente tenta di aggiungere l'attributo certificato numero {collectionIndex} al gruppo dell'e-service")
@@ -81,12 +100,10 @@ public class EserviceAttributesSteps {
 
     @When("l'utente tenta di aggiungere gli attributi certificati numeri da {collectionIndex} a {collectionIndex} al gruppo dell'e-service")
     public void addEServiceCertifiedAttributes(int startIncludedIndex, int endIncludedIndex) {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        int groupIndex = sharedStepsContext.getEServicesCommonContext().getGroupId();
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey();
         List<UUID> attributeIdsToAdd = getAttributeIdsToAdd(startIncludedIndex, endIncludedIndex);
 
-        addEServiceCertifiedAttributes(eServiceId, descriptorId, groupIndex, attributeIdsToAdd);
+        performAddEServiceCertifiedAttributes(attributesKey, attributeIdsToAdd);
     }
 
     private List<UUID> getAttributeIdsToAdd(int startIncludedIndex, int endIncludedIndex) {
@@ -99,50 +116,48 @@ public class EserviceAttributesSteps {
 
     @When("l'utente tenta di aggiungere l'attributo certificato numero {collectionIndex} al gruppo dell'e-service indicando un e-service id inesistente")
     public void addEServiceCertifiedAttributesWithUnexistentEServiceId(int attributeIndex) {
-        UUID eServiceId = UUID.randomUUID();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        int groupIndex = sharedStepsContext.getEServicesCommonContext().getGroupId();
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey().withEServiceId(
+            UUID.randomUUID());
         List<UUID> attributeIdsToAdd = getAttributeIdsToAdd(attributeIndex, attributeIndex);
 
-        addEServiceCertifiedAttributes(eServiceId, descriptorId, groupIndex, attributeIdsToAdd);
+        performAddEServiceCertifiedAttributes(attributesKey, attributeIdsToAdd);
     }
 
     @When("l'utente tenta di aggiungere l'attributo certificato numero {collectionIndex} al gruppo dell'e-service indicando un descriptor id inesistente")
     public void addEServiceCertifiedAttributesWithUnexistentDescriptorId(int attributeIndex) {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = UUID.randomUUID();
-        int groupIndex = sharedStepsContext.getEServicesCommonContext().getGroupId();
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey().withDescriptorId(
+            UUID.randomUUID());
         List<UUID> attributeIdsToAdd = getAttributeIdsToAdd(attributeIndex, attributeIndex);
 
-        addEServiceCertifiedAttributes(eServiceId, descriptorId, groupIndex, attributeIdsToAdd);
+        performAddEServiceCertifiedAttributes(attributesKey, attributeIdsToAdd);
     }
 
     @When("l'utente tenta di aggiungere l'attributo certificato numero {collectionIndex} al gruppo dell'e-service indicando un group index inesistente")
     public void addEServiceCertifiedAttributesWithUnexistentGroupIndex(int attributeIndex) {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        int groupIndex = 999;
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey().withGroupIndex(999);
         List<UUID> attributeIdsToAdd = getAttributeIdsToAdd(attributeIndex, attributeIndex);
 
-        addEServiceCertifiedAttributes(eServiceId, descriptorId, groupIndex, attributeIdsToAdd);
+        performAddEServiceCertifiedAttributes(attributesKey, attributeIdsToAdd);
     }
 
     @When("l'utente tenta di aggiungere degli attributi certificati al gruppo dell'e-service indicando degli attribute ids inesistenti")
     public void addEServiceCertifiedAttributesWithUnexistentIds() {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        int groupIndex = sharedStepsContext.getEServicesCommonContext().getGroupId();
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey();
         List<UUID> attributeIdsToAdd = List.of(UUID.randomUUID());
 
-        addEServiceCertifiedAttributes(eServiceId, descriptorId, groupIndex, attributeIdsToAdd);
+        performAddEServiceCertifiedAttributes(attributesKey, attributeIdsToAdd);
     }
 
-    private void addEServiceCertifiedAttributes(UUID eServiceId, UUID descriptorId, int groupIndex,
+    private void performAddEServiceCertifiedAttributes(EServiceAttributesKey key,
         List<UUID> attributeIdsToAdd) {
-        httpExecutor.performCall(() -> eServiceClient.addCertifiedAttributes(eServiceId,
-            descriptorId, groupIndex, attributeIdsToAdd));
-        if(httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            sharedStepsContext.getEServicesCommonContext().addCertifiedAttributes(attributeIdsToAdd);
+        httpExecutor.performCall(() -> eServiceClient.addCertifiedAttributes(
+            key.getEServiceId(),
+            key.getDescriptorId(),
+            key.getGroupIndex(),
+            attributeIdsToAdd));
+        if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+            sharedStepsContext.getEServicesCommonContext()
+                .addCertifiedAttributes(attributeIdsToAdd);
         }
     }
 
@@ -151,8 +166,9 @@ public class EserviceAttributesSteps {
         List<IM2MEServiceAttributeClient.EServiceAttribute<CertifiedAttribute>> returnedAttributes =
             (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
 
-        int expectedGroupIndex = sharedStepsContext.getEServicesCommonContext().getGroupId();
-        List<UUID> expectedIds = sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds();
+        int expectedGroupIndex = getEServiceAttributesKey().getGroupIndex();
+        List<UUID> expectedIds = sharedStepsContext.getEServicesCommonContext()
+            .getCertifiedAttributesIds();
 
         Integer returnedGroupIndex = returnedAttributes.get(0).getGroupIndex();
         List<UUID> returnedIds = returnedAttributes.stream()
@@ -201,5 +217,46 @@ public class EserviceAttributesSteps {
         assertThat(actualSnapshot)
             .as("Verifica che non ci siano state modifiche inattese agli attributi aggiunti precedentemente")
             .containsExactlyInAnyOrderElementsOf(previousSnapshot);
+    }
+
+    @When("l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service")
+    public void getEServiceCertifiedAttributes() {
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey();
+        performGetEServiceCertifiedAttributes(attributesKey);
+    }
+
+    @When("l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un e-service id inesistente")
+    public void getEServiceCertifiedAttributesWithUnexistentEServiceId() {
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey().withEServiceId(
+            UUID.randomUUID());
+        performGetEServiceCertifiedAttributes(attributesKey);
+    }
+
+    @When("l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un descriptor id inesistente")
+    public void getEServiceCertifiedAttributesWithUnexistentDescriptorId() {
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey().withDescriptorId(
+            UUID.randomUUID());
+        performGetEServiceCertifiedAttributes(attributesKey);
+    }
+
+    @When("l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un group index inesistente")
+    public void getEServiceCertifiedAttributesWithUnexistentGroupIndex() {
+        EServiceAttributesKey attributesKey = getEServiceAttributesKey().withGroupIndex(999);
+        performGetEServiceCertifiedAttributes(attributesKey);
+    }
+
+    @Then("gli attributi certificati ottenuti sono coerenti con quelli aggiunti")
+    public void checkGotCertifiedAttributes() {
+        List<UUID> expectedCertifiedAttributesIds = sharedStepsContext.getEServicesCommonContext()
+            .getCertifiedAttributesIds();
+        List<EServiceAttribute<CertifiedAttribute>> actualCertifiedAttributes =
+            (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
+        List<UUID> actualCertifiedAttributesIds = actualCertifiedAttributes.stream()
+            .map(att -> att.getAttribute().getId())
+            .toList();
+
+        assertThat(actualCertifiedAttributesIds)
+            .as("Verifica che gli attributi certificati reperiti siano identici a quelli precedentemente aggiunti")
+            .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributesIds);
     }
 }

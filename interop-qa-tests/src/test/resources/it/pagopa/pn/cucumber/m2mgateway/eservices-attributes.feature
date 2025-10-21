@@ -2,7 +2,7 @@
 Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
 
   @m2m-parte2-ottobre
-  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_01_A] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
+  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01_A] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 4 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -34,7 +34,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
       | DEPRECATED  |
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_01_B] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01_B] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 4 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -60,7 +60,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_02] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato ARCHIVED (Parte2#Scenario intorno a 114)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato ARCHIVED (Parte2#Scenario intorno a 114)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -74,7 +74,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_03] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service che non gli appartiene (Parte2#Scenario intorno a 115)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_03] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service che non gli appartiene (Parte2#Scenario intorno a 115)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -88,7 +88,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -116,7 +116,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_05] Un utente NON può aggiungere degli attributi certificati a una versione di un e-service indicando un auth. token non valido (Parte2#Scenario intorno a 120)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_05] Un utente NON può aggiungere degli attributi certificati a una versione di un e-service indicando un auth. token non valido (Parte2#Scenario intorno a 120)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -130,7 +130,7 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_06] Un utente con ruolo M2M NON può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 120)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_06] Un utente con ruolo M2M NON può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 121)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -142,3 +142,78 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
+
+  @m2m-parte2-ottobre
+  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_01_A] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi certificati di una versione di un e-service (Parte2#Scenario intorno a 244)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea 2 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
+    And "PA1" porta il descrittore dell'e-service in stato "<stato>"
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    Examples:
+      | stato       |
+      | DRAFT       |
+      | PUBLISHED   |
+      | SUSPENDED   |
+      | DEPRECATED  |
+      | ARCHIVED    |
+
+  @m2m-parte2-ottobre
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi certificati di una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 244)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea 2 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 2 attributo certificato con successo
+    And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+  @m2m-parte2-ottobre
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi certificati di una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea 1 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
+
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un e-service id inesistente
+    Then si ottiene lo status code 404
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un descriptor id inesistente
+    Then si ottiene lo status code 404
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un group index inesistente
+    Then si ottiene lo status code 404
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un e-service id inesistente
+    Then si ottiene lo status code 404
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un descriptor id inesistente
+    Then si ottiene lo status code 404
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un group index inesistente
+    Then si ottiene lo status code 404
+
+  @m2m-parte2-ottobre
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_03] Un utente NON può leggere gli attributi certificati di una versione di un e-service indicando un auth. token non valido (Parte2#Scenario intorno a 246)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea 1 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 401
