@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 import static it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceAttributesKey.from;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -169,30 +168,6 @@ public class EserviceAttributesSteps {
             sharedStepsContext.getEServicesCommonContext()
                 .addCertifiedAttributes(attributeIdsToAdd);
         }
-    }
-
-    @Then("gli attributi certificati restituiti dell'e-service sono coerenti con quelli aggiunti")
-    public void checkReturnedEServiceCertifiedAttributes() {
-        List<IM2MEServiceAttributeClient.EServiceAttribute<CertifiedAttribute>> returnedAttributes =
-            (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
-
-        int expectedGroupIndex = getEServiceAttributesKey().getGroupIndex();
-        List<UUID> expectedIds = sharedStepsContext.getEServicesCommonContext()
-            .getCertifiedAttributesIds();
-
-        Integer returnedGroupIndex = returnedAttributes.get(0).getGroupIndex();
-        List<UUID> returnedIds = returnedAttributes.stream()
-            .map(att -> att.getAttribute().getId())
-            .toList();
-
-        assertSoftly(softly -> {
-            softly.assertThat(returnedGroupIndex)
-                .as("Verifica che il group index sia quello atteso")
-                .isEqualTo(expectedGroupIndex);
-            softly.assertThat(returnedIds)
-                .as("Verifica che gli attributi restituiti sia quelli effettivamente aggiunti")
-                .containsExactlyInAnyOrderElementsOf(expectedIds);
-        });
     }
 
     @Then("gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service")

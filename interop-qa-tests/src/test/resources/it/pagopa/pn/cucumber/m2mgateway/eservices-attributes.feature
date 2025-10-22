@@ -12,18 +12,16 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     When l'utente tenta di aggiungere gli attributi certificati numeri da 2 a 3 al gruppo dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene lo status code 204
 
     # Verifica che il risultato sia coerente e che non sia stato modificato l'attributo caricato in fase di creazione
-    And gli attributi certificati restituiti dell'e-service sono coerenti con quelli aggiunti
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service
     And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
     When l'utente tenta di aggiungere l'attributo certificato numero 4 al gruppo dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene lo status code 204
 
     # Verifica che il risultato sia coerente e che non siano stati modificati gli attributi aggiunti in precedenza
-    And gli attributi certificati restituiti dell'e-service sono coerenti con quelli aggiunti
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service
     And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
@@ -45,18 +43,16 @@ Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     When l'utente tenta di aggiungere gli attributi certificati numeri da 2 a 3 al gruppo dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene lo status code 204
 
     # Verifica che il risultato sia coerente e che non sia stato modificato l'attributo caricato in fase di creazione
-    And gli attributi certificati restituiti dell'e-service sono coerenti con quelli aggiunti
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service
     And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
     When l'utente tenta di aggiungere l'attributo certificato numero 4 al gruppo dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene lo status code 204
 
     # Verifica che il risultato sia coerente e che non siano stati modificati gli attributi aggiunti in precedenza
-    And gli attributi certificati restituiti dell'e-service sono coerenti con quelli aggiunti
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service
     And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
