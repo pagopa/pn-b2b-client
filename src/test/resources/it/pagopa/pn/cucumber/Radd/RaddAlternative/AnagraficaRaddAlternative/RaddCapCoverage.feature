@@ -155,6 +155,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 80100 | /        | H501          | MI       | 2025-11-01    | 2025-11-01  |
       | 80100 | /        | null          | null     | 2025-10-01    | 2025-12-31  |
       | 80100 | /        | null          | null     | null          | null        |
+      | 80100 | /        | H501          | RM       | null          | 2025-12-31  |
+      | 80100 | /        | H501          | RM       | 2025-10-01    | null        |
 
 
   @capCoverageRadd @cognito2
@@ -373,25 +375,34 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
 
 
+
+
 ##  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST-cop-cap-radd.csv
 ##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cop-cap-radd.csv
-  #@capCoverageRadd
-  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_csv] Confronto coperture da csv riferimento alla tabella pn-AttachmentsConfig
+  Scenario: [RADD_API_COPERTURA_CAP_INSERIMENTO_csv] Inserimento coperture da csv a tabella pn-RaddCoverage
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
-    Then leggo il file csv e calcolo la copertura attuale
-    And verifico la copertura Radd dai dati del csv
+    Then inserisco i dati di copertura dal CSV nel database
 
 
 
 
+##  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST-cop-cap-radd.csv
+##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cop-cap-radd.csv
+  @capCoverageRadd
+  Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_csv] Confronto coperture da csv
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then leggo il file csv e salvo cap, localita e stato copertura
+    And verifico che lo stato della copertura sia coerente tra file e database
 
 
+
+  # Solo per testing
   Scenario: [RADD_API_ONLY_TESTING] Verifica copertura Radd vedi da tabella : pn-RaddCoverage
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
 
     Then setto i dati per verificare la copertura Radd:
-      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
-      | null     | null       | null        | 00100 | BF-APJJ    | null  | null | null    |
+      | nameRow2 | addressRow | addressRow2 | cap   | city    | city2 | pr   | country |
+      | null     | null       | null        | 00100 | BF-APJJ | null  | null | null    |
 
     And invoco l'API di verifica copertura cap Radd Light mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"

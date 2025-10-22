@@ -23,7 +23,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class CoperturaCapRaddSteps {
     private UpdateCoverageRequest updateRequest;
     private CheckCoverageResponse checkCoverageResponse;
 
-    private Map<String, Boolean> coverageMap = new HashMap<>();
+    private Map<String, Map<String, Object>> coverageMap = new HashMap<>();
 
     @Autowired
     public CoperturaCapRaddSteps(PnRaddCapCoverageClientImpl raddCapCoverageClient, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt, SettableAuthTokenRaddCognito settableAuthTokenRaddCognito) {
@@ -314,14 +314,19 @@ public class CoperturaCapRaddSteps {
 
     }
 
-    @Given("leggo il file csv e calcolo la copertura attuale")
+
+    // Step lettura CSV
+
+
+    @Given("leggo il file csv e salvo cap, localita e stato copertura")
     public void getCoverageFromFile() throws IOException {
+
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/TEST-cop-cap-radd.csv"))) {
             String line;
             boolean isHeader = true;
 
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-            OffsetDateTime now = OffsetDateTime.now();
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate now = LocalDate.now();
 
             while ((line = br.readLine()) != null) {
                 if (isHeader) {
@@ -330,55 +335,72 @@ public class CoperturaCapRaddSteps {
                 }
 
                 String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                if (values.length < 4) continue;
+                if (values.length < 6) continue;
 
-                String configKey = values[0].replace("\"", "").trim();
-                String startValidityStr = values[1].replace("\"", "").trim();
-                String endValidityStr = values[3].replace("\"", "").trim();
+                String locality = values[0].replace("\"", "").trim();
+                String cap = values[2].replace("\"", "").trim();
+                String startValidityStr = values[4].replace("\"", "").trim();
+                String endValidityStr = values[5].replace("\"", "").trim();
 
-                String zip = configKey.startsWith("ZIP##") ? configKey.substring(5) : configKey;
+                if (cap.isEmpty()) continue;
 
                 try {
-                    OffsetDateTime start = OffsetDateTime.parse(startValidityStr, formatter);
-                    OffsetDateTime end = endValidityStr.isEmpty()
-                            ? OffsetDateTime.parse("9999-12-31T00:00:00Z", formatter)
-                            : OffsetDateTime.parse(endValidityStr, formatter);
+                    LocalDate start = LocalDate.parse(startValidityStr, dateFormatter);
+                    LocalDate end = endValidityStr.isEmpty()
+                            ? LocalDate.parse("9999-12-31", dateFormatter)
+                            : LocalDate.parse(endValidityStr, dateFormatter);
 
                     boolean isActive = (now.isEqual(start) || now.isAfter(start)) &&
                             (now.isEqual(end) || now.isBefore(end));
 
-                    coverageMap.put(zip, isActive);
+                    Map<String, Object> coverageData = new HashMap<>();
+                    coverageData.put("locality", locality.isEmpty() ? null : locality);
+                    coverageData.put("isActive", isActive);
+
+                    coverageMap.put(cap, coverageData);
+
                 } catch (Exception e) {
-                    System.err.println("Errore parsing per riga: " + configKey + " → " + e.getMessage());
+                    System.err.println("Errore parsing per CAP " + cap + ": " + e.getMessage());
                 }
             }
         }
 
         System.out.println("Mappa copertura creata con " + coverageMap.size() + " elementi.");
-        coverageMap.forEach((k, v) -> System.out.println(k + " = " + v));
+        coverageMap.forEach((cap, data) ->
+                System.out.println(cap + " → " + data)
+        );
     }
 
-    @Then("verifico la copertura Radd dai dati del csv")
+    @Then("verifico che lo stato della copertura sia coerente tra file e database")
     public void setCheckCoverageRequest() {
 
         Map<String, String> report = new HashMap<>();
 
-        coverageMap.forEach((cap, expectedCoverage) -> {
+        coverageMap.forEach((cap, data) -> {
+
+            String localityTmp = (String) data.get("locality");
+            boolean expectedCoverage = (boolean) data.get("isActive");
 
             CheckCoverageRequest checkCoverageRequest = new CheckCoverageRequest()
                     .cap(cap);
-                    //.city("CITY");
 
-            CheckCoverageResponse response = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest);
+            if (localityTmp != null) {
+                checkCoverageRequest.city(localityTmp);
+            }else{checkCoverageRequest.city("ND");}
 
-            boolean actualCoverage = response.getHasCoverage() != null && response.getHasCoverage();
+            SearchMode mode = (localityTmp == null) ? SearchMode.LIGHT : SearchMode.COMPLETE;
 
-            if (expectedCoverage && actualCoverage) {
+            CheckCoverageResponse responseTmp = raddCapCoverageClient.checkCoverage(mode, checkCoverageRequest);
+
+            boolean actualCoverage = responseTmp.getHasCoverage() != null && responseTmp.getHasCoverage();
+
+            if (expectedCoverage == actualCoverage) {
                 report.put(cap, "OK");
             } else {
                 report.put(cap, "KO");
             }
         });
+
         System.out.println("===== REPORT COPERTURA RADD =====");
         report.forEach((cap, status) -> System.out.println(cap + " -> " + status));
 
@@ -386,7 +408,76 @@ public class CoperturaCapRaddSteps {
         if (hasKO) {
             throw new AssertionError("Almeno un CAP non ha la copertura prevista. Report: " + report);
         }
+    }
 
+    @Given("inserisco i dati di copertura dal CSV nel database")
+    public void insertCoverageFromCSV() throws IOException {
+
+        int inserted = 0;
+        int skipped = 0;
+        int failed = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/TEST-cop-cap-radd.csv"))) {
+            String line;
+            boolean isHeader = true;
+
+            while ((line = br.readLine()) != null) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+
+                String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                if (values.length < 6) continue;
+
+                String locality = values[0].replace("\"", "").trim();
+                String province = values[1].replace("\"", "").trim();
+                String cap = values[2].replace("\"", "").trim();
+                String cadastralCode = values[3].replace("\"", "").trim();
+                String startValidityStr = values[4].replace("\"", "").trim();
+                String endValidityStr = values[5].replace("\"", "").trim();
+
+                if (cap.isEmpty()) continue;
+
+                CreateCoverageRequest createRequest = new CreateCoverageRequest()
+                        .cap(toNullable(cap))
+                        .locality(locality.isEmpty() ? "ND" : locality)
+                        .cadastralCode(toNullable(cadastralCode))
+                        .province(toNullable(province));
+
+                try {
+                    raddCapCoverageClient.addCoverageWithHttpInfo(createRequest);
+                    inserted++;
+                } catch (HttpStatusCodeException e) {
+                    if (e.getStatusCode().value() == 409) {
+                        System.out.println("Coverage già presente per CAP " + cap + ", skipping insert.");
+                        skipped++;
+                    } else {
+                        System.out.println("Errore durante l'inserimento per CAP " + cap + ": " + e.getMessage());
+                        failed++;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Errore generico durante l'inserimento per CAP " + cap + ": " + e.getMessage());
+                    failed++;
+                }
+                UpdateCoverageRequest updateRequest = new UpdateCoverageRequest()
+                        .cadastralCode(toNullable(cadastralCode))
+                        .province(toNullable(province))
+                        .startValidity(startValidityStr.isEmpty() ? null : startValidityStr)
+                        .endValidity(endValidityStr.isEmpty() ? null : endValidityStr);
+
+                try {
+                    raddCapCoverageClient.updateCoverage(cap, locality, updateRequest);
+                } catch (Exception e) {
+                    System.out.println("Errore aggiornamento date per CAP " + cap + ": " + e.getMessage());
+                }
+            }
+        }
+        System.out.println(" *** REPORT INSERIMENTO COPERTURA CSV *** ");
+        System.out.println("Record inseriti correttamente: " + inserted);
+        System.out.println("Record saltati (409 Conflict): " + skipped);
+        System.out.println("Record falliti: " + failed);
+        System.out.println("Inserimento dati CSV completato con successo.");
     }
 
 }
