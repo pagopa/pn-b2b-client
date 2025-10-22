@@ -187,3 +187,19 @@ Feature: Analog send e2e
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Futuro"
     And l'operazione ha prodotto un errore con status code "400"
+
+  @analogFutureDate
+  Scenario: [B2B_ANALOG_SEND_6] Verifica invio notifica consolidatore con data nel presente con esito positivo
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario
+      | denomination            | Leonardo da Vinci           |
+      | taxId                   | DVNLRD52D15M059P            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Presente"
+    Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Presente"
+    And l'operazione ha prodotto un errore con status code "400.09"
