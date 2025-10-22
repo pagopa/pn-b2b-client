@@ -9,14 +9,16 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient.EServiceAttribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -26,6 +28,7 @@ public class EserviceAttributesSteps {
     private final IM2MEServiceAttributeClient eServiceClient;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpExecutor;
+    private final PollingService pollingService;
 
     private final ResourceSnapshots<List<EServiceAttribute<CertifiedAttribute>>> certifiedAttributeSnapshots = new ResourceSnapshots<>();
 
@@ -36,6 +39,7 @@ public class EserviceAttributesSteps {
         this.eServiceClient = clientTokenConfigurator.getM2mEServiceAttributeClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
     }
 
     @Given("l'utente crea un gruppo di attributi contenente {int} attribut(o)(i) certificat(o)(i) con successo")
@@ -80,10 +84,15 @@ public class EserviceAttributesSteps {
     }
 
     private void performGetEServiceCertifiedAttributes(EServiceAttributesKey key) {
-        httpExecutor.performCall(() -> eServiceClient.getCertifiedAttributes(
+        httpExecutor.performCall(() -> getCertifiedAttributes(key));
+    }
+
+    private List<EServiceAttribute<CertifiedAttribute>> getCertifiedAttributes(
+        EServiceAttributesKey key) {
+        return eServiceClient.getCertifiedAttributes(
             key.getEServiceId(),
             key.getDescriptorId()
-        ));
+        );
     }
 
     private EServiceAttributesGroupKey getEServiceAttributesKey() {
@@ -259,5 +268,92 @@ public class EserviceAttributesSteps {
         assertThat(actualCertifiedAttributesIds)
             .as("Verifica che gli attributi certificati reperiti siano identici a quelli precedentemente aggiunti")
             .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributesIds);
+    }
+
+    @When("l'utente tenta di rimuovere l'attributo certificato numero {collectionIndex} dal gruppo dell'e-service")
+    public void removeEServiceCertifiedAttribute(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds()
+            .get(attributeIndex);
+        performDeleteCertifiedAttribute(key, attributeId);
+    }
+
+    private void performDeleteCertifiedAttribute(EServiceAttributesGroupKey key, UUID attributeId) {
+        httpExecutor.performCall(() -> eServiceClient.deleteCertifiedAttribute(
+            key.getEServiceId(),
+            key.getDescriptorId(),
+            key.getGroupIndex(),
+            attributeId
+        ));
+    }
+
+    @Then("è stato rimosso dall'e-service solo l'attributo certificato numero {collectionIndex}")
+    public void checkRemovedCertifiedAttribute(int removedAttributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        List<UUID> actualCertifiedAttributeIds =
+            getCertifiedAttributes(from(key)).stream()
+                .map(attribute -> attribute.getAttribute().getId())
+                .toList();
+
+        List<UUID> expectedCertifiedAttributeIds = new ArrayList<>(
+            sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds());
+        expectedCertifiedAttributeIds.remove(removedAttributeIndex);
+
+        assertThat(actualCertifiedAttributeIds)
+            .as("Verifica che sia stato rimosso soltanto l'attributo certificato numero " + removedAttributeIndex)
+            .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributeIds);
+    }
+
+    @Then("gli attributi certificati del gruppo sono rimasti invariati")
+    public void checkSameCertifiedAttributes() {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        List<UUID> actualCertifiedAttributeIds =
+            getCertifiedAttributes(from(key)).stream()
+                .map(attribute -> attribute.getAttribute().getId())
+                .toList();
+
+        List<UUID> expectedCertifiedAttributeIds = new ArrayList<>(
+            sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds());
+
+        assertThat(actualCertifiedAttributeIds)
+            .as("Verifica che gli attributi certificati siano rimasti invariati")
+            .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributeIds);
+    }
+
+    @Given("l'utente rimuove l'attributo certificato numero {collectionIndex} dal gruppo dell'e-service con successo")
+    public void successfullyDeleteCertifiedAttribute(int attributeToRemoveIndex) {
+        removeEServiceCertifiedAttribute(attributeToRemoveIndex);
+        checkRemovedCertifiedAttribute(attributeToRemoveIndex);
+    }
+
+    @When("l'utente tenta di rimuovere l'attributo certificato numero {collectionIndex} dal gruppo dell'e-service indicando un e-service id inesistente")
+    public void removeEServiceCertifiedAttributeWithUnexistentEServiceId(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey().withEServiceId(UUID.randomUUID());
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds()
+            .get(attributeIndex);
+        performDeleteCertifiedAttribute(key, attributeId);
+    }
+
+    @When("l'utente tenta di rimuovere l'attributo certificato numero {collectionIndex} dal gruppo dell'e-service indicando un descriptor id inesistente")
+    public void removeEServiceCertifiedAttributeWithUnexistentDescriptorId(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey().withDescriptorId(UUID.randomUUID());
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds()
+            .get(attributeIndex);
+        performDeleteCertifiedAttribute(key, attributeId);
+    }
+
+    @When("l'utente tenta di rimuovere l'attributo certificato numero {collectionIndex} dal gruppo dell'e-service indicando un group index inesistente")
+    public void removeEServiceCertifiedAttributeWithUnexistentGroupIndex(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey().withGroupIndex(999);
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds()
+            .get(attributeIndex);
+        performDeleteCertifiedAttribute(key, attributeId);
+    }
+
+    @When("l'utente tenta di rimuovere un attributo certificato dal gruppo dell'e-service indicando un attribute id inesistente")
+    public void removeEServiceCertifiedAttributeWithUnexistentAttributeId() {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        UUID attributeId = UUID.randomUUID();
+        performDeleteCertifiedAttribute(key, attributeId);
     }
 }

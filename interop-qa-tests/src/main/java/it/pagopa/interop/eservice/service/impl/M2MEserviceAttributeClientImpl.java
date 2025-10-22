@@ -84,6 +84,12 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
             .toList();
     }
 
+    @Override
+    public void deleteCertifiedAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
+        UUID attributeId) {
+        this.eservicesApi.deleteEServiceDescriptorCertifiedAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
+    }
+
     private EServiceAttribute<CertifiedAttribute> mapToEServiceAttribute(EServiceDescriptorCertifiedAttribute attribute) {
         return EServiceAttribute.<CertifiedAttribute>builder()
             .attribute(attribute.getAttribute())
