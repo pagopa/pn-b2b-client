@@ -22,6 +22,7 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,7 @@ public class ClientTokenConfigurator {
     private final IM2MDelegationClient m2mDelegationClient;
     private final IM2MClientsClient m2MClientsClient;
     private final IM2MTenantClient m2mTenantClient;
+    private final ISelfcareClient iSelfcareClient;
 
     public void setBearerToken(String token) {
         this.lastToken = token;
@@ -82,6 +84,7 @@ public class ClientTokenConfigurator {
         m2mDelegationClient.setBearerToken(token);
         m2MClientsClient.setBearerToken(token);
         m2mTenantClient.setBearerToken(token);
+        iSelfcareClient.setBearerToken(token);
     }
 
 }
