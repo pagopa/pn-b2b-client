@@ -6,8 +6,11 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceD
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttributes;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -92,6 +95,52 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
 
     private EServiceAttribute<CertifiedAttribute> mapToEServiceAttribute(EServiceDescriptorCertifiedAttribute attribute) {
         return EServiceAttribute.<CertifiedAttribute>builder()
+            .attribute(attribute.getAttribute())
+            .groupIndex(attribute.getGroupIndex())
+            .build();
+    }
+
+    @Override
+    public List<EServiceAttribute<DeclaredAttribute>> addDeclaredAttributes(
+        UUID eServiceId,
+        UUID descriptorId,
+        int groupId,
+        List<UUID> attributes
+    ) {
+        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
+        return List.of(EServiceAttribute.<DeclaredAttribute>builder().build());
+    }
+
+    @Override
+    public List<EServiceAttribute<DeclaredAttribute>> createDeclaredAttributesGroup(
+        UUID eServiceId,
+        UUID descriptorId,
+        List<UUID> attributes
+    ) {
+        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
+        return List.of(EServiceAttribute.<DeclaredAttribute>builder().build());
+    }
+
+    @Override
+    public List<EServiceAttribute<DeclaredAttribute>> getDeclaredAttributes(
+        UUID eServiceId, UUID descriptorId) {
+        EServiceDescriptorDeclaredAttributes attributes = this.eservicesApi.getEServiceDescriptorDeclaredAttributes(
+            eServiceId, descriptorId, 0, 30);
+
+        return attributes.getResults().stream()
+            .map(this::mapToEServiceAttribute)
+            .toList();
+    }
+
+    @Override
+    public void deleteDeclaredAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
+        UUID attributeId) {
+        this.eservicesApi.deleteEServiceDescriptorDeclaredAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
+    }
+
+    private EServiceAttribute<DeclaredAttribute> mapToEServiceAttribute(
+        EServiceDescriptorDeclaredAttribute attribute) {
+        return EServiceAttribute.<DeclaredAttribute>builder()
             .attribute(attribute.getAttribute())
             .groupIndex(attribute.getGroupIndex())
             .build();

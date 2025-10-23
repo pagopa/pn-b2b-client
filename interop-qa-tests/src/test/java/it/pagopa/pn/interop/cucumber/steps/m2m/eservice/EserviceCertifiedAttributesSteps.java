@@ -8,7 +8,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient.EServiceAttribute;
@@ -22,23 +21,21 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-public class EserviceAttributesSteps {
+public class EserviceCertifiedAttributesSteps {
 
     private final IM2MEServiceAttributeClient eServiceClient;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpExecutor;
-    private final PollingService pollingService;
 
     private final ResourceSnapshots<List<EServiceAttribute<CertifiedAttribute>>> certifiedAttributeSnapshots = new ResourceSnapshots<>();
 
-    public EserviceAttributesSteps(
+    public EserviceCertifiedAttributesSteps(
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator clientTokenConfigurator
     ) {
         this.eServiceClient = clientTokenConfigurator.getM2mEServiceAttributeClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.pollingService = sharedStepsContext.getPollingService();
     }
 
     @Given("l'utente crea un gruppo di attributi contenente {int} attribut(o)(i) certificat(o)(i) con successo")

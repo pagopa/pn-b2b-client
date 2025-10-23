@@ -1,5 +1,6 @@
 @m2mEservices
-Feature: Gestione degli attributi degli e-services attraverso APIs M2M V2
+@m2m-eservice-certified-attributes
+Feature: Gestione degli attributi certificati degli e-services attraverso APIs M2M V2
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01_A] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
