@@ -884,8 +884,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa che non gli appartiene
     Given l'utente è un "admin" di "PA1"
-    And stampo il bearer token utilizzato "PA1" "RECEIVE" "PUBLISHED"
-#    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin

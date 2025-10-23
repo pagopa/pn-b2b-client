@@ -49,60 +49,6 @@ public class DescriptorPublicationSteps {
         );
     }
 
-    @And("stampo il bearer token utilizzato {string} {string} {string}")
-    public void printAuth(String tenantType, String mode, String eServiceDescriptorState) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-
-
-        HttpBearerAuth bearer = (HttpBearerAuth) clientTokenConfigurator.getEServiceClient().getAuthToken()
-                .get("bearerAuth");
-
-        try {
-            Field tokenField = HttpBearerAuth.class.getDeclaredField("bearerToken");
-            tokenField.setAccessible(true);  // permette di leggere il campo privato
-            String token = (String) tokenField.get(bearer);
-
-            Field schemeField = HttpBearerAuth.class.getDeclaredField("scheme");
-            schemeField.setAccessible(true);
-            String scheme = (String) schemeField.get(bearer);
-
-            System.out.println("Bearer token utilizzato nel test: " + token);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-
-        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)),
-                new UpdateEServiceDescriptorSeed()
-        );
-        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
-        eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
-        eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
-
-        // If descriptorState is not DRAFT we have to add a completed risk analysis in order to correctly publish the descriptor
-        if ("RECEIVE".equalsIgnoreCase(mode) && !"DRAFT".equalsIgnoreCase(eServiceDescriptorState)) {
-            RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
-            UUID riskAnalysisId = dataPreparationService.addRiskAnalysisToEService(
-                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                    new EServiceRiskAnalysisSeed()
-                            .name(riskAnalysis.getName())
-                            .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
-            );
-            sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
-        }
-
-        dataPreparationService.bringDescriptorToGivenState(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-                EServiceDescriptorState.valueOf(eServiceDescriptorState),
-                false
-        );
-    }
-
     @Given("{string} ha già creato un e-service in modalità {string} con un descrittore in stato {string}")
     public void createEServiceWithModeAndState(String tenantType, String mode, String eServiceDescriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
