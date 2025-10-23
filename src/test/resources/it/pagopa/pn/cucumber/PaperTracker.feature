@@ -34,6 +34,26 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_GIACENZA_AR_4 |
       | OK_AR_BAD_EVENT |
 
+
+
+  @paperTracker
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequenceName> |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>" iun "iun"
+    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>" iun "iun"
+    Examples:
+      | sequenceName              |
       | OK_RIR |
       | FAIL_RIR |
       | OK_RIR_INVALID_DATETIME |
@@ -41,7 +61,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_NOT_ORDERED |
 
   @paperTracker
-  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -49,6 +69,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_RIR_NO_DEMAT |
       | digitalDomicile         | NULL              |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
@@ -116,17 +138,33 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | sequenceName                        |
       | OK-Retry_AR                         |
       | OK-NonRendicontabile_AR             |
-      | OK-Retry_RIR |
-      #EGEY-JQJU-HPJZ-202510-A-1
       | FAIL_CON996_PCRETRY_FURTO_AR |
   #WYPN-XKMK-LGVL-202510-H-1
       | OK_PCRETRY_CON996_AR |
   #XQEP-DGTY-ARDG-202510-T-1
-      | FAIL_CON996_PCRETRY_FURTO_RIR |
-    #VQGA-LWAE-UHJA-202510-Z-1
-      | OK_PCRETRY_CON996_RIR |
-    #VPAT-UKVT-XNLX-202510-Y-1
 
+  @paperTracker
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2_RIR] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
+  si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequenceName>   |
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
+    Examples:
+      | sequenceName                        |
+      | OK-Retry_RIR |
+      | FAIL_CON996_PCRETRY_FURTO_RIR |
+      | OK_PCRETRY_CON996_RIR |
 
 
   @paperTracker
@@ -148,8 +186,27 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | physicalAddress                   | category                             | flowThrow                     |
       | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
-      | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
 
+  @paperTracker
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_RIR] Si verifica che i dati ritornati da /errors siano quelli attesi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | <physicalAddress> |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+   #da aggiungere anche controllo della timeline e questo test diventa permanente
+    #Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>" "0"
+    Examples:
+      | physicalAddress                   | category                             | flowThrow                     |
+      | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@FAIL_CON996_PCRETRY_RIR       | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
 
   @paperTracker
@@ -227,8 +284,27 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_OCR_FAIL                              | Via@OK_AR_OCR_FAIL                              | ANALOG_SUCCESS_WORKFLOW |
       | OK_AR_OCR_PENDING                           | Via@OK_AR_OCR_PENDING                           | ANALOG_SUCCESS_WORKFLOW |
 
+      | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   | ANALOG_SUCCESS_WORKFLOW |
+      | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           | ANALOG_SUCCESS_WORKFLOW |
 
-
+  #TODO: questo scenario andrà incluso nell'NRT totale
+  @paperTrackerRunMode
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4_RIR]
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | <physicalAddress> |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
+    Then si controlla che non ci siano eventi duplicati
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    Examples:
+      | sequence                          | physicalAddress                   | waitUntil               |
       | OK_RIR                            |Via@OK_RIR                         | ANALOG_SUCCESS_WORKFLOW |
       | FAIL_RIR                          |Via@FAIL_RIR                       | ANALOG_SUCCESS_WORKFLOW |
       | OK-Retry_RIR                      |Via@OK-Retry_RIR                   | ANALOG_SUCCESS_WORKFLOW |
@@ -236,10 +312,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_NOT_ORDERED                |Via@OK_RIR_NOT_ORDERED             | ANALOG_SUCCESS_WORKFLOW |
       | FAIL_CON996_PCRETRY_FURTO_RIR     |Via@FAIL_CON996_PCRETRY_FURTO_RIR  | ANALOG_SUCCESS_WORKFLOW |
       | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   | ANALOG_SUCCESS_WORKFLOW |
-      | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           | ANALOG_SUCCESS_WORKFLOW |
-
-
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
@@ -260,10 +332,29 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | sequence                          | physicalAddress                     | deliveryDetailCode |
       | OK_AR_INVALID_DATETIME            | Via@OK_AR_INVALID_DATETIME          | RECRN001B          |
       | OK_AR_NO_EVENT_B                  | Via@OK_AR_NO_EVENT_B                | RECRN001A          |
-      | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME          | RECRI003B          |
       | OK_AR_BLOCKED                     | Via@OK_AR_BLOCKED                   | CON020 |
       | FAIL_Consolidatore-AR             | Via@FAIL_Consolidatore-AR           | CON996 |
       | FAIL_ConsolidatoreIndirizzo-AR    | Via@FAIL_ConsolidatoreIndirizzo-AR  | CON997 |
-      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                  | RECRI003A |
       | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR           | CON996 |
+
+      #TODO: questo scenario andrà incluso nell'NRT totale
+  @paperTrackerRunMode
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5_RIR]
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | <physicalAddress> |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
+    Then si controlla che non ci siano eventi duplicati
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    Examples:
+      | sequence                          | physicalAddress                     | deliveryDetailCode |
+      | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME          | RECRI003B          |
+      | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                  | RECRI003A          |
 
