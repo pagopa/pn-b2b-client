@@ -65,7 +65,7 @@ public class DeclaredAttributeCreationSteps {
     public void createDeclaredAttributes(int attributesQt) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         for(int i = 0; i < attributesQt; i++) {
-            Attribute attribute = dataPreparationService.createAttribute(AttributeKind.CERTIFIED);
+            Attribute attribute = dataPreparationService.createAttribute(AttributeKind.DECLARED);
             sharedStepsContext.getAttributeCommonContext().addDeclaredAttribute(attribute);
         }
     }

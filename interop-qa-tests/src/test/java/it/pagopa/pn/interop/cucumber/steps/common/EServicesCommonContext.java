@@ -27,6 +27,7 @@ public class EServicesCommonContext {
 
     private List<UUID> certifiedAttributesIds = new ArrayList<>();
     private List<UUID> declaredAttributesIds = new ArrayList<>();
+    private List<UUID> verifiedAttributesIds = new ArrayList<>();
 
     private UUID documentId;
     private UUID documentId2;
@@ -43,5 +44,8 @@ public class EServicesCommonContext {
 
     public void addDeclaredAttributes(List<UUID> attributesIds) {
         this.declaredAttributesIds.addAll(attributesIds);
+    }
+    public void addVerifiedAttributes(List<UUID> attributesIds) {
+        this.verifiedAttributesIds.addAll(attributesIds);
     }
 }

@@ -5,12 +5,8 @@ import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceDescriptorsListRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttributes;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
+
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -145,4 +141,54 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
             .groupIndex(attribute.getGroupIndex())
             .build();
     }
+
+//    ---------------------------------------
+@Override
+public List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(
+        UUID eServiceId,
+        UUID descriptorId,
+        int groupId,
+        List<UUID> attributes
+) {
+    // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
+    return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+}
+
+    @Override
+    public List<EServiceAttribute<VerifiedAttribute>> createVerifiedAttributesGroup(
+            UUID eServiceId,
+            UUID descriptorId,
+            List<UUID> attributes
+    ) {
+        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
+        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+    }
+
+    @Override
+    public List<EServiceAttribute<VerifiedAttribute>> getVerifiedAttributes(
+            UUID eServiceId, UUID descriptorId) {
+        EServiceDescriptorVerifiedAttributes attributes = this.eservicesApi.getEServiceDescriptorVerifiedAttributes(
+                eServiceId, descriptorId, 0, 30);
+
+        return attributes.getResults().stream()
+                .map(this::mapToEServiceAttribute)
+                .toList();
+    }
+
+    @Override
+    public void deleteVerifiedAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
+                                        UUID attributeId) {
+        this.eservicesApi.deleteEServiceDescriptorVerifiedAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
+    }
+
+    private EServiceAttribute<VerifiedAttribute> mapToEServiceAttribute(
+            EServiceDescriptorVerifiedAttribute attribute) {
+        return EServiceAttribute.<VerifiedAttribute>builder()
+                .attribute(attribute.getAttribute())
+                .groupIndex(attribute.getGroupIndex())
+                .build();
+    }
+//    ---------------------------------------
+
+
 }
