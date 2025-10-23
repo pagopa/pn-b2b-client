@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 
-import static it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceAttributesKey.from;
+import static it.pagopa.pn.interop.cucumber.steps.m2m.EServiceAttributesKey.from;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.And;
@@ -16,6 +16,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAtt
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.EServiceAttributesGroupKey;
+import it.pagopa.pn.interop.cucumber.steps.m2m.EServiceAttributesKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
