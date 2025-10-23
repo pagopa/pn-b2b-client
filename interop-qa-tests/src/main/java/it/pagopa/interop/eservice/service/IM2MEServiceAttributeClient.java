@@ -5,10 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAtt
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import java.util.List;
 import java.util.UUID;
-
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
 
 public interface IM2MEServiceAttributeClient extends SettableBearerToken {
     List<EServiceAttribute<CertifiedAttribute>> addCertifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
