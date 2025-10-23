@@ -31,6 +31,8 @@ public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
     private final String basePath;
     private final AppIoPnMandateCreateApi appIoMandateApi;
 
+    private final String appIoApiKey;
+
     public PnMandateAppIoClientImpl(RestTemplate restTemplate,
                                     @Value("${pn.appio.externa.base-url.pagopa}") String basePath,
                                     @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
@@ -40,7 +42,8 @@ public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
                                     @Value("${pn.bearer-token.user5}") String dinoBearerToken,
                                     @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
                                     @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                    @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
+                                    @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken,
+                                    @Value("${pn.external.appio.api-key}") String appIoApiKey) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
@@ -48,16 +51,18 @@ public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
         this.leonardoBearerToken = leonardoBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.appIoApiKey = appIoApiKey;
         this.bearerTokenSetted = BearerTokenType.PG_1;
         this.appIoMandateApi = new AppIoPnMandateCreateApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
     }
 
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
+    private ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
 //        newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
+//        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("x-api-key", appIoApiKey);
         return newApiClient;
     }
 

@@ -426,6 +426,13 @@ public class SharedSteps {
         getNotificationStepInterface().addDocumentItems(numAllegati);
     }
 
+    @When("la notifica viene inviata tramite api b2b dal {string} senza aspettare che diventi accepted")
+    public void sendNotificationWithoutWaitingForAccepted(String paName) throws IOException {
+        setPaAndSenderTaxId(paName);
+        getNotificationStepInterface().uploadNotification(null);
+        assertThat(notificationIun).as("Lo IUN della notifica inviata non dev'essere null").isNotNull();
+    }
+
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi {string}")
     public void sendNotificationWithoutSettingPa(String status) {
         sendNotification(null, status);
