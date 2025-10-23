@@ -8,6 +8,7 @@ import lombok.With;
 @Data
 @With
 @Builder
+// TODO rifomulare così che estenda EServiceAttributesKey
 public class EServiceAttributesGroupKey {
     private UUID eServiceId;
     private UUID descriptorId;

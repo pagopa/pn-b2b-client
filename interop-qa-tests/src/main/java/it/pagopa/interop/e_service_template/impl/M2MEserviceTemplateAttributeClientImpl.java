@@ -1,13 +1,17 @@
-package it.pagopa.interop.eservice.service.impl;
+package it.pagopa.interop.e_service_template.impl;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateAttributeClient;
 import it.pagopa.interop.eservice.service.EServiceAttribute;
-import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceDescriptorsListRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
-
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionDeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionDeclaredAttributes;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -21,17 +25,17 @@ import org.springframework.web.client.RestTemplate;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClient {
-    private final EservicesApi eservicesApi;
+public class M2MEserviceTemplateAttributeClientImpl implements IM2MEServiceTemplateAttributeClient {
+    private final EserviceTemplatesApi templatesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
     private final EserviceDescriptorsListRequest defaultDescriptorListRequest;
 
-    public M2MEserviceAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public M2MEserviceTemplateAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
-        this.eservicesApi = new EservicesApi(createApiClient("dummyBearer"));
+        this.templatesApi = new EserviceTemplatesApi(createApiClient("dummyBearer"));
 
         this.defaultDescriptorListRequest = EserviceDescriptorsListRequest.builder()
                 .limit(30)
@@ -49,7 +53,7 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
 
     @Override
     public void setBearerToken(String bearerToken) {
-        this.eservicesApi.setApiClient(createApiClient(bearerToken));
+        this.templatesApi.setApiClient(createApiClient(bearerToken));
     }
 
     @Override
@@ -76,7 +80,7 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
     @Override
     public List<EServiceAttribute<CertifiedAttribute>> getCertifiedAttributes(
         UUID eServiceId, UUID descriptorId) {
-        EServiceDescriptorCertifiedAttributes attributes = this.eservicesApi.getEServiceDescriptorCertifiedAttributes(
+        EServiceTemplateVersionCertifiedAttributes attributes = this.templatesApi.getEServiceTemplateVersionCertifiedAttributes(
             eServiceId, descriptorId, 0, 30);
 
         return attributes.getResults().stream()
@@ -87,10 +91,11 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
     @Override
     public void deleteCertifiedAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
         UUID attributeId) {
-        this.eservicesApi.deleteEServiceDescriptorCertifiedAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
+        this.templatesApi.deleteEServiceTemplateVersionCertifiedAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
     }
 
-    private EServiceAttribute<CertifiedAttribute> mapToEServiceAttribute(EServiceDescriptorCertifiedAttribute attribute) {
+    private EServiceAttribute<CertifiedAttribute> mapToEServiceAttribute(
+        EServiceTemplateVersionCertifiedAttribute attribute) {
         return EServiceAttribute.<CertifiedAttribute>builder()
             .attribute(attribute.getAttribute())
             .groupIndex(attribute.getGroupIndex())
@@ -121,7 +126,7 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
     @Override
     public List<EServiceAttribute<DeclaredAttribute>> getDeclaredAttributes(
         UUID eServiceId, UUID descriptorId) {
-        EServiceDescriptorDeclaredAttributes attributes = this.eservicesApi.getEServiceDescriptorDeclaredAttributes(
+        EServiceTemplateVersionDeclaredAttributes attributes = this.templatesApi.getEServiceTemplateVersionDeclaredAttributes(
             eServiceId, descriptorId, 0, 30);
 
         return attributes.getResults().stream()
@@ -132,64 +137,14 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
     @Override
     public void deleteDeclaredAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
         UUID attributeId) {
-        this.eservicesApi.deleteEServiceDescriptorDeclaredAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
+        this.templatesApi.deleteEServiceTemplateVersionDeclaredAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
     }
 
     private EServiceAttribute<DeclaredAttribute> mapToEServiceAttribute(
-        EServiceDescriptorDeclaredAttribute attribute) {
+        EServiceTemplateVersionDeclaredAttribute attribute) {
         return EServiceAttribute.<DeclaredAttribute>builder()
             .attribute(attribute.getAttribute())
             .groupIndex(attribute.getGroupIndex())
             .build();
     }
-
-//    ---------------------------------------
-@Override
-public List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(
-        UUID eServiceId,
-        UUID descriptorId,
-        int groupId,
-        List<UUID> attributes
-) {
-    // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-    return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
-}
-
-    @Override
-    public List<EServiceAttribute<VerifiedAttribute>> createVerifiedAttributesGroup(
-            UUID eServiceId,
-            UUID descriptorId,
-            List<UUID> attributes
-    ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
-    }
-
-    @Override
-    public List<EServiceAttribute<VerifiedAttribute>> getVerifiedAttributes(
-            UUID eServiceId, UUID descriptorId) {
-        EServiceDescriptorVerifiedAttributes attributes = this.eservicesApi.getEServiceDescriptorVerifiedAttributes(
-                eServiceId, descriptorId, 0, 30);
-
-        return attributes.getResults().stream()
-                .map(this::mapToEServiceAttribute)
-                .toList();
-    }
-
-    @Override
-    public void deleteVerifiedAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
-                                        UUID attributeId) {
-        this.eservicesApi.deleteEServiceDescriptorVerifiedAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
-    }
-
-    private EServiceAttribute<VerifiedAttribute> mapToEServiceAttribute(
-            EServiceDescriptorVerifiedAttribute attribute) {
-        return EServiceAttribute.<VerifiedAttribute>builder()
-                .attribute(attribute.getAttribute())
-                .groupIndex(attribute.getGroupIndex())
-                .build();
-    }
-//    ---------------------------------------
-
-
 }

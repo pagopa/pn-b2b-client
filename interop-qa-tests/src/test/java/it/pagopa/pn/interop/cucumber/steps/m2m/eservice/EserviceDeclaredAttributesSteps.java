@@ -10,7 +10,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
-import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient.EServiceAttribute;
+import it.pagopa.interop.eservice.service.EServiceAttribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
