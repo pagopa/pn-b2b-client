@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m;
+package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 import java.util.UUID;
 import lombok.Builder;
