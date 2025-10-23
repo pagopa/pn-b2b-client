@@ -60,7 +60,7 @@ Feature: Lettura richiesta di fruizione
       | ARCHIVED       | AUTOMATIC        |
 
   @happy-path
-  @agreement_read3
+  @agreement_read3 @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

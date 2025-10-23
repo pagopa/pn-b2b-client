@@ -70,7 +70,7 @@ Feature: Upgrade di una richiesta di fruizione
     Then si ottiene status code 400
 
   @sad-path
-  @agreement_upgrade3b
+  @agreement_upgrade3b @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES e associata ad una versione di e-service antecedente all’ultima versione di e-service pubblicata, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -103,7 +103,7 @@ Feature: Upgrade di una richiesta di fruizione
       | ARCHIVED       | AUTOMATIC        |
 
   @sad-path
-  @agreement_upgrade4 @wait_for_fix @IMN-351
+  @agreement_upgrade4 @wait_for_fix @IMN-351 @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e associata ad una versione di e-service antecedente all’ultima versione pubblicata, all'interno della nuova versione SONO cambiati gli attributi rispetto alla versione precedente, ed il fruitore non ne possegga uno o più tra quelli CERTIFICATI, alla richiesta di aggiornamento da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"

@@ -34,7 +34,6 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 
 public interface IEServiceClient extends SettableBearerToken {
-
     CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed);
     void deleteEService(UUID eServiceId);
     void deleteEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);

@@ -44,7 +44,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     Then si ottiene status code 400
 
   @happy-path
-  @agreement_submit3
+  @agreement_submit3 @certifiedAttribute
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, con NON tutti gli attributi richiesti certificati, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi dell’ente fruitore, che è anche l’erogatore dell’e-service, va a buon fine
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha creato un attributo certificato e non lo ha assegnato a "PA2"
@@ -118,7 +118,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     Then si ottiene status code 400
 
   @sad-path
-  @agreement_submit9
+  @agreement_submit9 @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, associata ad un e-service nella sua ultima versione pubblicata, con NON tutti gli attributi richiesti certificati, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

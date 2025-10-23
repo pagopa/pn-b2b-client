@@ -3,7 +3,6 @@ Feature: Import di un descrittore
   Tutti gli utenti autorizzati possono effettuare una richiesta di import di un descrittore di un e-service.
   Il controllo sui documenti da caricare e se il nome dell'eservice è già presente sono stati tralasciati in quanto già testati nei relativi endpoint dedicati
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/QA-9259
   @happy-path
   @descriptor_import1 @no-parallel
   Scenario Outline: La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato, dato un pacchetto correttamente strutturato, contenente due documenti correttamente mappati nel file di configurazione, va a buon fine e il descrittore viene correttamente creato in stato DRAFT con quei documenti

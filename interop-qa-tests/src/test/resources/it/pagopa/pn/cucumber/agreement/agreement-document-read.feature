@@ -45,7 +45,7 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | ARCHIVED       | AUTOMATIC        |
 
   @happy-path
-  @agreement_document_read2b
+  @agreement_document_read2b @certifiedAttribute
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

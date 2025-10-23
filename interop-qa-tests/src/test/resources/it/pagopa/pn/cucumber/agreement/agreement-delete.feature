@@ -34,7 +34,7 @@ Feature: Cancellazione richiesta di fruizione
       | Privato | api,security |       403 |
 
   @happy-path
-  @agreement_delete1b
+  @agreement_delete1b @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
