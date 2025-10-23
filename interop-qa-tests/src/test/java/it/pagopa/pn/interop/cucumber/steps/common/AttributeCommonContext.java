@@ -26,13 +26,22 @@ public class AttributeCommonContext {
     String attributeConsumerTenant;
 
     List<Attribute> createdAttributes = new ArrayList<>();
+    List<Attribute> declaredAttributes = new ArrayList<>();
+
     public Attribute getLastCreatedAttribute() {
         return lastOf(createdAttributes);
     }
+
     public void addCreatedAttribute(Attribute attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
+
+    public void addDeclaredAttribute(Attribute attribute) {
+        this.attributeId = attribute.getId();
+        this.declaredAttributes.add(attribute);
+    }
+
 
     //--M2M--
     List<CertifiedAttribute> certifiedPublished = new ArrayList<>();

@@ -26,6 +26,7 @@ public class EServicesCommonContext {
     private int groupId; // id dell'ultimo gruppo di attributi creato
 
     private List<UUID> certifiedAttributesIds = new ArrayList<>();
+    private List<UUID> declaredAttributesIds = new ArrayList<>();
 
     private UUID documentId;
     private UUID documentId2;
@@ -38,5 +39,9 @@ public class EServicesCommonContext {
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);
+    }
+
+    public void addDeclaredAttributes(List<UUID> attributesIds) {
+        this.declaredAttributesIds.addAll(attributesIds);
     }
 }
