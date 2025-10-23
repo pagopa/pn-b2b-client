@@ -80,6 +80,10 @@ public class EServiceTemplateStepContext {
 
     private List<DocumentMetadata> documentsMetadata;
 
+    private int groupId; // id dell'ultimo gruppo di attributi creato
+    private List<UUID> certifiedAttributesIds = new ArrayList<>();
+    private List<UUID> declaredAttributesIds = new ArrayList<>();
+
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(
             RiskAnalysisFormSeed.class);
@@ -108,6 +112,14 @@ public class EServiceTemplateStepContext {
 
     public void addTemplateManaged(EServiceTemplateInfo templateInfo) {
         this.templatesManaged.add(templateInfo);
+    }
+
+    public void addCertifiedAttributes(List<UUID> attributesIds) {
+        this.certifiedAttributesIds.addAll(attributesIds);
+    }
+
+    public void addDeclaredAttributes(List<UUID> attributesIds) {
+        this.declaredAttributesIds.addAll(attributesIds);
     }
 
     private <T> T lastOf(List<T> list) {
