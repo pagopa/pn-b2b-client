@@ -148,7 +148,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
     public CatalogEServices getEServicesCatalog(Integer offset, Integer limit, String q, List<UUID> producersIds,
                                                 List<UUID> attributesIds, List<EServiceDescriptorState> states,
                                                 List<AgreementState> agreementStates, EServiceMode mode, Boolean isConsumerDelegable) {
-        return eservicesApi.getEServicesCatalog(offset, limit, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable);
+
+        /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
+         * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
+        return eservicesApi.getEServicesCatalog(offset, limit, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable, null);
     }
 
     public CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
