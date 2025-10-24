@@ -65,7 +65,6 @@
         | Poste~80056             | esattamente | 0     |
         | Fulmine~80057           | esattamente | 0     |
         | Fulmine~80058           | esattamente | 0     |
-        | Poste~80058             | esattamente | 0     |
         | Fulmine~80059           | esattamente | 0     |
         | Poste~80062             | esattamente | 0     |
         | Poste~80063             | esattamente | 0     |
@@ -76,9 +75,9 @@
         | Fulmine~80070           | esattamente | 0     |
         | Poste~80072             | esattamente | 0     |
         | Poste~80073             | esattamente | 0     |
-        | Fulmine~80075           | esattamente | 0     |
         | Poste~80075             | esattamente | 0     |
-        | Fulmine~80077           | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
         | Poste~80077             | esattamente | 0     |
         | Fulmine~80078           | esattamente | 0     |
         | Poste~80078             | esattamente | 0     |
@@ -199,7 +198,6 @@
         | Poste~80056             | esattamente | 0     |
         | Fulmine~80057           | esattamente | 0     |
         | Fulmine~80058           | esattamente | 0     |
-        | Poste~80058             | esattamente | 0     |
         | Fulmine~80059           | esattamente | 0     |
         | Poste~80062             | esattamente | 0     |
         | Poste~80063             | esattamente | 0     |
@@ -210,9 +208,9 @@
         | Fulmine~80070           | esattamente | 0     |
         | Poste~80072             | esattamente | 0     |
         | Poste~80073             | esattamente | 0     |
-        | Fulmine~80075           | esattamente | 0     |
         | Poste~80075             | esattamente | 0     |
-        | Fulmine~80077           | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
         | Poste~80077             | esattamente | 0     |
         | Fulmine~80078           | esattamente | 0     |
         | Poste~80078             | esattamente | 0     |
