@@ -19,10 +19,8 @@ public class SelfcareSteps {
 
     private ResponseEntity<List<User>> institutionsSelfcareResponse;
 
-    public SelfcareSteps(ISelfcareClient selfcareClient,
-                         ClientTokenConfigurator clientTokenConfigurator,
-                         SharedStepsContext sharedStepsContext) {
-        this.selfcareClient = selfcareClient;
+    public SelfcareSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
+        this.selfcareClient = clientTokenConfigurator.getISelfcareClient();
         this.identityService = sharedStepsContext.getIdentityService();
     }
 
