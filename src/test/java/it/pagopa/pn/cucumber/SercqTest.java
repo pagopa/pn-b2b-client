@@ -14,6 +14,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @ExcludeTags({"ignore"})
 //@IncludeTags({"sercq","sercqTos","sercqF2"})
-@IncludeTags({"sercqF2"})
+@IncludeTags({"sercq","sercqTos"})
 public class SercqTest {
 }
