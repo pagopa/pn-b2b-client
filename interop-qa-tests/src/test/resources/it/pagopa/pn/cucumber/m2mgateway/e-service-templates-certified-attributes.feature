@@ -139,17 +139,17 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service template
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service template
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service template
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
     Examples:
       | mode        | stato       |
       | erogazione  | DRAFT       |
@@ -234,7 +234,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
 
     # TODO in caso di refactor delle snapshot, andrebbe accorpato con lo step "gli attributi certificati del gruppo dell'e-service template sono rimasti invariati"
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_03] Un utente NON può rimuovere gli attributi certificati di una versione di un e-service template indicando degli identificativi inesistenti o appartenenti ad attributi già rimossi (Parte2#Scenario intorno a 271, 273)
@@ -246,22 +246,22 @@ Feature: Gestione degli attributi certificati degli e-service templates template
 
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template indicando un e-service template id inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template indicando un descriptor id inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template indicando un group index inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     When l'utente tenta di rimuovere un attributo certificato dal gruppo dell'e-service template indicando un attribute id inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
     # verifica che la rimozione di un attributo già eliminato fallisca
     Given l'utente rimuove l'attributo certificato numero 1 dal gruppo dell'e-service template con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
       | mode        |
       | erogazione  |
@@ -278,7 +278,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template
     Then si ottiene lo status code 401
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
       | mode        |
       | erogazione  |
@@ -294,7 +294,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service template
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
       | mode        |
       | erogazione  |
@@ -310,7 +310,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi certificati con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service template
     Then si ottiene lo status code 400
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
       | mode        | stato       |
       | erogazione  | PUBLISHED   |
