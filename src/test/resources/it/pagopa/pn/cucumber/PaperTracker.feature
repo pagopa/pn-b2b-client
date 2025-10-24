@@ -19,7 +19,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | ok_AR |
       | FAIL-Discovery_AR |
       | FAIL_AR |
-#      | FAIL_IndirizzoInesistenteAR |
       | FAIL-Irreperibile_AR |
       | OK-Giacenza_AR |
       | FAIL-Giacenza_AR |
@@ -264,7 +263,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL-DiscoveryIrreperibile_AR               | Via@FAIL-DiscoveryIrreperibile_AR               | ANALOG_FAILURE_WORKFLOW |
 
 
-      | FAIL-WO_AR                                  | Via@FAIL-WO_AR                                  | ANALOG_SUCCESS_WORKFLOW |
       | OK-WO-Giacenza_AR                           | Via@OK-WO-Giacenza_AR                           | ANALOG_SUCCESS_WORKFLOW |
       | OK-M_AR                                     | Via@OK-M_AR                                     | ANALOG_SUCCESS_WORKFLOW |
       | FAIL-Irreperibile_AR_SLOW                   | Via@FAIL-Irreperibile_AR_SLOW                   | ANALOG_SUCCESS_WORKFLOW |
@@ -306,12 +304,12 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Examples:
       | sequence                          | physicalAddress                   | waitUntil               |
       | OK_RIR                            |Via@OK_RIR                         | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL_RIR                          |Via@FAIL_RIR                       | ANALOG_SUCCESS_WORKFLOW |
-      | OK-Retry_RIR                      |Via@OK-Retry_RIR                   | ANALOG_SUCCESS_WORKFLOW |
+     | FAIL_RIR                          |Via@FAIL_RIR                       | ANALOG_SUCCESS_WORKFLOW |
+     | OK-Retry_RIR                      |Via@OK-Retry_RIR                   | ANALOG_SUCCESS_WORKFLOW |
       | OK_RIR_TIMESTAMP_ERR              |Via@OK_RIR_TIMESTAMP_ERR           | ANALOG_SUCCESS_WORKFLOW |
       | OK_RIR_NOT_ORDERED                |Via@OK_RIR_NOT_ORDERED             | ANALOG_SUCCESS_WORKFLOW |
       | FAIL_CON996_PCRETRY_FURTO_RIR     |Via@FAIL_CON996_PCRETRY_FURTO_RIR  | ANALOG_SUCCESS_WORKFLOW |
-      | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          | ANALOG_SUCCESS_WORKFLOW |
+       | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          | ANALOG_SUCCESS_WORKFLOW |
 
 
   #TODO: questo scenario andrà incluso nell'NRT totale
@@ -337,6 +335,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL_ConsolidatoreIndirizzo-AR    | Via@FAIL_ConsolidatoreIndirizzo-AR  | CON997 |
       | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR           | CON996 |
 
+
       #TODO: questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5_RIR]
@@ -357,4 +356,45 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | sequence                          | physicalAddress                     | deliveryDetailCode |
       | OK_RIR_INVALID_DATETIME           |Via@OK_RIR_INVALID_DATETIME          | RECRI003B          |
       | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                  | RECRI003A          |
+
+
+  @paperTrackerRunMode
+  Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_5_FAIL-WO_AR] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-WO_AR    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECRN002C                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_responseStatus     | KO                             |
+      | details_deliveryFailureCause | M02                          |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECRN002B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "Plico"}]    |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECRN002A                      |
+      | details_sentAttemptMade    | 0                              |
+
 
