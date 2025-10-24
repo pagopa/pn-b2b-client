@@ -159,17 +159,17 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
     Examples:
       | stato       |
       | DRAFT       |
@@ -190,17 +190,17 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi certificati di una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
@@ -265,7 +265,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
 
     # TODO in caso di refactor delle snapshot, andrebbe accorpato con lo step "gli attributi certificati del gruppo dell'e-service sono rimasti invariati"
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_03] Un utente NON può rimuovere gli attributi certificati di una versione di un e-service indicando degli identificativi inesistenti o appartenenti ad attributi già rimossi (Parte2#Scenario intorno a 271, 273)
@@ -277,22 +277,22 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
 
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service indicando un descriptor id inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service indicando un group index inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     When l'utente tenta di rimuovere un attributo certificato dal gruppo dell'e-service indicando un attribute id inesistente
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
     # verifica che la rimozione di un attributo già eliminato fallisca
     Given l'utente rimuove l'attributo certificato numero 1 dal gruppo dell'e-service con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_04] Un utente NON può rimuovere gli attributi certificati di una versione di un e-service indicando un auth. token non valido (Parte2#Scenario intorno a 272)
@@ -305,7 +305,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 401
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_05] Un utente NON può rimuovere gli attributi certificati di una versione di un e-service che non gli appartiene (Parte2#Scenario intorno a 274)
@@ -317,7 +317,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 404
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_A] Un utente non può rimuovere gli attributi certificati da una versione di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
@@ -329,7 +329,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 400
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
       | stato       |
       | PUBLISHED   |
@@ -347,4 +347,4 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 400
-    And gli attributi certificati del gruppo sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
