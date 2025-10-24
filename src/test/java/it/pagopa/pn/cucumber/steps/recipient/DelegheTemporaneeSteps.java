@@ -47,6 +47,8 @@ public class DelegheTemporaneeSteps {
 
     private final IPnMandateAppIoClient mandateAppIoClient;
 
+    private final CieGeneratorTool cieGeneratorTool;
+
     private String qrCode;
 
     private MandateCreationResponse mandateCreationResponse;
@@ -64,10 +66,11 @@ public class DelegheTemporaneeSteps {
     @Autowired
     public DelegheTemporaneeSteps(SharedSteps sharedSteps,
                                   RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps,
-                                  PnMandateAppIoClientImpl mandateAppIoClient) {
+                                  PnMandateAppIoClientImpl mandateAppIoClient, CieGeneratorTool cieGeneratorTool) {
         this.sharedSteps = sharedSteps;
         this.mandateAppIoClient = mandateAppIoClient;
         this.ricezioneNotificheWebDelegheSteps = ricezioneNotificheWebDelegheSteps;
+        this.cieGeneratorTool = cieGeneratorTool;
     }
 
     //TODO delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
@@ -168,16 +171,17 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    private CIEValidationData getCieValidationData(String delegatorTaxId, String inputParamsType) {
-        Path path = null;
+    @And("TODO remove test cie {string} {string}")
+    public CIEValidationData getCieValidationData(String delegatorTaxId, String inputParamsType) {
+        Path path = Path.of("lib");
         LocalDate expirationDate = LocalDate.now().plusYears(1L);
-        String nonce = null;
+        String nonce = "00000"; //TODO: che ci devo passare ?
         switch (inputParamsType.toUpperCase()) {
             case "DATI DI UNA CIE SCADUTA" -> expirationDate = LocalDate.now().minusYears(1L);
             case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> delegatorTaxId = Costanti.GALILEO_GALILEI_TAX_ID;
             case "SIGNED NONCE ERRATO" -> nonce = "00000";
         }
-        return CieGeneratorTool.generateCieValidationData(path, delegatorTaxId, expirationDate, nonce);
+        return cieGeneratorTool.generateCieValidationData(path, delegatorTaxId, expirationDate, nonce);
     }
 
     //Step importante in quanto va anche a settare il mandateId nella classe RicezioneNotificheWebDelegheSteps
@@ -265,18 +269,26 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    //TODO MATTEO: solo per debug, per evitare di aspettare ogni volta che una notifica vada in accepted
-    //rimuovere una volta verificato che i test funzionano
-    @Given("il mandate in uso è quello con id {string}")
+    //TODO REMOVE: metodi solo per debug, per evitare di aspettare ogni volta che una notifica vada in accepted
+
+    @Given("TODO remove il mandate in uso è quello con id {string}")
     public void mockMandate(String mandateId) {
         mandateDtoB2b = new MandateDto();
         mandateDtoB2b.setMandateId(mandateId);
     }
 
-    @Given("calcolo il qrCode dello notifica con iun {string}")
+    @Given("TODO remove calcolo il qrCode dello notifica con iun {string}")
     public void calcoloIlQrCodeDelloNotificaConIun(String iun) {
         qrCode = "http://cittadini.notifichedigitali.it/io?aar=" +
                 (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, 0));
         log.info("QRCODE = " + qrCode);
+    }
+
+    @Given("vengono settati i parametri per il tool CIE")
+    public void setToolCieParameter() {
+        log.info("Inizio il setting dei parametri");
+        System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-830192246553");
+        System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.key");
+        log.info("Parametri settati");
     }
 }

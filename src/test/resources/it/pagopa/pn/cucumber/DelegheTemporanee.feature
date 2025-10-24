@@ -1,7 +1,23 @@
+#Per un corretto funzionamento della suite sono necessari diversi passaggi propedeutici:
+  #1) su AWS, nella whiteList devono essere presente i taxId di Cristoforo Colombo (Mario Gherkin), Ettore Fieramosca (Mario Cucumber) e Galileo Galilei
+  #2) è necessario che il tempo di scadenza di una notifica sia impostato a 7 minuti
+  #3) C'è il problema dell'IP col WAF (Web Authorization Filter). Capire se su AWS si può aggirare.
+  #3.1) In ogni caso, quando si runna in locale, bisogna impostare il proprio IP tra quelli autorizzati sempre su AWS WAF
+
 Feature: Deleghe Temporanee 15755
 
+  Background:
+    Given vengono settati i parametri per il tool CIE
+
   Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING
-    Given calcolo il qrCode dello notifica con iun ""
+    Given TODO remove calcolo il qrCode dello notifica con iun ""
+
+  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_SET_MANDATE
+    Given TODO remove il mandate in uso è quello con id ""
+
+  @testCie
+  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_CIE
+    Given TODO remove test cie "FRMTTR76M06B715E" "DATI VALIDI"
 
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)
@@ -163,7 +179,7 @@ Feature: Deleghe Temporanee 15755
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     Then l'operazione restituisce codice 400
 
-  #21 non fattibile (chiamata non prevede token)
+  #21 NON FATTIBILE (ACCETTAZIONE FALLITA CAUSA TOKEN ERRATO: non sono previsti token)
 
   #22
   @delegheTemporanee
