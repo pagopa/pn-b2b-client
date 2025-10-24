@@ -228,7 +228,7 @@ public class EserviceTemplateCertifiedAttributesSteps {
         performGetEServiceCertifiedAttributes(attributesKey);
     }
 
-    @Then("gli attributi certificati ottenuti sono coerenti con quelli aggiunti")
+    @Then("gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template")
     public void checkGotCertifiedAttributes() {
         List<UUID> expectedCertifiedAttributesIds = sharedStepsContext.getEServiceTemplateStepContext()
             .getCertifiedAttributesIds();
@@ -276,7 +276,7 @@ public class EserviceTemplateCertifiedAttributesSteps {
             .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributeIds);
     }
 
-    @Then("gli attributi certificati del gruppo sono rimasti invariati")
+    @Then("gli attributi certificati del gruppo del template sono rimasti invariati")
     public void checkSameCertifiedAttributes() {
         EServiceTemplateAttributesGroupKey key = getEServiceTemplateAttributesKey();
         List<UUID> actualCertifiedAttributeIds =
