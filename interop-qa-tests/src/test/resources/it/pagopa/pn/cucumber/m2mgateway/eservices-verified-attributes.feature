@@ -8,7 +8,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 4 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And "PA1" porta il descrittore dell'e-service in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
@@ -19,7 +19,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati sono stati aggiunti correttamente al gruppo dell'e-service
     And i precedenti attributi verificati del gruppo dell'e-service sono rimasti invariati
-    When l'utente tenta di aggiungere l'attributo verifica numero 4 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo verificato numero 4 al gruppo dell'e-service
     Then si ottiene lo status code 204
 
     # Verifica che il risultato sia coerente e che non siano stati modificati gli attributi aggiunti in precedenza
@@ -39,7 +39,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 4 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
@@ -50,7 +50,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati sono stati aggiunti correttamente al gruppo dell'e-service
     And i precedenti attributi verificati del gruppo dell'e-service sono rimasti invariati
-    When l'utente tenta di aggiungere l'attributo verifica numero 4 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo verificato numero 4 al gruppo dell'e-service
     Then si ottiene lo status code 204
 
     # Verifica che il risultato sia coerente e che non siano stati modificati gli attributi aggiunti in precedenza
@@ -64,11 +64,11 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And "PA1" porta il descrittore dell'e-service in stato "ARCHIVED"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 400
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati del gruppo dell'e-service sono rimasti invariati
@@ -79,10 +79,10 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 404
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
@@ -94,20 +94,20 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
 
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service indicando un e-service id inesistente
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati del gruppo dell'e-service sono rimasti invariati
 
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service indicando un descriptor id inesistente
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service indicando un descriptor id inesistente
     Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati del gruppo dell'e-service sono rimasti invariati
 
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service indicando un group index inesistente
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service indicando un group index inesistente
     Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati del gruppo dell'e-service sono rimasti invariati
@@ -123,10 +123,10 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And viene impostato per l'utente un token m2m non valido
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 401
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
@@ -138,10 +138,10 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di aggiungere l'attributo verifica numero 2 al gruppo dell'e-service
+    When l'utente tenta di aggiungere l'attributo verificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
@@ -184,7 +184,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 2 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 2 attributo verificato con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
 
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -208,7 +208,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 1 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
 
     When l'utente tenta di reperire gli attributi verificati dal gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404
@@ -231,7 +231,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 1 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di reperire gli attributi verificati dal gruppo dell'e-service
     Then si ottiene lo status code 401
@@ -248,9 +248,9 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente crea 2 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
-    When l'utente tenta di rimuovere l'attributo verifica numero 2 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 200
-    And è stato rimosso dall'e-service solo l'attributo verifica numero 2
+    And è stato rimosso dall'e-service solo l'attributo verificato numero 2
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_VERIFICHE_ATTRIBUTES_DELETE_02] Un utente con ruolo M2M NON può rimuovere gli attributi verificati di una versione di un e-service (Parte2#Scenario intorno a 270)
@@ -260,7 +260,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And l'utente tenta di rimuovere l'attributo verifica numero 2 dal gruppo dell'e-service
+    And l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
 
@@ -273,24 +273,24 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 1 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
 
-    When l'utente tenta di rimuovere l'attributo verifica numero 1 dal gruppo dell'e-service indicando un e-service id inesistente
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
-    When l'utente tenta di rimuovere l'attributo verifica numero 1 dal gruppo dell'e-service indicando un descriptor id inesistente
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service indicando un descriptor id inesistente
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
-    When l'utente tenta di rimuovere l'attributo verifica numero 1 dal gruppo dell'e-service indicando un group index inesistente
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service indicando un group index inesistente
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
-    When l'utente tenta di rimuovere un attributo verifica dal gruppo dell'e-service indicando un attribute id inesistente
+    When l'utente tenta di rimuovere un attributo verificato dal gruppo dell'e-service indicando un attribute id inesistente
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
 
     # verifica che la rimozione di un attributo già eliminato fallisca
-    Given l'utente rimuove l'attributo verifica numero 1 dal gruppo dell'e-service con successo
-    When l'utente tenta di rimuovere l'attributo verifica numero 1 dal gruppo dell'e-service
+    Given l'utente rimuove l'attributo verificato numero 1 dal gruppo dell'e-service con successo
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
 
@@ -300,9 +300,9 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1"
     And l'utente crea 1 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo verifica con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributo verificato con successo
     And viene impostato per l'utente un token m2m non valido
-    When l'utente tenta di rimuovere l'attributo verifica numero 1 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 401
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And gli attributi verificati del gruppo sono rimasti invariati
@@ -315,7 +315,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente tenta di rimuovere l'attributo verifica numero 2 dal gruppo dell'e-service
+    And l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
 
@@ -327,7 +327,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And "PA1" porta il descrittore dell'e-service in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
-    When l'utente tenta di rimuovere l'attributo verifica numero 2 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati
     Examples:
@@ -345,6 +345,6 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
-    When l'utente tenta di rimuovere l'attributo verifica numero 2 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati

@@ -6,12 +6,8 @@ import it.pagopa.interop.eservice.service.EServiceAttribute;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceDescriptorsListRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttributes;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionDeclaredAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionDeclaredAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
+
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -147,4 +143,52 @@ public class M2MEserviceTemplateAttributeClientImpl implements IM2MEServiceTempl
             .groupIndex(attribute.getGroupIndex())
             .build();
     }
+//----------------------------------------------------------------------
+    @Override
+    public List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(
+            UUID eServiceId,
+            UUID descriptorId,
+            int groupId,
+            List<UUID> attributes
+    ) {
+        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
+        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+    }
+
+    @Override
+    public List<EServiceAttribute<VerifiedAttribute>> createVerifiedAttributesGroup(
+            UUID eServiceId,
+            UUID descriptorId,
+            List<UUID> attributes
+    ) {
+        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
+        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+    }
+
+    @Override
+    public List<EServiceAttribute<VerifiedAttribute>> getVerifiedAttributes(
+            UUID eServiceId, UUID descriptorId) {
+        EServiceTemplateVersionVerifiedAttributes attributes = this.templatesApi.getEServiceTemplateVersionVerifiedAttributes(
+                eServiceId, descriptorId, 0, 30);
+
+        return attributes.getResults().stream()
+                .map(this::mapToEServiceAttribute)
+                .toList();
+    }
+
+    @Override
+    public void deleteVerifiedAttribute(UUID eServiceId, UUID descriptorId, int groupIndex,
+                                         UUID attributeId) {
+        this.templatesApi.deleteEServiceTemplateVersionVerifiedAttributeFromGroup(eServiceId, descriptorId, groupIndex, attributeId);
+    }
+
+    private EServiceAttribute<VerifiedAttribute> mapToEServiceAttribute(
+            EServiceTemplateVersionVerifiedAttribute attribute) {
+        return EServiceAttribute.<VerifiedAttribute>builder()
+                .attribute(attribute.getAttribute())
+                .groupIndex(attribute.getGroupIndex())
+                .build();
+    }
+
+
 }
