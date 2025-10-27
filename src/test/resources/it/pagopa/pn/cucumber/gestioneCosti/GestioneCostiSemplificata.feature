@@ -6,7 +6,7 @@ Feature: Test sul processo di fruizione e aggiornamento costi gara
   @gestioneCostiSemplificata
   Scenario: [COST-ANALOGIC-SUCCESS-1] Viene effettuato un test massivo effettuando le chiamate con dati presi dal CSV
     Given vengono recuperati i valori delle richieste da file
-    Then viene invocata l'api e si controlla che il risultato sia quello atteso per la gara con tenderId "20251110"
+    Then viene invocata l'api e si controlla che il risultato sia quello atteso per la gara con tenderId "20250319"
 
  @gestioneCostiSemplificata
   Scenario: [COST-ANALOGIC-FAILURE-1] Recupero dei costi associati ad uno specifico CAP con TenderId errato
