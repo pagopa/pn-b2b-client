@@ -1,6 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 
+import static it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceAttributesKey.from;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,14 +16,10 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
-
-import static it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EServiceAttributesKey.from;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class EserviceVerifiedAttributesSteps {
 
@@ -60,12 +59,16 @@ public class EserviceVerifiedAttributesSteps {
         httpExecutor.performCall(
             () -> eServiceClient.createVerifiedAttributesGroup(eServiceId, descriptorId,
                 attributesIds));
-        List<EServiceAttribute<VerifiedAttribute>> response = (List<EServiceAttribute<VerifiedAttribute>>) httpExecutor.getResponse();
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            sharedStepsContext.getEServicesCommonContext()
-                .setGroupId(response.get(0).getGroupIndex());
-            sharedStepsContext.getEServicesCommonContext().addVerifiedAttributes(attributesIds);
+            if (attributesQt > 0) {
+                List<EServiceAttribute<VerifiedAttribute>> response = (List<EServiceAttribute<VerifiedAttribute>>) httpExecutor.getResponse();
+                sharedStepsContext.getEServicesCommonContext()
+                    .setGroupId(response.get(0).getGroupIndex());
+                sharedStepsContext.getEServicesCommonContext().addVerifiedAttributes(attributesIds);
+            }
+        } else {
+            throw new IllegalStateException("Si è verificato un errore durante la creazione dei gruppi di attributi verificati: %s".formatted(httpExecutor.getErrorMessage()));
         }
     }
 

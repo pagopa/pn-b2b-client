@@ -18,6 +18,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDesc
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttributesGroup;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttributesGroup;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import java.util.List;
 import java.util.UUID;
@@ -179,16 +180,19 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
             .build();
     }
 
-//    ---------------------------------------
 @Override
-public List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(
+public void addVerifiedAttributes(
         UUID eServiceId,
         UUID descriptorId,
         int groupId,
         List<UUID> attributes
 ) {
-    // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-    return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+    this.eservicesApi.assignEServiceDescriptorCertifiedAttributesToGroup(
+        eServiceId,
+        descriptorId,
+        groupId,
+        new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
+    );
 }
 
     @Override
@@ -197,8 +201,15 @@ public List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(
             UUID descriptorId,
             List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+        EServiceDescriptorVerifiedAttributesGroup group = this.eservicesApi.createEServiceDescriptorVerifiedAttributesGroup(
+            eServiceId,
+            descriptorId,
+            new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
+        );
+
+        return group.getAttributes().stream()
+            .map(this.attributeMapper::map)
+            .collect(Collectors.toList());
     }
 
     @Override
