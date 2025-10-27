@@ -80,6 +80,38 @@ public class DescriptorPublicationSteps {
         );
     }
 
+    // TODO: bisogna rifattorizzare il codice per riutlizzare in maniera corretta
+    @Given("{string} ha già creato un e-service in modalità {string} con un descrittore in stato {string} e flag dati personali a {string}")
+    public void createEServiceWithModeAndStateAndPersonaDataFlag(String tenantType, String mode, String eServiceDescriptorState, String personalDataFlag) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                new EServiceSeed().mode(EServiceMode.fromValue(mode)).personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
+                new UpdateEServiceDescriptorSeed()
+        );
+        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+        eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
+        eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
+
+        // If descriptorState is not DRAFT we have to add a completed risk analysis in order to correctly publish the descriptor
+        if ("RECEIVE".equalsIgnoreCase(mode) && !"DRAFT".equalsIgnoreCase(eServiceDescriptorState)) {
+            RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+            UUID riskAnalysisId = dataPreparationService.addRiskAnalysisToEService(
+                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                    new EServiceRiskAnalysisSeed()
+                            .name(riskAnalysis.getName())
+                            .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
+            );
+            sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
+        }
+
+        dataPreparationService.bringDescriptorToGivenState(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                EServiceDescriptorState.valueOf(eServiceDescriptorState),
+                false
+        );
+    }
+
     @When("l'utente pubblica quel descrittore")
     @When("l'utente pubblica l'e-service")
     public void userPublishDescriptor() {
