@@ -170,6 +170,7 @@ Feature: Analog send e2e
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Presente"
     And l'operazione non ha prodotto errori
 
