@@ -59,12 +59,16 @@ public class EserviceCertifiedAttributesSteps {
         httpExecutor.performCall(
             () -> eServiceClient.createCertifiedAttributesGroup(eServiceId, descriptorId,
                 attributesIds));
-        List<EServiceAttribute<CertifiedAttribute>> response = (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            sharedStepsContext.getEServicesCommonContext()
-                .setGroupId(response.get(0).getGroupIndex());
-            sharedStepsContext.getEServicesCommonContext().addCertifiedAttributes(attributesIds);
+            if (attributesQt > 0) {
+                List<EServiceAttribute<CertifiedAttribute>> response = (List<EServiceAttribute<CertifiedAttribute>>) httpExecutor.getResponse();
+                sharedStepsContext.getEServicesCommonContext()
+                    .setGroupId(response.get(0).getGroupIndex());
+                sharedStepsContext.getEServicesCommonContext().addCertifiedAttributes(attributesIds);
+            }
+        } else {
+            throw new IllegalStateException("Si è verificato un errore durante la creazione dei gruppi di attributi certificati: %s".formatted(httpExecutor.getErrorMessage()));
         }
     }
 

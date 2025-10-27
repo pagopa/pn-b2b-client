@@ -34,32 +34,22 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
       | DEPRECATED  |
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01_B] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 4 attributi certificati con successo
+    And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
-    When l'utente tenta di aggiungere gli attributi certificati numeri da 2 a 3 al gruppo dell'e-service
-    Then si ottiene lo status code 204
-
-    # Verifica che il risultato sia coerente e che non sia stato modificato l'attributo caricato in fase di creazione
+    When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
+    Then si ottiene lo status code 400
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
-    And gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service
-    And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
-    When l'utente tenta di aggiungere l'attributo certificato numero 4 al gruppo dell'e-service
-    Then si ottiene lo status code 204
-
-    # Verifica che il risultato sia coerente e che non siano stati modificati gli attributi aggiunti in precedenza
-    And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
-    And gli attributi certificati sono stati aggiunti correttamente al gruppo dell'e-service
-    And i precedenti attributi certificati del gruppo dell'e-service sono rimasti invariati
+    And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato ARCHIVED (Parte2#Scenario intorno a 114)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_B] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato ARCHIVED (Parte2#Scenario intorno a 114)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi certificati con successo
@@ -80,10 +70,11 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And l'utente crea 2 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 1 attributo certificato con successo
+    And "PA1" porta il descrittore dell'e-service in stato "PUBLISHED"
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
-    Then si ottiene lo status code 404
+    Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
@@ -144,6 +135,21 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     When l'utente tenta di aggiungere l'attributo certificato numero 2 al gruppo dell'e-service
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
+    And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
+
+  # NOTA 27/10/2025: scenario attualmente non presente in SRS
+  @m2m-parte2-ottobre
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_07 Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi NON certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea 1 attributi dichiarati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 0 attributi certificati con successo
+    And "PA1" porta il descrittore dell'e-service in stato "PUBLISHED"
+    And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
+    When l'utente tenta di aggiungere l'attributo dichiarato numero 1 al gruppo dell'e-service
+    Then si ottiene lo status code 404
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 

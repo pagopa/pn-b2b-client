@@ -26,7 +26,6 @@ import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.M2MDelegationClient;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
-import it.pagopa.interop.e_service_template.IM2MEServiceTemplateAttributeClient;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateMainMapperImpl;
 import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
@@ -36,6 +35,7 @@ import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceAttributeClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
+import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -157,6 +157,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceTemplateVersionMapperImpl.class,
         EServiceTemplateMainMapperImpl.class,
         EServiceDescriptorQuotasMapperImpl.class,
+        EServiceAttributeMapperImpl.class,
         EServicePatchContext.class,
         EServiceDescriptorPatchContext.class,
         PurposePatchContext.class,

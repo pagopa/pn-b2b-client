@@ -8,7 +8,7 @@ import java.util.UUID;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 
 public interface IM2MEServiceAttributeClient extends SettableBearerToken {
-    List<EServiceAttribute<CertifiedAttribute>> addCertifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
+    void addCertifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
     List<EServiceAttribute<CertifiedAttribute>> createCertifiedAttributesGroup(UUID eServiceId, UUID descriptorId, List<UUID> attributes);
     List<EServiceAttribute<CertifiedAttribute>> getCertifiedAttributes(UUID eServiceId, UUID descriptorId);
     void deleteCertifiedAttribute(UUID eServiceId, UUID descriptorId, int groupId, UUID attribute);

@@ -60,6 +60,7 @@ public class CatalogCommonSteps {
             descriptorId,
             EServiceDescriptorState.valueOf(state),
             false);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
     public static void createEServiceWithDescriptor(

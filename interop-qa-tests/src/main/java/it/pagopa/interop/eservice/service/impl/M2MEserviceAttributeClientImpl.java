@@ -4,12 +4,24 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.EServiceAttribute;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceDescriptorsListRequest;
+import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
-
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorAttributesGroupSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorCertifiedAttributesGroup;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,10 +37,11 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
+    private final EServiceAttributeMapper attributeMapper;
 
     private final EserviceDescriptorsListRequest defaultDescriptorListRequest;
 
-    public M2MEserviceAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public M2MEserviceAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, EServiceAttributeMapper mapper) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.eservicesApi = new EservicesApi(createApiClient("dummyBearer"));
@@ -38,6 +51,7 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
                 .offset(0)
                 .eserviceId(UUID.randomUUID())
                 .build();
+        this.attributeMapper = mapper;
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -53,14 +67,18 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
     }
 
     @Override
-    public List<EServiceAttribute<CertifiedAttribute>> addCertifiedAttributes(
+    public void addCertifiedAttributes(
         UUID eServiceId,
         UUID descriptorId,
         int groupId,
         List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<CertifiedAttribute>builder().build());
+        this.eservicesApi.assignEServiceDescriptorCertifiedAttributesToGroup(
+            eServiceId,
+            descriptorId,
+            groupId,
+            new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
+        );
     }
 
     @Override
@@ -69,8 +87,15 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
         UUID descriptorId,
         List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<CertifiedAttribute>builder().build());
+        EServiceDescriptorCertifiedAttributesGroup group = this.eservicesApi.createEServiceDescriptorCertifiedAttributesGroup(
+            eServiceId,
+            descriptorId,
+            new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
+        );
+
+        return group.getAttributes().stream()
+            .map(this.attributeMapper::map)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -104,8 +129,15 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
         int groupId,
         List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<DeclaredAttribute>builder().build());
+        this.eservicesApi.assignEServiceDescriptorDeclaredAttributesToGroup(
+            eServiceId,
+            descriptorId,
+            groupId,
+            new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
+        );
+
+        /* FIXME 27/10/2025 placeholder momentaneo in vista del refactor del metodo, che restituirà "void" */
+        return Collections.emptyList();
     }
 
     @Override

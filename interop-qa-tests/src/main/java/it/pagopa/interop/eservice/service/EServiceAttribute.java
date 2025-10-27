@@ -1,13 +1,14 @@
 package it.pagopa.interop.eservice.service;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@Builder
+@AllArgsConstructor
 public
 class EServiceAttribute<T> {
-
     private Integer groupIndex;
     private T attribute;
 }
