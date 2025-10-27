@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IM2MEServiceTemplateAttributeClient extends SettableBearerToken {
-    List<EServiceAttribute<CertifiedAttribute>> addCertifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
+    void addCertifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
     List<EServiceAttribute<CertifiedAttribute>> createCertifiedAttributesGroup(UUID eServiceId, UUID descriptorId, List<UUID> attributes);
     List<EServiceAttribute<CertifiedAttribute>> getCertifiedAttributes(UUID eServiceId, UUID descriptorId);
     void deleteCertifiedAttribute(UUID eServiceId, UUID descriptorId, int groupId, UUID attribute);
