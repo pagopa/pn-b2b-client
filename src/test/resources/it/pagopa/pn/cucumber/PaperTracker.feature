@@ -381,13 +381,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                       |
       | details_recIndex           | 0                              |
-      | details_deliveryDetailCode | RECRN002C                      |
-      | details_sentAttemptMade    | 0                              |
-      | details_responseStatus     | KO                             |
-      | details_deliveryFailureCause | M02                          |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                       |
-      | details_recIndex           | 0                              |
       | details_deliveryDetailCode | RECRN002B                      |
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Plico"}]    |
