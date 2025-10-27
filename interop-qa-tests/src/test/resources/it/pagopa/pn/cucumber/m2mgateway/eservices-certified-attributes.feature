@@ -3,7 +3,7 @@
 Feature: Gestione degli attributi certificati degli e-services attraverso APIs M2M V2
 
   @m2m-parte2-ottobre
-  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01_A] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
+  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
     And l'utente crea 4 attributi certificati con successo
@@ -140,7 +140,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
 
   # NOTA 27/10/2025: scenario attualmente non presente in SRS
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_07 Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi NON certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_07] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi NON certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
     And l'utente crea 1 attributi dichiarati con successo

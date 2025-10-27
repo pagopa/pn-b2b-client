@@ -59,12 +59,16 @@ public class EserviceDeclaredAttributesSteps {
         httpExecutor.performCall(
             () -> eServiceClient.createDeclaredAttributesGroup(eServiceId, descriptorId,
                 attributesIds));
-        List<EServiceAttribute<DeclaredAttribute>> response = (List<EServiceAttribute<DeclaredAttribute>>) httpExecutor.getResponse();
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            sharedStepsContext.getEServicesCommonContext()
-                .setGroupId(response.get(0).getGroupIndex());
-            sharedStepsContext.getEServicesCommonContext().addDeclaredAttributes(attributesIds);
+            if (attributesQt > 0) {
+                List<EServiceAttribute<DeclaredAttribute>> response = (List<EServiceAttribute<DeclaredAttribute>>) httpExecutor.getResponse();
+                sharedStepsContext.getEServicesCommonContext()
+                    .setGroupId(response.get(0).getGroupIndex());
+                sharedStepsContext.getEServicesCommonContext().addDeclaredAttributes(attributesIds);
+            }
+        } else {
+            throw new IllegalStateException("Si è verificato un errore durante la creazione dei gruppi di attributi dichiarati: %s".formatted(httpExecutor.getErrorMessage()));
         }
     }
 
