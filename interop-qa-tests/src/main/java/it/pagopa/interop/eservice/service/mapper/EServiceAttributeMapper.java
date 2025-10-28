@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDesc
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionDeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import org.mapstruct.Mapper;
 
@@ -18,4 +19,6 @@ public interface EServiceAttributeMapper {
 
     EServiceAttribute<CertifiedAttribute> map(
         EServiceTemplateVersionCertifiedAttribute attributesGroup);
+    EServiceAttribute<DeclaredAttribute> map(
+        EServiceTemplateVersionDeclaredAttribute attributesGroup);
 }

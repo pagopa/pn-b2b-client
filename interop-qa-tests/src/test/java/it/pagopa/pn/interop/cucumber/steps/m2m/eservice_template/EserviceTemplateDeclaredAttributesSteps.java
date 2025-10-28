@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,13 +15,10 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class EserviceTemplateDeclaredAttributesSteps {
 
@@ -59,12 +58,16 @@ public class EserviceTemplateDeclaredAttributesSteps {
         httpExecutor.performCall(
             () -> templateClient.createDeclaredAttributesGroup(template.id(), template.lastVersionId(),
                 attributesIds));
-        List<EServiceAttribute<DeclaredAttribute>> response = (List<EServiceAttribute<DeclaredAttribute>>) httpExecutor.getResponse();
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            sharedStepsContext.getEServiceTemplateStepContext()
-                .setGroupId(response.get(0).getGroupIndex());
-            sharedStepsContext.getEServiceTemplateStepContext().addDeclaredAttributes(attributesIds);
+            if (attributesQt > 0) {
+                List<EServiceAttribute<DeclaredAttribute>> response = (List<EServiceAttribute<DeclaredAttribute>>) httpExecutor.getResponse();
+                sharedStepsContext.getEServiceTemplateStepContext()
+                    .setGroupId(response.get(0).getGroupIndex());
+                sharedStepsContext.getEServiceTemplateStepContext().addDeclaredAttributes(attributesIds);
+            }
+        } else {
+            throw new IllegalStateException("Si è verificato un errore durante la creazione dei gruppi di attributi dichiarati: %s".formatted(httpExecutor.getErrorMessage()));
         }
     }
 

@@ -44,10 +44,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
+    And "PA1" porta la versione dell'e-service template in stato PUBLISHED
     And [si prende nota dello stato degli attributi dichiarati del gruppo dell'e-service template]
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di aggiungere l'attributo dichiarato numero 2 al gruppo dell'e-service template
-    Then si ottiene lo status code 404
+    Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi dichiarati del gruppo dell'e-service template]
     And gli attributi dichiarati del gruppo dell'e-service template sono rimasti invariati
@@ -126,6 +127,26 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | mode        |
       | erogazione  |
       #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+  # NOTA 27/10/2025: scenario attualmente non presente in SRS
+  @m2m-parte2-ottobre
+  Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_07] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi NON dichiarati a una versione di un e-service template (Parte2#Scenario intorno a 197)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
+    And l'utente crea 1 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi associati all'e-service template contenente 0 attributi dichiarati con successo
+    And "PA1" porta la versione dell'e-service template in stato PUBLISHED
+    And [si prende nota dello stato degli attributi dichiarati del gruppo dell'e-service template]
+    When l'utente tenta di aggiungere l'attributo certificato numero 1 al gruppo dell'e-service template
+    Then si ottiene lo status code 404
+    And [si prende nota dello stato degli attributi dichiarati del gruppo dell'e-service template]
+    And gli attributi dichiarati del gruppo dell'e-service template sono rimasti invariati
+    Examples:
+      | mode        |
+      | erogazione  |
+      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_A] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 244)

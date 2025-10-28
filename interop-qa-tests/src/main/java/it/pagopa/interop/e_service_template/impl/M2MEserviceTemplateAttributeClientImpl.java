@@ -113,14 +113,17 @@ public class M2MEserviceTemplateAttributeClientImpl implements IM2MEServiceTempl
     }
 
     @Override
-    public List<EServiceAttribute<DeclaredAttribute>> addDeclaredAttributes(
+    public void addDeclaredAttributes(
         UUID templateId,
         UUID versionId,
         int groupId,
         List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<DeclaredAttribute>builder().build());
+        this.templatesApi.assignEServiceTemplateVersionDeclaredAttributesToGroup(
+            templateId,
+            versionId,
+            groupId,
+            new EServiceTemplateVersionAttributesGroupSeed().attributeIds(attributes));
     }
 
     @Override
@@ -129,8 +132,15 @@ public class M2MEserviceTemplateAttributeClientImpl implements IM2MEServiceTempl
         UUID versionId,
         List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<DeclaredAttribute>builder().build());
+        EServiceTemplateVersionDeclaredAttributesGroup group = this.templatesApi.createEServiceTemplateVersionDeclaredAttributesGroup(
+            templateId,
+            versionId,
+            new EServiceTemplateVersionAttributesGroupSeed().attributeIds(attributes)
+        );
+
+        return group.getAttributes().stream()
+            .map(this.attributeMapper::map)
+            .collect(Collectors.toList());
     }
 
     @Override
