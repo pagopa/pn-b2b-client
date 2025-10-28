@@ -226,12 +226,6 @@ public class EserviceTemplateVerifiedAttributesSteps {
         performGetEServiceVerifiedAttributes(attributesKey);
     }
 
-    @When("l'utente tenta di reperire gli attributi verificati dal gruppo dell'e-service template indicando un group index inesistente")
-    public void getEServiceVerifiedAttributesWithUnexistentGroupIndex() {
-        EServiceTemplateAttributesGroupKey attributesKey = getEServiceTemplateAttributesKey().withGroupIndex(999);
-        performGetEServiceVerifiedAttributes(attributesKey);
-    }
-
     @Then("gli attributi verificati ottenuti sono coerenti con quelli aggiunti nel template")
     public void checkGotVerifiedAttributes() {
         List<UUID> expectedVerifiedAttributesIds = sharedStepsContext.getEServiceTemplateStepContext()
