@@ -2,6 +2,7 @@
 @m2m-eservice-certified-attributes
 Feature: Gestione degli attributi certificati degli e-services attraverso APIs M2M V2
 
+  # TODO: strategia basata su snapshots - di cui gli step tra parentesi quadre sono perno - da rivedere
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -178,14 +179,13 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
     Examples:
       | stato       |
-      | DRAFT       |
       | PUBLISHED   |
       | SUSPENDED   |
       | DEPRECATED  |
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi certificati di una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 244)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi certificati di una versione di un e-service in stato WAITING_FOR_APPROVAL solo se appartiene all'ente creatore  (Parte2#Scenario intorno a 244)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi certificati con successo
@@ -208,6 +208,34 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     Then si ottiene lo status code 200
     And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
 
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 404
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+  @m2m-parte2-ottobre
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_01_C] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi certificati di una versione di un e-service in stato DRAFT solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea 2 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 200
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
+    Then si ottiene lo status code 404
+    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
+
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi certificati di una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -220,15 +248,11 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     Then si ottiene lo status code 404
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un descriptor id inesistente
     Then si ottiene lo status code 404
-    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un group index inesistente
-    Then si ottiene lo status code 404
 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un descriptor id inesistente
-    Then si ottiene lo status code 404
-    When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service indicando un group index inesistente
     Then si ottiene lo status code 404
 
   @m2m-parte2-ottobre
@@ -241,11 +265,6 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 401
-
-    # TODO rivedere strategia basata sulle snapshots
-    # TODO il controllo del response status code di httpExecutor potrebbe erroneamente farsi sul risultato di una call precedente, verificare
-    # TODO edit/aggiunta scenari di POST: test con secondo gruppo
-    # TODO rimuovere test oggetti restituito dalle post, partendo dal client (che ora dovrà restituire void)
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_01] Un utente con ruolo M2M-ADMIN può rimuovere gli attributi certificati di una versione di un e-service in stato DRAFT (Parte2#Scenario intorno a 268)

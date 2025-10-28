@@ -468,7 +468,8 @@ public class BFFDataPreparationService {
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
                 .isConsumerDelegable(false)
-                .isClientAccessDelegable(false);
+                .isClientAccessDelegable(false)
+                .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
@@ -1175,6 +1176,7 @@ public class BFFDataPreparationService {
         eServiceSeed.setMode(useOrDefault(partialClientSeed.getMode(), defaultClientSeed.getMode()));
         eServiceSeed.setIsConsumerDelegable(useOrDefault(partialClientSeed.getIsConsumerDelegable(), defaultClientSeed.getIsConsumerDelegable()));
         eServiceSeed.setIsClientAccessDelegable(useOrDefault(partialClientSeed.getIsClientAccessDelegable(), defaultClientSeed.getIsClientAccessDelegable()));
+        eServiceSeed.setPersonalData(useOrDefault(partialClientSeed.getPersonalData(), defaultClientSeed.getPersonalData()));
         return eServiceSeed;
     }
 
