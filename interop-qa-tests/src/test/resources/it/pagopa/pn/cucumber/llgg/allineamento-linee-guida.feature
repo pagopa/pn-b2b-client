@@ -94,19 +94,30 @@ Feature: Allineamento linee guida
       | true             |
       | false            |
 
-    #TODO: al momento per i ruoli api parte correttamente la chiamanta, verificare con Roberto
+    #TODO: per i ruoli api parte correttamente la chiamata, ho verificato con Roberto, bisogna correggere lo scenario
   Scenario Outline: [LLGG_7] Setting flagPersonalData usando ruoli differenti (Scenario 20)
     Given l'utente è un "<ruolo>" di "<ente>"
     When viene settato il personalDataFlag a "true" passando un eServiceId inesistente
     Then si ottiene lo status code <statusCode>
 
     Examples:
-      | ente | ruolo        | statusCode |
-      | GSP  | api          |        403 |
-      | GSP  | security     |        403 |
-      | GSP  | support      |        403 |
-      | GSP  | api,security |        403 |
-      | PA1  | api          |        403 |
-      | PA1  | security     |        403 |
-      | PA1  | support      |        403 |
-      | PA1  | api,security |        403 |
+      | ente | ruolo    | statusCode |
+      | GSP  | security | 403        |
+      | GSP  | support  | 403        |
+      | PA1  | security | 403        |
+      | PA1  | support  | 403        |
+
+  Scenario Outline: [LLGG_8] Creazione e-service in modalità "DELIVER" con diverse combinazioni di flagPersonalData e setting a posteriori del medesimo (Scenario 21)
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "<statoVersione>" e flag dati personali a "true"
+    Then si ottiene status code 200
+    Then viene settato il personalDataFlag a "false" nell'eservice appena creato
+    Then si ottiene status code 409
+
+    Examples:
+      | statoVersione |
+      | PUBLISHED     |
+      | SUSPENDED     |
+      | DEPRECATED    |
+      | ARCHIVED      |
+    
