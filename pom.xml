@@ -70,7 +70,7 @@
             <artifactId>cieToolGenerator</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/chiechecker-generator-tool.jar</systemPath>
+            <systemPath>${project.basedir}/lib/ciechecker-generator-tool.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -220,7 +220,17 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk18on</artifactId>
-            <version>1.78</version>
+            <version>1.81</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>1.81</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcutil-jdk18on</artifactId>
+            <version>1.81</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -276,7 +286,7 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${project.basedir}/lib/chiechecker-generator-tool.jar</file>
+                            <file>${project.basedir}/lib/ciechecker-generator-tool.jar</file>
                             <groupId>it.pagopa.pn</groupId>
                             <artifactId>cieToolGenerator</artifactId>
                             <version>1.0</version>

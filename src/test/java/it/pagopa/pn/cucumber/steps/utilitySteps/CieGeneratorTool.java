@@ -8,7 +8,6 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MRTDDat
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.NISData;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Base64;
@@ -31,45 +30,43 @@ public class CieGeneratorTool {
     }
 
     private CIEValidationData convertOutputToClassForAcceptation(CieValidationData libraryOutput) {
-        byte[] rawData;
         CIEValidationData convertedOutput = new CIEValidationData();
+        NISData convertedNisData = new NISData();
+        MRTDData convertedMrtdData = new MRTDData();
+
+//        convertedOutput.setSignedNonce(Base64URL.encode(libraryOutput.getSignedNonce()).toString());
+//
+//        convertedNisData.setNis(Base64URL.encode(libraryOutput.getCieIas().getNis()).toString());
+//        convertedNisData.setPubKey(Base64URL.encode(libraryOutput.getCieIas().getPublicKey()).toString());
+//        convertedNisData.setSod(Base64URL.encode(libraryOutput.getCieIas().getSod()).toString());
+//
+//        convertedMrtdData.setDg1(Base64URL.encode(libraryOutput.getCieMrtd().getDg1()).toString());
+//        convertedMrtdData.setDg11(Base64URL.encode(libraryOutput.getCieMrtd().getDg11()).toString());
+//        convertedMrtdData.setSod(Base64URL.encode(libraryOutput.getCieMrtd().getSod()).toString());
+
+        Base64.Encoder encoder = Base64.getUrlEncoder();
 
         //SIGNED NONCE
-        rawData = Base64.getDecoder().decode(libraryOutput.getSignedNonce());
-        convertedOutput.setSignedNonce(new String(rawData, StandardCharsets.UTF_8));
+        convertedOutput.setSignedNonce(encoder.encodeToString(libraryOutput.getSignedNonce()));
 
-        NISData convertedNisData = new NISData();
         //NISData.nis
-        rawData = Base64.getDecoder().decode(libraryOutput.getCieIas().getNis());
-        convertedNisData.setNis(new String(rawData, StandardCharsets.UTF_8));
+        convertedNisData.setNis(encoder.encodeToString(libraryOutput.getCieIas().getNis()));
         //NISData.sod
-        rawData = Base64.getDecoder().decode(libraryOutput.getCieIas().getSod());
-        convertedNisData.setSod(new String(rawData, StandardCharsets.UTF_8));
+        convertedNisData.setSod(encoder.encodeToString(libraryOutput.getCieIas().getSod()));
         //NISData.pubKey
-        rawData = Base64.getDecoder().decode(libraryOutput.getCieIas().getPublicKey());
-        convertedNisData.setPubKey(new String(rawData, StandardCharsets.UTF_8));
-        convertedOutput.setNisData(convertedNisData);
+        convertedNisData.setPubKey(encoder.encodeToString(libraryOutput.getCieIas().getPublicKey()));
 
-        MRTDData convertedMrtdData = new MRTDData();
         //MRTDData.dg1
-        rawData = Base64.getDecoder().decode(libraryOutput.getCieMrtd().getDg1());
-        convertedMrtdData.setDg1(new String(rawData, StandardCharsets.UTF_8));
+        convertedMrtdData.setDg1(encoder.encodeToString(libraryOutput.getCieMrtd().getDg1()));
         //MRTDData.dg11
-        rawData = Base64.getDecoder().decode(libraryOutput.getCieMrtd().getDg11());
-        convertedMrtdData.setDg11(new String(rawData, StandardCharsets.UTF_8));
+        convertedMrtdData.setDg11(encoder.encodeToString(libraryOutput.getCieMrtd().getDg11()));
         //MRTDData.sod
-        rawData = Base64.getDecoder().decode(libraryOutput.getCieMrtd().getSod());
-        convertedMrtdData.setSod(new String(rawData, StandardCharsets.UTF_8));
+        convertedMrtdData.setSod(encoder.encodeToString(libraryOutput.getCieMrtd().getSod()));
+
+        convertedOutput.setNisData(convertedNisData);
         convertedOutput.setMrtdData(convertedMrtdData);
 
-//        convertedOutput.setSignedNonce(libraryOutput.getSignedNonce().toString());
-//        convertedNisData.setNis(libraryOutput.getCieIas().getNis().toString());
-//        convertedNisData.setSod(libraryOutput.getCieIas().getSod().toString());
-//        convertedNisData.setPubKey(libraryOutput.getCieIas().getPublicKey().toString());
-//        convertedMrtdData.setDg1(libraryOutput.getCieMrtd().getDg1().toString());
-//        convertedMrtdData.setDg11(libraryOutput.getCieMrtd().getDg11().toString());
-//        convertedMrtdData.setSod(libraryOutput.getCieMrtd().getSod().toString());
-
+        System.out.println(convertedOutput);
         return convertedOutput;
     }
 }

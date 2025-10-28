@@ -14,6 +14,6 @@ import org.junit.platform.suite.api.*;
         @ConfigurationParameter(key = Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"testCie"})
+@IncludeTags({"delegheTemporanee"})
 public class DelegheTemporaneeTest {
 }

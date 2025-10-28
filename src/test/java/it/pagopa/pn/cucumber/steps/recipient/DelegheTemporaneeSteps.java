@@ -112,6 +112,7 @@ public class DelegheTemporaneeSteps {
         assertThat(mandateCreationResponse).as("La response di creazione delega non dev'essere null").isNotNull();
         assertThat(mandateCreationResponse.getMandate()).as("Il mandate della create response non dev'essere null").isNotNull();
         mandateDtoB2b = mandateCreationResponse.getMandate();
+        log.info("CREATED MANDATE TEMP: " + mandateCreationResponse.getMandate());
     }
 
     @When("la delega temporanea di {destinatario} viene accettata da {destinatario} passando {string}")
@@ -120,7 +121,7 @@ public class DelegheTemporaneeSteps {
         String delegatorTaxId = delegator.getTaxId();
         String lollipopUserId = delegate.getTaxId();
         String mandateId = mandateDtoB2b.getMandateId();
-        CIEValidationData cieValidationData = getCieValidationData(delegatorTaxId, inputParamsType);
+        CIEValidationData cieValidationData = getCieValidationData(delegatorTaxId, mandateDtoB2b.getVerificationCode(), inputParamsType);
 
         switch (inputParamsType.toUpperCase()) {
             //TODO:
@@ -154,6 +155,8 @@ public class DelegheTemporaneeSteps {
                     cieValidationData);
         } catch (HttpClientErrorException e) {
             this.error = e;
+        } catch (Exception exc) {
+            System.out.println(exc.getMessage());
         }
     }
 
@@ -171,11 +174,10 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    @And("TODO remove test cie {string} {string}")
-    public CIEValidationData getCieValidationData(String delegatorTaxId, String inputParamsType) {
-        Path path = Path.of("lib");
+    @And("TODO remove test cie utente {string} nonce {string} con {string}")
+    public CIEValidationData getCieValidationData(String delegatorTaxId, String nonce, String inputParamsType) {
+        Path path = Path.of("lib/output");
         LocalDate expirationDate = LocalDate.now().plusYears(1L);
-        String nonce = "00000"; //TODO: che ci devo passare ?
         switch (inputParamsType.toUpperCase()) {
             case "DATI DI UNA CIE SCADUTA" -> expirationDate = LocalDate.now().minusYears(1L);
             case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> delegatorTaxId = Costanti.GALILEO_GALILEI_TAX_ID;
@@ -242,7 +244,7 @@ public class DelegheTemporaneeSteps {
     @And("{string} recupera lato web PA una notifica vecchia 120 o più giorni inviata a {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, Destinatario recipient) {
         sharedSteps.setPA(paName);
-        String recipientTaxId = null;//recipient.getTaxId();
+        String recipientTaxId = recipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         BffNotificationsResponse bffNotificationsResponse = sharedSteps.getWebPaClient().searchSentNotification(
                 todayDate.minusDays(130),
@@ -271,10 +273,11 @@ public class DelegheTemporaneeSteps {
 
     //TODO REMOVE: metodi solo per debug, per evitare di aspettare ogni volta che una notifica vada in accepted
 
-    @Given("TODO remove il mandate in uso è quello con id {string}")
-    public void mockMandate(String mandateId) {
+    @Given("TODO remove il mandate in uso è quello con id {string} e verificationCode {string}")
+    public void mockMandate(String mandateId, String nonce) {
         mandateDtoB2b = new MandateDto();
         mandateDtoB2b.setMandateId(mandateId);
+        mandateDtoB2b.setVerificationCode(nonce);
     }
 
     @Given("TODO remove calcolo il qrCode dello notifica con iun {string}")
@@ -287,8 +290,18 @@ public class DelegheTemporaneeSteps {
     @Given("vengono settati i parametri per il tool CIE")
     public void setToolCieParameter() {
         log.info("Inizio il setting dei parametri");
-        System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-830192246553");
-        System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.key");
+        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        switch (environment) {
+            case "dev" ->
+                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-830192246553");//BUCKET DEV
+            case "test" ->
+                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-151559006927");//BUCKET TEST
+            case "uat" ->
+                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-TODO_UAT");//BUCKET UAT
+            default -> throw new IllegalArgumentException("Invalid environment param");
+        }
+        System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
         log.info("Parametri settati");
+        System.getenv().entrySet().forEach(x -> System.out.println("PARAM : " + x));
     }
 }
