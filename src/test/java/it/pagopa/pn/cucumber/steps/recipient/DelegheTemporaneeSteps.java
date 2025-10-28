@@ -61,7 +61,7 @@ public class DelegheTemporaneeSteps {
 
     private HttpClientErrorException error;
 
-    private final static String QRCODE_FROM_HOTFIX = "http://cittadini.notifichedigitali.it/io?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
+    private static final String QRCODE_FROM_HOTFIX = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
     @Autowired
     public DelegheTemporaneeSteps(SharedSteps sharedSteps,
@@ -77,8 +77,9 @@ public class DelegheTemporaneeSteps {
     @When("{destinatario} viene temporaneamente delegato da {string} passando {string}")
     public void creaDelegaTemporanea(Destinatario delegate, String delegator, String inputParamsType) {
 
-        qrCode = "http://cittadini.notifichedigitali.it/io?aar=" +
+        qrCode = getQRPathEnvironmentBased() + "?aar=" +
                 (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0));
+
         MandateCreationRequest mandateCreationRequest = new MandateCreationRequest();
         mandateCreationRequest.setAarQrCodeValue(qrCode);
         String taxId = delegate.getTaxId();
@@ -86,7 +87,8 @@ public class DelegheTemporaneeSteps {
 
         switch (inputParamsType.toUpperCase()) {
             //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
-            case "QRCODE INESISTENTE" -> mandateCreationRequest.setAarQrCodeValue(QRCODE_FROM_HOTFIX);
+            case "QRCODE INESISTENTE" ->
+                    mandateCreationRequest.setAarQrCodeValue(getQRPathEnvironmentBased() + QRCODE_FROM_HOTFIX);
             case "QRCODE NON VALIDO" -> qrCode = "invalid";
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
@@ -303,5 +305,15 @@ public class DelegheTemporaneeSteps {
         System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
         log.info("Parametri settati");
         System.getenv().entrySet().forEach(x -> System.out.println("PARAM : " + x));
+    }
+
+    private String getQRPathEnvironmentBased() {
+        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        return switch (environment) {
+            case "dev" -> "http://cittadini.notifichedigitali.it/io";
+            case "test" -> "https://cittadini.test.notifichedigitali.it/io/";
+            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
+            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
+        };
     }
 }
