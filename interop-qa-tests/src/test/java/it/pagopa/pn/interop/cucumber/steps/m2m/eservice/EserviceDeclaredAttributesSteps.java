@@ -225,12 +225,6 @@ public class EserviceDeclaredAttributesSteps {
         performGetEServiceDeclaredAttributes(from(attributesKey));
     }
 
-    @When("l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service indicando un group index inesistente")
-    public void getEServiceDeclaredAttributesWithUnexistentGroupIndex() {
-        EServiceAttributesGroupKey attributesKey = getEServiceAttributesKey().withGroupIndex(999);
-        performGetEServiceDeclaredAttributes(from(attributesKey));
-    }
-
     @Then("gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti")
     public void checkGotDeclaredAttributes() {
         List<UUID> expectedDeclaredAttributesIds = sharedStepsContext.getEServicesCommonContext()
