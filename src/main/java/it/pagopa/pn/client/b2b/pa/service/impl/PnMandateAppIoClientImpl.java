@@ -19,16 +19,12 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
 
-    private final RestTemplate restTemplate;
-    private final String basePath;
     private final AppIoPnMandateCreateApi appIoMandateApi;
     private final String appIoApiKey;
 
     public PnMandateAppIoClientImpl(RestTemplate restTemplate,
                                     @Value("${pn.appio.externa.base-url}") String basePath,
                                     @Value("${pn.external.appio.api-key}") String appIoApiKey) {
-        this.restTemplate = restTemplate;
-        this.basePath = basePath;
         this.appIoApiKey = appIoApiKey;
         this.appIoMandateApi = new AppIoPnMandateCreateApi(newApiClient(restTemplate, basePath));
     }
