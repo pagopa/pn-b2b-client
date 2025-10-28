@@ -11,7 +11,6 @@ import org.springframework.web.client.RestClientException;
 
 public interface IPnRaddCapCoverageClient {
 
-    //todo t cap new api
 
     Coverage addCoverage(CreateCoverageRequest createCoverageRequest) throws RestClientException;
 

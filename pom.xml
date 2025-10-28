@@ -55,8 +55,7 @@
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
         <open.api.version.downtime.logs>develop</open.api.version.downtime.logs>
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
-<!--        <open.api.version.radd.alt>v2.7.0</open.api.version.radd.alt>-->
-        <open.api.version.radd.alt>10c07296a990e16b3e7265b6370a65a66488cd2b</open.api.version.radd.alt>
+        <open.api.version.radd.alt>v2.14.0-RC.1</open.api.version.radd.alt>
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
