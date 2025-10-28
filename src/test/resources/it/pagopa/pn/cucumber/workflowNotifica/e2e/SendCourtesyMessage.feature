@@ -59,8 +59,8 @@ Feature: Invio messaggi cortesia e2e
       | details_recIndex       | 0                                                 |
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
 
-# solo UAT - TODO Non possiamo abilitare sercQ per questo utente non censito per AddressBook
-  @courtesyMessage @CM_FlagOFF @uat #rif srs 44
+# solo UAT
+  @courtesyMessage @CM_FlagOFF @uatCM #rif srs 44
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_3] Verifica successione elementi - Invio DIGITALE con APPIO di cortesia solo PF UAT
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -70,14 +70,7 @@ Feature: Invio messaggi cortesia e2e
     And destinatario
       | denomination    | Matteo Rossi     |
       | taxId           | AAAAAA00A00A000C |
-#      | payment_pagoPaForm   | SI                            |
-#      | payment_f24          | PAYMENT_F24_STANDARD          |
-#      | title_payment        | F24_STANDARD_AAAAAA00A00A000C |
-#      | apply_cost_pagopa    | SI                            |
-#      | apply_cost_f24       | SI                            |
-#      | payment_multy_number | 1                             |
       | digitalDomicile | NULL             |
-    #And vengono rimossi eventuali recapiti presenti per l'utente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 999 secondi
@@ -85,7 +78,7 @@ Feature: Invio messaggi cortesia e2e
       | details                | NOT_NULL                                 |
       | details_recIndex       | 0                                        |
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
 
 
   @courtesyMessage @addressBook3 @CM_FlagOFF @cleanAddressBook #rif srs 44
@@ -171,8 +164,8 @@ Feature: Invio messaggi cortesia e2e
 
 
 
-  # TODO solo UAT
-  @courtesyMessage @CM_FlagOFF @uat #rif srs 45
+  # solo UAT
+  @courtesyMessage @CM_FlagOFF @uatCM #rif srs 45
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_7] Verifica successione elementi - Invio ANALOGICO con APPIO di cortesia solo PF UAT
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
@@ -276,7 +269,7 @@ Feature: Invio messaggi cortesia e2e
 
 #  #@courtesyMessage #rif srs 39
 #  Scenario: [COURTESY_MESSAGE_SERCQ_F2_11] Verifica successione elementi - Invio DIGITALE con SEND, cortesia APPIO per PF UAT
-#    #TODO Serve un utenza con APPIO che sia censita in AddreddBook
+#  Serve un utenza con APPIO che sia censita in AddreddBook
 
 
   @addressBook3 @courtesyMessage @cleanAddressBook #rif srs 39
@@ -363,7 +356,7 @@ Feature: Invio messaggi cortesia e2e
 
 #  #@courtesyMessage #rif srs 40
 #  Scenario: [COURTESY_MESSAGE_SERCQ_F2_15] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia APPIO per PF UAT
-#    #TODO Serve un utenza con APPIO che sia censita in AddreddBook
+#  Serve un utenza con APPIO che sia censita in AddreddBook
 
   @addressBook3 @courtesyMessage @cleanAddressBook #rif srs 40
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_16] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia TPP solo PF
@@ -393,22 +386,20 @@ Feature: Invio messaggi cortesia e2e
 
 
   #@courtesyMessage #rif srs 41
-  #@courtesyMessage @cleanAddressBook  #in-test
+  #@courtesyMessage @cleanAddressBook
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_17] Verifica successione elementi - Invio DIGITALE con domicilio PEC da RN, cortesia email per PF
-  #TODO serve un utente censito per AddressBook che ritorni una pec dai RN
+  # serve un utente censito per AddressBook che ritorni una pec dai RN
     Given si predispone addressbook per l'utente "Dino Sauro"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Dino Sauro"
     Then viene generata una nuova notifica
       | subject | invio notifica a Sauro Dino |
-
     And destinatario
       | denomination            | Dino Sauro                |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
       | taxId                   | DSRDNI00A01A225I          |
-
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
@@ -419,7 +410,7 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-  @addressBook1 @courtesyMessage @cleanAddressBook #OK
+  @addressBook1 @courtesyMessage @cleanAddressBook
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_17B] Verifica successione elementi - Invio ANALOGICO con domicilio PEC da RN, cortesia email per PF
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -427,12 +418,10 @@ Feature: Invio messaggi cortesia e2e
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Then viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-
     And destinatario
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
@@ -449,8 +438,8 @@ Feature: Invio messaggi cortesia e2e
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_18] Verifica successione elementi - Invio DIGITALE con domicilio PEC da RN, cortesia email per PG
 
 
-  #@courtesyMessage #rif srs 41 TODO ottenere l'idirizzo cf@pec.it
-  #@addressBook1 @courtesyMessage @cleanAddressBook #in-test
+   #rif srs 41 ottenere l'idirizzo cf@pec.it
+    @uatCM @courtesyMessage
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_19] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC da RN, cortesia APPIO per PF UAT
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
@@ -460,8 +449,7 @@ Feature: Invio messaggi cortesia e2e
       | recipientType   | PF                 |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-      #| physicalAddress_address | Via@ok_AR        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     #And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
@@ -527,26 +515,23 @@ Feature: Invio messaggi cortesia e2e
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
-  @courtesyMessage @uat #rif srs 42
+  @courtesyMessage @uatCM #rif srs 42
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_23] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC SPECIALE, cortesia APPIO per PF UAT
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-
     And destinatario
       | denomination            | Matteo Rossi              |
       | taxId                   | AAAAAA00A00A000C          |
       | digitalDomicile         | testpagopa1@pec.pagopa.it |
       | physicalAddress_address | Via@ok_AR                 |
-
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
-    And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
+    #And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | details                | NOT_NULL                                 |
       | details_recIndex       | 0                                        |
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
-
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
   @courtesyMessage @addressBook3 #rif srs 42
@@ -555,13 +540,11 @@ Feature: Invio messaggi cortesia e2e
     Then viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
-
     And destinatario
       | denomination    | Mario Gherkin             |
       | taxId           | CLMCST42R12D969Z          |
       | digitalDomicile | testpagopa1@pec.pagopa.it |
    #   | digitalDomicile_address      | test@pecOk.it        |
-
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
@@ -569,7 +552,6 @@ Feature: Invio messaggi cortesia e2e
       | details                | NOT_NULL                          |
       | details_recIndex       | 0                                 |
       | details_digitalAddress | {"type": "TPP", "address": "APP"} |
-
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
@@ -597,7 +579,6 @@ Feature: Invio messaggi cortesia e2e
       | details                | NOT_NULL                                          |
       | details_recIndex       | 0                                                 |
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
-
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
   @addressBook2 @courtesyMessage @cleanAddressBook #rif srs 43
@@ -627,7 +608,7 @@ Feature: Invio messaggi cortesia e2e
 
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
-  @courtesyMessage @uat #rif srs 43
+  @courtesyMessage @uatCM #rif srs 43
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_27] Verifica successione elementi - Invio ANALOGICO, cortesia APPIO per PF UAT
     Given viene generata una nuova notifica
       | subject | invio notifica a Rossi |
@@ -644,7 +625,7 @@ Feature: Invio messaggi cortesia e2e
       | details_recIndex       | 0                                        |
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
 
   @courtesyMessage @addressBook3 #rif srs 43
@@ -689,7 +670,7 @@ Feature: Invio messaggi cortesia e2e
   @e2e @addressBook1
   Scenario: [E2E-SEND_COURTESY_MESSAGE_1] invio messaggio di cortesia - invio per email
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserito un recapito legale "example@pecSuccess.it
+    And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_1"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
