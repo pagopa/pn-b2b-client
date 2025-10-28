@@ -5,7 +5,7 @@ import org.junit.platform.suite.api.*;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("it/pagopa/pn/cucumber/workflowNotifica/webhook")
+@SelectClasspathResource("it/pagopa/pn/cucumber")
 @ConfigurationParameters({
         @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
