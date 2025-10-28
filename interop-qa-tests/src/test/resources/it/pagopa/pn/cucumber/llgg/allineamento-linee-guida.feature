@@ -51,6 +51,7 @@ Feature: Allineamento linee guida
       | true             | 200              | 200               |
       | undefined        | 200              | 400               |
 
+    #TODO: Gli ultimi due scenari non sono coerenti, dovrebbe esserci un refuso nella progettazione dei test
   Scenario Outline: [LLGG_4] Aggiornamento descrittore in modalità RECIVE di un eService comprendente il flag dati (Scenario 11, 12, 13)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
@@ -70,3 +71,5 @@ Feature: Allineamento linee guida
       | true             | true                         | 200              | 200               |
       | undefined        | true                         | 200              | 400               |
       | undefined        | false                        | 200              | 400               |
+      | false            | true                         | 200              | 400               |
+      | true             | false                        | 200              | 400               |

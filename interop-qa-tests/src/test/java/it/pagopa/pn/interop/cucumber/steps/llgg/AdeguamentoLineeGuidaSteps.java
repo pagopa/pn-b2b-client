@@ -1,7 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.llgg;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -10,6 +12,7 @@ import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -38,21 +41,6 @@ public class AdeguamentoLineeGuidaSteps {
         });
     }
 
-
-    public void userRequireTemplateVersionAndCheck(String version, Consumer<RiskAnalysisFormConfig> action) {
-        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        RiskAnalysisFormConfig riskAnalysis;
-
-        httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().retrieveRiskAnalysisConfigurationByVersion(
-                        version, sharedStepsContext.getEServicesCommonContext().getEserviceId()
-                )
-        );
-
-        riskAnalysis = (RiskAnalysisFormConfig) httpCallExecutor.getResponse();
-        action.accept(riskAnalysis);
-    }
-
     @When("l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a {string}")
     public void addCustomRiskAnalysis(String flagCondition) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -76,5 +64,33 @@ public class AdeguamentoLineeGuidaSteps {
         );
     }
 
+    @When("viene settato il personalDataFlag a {string} passando un eServiceId inesistente")
+    public void updatePersonalDataFlagAfterPublication(String flagPersonalData) {
 
+        UUID eserviceId = UUID.randomUUID();
+
+        EServicePersonalDataFlagUpdateSeed seed = new EServicePersonalDataFlagUpdateSeed();
+        seed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateEServicePersonalDataFlagAfterPublication(
+                        eserviceId,seed
+                )
+        );
+    }
+
+
+    public void userRequireTemplateVersionAndCheck(String version, Consumer<RiskAnalysisFormConfig> action) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        RiskAnalysisFormConfig riskAnalysis;
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().retrieveRiskAnalysisConfigurationByVersion(
+                        version, sharedStepsContext.getEServicesCommonContext().getEserviceId()
+                )
+        );
+
+        riskAnalysis = (RiskAnalysisFormConfig) httpCallExecutor.getResponse();
+        action.accept(riskAnalysis);
+    }
 }
