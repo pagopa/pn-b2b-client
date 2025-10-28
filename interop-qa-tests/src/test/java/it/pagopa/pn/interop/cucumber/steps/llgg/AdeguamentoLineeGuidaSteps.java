@@ -3,13 +3,13 @@ package it.pagopa.pn.interop.cucumber.steps.llgg;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import org.assertj.core.api.Assertions;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,18 +64,23 @@ public class AdeguamentoLineeGuidaSteps {
         );
     }
 
-    @When("viene settato il personalDataFlag a {string} passando un eServiceId inesistente")
-    public void updatePersonalDataFlagAfterPublication(String flagPersonalData) {
+    @When("viene settato il personalDataFlag a {string} passando un {string} inesistente")
+    public void updatePersonalDataFlagAfterPublication(String flagPersonalData, String target) {
 
-        UUID eserviceId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
+        boolean isEservice = target.equalsIgnoreCase("eServiceId");
 
-        EServicePersonalDataFlagUpdateSeed seed = new EServicePersonalDataFlagUpdateSeed();
-        seed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
+        EServicePersonalDataFlagUpdateSeed eserviceSeed = new EServicePersonalDataFlagUpdateSeed();
+        eserviceSeed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
+
+        EServiceTemplatePersonalDataFlagUpdateSeed eServiceTemplateSeed = new EServiceTemplatePersonalDataFlagUpdateSeed();
+        eServiceTemplateSeed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
 
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateEServicePersonalDataFlagAfterPublication(
-                        eserviceId,seed
-                )
+                () -> {
+                    if(isEservice) clientTokenConfigurator.getEServiceClient().updateEServicePersonalDataFlagAfterPublication(id,eserviceSeed);
+                    else clientTokenConfigurator.getEServiceTemplateClient().updateEServiceTemplatePersonalDataFlagAfterPublication(id,eServiceTemplateSeed);
+                }
         );
     }
 
@@ -94,18 +99,23 @@ public class AdeguamentoLineeGuidaSteps {
         );
     }
 
-    @When("viene settato il personalDataFlag a {string} passando un eServiceId inesistente e un token invalido")
-    public void updatePersonalDataFlagAfterPublicationWithInvalidToken(String flagPersonalData) {
+    @When("viene settato il personalDataFlag a {string} passando un {string} inesistente e un token invalido")
+    public void updatePersonalDataFlagAfterPublicationWithInvalidToken(String flagPersonalData, String target) {
 
-        UUID eserviceId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
+        boolean isEservice = target.equalsIgnoreCase("eServiceId");
 
-        EServicePersonalDataFlagUpdateSeed seed = new EServicePersonalDataFlagUpdateSeed();
-        seed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
+        EServicePersonalDataFlagUpdateSeed eserviceSeed = new EServicePersonalDataFlagUpdateSeed();
+        eserviceSeed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
+
+        EServiceTemplatePersonalDataFlagUpdateSeed eServiceTemplateSeed = new EServiceTemplatePersonalDataFlagUpdateSeed();
+        eServiceTemplateSeed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
 
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(
-                        eserviceId,seed
-                )
+                () -> {
+                    if(isEservice) clientTokenConfigurator.getEServiceClient().updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(id,eserviceSeed);
+                    else clientTokenConfigurator.getEServiceTemplateClient().updateEServiceTemplatePersonalDataFlagAfterPublicationWithInvalidToken(id,eServiceTemplateSeed);
+                }
         );
     }
 

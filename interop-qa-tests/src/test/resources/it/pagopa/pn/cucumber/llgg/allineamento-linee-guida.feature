@@ -76,7 +76,7 @@ Feature: Allineamento linee guida
 
   Scenario Outline: [LLGG_5] Setting flagPersonalData passando un eServiceId inesistente (Scenario 17)
     Given l'utente è un "admin" di "PA1"
-    When viene settato il personalDataFlag a "<personalDataFlag>" passando un eServiceId inesistente
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceId" inesistente
     Then si ottiene lo status code 404
 
     Examples:
@@ -86,7 +86,7 @@ Feature: Allineamento linee guida
 
   Scenario Outline: [LLGG_6] Setting flagPersonalData usando un token invalido (Scenario 19)
     Given l'utente è un "admin" di "PA1"
-    When viene settato il personalDataFlag a "<personalDataFlag>" passando un eServiceId inesistente e un token invalido
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceId" inesistente e un token invalido
     Then si ottiene lo status code 401
 
     Examples:
@@ -97,7 +97,7 @@ Feature: Allineamento linee guida
     #TODO: per i ruoli api parte correttamente la chiamata, ho verificato con Roberto, bisogna correggere lo scenario
   Scenario Outline: [LLGG_7] Setting flagPersonalData usando ruoli differenti (Scenario 20)
     Given l'utente è un "<ruolo>" di "<ente>"
-    When viene settato il personalDataFlag a "true" passando un eServiceId inesistente
+    When viene settato il personalDataFlag a "true" passando un "eServiceId" inesistente
     Then si ottiene lo status code <statusCode>
 
     Examples:
@@ -120,4 +120,69 @@ Feature: Allineamento linee guida
       | SUSPENDED     |
       | DEPRECATED    |
       | ARCHIVED      |
-    
+
+
+  Scenario Outline: [LLGG_9] Creazione di un template in stato DRAFT impostando il flagPersonalData (Scenario 22, 23, 24)
+    Given l'utente è un "<ruolo>" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT con flagPersonalData impostato a "<flagPersonalData>"
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    Then si ottiene response status code 200
+    And l'utente effettua la pubblicazione dell'e-service template
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | ruolo | modo       | flagPersonalData | statusCode |
+      | admin | erogazione | true             | 200        |
+      | admin | erogazione | false            | 200        |
+      | admin | erogazione | undefined        | 400        |
+
+  Scenario Outline: [LLGG_10] Creazione di un template in stato DRAFT impostando il flagPersonalData (Scenario 25)
+    Given l'utente è un "<ruolo>" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT con flagPersonalData impostato a "<flagPersonalData>"
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    Then si ottiene response status code 200
+    And l'utente effettua la pubblicazione dell'e-service template
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | ruolo | modo       | flagPersonalData | statusCode |
+      | admin | erogazione | true             | 200        |
+      | admin | erogazione | false            | 200        |
+      | admin | erogazione | undefined        | 400        |
+
+    #TODO: la modifica restituisce 204 non 200, bisogna correggere lo scenario
+  Scenario Outline: [LLGG_11] Modifica di un template in stato DRAFT con il flagPersonalData presente (Scenario 25, 26, 27)
+    Given l'utente è un "<ruolo>" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT con flagPersonalData impostato a "<flagPersonalData>"
+    Then si ottiene response status code 200
+    And l'utente tenta delle modifiche alla versione dell'e-service template
+    And le modifiche alla versione sono state applicate correttamente
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | ruolo | modo       | flagPersonalData | statusCode |
+      | admin | erogazione | true             | 200        |
+      | admin | erogazione | false            | 200        |
+      | admin | erogazione | undefined        | 400        |
+
+  Scenario Outline: [LLGG_12] Setting flagPersonalData passando un eServiceTemplateId inesistente (Scenario 30)
+    Given l'utente è un "admin" di "PA1"
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceTemplateId" inesistente
+    Then si ottiene lo status code 404
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario Outline: [LLGG_13] Setting flagPersonalData passando un eServiceTemplateId inesistente (Scenario 32)
+    Given l'utente è un "admin" di "PA1"
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceTemplateId" inesistente e un token invalido
+    Then si ottiene lo status code 401
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
