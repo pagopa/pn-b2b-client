@@ -10,24 +10,30 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       200 |
+      | PA1     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | PA1     | admin        |       200 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @sad-path
   @agreement_submit2 @wait_for_fix @IMN-309
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, la quale è in stato SUSPENDED, all'inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi dell’ente fruitore, dà errore
     Given l'utente è un "admin" di "PA1"
@@ -37,6 +43,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then si ottiene status code 400
 
+  @happy-path
   @agreement_submit3
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, con NON tutti gli attributi richiesti certificati, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi dell’ente fruitore, che è anche l’erogatore dell’e-service, va a buon fine
     Given l'utente è un "admin" di "PA2"
@@ -46,6 +53,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then si ottiene status code 200
 
+  @happy-path
   @agreement_submit4
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, la quale versione ha attivazione manuale delle richieste di fruizione e che non richiede attributi, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, va a buon fine, e la richiesta di fruizione passa in stato PENDING
     Given l'utente è un "admin" di "PA1"
@@ -54,6 +62,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then la richiesta di fruizione assume lo stato "PENDING"
 
+  @happy-path
   @agreement_submit5
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, la quale versione ha attivazione automatica delle richieste di fruizione (agreementApprovalPolicy = AUTOMATIC), e che non richiede attributi, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, va a buon fine, e la richiesta di fruizione passa in stato ACTIVE
     Given l'utente è un "admin" di "PA1"
@@ -62,6 +71,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then la richiesta di fruizione assume lo stato "ACTIVE"
 
+  @happy-path
   @agreement_submit6
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, la quale versione ha attivazione automatica delle richieste di fruizione con almeno un attributo verificato che il fruitore NON possiede, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine, e la richiesta di fruizione passa in stato PENDING
     Given l'utente è un "admin" di "PA1"
@@ -71,6 +81,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then la richiesta di fruizione assume lo stato "PENDING"
 
+  @sad-path
   @agreement_submit7a
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, associata ad un e-service nella sua ultima versione pubblicata, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -86,6 +97,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @sad-path
   @agreement_submit7b
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED associata ad un e-service nella sua ultima versione pubblicata, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -95,6 +107,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then si ottiene status code 400
 
+  @sad-path
   @agreement_submit8
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, MA NON tutti gli attributi richiesti dichiarati dal fruitore, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -104,6 +117,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     When l'utente inoltra quella richiesta di fruizione
     Then si ottiene status code 400
 
+  @sad-path
   @agreement_submit9
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, associata ad un e-service nella sua ultima versione pubblicata, con NON tutti gli attributi richiesti certificati, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
@@ -119,6 +133,7 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @sad-path
   @agreement_submit10
   Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service NON nella sua ultima versione pubblicata, all’inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"

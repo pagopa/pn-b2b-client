@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pari.cucumber.utils.ApiClientContext;
+import it.pagopa.pari.cucumber.utils.SharedCommonContext;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionsResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductDTO;
@@ -27,14 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegistroBeniInstitutionsSteps {
     private final ApiClientContext apiClientContext;
+    private final SharedCommonContext sharedCommonContext;
     private InstitutionsResponse institutionsResponse;
     private InstitutionResponse institutionResponse;
     private InstitutionDTO institutionDTO;
     private HttpStatusCodeException httpStatusCodeException;
-    private List<ProductDTO> productDTO;
 
-    public RegistroBeniInstitutionsSteps(ApiClientContext apiClientContext) {
+    public RegistroBeniInstitutionsSteps(ApiClientContext apiClientContext, SharedCommonContext sharedCommonContext) {
         this.apiClientContext = apiClientContext;
+        this.sharedCommonContext = sharedCommonContext;
     }
 
     @When("viene recuperata la lista di istituzioni")
@@ -52,25 +54,33 @@ public class RegistroBeniInstitutionsSteps {
         institutionResponse = apiClientContext.getRegisterPortalOperationClient().retrieveInstitutionById(institutionDTO.getInstitutionId());
     }
 
+    @When("viene recuperata la lista prodotti in ordine alfabetico {string} di una specifica istituzione tra quelle recuperate precedentemente")
+    public void retrieveInstitutionProductsSorted(String sort) {
+
+    }
+
+
     @When("viene recuperata la lista prodotti di una specifica istituzione tra quelle recuperate precedentemente")
     public void retrieveInstitutionProducts() {
         assertNotNull(institutionsResponse);
-        productDTO = Optional.ofNullable(institutionsResponse.getInstitutions())
+        List<ProductDTO> productDTO = Optional.ofNullable(institutionsResponse.getInstitutions())
                 .orElse(List.of())
                 .stream()
                 .map(this::createInstitution)
-                .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(ist.getInstitutionId(), 0, 10, null, null,
-                        null, null, null, null))
+                .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null, null,
+                        null, null, null, null, null, null, ist.getInstitutionId()))
                 .filter(Objects::nonNull)
                 .map(ProductListDTO::getContent)
                 .filter(Objects::nonNull)
                 .filter(list -> !list.isEmpty())
                 .findFirst()
                 .orElse(List.of());
+        sharedCommonContext.setLastProductsUploaded(productDTO);
     }
 
     @And("si verifica che il prodotto ritornato abbia tutti i campi validi")
     public void verifyProductsData() {
+        List<ProductDTO> productDTO = sharedCommonContext.getLastProductsUploaded();
         assertNotNull(productDTO);
         productDTO.forEach(x -> {
             assertNotNull(x.getOrganizationId());

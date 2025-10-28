@@ -1,6 +1,7 @@
 @m2m-agreements
 Feature: Gestione degli agreements
 
+  @happy-path
   Scenario Outline: [M2M_AGREEMENTS_LIST_1] La lista degli agreements può essere visionata da un utente con ruolo M2M o M2M-ADMIN
     Given "PA1" ha già creato e pubblicato 5 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
@@ -13,6 +14,7 @@ Feature: Gestione degli agreements
       | m2m-admin  |
       | m2m        |
 
+  @sad-path
   Scenario: [M2M_AGREEMENTS_LIST_2] La lista degli agreements NON può essere visionata da un utente che ha presentato un token m2m scaduto
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

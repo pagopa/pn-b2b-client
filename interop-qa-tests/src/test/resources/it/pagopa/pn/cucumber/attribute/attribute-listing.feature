@@ -3,6 +3,7 @@ Feature: Listing attributi
   Tutti gli utenti autenticati possono leggere la lista degli attributi
 
   # NOTE 16/04/2025 riproduzione dello scenario come presente nel repo interop-qa-tests
+  @happy-path
   @attribute_listing1
   Scenario Outline: Restituisce gli attributi disponibili
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -52,6 +53,7 @@ Feature: Listing attributi
   #    | PA1     | api,security |
     # 16/04/2025 "Privato" non è abilitato, errore 403: "Requester origin IVASS is not allowed"
 
+  @happy-path
   @attribute_listing2
   Scenario: A fronte di 5 attributi in db e una richiesta di 3 attributi, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA1"
@@ -59,6 +61,7 @@ Feature: Listing attributi
     When l'utente richiede una operazione di listing degli attributi limitata ai primi 3 attributi
     Then si ottiene status code 200 e la lista di 3 attributi
 
+  @happy-path
   @attribute_listing3
   Scenario: A fronte di 5 attributi in db e un offset di 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
@@ -66,6 +69,7 @@ Feature: Listing attributi
     When l'utente richiede una operazione di listing degli attributi con offset 2
     Then si ottiene status code 200 e la lista di 3 attributi
 
+  @happy-path
   @attribute_listing4
   Scenario: A fronte di 5 attributi in db dei quali 3 certificati, 2 verificati e 1 dichiarato, restituisce solo i 3 certificati e i 2 verificati
     Given l'utente è un "admin" di "PA2"
@@ -75,6 +79,7 @@ Feature: Listing attributi
     When l'utente richiede una operatione di listing degli attributi filtrando per tipo "certificato" e "verificato"
     Then si ottiene status code 200 e la lista di 5 attributi
 
+  @happy-path
   @attribute_listing5
   Scenario: Restituisce gli attributi in db che contengono la keyword "test" all'interno del nome con ricerca case insensitive
     Given l'utente è un "admin" di "PA1"
@@ -83,6 +88,7 @@ Feature: Listing attributi
     When l'utente richiede una operazione di listing degli attributi filtrando per keyword "test" all'interno del nome
     Then si ottiene status code 200 e la lista di 1 attributo
 
+  @happy-path
   @attribute_listing6
   Scenario: Restituisce un insieme vuoto di attributi per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"

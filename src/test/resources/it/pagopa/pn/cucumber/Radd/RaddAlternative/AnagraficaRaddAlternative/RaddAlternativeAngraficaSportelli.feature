@@ -5,9 +5,9 @@ Feature: Radd Alternative Anagrafica Sportelli
   Scenario: [RADD_ANAGRAFICA_CSV_1] caricamento CSV con 2 sportelli
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
-      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description | radd_phoneNumber | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
-      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | test sportelli   | 01-5410951       | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
-      | vai posto2       | 30023            | VE                    | CONCORDIA SAGITTARIA | ITALIA               | test sportelli   | 01-5245951       | 11.0000                     | 32.1245                      | lun=9:00-10:00#  | now                 | +10g              | 22            | testRadd          |
+      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city   | address_radd_country | radd_description | radd_phoneNumber | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
+      | via Noghera      | 30022            | VE                    | Ceggia              | ITALIA               | test sportelli   | 01-5410951       | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | vai Roma         | 30023            | VE                    | Concorda sagittaria | ITALIA               | test sportelli   | 01-5245951       | 11.0000                     | 32.1245                      | lun=9:00-10:00#  | now                 | +10g              | 22            | testRadd          |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   |
@@ -19,8 +19,8 @@ Feature: Radd Alternative Anagrafica Sportelli
     When viene cambiato raddista con "STANDARD"
     Then viene caricato il csv 2 volte con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_description | radd_phoneNumber |
-      | via posto        | 30020            | VE                    | PONTE CREPALDO    | ITALIA               | test sportelli   | 01-5245951       |
-      | vai posto2       | 30020            | VE                    | PORTEGRANDI       | ITALIA               | test sportelli   | 01-5245951       |
+      | via Doria        | 30020            | VE                    | Crepaldo          | ITALIA               | test sportelli   | 01-5245951       |
+      | vai Trieste      | 30020            | VE                    | Portegrandi       | ITALIA               | test sportelli   | 01-5245951       |
     And l'operazione ha prodotto un errore con status code "409"
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
@@ -33,8 +33,8 @@ Feature: Radd Alternative Anagrafica Sportelli
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_description | radd_phoneNumber |
-      | via posto        | 74022            | TA                    | FRAGAGNANO        | ITALIA               | test sportelli   | 01-5245951       |
-      | vai posto2       | 74025            | TA                    | MARINA DI GINOSA  | ITALIA               | test sportelli   | 01-5245951       |
+      | via Dante        | 74022            | TA                    | Fragagnano        | ITALIA               | test sportelli   | 01-5245951       |
+      | vai Ionio        | 74025            | TA                    | Marina di Ginosa  | ITALIA               | test sportelli   | 01-5245951       |
     Then viene controllato lo stato di caricamento del csv a "PENDING"
     Then viene caricato il csv con formatto "corretto" con restituzione errore con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_description | radd_phoneNumber |
@@ -53,8 +53,8 @@ Feature: Radd Alternative Anagrafica Sportelli
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_description | radd_phoneNumber |
-      | via posto        | 75010            | MT                    | ALIANO            | ITALIA               | test sportelli   | 01-5245951       |
-      | vai posto2       | 75010            | MT                    | CALCIANO          | ITALIA               | test sportelli   | 01-5245951       |
+      | via Stella       | 75010            | MT                    | Aliano            | ITALIA               | test sportelli   | 01-5245951       |
+      | vai Garaguso     | 75010            | MT                    | Calciano          | ITALIA               | test sportelli   | 01-5245951       |
     Then viene controllato lo stato di caricamento del csv a "PENDING"
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
@@ -139,9 +139,9 @@ Feature: Radd Alternative Anagrafica Sportelli
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description | radd_phoneNumber | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
-      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | NULL             | NULL             | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
-      | via posto2       | 30022            | VE                    | GORGOGLIONE          | ITALIA               | test sportelli   | error            | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
-      | via posto3       | 30023            | VE                    | CONCORDIA SAGITTARIA | ITALIA               | test sportelli   | 01-5245951       | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | via Bosco        | 30022            | VE                    | Ceggia               | ITALIA               | NULL             | NULL             | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | via Fontana      | 30022            | VE                    | Gorgoglione          | ITALIA               | test sportelli   | error            | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | via Claudia      | 30023            | VE                    | Concordia Sagittaria | ITALIA               | test sportelli   | 01-5245951       | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   | errorMessage                                                          |
@@ -549,7 +549,7 @@ Feature: Radd Alternative Anagrafica Sportelli
       | address_radd_row      | via posto    |
       | address_radd_cap      | 80020        |
       | address_radd_province | NA           |
-      | address_radd_city     | FRATTAMINORE |
+      | address_radd_city     | Frattaminore |
       | address_radd_country  | ITALY        |
       | radd_externalCode     | testRadd     |
       | radd_phoneNumber      | 01-5245951   |
@@ -602,11 +602,11 @@ Feature: Radd Alternative Anagrafica Sportelli
       | radd_description      | test sportelli |
     Then viene effettuato il controllo se la richiesta ha trovato dei sportelli
     Examples:
-      | cap   | provincia | citta      | externalCode |
-      | 75010 | NULL      | NULL       | NULL         |
-      | NULL  | MT        | NULL       | NULL         |
-      | NULL  | NULL      | Casavatore | NULL         |
-      | NULL  | NULL      | NULL       | testRadd     |
+      | cap   | provincia | citta          | externalCode |
+      | 75010 | NULL      | NULL           | NULL         |
+      | NULL  | MT        | NULL           | NULL         |
+      | NULL  | NULL      | Oliveto Lucano | NULL         |
+      | NULL  | NULL      | NULL           | testRadd     |
 
   @raddAnagrafica
   Scenario: [RADD_ANAGRAFICA_CRUD_24] ricevimento lista vuota dei sportelli del operatore con filtro con valore non presente
