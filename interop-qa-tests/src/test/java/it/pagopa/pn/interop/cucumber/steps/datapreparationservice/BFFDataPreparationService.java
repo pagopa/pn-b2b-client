@@ -1113,6 +1113,7 @@ public class BFFDataPreparationService {
         eServiceSeed.setMode(useOrDefault(partialClientSeed.getMode(), defaultClientSeed.getMode()));
         eServiceSeed.setIsConsumerDelegable(useOrDefault(partialClientSeed.getIsConsumerDelegable(), defaultClientSeed.getIsConsumerDelegable()));
         eServiceSeed.setIsClientAccessDelegable(useOrDefault(partialClientSeed.getIsClientAccessDelegable(), defaultClientSeed.getIsClientAccessDelegable()));
+        eServiceSeed.setPersonalData(useOrDefault(partialClientSeed.getPersonalData(), defaultClientSeed.getPersonalData()));
         return eServiceSeed;
     }
 

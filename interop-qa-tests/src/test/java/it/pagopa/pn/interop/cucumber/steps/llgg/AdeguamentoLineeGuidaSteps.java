@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormCon
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;
@@ -17,10 +18,10 @@ public class AdeguamentoLineeGuidaSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
 
-    public AdeguamentoLineeGuidaSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext, IHttpExecutor httpCallExecutor) {
+    public AdeguamentoLineeGuidaSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("verifica che la versione 3.1 dell'analisi del rischio includa domande inerenti all'uso di dati personali")
@@ -52,66 +53,28 @@ public class AdeguamentoLineeGuidaSteps {
         action.accept(riskAnalysis);
     }
 
-    @When("l'utente aggiunge un'analisi del rischio custom")
-    public void addCustomRiskAnalysis() {
+    @When("l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a {string}")
+    public void addCustomRiskAnalysis(String flagCondition) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        RiskAnalysis customRiskAnalysis;
 
-        // qui metti il tuo JSON come stringa
-        String json = "{\n" +
-                "    \"riskAnalysis\": [\n" +
-                "        {\n" +
-                "            \"createdAt\": \"2025-10-27T18:38:03.614Z\",\n" +
-                "            \"id\": \"66023227-4905-48ab-83b2-949380f1eb05\",\n" +
-                "            \"name\": \"prova finalita\",\n" +
-                "            \"riskAnalysisForm\": {\n" +
-                "                \"answers\": {\n" +
-                "                    \"checkedExistenceMereCorrectnessInteropCatalogue\": [\"true\"],\n" +
-                "                    \"confirmPricipleIntegrityAndDiscretion\": [\"true\"],\n" +
-                "                    \"dataDownload\": [\"NO\"],\n" +
-                "                    \"declarationConfirmGDPR\": [\"true\"],\n" +
-                "                    \"deliveryMethod\": [\"CLEARTEXT\"],\n" +
-                "                    \"doneDpia\": [\"NO\"],\n" +
-                "                    \"institutionalPurpose\": [\"prova prova prova\"],\n" +
-                "                    \"isRequestOnBehalfOfThirdParties\": [\"NO\"],\n" +
-                "                    \"knowsDataQuantity\": [\"NO\"],\n" +
-                "                    \"legalBasis\": [\"CONTRACT\"],\n" +
-                "                    \"personalDataTypes\": [\"WITH_NON_IDENTIFYING_DATA\"],\n" +
-                "                    \"policyProvided\": [\"YES\"],\n" +
-                "                    \"policyProvidedMedium\": [\"PRINT\"],\n" +
-                "                    \"purpose\": [\"INSTITUTIONAL\"],\n" +
-                "                    \"purposePursuit\": [\"MERE_CORRECTNESS\"],\n" +
-                "                    \"usesPersonalData\": [\"YES\"]\n" +
-                "                },\n" +
-                "                \"riskAnalysisId\": \"66023227-4905-48ab-83b2-949380f1eb05\",\n" +
-                "                \"version\": \"3.1\"\n" +
-                "            }\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
-
-        try {
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-
-            // leggo solo il nodo riskAnalysis[0]
-            com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(json);
-            com.fasterxml.jackson.databind.JsonNode raNode = root.path("riskAnalysis").get(0);
-
-            // mappo in RiskAnalysis (la tua domain class)
-            RiskAnalysis customRiskAnalysis = mapper.treeToValue(raNode, RiskAnalysis.class);
-
-            // costruisco la request per l’API
-            httpCallExecutor.performCall(
-                    () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
-                            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                            new it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed()
-                                    .name(customRiskAnalysis.getName())
-                                    .riskAnalysisForm(customRiskAnalysis.getRiskAnalysisForm())
-                    )
-            );
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante la creazione dell'analisi del rischio custom", e);
+        if (flagCondition.equals("true")) {
+            customRiskAnalysis = FileUtils.readJsonAs("classpath:it/pagopa/pn/cucumber/llgg/personal-data-true-risk-analysis.json", RiskAnalysis.class);
+        } else if (flagCondition.equals("false")) {
+            customRiskAnalysis = FileUtils.readJsonAs("classpath:it/pagopa/pn/cucumber/llgg/personal-data-false-risk-analysis.json", RiskAnalysis.class);
+        } else {
+            throw new RuntimeException(String.format("Flag condition non riconosciuto: %s", flagCondition));
         }
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        new it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed()
+                                .name(customRiskAnalysis.getName())
+                                .riskAnalysisForm(customRiskAnalysis.getRiskAnalysisForm())
+                )
+        );
     }
+
 
 }
