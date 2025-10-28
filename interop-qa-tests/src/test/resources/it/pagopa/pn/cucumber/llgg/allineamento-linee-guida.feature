@@ -73,3 +73,40 @@ Feature: Allineamento linee guida
       | undefined        | false                        | 200              | 400               |
       | false            | true                         | 200              | 400               |
       | true             | false                        | 200              | 400               |
+
+  Scenario Outline: [LLGG_5] Setting flagPersonalData passando un eServiceId inesistente (Scenario 17)
+    Given l'utente è un "admin" di "PA1"
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un eServiceId inesistente
+    Then si ottiene lo status code 404
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario Outline: [LLGG_6] Setting flagPersonalData usando un token invalido (Scenario 19)
+    Given l'utente è un "admin" di "PA1"
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un eServiceId inesistente e un token invalido
+    Then si ottiene lo status code 401
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+    #TODO: al momento per i ruoli api parte correttamente la chiamanta, verificare con Roberto
+  Scenario Outline: [LLGG_7] Setting flagPersonalData usando ruoli differenti (Scenario 20)
+    Given l'utente è un "<ruolo>" di "<ente>"
+    When viene settato il personalDataFlag a "true" passando un eServiceId inesistente
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | api          |        403 |
+      | GSP  | security     |        403 |
+      | GSP  | support      |        403 |
+      | GSP  | api,security |        403 |
+      | PA1  | api          |        403 |
+      | PA1  | security     |        403 |
+      | PA1  | support      |        403 |
+      | PA1  | api,security |        403 |

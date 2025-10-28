@@ -79,6 +79,20 @@ public class AdeguamentoLineeGuidaSteps {
         );
     }
 
+    @When("viene settato il personalDataFlag a {string} passando un eServiceId inesistente e un token invalido")
+    public void updatePersonalDataFlagAfterPublicationWithInvalidToken(String flagPersonalData) {
+
+        UUID eserviceId = UUID.randomUUID();
+
+        EServicePersonalDataFlagUpdateSeed seed = new EServicePersonalDataFlagUpdateSeed();
+        seed.setPersonalData(flagPersonalData.equalsIgnoreCase("true"));
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(
+                        eserviceId,seed
+                )
+        );
+    }
 
     public void userRequireTemplateVersionAndCheck(String version, Consumer<RiskAnalysisFormConfig> action) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

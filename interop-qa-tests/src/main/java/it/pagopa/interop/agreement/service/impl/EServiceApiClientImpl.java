@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 )
 public class EServiceApiClientImpl implements IEServiceClient {
     private final EservicesApi eservicesApi;
+    private final EservicesApi apiWithWrongToken;
     private final RestTemplate restTemplate;
     private final String basePath;
 
@@ -36,6 +37,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.eservicesApi = new EservicesApi(createApiClient("dummyBearer"));
+        this.apiWithWrongToken = new EservicesApi(createApiClient("tokenInvalid"));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -173,6 +175,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed) {
         eservicesApi.updateEServicePersonalDataFlagAfterPublication(eServiceId, seed);
+    }
+
+    @Override
+    public void updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed) {
+        apiWithWrongToken.updateEServicePersonalDataFlagAfterPublication(eServiceId, seed);
     }
 
     @Override
