@@ -236,7 +236,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
         String eServiceName) {
-        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, eServiceName, null, null);
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, eServiceName, null, null, null);
     }
 
     @Override
