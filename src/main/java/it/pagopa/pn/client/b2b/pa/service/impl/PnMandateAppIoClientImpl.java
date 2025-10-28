@@ -25,7 +25,7 @@ public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
     private final String appIoApiKey;
 
     public PnMandateAppIoClientImpl(RestTemplate restTemplate,
-                                    @Value("${pn.appio.externa.base-url.pagopa}") String basePath,
+                                    @Value("${pn.appio.externa.base-url}") String basePath,
                                     @Value("${pn.external.appio.api-key}") String appIoApiKey) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
