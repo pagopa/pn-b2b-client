@@ -21,7 +21,7 @@ public interface IM2MEServiceTemplateAttributeClient extends SettableBearerToken
     void deleteDeclaredAttribute(UUID eServiceId, UUID descriptorId, int groupId, UUID attribute);
 
 
-    List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
+    void addVerifiedAttributes(UUID eServiceId, UUID descriptorId, int groupId, List<UUID> attributes);
     List<EServiceAttribute<VerifiedAttribute>> createVerifiedAttributesGroup(UUID eServiceId, UUID descriptorId, List<UUID> attributes);
     List<EServiceAttribute<VerifiedAttribute>> getVerifiedAttributes(UUID eServiceId, UUID descriptorId);
     void deleteVerifiedAttribute(UUID eServiceId, UUID descriptorId, int groupId, UUID attribute);

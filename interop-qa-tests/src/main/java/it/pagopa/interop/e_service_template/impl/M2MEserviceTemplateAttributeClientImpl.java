@@ -167,16 +167,19 @@ public class M2MEserviceTemplateAttributeClientImpl implements IM2MEServiceTempl
             .groupIndex(attribute.getGroupIndex())
             .build();
     }
-//----------------------------------------------------------------------
+
     @Override
-    public List<EServiceAttribute<VerifiedAttribute>> addVerifiedAttributes(
+    public void addVerifiedAttributes(
             UUID templateId,
             UUID versionId,
             int groupId,
             List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+        this.templatesApi.assignEServiceTemplateVersionVerifiedAttributesToGroup(
+            templateId,
+            versionId,
+            groupId,
+            new EServiceTemplateVersionAttributesGroupSeed().attributeIds(attributes));
     }
 
     @Override
@@ -185,8 +188,15 @@ public class M2MEserviceTemplateAttributeClientImpl implements IM2MEServiceTempl
             UUID versionId,
             List<UUID> attributes
     ) {
-        // TODO 09/10/2025 placeholder di una API non ancora rilasciata. Aggiornare una volta ottenuta la specifica.
-        return List.of(EServiceAttribute.<VerifiedAttribute>builder().build());
+        EServiceTemplateVersionVerifiedAttributesGroup group = this.templatesApi.createEServiceTemplateVersionVerifiedAttributesGroup(
+            templateId,
+            versionId,
+            new EServiceTemplateVersionAttributesGroupSeed().attributeIds(attributes)
+        );
+
+        return group.getAttributes().stream()
+            .map(this.attributeMapper::map)
+            .collect(Collectors.toList());
     }
 
     @Override
