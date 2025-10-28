@@ -97,6 +97,7 @@ public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
+        log.info("APP IO BASEPATH: " + basePath);
         return beenSet;
     }
 
