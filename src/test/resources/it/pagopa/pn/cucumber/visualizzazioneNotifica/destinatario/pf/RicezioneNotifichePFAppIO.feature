@@ -258,3 +258,11 @@ Feature: recupero notifiche tramite api AppIO b2b
     #https://pagopa.atlassian.net/browse/PN-16249
     And a seguito della scansione del QR Code, la notifica può essere recuperata da: Leonardo da Vinci tramite AppIO passando un header src non valido
     Then si verifica che la chiamata abbia ritornato uno status code: 403
+
+
+
+  Scenario: [QR_CODE_HF] Viene
+    And viene generato il QR Code "corretto" per la notifica di 60 giorni
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori

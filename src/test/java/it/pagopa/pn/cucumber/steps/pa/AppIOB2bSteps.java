@@ -5,11 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.RequestCheckQrMandateDto;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ResponseCheckQrMandateDto;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyAttachment;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
+import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
@@ -31,12 +27,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -51,7 +42,8 @@ public class AppIOB2bSteps {
     @Value("${pn.appIO.checkQrCode-bodyUrl}")
     private String qrCodeBodyUrl;
     private String qrCode;
-
+    @Value("${pn.iun.120gg.fieramosca}")
+    private String iun120gg;
 
     @Autowired
     public AppIOB2bSteps(IPnAppIOB2bClient iPnAppIOB2bClient, SharedSteps sharedSteps) {
@@ -63,6 +55,15 @@ public class AppIOB2bSteps {
     public void vieneGeneratoIlCodiceQRPerLaNotificaCreata(String qrCodeType) {
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
+            case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
+            default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
+        };
+    }
+    @Given("viene generato il QR Code {string} per la notifica di 60 giorni")
+    public void vieneGeneratoIlCodiceQRPerLaNotificaOld(String qrCodeType) {
+        sharedSteps.setNotificationIun(iun120gg);
+        qrCode = switch (qrCodeType.toLowerCase()) {
+            case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 1);
             case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
         };
