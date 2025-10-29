@@ -24,4 +24,5 @@ public class EServiceTemplateInfo {
     private EServiceMode mode;
     private UUID id;
     private java.util.UUID lastVersionId;
+    private Boolean personalData;
 }

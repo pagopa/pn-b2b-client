@@ -172,7 +172,9 @@ public class EServiceTemplateCreateSteps {
                 templateSeed.getDescription(),
                 templateSeed.getMode(),
                 creationResponse.getId(),
-                creationResponse.getVersionId()));
+                creationResponse.getVersionId(),
+                templateSeed.getPersonalData()
+                ));
     }
 
     /**

@@ -14,6 +14,32 @@ Feature: Allineamento linee guida
       | false            | 200        |
       | undefined        | 400        |
 
+  Scenario Outline: [LLGG_1.1] Creazione e-service in modalità "DELIVER" con diverse combinazioni di flagPersonalData e verifica del descrittore (Scenario 39)
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
+    Then si ottiene status code 200
+    Given "PA1" ha già caricato un'interfaccia per quel descrittore
+    When l'utente pubblica quel descrittore
+    Then si ottiene status code 200
+    Then verifica che il flagPersonalData presente nell'eService con il descrittore appena creato sia "<personalDataFlag>"
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario Outline: [LLGG_1.2] Creazione e-service in modalità "DELIVER" con diverse combinazioni di flagPersonalData e verifica del dettaglio (Scenario 40)
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "<personalDataFlag>"
+    Then si ottiene status code 200
+    Then verifica che il flagPersonalData presente nell'eService sia "<personalDataFlag>"
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+
   Scenario Outline: [LLGG_2] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData (Scenario 4, 5, 6, 7)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<eServicePersonalDataFlag>"
@@ -33,6 +59,41 @@ Feature: Allineamento linee guida
       | true                     | 400                  | false                        | 400                    |
       | true                     | 200                  | true                         | 204                    |
       | false                    | 400                  | true                         | 400                    |
+
+  Scenario Outline: [LLGG_2.1] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData e verifica del descrittore (Scenario 39)
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
+    Then si ottiene status code 200
+    When verifica che la versione 3.1 dell'analisi del rischio includa domande inerenti all'uso di dati personali
+    When l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a "<personalDataFlag>"
+    Then si ottiene status code 204
+    Given "PA1" ha già caricato un'interfaccia per quel descrittore
+    When l'utente pubblica quel descrittore
+    Then si ottiene status code 200
+    Then verifica che il flagPersonalData presente nell'eService con il descrittore appena creato sia "<personalDataFlag>"
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario Outline: [LLGG_2.2] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData e verifica del dettaglio (Scenario 40)
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
+    Then si ottiene status code 200
+    When verifica che la versione 3.1 dell'analisi del rischio includa domande inerenti all'uso di dati personali
+    When l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a "<personalDataFlag>"
+    Then si ottiene status code 204
+    Given "PA1" ha già caricato un'interfaccia per quel descrittore
+    When l'utente pubblica quel descrittore
+    Then si ottiene status code 200
+    Then verifica che il flagPersonalData presente nell'eService sia "<personalDataFlag>"
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
 
   Scenario Outline: [LLGG_3] Aggiornamento descrittore in modalità DELIVER di un eService comprendente il flag dati (Scenario 8,9,10)
     Given l'utente è un "admin" di "PA1"
@@ -211,3 +272,15 @@ Feature: Allineamento linee guida
       | PUBLISHED     |
       | SUSPENDED     |
       | DEPRECATED    |
+
+  Scenario Outline: [LLGG_16] Istanza di un eservice a partire da un template in cui è stato settato il flag relativo ai dati personali
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con flagPersonalData impostato a "<personalDataFlag>"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    Then si ottiene status code 200
+    And verifica che il flagPersonalData presente nell'istanza dell'eServiceTemplate coincida con quanto specificato nel template
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |

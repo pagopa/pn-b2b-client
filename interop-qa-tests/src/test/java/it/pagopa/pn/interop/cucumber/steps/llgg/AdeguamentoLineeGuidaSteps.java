@@ -2,12 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.llgg;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplatePersonalDataFlagUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import org.assertj.core.api.Assertions;
 
@@ -86,6 +85,73 @@ public class AdeguamentoLineeGuidaSteps {
         updatePersonalDataFlagInternal(target.equalsIgnoreCase("eServiceId"), UUID.randomUUID(), flagPersonalData, true);
     }
 
+    @When("verifica che il flagPersonalData presente nell'istanza dell'eServiceTemplate coincida con quanto specificato nel template")
+    public void checkEserviceTemplateIstance() {
+        EServiceTemplateInfo template = this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID eServiceId = this.sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+
+        if (template == null) throw new RuntimeException("Nessun template gestito trovato nel contesto: impossibile verificare l'istanza di eService.");
+        if (eServiceId == null) throw new RuntimeException("Nessun eService creato a partire dal template trovato nel contesto: impossibile recuperare i dettagli.");
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(eServiceId)
+        );
+
+        Assertions.assertThat(this.httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                .as("La chiamata GET per i dettagli dell'eService (id=%s) non è andata a buon fine", eServiceId)
+                .isTrue();
+
+        ProducerEServiceDetails eService = (ProducerEServiceDetails) httpCallExecutor.getResponse();
+
+        Assertions.assertThat(eService.getPersonalData())
+                .as("Il flag personalData dell'eService (id=%s) non corrisponde a quello del template (id=%s)", eServiceId, template.id())
+                .isEqualTo(template.personalData());
+    }
+
+    @When("verifica che il flagPersonalData presente nell'eService sia {string}")
+    public void checkEserviceIstance(String flagPersonalData) {
+        UUID eServiceId = this.sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        if (eServiceId == null) throw new RuntimeException("Nessun eService creato a partire dal template trovato nel contesto: impossibile recuperare i dettagli.");
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(eServiceId)
+        );
+
+        Assertions.assertThat(this.httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                .as("La chiamata GET per i dettagli dell'eService (id=%s) non è andata a buon fine", eServiceId)
+                .isTrue();
+
+        ProducerEServiceDetails eService = (ProducerEServiceDetails) httpCallExecutor.getResponse();
+        Boolean expectedFlag = flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true");
+
+        Assertions.assertThat(eService.getPersonalData())
+                .as("Il flag personalData dell'eService (id=%s) non corrisponde a (id=%s)", eServiceId, expectedFlag)
+                .isEqualTo(expectedFlag);
+    }
+
+    @When("verifica che il flagPersonalData presente nell'eService con il descrittore appena creato sia {string}")
+    public void checkEserviceIstanceWithDescriptor(String flagPersonalData) {
+        UUID eServiceId = this.sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = this.sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        if (eServiceId == null) throw new RuntimeException("Nessun eServiceId trovato.");
+        if (descriptorId == null) throw new RuntimeException("Nessun descriptorId trovato");
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId)
+        );
+
+        Assertions.assertThat(this.httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                .as("La chiamata GET per i dettagli dell'eService (id=%s) e descriptor (id=%s) non è andata a buon fine", eServiceId, descriptorId)
+                .isTrue();
+
+        ProducerEServiceDescriptor descriptor = (ProducerEServiceDescriptor) httpCallExecutor.getResponse();
+        Boolean expectedFlag = flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true");
+
+        Assertions.assertThat(descriptor.getEservice().getPersonalData())
+                .as("Il flag personalData dell'eService (id=%s) con descrittore (id=%s) non corrisponde a (id=%s)", eServiceId, descriptorId, expectedFlag)
+                .isEqualTo(expectedFlag);
+    }
 
     private void userRequireTemplateVersionAndCheck(String version, Consumer<RiskAnalysisFormConfig> action) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
