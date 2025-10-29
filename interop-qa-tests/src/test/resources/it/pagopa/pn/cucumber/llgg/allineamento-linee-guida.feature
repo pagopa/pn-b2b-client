@@ -186,3 +186,28 @@ Feature: Allineamento linee guida
       | personalDataFlag |
       | true             |
       | false            |
+
+  Scenario Outline: [LLGG_14] Setting flagPersonalData per eServiceTemplate usando ruoli differenti (Scenario 33)
+    Given l'utente è un "<ruolo>" di "<ente>"
+    When viene settato il personalDataFlag a "true" passando un "eServiceTemplateId" inesistente
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | ente | ruolo    | statusCode |
+      | GSP  | security | 403        |
+      | GSP  | support  | 403        |
+      | PA1  | security | 403        |
+      | PA1  | support  | 403        |
+
+  Scenario Outline: [LLGG_15] Creazione e-service-template con diverse combinazioni di flagPersonalData e setting a posteriori del medesimo (Scenario 34)
+    Given l'utente è un "admin" di "PA1"
+    Given l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <statoVersione> con flagPersonalData impostato a "true"
+    Then si ottiene status code 200
+    Then viene settato il personalDataFlag a "false" nell'eservice template appena creato
+    Then si ottiene status code 409
+
+    Examples:
+      | statoVersione |
+      | PUBLISHED     |
+      | SUSPENDED     |
+      | DEPRECATED    |
