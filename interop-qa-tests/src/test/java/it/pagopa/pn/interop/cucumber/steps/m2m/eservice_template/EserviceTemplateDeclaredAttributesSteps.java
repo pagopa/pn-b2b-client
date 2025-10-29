@@ -15,6 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -265,13 +266,16 @@ public class EserviceTemplateDeclaredAttributesSteps {
                 .map(attribute -> attribute.getAttribute().getId())
                 .toList();
 
-        List<UUID> expectedDeclaredAttributeIds = new ArrayList<>(
-            sharedStepsContext.getEServiceTemplateStepContext().getDeclaredAttributesIds());
+        EServiceTemplateStepContext context = sharedStepsContext.getEServiceTemplateStepContext();
+        List<UUID> expectedDeclaredAttributeIds = new ArrayList<>(context.getDeclaredAttributesIds());
         expectedDeclaredAttributeIds.remove(removedAttributeIndex);
 
         assertThat(actualDeclaredAttributeIds)
             .as("Verifica che sia stato rimosso soltanto l'attributo dichiarato numero " + removedAttributeIndex)
             .containsExactlyInAnyOrderElementsOf(expectedDeclaredAttributeIds);
+
+        UUID removedAttributeId = context.getDeclaredAttributesIds().remove(removedAttributeIndex);
+        context.getRemovedDeclaredAttributesIds().add(removedAttributeId);
     }
 
     @Then("gli attributi dichiarati del gruppo del template sono rimasti invariati")
@@ -294,6 +298,13 @@ public class EserviceTemplateDeclaredAttributesSteps {
     public void successfullyDeleteDeclaredAttribute(int attributeToRemoveIndex) {
         removeEServiceDeclaredAttribute(attributeToRemoveIndex);
         checkRemovedDeclaredAttribute(attributeToRemoveIndex);
+    }
+
+    @When("l'utente tenta di rimuovere l'attributo dichiarato già eliminato numero {collectionIndex} dal gruppo dell'e-service template")
+    public void removeDeletedEServiceDeclaredAttribute(int attributeIndex) {
+        EServiceTemplateAttributesGroupKey key = getEServiceTemplateAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServiceTemplateStepContext().getRemovedDeclaredAttributesIds().get(attributeIndex);
+        performDeleteDeclaredAttribute(key, attributeId);
     }
 
     @When("l'utente tenta di rimuovere l'attributo dichiarato numero {collectionIndex} dal gruppo dell'e-service template indicando un e-service template id inesistente")

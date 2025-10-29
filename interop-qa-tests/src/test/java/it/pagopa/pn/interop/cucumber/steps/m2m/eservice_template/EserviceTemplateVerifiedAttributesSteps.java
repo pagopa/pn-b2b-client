@@ -15,6 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -249,6 +250,13 @@ public class EserviceTemplateVerifiedAttributesSteps {
         performDeleteVerifiedAttribute(key, attributeId);
     }
 
+    @When("l'utente tenta di rimuovere l'attributo verificato già eliminato numero {collectionIndex} dal gruppo dell'e-service template")
+    public void removeDeletedEServiceVerifiedAttribute(int attributeIndex) {
+        EServiceTemplateAttributesGroupKey key = getEServiceTemplateAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServiceTemplateStepContext().getRemovedVerifiedAttributesIds().get(attributeIndex);
+        performDeleteVerifiedAttribute(key, attributeId);
+    }
+
     private void performDeleteVerifiedAttribute(EServiceTemplateAttributesGroupKey key, UUID attributeId) {
         httpExecutor.performCall(() -> templateClient.deleteVerifiedAttribute(
             key.getTemplateId(),
@@ -265,13 +273,16 @@ public class EserviceTemplateVerifiedAttributesSteps {
                 .map(attribute -> attribute.getAttribute().getId())
                 .toList();
 
-        List<UUID> expectedVerifiedAttributeIds = new ArrayList<>(
-            sharedStepsContext.getEServiceTemplateStepContext().getVerifiedAttributesIds());
+        EServiceTemplateStepContext context = sharedStepsContext.getEServiceTemplateStepContext();
+        List<UUID> expectedVerifiedAttributeIds = new ArrayList<>(context.getVerifiedAttributesIds());
         expectedVerifiedAttributeIds.remove(removedAttributeIndex);
 
         assertThat(actualVerifiedAttributeIds)
             .as("Verifica che sia stato rimosso soltanto l'attributo verificato numero " + removedAttributeIndex)
             .containsExactlyInAnyOrderElementsOf(expectedVerifiedAttributeIds);
+
+        UUID removedAttributeId = context.getVerifiedAttributesIds().remove(removedAttributeIndex);
+        context.getRemovedVerifiedAttributesIds().add(removedAttributeId);
     }
 
     @Then("gli attributi verificati del gruppo nel template sono rimasti invariati")

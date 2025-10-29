@@ -276,7 +276,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
 
     # TODO in caso di refactor delle snapshot, andrebbe accorpato con lo step "gli attributi certificati del gruppo dell'e-service template sono rimasti invariati"
-    #And gli attributi certificati del gruppo del template sono rimasti invariati
+    And gli attributi certificati del gruppo del template sono rimasti invariati
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_03] Un utente NON può rimuovere gli attributi certificati di una versione di un e-service template indicando degli identificativi inesistenti o appartenenti ad attributi già rimossi (Parte2#Scenario intorno a 271, 273)
@@ -301,7 +301,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
 
     # verifica che la rimozione di un attributo già eliminato fallisca
     Given l'utente rimuove l'attributo certificato numero 1 dal gruppo dell'e-service template con successo
-    When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template
+    When l'utente tenta di rimuovere l'attributo certificato già eliminato numero 1 dal gruppo dell'e-service template
     Then si ottiene lo status code 404
     And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
@@ -336,6 +336,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service template
     Then si ottiene lo status code 404
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:
       | mode        |
@@ -343,14 +344,14 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
 
   @m2m-parte2-ottobre
-  Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_06] Un utente non può rimuovere gli attributi certificati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
+  Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_06] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
     Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 2 attributi certificati con successo
-    And "PA1" porta la versione dell'e-service template in stato <stato>
+    And l'utente crea 1 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi certificati con successo
-    When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service template
+    And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributi certificati con successo
+    And "PA1" porta la versione dell'e-service template in stato <stato>
+    When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service template
     Then si ottiene lo status code 400
     And gli attributi certificati del gruppo del template sono rimasti invariati
     Examples:

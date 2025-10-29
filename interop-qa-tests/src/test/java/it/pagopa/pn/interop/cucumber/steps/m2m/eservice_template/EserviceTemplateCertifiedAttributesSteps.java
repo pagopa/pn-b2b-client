@@ -15,6 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -249,6 +250,13 @@ public class EserviceTemplateCertifiedAttributesSteps {
         performDeleteCertifiedAttribute(key, attributeId);
     }
 
+    @When("l'utente tenta di rimuovere l'attributo certificato già eliminato numero {collectionIndex} dal gruppo dell'e-service template")
+    public void removeDeletedEServiceCertifiedAttribute(int attributeIndex) {
+        EServiceTemplateAttributesGroupKey key = getEServiceTemplateAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServiceTemplateStepContext().getRemovedCertifiedAttributesIds().get(attributeIndex);
+        performDeleteCertifiedAttribute(key, attributeId);
+    }
+
     private void performDeleteCertifiedAttribute(EServiceTemplateAttributesGroupKey key, UUID attributeId) {
         httpExecutor.performCall(() -> templateClient.deleteCertifiedAttribute(
             key.getTemplateId(),
@@ -265,13 +273,16 @@ public class EserviceTemplateCertifiedAttributesSteps {
                 .map(attribute -> attribute.getAttribute().getId())
                 .toList();
 
-        List<UUID> expectedCertifiedAttributeIds = new ArrayList<>(
-            sharedStepsContext.getEServiceTemplateStepContext().getCertifiedAttributesIds());
+        EServiceTemplateStepContext context = sharedStepsContext.getEServiceTemplateStepContext();
+        List<UUID> expectedCertifiedAttributeIds = new ArrayList<>(context.getCertifiedAttributesIds());
         expectedCertifiedAttributeIds.remove(removedAttributeIndex);
 
         assertThat(actualCertifiedAttributeIds)
             .as("Verifica che sia stato rimosso soltanto l'attributo certificato numero " + removedAttributeIndex)
             .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributeIds);
+
+        UUID removedAttributeId = context.getCertifiedAttributesIds().remove(removedAttributeIndex);
+        context.getRemovedCertifiedAttributesIds().add(removedAttributeId);
     }
 
     @Then("gli attributi certificati del gruppo del template sono rimasti invariati")
