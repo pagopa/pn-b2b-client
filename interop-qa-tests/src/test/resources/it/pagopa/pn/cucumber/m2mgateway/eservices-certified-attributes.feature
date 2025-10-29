@@ -3,6 +3,7 @@
 Feature: Gestione degli attributi certificati degli e-services attraverso APIs M2M V2
 
   # TODO: strategia basata su snapshots - di cui gli step tra parentesi quadre sono perno - da rivedere
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8006
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -34,6 +35,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
       | SUSPENDED   |
       | DEPRECATED  |
 
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8007
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -49,6 +51,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8007
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_B] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato ARCHIVED (Parte2#Scenario intorno a 114)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -80,6 +83,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7992
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -315,7 +319,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
 
     # verifica che la rimozione di un attributo già eliminato fallisca
     Given l'utente rimuove l'attributo certificato numero 1 dal gruppo dell'e-service con successo
-    When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo certificato già eliminato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 404
     And gli attributi certificati del gruppo sono rimasti invariati
 
@@ -342,17 +346,18 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 404
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And gli attributi certificati del gruppo sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_A] Un utente non può rimuovere gli attributi certificati da una versione di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
+  Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_A] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 2 attributi certificati con successo
-    And "PA1" porta il descrittore dell'e-service in stato "<stato>"
+    And l'utente crea 1 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
-    When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
+    And l'utente crea un gruppo di attributi contenente 1 attributi certificati con successo
+    And "PA1" porta il descrittore dell'e-service in stato "<stato>"
+    When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi certificati del gruppo sono rimasti invariati
     Examples:
@@ -363,13 +368,14 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_B] Un utente non può rimuovere gli attributi certificati da una versione di un e-service in stato diverso WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
+  Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
     And l'utente crea 2 attributi certificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi certificati del gruppo sono rimasti invariati

@@ -29,6 +29,10 @@ public class EServicesCommonContext {
     private List<UUID> declaredAttributesIds = new ArrayList<>();
     private List<UUID> verifiedAttributesIds = new ArrayList<>();
 
+    private List<UUID> removedCertifiedAttributesIds = new ArrayList<>();
+    private List<UUID> removedDeclaredAttributesIds = new ArrayList<>();
+    private List<UUID> removedVerifiedAttributesIds = new ArrayList<>();
+
     private UUID documentId;
     private UUID documentId2;
     private List<DocumentMetadata> documentsMetadata;

@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAtt
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -248,6 +249,13 @@ public class EserviceCertifiedAttributesSteps {
         performDeleteCertifiedAttribute(key, attributeId);
     }
 
+    @When("l'utente tenta di rimuovere l'attributo certificato già eliminato numero {collectionIndex} dal gruppo dell'e-service")
+    public void removeDeletedEServiceCertifiedAttribute(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getRemovedCertifiedAttributesIds().get(attributeIndex);
+        performDeleteCertifiedAttribute(key, attributeId);
+    }
+
     private void performDeleteCertifiedAttribute(EServiceAttributesGroupKey key, UUID attributeId) {
         httpExecutor.performCall(() -> eServiceClient.deleteCertifiedAttribute(
             key.getEServiceId(),
@@ -265,13 +273,16 @@ public class EserviceCertifiedAttributesSteps {
                 .map(attribute -> attribute.getAttribute().getId())
                 .toList();
 
-        List<UUID> expectedCertifiedAttributeIds = new ArrayList<>(
-            sharedStepsContext.getEServicesCommonContext().getCertifiedAttributesIds());
+        EServicesCommonContext context = sharedStepsContext.getEServicesCommonContext();
+        List<UUID> expectedCertifiedAttributeIds = new ArrayList<>(context.getCertifiedAttributesIds());
         expectedCertifiedAttributeIds.remove(removedAttributeIndex);
 
         assertThat(actualCertifiedAttributeIds)
             .as("Verifica che sia stato rimosso soltanto l'attributo certificato numero " + removedAttributeIndex)
             .containsExactlyInAnyOrderElementsOf(expectedCertifiedAttributeIds);
+
+        UUID removedAttributeId = context.getCertifiedAttributesIds().remove(removedAttributeIndex);
+        context.getRemovedCertifiedAttributesIds().add(removedAttributeId);
     }
 
     @Then("gli attributi certificati del gruppo sono rimasti invariati")
