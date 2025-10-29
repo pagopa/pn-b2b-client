@@ -409,6 +409,11 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public CatalogEServiceTemplates getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds, Boolean personalData) {
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalog(offset, limit, q, creatorsIds,personalData);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.eserviceTemplatesApi.setApiClient(createApiClient(bearerToken));
     }

@@ -12,4 +12,5 @@ public interface IProducerClient extends SettableBearerToken {
     ProducerEServiceDescriptor getProducerEServiceDescriptor(UUID eserviceId, UUID descriptorId);
     ProducerEServiceDetails getProducerEServiceDetails(UUID eserviceId);
     ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated);
+    ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated, Boolean personalData);
 }

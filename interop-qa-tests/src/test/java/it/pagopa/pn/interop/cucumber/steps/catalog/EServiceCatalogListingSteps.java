@@ -83,6 +83,42 @@ public class EServiceCatalogListingSteps {
         eServicesCommonContext.setDraftEServicesIds(eServiceDescriptors.subList(0, suspendedEServices + publishedEServices));
     }
 
+    @Given("{string} ha già creato {int} e-services in catalogo in stato PUBLISHED o SUSPENDED e {int} in stato DRAFT impostando il flagPersonalData a {string}")
+    public void tenantHasAlreadyCreatedEservicesWithSpecificState(String tenantType, int countEServices, int countDraftEServices, String flagPersonalData) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        int suspendedEServices = countEServices / 2;
+        int publishedEServices = countEServices - suspendedEServices;
+        int draftEServices = countDraftEServices;
+        int totalEServices = countEServices + draftEServices;
+        Boolean personalData = flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true");
+
+        List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
+        // 1. Create the draft e-services with draft descriptors
+        for (int i=0; i<totalEServices; i++) {
+            EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                    new EServiceSeed().name(String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed())).personalData(personalData),
+                    new UpdateEServiceDescriptorSeed());
+            eServiceDescriptors.add(eServiceDescriptor);
+        }
+
+        // 2. Take only the ids of the e-services that needs to be published and suspended
+        List<EServiceDescriptor> idsToPublishAndSuspend = eServiceDescriptors.subList(0, suspendedEServices + publishedEServices);
+
+        // 3. For each draft descriptor, in order to publish it, add the document interface
+        idsToPublishAndSuspend.forEach(e -> dataPreparationService.addInterfaceToDescriptor(e.getEServiceId(), e.getDescriptorId()));
+
+        // 4. Publish the descriptors
+        idsToPublishAndSuspend.forEach(e -> dataPreparationService.publishDescriptor(e.getEServiceId(), e.getDescriptorId()));
+
+        // 5. Suspend the desired number of descriptors
+        List<EServiceDescriptor> idsToSuspend = idsToPublishAndSuspend.subList(0, suspendedEServices);
+        idsToSuspend.forEach(e -> dataPreparationService.suspendDescriptor(e.getEServiceId(), e.getDescriptorId()));
+
+        eServicesCommonContext.setPublishedEservicesIds(idsToPublishAndSuspend.subList(0, suspendedEServices));
+        eServicesCommonContext.setSuspendedEservicesIds(idsToSuspend);
+        eServicesCommonContext.setDraftEServicesIds(eServiceDescriptors.subList(0, suspendedEServices + publishedEServices));
+    }
+
     @Given("{string} ha un agreement attivo con un e-service di {string}")
     public void tenantAlreadyHasAnActiveAgreement(String tenantType, String producer) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

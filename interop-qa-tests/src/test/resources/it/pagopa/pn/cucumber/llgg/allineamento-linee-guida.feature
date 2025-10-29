@@ -310,3 +310,25 @@ Feature: Allineamento linee guida
       | true             | 200        |
       | false            | 200        |
       | undefined        | 400        |
+
+    Scenario Outline: [LLGG_19] Verifica che in fase di creazione di una delega sia funzionante il filtro per flagPersonalData per gli eServices (Scenario 43)
+      Given l'utente è un "admin" di "PA1"
+      Given "PA1" ha già creato 1 e-services in catalogo in stato PUBLISHED o SUSPENDED e 0 in stato DRAFT impostando il flagPersonalData a "<flagPersonalData>"
+      Then i 1 e-service recuperati hanno il flagPersonalData settato a "<flagPersonalData>"
+
+      Examples:
+        | flagPersonalData |
+        | true             |
+        | false            |
+
+  Scenario Outline: [LLGG_20] Verifica che in fase di creazione di una delega sia funzionante il filtro per flagPersonalData per gli eServicesTemplate (Scenario 44)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con flagPersonalData impostato a "<flagPersonalData>"
+    Then i 1 e-service template recuperati hanno il flagPersonalData settato a "<flagPersonalData>"
+
+    Examples:
+      | flagPersonalData |
+      | true             |
+      | false            |
+
+

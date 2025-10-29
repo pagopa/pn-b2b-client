@@ -190,4 +190,5 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         String q);
 
     ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds);
+    CatalogEServiceTemplates getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds, Boolean personalData);
 }

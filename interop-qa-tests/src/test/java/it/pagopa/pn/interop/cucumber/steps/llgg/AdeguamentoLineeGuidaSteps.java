@@ -161,13 +161,16 @@ public class AdeguamentoLineeGuidaSteps {
     public void checkEserviceTemplate(String flagPersonalData) {
         EServiceTemplateInfo lastTemplate = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
 
-        if (lastTemplate == null) throw new IllegalStateException("Nessun template gestito trovato nel contesto: impossibile verificare l'eServiceTemplate.");
+        if (lastTemplate == null)
+            throw new IllegalStateException("Nessun template gestito trovato nel contesto: impossibile verificare l'eServiceTemplate.");
 
         UUID eServiceTemplateId = lastTemplate.id();
         UUID eServiceTemplateVersionId = lastTemplate.lastVersionId();
 
-        if (eServiceTemplateId == null) throw new IllegalStateException("L'ID del template è nullo: impossibile effettuare la chiamata per i dettagli.");
-        if (eServiceTemplateVersionId == null) throw new IllegalStateException("L'ID della versione del template è nullo: impossibile effettuare la chiamata per i dettagli.");
+        if (eServiceTemplateId == null)
+            throw new IllegalStateException("L'ID del template è nullo: impossibile effettuare la chiamata per i dettagli.");
+        if (eServiceTemplateVersionId == null)
+            throw new IllegalStateException("L'ID della versione del template è nullo: impossibile effettuare la chiamata per i dettagli.");
 
         httpCallExecutor.performCall(
                 () -> this.clientTokenConfigurator.getEServiceTemplateClient()
@@ -197,6 +200,56 @@ public class AdeguamentoLineeGuidaSteps {
                 .isEqualTo(expectedFlag);
     }
 
+    @When("i {int} e-service recuperati hanno il flagPersonalData settato a {string}")
+    public void searchCreatedEServices(int toSearch, String flagPersonalData) {
+
+        Boolean personalData = flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true");
+
+        for (int i = 0; i < toSearch; i++) {
+            String query = String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed());
+
+            httpCallExecutor.performCall(
+                    () -> clientTokenConfigurator.getProducerClient()
+                            .getProducerEServices(0, 30, query, null, null, personalData)
+            );
+
+            Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                    .as("La chiamata GET /producers/eservices con query='%s' non è andata a buon fine", query)
+                    .isTrue();
+
+            ProducerEServices results = (ProducerEServices) httpCallExecutor.getResponse();
+            if (results == null) throw new IllegalStateException("La risposta della ricerca eServices è vuota");
+
+            List<String> resultsName = results.getResults().stream().map(ProducerEService::getName).toList();
+            Assertions.assertThat(resultsName).as(String.format("Il nome '%s' non è contenuto tra i risultati", query)).contains(query);
+
+        }
+    }
+
+    @When("i {int} e-service template recuperati hanno il flagPersonalData settato a {string}")
+    public void searchCreatedEServiceTemplates(int toSearch, String flagPersonalData) {
+
+        Boolean personalData = flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true");
+
+        for (int i = 0; i < toSearch; i++) {
+            String query = String.format("eservice-template-%d-%d", sharedStepsContext.getTestSeed(), i);
+
+            httpCallExecutor.performCall(
+                    () -> clientTokenConfigurator.getEServiceTemplateClient().getEServiceTemplatesCatalog(0, 30, query, null, personalData)
+            );
+
+            Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                    .as("La chiamata GET /catalog/eservices/templates con query='%s' non è andata a buon fine", query)
+                    .isTrue();
+
+            CatalogEServiceTemplates results = (CatalogEServiceTemplates) httpCallExecutor.getResponse();
+            if (results == null) throw new IllegalStateException("La risposta della ricerca eServices è vuota");
+
+            List<String> resultsName = results.getResults().stream().map(CatalogEServiceTemplate::getName).toList();
+            Assertions.assertThat(resultsName).as(String.format("Il nome '%s' non è contenuto tra i risultati", query)).contains(query);
+
+        }
+    }
 
     private void userRequireTemplateVersionAndCheck(String version, Consumer<RiskAnalysisFormConfig> action) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
