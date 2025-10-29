@@ -23,8 +23,8 @@ public class CieGeneratorTool {
         this.cieGenerator = new CieGeneratorApiImpl();
     }
 
-    public CIEValidationData generateCieValidationData(Path outputDir, String codiceFiscale, LocalDate expirationDate, String nonce) {
-        CieValidationData libraryOutput = cieGenerator.generateCieValidationData(outputDir, codiceFiscale, expirationDate, nonce);
+    public CIEValidationData generateCieValidationData(Path outputDir, String codiceFiscaleDelegante, String codiceFiscaleOwnerCIE, LocalDate expirationDate, String nonce) {
+        CieValidationData libraryOutput = cieGenerator.generateCieValidationData(outputDir, codiceFiscaleDelegante, codiceFiscaleOwnerCIE, expirationDate, nonce);
         assertThat(libraryOutput).as("output non generato").isNotNull();
         return convertOutputToClassForAcceptation(libraryOutput);
     }

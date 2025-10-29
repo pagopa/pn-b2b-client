@@ -26,7 +26,7 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -59,7 +59,7 @@ public class DelegheTemporaneeSteps {
 
     private List<it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto> mandatesByDelegator;
 
-    private HttpClientErrorException error;
+    private HttpStatusCodeException error;
 
     private static final String QRCODE_FROM_HOTFIX = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
@@ -102,10 +102,8 @@ public class DelegheTemporaneeSteps {
                     null, null, lollipopUserId, null, null,
                     mandateCreationRequest);
             checkMandateCreation();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpStatusCodeException e) {
             this.error = e;
-        } catch (Exception e) {
-            log.info(e.getMessage());
         }
     }
 
@@ -139,6 +137,7 @@ public class DelegheTemporaneeSteps {
             }
             case "SIGNED NONCE ERRATO" -> cieValidationData.setSignedNonce("00000");
             case "NIS DATA CIE ERRATO" -> cieValidationData.setNisData(null);
+            case "MRTD DATA CIE ERRATO" -> cieValidationData.setMrtdData(null);
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
         try {
@@ -155,10 +154,8 @@ public class DelegheTemporaneeSteps {
                     null,
                     null,
                     cieValidationData);
-        } catch (HttpClientErrorException e) {
+        } catch (HttpStatusCodeException e) {
             this.error = e;
-        } catch (Exception exc) {
-            System.out.println(exc.getMessage());
         }
     }
 
@@ -180,12 +177,13 @@ public class DelegheTemporaneeSteps {
     public CIEValidationData getCieValidationData(String delegatorTaxId, String nonce, String inputParamsType) {
         Path path = Path.of("lib/output");
         LocalDate expirationDate = LocalDate.now().plusYears(1L);
+        String cieOwnerTaxId = delegatorTaxId;
         switch (inputParamsType.toUpperCase()) {
             case "DATI DI UNA CIE SCADUTA" -> expirationDate = LocalDate.now().minusYears(1L);
-            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> delegatorTaxId = Costanti.GALILEO_GALILEI_TAX_ID;
+            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> cieOwnerTaxId = Costanti.GALILEO_GALILEI_TAX_ID;
             case "SIGNED NONCE ERRATO" -> nonce = "00000";
         }
-        return cieGeneratorTool.generateCieValidationData(path, delegatorTaxId, expirationDate, nonce);
+        return cieGeneratorTool.generateCieValidationData(path, delegatorTaxId, cieOwnerTaxId, expirationDate, nonce);
     }
 
     //Step importante in quanto va anche a settare il mandateId nella classe RicezioneNotificheWebDelegheSteps
@@ -204,7 +202,7 @@ public class DelegheTemporaneeSteps {
         try {
             ricezioneNotificheWebDelegheSteps.getWebMandateClient().acceptMandate(
                     mandateDtoB2b.getMandateId(), new AcceptRequestDto().verificationCode(mandateDtoB2b.getVerificationCode()));
-        } catch (HttpClientErrorException e) {
+        } catch (HttpStatusCodeException e) {
             this.error = e;
         }
     }
@@ -238,7 +236,7 @@ public class DelegheTemporaneeSteps {
                         .as("La lista di deleghe del " + (isDelegate ? "delegato" : "delegante") + "non deve contenere la delega temporanea")
                         .isNull();
             }
-        } catch (HttpClientErrorException e) {
+        } catch (HttpStatusCodeException e) {
             this.error = e;
         }
     }

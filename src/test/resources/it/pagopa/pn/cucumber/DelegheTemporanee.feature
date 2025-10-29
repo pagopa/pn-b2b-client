@@ -1,11 +1,11 @@
 #Per un corretto funzionamento della suite sono necessari diversi passaggi propedeutici:
   #1) su AWS, nella whiteList devono essere presente i taxId di Cristoforo Colombo (Mario Gherkin), Ettore Fieramosca (Mario Cucumber) e Galileo Galilei
   #2) è necessario che il tempo di scadenza di una notifica sia impostato a 7 minuti
-  #3) C'è il problema dell'IP col WAF (Web Authorization Filter). Capire se su AWS si può aggirare.
-  #3.1) In ogni caso, quando si runna in locale, bisogna impostare il proprio IP tra quelli autorizzati sempre su AWS WAF (cambia giornalmente)
+  #3) Quando si esegue in locale, bisogna impostare il proprio IP tra quelli autorizzati sempre su AWS WAF (Web Authorization Filter). Cambia giornalmente
+  # L'ip è recuperabile dai log CloudWatch, (cercare il gruppo denominato MandateMicroservicePublicIoAPI)
   #4) Quando si esegue in locale, per poter richiamare il tool di generazione CIE è necessario:
-  # 1 - aver scaricato AWS Toolkit (da cui impostare profilo e region)
-  # 2 - cliccare le freccette verdi affianco allo scenario che si intende eseguire -> Modify run configuration -> AWS connection -> Selezionare pallino "Use the currently selected credential profile-region"
+  # 4.1 - aver scaricato AWS Toolkit (da cui impostare profilo e region)
+  # 4.2 - cliccare le freccette verdi affianco allo scenario che si intende eseguire -> Modify run configuration -> AWS connection -> Selezionare pallino "Use the currently selected credential profile-region"
 
 Feature: Deleghe Temporanee 15755
 
@@ -19,7 +19,13 @@ Feature: Deleghe Temporanee 15755
     Given TODO remove il mandate in uso è quello con id "" e verificationCode ""
 
   Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_CIE
-    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "46290" con "DATI VALIDI"
+#    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
+#    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI DI UNA CIE SCADUTA"
+    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI VALIDI"
+
+      #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
+#    Given imposto lo iun di SharedSteps a "" e la pa a "Comune_Multi"
+#    And TODO remove il mandate in uso è quello con id "" e verificationCode ""
 
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)
@@ -258,25 +264,29 @@ Feature: Deleghe Temporanee 15755
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
 #    And la delega temporanea è stata correttamente creata
-    Given imposto lo iun di SharedSteps a "DUZH-WMPQ-EGXY-202510-J-1" e la pa a "Comune_Multi"
-    And TODO remove il mandate in uso è quello con id "871d83d0-4fdf-4c1a-a313-c4c66f13d363" e verificationCode "21766"
 #    #18 TODO: signedNonce, nisData, mrtdData inesistenti
 #    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "HEADER E BODY INESISTENTI"
 #    Then l'operazione restituisce codice 400
 #    #19 TODO: signedNonce, nisData, mrtdData non validi
 #    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "HEADER E BODY NON VALIDI"
 #    Then l'operazione restituisce codice 400
-    #25 CIE non valida (TODO: ovvero ???)
-    #28
-    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "SIGNED NONCE ERRATO"
-    Then l'operazione restituisce codice 422
-    #29
-    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "NIS DATA CIE ERRATO"
+
+  #25
+  @delegheTemporanee
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_WRONG_MRTD] Accettazione senza successo di una delega temporanea (MRTD CIE errato)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica delega temporanea |
+      | senderDenomination | comune di Palermo                |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And la delega temporanea è stata correttamente creata
+    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "MRTD DATA CIE ERRATO"
     Then l'operazione restituisce codice 422
 
   #26
   @delegheTemporanee
-  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_CIE_EXPIRED] Accettazione senza successo di una delega temporanea scaduta (CIE scaduta)
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_CIE_EXPIRED] Accettazione senza successo di una delega temporanea (CIE scaduta)
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
@@ -289,7 +299,7 @@ Feature: Deleghe Temporanee 15755
 
   #27
   @delegheTemporanee
-  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_CIE_NOT_OF_RECIPIENT] Accettazione senza successo di una delega temporanea scaduta (CIE diversa da destinatario)
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_CIE_NOT_OF_RECIPIENT] Accettazione senza successo di una delega temporanea (CIE diversa da destinatario)
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
@@ -300,9 +310,35 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
     Then l'operazione restituisce codice 422
 
+  #28
+  @delegheTemporanee
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_WRONG_NONCE] Accettazione senza successo di una delega temporanea (Nonce CIE errato)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica delega temporanea |
+      | senderDenomination | comune di Palermo                |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And la delega temporanea è stata correttamente creata
+    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "SIGNED NONCE ERRATO"
+    Then l'operazione restituisce codice 422
+
+  #29
+  @delegheTemporanee
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_WRONG_NIS] Accettazione senza successo di una delega temporanea (NIS CIE errato)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica delega temporanea |
+      | senderDenomination | comune di Palermo                |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And la delega temporanea è stata correttamente creata
+    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "NIS DATA CIE ERRATO"
+    Then l'operazione restituisce codice 422
+
   #31
   @delegheTemporanee
-  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_API_B2B] Accettazione senza successo di una delega temporanea scaduta (accettazione tramite api b2b)
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_API_B2B] Accettazione senza successo di una delega temporanea (accettazione tramite api b2b)
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
@@ -313,9 +349,18 @@ Feature: Deleghe Temporanee 15755
     When "Mario Gherkin" tenta di accettare la delega temporanea richiamando l'api b2b
     Then l'operazione restituisce codice 400
 
+  #37
+  @delegheTemporanee
+  Scenario: [MANDATE_TEMP_ACCEPTATION_120_GIORNI] Accettazione senza successo di una delega temporanea che permette la visualizzazione di una notifica più vecchia di 120 giorni
+    Given "Comune_Multi" recupera lato web PA una notifica vecchia 120 o più giorni inviata a Mario Cucumber
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
+    And l'operazione non ha prodotto alcun errore
+    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
+
   #39
   @delegheTemporanee
-  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_DIFFERENT_TAXID_USERID] Accettazione senza successo di una delega temporanea scaduta (taxId e userId non coincidono)
+  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_DIFFERENT_TAXID_USERID] Accettazione senza successo di una delega temporanea (taxId e userId non coincidono)
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
@@ -325,12 +370,3 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
     Then l'operazione restituisce codice 403
-
-  #37
-  @delegheTemporanee
-  Scenario: [MANDATE_TEMP_ACCEPTATION_120_GIORNI] Accettazione senza successo di una delega temporanea che permette la visualizzazione di una notifica più vecchia di 120 giorni
-    Given "Comune_Multi" recupera lato web PA una notifica vecchia 120 o più giorni inviata a Mario Cucumber
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
-    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
-    And l'operazione non ha prodotto alcun errore
-    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega

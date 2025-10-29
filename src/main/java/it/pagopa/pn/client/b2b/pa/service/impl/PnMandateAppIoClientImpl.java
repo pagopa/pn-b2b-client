@@ -20,20 +20,19 @@ import org.springframework.web.client.RestTemplate;
 public class PnMandateAppIoClientImpl implements IPnMandateAppIoClient {
 
     private final AppIoPnMandateCreateApi appIoMandateApi;
-    private final String appIoApiKey;
 
     public PnMandateAppIoClientImpl(RestTemplate restTemplate,
-                                    @Value("${pn.appio.externa.base-url}") String basePath,
+                                    @Value("${pn.appio.externa.base-url}") String appIoBaseUrl,
                                     @Value("${pn.external.appio.api-key}") String appIoApiKey) {
-        this.appIoApiKey = appIoApiKey;
-        this.appIoMandateApi = new AppIoPnMandateCreateApi(newApiClient(restTemplate, basePath));
+        this.appIoMandateApi = new AppIoPnMandateCreateApi(newApiClient(restTemplate, appIoBaseUrl, appIoApiKey));
     }
 
 
-    private ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
-        log.info("APP IO BASEPATH: " + basePath);
+    private ApiClient newApiClient(RestTemplate restTemplate, String appIoBaseUrl, String appIoApiKey) {
+        log.info("APP IO BASEURL: " + appIoBaseUrl);
+        log.info("APP IO APIKEY: " + appIoApiKey);
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
+        newApiClient.setBasePath(appIoBaseUrl);
         newApiClient.addDefaultHeader("x-api-key", appIoApiKey);
         return newApiClient;
     }
