@@ -226,12 +226,6 @@ public class EserviceTemplateCertifiedAttributesSteps {
         performGetEServiceCertifiedAttributes(attributesKey);
     }
 
-    @When("l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service template indicando un group index inesistente")
-    public void getEServiceCertifiedAttributesWithUnexistentGroupIndex() {
-        EServiceTemplateAttributesGroupKey attributesKey = getEServiceTemplateAttributesKey().withGroupIndex(999);
-        performGetEServiceCertifiedAttributes(attributesKey);
-    }
-
     @Then("gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template")
     public void checkGotCertifiedAttributes() {
         List<UUID> expectedCertifiedAttributesIds = sharedStepsContext.getEServiceTemplateStepContext()

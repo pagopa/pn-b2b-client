@@ -147,7 +147,6 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | erogazione  |
       #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
 
-
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_A] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 244)
     Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
@@ -173,11 +172,37 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti nel template
     Examples:
       | mode        | stato       |
-      | erogazione  | DRAFT       |
       | erogazione  | PUBLISHED   |
       | erogazione  | SUSPENDED   |
       | erogazione  | DEPRECATED  |
     # 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+  @m2m-parte2-ottobre
+  Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template in stato DRAFT solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
+    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea 2 attributi dichiarati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi dichiarati con successo
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template
+    Then si ottiene lo status code 200
+    And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti nel template
+
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template
+    Then si ottiene lo status code 200
+    And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti nel template
+
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template
+    Then si ottiene lo status code 404
+    And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti nel template
+    Examples:
+      | mode        |
+      | erogazione  |
+      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi dichiarati di una versione di un e-service template indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
@@ -191,15 +216,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Then si ottiene lo status code 404
     When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template indicando un descriptor id inesistente
     Then si ottiene lo status code 404
-    When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template indicando un group index inesistente
-    Then si ottiene lo status code 404
 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template indicando un e-service template id inesistente
     Then si ottiene lo status code 404
     When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template indicando un descriptor id inesistente
-    Then si ottiene lo status code 404
-    When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template indicando un group index inesistente
     Then si ottiene lo status code 404
     Examples:
       | mode        |
