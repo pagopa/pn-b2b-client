@@ -12,27 +12,27 @@ Feature: Attivazione e riattivazione di una finalità
     Then si ottiene status code <risultato>
 
     @happy-path
-    Examples: 
-      | ente    | ruolo        | risultato |
-      | PA1     | admin        |       200 |
-      | GSP     | admin        |       200 |
-      | Privato | admin        |       200 |
+    Examples:
+      | ente    | ruolo | risultato |
+      | PA1     | admin | 200       |
+      | GSP     | admin | 200       |
+      | Privato | admin | 200       |
 
     @sad-path
     Examples:
       | ente    | ruolo        | risultato |
-      | PA1     | api          |       403 |
-      | PA1     | security     |       403 |
-      | PA1     | api,security |       403 |
-      | PA1     | support      |       403 |
-      | GSP     | api          |       403 |
-      | GSP     | security     |       403 |
-      | GSP     | api,security |       403 |
-      | GSP     | support      |       403 |
-      | Privato | api          |       403 |
-      | Privato | security     |       403 |
-      | Privato | api,security |       403 |
-      | Privato | support      |       403 |
+      | PA1     | api          | 403       |
+      | PA1     | security     | 403       |
+      | PA1     | api,security | 403       |
+      | PA1     | support      | 403       |
+      | GSP     | api          | 403       |
+      | GSP     | security     | 403       |
+      | GSP     | api,security | 403       |
+      | GSP     | support      | 403       |
+      | Privato | api          | 403       |
+      | Privato | security     | 403       |
+      | Privato | api,security | 403       |
+      | Privato | support      | 403       |
 
   @happy-path
   @purpose_activation1b
@@ -102,7 +102,7 @@ Feature: Attivazione e riattivazione di una finalità
     Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
 
   @sad-path
-  @purpose_activation7a
+    @purpose_activation7a
   Scenario Outline: Per una finalità precedentemente creata da un fruitore e che è in stato DRAFT o ARCHIVED, alla richiesta di attivazione da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -111,7 +111,7 @@ Feature: Attivazione e riattivazione di una finalità
     When l'utente attiva la finalità in stato "<statoFinalità>" per quell'e-service
     Then si ottiene status code 403
 
-    Examples: 
+    Examples:
       | statoFinalità |
       | DRAFT         |
       | ARCHIVED      |

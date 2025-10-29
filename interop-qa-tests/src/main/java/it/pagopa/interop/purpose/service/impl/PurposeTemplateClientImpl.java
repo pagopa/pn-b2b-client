@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -59,8 +60,33 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
+    public RiskAnalysisTemplateAnswerAnnotationDocument addRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, String prettyName, Resource doc) throws RestClientException {
+        return purposesTemplateApi.addRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, prettyName, doc);
+    }
+
+    @Override
+    public PurposeTemplate archivePurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        return purposesTemplateApi.archivePurposeTemplate(purposeTemplateId);
+    }
+
+    @Override
     public CreatedResource createPurposeTemplate(PurposeTemplateSeed purposeTemplateSeed) throws RestClientException {
         return purposesTemplateApi.createPurposeTemplate(purposeTemplateSeed);
+    }
+
+    @Override
+    public void deletePurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        purposesTemplateApi.deletePurposeTemplate(purposeTemplateId);
+    }
+
+    @Override
+    public void deleteRiskAnalysisTemplateAnswerAnnotation(UUID purposeTemplateId, UUID answerId) throws RestClientException {
+        purposesTemplateApi.deleteRiskAnalysisTemplateAnswerAnnotation(purposeTemplateId, answerId);
+    }
+
+    @Override
+    public void deleteRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException {
+        purposesTemplateApi.deleteRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId);
     }
 
     @Override
@@ -94,8 +120,23 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
+    public PurposeTemplate publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        return purposesTemplateApi.publishPurposeTemplate(purposeTemplateId);
+    }
+
+    @Override
+    public PurposeTemplate suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        return purposesTemplateApi.suspendPurposeTemplate(purposeTemplateId);
+    }
+
+    @Override
     public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject3 inlineObject3) throws RestClientException {
         purposesTemplateApi.unlinkEServiceToPurposeTemplate(purposeTemplateId, inlineObject3);
+    }
+
+    @Override
+    public PurposeTemplate unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        return purposesTemplateApi.unsuspendPurposeTemplate(purposeTemplateId);
     }
 
     @Override

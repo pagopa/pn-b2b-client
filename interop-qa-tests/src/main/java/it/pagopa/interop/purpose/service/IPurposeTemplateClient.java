@@ -14,7 +14,17 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
 
     RiskAnalysisTemplateAnswerAnnotation addPurposeTemplateRiskAnalysisAnswerAnnotation(UUID purposeTemplateId, UUID answerId, RiskAnalysisTemplateAnswerAnnotationText riskAnalysisTemplateAnswerAnnotationText) throws RestClientException;
 
+    RiskAnalysisTemplateAnswerAnnotationDocument addRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, String prettyName, org.springframework.core.io.Resource doc) throws RestClientException;
+
+    PurposeTemplate archivePurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+
     CreatedResource createPurposeTemplate(PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
+
+    void deletePurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+
+    void deleteRiskAnalysisTemplateAnswerAnnotation(UUID purposeTemplateId, UUID answerId) throws RestClientException;
+
+    void deleteRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException;
 
     CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis) throws RestClientException;
 
@@ -28,7 +38,13 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
 
     EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject2 inlineObject2) throws RestClientException;
 
+    PurposeTemplate publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+
+    PurposeTemplate suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+
     void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject3 inlineObject3) throws RestClientException;
+
+    PurposeTemplate unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
 
     PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
 
