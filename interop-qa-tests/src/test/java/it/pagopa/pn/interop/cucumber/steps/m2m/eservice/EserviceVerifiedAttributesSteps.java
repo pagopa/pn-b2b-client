@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -254,6 +255,13 @@ public class EserviceVerifiedAttributesSteps {
         performDeleteVerifiedAttribute(key, attributeId);
     }
 
+    @When("l'utente tenta di rimuovere l'attributo verificato già eliminato numero {collectionIndex} dal gruppo dell'e-service")
+    public void removeDeletedEServiceVerifiedAttribute(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getRemovedVerifiedAttributesIds().get(attributeIndex);
+        performDeleteVerifiedAttribute(key, attributeId);
+    }
+
     private void performDeleteVerifiedAttribute(EServiceAttributesGroupKey key, UUID attributeId) {
         httpExecutor.performCall(() -> eServiceClient.deleteVerifiedAttribute(
             key.getEServiceId(),
@@ -271,13 +279,16 @@ public class EserviceVerifiedAttributesSteps {
                 .map(attribute -> attribute.getAttribute().getId())
                 .toList();
 
-        List<UUID> expectedVerifiedAttributeIds = new ArrayList<>(
-            sharedStepsContext.getEServicesCommonContext().getVerifiedAttributesIds());
+        EServicesCommonContext context = sharedStepsContext.getEServicesCommonContext();
+        List<UUID> expectedVerifiedAttributeIds = new ArrayList<>(context.getVerifiedAttributesIds());
         expectedVerifiedAttributeIds.remove(removedAttributeIndex);
 
         assertThat(actualVerifiedAttributeIds)
             .as("Verifica che sia stato rimosso soltanto l'attributo verificato numero " + removedAttributeIndex)
             .containsExactlyInAnyOrderElementsOf(expectedVerifiedAttributeIds);
+
+        UUID removedAttributeId = context.getVerifiedAttributesIds().remove(removedAttributeIndex);
+        context.getRemovedVerifiedAttributesIds().add(removedAttributeId);
     }
 
     @Then("gli attributi verificati del gruppo sono rimasti invariati")

@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.ResourceSnapshots;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -248,6 +249,13 @@ public class EserviceDeclaredAttributesSteps {
         performDeleteDeclaredAttribute(key, attributeId);
     }
 
+    @When("l'utente tenta di rimuovere l'attributo dichiarato già eliminato numero {collectionIndex} dal gruppo dell'e-service")
+    public void removeDeletedEServiceDeclaredAttribute(int attributeIndex) {
+        EServiceAttributesGroupKey key = getEServiceAttributesKey();
+        UUID attributeId = sharedStepsContext.getEServicesCommonContext().getRemovedDeclaredAttributesIds().get(attributeIndex);
+        performDeleteDeclaredAttribute(key, attributeId);
+    }
+
     private void performDeleteDeclaredAttribute(EServiceAttributesGroupKey key, UUID attributeId) {
         httpExecutor.performCall(() -> eServiceClient.deleteDeclaredAttribute(
             key.getEServiceId(),
@@ -265,13 +273,16 @@ public class EserviceDeclaredAttributesSteps {
                 .map(attribute -> attribute.getAttribute().getId())
                 .toList();
 
-        List<UUID> expectedDeclaredAttributeIds = new ArrayList<>(
-            sharedStepsContext.getEServicesCommonContext().getDeclaredAttributesIds());
+        EServicesCommonContext context = sharedStepsContext.getEServicesCommonContext();
+        List<UUID> expectedDeclaredAttributeIds = new ArrayList<>(context.getDeclaredAttributesIds());
         expectedDeclaredAttributeIds.remove(removedAttributeIndex);
 
         assertThat(actualDeclaredAttributeIds)
             .as("Verifica che sia stato rimosso soltanto l'attributo dichiarato numero " + removedAttributeIndex)
             .containsExactlyInAnyOrderElementsOf(expectedDeclaredAttributeIds);
+
+        UUID removedAttributeId = context.getDeclaredAttributesIds().remove(removedAttributeIndex);
+        context.getRemovedDeclaredAttributesIds().add(removedAttributeId);
     }
 
     @Then("gli attributi dichiarati del gruppo sono rimasti invariati")

@@ -313,7 +313,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
 
     # verifica che la rimozione di un attributo già eliminato fallisca
     Given l'utente rimuove l'attributo verificato numero 1 dal gruppo dell'e-service con successo
-    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo verificato già eliminato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 404
     And gli attributi verificati del gruppo sono rimasti invariati
 
@@ -340,17 +340,18 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
     Then si ottiene lo status code 404
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And gli attributi verificati del gruppo sono rimasti invariati
 
   @m2m-parte2-ottobre
-  Scenario Outline: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_DELETE_06_A] Un utente non può rimuovere gli attributi verificati da una versione di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
+  Scenario Outline: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_DELETE_06_A] Un utente NON può rimuovere gli attributi verificati da una versione di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 2 attributi verificati con successo
-    And "PA1" porta il descrittore dell'e-service in stato "<stato>"
+    And l'utente crea 1 attributi verificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
-    When l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
+    And l'utente crea un gruppo di attributi contenente 1 attributi verificati con successo
+    And "PA1" porta il descrittore dell'e-service in stato "<stato>"
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati
     Examples:
@@ -361,13 +362,13 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
-  Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_DELETE_06_B] Un utente non può rimuovere gli attributi verificati da una versione di un e-service in stato diverso WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
+  Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi verificati da una versione di un e-service in stato diverso WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 2 attributi verificati con successo
+    And l'utente crea 1 attributi verificati con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributi verificati con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 2 attributi verificati con successo
-    When l'utente tenta di rimuovere l'attributo verificato numero 2 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati

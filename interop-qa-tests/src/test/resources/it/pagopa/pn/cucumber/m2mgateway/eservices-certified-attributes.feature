@@ -371,11 +371,11 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 2 attributi certificati con successo
+    And l'utente crea 1 attributi certificati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 2 attributi certificati con successo
+    And l'utente crea un gruppo di attributi contenente 1 attributi certificati con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service
+    When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi certificati del gruppo sono rimasti invariati
