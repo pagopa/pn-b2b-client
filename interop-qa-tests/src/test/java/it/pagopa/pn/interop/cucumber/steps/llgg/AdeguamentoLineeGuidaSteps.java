@@ -9,6 +9,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import org.assertj.core.api.Assertions;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -90,8 +91,10 @@ public class AdeguamentoLineeGuidaSteps {
         EServiceTemplateInfo template = this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID eServiceId = this.sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
 
-        if (template == null) throw new RuntimeException("Nessun template gestito trovato nel contesto: impossibile verificare l'istanza di eService.");
-        if (eServiceId == null) throw new RuntimeException("Nessun eService creato a partire dal template trovato nel contesto: impossibile recuperare i dettagli.");
+        if (template == null)
+            throw new RuntimeException("Nessun template gestito trovato nel contesto: impossibile verificare l'istanza di eService.");
+        if (eServiceId == null)
+            throw new RuntimeException("Nessun eService creato a partire dal template trovato nel contesto: impossibile recuperare i dettagli.");
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(eServiceId)
@@ -111,7 +114,8 @@ public class AdeguamentoLineeGuidaSteps {
     @When("verifica che il flagPersonalData presente nell'eService sia {string}")
     public void checkEserviceIstance(String flagPersonalData) {
         UUID eServiceId = this.sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        if (eServiceId == null) throw new RuntimeException("Nessun eService creato a partire dal template trovato nel contesto: impossibile recuperare i dettagli.");
+        if (eServiceId == null)
+            throw new RuntimeException("Nessun eService creato a partire dal template trovato nel contesto: impossibile recuperare i dettagli.");
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(eServiceId)
@@ -152,6 +156,47 @@ public class AdeguamentoLineeGuidaSteps {
                 .as("Il flag personalData dell'eService (id=%s) con descrittore (id=%s) non corrisponde a (id=%s)", eServiceId, descriptorId, expectedFlag)
                 .isEqualTo(expectedFlag);
     }
+
+    @When("verifica che il flagPersonalData presente nella nuova versione dell'eServiceTemplate sia {string}")
+    public void checkEserviceTemplate(String flagPersonalData) {
+        EServiceTemplateInfo lastTemplate = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+
+        if (lastTemplate == null) throw new IllegalStateException("Nessun template gestito trovato nel contesto: impossibile verificare l'eServiceTemplate.");
+
+        UUID eServiceTemplateId = lastTemplate.id();
+        UUID eServiceTemplateVersionId = lastTemplate.lastVersionId();
+
+        if (eServiceTemplateId == null) throw new IllegalStateException("L'ID del template è nullo: impossibile effettuare la chiamata per i dettagli.");
+        if (eServiceTemplateVersionId == null) throw new IllegalStateException("L'ID della versione del template è nullo: impossibile effettuare la chiamata per i dettagli.");
+
+        httpCallExecutor.performCall(
+                () -> this.clientTokenConfigurator.getEServiceTemplateClient()
+                        .getEServiceTemplateVersionWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId)
+        );
+
+        Assertions.assertThat(this.httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                .as("La chiamata GET per il template (id=%s, versione=%s) non è andata a buon fine",
+                        eServiceTemplateId, eServiceTemplateVersionId)
+                .isTrue();
+
+        ResponseEntity<EServiceTemplateVersionDetails> response = (ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse();
+
+        if (response == null || response.getBody() == null) {
+            throw new IllegalStateException(String.format(
+                    "La risposta per il template (id=%s, versione=%s) è vuota",
+                    eServiceTemplateId, eServiceTemplateVersionId
+            ));
+        }
+
+        EServiceTemplateVersionDetails templateVersion = response.getBody();
+        Boolean expectedFlag = flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true");
+
+        Assertions.assertThat(templateVersion.getEserviceTemplate().getPersonalData())
+                .as("Il flag personalData dell'eServiceTemplate (id=%s, versione=%s) non corrisponde al valore atteso: %s",
+                        eServiceTemplateId, eServiceTemplateVersionId, expectedFlag)
+                .isEqualTo(expectedFlag);
+    }
+
 
     private void userRequireTemplateVersionAndCheck(String version, Consumer<RiskAnalysisFormConfig> action) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

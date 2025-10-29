@@ -284,3 +284,29 @@ Feature: Allineamento linee guida
       | personalDataFlag |
       | true             |
       | false            |
+
+  Scenario Outline: [LLGG_17] Verifica del flag dati personali in una nuova versione del template eService (Scenario 41)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con flagPersonalData impostato a "<personalDataFlag>"
+    And l'utente tenta delle modifiche alla versione dell'e-service template
+    Then si ottiene response status code 200
+    And le modifiche alla versione sono state applicate correttamente
+    And verifica che il flagPersonalData presente nella nuova versione dell'eServiceTemplate sia "<personalDataFlag>"
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario Outline: [LLGG_18] Verifica che la pubblicazione di un e-service template sia effettuabile solo specificando il flag sui dati personali (Scenario 42)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con flagPersonalData impostato a "<flagPersonalData>"
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    Then si ottiene status code <statusCode>
+
+    Examples:
+      | flagPersonalData | statusCode |
+      | true             | 200        |
+      | false            | 200        |
+      | undefined        | 400        |
