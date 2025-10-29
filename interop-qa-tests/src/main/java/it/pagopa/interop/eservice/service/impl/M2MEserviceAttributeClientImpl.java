@@ -180,20 +180,20 @@ public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClie
             .build();
     }
 
-@Override
-public void addVerifiedAttributes(
-        UUID eServiceId,
-        UUID descriptorId,
-        int groupId,
-        List<UUID> attributes
-) {
-    this.eservicesApi.assignEServiceDescriptorCertifiedAttributesToGroup(
-        eServiceId,
-        descriptorId,
-        groupId,
-        new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
-    );
-}
+    @Override
+    public void addVerifiedAttributes(
+            UUID eServiceId,
+            UUID descriptorId,
+            int groupId,
+            List<UUID> attributes
+    ) {
+        this.eservicesApi.assignEServiceDescriptorVerifiedAttributesToGroup(
+            eServiceId,
+            descriptorId,
+            groupId,
+            new EServiceDescriptorAttributesGroupSeed().attributeIds(attributes)
+        );
+    }
 
     @Override
     public List<EServiceAttribute<VerifiedAttribute>> createVerifiedAttributesGroup(

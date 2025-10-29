@@ -366,6 +366,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
     And l'utente crea 1 attributi verificati con successo
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi contenente 1 attributi verificati con successo
     And "PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
