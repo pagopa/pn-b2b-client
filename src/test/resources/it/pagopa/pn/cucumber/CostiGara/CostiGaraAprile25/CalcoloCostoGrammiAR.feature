@@ -1228,7 +1228,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAprile25
-  Scenario: [CALCOLO-COSTO_AR-100GR_53] (Aprile) Invio notifica ZONE_1 (test num.2) e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario Outline: [CALCOLO-COSTO_AR-100GR_53] (Aprile) Invio notifica ZONE_1 (test num.2) e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber               |
       | senderDenomination    | Comune di palermo                             |
@@ -1237,13 +1237,17 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1270" della notifica
+    Examples:
+      | state              |
+      | ALBANIA            |
+      | MACEDONIA DEL NORD |
 
   @costoAnalogicoAprile25
   Scenario: [CALCOLO-COSTO_AR-101GR_54] (Aprile) Invio notifica ZONE_2 (test num.2) e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -1265,7 +1269,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAprile25
-  Scenario: [CALCOLO-COSTO_AR-250GR_55] (Aprile) Invio notifica ZONE_3 (test num.2) e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario Outline: [CALCOLO-COSTO_AR-250GR_55] (Aprile) Invio notifica ZONE_3 (test num.2) e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -1274,10 +1278,16 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | AUSTRALIA  |
+      | physicalAddress_State   | <state>  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2013" della notifica
+    Examples:
+      | state       |
+      | AUSTRALIA   |
+      | MIDWAY      |
+      | PHOENIX     |
+      | SANTA CROCE |
