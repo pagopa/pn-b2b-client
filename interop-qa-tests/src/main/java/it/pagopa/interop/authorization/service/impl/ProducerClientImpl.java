@@ -54,7 +54,7 @@ public class ProducerClientImpl implements IProducerClient {
 
     @Override
     public ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated) {
-        return eservicesApi.getProducerEServices(offset, limit, q, consumersIds, delegated, null);
+        return eservicesApi.getProducerEServices(offset, limit, null, q, consumersIds, delegated);
     }
 
     @Override
