@@ -42,15 +42,13 @@ Feature: finalità agevolata, purpose template DELETE
       | api      |
       | support  |
       | security |
-      | m2m      |
-#      | m2m-admin | ---------> TODO vale come != admin ???
 
   #19(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario: [DELETE_PURPOSE_TEMPLATE_KO_IS_NOT_CREATOR]
+  Scenario: [DELETE_PURPOSE_TEMPLATE_KO_IS_NO_CREATOR]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    When l'utente è il numero 2 ad avere ruolo "admin" di "PA1"
+    When l'utente è un "admin" di "GSP"
     And si cancella il purpose template creato
     Then si ottiene lo status code 403
 

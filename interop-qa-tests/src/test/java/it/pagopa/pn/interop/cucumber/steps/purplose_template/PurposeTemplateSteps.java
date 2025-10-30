@@ -28,6 +28,8 @@ public class PurposeTemplateSteps {
 
     private PurposeTemplateWithCompactCreator purposeTemplateWithCompactCreator;
 
+    private PurposeTemplate purposeTemplate;
+
     private HttpStatusCodeException error;
 
     private List<CompactPurposeTemplateEService> linkedEServices;
@@ -48,6 +50,7 @@ public class PurposeTemplateSteps {
         this.purposeTemplateClient = clientTokenConfigurator.getPurposeTemplateClient();
     }
 
+    //Il seguente metodo crea un purpose template in stato draft
     @When("viene creato un nuovo purpose template")
     public void createPurposeTemplate() {
         PurposeTemplateSeed request = new PurposeTemplateSeed();
@@ -78,14 +81,11 @@ public class PurposeTemplateSteps {
     @When("si effettua la get del purpose template {exists}")
     public void getPurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
-        boolean success = false;
-        try {
-            PurposeTemplateWithCompactCreator purposeTemplateWithCompactCreator = purposeTemplateClient.getPurposeTemplate(ptId);
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
-        if (success) {
-            assertThat(createdTemplate).as("Il risultato della get del purpose con id " + createdTemplate.getId() + " non dev'essere null").isNotNull();
+
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
+            assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdTemplate.getId() + " non dev'essere null").isNotNull();
         }
     }
 
@@ -100,13 +100,10 @@ public class PurposeTemplateSteps {
             case "ARCHIVED" -> state = List.of(PurposeTemplateState.ARCHIVED);
             default -> throw new IllegalArgumentException("Invalid PurposeTemplateState: " + status);
         }
-        boolean success = false;
-        try {
-            CreatorPurposeTemplates creatorPurposeTemplates = purposeTemplateClient.getCreatorPurposeTemplates(1, 10, null, null, state);
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
-        if (success) {
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getCreatorPurposeTemplates(1, 10, null, null, state));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            CreatorPurposeTemplates creatorPurposeTemplates = (CreatorPurposeTemplates) httpCallExecutor.getResponse();
+            assertThat(creatorPurposeTemplates).as("Il risultato della get dei purpose template by Creator" + createdTemplate.getId() + " non dev'essere null").isNotNull();
         }
     }
 
@@ -280,17 +277,75 @@ public class PurposeTemplateSteps {
     @When("si aggiorna il purpose template {exists} che è in stato {string}")
     public void updatePurposeTemplateInStatus(boolean exists, String status) {
         PurposeTemplateWithCompactCreator pt = purposeTemplateClient.getPurposeTemplate(createdTemplate.getId());
-        assertThat(pt.getState().getValue()).as("").isEqualToIgnoringCase(status);
+        assertThat(pt.getState().getValue()).as("TODO MATTEO").isEqualToIgnoringCase(status);
         updatePurposeTemplate(exists);
     }
 
-    @And("il purpose template creato viene spostato in stato {ptState}")
+    @And("il purpose template {exists} viene spostato in stato {ptState}")
     public void changePurposeTemplateState(boolean exists, PurposeTemplateState ptState) {
         switch (ptState) {
             case DRAFT -> System.out.println("TODO");
-            case ACTIVE -> System.out.println("TODO activate");
-            case SUSPENDED -> System.out.println("TODO suspend");
+            case ACTIVE -> activatePurposeTemplate(exists);
+            case SUSPENDED -> suspendPurposeTemplate(exists);
             case ARCHIVED -> System.out.println("TODO archive");
+        }
+    }
+
+    @And("il purpose template {exists} viene riattivato")
+    public void reactivateSuspendedPurposeTemplate(boolean exists) {
+        UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.unsuspendPurposeTemplate(ptId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
+            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").equals(PurposeTemplateState.ACTIVE);
+        }
+    }
+
+    private void activatePurposeTemplate(boolean exists) {
+        UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.publishPurposeTemplate(ptId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
+            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").equals(PurposeTemplateState.ACTIVE);
+        }
+    }
+
+    private void suspendPurposeTemplate(boolean exists) {
+        UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
+            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta sospeso").equals(PurposeTemplateState.SUSPENDED);
+        }
+    }
+
+    private void archivePurposeTemplate(boolean exists) {
+        UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
+            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta archiviato").equals(PurposeTemplateState.ARCHIVED);
+        }
+    }
+
+    @And("viene creato un nuovo purpose template in stato {ptState}")
+    public void vieneCreatoUnNuovoPurposeTemplateInStato(PurposeTemplateState ptState) {
+        createPurposeTemplate();
+        switch (ptState) {
+            case ACTIVE -> activatePurposeTemplate(true);
+            case SUSPENDED -> {
+                activatePurposeTemplate(true);
+                suspendPurposeTemplate(true);
+            }
+            case ARCHIVED -> {
+                activatePurposeTemplate(true);
+                suspendPurposeTemplate(true);
+                archivePurposeTemplate(true);
+            }
         }
     }
 }
