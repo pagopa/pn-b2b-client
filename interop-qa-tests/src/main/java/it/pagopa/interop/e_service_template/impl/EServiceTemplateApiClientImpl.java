@@ -410,7 +410,8 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
 
     @Override
     public CatalogEServiceTemplates getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds, Boolean personalData) {
-        return this.eserviceTemplatesApi.getEServiceTemplatesCatalog(offset, limit, q, creatorsIds,personalData);
+        PersonalDataFilter filter = personalData == null ? null : PersonalDataFilter.valueOf(personalData.toString().toUpperCase());
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalog(offset, limit, filter, q, creatorsIds);
     }
 
     @Override

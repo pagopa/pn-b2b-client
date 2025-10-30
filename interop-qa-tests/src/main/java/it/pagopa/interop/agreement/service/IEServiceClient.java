@@ -38,7 +38,6 @@ public interface IEServiceClient extends SettableBearerToken {
     PresignedUrl getImportEservicePresignedUrl(String fileName);
     CreatedEServiceDescriptor importEService(FileResource fileResource);
     void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed);
-    void updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed);
 
     ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
         UUID templateId, InstanceEServiceSeed instanceEServiceSeed);
