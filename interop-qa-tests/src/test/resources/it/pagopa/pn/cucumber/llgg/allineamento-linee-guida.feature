@@ -242,7 +242,8 @@ Feature: Allineamento linee guida
 
   Scenario Outline: [LLGG_13] Setting flagPersonalData passando un eServiceTemplateId inesistente (Scenario 32)
     Given l'utente è un "admin" di "PA1"
-    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceTemplateId" inesistente e un token invalido
+    When viene impostato per l'utente un token non valido
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceTemplateId" inesistente
     Then si ottiene lo status code 401
 
     Examples:
