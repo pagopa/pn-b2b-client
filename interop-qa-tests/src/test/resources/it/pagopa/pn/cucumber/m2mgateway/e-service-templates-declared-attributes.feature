@@ -7,8 +7,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
   
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi dichiarati a una versione di un e-service template (Parte2#Scenario intorno a 197)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 4 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -39,8 +39,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_03] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi dichiarati a una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 115)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -59,8 +59,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi dichiarati a una versione di un e-service template indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -92,8 +92,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_05] Un utente NON può aggiungere degli attributi dichiarati a una versione di un e-service template indicando un auth. token non valido (Parte2#Scenario intorno a 120)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -111,8 +111,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_06] Un utente con ruolo M2M NON può aggiungere degli attributi dichiarati a una versione di un e-service template (Parte2#Scenario intorno a 121)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -149,8 +149,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_A] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 244)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi dichiarati con successo
@@ -179,8 +179,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template in stato DRAFT solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi dichiarati con successo
@@ -206,8 +206,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi dichiarati di una versione di un e-service template indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 1 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -229,8 +229,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_03] Un utente NON può leggere gli attributi dichiarati di una versione di un e-service template indicando un auth. token non valido (Parte2#Scenario intorno a 246)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 1 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -246,8 +246,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_01] Un utente con ruolo M2M-ADMIN può rimuovere gli attributi dichiarati di una versione di un e-service template in stato DRAFT (Parte2#Scenario intorno a 268)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi dichiarati con successo
@@ -261,8 +261,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_02] Un utente con ruolo M2M NON può rimuovere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 270)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi dichiarati con successo
@@ -270,21 +270,21 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     And l'utente tenta di rimuovere l'attributo dichiarato numero 2 dal gruppo dell'e-service template
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+
+    # TODO in caso di refactor delle snapshot, andrebbe accorpato con lo step "gli attributi dichiarati del gruppo dell'e-service template sono rimasti invariati"
+    And gli attributi dichiarati del gruppo del template sono rimasti invariati
     Examples:
       | mode        |
       | erogazione  |
       #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
 
-    # TODO in caso di refactor delle snapshot, andrebbe accorpato con lo step "gli attributi dichiarati del gruppo dell'e-service template sono rimasti invariati"
-    And gli attributi dichiarati del gruppo del template sono rimasti invariati
-
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_03] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service template indicando degli identificativi inesistenti o appartenenti ad attributi già rimossi (Parte2#Scenario intorno a 271, 273)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
-    And l'utente crea 1 attributi dichiarati con successo
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
+    And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
+    And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributo dichiarato con successo
 
     When l'utente tenta di rimuovere l'attributo dichiarato numero 1 dal gruppo dell'e-service template indicando un e-service template id inesistente
     Then si ottiene lo status code 404
@@ -311,8 +311,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_04] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service template indicando un auth. token non valido (Parte2#Scenario intorno a 272)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 1 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributo dichiarato con successo
@@ -328,8 +328,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_05] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 274)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi dichiarati con successo
@@ -345,8 +345,8 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_06] Un utente NON può rimuovere gli attributi dichiarati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
-    Given l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     And l'utente crea 1 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 1 attributi dichiarati con successo

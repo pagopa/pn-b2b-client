@@ -293,9 +293,9 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
   Scenario: [M2M_ESERVICES_DECLARED_ATTRIBUTES_DELETE_03] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service indicando degli identificativi inesistenti o appartenenti ad attributi già rimossi (Parte2#Scenario intorno a 271, 273)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
-    And l'utente crea 1 attributi dichiarati con successo
+    And l'utente crea 2 attributi dichiarati con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente crea un gruppo di attributi contenente 1 attributo dichiarato con successo
+    And l'utente crea un gruppo di attributi contenente 2 attributi dichiarati con successo
 
     When l'utente tenta di rimuovere l'attributo dichiarato numero 1 dal gruppo dell'e-service indicando un e-service id inesistente
     Then si ottiene lo status code 404

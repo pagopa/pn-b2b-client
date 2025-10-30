@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.With;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@With
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,5 +29,11 @@ public class EServiceTemplateAttributesGroupKey extends EServiceTemplateAttribut
     @Override
     public EServiceTemplateAttributesGroupKey withVersionId(UUID versionId) {
         return copyFrom(super.withVersionId(versionId));
+    }
+
+    public EServiceTemplateAttributesGroupKey withGroupIndex(int groupIndex) {
+        EServiceTemplateAttributesGroupKey out = copyFrom(this);
+        out.groupIndex = groupIndex;
+        return out;
     }
 }

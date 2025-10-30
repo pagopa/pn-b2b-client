@@ -169,7 +169,7 @@ public class EServiceTemplateTestAssistant {
 
     public void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName, int fileIndex) {
-        String userToken = sharedStepsContext.getUserToken();
+        String userToken = clientTokenConfigurator.getLastToken();
         Resource doc = buildResource(kind, fileIndex);
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
     }
