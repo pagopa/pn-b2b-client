@@ -42,9 +42,11 @@ public class AppIOB2bSteps {
 
     @Value("${pn.appIO.checkQrCode-bodyUrl}")
     private String qrCodeBodyUrl;
+    @Value("${pn.appIO.checkQrCodeV2-bodyUrl}")
+    private String qrCodeBodyUrlV2;
     private String qrCode;
-    @Value("${pn.iun.120gg.fieramosca}")
-    private String iun120gg;
+    @Value("${pn.iun.60gg.fieramosca}")
+    private String iun60gg;
 
     @Autowired
     public AppIOB2bSteps(IPnAppIOB2bClient iPnAppIOB2bClient, SharedSteps sharedSteps) {
@@ -62,7 +64,7 @@ public class AppIOB2bSteps {
     }
     @Given("viene generato il QR Code {string} per la notifica di 60 giorni")
     public void vieneGeneratoIlCodiceQRPerLaNotificaOld(String qrCodeType) {
-       sharedSteps.setNotificationIun(iun120gg);
+       sharedSteps.setNotificationIun(iun60gg);
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
@@ -70,18 +72,23 @@ public class AppIOB2bSteps {
         };
     }
 
-    @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica")
-    public void userScanQRCodeWithoutLollipopHeader(Destinatario user) {
-        userScanQrCode(user, null);
+    @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica con versione {string}")
+    public void userScanQRCodeWithoutLollipopHeader(Destinatario user, String qrCodeBodyUrlVersion ) {
+        userScanQrCode(user, null, qrCodeBodyUrlVersion );
     }
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop")
     public void userScanQRCodeWithLollipopHeader(Destinatario user) {
-        userScanQrCode(user, "CLMCST42R12D969Z");
+        userScanQrCode(user, "CLMCST42R12D969Z", "0.9");
     }
 
-    private void userScanQrCode(Destinatario user, String xPagopaLollipopUserId) {
-        RequestCheckQrMandateDto requestCheckAarMandateDto = new RequestCheckQrMandateDto().aarQrCodeValue(qrCodeBodyUrl + qrCode);
+    private void userScanQrCode(Destinatario user, String xPagopaLollipopUserId,String qrCodeBodyUrlVersion) {
+
+        String qrCodeBodyUrlTmp = qrCodeBodyUrlVersion.equalsIgnoreCase("1.0")
+                ? qrCodeBodyUrlV2
+                : qrCodeBodyUrl;
+
+        RequestCheckQrMandateDto requestCheckAarMandateDto = new RequestCheckQrMandateDto().aarQrCodeValue(qrCodeBodyUrlTmp + qrCode);
         try {
             responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), xPagopaLollipopUserId, requestCheckAarMandateDto);
         } catch (HttpStatusCodeException ex) {
