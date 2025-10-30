@@ -167,6 +167,7 @@ public class EServiceTemplateCreateSteps {
             .description("Descrizione del servizio associato al template " + templateName)
             .mode(eServiceMode)
             .version(version)
-            .technology(EServiceTechnology.REST);
+            .technology(EServiceTechnology.REST)
+            .personalData(false);
     }
 }
