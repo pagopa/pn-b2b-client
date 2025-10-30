@@ -1136,6 +1136,7 @@ public class BFFDataPreparationService {
                 ),
                 res -> Optional.ofNullable((ProducerEServiceDetails) httpCallExecutor.getResponse())
                         .map(ProducerEServiceDetails::getRiskAnalysis)
+                        .filter(list -> !list.isEmpty())
                         .map(list -> list.get(0))
                         .map(EServiceRiskAnalysis::getId)
                         .isPresent(),

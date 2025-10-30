@@ -39,6 +39,8 @@ import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
+import it.pagopa.interop.selfcare.service.ISelfcareClient;
+import it.pagopa.interop.selfcare.service.impl.SelfcareClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
@@ -173,7 +175,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ReversePurposePatchOperationsAssistant.class,
         EServiceTemplatePatchOperationsAssistant.class,
         EServiceTemplateVersionQuotasPatchOperationsAssistant.class,
-        EServiceDescriptorQuotasPatchOperationsAssistant.class
+        EServiceDescriptorQuotasPatchOperationsAssistant.class,
+        ISelfcareClient.class,
+        SelfcareClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

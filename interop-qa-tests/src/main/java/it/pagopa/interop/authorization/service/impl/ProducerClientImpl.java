@@ -56,7 +56,7 @@ public class ProducerClientImpl implements IProducerClient {
     public ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated) {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
-        return eservicesApi.getProducerEServices(offset, limit, q, consumersIds, delegated, null);
+        return eservicesApi.getProducerEServices(offset, limit, null, q, consumersIds, delegated);
     }
 
     @Override
