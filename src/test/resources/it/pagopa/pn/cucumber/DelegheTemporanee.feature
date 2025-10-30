@@ -1,11 +1,13 @@
 #Per un corretto funzionamento della suite sono necessari diversi passaggi propedeutici:
   #1) su AWS, nella whiteList devono essere presente i taxId di Cristoforo Colombo (Mario Gherkin), Ettore Fieramosca (Mario Cucumber) e Galileo Galilei
   #2) è necessario che il tempo di scadenza di una notifica sia impostato a 7 minuti
-  #3) Quando si esegue in locale, bisogna impostare il proprio IP tra quelli autorizzati sempre su AWS WAF (Web Authorization Filter). Cambia giornalmente
+  #3) Quando si esegue in locale, bisogna:
+  #3.1) impostare il proprio IP tra quelli autorizzati sempre su AWS WAF (Web Authorization Filter). Cambia giornalmente
   # L'ip è recuperabile dai log CloudWatch, (cercare il gruppo denominato MandateMicroservicePublicIoAPI)
-  #4) Quando si esegue in locale, per poter richiamare il tool di generazione CIE è necessario:
-  # 4.1 - aver scaricato AWS Toolkit (da cui impostare profilo e region)
-  # 4.2 - cliccare le freccette verdi affianco allo scenario che si intende eseguire -> Modify run configuration -> AWS connection -> Selezionare pallino "Use the currently selected credential profile-region"
+  #3.2) per poter richiamare il tool di generazione CIE è necessario:
+  # 3.2.1 - aver scaricato AWS Toolkit (da cui impostare profilo e region)
+  # 3.2.2 - cliccare le freccette verdi affianco allo scenario che si intende eseguire -> Modify run configuration -> AWS connection -> Selezionare pallino "Use the currently selected credential profile-region"
+  #3.3) aprire il tunnel verso delivery
 
 Feature: Deleghe Temporanee 15755
 
@@ -30,7 +32,8 @@ Feature: Deleghe Temporanee 15755
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
-    Given viene generata una nuova notifica
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
       | document           | SI                               |

@@ -76,7 +76,6 @@ public class DelegheTemporaneeSteps {
     //TODO delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
     @When("{destinatario} viene temporaneamente delegato da {string} passando {string}")
     public void creaDelegaTemporanea(Destinatario delegate, String delegator, String inputParamsType) {
-
         qrCode = getQRPathEnvironmentBased() + "?aar=" +
                 (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0));
 
@@ -89,7 +88,7 @@ public class DelegheTemporaneeSteps {
             //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
             case "QRCODE INESISTENTE" ->
                     mandateCreationRequest.setAarQrCodeValue(getQRPathEnvironmentBased() + QRCODE_FROM_HOTFIX);
-            case "QRCODE NON VALIDO" -> qrCode = "invalid";
+            case "QRCODE NON VALIDO" -> mandateCreationRequest.setAarQrCodeValue("invalid");
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
