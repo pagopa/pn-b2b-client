@@ -6,8 +6,33 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
+import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +54,6 @@ import org.springframework.web.client.RestTemplate;
 )
 public class EServiceApiClientImpl implements IEServiceClient {
     private final EservicesApi eservicesApi;
-    private final EservicesApi apiWithWrongToken;
     private final RestTemplate restTemplate;
     private final String basePath;
 
@@ -37,7 +61,6 @@ public class EServiceApiClientImpl implements IEServiceClient {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.eservicesApi = new EservicesApi(createApiClient("dummyBearer"));
-        this.apiWithWrongToken = new EservicesApi(createApiClient("tokenInvalid"));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -122,7 +145,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
-        return eservicesApi.getEServicesCatalog(offset, limit, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable, null);
+        return eservicesApi.getEServicesCatalog(offset, limit, null, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable);
     }
 
     public CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
@@ -178,11 +201,6 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public void updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed) {
-        apiWithWrongToken.updateEServicePersonalDataFlagAfterPublication(eServiceId, seed);
-    }
-
-    @Override
     public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
         UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
         /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
@@ -225,7 +243,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
             String eServiceName) {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
-        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, eServiceName, null, null, null);
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null);
     }
 
     @Override

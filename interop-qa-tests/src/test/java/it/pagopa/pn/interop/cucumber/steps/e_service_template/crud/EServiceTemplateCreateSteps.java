@@ -208,6 +208,7 @@ public class EServiceTemplateCreateSteps {
                 .mode(eServiceMode)
                 .version(version)
                 .personalData(flagPersonalData)
-                .technology(EServiceTechnology.REST);
+                .technology(EServiceTechnology.REST)
+            .personalData(false);
     }
 }

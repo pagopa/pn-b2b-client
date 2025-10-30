@@ -406,7 +406,8 @@ public class BFFDataPreparationService {
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
                 .isConsumerDelegable(false)
-                .isClientAccessDelegable(false);
+                .isClientAccessDelegable(false)
+                .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));

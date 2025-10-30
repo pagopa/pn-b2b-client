@@ -26,11 +26,12 @@ import org.junit.platform.suite.api.Suite;
 @IncludeTags({
     // BFF
     "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
-    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila",
+    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "selfcare",
 
     // M2M
     "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
-    "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre"
+    "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
+
 })
 public class NrtTest {
 }

@@ -405,7 +405,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         Integer offset, Integer limit, String q, List<UUID> creatorsIds) {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
-        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(offset, limit, q, creatorsIds,null);
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(offset, limit, null, q, creatorsIds);
     }
 
     @Override
