@@ -44,15 +44,7 @@ public class AdeguamentoLineeGuidaSteps {
     @When("l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a {string}")
     public void addCustomRiskAnalysis(String flagCondition) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        RiskAnalysis customRiskAnalysis;
-
-        if (flagCondition.equals("true")) {
-            customRiskAnalysis = FileUtils.readJsonAs("classpath:it/pagopa/pn/cucumber/llgg/personal-data-true-risk-analysis.json", RiskAnalysis.class);
-        } else if (flagCondition.equals("false")) {
-            customRiskAnalysis = FileUtils.readJsonAs("classpath:it/pagopa/pn/cucumber/llgg/personal-data-false-risk-analysis.json", RiskAnalysis.class);
-        } else {
-            throw new RuntimeException(String.format("Flag condition non riconosciuto: %s", flagCondition));
-        }
+        RiskAnalysis customRiskAnalysis = getRiskAnalysis(flagCondition);
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
@@ -62,6 +54,19 @@ public class AdeguamentoLineeGuidaSteps {
                                 .riskAnalysisForm(customRiskAnalysis.getRiskAnalysisForm())
                 )
         );
+    }
+
+    public static RiskAnalysis getRiskAnalysis(String flagPersonalData) {
+        RiskAnalysis customRiskAnalysis;
+
+        if (flagPersonalData.equals("true")) {
+            customRiskAnalysis = FileUtils.readJsonAs("classpath:it/pagopa/pn/cucumber/llgg/personal-data-true-risk-analysis.json", RiskAnalysis.class);
+        } else if (flagPersonalData.equals("false")) {
+            customRiskAnalysis = FileUtils.readJsonAs("classpath:it/pagopa/pn/cucumber/llgg/personal-data-false-risk-analysis.json", RiskAnalysis.class);
+        } else {
+            throw new RuntimeException(String.format("Flag condition non riconosciuto: %s", flagPersonalData));
+        }
+        return customRiskAnalysis;
     }
 
     @When("viene settato il personalDataFlag a {string} passando un {string} inesistente")

@@ -351,10 +351,28 @@ Feature: Allineamento linee guida
       | true             |
       | false            |
 
-  Scenario: Per una finalità precedentemente creata da un fruitore, la quale è sopra soglia ed è passata da DRAFT a WAITING_FOR_APPROVAL, alla richiesta di attivazione da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, va a buon fine
+  Scenario Outline: [LLGG_22] Verifica che la purpose sia attivata quando i valori del falgPersonalData non coincidono (Scenario 53)
     Given l'utente è un "admin" di "PA2"
-    Given "PA2" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
+    Given "PA2" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "<personalDataFlag>"
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA1" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    Given "PA1" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice con flagPersonalData impostato a "<personalDataFlag>"
     When l'utente attiva la finalità in stato "WAITING_FOR_APPROVAL" per quell'e-service
     Then si ottiene status code 200
+
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario Outline: [LLGG_23] Verifica che la purpose non sia attivata quando i valori del falgPersonalData non coincidono (Scenario 54)
+    Given l'utente è un "admin" di "PA2"
+    Given "PA2" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "<personalDataFlag>"
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA1" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice con flagPersonalData impostato a "<personalDataFlag2>"
+    Then si ottiene status code 400
+
+    Examples:
+      | personalDataFlag | personalDataFlag2 |
+      | true             |false              |
+      | false            |true               |
+
