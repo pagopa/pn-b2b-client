@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 @Slf4j
@@ -61,9 +62,9 @@ public class AppIOB2bSteps {
     }
     @Given("viene generato il QR Code {string} per la notifica di 60 giorni")
     public void vieneGeneratoIlCodiceQRPerLaNotificaOld(String qrCodeType) {
-        sharedSteps.setNotificationIun(iun120gg);
+       sharedSteps.setNotificationIun(iun120gg);
         qrCode = switch (qrCodeType.toLowerCase()) {
-            case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 1);
+            case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
         };
@@ -87,6 +88,12 @@ public class AppIOB2bSteps {
             notificationServerError = ex;
         }
     }
+    @When("l'operazione non ha prodotti errori")
+    public void checkExxeption(){
+        assertNull(notificationServerError,
+                "notificationServerError non deve essere valorizzato, ma vale: " + notificationServerError);
+    }
+
 
     @When("viene chiamato l'endpoint {string} con i seguenti params:")
     public void callScanQRCodeWithParams(String endpoint, DataTable dataTable) {

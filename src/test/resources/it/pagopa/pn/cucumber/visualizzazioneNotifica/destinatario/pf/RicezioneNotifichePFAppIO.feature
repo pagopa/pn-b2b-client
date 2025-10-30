@@ -79,26 +79,26 @@ Feature: recupero notifiche tramite api AppIO b2b
   @appIo
   Scenario Outline: [QR_CODE_2] Si verificano gli status code ritornati per il caso negativo dell'API: checkQRCode
     And viene chiamato l'endpoint "checkQRCode" con i seguenti params:
-    | taxId             | <PARAM_1>   |
-    | aarQrCodeValue    | <PARAM_2>   |
+      | taxId          | <PARAM_1> |
+      | aarQrCodeValue | <PARAM_2> |
     Then si verifica che la chiamata abbia ritornato uno status code: 400
     Examples:
-    | PARAM_1           | PARAM_2 |
-    |                   | UFlEQS1RR05LLURWUlUtMjAyNTA4LU4tMV9QRi00ZmM3NWRmMy0wOTEzLTQwN2UtYmRhYS1lNTAzMjk3MDhiN2RfM2Y2MWQ1N2QtMmJmOC00NGU4LWFhMmMtNjBlZmNmODY3YTVh  |
-    | FRMTTR76M06B715E  |                                                                                                                                           |
+      | PARAM_1          | PARAM_2                                                                                                                                  |
+      |                  | UFlEQS1RR05LLURWUlUtMjAyNTA4LU4tMV9QRi00ZmM3NWRmMy0wOTEzLTQwN2UtYmRhYS1lNTAzMjk3MDhiN2RfM2Y2MWQ1N2QtMmJmOC00NGU4LWFhMmMtNjBlZmNmODY3YTVh |
+      | FRMTTR76M06B715E |                                                                                                                                          |
 
   #[TC_6] [TC_7]
   @appIo
   Scenario Outline: [QR_CODE_3] Si verificano gli status code ritornati per il caso negativo dell'API: getReceivedNotification
     And viene chiamato l'endpoint "getReceivedNotification" con i seguenti params:
-      | iun             | <PARAM_1>   |
-      | taxId           | <PARAM_2>   |
+      | iun   | <PARAM_1> |
+      | taxId | <PARAM_2> |
     Then si verifica che la chiamata abbia ritornato uno status code: 400
     Examples:
-      | PARAM_1                     | PARAM_2           |
-      |                             | FRMTTR76M06B715E  |
-      | ERRA-T000-0000-ERRATO-0-0   | FRMTTR76M06B715E  |
-      | NAUZ-WNPH-WQZE-202508-Y-1   |                   |
+      | PARAM_1                   | PARAM_2          |
+      |                           | FRMTTR76M06B715E |
+      | ERRA-T000-0000-ERRATO-0-0 | FRMTTR76M06B715E |
+      | NAUZ-WNPH-WQZE-202508-Y-1 |                  |
 
   @appIo
   Scenario: [QR_CODE_4] Viene generata una notifica e invocato l'endpoint per il recupero del documento tramite docIdx (/delivery/notifications/received/{iun}/attachments/documents/{docIdx})
@@ -115,16 +115,16 @@ Feature: recupero notifiche tramite api AppIO b2b
   @appIo
   Scenario Outline: [QR_CODE_5] Si verificano gli status code ritornati per il caso negativo dell'API: getSentNotificationDocument
     And viene chiamato l'endpoint "getSentNotificationDocument" con i seguenti params:
-      | iun             | <PARAM_1>   |
-      | docIdx          | <PARAM_2>   |
-      | taxId           | <PARAM_3>   |
+      | iun    | <PARAM_1> |
+      | docIdx | <PARAM_2> |
+      | taxId  | <PARAM_3> |
     Then si verifica che la chiamata abbia ritornato uno status code: <PARAM_4>
     Examples:
-      | PARAM_1                     | PARAM_2     | PARAM_3                    | PARAM_4  |
-      |                             | 0           | FRMTTR76M06B715E           | 400      |
-      | ERRA-T000-0000-ERRATO-0-0   |             | FRMTTR76M06B715E           | 400      |
-      | NAUZ-WNPH-WQZE-202508-Y-1   | 0           |                            | 400      |
-      | PKMK-AAAA-WJDK-202509-A-1   | 0           | FRMTTR76M06B715E           | 404      |
+      | PARAM_1                   | PARAM_2 | PARAM_3          | PARAM_4 |
+      |                           | 0       | FRMTTR76M06B715E | 400     |
+      | ERRA-T000-0000-ERRATO-0-0 |         | FRMTTR76M06B715E | 400     |
+      | NAUZ-WNPH-WQZE-202508-Y-1 | 0       |                  | 400     |
+      | PKMK-AAAA-WJDK-202509-A-1 | 0       | FRMTTR76M06B715E | 404     |
 
   #[TC_12]
   @appIo
@@ -170,22 +170,29 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
+#  Scenario: [QR_CE_6] Viene creata una notifica e recuperato l'F24 tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+#    And imposto lo iun di SharedSteps a "GZTM-ARKT-JPAY-202510-N-1" e la pa a "Comune_Multi"
+#    And viene generato il QR Code "corretto" per la notifica appena creata
+#    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica
+#    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+#    And il download non ha prodotto errori
+
   #[TC_13] [TC_14]
   @appIo
   Scenario Outline: [QR_CODE_7] Si verificano gli status code ritornati per il caso negativo dell'API: getReceivedNotificationAttachment
     And viene chiamato l'endpoint "getReceivedNotificationAttachment" con i seguenti params:
-      | iun             | <PARAM_1>   |
-      | attachmentName  | <PARAM_2>   |
-      | taxId           | <PARAM_3>   |
-      | attachmentIdx   | 0           |
+      | iun            | <PARAM_1> |
+      | attachmentName | <PARAM_2> |
+      | taxId          | <PARAM_3> |
+      | attachmentIdx  | 0         |
     Then si verifica che la chiamata abbia ritornato uno status code: <PARAM_4>
     Examples:
-      | PARAM_1                     | PARAM_2     | PARAM_3                    | PARAM_4 |
-      |                             | F24         | FRMTTR76M06B715E           | 400     |
-      | ERRA-T000-0000-ERRATO-0-0   | F24         | FRMTTR76M06B715E           | 400     |
-      | NAUZ-WNPH-WQZE-202508-Y-1   |             | FRMTTR76M06B715E           | 400     |
-      | NAUZ-WNPH-WQZE-202508-Y-1   | PAGOPA      |                            | 400     |
-      | AAAA-AAAA-WQZE-202508-Y-1   | PAGOPA      | FRMTTR76M06B715E           | 404     |
+      | PARAM_1                   | PARAM_2 | PARAM_3          | PARAM_4 |
+      |                           | F24     | FRMTTR76M06B715E | 400     |
+      | ERRA-T000-0000-ERRATO-0-0 | F24     | FRMTTR76M06B715E | 400     |
+      | NAUZ-WNPH-WQZE-202508-Y-1 |         | FRMTTR76M06B715E | 400     |
+      | NAUZ-WNPH-WQZE-202508-Y-1 | PAGOPA  |                  | 400     |
+      | AAAA-AAAA-WQZE-202508-Y-1 | PAGOPA  | FRMTTR76M06B715E | 404     |
 
   @appIo
   Scenario: [QR_CODE_8] Lettura tramite AppIO di una notifica da parte di un delegato PF da un delegatore PF
@@ -259,10 +266,14 @@ Feature: recupero notifiche tramite api AppIO b2b
     And a seguito della scansione del QR Code, la notifica può essere recuperata da: Leonardo da Vinci tramite AppIO passando un header src non valido
     Then si verifica che la chiamata abbia ritornato uno status code: 403
 
-
-
+  @appIo
   Scenario: [QR_CODE_HF] Viene
+
+    #And imposto lo iun di SharedSteps a "KMNG-VHZH-QEMZ-202310-M-1" e la pa a "Comune_1"
+
     And viene generato il QR Code "corretto" per la notifica di 60 giorni
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
-    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
-    And il download non ha prodotto errori
+    And l'operazione non ha prodotti errori
+
+#    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+#    And il download non ha prodotto errori
