@@ -63,16 +63,16 @@ Feature: recupero notifiche tramite api AppIO b2b
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
 #    [TC_5]
     And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO
     # SI VERIFICA CHE UN UTENTE CHE NON è DESTINATARIO O DELEGATO NON POSSA LEGGERE IL QRCODE
-    And l'utente Signor Generato scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Signor Generato scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And si verifica che la chiamata abbia ritornato uno status code: 403
 
     #[TC_3] SI PROVA A RIACCEDERE ALLA NOTIFICA SCANSIONANDO UN QR CODE NON VALIDO
     And viene generato il QR Code "malformato" per la notifica appena creata
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And si verifica che la chiamata abbia ritornato uno status code: 404
     
   #[TC_2]
@@ -108,7 +108,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     Then a seguito della scansione del QR Code, il documento notificato può essere recuperata tramite AppIO
 
   #[TC_9]
@@ -143,7 +143,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
@@ -166,7 +166,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
@@ -212,7 +212,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: Mario Cucumber
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato: Mario Cucumber
     And il download non ha prodotto errori
@@ -238,7 +238,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     And viene generato il QR Code "corretto" per la notifica appena creata
-    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And a seguito della scansione del QR Code, la notifica può essere recuperata tramite AppIO dal delegato: Mario Gherkin
     Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO dal delegato: Mario Gherkin
     And il download non ha prodotto errori
@@ -267,13 +267,62 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then si verifica che la chiamata abbia ritornato uno status code: 403
 
   @appIo
-  Scenario: [QR_CODE_HF] Viene
-
-    #And imposto lo iun di SharedSteps a "KMNG-VHZH-QEMZ-202310-M-1" e la pa a "Comune_1"
-
+  Scenario: [QR_CODE_11] Viene recuperato il qrcode da notifica di 60 giorni
     And viene generato il QR Code "corretto" per la notifica di 60 giorni
-    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And l'operazione non ha prodotti errori
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
 
-#    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
-#    And il download non ha prodotto errori
+
+  @appIo
+  Scenario: [QR_CODE_HF_12] Viene recuperato il qrcode da notifica di 60 giorni
+    And viene generato il QR Code "corretto" per la notifica di 60 giorni
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "1.0"
+    And l'operazione non ha prodotti errori
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
+  @appIo
+  Scenario: [QR_CODE_13] Viene creata una notifica e recuperato il documento di pagamento PAGOPA tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "1.0"
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
+  @appIo
+  Scenario: [QR_CODE_14] Viene creata una notifica e recuperato l'F24 tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                 |
+      | physicalAddress_address      | Via@ok_AR            |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "corretto" per la notifica appena creata
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica con versione "1.0"
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
