@@ -81,11 +81,6 @@ public class AdeguamentoLineeGuidaSteps {
         updatePersonalDataFlagInternal(false, templateId, flagPersonalData, false);
     }
 
-    @When("viene settato il personalDataFlag a {string} passando un {string} inesistente e un token invalido")
-    public void updatePersonalDataFlagAfterPublicationWithInvalidToken(String flagPersonalData, String target) {
-        updatePersonalDataFlagInternal(target.equalsIgnoreCase("eServiceId"), UUID.randomUUID(), flagPersonalData, true);
-    }
-
     @When("verifica che il flagPersonalData presente nell'istanza dell'eServiceTemplate coincida con quanto specificato nel template")
     public void checkEserviceTemplateIstance() {
         EServiceTemplateInfo template = this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
@@ -274,8 +269,7 @@ public class AdeguamentoLineeGuidaSteps {
                 seed.setPersonalData(personalData);
 
                 if (invalidToken) {
-                    clientTokenConfigurator.getEServiceClient()
-                            .updateEServicePersonalDataFlagAfterPublicationWithInvalidToken(id, seed);
+
                 } else {
                     clientTokenConfigurator.getEServiceClient()
                             .updateEServicePersonalDataFlagAfterPublication(id, seed);

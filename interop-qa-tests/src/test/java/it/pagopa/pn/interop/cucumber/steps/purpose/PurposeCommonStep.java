@@ -66,6 +66,13 @@ public class PurposeCommonStep {
         createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null);
     }
 
+    @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice con flagPersonalData impostato a {string}")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState, String flagPersonalData) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null);
+    }
+
     @Given("{string} ha già pubblicato quella versione di e-service")
     public void publishDescriptor(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

@@ -84,9 +84,10 @@ public class DescriptorPublicationSteps {
     @Given("{string} ha già creato un e-service in modalità {string} con un descrittore in stato {string} e flag dati personali a {string}")
     public void createEServiceWithModeAndStateAndPersonaDataFlag(String tenantType, String mode, String eServiceDescriptorState, String personalDataFlag) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)).personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
-                new UpdateEServiceDescriptorSeed()
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptorWithCustomPersonalData(
+                new EServiceSeed().mode(EServiceMode.fromValue(mode)),
+                new UpdateEServiceDescriptorSeed(),
+                personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")
         );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());

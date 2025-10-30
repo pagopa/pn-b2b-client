@@ -40,7 +40,7 @@ Feature: Allineamento linee guida
       | false            |
 
 
-  Scenario Outline: [LLGG_2] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData (Scenario 4, 5, 6, 7)
+  Scenario Outline: [LLGG_2] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData (Scenario 4, 5, 6, 7, 49, 50)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<eServicePersonalDataFlag>"
     Then si ottiene status code 200
@@ -59,6 +59,7 @@ Feature: Allineamento linee guida
       | true                     | 400                  | false                        | 400                    |
       | true                     | 200                  | true                         | 204                    |
       | false                    | 400                  | true                         | 400                    |
+
 
   Scenario Outline: [LLGG_2.1] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData e verifica del descrittore (Scenario 39)
     Given l'utente è un "admin" di "PA1"
@@ -147,7 +148,8 @@ Feature: Allineamento linee guida
 
   Scenario Outline: [LLGG_6] Setting flagPersonalData usando un token invalido (Scenario 19)
     Given l'utente è un "admin" di "PA1"
-    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceId" inesistente e un token invalido
+    When viene impostato per l'utente un token non valido
+    When viene settato il personalDataFlag a "<personalDataFlag>" passando un "eServiceId" inesistente
     Then si ottiene lo status code 401
 
     Examples:
@@ -331,4 +333,28 @@ Feature: Allineamento linee guida
       | true             |
       | false            |
 
+  Scenario Outline: [LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all'erogazione settando il flag personal data (Scenario 45)
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'ente "PA2" accetta la delega
+    And l'utente è un "admin" di "PA2"
+    When l'utente pubblica l'e-service
+    Then si ottiene lo status code 200
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
 
+    Examples:
+      | personalDataFlag |
+      | true             |
+      | false            |
+
+  Scenario: Per una finalità precedentemente creata da un fruitore, la quale è sopra soglia ed è passata da DRAFT a WAITING_FOR_APPROVAL, alla richiesta di attivazione da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, va a buon fine
+    Given l'utente è un "admin" di "PA2"
+    Given "PA2" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA1" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    When l'utente attiva la finalità in stato "WAITING_FOR_APPROVAL" per quell'e-service
+    Then si ottiene status code 200

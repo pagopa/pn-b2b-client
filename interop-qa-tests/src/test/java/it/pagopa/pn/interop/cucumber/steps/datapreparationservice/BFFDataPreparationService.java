@@ -425,6 +425,32 @@ public class BFFDataPreparationService {
         return new EServiceDescriptor(eserviceId, descriptorId);
     }
 
+    public EServiceDescriptor createEServiceAndDraftDescriptorWithCustomPersonalData(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, Boolean personalData) {
+        EServiceSeed defaultEserviceSeed = new EServiceSeed()
+                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .description("Descrizione e-service")
+                .technology(EServiceTechnology.REST)
+                .mode(EServiceMode.DELIVER)
+                .isConsumerDelegable(false)
+                .isClientAccessDelegable(false);
+        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        eServiceSeed.setPersonalData(personalData);
+
+        httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
+        assertValidResponse();
+        UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
+        UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
+                res -> res != HttpStatus.NOT_FOUND,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+
+        updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
+        return new EServiceDescriptor(eserviceId, descriptorId);
+    }
+
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
