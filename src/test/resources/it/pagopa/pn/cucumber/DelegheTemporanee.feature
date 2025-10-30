@@ -26,8 +26,8 @@ Feature: Deleghe Temporanee 15755
     Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI VALIDI"
 
       #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
-#    Given imposto lo iun di SharedSteps a "" e la pa a "Comune_Multi"
-#    And TODO remove il mandate in uso è quello con id "" e verificationCode ""
+#    Given imposto lo iun di SharedSteps a "UQWV-KZVY-XZJT-202510-P-1" e la pa a "Comune_Multi"
+#    And TODO remove il mandate in uso è quello con id "b64dd634-1b53-497f-8b6e-f497983612e4" e verificationCode "59106"
 
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)

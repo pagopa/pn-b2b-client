@@ -134,9 +134,27 @@ public class DelegheTemporaneeSteps {
                 cieValidationData.setNisData(null);
                 cieValidationData.setSignedNonce(null);
             }
-            case "SIGNED NONCE ERRATO" -> cieValidationData.setSignedNonce("00000");
-            case "NIS DATA CIE ERRATO" -> cieValidationData.setNisData(null);
-            case "MRTD DATA CIE ERRATO" -> cieValidationData.setMrtdData(null);
+            case "SIGNED NONCE ERRATO" -> {
+                String signedNonce = cieValidationData.getSignedNonce();
+                String firstChar = signedNonce.substring(0, 1);
+                String replacement = firstChar.equals("A") ? "B" : "A";
+                signedNonce = replacement + signedNonce.substring(1);
+                cieValidationData.setSignedNonce(signedNonce);
+            }
+            case "NIS DATA CIE ERRATO" -> {
+                String nisData = cieValidationData.getNisData().getNis();
+                String firstChar = nisData.substring(0, 1);
+                String replacement = firstChar.equals("A") ? "B" : "A";
+                nisData = replacement + nisData.substring(1);
+                cieValidationData.getNisData().setNis(nisData + "wrong");
+            }
+            case "MRTD DATA CIE ERRATO" -> {
+                String mrtdDataDg1 = cieValidationData.getMrtdData().getDg1();
+                String firstChar = mrtdDataDg1.substring(0, 1);
+                String replacement = firstChar.equals("A") ? "B" : "A";
+                mrtdDataDg1 = replacement + mrtdDataDg1.substring(1);
+                cieValidationData.getMrtdData().setDg1(mrtdDataDg1);
+            }
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
         try {
