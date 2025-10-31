@@ -70,7 +70,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
       | ARCHIVED       | AUTOMATIC        |
 
   @sad-path
-  @purpose_creation_deliver4b
+  @purpose_creation_deliver4b @certifiedAttribute
   Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

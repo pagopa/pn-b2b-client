@@ -1,17 +1,17 @@
 package it.pagopa.pn.interop.cucumber.utility;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Component
 public class BlobFileCreator {
-
     public Resource createBlobFile(String blobFilePath, String fileNameToCreate) {
         Path filePath = Paths.get(blobFilePath);
         byte[] fileContent = null;

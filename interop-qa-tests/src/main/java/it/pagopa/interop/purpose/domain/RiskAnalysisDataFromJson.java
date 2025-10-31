@@ -35,6 +35,7 @@ public class RiskAnalysisDataFromJson {
         private List<String> checkedExistenceMereCorrectnessInteropCatalogue;
         private List<String> usesThirdPartyData;
         private List<String> declarationConfirmGDPR;
+        private List<String> isRequestOnBehalfOfThirdParties;
 
         public Map<String, List<String>> toMap() {
             Map<String, List<String>> map = new HashMap<>();

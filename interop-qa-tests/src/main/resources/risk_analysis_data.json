@@ -14,35 +14,17 @@
   },
   "PA": {
     "completed": {
+      "institutionalPurpose": ["prova prova prova"],
+      "isRequestOnBehalfOfThirdParties": ["NO"],
       "purpose": ["INSTITUTIONAL"],
-      "institutionalPurpose": ["test"],
-      "personalDataTypes": ["WITH_NON_IDENTIFYING_DATA"],
-      "legalBasis": ["CONSENT"],
-      "knowsDataQuantity": ["NO"],
-      "deliveryMethod": ["CLEARTEXT"],
-      "policyProvided": ["YES"],
-      "confirmPricipleIntegrityAndDiscretion": ["true"],
-      "doneDpia": ["NO"],
-      "dataDownload": ["NO"],
-      "purposePursuit": ["MERE_CORRECTNESS"],
-      "checkedExistenceMereCorrectnessInteropCatalogue": ["true"],
-      "usesThirdPartyData": ["NO"],
-      "declarationConfirmGDPR": ["true"]
+      "usesPersonalData": ["NO"],
+      "usesThirdPartyPersonalData": ["NO"]
     },
     "uncompleted": {
+      "institutionalPurpose": ["prova prova prova"],
+      "isRequestOnBehalfOfThirdParties": ["NO"],
       "purpose": ["INSTITUTIONAL"],
-      "institutionalPurpose": ["test"],
-      "legalBasis": ["CONSENT"],
-      "knowsDataQuantity": ["NO"],
-      "deliveryMethod": ["CLEARTEXT"],
-      "policyProvided": ["YES"],
-      "confirmPricipleIntegrityAndDiscretion": ["true"],
-      "doneDpia": ["NO"],
-      "dataDownload": ["NO"],
-      "purposePursuit": ["MERE_CORRECTNESS"],
-      "checkedExistenceMereCorrectnessInteropCatalogue": ["true"],
-      "usesThirdPartyData": ["NO"],
-      "declarationConfirmGDPR": ["true"]
+      "usesThirdPartyPersonalData": ["NO"]
     }
   }
 }

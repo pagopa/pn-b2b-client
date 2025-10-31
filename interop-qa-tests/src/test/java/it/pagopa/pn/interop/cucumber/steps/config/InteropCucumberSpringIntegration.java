@@ -6,9 +6,13 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.agreement.service.impl.AgreementClientImpl;
 import it.pagopa.interop.agreement.service.impl.EServiceApiClientImpl;
 import it.pagopa.interop.agreement.service.impl.M2MAgreementClientImpl;
+import it.pagopa.interop.agreement.service.impl.M2MClientsClientImpl;
+import it.pagopa.interop.agreement.service.impl.M2MTenantClientImpl;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.impl.AttributeApiClientImpl;
-import it.pagopa.interop.attribute.service.impl.M2MAttributeClientImpl;
+import it.pagopa.interop.attribute.service.impl.M2MCertifiedAttributeClientImpl;
+import it.pagopa.interop.attribute.service.impl.M2MDeclaredAttributeClientImpl;
+import it.pagopa.interop.attribute.service.impl.M2MVerifiedAttributeClientImpl;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
@@ -23,15 +27,17 @@ import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.M2MDelegationClient;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
+import it.pagopa.interop.e_service_template.impl.EServiceTemplateMainMapperImpl;
+import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
-import it.pagopa.interop.eservice_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
-import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
+import it.pagopa.interop.selfcare.service.ISelfcareClient;
+import it.pagopa.interop.selfcare.service.impl.SelfcareClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
@@ -44,12 +50,42 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDescriptionMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceNameMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.mapper.EServiceTemplateVersionMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.mapper.EServiceTemplateVersionQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
@@ -93,7 +129,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         RiskAnalysisMapperImpl.class,
         it.pagopa.interop.authorization.service.DataPreparationService.class,
         M2MAgreementClientImpl.class,
-        M2MAttributeClientImpl.class,
+        M2MCertifiedAttributeClientImpl.class,
         M2MPurposeClientImpl.class,
         M2MEserviceClientImpl.class,
         M2MEServiceTemplateClientImpl.class,
@@ -101,6 +137,42 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MEserviceDescriptorClientImpl.class,
         CucumberScopedBeans.class,
         M2MDelegationClient.class,
+        M2MDeclaredAttributeClientImpl.class,
+        M2MVerifiedAttributeClientImpl.class,
+        M2MClientsClientImpl.class,
+        M2MTenantClientImpl.class,
+        DelayServiceImpl.class,
+        EServiceMapperImpl.class,
+        EServiceNameMapperImpl.class,
+        EServiceDelegationMapperImpl.class,
+        EServiceDescriptionMapperImpl.class,
+        EServiceDescriptorMapperImpl.class,
+        EServiceTemplateMapperImpl.class,
+        EServiceTemplateVersionQuotasMapperImpl.class,
+        DocumentMapperImpl.class,
+        PurposeMapperImpl.class,
+        ReversePurposeMapperImpl.class,
+        EServiceTemplateVersionMapperImpl.class,
+        EServiceTemplateMainMapperImpl.class,
+        EServiceDescriptorQuotasMapperImpl.class,
+        EServicePatchContext.class,
+        EServiceDescriptorPatchContext.class,
+        PurposePatchContext.class,
+        EServiceTemplatePatchContext.class,
+        EServiceTemplateVersionPatchContext.class,
+        EServicePatchOperationsAssistant.class,
+        EServiceNamePatchOperationsAssistant.class,
+        EServiceDelegationPatchOperationsAssistant.class,
+        EServiceDescriptionPatchOperationsAssistant.class,
+        EServiceDescriptorPatchOperationsAssistant.class,
+        EServiceTemplateVersionPatchOperationsAssistant.class,
+        PurposePatchOperationsAssistant.class,
+        ReversePurposePatchOperationsAssistant.class,
+        EServiceTemplatePatchOperationsAssistant.class,
+        EServiceTemplateVersionQuotasPatchOperationsAssistant.class,
+        EServiceDescriptorQuotasPatchOperationsAssistant.class,
+        ISelfcareClient.class,
+        SelfcareClientImpl.class,
         PurposeTemplateClientImpl.class
 })
 @EnableScheduling

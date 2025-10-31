@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class M2MAuthSteps {
+
+    public static final String INVALID_AUTH_TOKEN = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
+
     @ParameterType("m2m|m2m-admin")
     public static M2MRole m2mRole(String m2mRole) {
         return M2MRole.fromValue(m2mRole.toUpperCase());
@@ -53,10 +56,10 @@ public class M2MAuthSteps {
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
+    @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        clientTokenConfigurator.setBearerToken(expiredToken);
-        sharedStepsContext.setUserToken(expiredToken);
+        clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
+        sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
     }
 
     @Deprecated(forRemoval = true)

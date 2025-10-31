@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.Data;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,6 +18,13 @@ public class DelegationCommonContext {
 
     private String delegatorTenant;
     private String delegateTenant;
+
+    private OffsetDateTime createdAt;
+    private OffsetDateTime activatedAt;
+    private OffsetDateTime rejectedAt;
+    private OffsetDateTime revokedAt;
+
+    private String rejectionReason;
 
     /* 06/02/2025 useful in those test cases where it is necessary to have a third-party
      * delegation ID in addition to the one between delegate and delegator */
