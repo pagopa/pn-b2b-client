@@ -10,6 +10,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.CIEValidationData;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationResponse;
@@ -63,8 +64,6 @@ public class DelegheTemporaneeSteps {
 
     private static final String WRONG_NONCE_00000 = "SHfG4qyZtIRQHVsM6XDhZUrlqX0A-rHvenifCW_1PIOG-hPXrICO2NfQVwlTqFehQOVJeT2pL71C0JQcqdqOE85xB5UPhwOcQRCTxXm7Dsl3Z3_daMwQFrCVhIjv6EPWOIrJB-ieAmo0RxBSAggaPUFegGz3ce5vFiXeYAmBOY3DpfuGj3webTj4VgXEvhy-iDegHUCyIVTZLPkbCiB_E_PpSt3clGDf8iS8yGK-iE9ODWRe7at_spFaTb9DCHxVYSXbdVIBVy8oA14uo9GVN1xsV-XN772BUIjLqlcRLqyVwn6a-vrYqCN3ywtdcGdN_AcrWeKUANUIad2m0K3FTA==";
 
-    private static final String WRONG_MRTD_DG1 = "YV1fH1pJPElUQUFBMTIzNDU2Nzg8PDw8PDw8PDw8PDw8PDw4MDAxMDE0TTI2MTAzMTNJVEE8PDw8PDw8PDw8PDRST1NTSTw8TUFSSU88PDw8PDw8PDw8PDw8PDw8PDw=";
-
     private static final String QRCODE_FROM_HOTFIX = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
     @Autowired
@@ -77,7 +76,7 @@ public class DelegheTemporaneeSteps {
         this.cieGeneratorTool = cieGeneratorTool;
     }
 
-    //TODO delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
+    //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
     @When("{destinatario} viene temporaneamente delegato da {string} passando {string}")
     public void creaDelegaTemporanea(Destinatario delegate, String delegator, String inputParamsType) {
         qrCode = getQRPathEnvironmentBased() + "?aar=" +
@@ -156,7 +155,13 @@ public class DelegheTemporaneeSteps {
                 nisDataPubKey = replacement + nisDataPubKey.substring(1);
                 cieValidationData.getNisData().setPubKey(nisDataPubKey);
             }
-            case "MRTD DATA CIE ERRATO" -> cieValidationData.getMrtdData().setDg1(WRONG_MRTD_DG1);
+            case "MRTD DATA CIE ERRATO" -> {
+                String mrtdDataDg1 = cieValidationData.getMrtdData().getDg1();
+                String firstChar = mrtdDataDg1.substring(0, 1);
+                String replacement = firstChar.equals("A") ? "B" : "A";
+                mrtdDataDg1 = replacement + mrtdDataDg1.substring(1);
+                cieValidationData.getNisData().setPubKey(mrtdDataDg1);
+            }
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
         try {
@@ -260,21 +265,25 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    @And("{string} recupera lato web PA una notifica vecchia 120 o più giorni inviata a {destinatario}")
-    public void retrieveNotification120DaysOldByIunWebPaSide(String paName, Destinatario recipient) {
+    @And("{string} recupera lato web PA una notifica vecchia 120 o più giorni inviata a {destinatario} e non a {destinatario}")
+    public void retrieveNotification120DaysOldByIunWebPaSide(String paName, Destinatario recipient, Destinatario notRecipient) {
         sharedSteps.setPA(paName);
         String recipientTaxId = recipient.getTaxId();
+        String notRecipientTaxId = notRecipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         BffNotificationsResponse bffNotificationsResponse = sharedSteps.getWebPaClient().searchSentNotification(
                 todayDate.minusDays(130),
                 todayDate.minusDays(120),
                 recipientTaxId, null, null, null, 50, null);
         assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
-        assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere vuota").isNotNull();
+        assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere null").isNotNull();
         assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere vuota").isNotEmpty();
-        FullSentNotificationV27 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(bffNotificationsResponse.getResultsPage().get(0).getIun());
+        NotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(n -> !n.getRecipients().contains(notRecipientTaxId)).findFirst().orElse(null);
+        assertThat(result).as("Nessuna notifica trovato con destinatario " + recipientTaxId + " e non " + notRecipientTaxId).isNotNull();
+        FullSentNotificationV27 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(result.getIun());
         sharedSteps.setNotificationIun(notifica120.getIun());
         log.info("IUN OLDER 120 GG: " + notifica120.getIun());
+        log.info("RECIPIENTS OLDER 120 GG: " + notifica120.getRecipients());
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {
