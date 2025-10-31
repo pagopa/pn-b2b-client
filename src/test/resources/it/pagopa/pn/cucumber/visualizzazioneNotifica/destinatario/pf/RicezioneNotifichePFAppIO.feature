@@ -271,7 +271,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And viene generato il QR Code "corretto" per la notifica di 60 giorni
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And l'operazione non ha prodotti errori
-    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
 
@@ -280,7 +280,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And viene generato il QR Code "corretto" per la notifica di 60 giorni
     And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "1.0"
     And l'operazione non ha prodotti errori
-    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
   @appIo
