@@ -6,7 +6,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
-    And il purpose template creato viene spostato in stato ACTIVE
+    And il purpose template creato viene spostato in stato PUBLISHED
     Then si ottiene lo status code <statusCode>
     Examples:
       | ruolo    | statusCode |
@@ -20,7 +20,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
   Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_KO_WRONG_STATE]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
-    When il purpose template creato viene spostato in stato ACTIVE
+    When il purpose template creato viene spostato in stato PUBLISHED
     Then si ottiene lo status code 400
     Examples:
       | state     |
@@ -33,7 +33,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
-    And il purpose template creato viene spostato in stato ACTIVE
+    And il purpose template creato viene spostato in stato PUBLISHED
     Then si ottiene lo status code 403
 
   #40(KO)
@@ -41,7 +41,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
   Scenario: [PURPOSE_TEMPLATE_ACTIVATION_KO_404]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    When il purpose template inesistente viene spostato in stato ACTIVE
+    When il purpose template inesistente viene spostato in stato PUBLISHED
     Then si ottiene lo status code 404
 
   #41(KO)
@@ -49,6 +49,6 @@ Feature: finalità agevolata, purpose template ACTIVATION
   Scenario: [PURPOSE_TEMPLATE_ACTIVATION_ALREADY_PUBLISHED]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    And il purpose template creato viene spostato in stato ACTIVE
-    When il purpose template creato viene spostato in stato ACTIVE
+    And il purpose template creato viene spostato in stato PUBLISHED
+    When il purpose template creato viene spostato in stato PUBLISHED
     Then si ottiene lo status code 409

@@ -15,7 +15,7 @@ public class ParameterTypesInterop {
         return !value.equals("inesistente");
     }
 
-    @ParameterType("DRAFT|ACTIVE|SUSPENDED|ARCHIVED")
+    @ParameterType("DRAFT|PUBLISHED|SUSPENDED|ARCHIVED")
     public static PurposeTemplateState ptState(String state) {
         return PurposeTemplateState.fromValue(state);
     }

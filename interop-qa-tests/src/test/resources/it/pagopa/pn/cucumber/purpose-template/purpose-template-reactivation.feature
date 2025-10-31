@@ -31,7 +31,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
   @purposeTemplate @purposeTemplateReactivation
   Scenario: [PURPOSE_TEMPLATE_REACTIVATION_KO_NO_CREATOR]
     Given l'utente è un "admin" di "PA1"
-    And viene creato un nuovo purpose template in stato ACTIVE
+    And viene creato un nuovo purpose template in stato PUBLISHED
     When l'utente è un "admin" di "GSP"
     And il purpose template creato viene riattivato
     Then si ottiene lo status code 403

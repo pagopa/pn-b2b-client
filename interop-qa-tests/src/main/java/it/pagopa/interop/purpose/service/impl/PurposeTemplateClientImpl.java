@@ -90,8 +90,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis) throws RestClientException {
-        return purposesTemplateApi.getCatalogPurposeTemplates(offset, limit, q, creatorIds, eserviceIds, targetTenantKind, excludeExpiredRiskAnalysis);
+    public CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis, Boolean handlesPersonalData) throws RestClientException {
+        return purposesTemplateApi.getCatalogPurposeTemplates(offset, limit, q, creatorIds, eserviceIds, targetTenantKind, excludeExpiredRiskAnalysis, handlesPersonalData);
     }
 
     @Override
@@ -105,8 +105,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, List<UUID> producerIds, List<UUID> eserviceIds) throws RestClientException {
-        return purposesTemplateApi.getPurposeTemplateEServices(purposeTemplateId, offset, limit, producerIds, eserviceIds);
+    public EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, List<UUID> producerIds, String eserviceName) throws RestClientException {
+        return purposesTemplateApi.getPurposeTemplateEServices(purposeTemplateId, offset, limit, producerIds, eserviceName);
     }
 
     @Override

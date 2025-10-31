@@ -1,6 +1,8 @@
-Feature: finalità agevolata, purpose template SUSPENSION
+Feature: finalità agevolata, purpose template ANNOTATION
 
-  #42-44(OK-KO)
+  #TODO todo Matteo -> 60-63 rimangono da fare
+
+  #64
   @purposeTemplate @purposeTemplateSuspension
   Scenario Outline: [PURPOSE_TEMPLATE_SUSPENSION]
     Given l'utente è un "admin" di "PA1"

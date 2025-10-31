@@ -28,9 +28,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     And viene creato un nuovo purpose template in stato <state>
     Then il purpose template creato viene associato all'e-service
     Examples:
-      | state  |
-      | DRAFT  |
-      | ACTIVE |
+      | state     |
+      | DRAFT     |
+      | PUBLISHED |
 
   #25(KO)
   Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_EC_KO]
@@ -89,9 +89,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     When il purpose template creato viene associato all'e-service
     Then si ottiene lo status code 409
     Examples:
-      | state  |
-      | DRAFT  |
-      | ACTIVE |
+      | state     |
+      | DRAFT     |
+      | PUBLISHED |
 
   #30(OK)
   Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_OK]
@@ -102,9 +102,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     And il purpose template creato viene associato all'e-service
     Then il purpose template creato viene disassociato dall'e-service
     Examples:
-      | state  |
-      | DRAFT  |
-      | ACTIVE |
+      | state     |
+      | DRAFT     |
+      | PUBLISHED |
 
   #31(KO)
   Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_KO_WRONG_STATE]

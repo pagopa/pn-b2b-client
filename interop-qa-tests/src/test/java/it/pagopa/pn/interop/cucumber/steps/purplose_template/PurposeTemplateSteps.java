@@ -94,7 +94,7 @@ public class PurposeTemplateSteps {
         List<PurposeTemplateState> state;
         switch (status.toUpperCase()) {
             case "ANY" -> state = null;
-            case "ACTIVE" -> state = List.of(PurposeTemplateState.ACTIVE);
+            case "ACTIVE" -> state = List.of(PurposeTemplateState.PUBLISHED);
             case "DRAFT" -> state = List.of(PurposeTemplateState.DRAFT);
             case "SUSPENDED" -> state = List.of(PurposeTemplateState.SUSPENDED);
             case "ARCHIVED" -> state = List.of(PurposeTemplateState.ARCHIVED);
@@ -108,55 +108,38 @@ public class PurposeTemplateSteps {
     }
 
     @When("si effettua la get di tutti i purpose template con titolo {string}")
-    public void todo(String title) {
+    public void getCatalogPurposeTemplate(String title) {
         String titleFilter = title.equalsIgnoreCase("ANY") ? null : title;
-        boolean success = false;
-        try {
-            CatalogPurposeTemplates catalogPurposeTemplates = purposeTemplateClient.getCatalogPurposeTemplates(1, 10, titleFilter, null, null, null, true);
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
-        if (success) {
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getCatalogPurposeTemplates(1, 10, titleFilter, null, null, null, true, true));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            CatalogPurposeTemplates catalogPurposeTemplates = (CatalogPurposeTemplates) httpCallExecutor.getResponse();
+            //TODO MATTEO storare il result in qualche variabile ???
         }
     }
 
     @When("si aggiorna il purpose template {exists}")
     public void updatePurposeTemplate(boolean exists) {
         PurposeTemplateSeed updateRequest = new PurposeTemplateSeed();
-        updateRequest.setPurposeTitle("updated_" + getTitleWithDate());
-        updateRequest.setPurposeDescription("Updated description");
+        updateRequest.setPurposeTitle("updated_title" + getTitleWithDate());
+        updateRequest.setPurposeDescription("updated_description" + getTitleWithDate());
 
         UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
-        boolean success = false;
-        PurposeTemplate updatedPurposeTemplate = null;
-        try {
-            updatedPurposeTemplate = purposeTemplateClient.updatePurposeTemplate(ptId, updateRequest);
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
-        if (success) {
-            assertThat(updatedPurposeTemplate).as("Il template aggiornato non dev'essere null").isNotNull();
-            assertThat(updatedPurposeTemplate.getPurposeDescription()).as("La descrizione deve risultare aggiornata").contains("Updated description");
-            assertThat(updatedPurposeTemplate.getPurposeTitle()).as("Il titolo deve risultare aggiornato").contains("Updated title");
-        } else {
-            assertThat(updatedPurposeTemplate).as("Il template aggiornato dev'essere null").isNull();
-            assertThat(error).as("L'operazione di update deve aver generato un errore").isNotNull();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, updateRequest));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
+            assertThat(purposeTemplate).as("Il template aggiornato non dev'essere null").isNotNull();
+            assertThat(purposeTemplate.getPurposeTitle()).as("Il titolo deve risultare aggiornato").contains("updated_title");
+            assertThat(purposeTemplate.getPurposeDescription()).as("La descrizione deve risultare aggiornata").contains("updated_description");
         }
     }
 
     @When("si cancella il purpose template {exists}")
     public void deletePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
-        boolean success = false;
-        try {
-            purposeTemplateClient.deletePurposeTemplate(ptId);
-            success = true;
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
+        httpCallExecutor.performCall(() -> purposeTemplateClient.deletePurposeTemplate(ptId));
         if (exists) {
             PurposeTemplateWithCompactCreator pt = getPurposeTemplateById(ptId);
-            if (success) {
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 assertThat(pt).as("Dopo la delete (OK), il result della get del purpose template con id " + ptId + " dovrebbe essere null").isNull();
             } else {
                 assertThat(pt).as("Dopo la delete (KO), il result della get del purpose template con id " + ptId + " non dovrebbe essere null").isNotNull();
@@ -164,15 +147,16 @@ public class PurposeTemplateSteps {
         }
     }
 
-    public PurposeTemplateWithCompactCreator getPurposeTemplateById(UUID purposeTemplateId) {
+    public PurposeTemplateWithCompactCreator getPurposeTemplateById(UUID ptId) {
         PurposeTemplateWithCompactCreator pt = null;
-        try {
-            pt = purposeTemplateClient.getPurposeTemplate(purposeTemplateId);
-            this.purposeTemplateWithCompactCreator = pt;
-        } catch (HttpStatusCodeException e) {
-            log.info("PurposeTemplate with id " + purposeTemplateId + " not found");
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
+            return purposeTemplateWithCompactCreator;
+        } else {
+            log.info("Failed to get PurposeTemplate with id " + ptId);
+            return null;
         }
-        return pt;
     }
 
     @And("il purpose template {exists} viene associato all'e-service")
@@ -182,12 +166,17 @@ public class PurposeTemplateSteps {
 
         UUID ptId = exists ? createdTemplate.getId() : UUID.randomUUID();
 
-        InlineObject2 o2 = new InlineObject2();
-        o2.setEserviceId(eServiceId);
+        InlineObject2 inlineObject = new InlineObject2();
+        inlineObject.setEserviceId(eServiceId);
+
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject));
+        if (exists) {
+            EServiceDescriptorPurposeTemplate esdPt = (EServiceDescriptorPurposeTemplate) httpCallExecutor.getResponse();
+        }
 
         boolean success = false;
         try {
-            purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, o2);
+            purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject);
             success = true;
         } catch (HttpStatusCodeException e) {
             this.error = e;
@@ -274,18 +263,11 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @When("si aggiorna il purpose template {exists} che è in stato {string}")
-    public void updatePurposeTemplateInStatus(boolean exists, String status) {
-        PurposeTemplateWithCompactCreator pt = purposeTemplateClient.getPurposeTemplate(createdTemplate.getId());
-        assertThat(pt.getState().getValue()).as("TODO MATTEO").isEqualToIgnoringCase(status);
-        updatePurposeTemplate(exists);
-    }
-
     @And("il purpose template {exists} viene spostato in stato {ptState}")
     public void changePurposeTemplateState(boolean exists, PurposeTemplateState ptState) {
         switch (ptState) {
             case DRAFT -> System.out.println("TODO");
-            case ACTIVE -> activatePurposeTemplate(exists);
+            case PUBLISHED -> activatePurposeTemplate(exists);
             case SUSPENDED -> suspendPurposeTemplate(exists);
             case ARCHIVED -> System.out.println("TODO archive");
         }
@@ -298,7 +280,7 @@ public class PurposeTemplateSteps {
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
             assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").equals(PurposeTemplateState.ACTIVE);
+            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").equals(PurposeTemplateState.PUBLISHED);
         }
     }
 
@@ -308,7 +290,7 @@ public class PurposeTemplateSteps {
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
             assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").equals(PurposeTemplateState.ACTIVE);
+            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").equals(PurposeTemplateState.PUBLISHED);
         }
     }
 
@@ -336,7 +318,7 @@ public class PurposeTemplateSteps {
     public void vieneCreatoUnNuovoPurposeTemplateInStato(PurposeTemplateState ptState) {
         createPurposeTemplate();
         switch (ptState) {
-            case ACTIVE -> activatePurposeTemplate(true);
+            case PUBLISHED -> activatePurposeTemplate(true);
             case SUSPENDED -> {
                 activatePurposeTemplate(true);
                 suspendPurposeTemplate(true);

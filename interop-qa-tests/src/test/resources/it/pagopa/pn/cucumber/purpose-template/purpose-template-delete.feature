@@ -45,7 +45,7 @@ Feature: finalità agevolata, purpose template DELETE
 
   #19(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario: [DELETE_PURPOSE_TEMPLATE_KO_IS_NO_CREATOR]
+  Scenario: [DELETE_PURPOSE_TEMPLATE_KO_NO_CREATOR]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"

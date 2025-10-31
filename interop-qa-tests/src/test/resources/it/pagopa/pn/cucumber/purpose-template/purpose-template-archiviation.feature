@@ -23,9 +23,9 @@ Feature: finalità agevolata, purpose template ARCHIVIATION
     When il purpose template creato viene spostato in stato ARCHIVED
     Then si ottiene lo status code 400
     Examples:
-      | state  |
-      | DRAFT  |
-      | ACTIVE |
+      | state     |
+      | DRAFT     |
+      | PUBLISHED |
 
   #57(KO)
   @purposeTemplate @purposeTemplateArchiviation
