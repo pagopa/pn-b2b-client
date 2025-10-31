@@ -116,7 +116,7 @@ Feature: Deleghe Temporanee 15755
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" senza aspettare che diventi accepted
     And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"

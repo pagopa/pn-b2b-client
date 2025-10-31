@@ -114,8 +114,8 @@ public class DelegheTemporaneeSteps {
         String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
         return switch (environment) {
             case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
-            case "test" -> "https://cittadini.test.notifichedigitali.it/io/";
-            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
+            case "test" -> "http://cittadini.test.notifichedigitali.it/io";
+            case "uat" -> "http://cittadini.uat.notifichedigitali.it/io";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         };
     }
