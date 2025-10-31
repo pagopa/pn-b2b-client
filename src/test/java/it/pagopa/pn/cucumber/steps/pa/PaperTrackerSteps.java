@@ -246,7 +246,8 @@ public class PaperTrackerSteps {
                     if (part.startsWith("DOC:")) {
                         String value = part.substring(4).trim();
                         if (value.equalsIgnoreCase("7ZIP")) tags.add("safestorage://PN_PRINTED");
-                        else if (value.equalsIgnoreCase("Plico") || value.equalsIgnoreCase("Indagine") || value.equalsIgnoreCase("AR"))
+                        else if (value.equalsIgnoreCase("Plico") || value.equalsIgnoreCase("Indagine") || value.equalsIgnoreCase("AR")
+                        || value.equalsIgnoreCase("ARCAD") || value.equalsIgnoreCase("23L") )
                             tags.add("safestorage://PN_EXTERNAL_LEGAL_FACTS-");
                     }
                     if (part.startsWith("FAILCAUSE:")) {
