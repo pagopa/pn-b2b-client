@@ -34,6 +34,22 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_BAD_EVENT |
 
 
+  @paperTracker
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_890_ERROR] Si verifica che gli statusCode mancanti nel tracker vengano salvati ma non gestiti
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-GIACENZA-LTE10_890 |
+      | digitalDomicile         | NULL              |
+      | physicalCommunication | AR_REGISTERED_LETTER                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK-GIACENZA-LTE10_890" iun "iun"
+    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: STATUS_CODE_ERROR e flowThrow: "SEQUENCE_VALIDATION" "Via@OK_AR_NO_EVENT_B" "0"
+
 
   @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
