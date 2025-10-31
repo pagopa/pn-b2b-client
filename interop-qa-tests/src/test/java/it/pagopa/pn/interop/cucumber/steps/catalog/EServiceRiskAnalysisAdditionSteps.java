@@ -67,6 +67,8 @@ public class EServiceRiskAnalysisAdditionSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String tenantType = sharedStepsContext.getTenantType();
         RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantType, false);
+        var answers = eServiceRiskAnalysisSeed.getRiskAnalysisForm().getAnswers();
+        answers.remove("usesPersonalData");
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(eServicesCommonContext.getEserviceId(),

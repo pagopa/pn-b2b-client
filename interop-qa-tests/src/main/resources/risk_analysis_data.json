@@ -23,7 +23,7 @@
     "uncompleted": {
       "institutionalPurpose": ["prova prova prova"],
       "isRequestOnBehalfOfThirdParties": ["NO"],
-      "purpose": ["INSTITUTIONAL"],
+      "usesPersonalData": ["NO"],
       "usesThirdPartyPersonalData": ["NO"]
     }
   }

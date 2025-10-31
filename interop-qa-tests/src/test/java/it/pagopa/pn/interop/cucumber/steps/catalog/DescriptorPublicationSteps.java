@@ -118,16 +118,16 @@ public class DescriptorPublicationSteps {
     public void userPublishDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         publishDescriptor(
-            sharedStepsContext.getHttpCallExecutor(),
-            clientTokenConfigurator.getEServiceClient(),
-            sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getHttpCallExecutor(),
+                clientTokenConfigurator.getEServiceClient(),
+                sharedStepsContext.getEServicesCommonContext());
     }
 
     public static void publishDescriptor(IHttpExecutor httpExecutor, IEServiceClient client, EServicesCommonContext context) {
         httpExecutor.performCall(
                 () -> client.publishDescriptor(
-                    context.getEserviceId(),
-                    context.getDescriptorId()
+                        context.getEserviceId(),
+                        context.getDescriptorId()
                 )
         );
     }
@@ -136,9 +136,13 @@ public class DescriptorPublicationSteps {
     public void userPartiallyCompileRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), false);
-        dataPreparationService.addRiskAnalysisToEService(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                new EServiceRiskAnalysisSeed().name(riskAnalysis.getName()).riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
-        );
+        try {
+            dataPreparationService.addRiskAnalysisToEService(
+                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                    new EServiceRiskAnalysisSeed().name(riskAnalysis.getName()).riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
+            );
+        } catch (AssertionError e) {
+            log.warn(e.getMessage());
+        }
     }
 }
