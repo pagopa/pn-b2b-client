@@ -61,6 +61,10 @@ public class DelegheTemporaneeSteps {
 
     private HttpStatusCodeException error;
 
+    private static final String WRONG_NONCE_00000 = "SHfG4qyZtIRQHVsM6XDhZUrlqX0A-rHvenifCW_1PIOG-hPXrICO2NfQVwlTqFehQOVJeT2pL71C0JQcqdqOE85xB5UPhwOcQRCTxXm7Dsl3Z3_daMwQFrCVhIjv6EPWOIrJB-ieAmo0RxBSAggaPUFegGz3ce5vFiXeYAmBOY3DpfuGj3webTj4VgXEvhy-iDegHUCyIVTZLPkbCiB_E_PpSt3clGDf8iS8yGK-iE9ODWRe7at_spFaTb9DCHxVYSXbdVIBVy8oA14uo9GVN1xsV-XN772BUIjLqlcRLqyVwn6a-vrYqCN3ywtdcGdN_AcrWeKUANUIad2m0K3FTA==";
+
+    private static final String WRONG_MRTD_DG1 = "YV1fH1pJPElUQUFBMTIzNDU2Nzg8PDw8PDw8PDw8PDw8PDw4MDAxMDE0TTI2MTAzMTNJVEE8PDw8PDw8PDw8PDRST1NTSTw8TUFSSU88PDw8PDw8PDw8PDw8PDw8PDw=";
+
     private static final String QRCODE_FROM_HOTFIX = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
     @Autowired
@@ -106,6 +110,16 @@ public class DelegheTemporaneeSteps {
         }
     }
 
+    private String getQRPathEnvironmentBased() {
+        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        return switch (environment) {
+            case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
+            case "test" -> "https://cittadini.test.notifichedigitali.it/io/";
+            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
+            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
+        };
+    }
+
     @Then("la delega temporanea è stata correttamente creata")
     public void checkMandateCreation() {
         assertThat(mandateCreationResponse).as("La response di creazione delega non dev'essere null").isNotNull();
@@ -123,7 +137,6 @@ public class DelegheTemporaneeSteps {
         CIEValidationData cieValidationData = getCieValidationData(delegatorTaxId, mandateDtoB2b.getVerificationCode(), inputParamsType);
 
         switch (inputParamsType.toUpperCase()) {
-            //TODO:
             //mandateId valido ma inesistente preso da ambiente di hotfix destinato a dare 404 quando la suite gira in DEV/TEST/UAT
             case "MANDATE ID INESISTENTE" -> mandateId = "82e80ed2-d93b-4e85-9767-cc6ae150fb80";
             case "MANDATE ID NON VALIDO" -> mandateId += "invalid";
@@ -134,27 +147,16 @@ public class DelegheTemporaneeSteps {
                 cieValidationData.setNisData(null);
                 cieValidationData.setSignedNonce(null);
             }
-            case "SIGNED NONCE ERRATO" -> {
-                String signedNonce = cieValidationData.getSignedNonce();
-                String firstChar = signedNonce.substring(0, 1);
-                String replacement = firstChar.equals("A") ? "B" : "A";
-                signedNonce = replacement + signedNonce.substring(1);
-                cieValidationData.setSignedNonce(signedNonce);
-            }
+            //1 possibilità su 100.000 che fallisca, qualora il nonce generato sia proprio 00000
+            case "SIGNED NONCE ERRATO" -> cieValidationData.setSignedNonce(WRONG_NONCE_00000);
             case "NIS DATA CIE ERRATO" -> {
-                String nisData = cieValidationData.getNisData().getNis();
-                String firstChar = nisData.substring(0, 1);
+                String nisDataPubKey = cieValidationData.getNisData().getPubKey();
+                String firstChar = nisDataPubKey.substring(0, 1);
                 String replacement = firstChar.equals("A") ? "B" : "A";
-                nisData = replacement + nisData.substring(1);
-                cieValidationData.getNisData().setNis(nisData + "wrong");
+                nisDataPubKey = replacement + nisDataPubKey.substring(1);
+                cieValidationData.getNisData().setPubKey(nisDataPubKey);
             }
-            case "MRTD DATA CIE ERRATO" -> {
-                String mrtdDataDg1 = cieValidationData.getMrtdData().getDg1();
-                String firstChar = mrtdDataDg1.substring(0, 1);
-                String replacement = firstChar.equals("A") ? "B" : "A";
-                mrtdDataDg1 = replacement + mrtdDataDg1.substring(1);
-                cieValidationData.getMrtdData().setDg1(mrtdDataDg1);
-            }
+            case "MRTD DATA CIE ERRATO" -> cieValidationData.getMrtdData().setDg1(WRONG_MRTD_DG1);
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
         try {
@@ -297,13 +299,6 @@ public class DelegheTemporaneeSteps {
         mandateDtoB2b.setVerificationCode(nonce);
     }
 
-    @Given("TODO remove calcolo il qrCode dello notifica con iun {string}")
-    public void calcoloIlQrCodeDelloNotificaConIun(String iun) {
-        qrCode = "http://cittadini.notifichedigitali.it/io?aar=" +
-                (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, 0));
-        log.info("QRCODE = " + qrCode);
-    }
-
     @Given("vengono settati i parametri per il tool CIE")
     public void setToolCieParameter() {
         log.info("Inizio il setting dei parametri");
@@ -320,15 +315,5 @@ public class DelegheTemporaneeSteps {
         System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
         log.info("Parametri settati");
         System.getenv().entrySet().forEach(x -> System.out.println("PARAM : " + x));
-    }
-
-    private String getQRPathEnvironmentBased() {
-        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
-        return switch (environment) {
-            case "dev" -> "http://cittadini.notifichedigitali.it/io";
-            case "test" -> "https://cittadini.test.notifichedigitali.it/io/";
-            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
-            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
-        };
     }
 }

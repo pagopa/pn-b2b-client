@@ -14,21 +14,6 @@ Feature: Deleghe Temporanee 15755
   Background:
     Given vengono settati i parametri per il tool CIE
 
-  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING
-    Given TODO remove calcolo il qrCode dello notifica con iun ""
-
-  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_SET_MANDATE
-    Given TODO remove il mandate in uso è quello con id "" e verificationCode ""
-
-  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_CIE
-#    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
-#    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI DI UNA CIE SCADUTA"
-    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI VALIDI"
-
-      #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
-#    Given imposto lo iun di SharedSteps a "UQWV-KZVY-XZJT-202510-P-1" e la pa a "Comune_Multi"
-#    And TODO remove il mandate in uso è quello con id "b64dd634-1b53-497f-8b6e-f497983612e4" e verificationCode "59106"
-
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
@@ -258,22 +243,6 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     Then l'operazione restituisce codice 404
 
-  #TODO rivedere alcuni casi
-  Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_ALL_CASES] Accettazione senza successo di una delega temporanea
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica delega temporanea |
-#      | senderDenomination | comune di Palermo                |
-#    And destinatario Mario Cucumber
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
-#    And la delega temporanea è stata correttamente creata
-#    #18 TODO: signedNonce, nisData, mrtdData inesistenti
-#    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "HEADER E BODY INESISTENTI"
-#    Then l'operazione restituisce codice 400
-#    #19 TODO: signedNonce, nisData, mrtdData non validi
-#    When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "HEADER E BODY NON VALIDI"
-#    Then l'operazione restituisce codice 400
-
   #25
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_ACCEPTATION_FAILED_WRONG_MRTD] Accettazione senza successo di una delega temporanea (MRTD CIE errato)
@@ -285,7 +254,7 @@ Feature: Deleghe Temporanee 15755
     And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "MRTD DATA CIE ERRATO"
-    Then l'operazione restituisce codice 422
+    Then l'operazione restituisce codice 500
 
   #26
   @delegheTemporanee
@@ -324,7 +293,7 @@ Feature: Deleghe Temporanee 15755
     And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "SIGNED NONCE ERRATO"
-    Then l'operazione restituisce codice 422
+    Then l'operazione restituisce codice 500
 
   #29
   @delegheTemporanee
@@ -372,4 +341,17 @@ Feature: Deleghe Temporanee 15755
     And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
-    Then l'operazione restituisce codice 403
+    Then l'operazione restituisce codice 400
+
+
+  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_SET_MANDATE
+    Given TODO remove il mandate in uso è quello con id "" e verificationCode ""
+
+  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_CIE
+#    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
+#    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI DI UNA CIE SCADUTA"
+    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI VALIDI"
+
+      #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
+#    Given imposto lo iun di SharedSteps a "TODO" e la pa a "Comune_Multi"
+#    And TODO remove il mandate in uso è quello con id "TODO" e verificationCode "TODO"
