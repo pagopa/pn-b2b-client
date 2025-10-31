@@ -18,10 +18,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.springframework.http.ResponseEntity;
 
 public interface IM2MEServiceTemplateClient extends SettableBearerToken {
-    // TODO 07/10/2025 approssimazione di un oggetto la cui specifica non è ancora nota.
-    //  Adattare una volta rilasciata la specifica.
     @Data
     @Builder
     class EServiceTemplateVersionCreationRequest {
@@ -83,7 +82,7 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     // TODO: aggiornare ad API m2m appena disponibili
     CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload);
 
-    EServiceTemplateVersion createEserviceTemplateVersion(
+    ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
         UUID templateId,
         EServiceTemplateVersionCreationRequest request);
 

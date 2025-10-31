@@ -396,34 +396,52 @@ Feature: Test API M2M of e-service template
   @e-service-template-m2m-delete
   Scenario: [INTEROP-EST-M2M-DELETE_03] Un utente NON può effettuare la cancellazione di un e-service template indicando un auth. token non valido
     Given viene impostato per l'utente un token m2m non valido
-    And l'utente tenta di effettuare la cancellazione dell'e-service template
+    When l'utente tenta di effettuare la cancellazione di un e-service template inesistente
     Then si ottiene lo status code 401
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
-  Scenario: [INTEROP-EST-M2M-DELETE_04] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service template
+  Scenario: [INTEROP-EST-M2M-DELETE_04] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template inesistente
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la cancellazione di un e-service template inesistente
     Then si ottiene lo status code 404
 
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
-  Scenario: [INTEROP-EST-M2M-DELETE_05] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service template
+  Scenario: [INTEROP-EST-M2M-DELETE_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato DRAFT che non gli appartiene
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service template
     Then si ottiene lo status code 404
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'e-service template esiste ancora
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
-  Scenario Outline: [INTEROP-EST-M2M-DELETE_07] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato non-DRAFT
+  Scenario Outline: [INTEROP-EST-M2M-DELETE_05_B] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato non-DRAFT che non gli appartiene
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la cancellazione dell'e-service template
+    Then si ottiene lo status code 403
+    # non si torna all'utente PA1 perché PA2 DEVE poter visualizzare il template di PA1
+    And l'e-service template esiste ancora
+    Examples:
+      | mode        | state       |
+      | erogazione  | PUBLISHED   |
+      | erogazione  | SUSPENDED   |
+      | erogazione  | DEPRECATED  |
+
+  @m2m-parte2-ottobre
+  @e-service-template-m2m-delete
+  Scenario Outline: [INTEROP-EST-M2M-DELETE_06] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato non-DRAFT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service template
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 409
     And l'e-service template esiste ancora
     Examples:
       | mode        | state       |
@@ -436,7 +454,7 @@ Feature: Test API M2M of e-service template
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
-  Scenario Outline: [INTEROP-EST-M2M-VERSION-CREATE_01] Un utente con ruolo M2M-ADMIN può effettuare la creazione di una versione di un e-service template in stato PUBLISHED o SUSPENDED
+  Scenario Outline: [INTEROP-EST-M2M-VERSION-CREATE_01_A] Un utente con ruolo M2M-ADMIN può effettuare la creazione di una versione di un e-service template la cui precedente versione è in un qualsiasi stato diverso da DRAFT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -452,8 +470,23 @@ Feature: Test API M2M of e-service template
       | stato       |
       | PUBLISHED   |
       | SUSPENDED   |
-      | DEPRECATED  |
-    # TODO non certa la legittimità di "DEPRECATED", verificare
+
+  @m2m-parte2-ottobre
+  @e-service-template-m2m-version-create
+  Scenario: [INTEROP-EST-M2M-VERSION-CREATE_01_B] Un utente con ruolo M2M-ADMIN può effettuare la creazione di una versione di un e-service template in cui una precedente versione è in stato DEPRECATED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DEPRECATED
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And [si prende nota del vecchio stato delle versioni dell'e-service template]
+    And l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template
+    Then si ottiene response status code 201
+    And la nuova versione dell'e-service template è stata restituita correttamente
+    And [si prende nota del nuovo stato delle versioni dell'e-service template]
+    And l'ultima versione dell'e-service template è stata creata correttamente
+    And la versione 1 dell'e-service template non ha subito modifiche
+    And la versione 2 dell'e-service template non ha subito modifiche
+    And le versioni dell'e-service template sono un totale di 3
+      # 3 perché l'avere una versione in stato DEPRECATED ha implicato la pubblicazione di una seconda versione già all'inizio
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
@@ -474,9 +507,10 @@ Feature: Test API M2M of e-service template
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
-  Scenario: [INTEROP-EST-M2M-VERSION-CREATE_03] Un utente NON può effettuare la creazione di una versione di un e-service template in stato DRAFT
+  Scenario: [INTEROP-EST-M2M-VERSION-CREATE_03] Un utente NON può effettuare la creazione di una versione di un e-service template la cui precedente versione è in stato DRAFT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template
     Then si ottiene response status code 409
 
@@ -485,7 +519,7 @@ Feature: Test API M2M of e-service template
   Scenario Outline: [INTEROP-EST-M2M-VERSION-CREATE_04] Un utente NON può effettuare la creazione di una versione di un e-service template che non gli appartiene
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "admin" di "PA2"
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template
     Then si ottiene response status code 403
     Examples:
@@ -496,7 +530,7 @@ Feature: Test API M2M of e-service template
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
   Scenario: [INTEROP-EST-M2M-VERSION-CREATE_05] Un utente NON può effettuare la creazione di una nuova versione di un e-service template inesistente
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente
     Then si ottiene response status code 404
 
@@ -506,7 +540,3 @@ Feature: Test API M2M of e-service template
     Given viene impostato per l'utente un token m2m non valido
     When l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente
     Then si ottiene response status code 401
-
-
-
-  # TODO adeguare i test di quest'ultima POST agli scenari di Stefano Netti

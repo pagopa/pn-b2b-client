@@ -3,7 +3,6 @@
 Feature: Gestione degli attributi certificati degli e-services attraverso APIs M2M V2
 
   # TODO: strategia basata su snapshots - di cui gli step tra parentesi quadre sono perno - da rivedere
-  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8006
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -35,7 +34,6 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
       | SUSPENDED   |
       | DEPRECATED  |
 
-  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8007
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -51,7 +49,6 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
-  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8007
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_B] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato ARCHIVED (Parte2#Scenario intorno a 114)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -83,7 +80,6 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And [si prende nota dello stato degli attributi certificati del gruppo dell'e-service]
     And gli attributi certificati del gruppo dell'e-service sono rimasti invariati
 
-  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7992
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"

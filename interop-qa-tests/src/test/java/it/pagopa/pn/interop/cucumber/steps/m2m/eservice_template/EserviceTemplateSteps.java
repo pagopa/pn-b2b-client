@@ -301,13 +301,17 @@ public class EserviceTemplateSteps {
     @When("l'utente tenta di effettuare la cancellazione dell'e-service template")
     public void deleteEServiceTemplate() {
         UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        m2mEServiceTemplateClient.deleteEServiceTemplate(templateId);
+        deleteEServiceTemplate(templateId);
     }
 
     @When("l'utente tenta di effettuare la cancellazione di un e-service template inesistente")
     public void deleteNonExistentEServiceTemplate() {
         UUID templateId = UUID.randomUUID();
-        m2mEServiceTemplateClient.deleteEServiceTemplate(templateId);
+        deleteEServiceTemplate(templateId);
+    }
+
+    private void deleteEServiceTemplate(UUID templateId) {
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.deleteEServiceTemplate(templateId));
     }
 
     @Then("l'e-service template non esiste( più)")
@@ -353,7 +357,7 @@ public class EserviceTemplateSteps {
     public void createEServiceTemplateVersion() {
         EServiceTemplateVersionCreationRequest request = buildVersionCreationRequest();
         UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.createEserviceTemplateVersion(templateId, request));
+        httpCallExecutor.performCallSavingBodyResponse(() -> m2mEServiceTemplateClient.createEserviceTemplateVersion(templateId, request));
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             this.lastVersionCreationRequest = request;
         }
@@ -372,7 +376,7 @@ public class EserviceTemplateSteps {
     @When("l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente")
     public void createEServiceTemplateVersionInUnexistentTemplate() {
         EServiceTemplateVersionCreationRequest request = buildVersionCreationRequest();
-        httpCallExecutor.performCall(
+        httpCallExecutor.performCallSavingBodyResponse(
             () -> m2mEServiceTemplateClient.createEserviceTemplateVersion(UUID.randomUUID(), request));
     }
 
@@ -385,18 +389,24 @@ public class EserviceTemplateSteps {
 
     @Then("l'ultima versione dell'e-service template è stata creata correttamente")
     public void checkCreatedEServiceTemplateVersion() {
-        List<EServiceTemplateVersion> currentVersions = this.newVersionsSnapshot.getResults();
-        EServiceTemplateVersion createdVersion = currentVersions.get(currentVersions.size() - 1);
-
+        EServiceTemplateVersion createdVersion = getLastVersion(this.newVersionsSnapshot);
         Integer previousVersionNumber = getLastVersionNumber(this.oldVersionsSnapshot);
 
         checkEServiceTemplateVersionConsistency(createdVersion, this.lastVersionCreationRequest, previousVersionNumber);
     }
 
+    private static EServiceTemplateVersion getLastVersion(
+        EServiceTemplateVersions oldVersionsSnapshot1) {
+        List<EServiceTemplateVersion> versions = oldVersionsSnapshot1.getResults();
+        return versions.stream()
+            .reduce((a, b) -> a.getVersion() > b.getVersion() ? a : b)
+            .orElseThrow(() -> new IllegalStateException("L'ultima versione creata non risulta presente tra quelle ottenute"));
+    }
+
     private static Integer getLastVersionNumber(EServiceTemplateVersions oldVersionsSnapshot1) {
-        List<EServiceTemplateVersion> previousVersions = oldVersionsSnapshot1.getResults();
-        EServiceTemplateVersion previousVersion = previousVersions.get(previousVersions.size() - 1);
-        return previousVersion.getVersion();
+        EServiceTemplateVersion version = getLastVersion(
+            oldVersionsSnapshot1);
+        return version.getVersion();
     }
 
     private void checkEServiceTemplateVersionConsistency(
@@ -414,29 +424,37 @@ public class EserviceTemplateSteps {
 
             EServiceTemplateVersionState expectedState = EServiceTemplateVersionState.DRAFT;
             softly.assertThat(version.getState())
-                .as("Verifica che lo stato della versionesia " + expectedState)
+                .as("Verifica che lo stato della versione sia " + expectedState)
                 .isEqualTo(expectedState);
 
             softly.assertThat(version.getVersion())
-                .as("Verifica che il numero di versione della versione sia immediatamente successivo a quello della precedente")
+                .as("Verifica che il numero di versione sia immediatamente successivo a quello della precedente")
                 .isEqualTo(previousVersionNumber + 1);
         });
     }
 
     @Then("la versione {int} dell'e-service template non ha subito modifiche")
-    public void checkPreviousEServiceTemplateVersion(int versionIndex) {
+    public void checkPreviousEServiceTemplateVersion(int versionNumber) {
         int oldSnapshotSize = oldVersionsSnapshot.getResults().size();
         int newSnapshotSize = newVersionsSnapshot.getResults().size();
-        if(oldSnapshotSize < versionIndex || newSnapshotSize < versionIndex) {
+        if(oldSnapshotSize < versionNumber || newSnapshotSize < versionNumber) {
             throw new IllegalArgumentException("L'indice di versione indicata eccede una delle "
                 + "snapshot a disposizione. Old snapshot size: %d. New snapshot size: %d"
                 .formatted(oldSnapshotSize, newSnapshotSize));
         }
 
-        assertThat(newVersionsSnapshot.getResults().get(versionIndex - 1))
+        assertThat(getTemplateVersionByVersionNumber(newVersionsSnapshot.getResults(), versionNumber))
             .as("Verifica che la versione di indice %d dell'e-service template non abbia subito modifiche")
-            .isEqualTo(oldVersionsSnapshot.getResults().get(versionIndex - 1));
+            .isEqualTo(getTemplateVersionByVersionNumber(oldVersionsSnapshot.getResults(), versionNumber));
     }
+
+    private EServiceTemplateVersion getTemplateVersionByVersionNumber(List<EServiceTemplateVersion> versions, int versionNumber) {
+        return versions.stream()
+            .filter(version -> version.getVersion().equals(versionNumber))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("La versione cercata non risulta presente tra quelle ottenute"));
+    }
+
     @Then("le versioni dell'e-service template sono un totale di {int}")
     public void checkEServiceTemplateVersionsQuantity(int versionsQuantity) {
         assertThat(newVersionsSnapshot.getResults())

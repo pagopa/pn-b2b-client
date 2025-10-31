@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -102,11 +103,12 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
-    public EServiceTemplateVersion createEserviceTemplateVersion(
+    public ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
         UUID templateId,
         EServiceTemplateVersionCreationRequest request) {
-        // TODO 07/10/2025 riempitivo per un API la cui specifica non è ancora nota. Adattare una volta rilasciata.
-        return new EServiceTemplateVersion();
+        return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(
+            templateId,
+            this.mapper.mapCreationRequestToSeed(request));
     }
 
     @Override
@@ -157,6 +159,6 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
 
     @Override
     public void deleteEServiceTemplate(UUID templateId) {
-        // TODO 06/10/2025 da completare una volta disponibili le APIs V2 di ottobre
+        eserviceTemplatesApi.deleteEServiceTemplate(templateId);
     }
 }
