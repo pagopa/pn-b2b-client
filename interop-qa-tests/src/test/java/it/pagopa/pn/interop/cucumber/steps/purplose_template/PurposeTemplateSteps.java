@@ -55,19 +55,14 @@ public class PurposeTemplateSteps {
     public void createPurposeTemplate() {
         PurposeTemplateSeed request = new PurposeTemplateSeed();
         request.setPurposeTitle(getTitleWithDate());
-        request.setPurposeDescription("test");
+        request.setPurposeDescription("almeno 10 caratteri");
+        request.setTargetTenantKind(TenantKind.PA);
 
-        boolean success = false;
-        CreatedResource response = null;
-        try {
-            response = purposeTemplateClient.createPurposeTemplate(request);
-            success = true;
-            this.createdTemplate = response;
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
-        if (success) {
-            assertThat(createdTemplate).as("Il purpose template creato non dev'essere null").isNotNull();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(request));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            createdTemplate = (CreatedResource) httpCallExecutor.getResponse();
+        } else {
+            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
