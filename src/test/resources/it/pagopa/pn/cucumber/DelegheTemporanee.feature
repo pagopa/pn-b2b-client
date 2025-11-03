@@ -346,15 +346,24 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
     Then l'operazione restituisce codice 400
 
-
-  Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_SET_MANDATE
-    Given TODO remove il mandate in uso è quello con id "" e verificationCode ""
-
   Scenario: TODO_REMOVE_ONLY_FOR_TESTING_AND_DEBUGGING_CIE
 #    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
 #    Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI DI UNA CIE SCADUTA"
     Given TODO remove test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI VALIDI"
 
-      #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
-#    Given imposto lo iun di SharedSteps a "TODO" e la pa a "Comune_Multi"
-#    And TODO remove il mandate in uso è quello con id "TODO" e verificationCode "TODO"
+  #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
+  #    Given imposto lo iun di SharedSteps a "TODO" e la pa a "Comune_Multi"
+#    And TODO remove il mandate in uso è quello con id "ba5dc3ec-b04a-40cf-baaf-3e654fb6cce5" e verificationCode "87980"
+  Scenario: [TEST MANUALI]
+
+    When viene effettuata una richiesta di creazione delega con i seguenti parametri:
+      | delegate  | CucumberSpa    |
+      | delegator | Mario Cucumber |
+      | dateFrom  | TODAY          |
+      | dateTo    | TOMORROW       |
+
+#    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+#    When "Mario Gherkin" viene delegato da "Mario Cucumber"
+#    And "Mario Gherkin" rifiuta la delega ricevuta da "Mario Cucumber"
+#    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
+#    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
