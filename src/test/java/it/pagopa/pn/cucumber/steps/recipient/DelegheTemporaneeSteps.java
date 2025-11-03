@@ -265,11 +265,10 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    @And("{string} recupera lato web PA una notifica vecchia 120 o più giorni inviata a {destinatario} e non a {destinatario}")
-    public void retrieveNotification120DaysOldByIunWebPaSide(String paName, Destinatario recipient, Destinatario notRecipient) {
+    @And("{string} recupera lato web PA una notifica vecchia 120 o più giorni inviata a {destinatario}")
+    public void retrieveNotification120DaysOldByIunWebPaSide(String paName, Destinatario recipient) {
         sharedSteps.setPA(paName);
         String recipientTaxId = recipient.getTaxId();
-        String notRecipientTaxId = notRecipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         BffNotificationsResponse bffNotificationsResponse = sharedSteps.getWebPaClient().searchSentNotification(
                 todayDate.minusDays(130),
@@ -279,10 +278,9 @@ public class DelegheTemporaneeSteps {
         assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere null").isNotNull();
         assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere vuota").isNotEmpty();
         NotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
-//                        n -> n.getRecipients().contains(recipientTaxId) && !n.getRecipients().contains(notRecipientTaxId))
                         n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
-        assertThat(result).as("Nessuna notifica trovato con destinatario " + recipientTaxId + " e non " + notRecipientTaxId).isNotNull();
+        assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
         FullSentNotificationV27 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(result.getIun());
         sharedSteps.setNotificationIun(notifica120.getIun());
         log.info("IUN OLDER 120 GG: " + notifica120.getIun());
