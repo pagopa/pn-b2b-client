@@ -279,7 +279,8 @@ public class DelegheTemporaneeSteps {
         assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere null").isNotNull();
         assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie 120 giorni non dev'essere vuota").isNotEmpty();
         NotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
-                        n -> n.getRecipients().contains(recipientTaxId) && !n.getRecipients().contains(notRecipientTaxId))
+//                        n -> n.getRecipients().contains(recipientTaxId) && !n.getRecipients().contains(notRecipientTaxId))
+                        n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
         assertThat(result).as("Nessuna notifica trovato con destinatario " + recipientTaxId + " e non " + notRecipientTaxId).isNotNull();
         FullSentNotificationV27 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(result.getIun());
