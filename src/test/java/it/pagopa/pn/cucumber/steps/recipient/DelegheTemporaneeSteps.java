@@ -285,7 +285,7 @@ public class DelegheTemporaneeSteps {
         FullSentNotificationV27 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(result.getIun());
         sharedSteps.setNotificationIun(notifica120.getIun());
         log.info("IUN OLDER 120 GG: " + notifica120.getIun());
-        log.info("RECIPIENTS OLDER 120 GG: " + notifica120.getRecipients());
+        log.info("RECIPIENTS OLDER 120 GG: " + notifica120.getRecipients().stream().map(r -> r.getTaxId()).toList());
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {
