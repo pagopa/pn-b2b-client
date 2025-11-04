@@ -22,6 +22,6 @@ public class ConfirmSmsBodyStrategy implements ITemplateEngineStrategy{
 
     @Override
     public String getTextToCheckLanguage(String language) {
-        return "Conferma questo numero di cellulare come recapito digitale a cui ricevere gli avvisi di cortesia inserendo su SEND il codice";
+        return "Conferma questo numero di cellulare come recapito digitale a cui ricevere gli avvisi inserendo su SEND il codice %s.";
     }
 }
