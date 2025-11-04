@@ -236,6 +236,8 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
         String eServiceName) {
+        /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
+         * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
         return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null);
     }
 

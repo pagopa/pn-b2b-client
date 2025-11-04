@@ -85,6 +85,15 @@ public class DelegationCommonStep {
     /* Questo step è un condensato di molti degli step del test [TC_CAPOFILA_PUB_1] */
     @Given("{string} ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando {string} come delegato")
     public void createWFAEService(String producer, String delegate) {
+        buildWFAEService(producer, delegate, true);
+    }
+
+    @Given("{string} porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando {string} come delegato")
+    public void bringDescriptorToStateWFA(String producer, String delegate) {
+        buildWFAEService(producer, delegate, false);
+    }
+
+    private void buildWFAEService(String producer, String delegate, boolean createEService) {
         // Il delegato dà la disponibilità a ricevere deleghe in erogazione
         clientTokenConfigurator.setBearerToken(identityService.getToken(delegate, null));
         DelegationCreateStep.setDelegationAvailability(
@@ -97,16 +106,20 @@ public class DelegationCommonStep {
             tenantsApi,
             pollingService);
 
-        // Il delegante crea l'e-service e vi associa un'interfaccia
         clientTokenConfigurator.setBearerToken(identityService.getToken(producer, null));
-        CatalogCommonSteps.createEServiceWithDescriptor(
-            "DRAFT",
-            dataPreparationService,
-            sharedStepsContext.getEServicesCommonContext());
+
+        if (createEService) {
+            // Il delegante crea l'e-service e vi associa un'interfaccia
+            CatalogCommonSteps.createEServiceWithDescriptor(
+                "DRAFT",
+                dataPreparationService,
+                sharedStepsContext.getEServicesCommonContext());
+        }
+
+        // Il associa un'interfaccia all'e-service
         dataPreparationService.addInterfaceToDescriptor(
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-            sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-        );
+            sharedStepsContext.getEServicesCommonContext().getDescriptorId());
 
         // Il delegante inoltra la richiesta di delega all'ente delegato
         DelegationCreateStep.createDelegate(

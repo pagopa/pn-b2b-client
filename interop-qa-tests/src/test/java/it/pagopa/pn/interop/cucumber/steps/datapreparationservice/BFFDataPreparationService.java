@@ -386,6 +386,10 @@ public class BFFDataPreparationService {
             .build();
     }
 
+    public Attribute createAttribute(AttributeKind attributeKind) {
+        return this.createAttribute(attributeKind, null);
+    }
+
     public Attribute createAttribute(AttributeKind attributeKind, String name) {
         String actualName = name == null ? String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         switch (attributeKind) {
