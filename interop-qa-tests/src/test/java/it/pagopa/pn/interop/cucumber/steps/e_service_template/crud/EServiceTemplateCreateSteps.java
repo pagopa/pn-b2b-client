@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
@@ -45,6 +46,7 @@ public class EServiceTemplateCreateSteps {
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
     private final DelayService delayService;
+    private final IdentityService identityService;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -64,6 +66,7 @@ public class EServiceTemplateCreateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
         this.delayService = delayService;
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
@@ -103,6 +106,13 @@ public class EServiceTemplateCreateSteps {
             testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
         }
         testAssistant.mutateLastVersionState(desiredState);
+    }
+
+    @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")
+    public void mutateEServiceTemplateState(String tenantType, EServiceTemplateVersionState desiredState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        testAssistant.mutateLastVersionState(desiredState);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")

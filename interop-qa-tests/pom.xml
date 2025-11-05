@@ -312,7 +312,13 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+                            <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.8.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+
+                            <!-- TODO 23/10/2025 momentaneamente necessario per non provocare il fallimento di OpenAPI Generator a seguito di errori nella specifica.
+                                  Identificare suddetti errori e segnalarli al team DEV. -->
+                            <skipValidateSpec>true</skipValidateSpec>
+
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -342,7 +348,7 @@
                     </execution>
 
                 </executions>
-            </plugin>
+             </plugin>
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-compiler-plugin</artifactId>
