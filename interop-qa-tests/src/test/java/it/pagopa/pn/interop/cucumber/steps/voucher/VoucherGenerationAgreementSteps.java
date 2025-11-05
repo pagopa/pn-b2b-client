@@ -2,14 +2,14 @@ package it.pagopa.pn.interop.cucumber.steps.voucher;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.ClientType;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.UUID;
@@ -19,11 +19,11 @@ public class VoucherGenerationAgreementSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
 
     public VoucherGenerationAgreementSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        DataPreparationService dataPreparationService) {
+        BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -35,7 +35,7 @@ public class VoucherGenerationAgreementSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         dataPreparationService.activateAgreement(
             sharedStepsContext.getAgreementId(),
-            clientType
+            clientType, null
         );
     }
 
@@ -159,7 +159,7 @@ public class VoucherGenerationAgreementSteps {
     @Given("{string} approva quella richiesta di fruizione")
     public void approveAgreement(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, null);
     }
 
     private static void handleUnknownAttributeKind(String attributeKind) {

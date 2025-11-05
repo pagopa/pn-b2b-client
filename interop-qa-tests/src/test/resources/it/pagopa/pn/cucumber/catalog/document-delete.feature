@@ -9,25 +9,32 @@ Feature: Cancellazione di un documento
     When l'utente cancella quel documento
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statoDescrittore | risultato |
       | GSP  | admin        | DRAFT            |       204 |
       | GSP  | api          | DRAFT            |       204 |
-      | GSP  | security     | DRAFT            |       403 |
       | GSP  | api,security | DRAFT            |       204 |
-      | GSP  | support      | DRAFT            |       403 |
       | PA1  | admin        | DRAFT            |       204 |
       | PA1  | api          | DRAFT            |       204 |
-      | PA1  | security     | DRAFT            |       403 |
       | PA1  | api,security | DRAFT            |       204 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statoDescrittore | risultato |
+      | GSP  | security     | DRAFT            |       403 |
+      | GSP  | support      | DRAFT            |       403 |
+      | PA1  | security     | DRAFT            |       403 |
       | PA1  | support      | DRAFT            |       403 |
 
+    @happy-path
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
       | GSP  | admin | PUBLISHED        |       204 |
       | GSP  | admin | SUSPENDED        |       204 |
       | GSP  | admin | DEPRECATED       |       204 |
 
+  @sad-path
   @document_delete2
   Scenario: Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED alla richiesta di cancellazione di un documento precedentemente caricato, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -35,6 +42,7 @@ Feature: Cancellazione di un documento
     When l'utente cancella quel documento
     Then si ottiene status code 400
 
+  @happy-path
   @document_delete3
   Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di cancellazione di un'interfaccia precedentemente caricata, l'operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -42,6 +50,7 @@ Feature: Cancellazione di un documento
     When l'utente cancella quell'interfaccia
     Then si ottiene status code 204
 
+  @sad-path
   @document_delete4
   Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, ARCHIVED, DEPRECATED, SUSPENDED), alla richiesta di cancellazione di un'interfaccia precedentemente caricata, si ottiene un errore
     Given l'utente è un "admin" di "PA1"

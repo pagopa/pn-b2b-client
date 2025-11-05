@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
@@ -71,12 +73,19 @@ public abstract class SessionTokenFactory {
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("jti", "uuid");
     }
 
+    @Getter
     private final InteropClientConfigs interopClientConfigs;
-    private ConfigFileReader configFileReader;
+    private final ConfigFileReader configFileReader;
+    private final KmsClient kmsClient;
 
-    public SessionTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
+    public SessionTokenFactory(
+        InteropClientConfigs interopClientConfigs,
+        ConfigFileReader configFileReader,
+        KmsClient kmsClient
+    ) {
         this.interopClientConfigs = interopClientConfigs;
         this.configFileReader = configFileReader;
+        this.kmsClient = kmsClient;
     }
 
     public abstract Map<String, Map<String, List<String>>> loadToken();
@@ -305,7 +314,7 @@ public abstract class SessionTokenFactory {
                 .signingAlgorithm(CONFIG.get("kms").get("alg"))
                 .build();
 
-        SignResponse response = KmsClient.create().sign(signRequest);
+        SignResponse response = this.kmsClient.sign(signRequest);
         if (response == null) {
             throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
         }
@@ -328,7 +337,7 @@ public abstract class SessionTokenFactory {
                 .signature(signature.signature())
                 .build();
 
-        VerifyResponse response = KmsClient.create().verify(verifyRequest);
+        VerifyResponse response = this.kmsClient.verify(verifyRequest);
         if (isNotTrue(response.signatureValid())) {
             throw new IllegalArgumentException("JWT Verify Signature failed");
         }

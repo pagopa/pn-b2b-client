@@ -12,6 +12,9 @@ public class InteropClientConfigs {
     @Value("${bff.base-url}")
     private String baseUrl;
 
+    @Value("${m2m.base-url}")
+    private String m2mBaseUrl;
+
     @Value("${remote-wellknown-url}")
     private String remoteWellknownUrl;
 

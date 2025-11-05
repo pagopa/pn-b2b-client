@@ -1,9 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
@@ -18,6 +16,7 @@ import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
@@ -35,6 +34,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 //NOTA BENE: A discapito del nome, questa classe utilizza in toto i metodi della V20
 public class WebhookStepsV10 implements WebhookStepsInterface {
 
+    private ResponseEntity<List<ProgressResponseElement>> consumeResponseWithHttpInfo;
     private ProgressResponseElement progressResponseElement;
     private List<ProgressResponseElement> progressResponseElementList;
     private List<StreamCreationRequest> streamCreationRequestList;
@@ -57,11 +57,11 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public Object getFullSentNotification() {
-        return b2bClient.getSentNotificationV2(sharedSteps.getNotificationIun());
+        return b2bClient.getSentNotificationV23(sharedSteps.getNotificationIun());
     }
 
-    private FullSentNotificationV20 getFullSentNotificationVersioned() {
-        return (FullSentNotificationV20) getFullSentNotification();
+    private FullSentNotificationV23 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV23) getFullSentNotification();
     }
 
     //TODO MATTEO: controllare per possibili metodi non implementati
@@ -242,6 +242,38 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
+    public void consumeEventStreamWithHttpInfo(UUID streamId) {
+        consumeResponseWithHttpInfo = webhookClient.consumeEventStreamHttp(streamId, null);
+        assertThat(consumeResponseWithHttpInfo).as("La response http della consume stream non dev'essere null").isNotNull();
+        progressResponseElementList = consumeResponseWithHttpInfo.getBody();
+        log.info("progressResponseElements" + streamVersion + " size: " + progressResponseElementList.size());
+        log.info("progressResponseElements" + streamVersion + ": " + progressResponseElementList);
+    }
+
+    @Override
+    public void checkHeader(boolean contains, String headerParameterName, String headerParameterValue) {
+        assertThat(consumeResponseWithHttpInfo.getHeaders()).as("Gli headers della response non devono essere null").isNotNull();
+        List<String> headerParameter = consumeResponseWithHttpInfo.getHeaders().get(headerParameterName);
+        if (contains) {
+            assertThat(headerParameter).as("L'header dovrebbe contenere il campo " + headerParameterName).isNotNull();
+            /*
+            Tranne l'header "Vary", tutti gli altri headers sono chiavi aventi come valore una lista di stringhe da un solo elemento.
+            Poichè non sono previsti controlli su di esso, prendiamo per buono che l'elemento 0 sia sempre il valore che ci interessa.
+            */
+            String value = headerParameter.get(0);
+            if (headerParameterValue.equalsIgnoreCase("NULL")) {
+                assertThat(value).as("Il valore dell'header " + headerParameterName + " dovrebbe essere null").isNull();
+            } else if (headerParameterValue.equalsIgnoreCase("NOT-NULL")) {
+                assertThat(value).as("Il valore dell'header " + headerParameterName + " dovrebbe essere diverso da null").isNotNull();
+            } else {
+                assertThat(value).as("Il valore dell'header " + headerParameterName + " non coincide con quanto atteso").isEqualTo(headerParameterValue);
+            }
+        } else {
+            assertThat(headerParameter).as("L'header non dovrebbe contenere il campo " + headerParameterName).isNull();
+        }
+    }
+
+    @Override
     public void consumeEventStreamAndCheckNumEvents(int numEvents) {
         UUID streamId = eventStreamList.get(0).getStreamId();
         progressResponseElementList = webhookClient.consumeEventStream(streamId, null);
@@ -284,7 +316,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
-        TimelineElementCategoryV20 timeLineOrStatus = ((TimelineElementCategoryV20) timelineForStream.getTimelineElementCategory());
+        TimelineElementCategoryV23 timeLineOrStatus = ((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
         PnPollingServiceWebhookV20 webhook = (PnPollingServiceWebhookV20) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V20);
         PnPollingResponseV20 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
@@ -330,7 +362,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public boolean checkTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
-        TimelineElementCategoryV20 timelineElementInternalCategory = TimelineElementCategoryV20.valueOf(((TimelineElementCategoryV20) timelineForStream.getTimelineElementCategory()).name());
+        TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
         boolean finish = false;
         for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
             try {
@@ -338,8 +370,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
-            TimelineElementV20 timelineElement = fullSentNotification.getTimeline().stream().filter(
+            FullSentNotificationV23 fullSentNotification = getFullSentNotificationVersioned();
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement = fullSentNotification.getTimeline().stream().filter(
                             elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
@@ -361,7 +393,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
+            FullSentNotificationV23 fullSentNotification = getFullSentNotificationVersioned();
             NotificationStatusHistoryElement notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().stream().filter(
                     elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
@@ -376,10 +408,10 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     public <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
         try {
             assertThat(progressResponseElement).as(NOT_NULL_P_R_E).isNotNull();
-            TimelineElementCategoryV20 timelineElementInternalCategory = TimelineElementCategoryV20.valueOf(((TimelineElementCategoryV20) timelineForStream.getTimelineElementCategory()).name());
+            TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
 
-            FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 elementToCheck = fullSentNotification.getTimeline().stream()
+            FullSentNotificationV23 fullSentNotification = getFullSentNotificationVersioned();
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 elementToCheck = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
@@ -420,8 +452,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement) {
-        AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV20> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
-        result.setTimelineElementCategory(TimelineElementCategoryV20.valueOf(timelineEventCategory));
+        AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV23> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
+        result.setTimelineElementCategory(TimelineElementCategoryV23.valueOf(timelineEventCategory));
         result.setWaiting(timingForElement.waiting());
         result.setNumCheck(timingForElement.numCheck());
         return (AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T>) result;
@@ -439,8 +471,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        if (timeLineOrStatus instanceof TimelineElementCategoryV20) {
-            pnPollingWebhook.setTimelineElementCategoryV20((TimelineElementCategoryV20) timeLineOrStatus);
+        if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
+            pnPollingWebhook.setTimelineElementCategoryV20((TimelineElementCategoryV23) timeLineOrStatus);
             progressResponseElementList.clear();
             pnPollingWebhook.setProgressResponseElementListV20(progressResponseElementList);
         } else if (timeLineOrStatus instanceof NotificationStatus) {
@@ -453,7 +485,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual) {
-        FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV23 fullSentNotification = getFullSentNotificationVersioned();
         assertThat(progressResponseElementList).as("La lista di progressResponseElements non dev'essere null").isNotNull();
         OffsetDateTime eventTimestamp = progressResponseElementList.stream().filter(
                 elem -> elem.getTimelineEventCategory().getValue().equals(webhookElementCategory)).findAny().get().getTimestamp();
@@ -519,8 +551,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public void checkLegalFactCategory(String timelineCategory, String legalFactCategory, boolean arePresent) {
-        FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElementWithTargetCategory =
+        FullSentNotificationV23 fullSentNotification = getFullSentNotificationVersioned();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElementWithTargetCategory =
                 fullSentNotification.getTimeline().stream().filter(
                         x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
 
@@ -529,7 +561,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                 .isNotNull();
         List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsId> elementsWithLegalFactCategory =
                 timelineElementWithTargetCategory.getLegalFactsIds().stream().filter(
-                        x -> x.getCategory().equals(legalFactCategory)).toList();
+                        x -> x.getCategory().getValue().equals(legalFactCategory)).toList();
         if (arePresent) {
             assertThat(elementsWithLegalFactCategory)
                     .as("La ricerca dovrebbe restituire almeno un elemento di timeline con legalFactCategory " + legalFactCategory)

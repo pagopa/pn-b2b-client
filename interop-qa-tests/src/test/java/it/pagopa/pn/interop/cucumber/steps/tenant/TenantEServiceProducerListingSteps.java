@@ -2,14 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.UUID;
 
 public class TenantEServiceProducerListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -67,7 +64,7 @@ public class TenantEServiceProducerListingSteps {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();
-        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
     }
 }

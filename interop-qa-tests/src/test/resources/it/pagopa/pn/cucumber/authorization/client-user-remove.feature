@@ -9,14 +9,19 @@ Feature: Rimozione di un membro da un client
     When l'utente richiede la rimozione di quel membro dal client
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | admin        |        204 |
+      | PA1  | admin        |        204 |
+
+    @happy-path
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
-      | PA1  | admin        |        204 |
       | PA1  | api          |        403 |
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |

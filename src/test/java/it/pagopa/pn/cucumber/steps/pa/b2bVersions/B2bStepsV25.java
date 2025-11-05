@@ -106,6 +106,21 @@ public class B2bStepsV25 implements B2bStepsInterface {
     }
 
     @Override
+    public void checkFullSentNotificationRelatedElementWithVersion(String relatedTimelineElement) {
+        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
+
+        boolean found = fullSentNotification.getNotificationStatusHistory().stream()
+                .filter(history -> history.getRelatedTimelineElements() != null)
+                .flatMap(history -> history.getRelatedTimelineElements().stream())
+                .anyMatch(element -> element.contains(relatedTimelineElement));
+
+        assertThat(found)
+                    .as("Il controllo sulla fullSentNotification V27 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement +", IUN: "+sharedSteps.getNotificationIun())
+                    .isFalse();
+
+    }
+
+    @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
@@ -350,6 +365,9 @@ public class B2bStepsV25 implements B2bStepsInterface {
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
         //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
+        if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)) {
+            pollingStrategy = TIMELINE_SLOW;
+        }
         String strategy = NotificationUtilsV25.getPollingStrategy(pollingStrategy);
         IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);

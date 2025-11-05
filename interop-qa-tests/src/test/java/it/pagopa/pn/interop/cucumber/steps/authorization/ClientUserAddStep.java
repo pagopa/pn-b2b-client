@@ -7,10 +7,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject7;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class ClientUserAddStep {
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
 
     public ClientUserAddStep(ClientTokenConfigurator clientTokenConfigurator,
@@ -37,7 +37,7 @@ public class ClientUserAddStep {
     public void addUsersToClient(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID userId = identityService.getUserId(tenantType, "admin");
-        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
+        InlineObject7 inlineObject = new InlineObject7().addUserIdsItem(userId);
         httpCallExecutor.performCall(
                 () -> authorizationClient.addUsersToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), inlineObject));
     }
@@ -91,7 +91,7 @@ public class ClientUserAddStep {
                 () -> authorizationClient.editClientAdmin(
                     clientId,
                     adminEditRequest));
-        if(httpCallExecutor.getClientResponse().is2xxSuccessful()){
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()){
             sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
         }
     }

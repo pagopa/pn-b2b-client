@@ -2,7 +2,9 @@
 Feature: Lettura singola finalità
   Tutti gli utenti possono leggere una finalità, l'analisi del rischio è disponibile solo per admin fruitori o erogatori di quella finalità.
 
+  @happy-path
   @purpose_read1
+  @wait_for_fix
   Scenario Outline: Per una finalità precedentemente creata dal fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura, va a buon fine, l’analisi del rischio è disponibile solo per gli admin
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -36,6 +38,7 @@ Feature: Lettura singola finalità
       | PA1  | admin | ARCHIVED             |
       | PA1  | admin | DRAFT                |
 
+  @happy-path
   @purpose_read2 @no-parallel
   Scenario Outline: Per una finalità precedentemente creata da un fruitore, la quale prima versione è in stato NON DRAFT (WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte dell’erogatore, va a buon fine
     Given l'utente è un "admin" di "PA2"
@@ -52,6 +55,7 @@ Feature: Lettura singola finalità
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
+  @sad-path
   @purpose_read3 @resource_intensive @wait_for_clarification @PIN-4805
   Scenario Outline: Per una finalità precedentemente creata da un fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte di un ente che non è né l'erogatore, né il fruitore, va a buon fine ma non ottiene l'analisi del rischio
     Given l'utente è un "admin" di "GSP"

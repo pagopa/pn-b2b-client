@@ -21,6 +21,6 @@ public class ValidPecBodyObjectStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language) {
-        return "SEND - Recapito legale PEC confermato";
+        return "SEND - Domicilio digitale PEC confermato";
     }
 }

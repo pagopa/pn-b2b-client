@@ -1,6 +1,6 @@
 package it.pagopa.interop.tracing.service.impl;
 
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
