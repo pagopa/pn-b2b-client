@@ -6,6 +6,7 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
@@ -46,6 +47,17 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+
+import java.io.File;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -288,8 +300,24 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public void approveDelegatedEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
-        this.eservicesApi.approveDelegatedEServiceDescriptor(eserviceId, descriptorId);
+    public void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId,
+        AgreementApprovalPolicy policy) {
+        eservicesApi.updateAgreementApprovalPolicy(
+            eServiceId,
+            descriptorId,
+            new UpdateEServiceDescriptorAgreementApprovalPolicySeed()
+                .agreementApprovalPolicy(policy)
+        );
+    }
+
+    @Override
+    public ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.getProducerEServiceDescriptor(eServiceId, descriptorId);
+    }
+
+    @Override
+    public void approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        this.eservicesApi.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
     }
 
     @Override
