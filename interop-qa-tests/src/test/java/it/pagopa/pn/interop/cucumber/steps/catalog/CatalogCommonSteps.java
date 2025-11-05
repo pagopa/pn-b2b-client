@@ -14,6 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,19 @@ public class CatalogCommonSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         createEServiceWithDescriptor(descriptorState, dataPreparationService,
             sharedStepsContext.getEServicesCommonContext());
+    }
+
+    @Given("{string} porta il descrittore dell'e-service in stato {string}")
+    public void bringDescriptorToState(String tenantType, String state) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        dataPreparationService.bringDescriptorToGivenState(
+            eserviceId,
+            descriptorId,
+            EServiceDescriptorState.valueOf(state),
+            false);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
     public static void createEServiceWithDescriptor(
