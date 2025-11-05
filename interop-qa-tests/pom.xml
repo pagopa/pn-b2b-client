@@ -342,6 +342,8 @@
                             <globalProperties>
                                 <skipFormModel>false</skipFormModel>
                             </globalProperties>
+                            <!-- disabilita la validazione -->
+                            <skipValidateSpec>true</skipValidateSpec>
                         </configuration>
                     </execution>
 

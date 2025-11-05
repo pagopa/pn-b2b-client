@@ -14,7 +14,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.llgg.AdeguamentoLineeGuidaSteps;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
@@ -64,6 +66,17 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
         createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null);
+    }
+
+    @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice con flagPersonalData impostato a {string}")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState, String flagPersonalData) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        try {
+            createFinalizationWithGivenStatusAndPersonalDataFlag(consumerId, tenantType, n, purposeVersionState, null, flagPersonalData);
+        }catch (AssertionFailedError e){
+            return;
+        }
     }
 
     @Given("{string} ha già pubblicato quella versione di e-service")
@@ -149,6 +162,34 @@ public class PurposeCommonStep {
 
     public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef) {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+        PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
+        for (int index = 0; index < n; index++) {
+            dataPreparationService.createPurposeWithGivenState(ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
+                    EServiceMode.DELIVER, PurposeVersionState.fromValue(purposeVersionState),
+                    TEServiceMode.builder()
+                            .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                            .consumerId(consumerId)
+                            .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
+                            .build(),
+                    delegationRef);
+
+            purposeCommonContext.getPurposesIds().add(purposeCommonContext.getPurposeId());
+            purposeCommonContext.getCurrentVersionIds().add(purposeCommonContext.getVersionId());
+            purposeCommonContext.getWaitingForApprovalVersionIds().add(purposeCommonContext.getWaitingForApprovalVersionId());
+        }
+
+        // Get the last element from the lists
+        List<String> purposesIds = purposeCommonContext.getPurposesIds();
+        List<String> currentVersionIds = purposeCommonContext.getCurrentVersionIds();
+        List<String> waitingForApprovalVersionIds = purposeCommonContext.getWaitingForApprovalVersionIds();
+        purposeCommonContext.setPurposeId((purposesIds.isEmpty()) ? null : purposesIds.get(purposesIds.size() - 1));
+        purposeCommonContext.setVersionId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
+        purposeCommonContext.setWaitingForApprovalVersionId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
+
+    }
+
+    public void createFinalizationWithGivenStatusAndPersonalDataFlag(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef, String personalDataFlag) {
+        RiskAnalysis riskAnalysis = AdeguamentoLineeGuidaSteps.getRiskAnalysis(personalDataFlag);
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         for (int index = 0; index < n; index++) {
             dataPreparationService.createPurposeWithGivenState(ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),

@@ -82,7 +82,7 @@ public class EServiceTemplateTestAssistant {
     }
 
     public String nextTestResourceNameSuffix() {
-        int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+        int randomInt = this.sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().size();
         return String.format("%d-%d", sharedStepsContext.getTestSeed(), randomInt);
     }
 

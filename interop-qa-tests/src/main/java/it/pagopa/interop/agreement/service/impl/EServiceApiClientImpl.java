@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescription
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
@@ -208,6 +209,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed) {
+        eservicesApi.updateEServicePersonalDataFlagAfterPublication(eServiceId, seed);
+    }
+
+    @Override
     public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
         UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
         /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
@@ -247,7 +253,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     @Override
     public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
-        String eServiceName) {
+            String eServiceName) {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
         return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null);

@@ -4,6 +4,7 @@ import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PersonalDataFilter;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
@@ -57,6 +58,12 @@ public class ProducerClientImpl implements IProducerClient {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
         return eservicesApi.getProducerEServices(offset, limit, null, q, consumersIds, delegated);
+    }
+
+    @Override
+    public ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated, Boolean personalData) {
+        PersonalDataFilter filter = personalData == null ? null : PersonalDataFilter.valueOf(personalData.toString().toUpperCase());
+        return eservicesApi.getProducerEServices(offset, limit, filter, q, consumersIds, delegated);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
-import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.WAITING_FOR_APPROVAL;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElse;
@@ -395,9 +394,12 @@ public class BFFDataPreparationService {
     public Attribute createAttribute(AttributeKind attributeKind, String name) {
         String actualName = name == null ? String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         switch (attributeKind) {
-            case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
-            case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
-            case DECLARED -> httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case CERTIFIED ->
+                    httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case VERIFIED ->
+                    httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case DECLARED ->
+                    httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
@@ -447,7 +449,7 @@ public class BFFDataPreparationService {
         );*/
     }
 
-    public void assignVerifiedAttributeToTenant(UUID tenantId, UUID verifierId, UUID attributeId, UUID agreementId, String expirationDate  ) {
+    public void assignVerifiedAttributeToTenant(UUID tenantId, UUID verifierId, UUID attributeId, UUID agreementId, String expirationDate) {
         httpCallExecutor.performCall(
                 () -> tenantsApi.verifyVerifiedAttribute(tenantId,
                         new VerifiedTenantAttributeSeed().id(attributeId).agreementId(agreementId).expirationDate(expirationDate)));
@@ -476,8 +478,34 @@ public class BFFDataPreparationService {
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
-        UUID eserviceId = ((CreatedEServiceDescriptor)httpCallExecutor.getResponse()).getId();
-        UUID descriptorId = ((CreatedEServiceDescriptor)httpCallExecutor.getResponse()).getDescriptorId();
+        UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
+        UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
+                res -> res != HttpStatus.NOT_FOUND,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+
+        updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
+        return new EServiceDescriptor(eserviceId, descriptorId);
+    }
+
+    public EServiceDescriptor createEServiceAndDraftDescriptorWithCustomPersonalData(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, Boolean personalData) {
+        EServiceSeed defaultEserviceSeed = new EServiceSeed()
+                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .description("Descrizione e-service")
+                .technology(EServiceTechnology.REST)
+                .mode(EServiceMode.DELIVER)
+                .isConsumerDelegable(false)
+                .isClientAccessDelegable(false);
+        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        eServiceSeed.setPersonalData(personalData);
+
+        httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
+        assertValidResponse();
+        UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
+        UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
@@ -850,8 +878,7 @@ public class BFFDataPreparationService {
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 sharedStepsContext.getPurposeCommonContext().addCreatedPurposeEService(purposeEServiceSeed);
             }
-        }
-        else {
+        } else {
             // For modes other than RECEIVE, build a PurposeSeed
             PurposeSeed purposeSeed = new PurposeSeed();
             purposeSeed.setTitle(teServiceMode.getTitle() != null ? teServiceMode.getTitle() : title);

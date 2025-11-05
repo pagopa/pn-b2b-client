@@ -56,6 +56,7 @@ public class M2MAuthSteps {
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
+    @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
         clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
         sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
