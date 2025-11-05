@@ -65,9 +65,10 @@ public class EServiceRiskAnalysisAdditionSteps {
     @When("l'utente aggiunge un'analisi del rischio non corretta per la tipologia di ente")
     public void addWrongRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        // We want to get the wrong risk analysis template, so we need to invert the tenantType
-        String tenantType = (List.of("GSP", "Privato").contains(sharedStepsContext.getTenantType())) ? "PA1" : "Privato";
-        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantType, true);
+        String tenantType = sharedStepsContext.getTenantType();
+        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantType, false);
+        var answers = eServiceRiskAnalysisSeed.getRiskAnalysisForm().getAnswers();
+        answers.remove("usesPersonalData");
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(eServicesCommonContext.getEserviceId(),

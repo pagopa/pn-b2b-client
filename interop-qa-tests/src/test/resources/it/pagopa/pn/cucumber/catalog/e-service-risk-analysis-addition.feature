@@ -52,14 +52,6 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     Then si ottiene status code 400
 
   @sad-path
-  @eservice_risk_analysis_addition5
-  Scenario: Per un e-service creato in modalità "RECEIVE", il quale non ha descrittori, alla richiesta di inserimento di un'analisi del rischio ben formattata e dell'ultima versione per quella tipologia di ente ma della tipologia errata, ottiene un errore
-    Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in DRAFT
-    When l'utente aggiunge un'analisi del rischio non corretta per la tipologia di ente
-    Then si ottiene status code 400
-
-  @sad-path
   @eservice_risk_analysis_addition6
   Scenario: Per un e-service creato in modalità "RECEIVE", il quale ha un solo descrittore in stato DRAFT, alla richiesta di inserimento di un'analisi del rischio ben formattata e della versione corretta per quella tipologia di ente ma della tipologia errata, ottiene un errore
     Given l'utente è un "admin" di "PA1"

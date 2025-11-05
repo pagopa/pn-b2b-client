@@ -2,7 +2,7 @@
   "Privato/GSP": {
     "completed": {
       "purpose": ["INSTITUTIONAL"],
-      "institutionalPurpose": ["test"],
+      "institutionalPurpose": ["prova prova prova"],
       "usesPersonalData": ["NO"],
       "usesThirdPartyPersonalData": ["NO"]
     },
@@ -23,7 +23,7 @@
     "uncompleted": {
       "institutionalPurpose": ["prova prova prova"],
       "isRequestOnBehalfOfThirdParties": ["NO"],
-      "purpose": ["INSTITUTIONAL"],
+      "usesPersonalData": ["NO"],
       "usesThirdPartyPersonalData": ["NO"]
     }
   }

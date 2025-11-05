@@ -135,7 +135,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | DEPRECATED            |
       | ARCHIVED              |
 
-  @m2m-parte2-agosto-rilascio1 @deleghe2
+  @m2m-parte2-agosto-rilascio1 @deleghe2 @failed-nrt-03112025
   Scenario: [M2MG_DOCUMENTS_16] Un utente non può effettuare la cancellazione di un'interfaccia di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 62)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin

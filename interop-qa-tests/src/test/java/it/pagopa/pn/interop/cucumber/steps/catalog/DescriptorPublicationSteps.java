@@ -1,13 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.auth.HttpBearerAuth;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
@@ -15,13 +13,11 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
-import lombok.extern.slf4j.Slf4j;
-
-import java.lang.reflect.Field;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DescriptorPublicationSteps {
@@ -118,16 +114,16 @@ public class DescriptorPublicationSteps {
     public void userPublishDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         publishDescriptor(
-            sharedStepsContext.getHttpCallExecutor(),
-            clientTokenConfigurator.getEServiceClient(),
-            sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getHttpCallExecutor(),
+                clientTokenConfigurator.getEServiceClient(),
+                sharedStepsContext.getEServicesCommonContext());
     }
 
     public static void publishDescriptor(IHttpExecutor httpExecutor, IEServiceClient client, EServicesCommonContext context) {
         httpExecutor.performCall(
                 () -> client.publishDescriptor(
-                    context.getEserviceId(),
-                    context.getDescriptorId()
+                        context.getEserviceId(),
+                        context.getDescriptorId()
                 )
         );
     }
@@ -138,7 +134,6 @@ public class DescriptorPublicationSteps {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), false);
         dataPreparationService.addRiskAnalysisToEService(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                new EServiceRiskAnalysisSeed().name(riskAnalysis.getName()).riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
-        );
+                new EServiceRiskAnalysisSeed().name(riskAnalysis.getName()).riskAnalysisForm(riskAnalysis.getRiskAnalysisForm()));
     }
 }
