@@ -8,6 +8,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -151,6 +152,13 @@ public class DelegationCommonStep {
             sharedStepsContext.getEServicesCommonContext());
 
         // A questo punto l'e-service sarà in stato WAITING_FOR_APPROVAL
+        // Si attende attivamente che l'e-service entri in stato WAITING_FOR_APPROVAL
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        pollingService.makePolling(
+            () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eserviceId, descriptorId),
+            res -> res.getState().equals(EServiceDescriptorState.WAITING_FOR_APPROVAL),
+            "Non è avvenuta la transizione di stato in " + EServiceDescriptorState.WAITING_FOR_APPROVAL);
     }
 
     @Then("si ottiene lo status code {int}")

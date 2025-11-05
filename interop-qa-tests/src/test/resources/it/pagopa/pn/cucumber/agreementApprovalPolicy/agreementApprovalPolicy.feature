@@ -2,7 +2,7 @@
 Feature: Test modificabilità campo "agreementApprovalPolicy"
 
   @app-edit-ff-on
-  Scenario Outline: [MOD_APP_ON_1] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED o WAITING FOR APPROVAL può essere modificato da un utente con ruolo ADMIN o API
+  Scenario Outline: [MOD_APP_ON_1] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED può essere modificato da un utente con ruolo ADMIN o API
     Given "PA1" ha già creato un e-service in stato "<stato>" con approvazione "<valore_iniziale>"
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica di agreementApprovalPolicy in "<valore_finale>"
@@ -48,14 +48,8 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
 
   @app-edit-ff-on
   Scenario: [MOD_APP_ON_2_B] Il campo "agreementApprovalPolicy" di un e-service in stato WAITING_FOR_APPROVAL non può essere modificato
-    Given l'ente "PA2" concede la disponibilità a ricevere deleghe
-    And l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    And l'utente richiede la creazione di una delega per l'ente "PA2"
-    And l'ente "PA2" accetta la delega
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2"
-    And l'utente crea una nuova versione dell'e-service
-    And l'utente delegato pubblica la versione dell'e-service
     When l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
     Then si ottiene lo status code 400
 

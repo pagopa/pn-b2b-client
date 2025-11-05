@@ -11,6 +11,7 @@ import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
@@ -18,7 +19,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
@@ -42,7 +42,7 @@ public class AgreementCommonSteps {
     private IAgreementClient agreementClient;
     private IEServiceClient eserviceClient;
     private PollingService pollingService;
-    private IHTTPExecutor httpCallExecutor;
+    private IHttpExecutor httpCallExecutor;
 
     public AgreementCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 BFFDataPreparationService dataPreparationService,
