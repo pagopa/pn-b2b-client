@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.WAITING_FOR_APPROVAL;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElse;
@@ -773,6 +775,17 @@ public class BFFDataPreparationService {
             res -> res.getState() == EServiceDescriptorState.PUBLISHED,
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
+    }
+
+    public CreatedResource approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        httpCallExecutor.performCall(() -> eServiceClient.approveDelegatedEServiceDescriptor(eServiceId, descriptorId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+                res -> res.getState() == PUBLISHED,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+        return (CreatedResource) httpCallExecutor.getResponse();
     }
 
     public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {

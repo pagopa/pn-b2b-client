@@ -4,6 +4,7 @@ import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
@@ -13,6 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
@@ -104,5 +106,8 @@ public interface IEServiceClient extends SettableBearerToken {
     ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
         UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed);
 
-    void approveDelegatedEServiceDescriptor(UUID eserviceId, UUID descriptorId);
+    void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId, AgreementApprovalPolicy policy);
+    ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId);
+
+    void approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId);
 }
