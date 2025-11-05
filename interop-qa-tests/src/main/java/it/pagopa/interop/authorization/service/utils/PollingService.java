@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PollingService {
     private final InteropClientConfigs interopClientConfigs;
 
-    public <T> void makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage) {
+    public <T> T makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage) {
         try {
             for (int i = 0; i < interopClientConfigs.getMaxPollingTry(); i++) {
                 Thread.sleep(interopClientConfigs.getMaxPollingSleep());
@@ -21,14 +21,14 @@ public class PollingService {
 
                 boolean shouldStopPolling = shouldStop.test(response);
                 if (shouldStopPolling) {
-                    return;
+                    return response;
                 }
             }
         } catch (InterruptedException e) {
             log.error("Unexpected thread interruption  during polling: {}", e.getMessage());
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error during shouldStop polling logic evaluation: " + e.getMessage());
+            throw new IllegalArgumentException("Error during polling: " + e.getMessage());
         }
 
         throw new PollingPredicateException("Eventual consistency error: " + errorMessage);

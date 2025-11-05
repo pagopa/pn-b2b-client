@@ -2,10 +2,13 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
 import static java.util.Objects.nonNull;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
@@ -14,10 +17,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -33,6 +40,8 @@ public class EServiceTemplateCreateSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
+    private final DelayService delayService;
+    private final IdentityService identityService;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -42,7 +51,8 @@ public class EServiceTemplateCreateSteps {
     public EServiceTemplateCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
         BFFDataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant) {
+        EServiceTemplateTestAssistant testAssistant,
+        DelayService delayService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -50,6 +60,8 @@ public class EServiceTemplateCreateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
+        this.delayService = delayService;
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
@@ -74,12 +86,53 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
+    @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")
+    public void mutateEServiceTemplateState(String tenantType, EServiceTemplateVersionState desiredState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        testAssistant.mutateLastVersionState(desiredState);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
     public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
         String lastTemplateNameUsed = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name();
         EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
             .name(lastTemplateNameUsed);
         createEServiceTemplate(sameNameTemplateSeed);
+    }
+
+    @Given("l'utente ha già creato un e-service template in modalità {eServiceMode}, stato {eServiceTemplateVersionState} e {int} DOCUMENTI già caricati")
+    public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, int documents) {
+        // creo il template
+        createEServiceTemplate(eServiceMode);
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+
+        // genero E carico i documenti
+        List<Document> documentList = dataPreparationService.addDocumentsToResource(
+            UUID.randomUUID(),
+            documents,
+            "E-Service template document",
+            "EST doc",
+            (prettyName, resource) -> testAssistant.addDocumentToEserviceTemplateVersion(
+                lastTemplateManaged.id(),
+                lastTemplateManaged.lastVersionId(),
+                EServiceTemplateDocumentKind.DOCUMENT,
+                prettyName,
+                sharedStepsContext.getUserToken(),
+                resource
+            ));
+
+        // NOTE 24/09/2025: si riutilizza l'attributo di EServicesCommonContext, essendo il tipo di
+        // dato trattato identico, ed essendo che i successivi step di verifica vi fanno riferimento.
+        // Sarebbe eventualmente da generalizzare spostandolo al liv. superiore "SharedStepContext".
+        sharedStepsContext.getEServicesCommonContext().setDocumentsMetadata(documentList.stream().map(Document::getMetadata).toList());
+
+        // muto lo stato in quello atteso
+        if (!desiredState.equals(EServiceTemplateVersionState.DRAFT)) {
+            delayService.delayForSeconds(1); // <-- per concedere il tempo di caricare il doc. di tipo INTERFACE evitando errori di eventual consistency
+        }
+        testAssistant.mutateLastVersionState(desiredState);
     }
 
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
@@ -105,6 +158,7 @@ public class EServiceTemplateCreateSteps {
             templateSeed.getName(),
             templateSeed.getIntendedTarget(),
             templateSeed.getDescription(),
+            templateSeed.getMode(),
             creationResponse.getId(),
             creationResponse.getVersionId()));
     }
@@ -123,6 +177,7 @@ public class EServiceTemplateCreateSteps {
             .description("Descrizione del servizio associato al template " + templateName)
             .mode(eServiceMode)
             .version(version)
-            .technology(EServiceTechnology.REST);
+            .technology(EServiceTechnology.REST)
+            .personalData(false);
     }
 }

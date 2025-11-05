@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,8 @@ public class EServiceTemplateDocumentReadSteps {
 
     public EServiceTemplateDocumentReadSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant
+        EServiceTemplateTestAssistant testAssistant,
+        DelayService delayService
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;

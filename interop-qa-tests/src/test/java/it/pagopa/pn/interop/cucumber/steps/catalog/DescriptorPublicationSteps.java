@@ -1,9 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.auth.HttpBearerAuth;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
@@ -14,9 +18,12 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
+@Slf4j
 public class DescriptorPublicationSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -74,12 +81,20 @@ public class DescriptorPublicationSteps {
     }
 
     @When("l'utente pubblica quel descrittore")
+    @When("l'utente pubblica l'e-service")
     public void userPublishDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getEServiceClient().publishDescriptor(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        publishDescriptor(
+            sharedStepsContext.getHttpCallExecutor(),
+            clientTokenConfigurator.getEServiceClient(),
+            sharedStepsContext.getEServicesCommonContext());
+    }
+
+    public static void publishDescriptor(IHttpExecutor httpExecutor, IEServiceClient client, EServicesCommonContext context) {
+        httpExecutor.performCall(
+                () -> client.publishDescriptor(
+                    context.getEserviceId(),
+                    context.getDescriptorId()
                 )
         );
     }
