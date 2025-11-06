@@ -22,4 +22,5 @@ public interface IHttpExecutor {
     HttpStatus getResponseStatus();
     Object getResponse();
     String getErrorMessage();
+    void setRawResponse(int statusCode, Object rawBody);
 }

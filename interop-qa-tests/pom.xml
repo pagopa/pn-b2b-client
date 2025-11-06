@@ -31,6 +31,7 @@
         <junit-jupiter.version>5.12.1</junit-jupiter.version>
         <junit.platform.version>1.12.1</junit.platform.version>
         <cucumber.version>7.22.0</cucumber.version>
+        <nimbus.version>9.37.3</nimbus.version>
 
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
     </properties>
@@ -170,6 +171,20 @@
             <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
             <version>0.12.6</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Nimbus (per Dpop) -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus.version}</version>
+        </dependency>
+
+        <!-- Apache HttpClient (per Dpop e header duplicati) -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
         </dependency>
 
         <dependency>
@@ -314,16 +329,10 @@
                             </typeMappings>
                             <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.8.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
-
-                            <!-- TODO 23/10/2025 momentaneamente necessario per non provocare il fallimento di OpenAPI Generator a seguito di errori nella specifica.
-                                  Identificare suddetti errori e segnalarli al team DEV. -->
-                            <skipValidateSpec>true</skipValidateSpec>
-
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
                                 <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.api</apiPackage>
                                 <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.model</modelPackage>
@@ -342,8 +351,6 @@
                             <globalProperties>
                                 <skipFormModel>false</skipFormModel>
                             </globalProperties>
-                            <!-- disabilita la validazione -->
-                            <skipValidateSpec>true</skipValidateSpec>
                         </configuration>
                     </execution>
 

@@ -7,7 +7,7 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.M2MTokenService;
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
@@ -181,7 +181,7 @@ public class EserviceTemplateSteps {
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service template")
-    public void patchEService(String tenant, M2MTokenService.M2MRole m2mRole) {
+    public void patchEService(String tenant, M2MRole m2mRole) {
         EServiceTemplatePatchRequest request = this.patchAssistant.buildDefaultPatchRequest();
         String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
         patchAssistant.patchResource(request, token);
@@ -231,7 +231,7 @@ public class EserviceTemplateSteps {
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template")
-    public void patchEServiceTemplateVersion(String tenant, M2MTokenService.M2MRole m2mRole) {
+    public void patchEServiceTemplateVersion(String tenant, M2MRole m2mRole) {
         EServiceTemplateVersionPatchRequest request = this.versionPatchAssistant.buildDefaultPatchRequest();
         String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
         versionPatchAssistant.patchResource(request, token);

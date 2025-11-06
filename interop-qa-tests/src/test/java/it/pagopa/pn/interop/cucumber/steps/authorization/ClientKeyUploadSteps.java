@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -27,27 +28,27 @@ public class ClientKeyUploadSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
-                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048))));
+                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048), KeyType.parse(keyType))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int}")
     public void userLoadsPublicKeyWithTypeAndSize(String keyType, int keyLength) {
         httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
-                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength))));
+                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength), KeyType.parse(keyType))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int} senza i delimitatori di inizio e fine")
     public void userLoadsPulicKeyWithoutDelimitators (String keyType, int keyLength) {
         httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
-                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength, false))));
+                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength, false), KeyType.parse(keyType))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo RSA di lunghezza 2048 con lo stesso kid")
     public void userLoadsPublicKeyWithTypeAndSizeAndSameKid() {
         httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
-                    sharedStepsContext.getClientCommonContext().getClientPublicKey())));
+                    sharedStepsContext.getClientCommonContext().getClientPublicKey(), KeyType.RSA)));
     }
 }

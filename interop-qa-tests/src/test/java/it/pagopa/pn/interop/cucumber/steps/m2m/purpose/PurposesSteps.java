@@ -10,8 +10,7 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.M2MTokenService;
-import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -36,7 +35,6 @@ import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -51,12 +49,10 @@ public class PurposesSteps {
 
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final IdentityService identityService;
     private final IM2MPurposeClient purposeClient;
     private final IPurposeApiClient bffPurposeClient;
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final DelayService delayService;
     private final int newDailyCalls = 50;
 
     private final PurposePatchOperationsAssistant purposePatchAssistant;
@@ -68,12 +64,10 @@ public class PurposesSteps {
         ReversePurposePatchOperationsAssistant reversePurposePatchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = sharedStepsContext.getIdentityService();
         this.purposeClient = clientTokenConfigurator.getM2mPurposeClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.bffPurposeClient = clientTokenConfigurator.getPurposeApiClient();
-        this.delayService = sharedStepsContext.getDelayService();
         this.purposePatchAssistant = purposePatchAssistant;
         this.reversePurposePatchAssistant = reversePurposePatchAssistant;
     }
@@ -405,7 +399,7 @@ public class PurposesSteps {
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità")
-    public void patchPurpose(String tenant, M2MTokenService.M2MRole m2mRole) {
+    public void patchPurpose(String tenant, M2MRole m2mRole) {
         PurposePatchRequest request = purposePatchAssistant.buildDefaultPatchRequest();
         String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
         purposePatchAssistant.patchResource(request, token);
@@ -451,7 +445,7 @@ public class PurposesSteps {
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
-    public void patchReversePurposeUsing(String tenant, M2MTokenService.M2MRole m2mRole) {
+    public void patchReversePurposeUsing(String tenant, M2MRole m2mRole) {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
         String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
         reversePurposePatchAssistant.patchResource(request, token);
