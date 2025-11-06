@@ -18,16 +18,19 @@ import java.time.Duration;
 public class LambdaInvoker {
 
     private LambdaClient lambdaClient;
-    @Value("${spring.profiles.active}") private String activeProfile;
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
-    private String getUserRole(){
-        if(activeProfile.equals("dev")){
-            return "ROLE_dev_core";
-        } else if(activeProfile.equals("test")){
-            return "ROLE_test_core";
-        }
+    private String getUserRole() {
+        return switch (activeProfile) {
+            case "dev" -> "ROLE_dev_core";
+            case "test" -> "ROLE_test_core";
+            case "uat" -> "ROLE_uat_core";
+            case "hotfix" -> "ROLE_hotfix_core";
+            default -> throw new RuntimeException("Invalid profile active");
+        };
 
-        throw new RuntimeException("Invalid profile active");
+
     }
 
     private LambdaClient getLambdaClient() {
@@ -35,16 +38,23 @@ public class LambdaInvoker {
             lambdaClient = LambdaClient.builder()
                     .httpClient(ApacheHttpClient.builder()
                             .maxConnections(50)
-                            .connectionTimeout(Duration.ofSeconds(10))
-                            .socketTimeout(Duration.ofSeconds(30))
+                            .connectionTimeout(Duration.ofSeconds(20))      // connessione iniziale
+                            .socketTimeout(Duration.ofSeconds(180))         // attesa risposta
+                            .connectionAcquisitionTimeout(Duration.ofSeconds(60))
+                            .connectionMaxIdleTime(Duration.ofSeconds(300)) // evita chiusura a 60s
+                            .tcpKeepAlive(true)
                             .build())
-                    //.credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // in locale
+                    .overrideConfiguration(c -> c
+                            .apiCallAttemptTimeout(Duration.ofSeconds(180))
+                            .apiCallTimeout(Duration.ofMinutes(6)))
+                    //.credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
                     .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
         return lambdaClient;
     }
+
 
     public String invokeMyLambda(String functionName, String payload) {
         InvokeRequest request = InvokeRequest.builder()

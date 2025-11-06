@@ -12,19 +12,24 @@ Feature: Cancellazione finalità
     When l'utente richiede la cancellazione della finalità
     Then si ottiene status code <risultato>
 
-    Examples: 
+    @happy-path
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       204 |
+      | GSP     | admin        |       204 |
+      | Privato | admin        |       204 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
-      | GSP     | admin        |       204 |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | api,security |       403 |
       | GSP     | support      |       403 |
-      | Privato | admin        |       204 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
@@ -40,13 +45,19 @@ Feature: Cancellazione finalità
     When l'utente richiede la cancellazione della finalità
     Then si ottiene status code <risultato>
 
-    Examples: 
+    @happy-path
+    Examples:
+      | statoFinalita        | risultato |
+      | WAITING_FOR_APPROVAL |       204 |
+
+    @sad-path
+    Examples:
       | statoFinalita        | risultato |
       | ACTIVE               |       409 |
       | SUSPENDED            |       409 |
-      | WAITING_FOR_APPROVAL |       204 |
       | ARCHIVED             |       409 |
 
+  @sad-path
   @nrt-minimal
   @purpose_delete3
   Scenario: [PURPOSE_DELETE_3] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), che non è il fruitore, ottiene un errore

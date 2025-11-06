@@ -5,13 +5,15 @@ import it.pagopa.pari.generated.openapi.clients.registro.beni.api.InstitutionsAp
 import it.pagopa.pari.generated.openapi.clients.registro.beni.api.PortalConsentApi;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.api.ProductsApi;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.api.ProductsUploadApi;
-import it.pagopa.pari.generated.openapi.clients.registro.beni.model.BatchList;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.CsvDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.InstitutionsResponse;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.PortalConsentDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductListDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductStatus;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.ProductsUpdateDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.RegisterUploadResponseDTO;
+import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UpdateResponseDTO;
 import it.pagopa.pari.generated.openapi.clients.registro.beni.model.UploadsListDTO;
 import it.pagopa.pari.registrobeni.domain.RdbRole;
 import it.pagopa.pari.utils.RdBJWTProvider;
@@ -20,6 +22,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -63,24 +67,24 @@ public class RegisterPortalOperationClientImpl {
         return productsUploadApi.downloadErrorReport(productFileId);
     }
 
-    public BatchList getBatchNameList(String xOrganizationSelected) {
+    public List<Object> getBatchNameList(String xOrganizationSelected) {
         return productsUploadApi.getBatchNameList(xOrganizationSelected);
     }
 
-    public UploadsListDTO getProductFilesList(Integer page, Integer size, String sort) {
-        return productsUploadApi.getProductFilesList(page, size, sort);
+    public UploadsListDTO getProductFilesList(Integer page, Integer size) {
+        return productsUploadApi.getProductFilesList(page, size);
     }
 
-    public RegisterUploadResponseDTO uploadProductList(String category, org.springframework.core.io.Resource csv) {
-        return productsUploadApi.uploadProductList(category, csv);
+    public RegisterUploadResponseDTO uploadProductList(org.springframework.core.io.Resource csv, String category) {
+        return productsUploadApi.uploadProductList(csv, category);
     }
 
-    public RegisterUploadResponseDTO verifyProductList(String category, org.springframework.core.io.Resource csv) {
-        return productsUploadApi.verifyProductList(category, csv);
+    public RegisterUploadResponseDTO verifyProductList(org.springframework.core.io.Resource csv, String category) {
+        return productsUploadApi.verifyProductList(csv, category);
     }
 
-    public ProductListDTO getProducts(String xOrganizationSelected, Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productCode, String productFileId) {
-        return productsApi.getProducts(xOrganizationSelected, page, size, sort, category, eprelCode, gtinCode, productCode, productFileId);
+    public ProductListDTO getProducts(Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productFileId, String productName, ProductStatus status, String organizationId) {
+        return productsApi.getProducts(page, size, sort, category, eprelCode, gtinCode, productFileId, productName, status, organizationId);
     }
 
     public InstitutionsResponse getInstitutionsList() {
@@ -89,6 +93,26 @@ public class RegisterPortalOperationClientImpl {
 
     public InstitutionResponse retrieveInstitutionById(String institutionId) {
         return institutionsApi.retrieveInstitutionById(institutionId);
+    }
+
+    public UpdateResponseDTO updateProductStatusApproved(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusApproved(productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusRejected(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusRejected(productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusSupervised(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusSupervised(productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusWaitApproved(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusWaitApproved(productsUpdateDTO);
+    }
+
+    public UpdateResponseDTO updateProductStatusRestored(ProductsUpdateDTO productsUpdateDTO) {
+        return productsApi.updateProductStatusRestored(productsUpdateDTO);
     }
 
     public void setBearerToken(RdbRole role) {

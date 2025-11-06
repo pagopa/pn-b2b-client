@@ -12,24 +12,30 @@ Feature: Sospensione di una finalità
     When l'utente sospende quella finalità in stato "ACTIVE"
     Then si ottiene status code <risultato>
 
-    Examples: 
+    @happy-path
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | GSP     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
-      | GSP     | admin        |       200 |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | api,security |       403 |
       | GSP     | support      |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+  @happy-path
   @nrt-minimal
   @purpose_suspend2
   Scenario: [PURPOSE_SUSPEND_2] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE, alla richiesta di sospensione da parte di un utente con sufficienti permessi dell’ente erogatore, che non coincide con l’ente fruitore, va a buon fine
@@ -40,6 +46,7 @@ Feature: Sospensione di una finalità
     When l'utente sospende quella finalità in stato "ACTIVE"
     Then si ottiene status code 200
 
+  @happy-path
   @nrt-minimal
   @purpose_suspend3
   Scenario Outline: [PURPOSE_SUSPEND_3] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, alla richiesta di sospensione da parte di un utente con sufficienti permessi dell’ente erogatore, che coincide con l’ente fruitore, va a buon fine
@@ -55,6 +62,7 @@ Feature: Sospensione di una finalità
       | ACTIVE        |
       | SUSPENDED     |
 
+  @sad-path
   @nrt-minimal
   @purpose_suspend4a
   Scenario Outline: [PURPOSE_SUSPEND_4A] Per una finalità precedentemente creata da un fruitore, la quale è in stato WAITING_FOR_APPROVAL, DRAFT o ARCHIVED, alla richiesta di sospensione da parte di un utente con sufficienti permessi, ottiene un errore
@@ -71,6 +79,7 @@ Feature: Sospensione di una finalità
       | DRAFT                |
       | ARCHIVED             |
 
+  @sad-path
   @nrt-minimal
   @purpose_suspend4b
   Scenario: [PURPOSE_SUSPEND_4B] Per una finalità precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di sospensione da parte di un utente con sufficienti permessi, ottiene un errore

@@ -33,7 +33,7 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
                 yield "Deposito avviso di avvenuta ricezione Con riferimento alla notifica avente IUN string, ai sensi dell’art. 26, comma 7, del D.L. 76/2020, essendo risultato il destinatario string CF";
             }
             case "TEDESCA" -> {
-                yield "Deposito avviso di avvenuta ricezione Unter Bezugnahme auf die Zustellung mit IUN string, gemäß Art. 26, Absatz 7, des DgV 76/2020, da der Empfänger string STEUERNUMMER";
+                yield "Deposito avviso di avvenuta ricezione Im Sinne des Art. 26, Absatz 7, des G.D. 76/2020, betreffend die Zustellung";
             }
             case "SLOVENA" -> {
                 yield "Deposito avviso di avvenuta ricezione V zvezi z obvestilom, ki vsebuje IUN string, v skladu s členom 26, sedmi odstavek, zakonodajnega odloka št. 76/2020, je prejemnik string DŠ";

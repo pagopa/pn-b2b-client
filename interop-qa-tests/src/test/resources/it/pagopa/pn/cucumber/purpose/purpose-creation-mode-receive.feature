@@ -14,24 +14,30 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità con tutti i campi richiesti correttamente formattati per quell'e-service associando quella analisi del rischio creata dall'erogatore
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | GSP     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
-      | GSP     | admin        |       200 |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | api,security |       403 |
       | GSP     | support      |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+  @happy-path
   @nrt-minimal
   @purpose_creation_receive2
   Scenario: [CREAZIONE_FINALITA_RECEIVE_2] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = RECEIVE, e una finalità già in stato DRAFT per lo stesso e-service, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
@@ -45,6 +51,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità con tutti i campi richiesti correttamente formattati per quell'e-service associando quella analisi del rischio creata dall'erogatore
     Then si ottiene status code 200
 
+  @happy-path
   @nrt-minimal
   @purpose_creation_receive3
   Scenario: [CREAZIONE_FINALITA_RECEIVE_3] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = RECEIVE, la quale è in stato SUSPENDED, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
@@ -58,6 +65,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità con tutti i campi richiesti correttamente formattati per quell'e-service associando quella analisi del rischio creata dall'erogatore
     Then si ottiene status code 200
 
+  @sad-path
   @nrt-minimal
   @purpose_creation_receive4a
   Scenario Outline: [CREAZIONE_FINALITA_RECEIVE_4] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato NON ACTIVE (DRAFT, PENDING, SUSPENDED o ARCHIVED) per un e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
@@ -77,8 +85,8 @@ Feature: Creazione finalità per e-service in erogazione inversa
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
-  @nrt-minimal
-  @purpose_creation_receive4b
+  @sad-path @nrt-minimal
+  @purpose_creation_receive4b @certifiedAttribute
   Scenario Outline: [CREAZIONE_FINALITA_RECEIVE_5] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES per un e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -96,6 +104,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @sad-path
   @nrt-minimal
   @purpose_creation_receive4c
   Scenario: [CREAZIONE_FINALITA_RECEIVE_6] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato REJECTED per un e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
@@ -109,6 +118,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità con tutti i campi richiesti correttamente formattati per quell'e-service associando quella analisi del rischio creata dall'erogatore
     Then si ottiene status code 400
 
+  @sad-path
   @nrt-minimal
   @purpose_creation_receive5
   Scenario: [CREAZIONE_FINALITA_RECEIVE_7] Un utente con sufficienti permessi (admin); il cui ente NON ha già una richiesta di fruizione per una versione di e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
@@ -120,6 +130,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità con tutti i campi richiesti correttamente formattati per quell'e-service associando quella analisi del rischio creata dall'erogatore
     Then si ottiene status code 400
 
+  @sad-path
   @nrt-minimal
   @purpose_creation_receive6
   Scenario: [CREAZIONE_FINALITA_RECEIVE_8] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati, il campo isFreeOfCharge valorizzato a true e il campo freeOfChargeReason non compilato. Ottiene un errore.
@@ -132,6 +143,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità per quell'e-service associando quella analisi del rischio creata dall'erogatore con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione
     Then si ottiene status code 400
 
+  @sad-path
   @nrt-minimal
   @purpose_creation_receive7
   Scenario: [CREAZIONE_FINALITA_RECEIVE_9] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati ma senza riskAnalysisId. Ottiene un errore.
@@ -144,6 +156,7 @@ Feature: Creazione finalità per e-service in erogazione inversa
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati senza passare l'identificativo dell'analisi del rischio
     Then si ottiene status code 400
 
+  @sad-path
   @nrt-minimal.
   @purpose_creation_receive8
   Scenario: [CREAZIONE_FINALITA_RECEIVE_10] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = RECEIVE, crea una nuova finalità con tutti i campi richiesti correttamente formattati, con in aggiunta un riskAnalysisId diverso da uno di quelli delle riskAnalysis create dall'erogatore. Ottiene un errore.

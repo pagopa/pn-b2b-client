@@ -2,6 +2,7 @@
 Feature: Lettura di una specifica versione di analisi del rischio
   Tutti gli utenti possono leggere una specifica versione di analisi del rischio
 
+  @happy-path
   @nrt-minimal
   @purpose_risk_analysis_read1 @fixed_in_node
   Scenario Outline: [PURPOSE_RISK_ANALYSIS_READ_1] Per una richiesta di lettura di una specifica versione di template di analisi del rischio da parte di un ente, alla richiesta di lettura per un e-service di erogazione diretta, ottiene la specifica versione di analisi del rischio dedicata all’ente fruitore
@@ -28,6 +29,7 @@ Feature: Lettura di una specifica versione di analisi del rischio
       | Privato | api,security |
       | Privato | support      |
 
+  @happy-path
   @nrt-minimal
   @purpose_risk_analysis_read2
   Scenario: [PURPOSE_RISK_ANALYSIS_READ_2] Per una richiesta di lettura di una specifica versione di template di analisi del rischio da parte di un ente, alla richiesta di lettura per un e-service di erogazione inversa, ottiene la specifica versione di analisi del rischio dedicata all’ente erogatore

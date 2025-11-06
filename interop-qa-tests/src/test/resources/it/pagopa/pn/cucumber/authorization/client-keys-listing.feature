@@ -2,6 +2,7 @@
 Feature: Listing chiavi client
   Tutti gli utenti autorizzati, security o support possono leggere la lista delle chiavi di un client a cui sono associati
 
+  @happy-path
   @nrt-minimal
   Scenario Outline: [CLIENT_KEYS_LISTING_1] Un utente admin o security; appartenente all'ente che ha creato il client; il quale utente è membro del client; richiede l’elenco delle chiavi caricate per il client. L’operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -22,6 +23,7 @@ Feature: Listing chiavi client
       | PA1     | security |
       | Privato | security |
 
+  @happy-path
   @nrt-minimal
   Scenario Outline: [CLIENT_KEYS_LISTING_2] Un utente admin o support; appartenente all'ente che ha creato il client; il quale utente non è membro del client; richiede l’elenco delle chiavi caricate per il client. L’operazione va a buon fine
     Given l'utente è un "<ruolo>" di "PA1"
@@ -38,6 +40,7 @@ Feature: Listing chiavi client
       | admin        |
       | support      |
 
+  @sad-path
   @nrt-minimal
   @wait_for_fix
   Scenario Outline: [CLIENT_KEYS_LISTING_3] Un utente api, security o api/security; appartenente all'ente che ha creato il client; il quale utente non è membro del client; richiede l’elenco delle chiavi caricate per il client. L’operazione non va a buon fine
@@ -56,6 +59,7 @@ Feature: Listing chiavi client
       | security     |
       | api,security |
 
+  @happy-path
   @nrt-minimal
   Scenario: [CLIENT_KEYS_LISTING_4] Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client da uno specifico utente. L’operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -68,6 +72,7 @@ Feature: Listing chiavi client
     When l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente "security"
     Then si ottiene status code 200 e la lista di 2 chiavi
 
+  @happy-path
   @nrt-minimal
   Scenario: [CLIENT_KEYS_LISTING_5] Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client; nel client non ci sono chiavi. L’operazione va a buon fine
     Given l'utente è un "admin" di "PA1"

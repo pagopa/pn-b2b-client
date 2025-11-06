@@ -2,6 +2,7 @@
 Feature: Export di un descrittore
   Tutti gli utenti autorizzati possono effettuare una richiesta di export di un descrittore di un e-service che il proprio ente eroga.
 
+  @happy-path
   @nrt-minimal
   @descriptor_export1
   Scenario Outline: [DESCRIPTOR_EXPORT_1] La richiesta di export di un descrittore di un e-service, senza documenti, in stato NON DRAFT, va a buon fine
@@ -30,6 +31,7 @@ Feature: Export di un descrittore
       | PA1  | admin | DEPRECATED       |
       | PA1  | admin | SUSPENDED        |
 
+  @sad-path
   @nrt-minimal
   @descriptor_export2
   Scenario: [DESCRIPTOR_EXPORT_2] La richiesta di export di un descrittore di un e-service, in stato DRAFT, ritorna un errore
@@ -38,6 +40,7 @@ Feature: Export di un descrittore
     When l'utente effettua una richiesta di export del descrittore
     Then si ottiene status code 400
 
+  @sad-path
   @nrt-minimal
   @descriptor_export3
   Scenario: [DESCRIPTOR_EXPORT_3] La richiesta di export di un descrittore di un e-service, senza documenti, da parte di un ente che non è l’erogatore, ritorna un errore
@@ -46,6 +49,7 @@ Feature: Export di un descrittore
     When l'utente effettua una richiesta di export del descrittore
     Then si ottiene status code 403
 
+  @happy-path
   @nrt-minimal
   @descriptor_export4
   Scenario: [DESCRIPTOR_EXPORT_4] La richiesta di export di un descrittore di un e-service, senza documenti, in erogazione inversa, con un’analisi del rischio compilata, va a buon fine. Il documento di configurazione che è parte del pacchetto esportato contiene anche l’analisi del rischio compilata dall’erogatore
@@ -56,6 +60,7 @@ Feature: Export di un descrittore
     And il pacchetto risulta correttamente formattato
     And il documento di configurazione contiene anche l’analisi del rischio compilata dall’erogatore
 
+  @happy-path
   @nrt-minimal
   @descriptor_export5
   Scenario: [DESCRIPTOR_EXPORT_5] La richiesta di export di un descrittore di un e-service, con due documenti, va a buon fine e vengono esportati anche i documenti

@@ -2,6 +2,7 @@
 Feature: Lettura di un'analisi del rischio di un eservice
   Tutti gli utenti autenticati possono leggere l'analisi del rischio di un eservice
 
+  @happy-path
   @nrt-minimal
   @eservice_risk_analysis_read1
   Scenario Outline: [ESERVICE_RISK_ANALYSIS_READ_01] Per un e-service precedentemente creato e pubblicato in modalità "RECEIVE", alla richiesta di lettura di una sua analisi del rischio, l'operazione va a buon fine

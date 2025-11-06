@@ -20,12 +20,14 @@ public class StepParameterTypes {
         SONO
     }
 
-    @ParameterType("PRODUTTORE_1|PRODUTTORE_2|INVITALIA")
+    @ParameterType("PRODUTTORE_1|PRODUTTORE_2|INVITALIA_L1|INVITALIA_L2|MERCHANT_ROOT")
     public RdbRole rdbRole(String role) {
         return switch (role) {
             case "PRODUTTORE_1" -> RdbRole.PRODUTTORE_1;
             case "PRODUTTORE_2" -> RdbRole.PRODUTTORE_2;
-            case "INVITALIA" -> RdbRole.INVITALIA;
+            case "INVITALIA_L1" -> RdbRole.INVITALIA_L1;
+            case "INVITALIA_L2" -> RdbRole.INVITALIA_L2;
+            case "MERCHANT_ROOT" -> RdbRole.MERCHANT_ROOT;
             default ->
                     throw new IllegalArgumentException("Invalid RDB role: " + role);
         };

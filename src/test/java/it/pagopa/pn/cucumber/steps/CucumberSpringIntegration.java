@@ -21,6 +21,7 @@ import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
@@ -46,6 +47,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClient.class,
+        PnPaperTrackerClientImpl.class,
         PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
@@ -54,6 +56,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,
         PnRaddAlternativeClientImpl.class,
+        PnRaddAlternativeV2ClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
@@ -170,6 +173,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,
+        SettableAuthTokenRaddCognito.class,
 
         LambdaInvoker.class,
 })

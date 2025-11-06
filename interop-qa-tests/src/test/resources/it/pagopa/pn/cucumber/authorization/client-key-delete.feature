@@ -2,6 +2,7 @@
 Feature: Cancellazione delle chiavi di un client
   Tutti gli utenti autorizzati possono cancellare le chiavi del proprio client, security solo le proprie
 
+  @happy-path
   @nrt-minimal
   Scenario Outline: [CLIENT_KEY_DELETE_1] Un utente con sufficienti permessi (admin o security); appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica caricata da lui stesso richiede la cancellazione della chiave. L'operazione va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -31,10 +32,15 @@ Feature: Cancellazione delle chiavi di un client
     When l'utente richiede una operazione di cancellazione della chiave di quel client
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ruoloCancellatore | ruoloCaricatore | statusCode |
       | admin             | security        |        204 |
       | admin             | api,security    |        204 |
+
+    @sad-path
+    Examples:
+      | ruoloCancellatore | ruoloCaricatore | statusCode |
       | security          | admin           |        403 |
       | security          | api,security    |        403 |
 
@@ -49,9 +55,14 @@ Feature: Cancellazione delle chiavi di un client
     When l'utente richiede una operazione di cancellazione della chiave di quel client
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ruolo    | statusCode |
       | admin    |        204 |
+
+    @sad-path
+    Examples:
+      | ruolo    | statusCode |
       | security |        403 |
 
   @nrt-minimal
@@ -64,9 +75,14 @@ Feature: Cancellazione delle chiavi di un client
     When l'utente richiede una operazione di cancellazione della chiave di quel client
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ruoloCancellatore | ruoloCaricatore | statusCode |
       | admin             | security        |        204 |
       | admin             | api,security    |        204 |
+
+    @sad-path
+    Examples:
+      | ruoloCancellatore | ruoloCaricatore | statusCode |
       | security          | admin           |        403 |
       | security          | api,security    |        403 |

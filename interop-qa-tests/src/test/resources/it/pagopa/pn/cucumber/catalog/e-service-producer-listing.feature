@@ -2,6 +2,7 @@
 Feature: Listing e-services lato erogatore
   Tutti gli utenti autenticati di enti erogatori possono ottenere la lista dei propri e-service erogati
 
+  @happy-path
   @nrt-minimal
   @producer_listing1
   Scenario Outline: [PRODUCER_LISTING_1] Restituisce gli e-service erogati dall’ente
@@ -24,6 +25,7 @@ Feature: Listing e-services lato erogatore
       | PA1  | api,security |         6 |
       | PA1  | support      |         6 |
 
+  @happy-path
   @nrt-minimal
   @producer_listing2
   Scenario: [PRODUCER_LISTING_2] A fronte di 5 e-service in db, restituisce solo i primi 3 risultati di e-service
@@ -32,6 +34,7 @@ Feature: Listing e-services lato erogatore
     When l'utente richiede una operazione di listing sui propri e-services erogati limitata ai primi 3 e-services
     Then si ottiene status code 200 e la lista di 3 e-services come erogatore
 
+  @happy-path
   @nrt-minimal
   @producer_listing3
   Scenario: [PRODUCER_LISTING_3] A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
@@ -40,6 +43,7 @@ Feature: Listing e-services lato erogatore
     When l'utente richiede una operazione di listing sui propri e-services con offset 2
     Then si ottiene status code 200 e la lista di 3 e-services come erogatore
 
+  @happy-path
   @nrt-minimal
   @producer_listing4 @to_fix @IMN-261
   Scenario: [PRODUCER_LISTING_4] Restituisce gli e-service erogati dall’ente fruiti da almeno uno dei fruitori specifici
@@ -50,6 +54,7 @@ Feature: Listing e-services lato erogatore
     When l'utente richiede una operazione di listing sui propri e-services fruiti da "PA2"
     Then si ottiene status code 200 e la lista di 1 e-service come erogatore
 
+  @happy-path
   @nrt-minimal
   @producer_listing5
   Scenario: [PRODUCER_LISTING_5] Restituisce gli e-service erogati dall’ente che contengono la keyword "test" all'interno del nome, con ricerca case insensitive
@@ -59,6 +64,7 @@ Feature: Listing e-services lato erogatore
     When l'utente richiede una operazione di listing sui propri e-services filtrando per la keyword "test"
     Then si ottiene status code 200 e la lista di 1 e-service come erogatore
 
+  @happy-path
   @nrt-minimal
   @producer_listing6
   Scenario: [PRODUCER_LISTING_6] Restituisce un insieme vuoto di e-service a catalogo per una ricerca che non porta risultati

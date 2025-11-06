@@ -1,5 +1,7 @@
 package it.pagopa.interop.utils;
 
+import static java.util.Objects.isNull;
+
 import it.pagopa.interop.common.IHttpExecutor;
 import lombok.Data;
 import java.util.function.Function;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -32,6 +35,14 @@ public class HttpCallExecutor implements IHttpExecutor {
             errorMessage = e.getMessage();
         }
         return responseStatus;
+    }
+
+    @Override
+    public <T> T performCallSavingBodyResponse(Supplier<ResponseEntity<T>> promise) {
+        ResponseEntity<T> tResponseEntity = performCall(promise, ResponseEntity::getStatusCode);
+        T body = isNull(tResponseEntity) ? null : tResponseEntity.getBody();
+        response = body;
+        return body;
     }
 
     /* TODO 11/03/2025: potrebbe essere il caso di restituire sempre una ResponseEntity,

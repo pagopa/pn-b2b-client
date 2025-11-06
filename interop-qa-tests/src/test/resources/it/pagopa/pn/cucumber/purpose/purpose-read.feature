@@ -2,6 +2,7 @@
 Feature: Lettura singola finalità
   Tutti gli utenti possono leggere una finalità, l'analisi del rischio è disponibile solo per admin fruitori o erogatori di quella finalità.
 
+  @happy-path
   @nrt-minimal
   @purpose_read1
   Scenario Outline: [LETTURA_FINALITA_1] Per una finalità precedentemente creata dal fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura, va a buon fine, l’analisi del rischio è disponibile solo per gli admin
@@ -37,6 +38,7 @@ Feature: Lettura singola finalità
       | PA1  | admin | ARCHIVED             |
       | PA1  | admin | DRAFT                |
 
+  @happy-path
   @nrt-minimal
   @purpose_read2 @no-parallel
   Scenario Outline: [LETTURA_FINALITA_2] Per una finalità precedentemente creata da un fruitore, la quale prima versione è in stato NON DRAFT (WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte dell’erogatore, va a buon fine
@@ -54,6 +56,7 @@ Feature: Lettura singola finalità
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
+  @sad-path
   @nrt-minimal
   @purpose_read3 @resource_intensive @wait_for_clarification @PIN-4805
   Scenario Outline: [LETTURA_FINALITA_3] Per una finalità precedentemente creata da un fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte di un ente che non è né l'erogatore, né il fruitore, va a buon fine ma non ottiene l'analisi del rischio

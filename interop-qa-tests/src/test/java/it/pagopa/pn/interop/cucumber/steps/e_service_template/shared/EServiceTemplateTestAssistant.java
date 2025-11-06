@@ -28,13 +28,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateDocumentInfo;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -80,24 +82,42 @@ public class EServiceTemplateTestAssistant {
     }
 
     public String nextTestResourceNameSuffix() {
-        int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+        int randomInt = this.sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().size();
         return String.format("%d-%d", sharedStepsContext.getTestSeed(), randomInt);
     }
 
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
-        Runnable publisher = () -> {
-            this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
-            publishEServiceTemplate();
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+        BiConsumer<UUID, UUID> publisher = (templateId, versionId) -> {
+            this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
+            publishEServiceTemplate(templateId, versionId);
         };
         switch (desiredState) {
             case DRAFT -> { /* no-op: una versione appena creata è automaticamente in questo stato */ }
-            case PUBLISHED -> publisher.run();
+            case PUBLISHED -> publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
             case SUSPENDED -> {
-                publisher.run();    // perché prima di essere sospesa deve essere pubblicata
+                publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());    // perché prima di essere sospesa deve essere pubblicata
                 suspendEServiceTemplate();
+            }
+            case DEPRECATED -> {
+                publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
+                UUID newVersionId = this.createNewVersion(lastTemplateManaged.id());
+                publisher.accept(lastTemplateManaged.id(), newVersionId);
             }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
         }
+    }
+
+    private UUID createNewVersion(UUID templateId) {
+        CreatedResource createdVersion = this.eServiceTemplateClient.createEServiceTemplateVersion(
+            templateId);
+        pollingService.makePolling(
+            () -> this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(templateId, createdVersion.getId()),
+            httpResponse -> httpResponse.getStatusCode().is2xxSuccessful(),
+            "Non è stata rilevata la versione dell'e-service creata entro il timeout. Consultare logs HTTP per maggiori dettagli."
+        );
+        return createdVersion.getId();
     }
 
     public void publishEServiceTemplate() {
@@ -126,6 +146,14 @@ public class EServiceTemplateTestAssistant {
         checkDocumentAddedToEServiceTemplateVersion(kind);
     }
 
+    public void addDocumentToEServiceTemplateVersionSuccessfully(
+        UUID templateId, UUID versionId, EServiceTemplateDocumentKind kind,
+        int fileIndex
+    ) {
+        addDocumentToEServiceTemplateVersion(templateId, versionId, kind, fileIndex);
+        checkDocumentAddedToEServiceTemplateVersion(templateId, versionId, kind);
+    }
+
     public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind, int fileIndex) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
@@ -141,7 +169,7 @@ public class EServiceTemplateTestAssistant {
 
     public void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName, int fileIndex) {
-        String userToken = sharedStepsContext.getUserToken();
+        String userToken = clientTokenConfigurator.getLastToken();
         Resource doc = buildResource(kind, fileIndex);
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
     }
@@ -170,7 +198,7 @@ public class EServiceTemplateTestAssistant {
         }
     }
 
-    public void addDocumentToEserviceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+    public UUID addDocumentToEserviceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateDocumentKind kind, String prettyName, String userToken, Resource doc) {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
@@ -188,8 +216,11 @@ public class EServiceTemplateTestAssistant {
         if(!httpCallExecutor.getResponseStatus().isError()) {
             ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
             try {
-                sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
+                UUID id = response.getBody().getId();
+                sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(
+                    id, prettyName,
                     doc.getInputStream().readAllBytes()));
+                return id;
             } catch (IOException e) {
                 fail("Errore imprevisto: il body del documento costruito non restituisce correttamente un InputStream", e);
             }
@@ -197,11 +228,18 @@ public class EServiceTemplateTestAssistant {
             sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(null, null, null, httpCallExecutor.getErrorMessage()));
         }
 
+        return eServiceTemplateId;
     }
 
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        checkDocumentAddedToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId,
+            kind);
+    }
+
+    private void checkDocumentAddedToEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind) {
         EServiceTemplateDocumentInfo lastAddedDocument = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument();
 
         if(isNotEmpty(lastAddedDocument.errorMessage())) {

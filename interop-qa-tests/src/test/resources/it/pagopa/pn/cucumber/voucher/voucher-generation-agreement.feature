@@ -52,7 +52,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Then si ottiene la corretta generazione del voucher
 
     @nrt-minimal
-    @voucher_generation_agreement4 @no-parallel
+    @voucher_generation_agreement4 @no-parallel @certifiedAttribute
     Scenario: [VOUCHER_GENERATION_AGREEMENT_04] La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo certificato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
         Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
@@ -265,7 +265,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Then la richiesta di generazione del Voucher non va a buon fine
 
     @nrt-minimal
-    @voucher_generation_agreement16 @no-parallel
+    @voucher_generation_agreement16 @no-parallel @certifiedAttribute
     Scenario: [VOUCHER_GENERATION_AGREEMENT_16] La generazione del Voucher fallisce quando il fruitore perde un attributo certificato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
         Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"

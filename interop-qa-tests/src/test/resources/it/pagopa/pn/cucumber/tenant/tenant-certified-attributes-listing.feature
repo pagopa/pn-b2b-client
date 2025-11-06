@@ -28,7 +28,7 @@ Feature: Listing attributi certificati posseduti da uno specifico aderente
       | Privato | api,security |
 
   @nrt-minimal
-  @tenant_certified_attributes_listing1b
+  @tenant_certified_attributes_listing1b @certifiedAttribute
   Scenario: [TENANT_CERTIFIED_ATTRIBUTES_LISTING_1B] Per due attributi precedentemente assegnati all’aderente, uno assegnato dalla piattaforma e facente parte degli attributi previsti da IPA e uno assegnato da un altro aderente dal flusso attributi self-service, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"

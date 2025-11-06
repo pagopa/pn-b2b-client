@@ -157,7 +157,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/cstar-securehub-infra-api-spec/6d1b9f7d943ae4051cf977f02b98b8fe012be390/src/idpay/apim/api/idpay_asset_register/openapi.register.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/cstar-securehub-infra-api-spec/refs/tags/v2.30.0/src/idpay/apim/api/idpay_asset_register/openapi.register.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -182,6 +182,48 @@
 
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>5.4.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-merchant-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/cstar-securehub-infra-api-spec/e8a4ada9ee2e9df4d2b25c75312e281ecf91ab6c/src/idpay/apim/api/idpay_merchants_portal/openapi.merchants.portal.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pari.generated.openapi.clients.merchant.root.api</apiPackage>
+                                <modelPackage>it.pagopa.pari.generated.openapi.clients.merchant.root.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pari.generated.openapi.clients.registro.beni.api</apiPackage>
+                            <modelPackage>it.pagopa.pari.generated.openapi.clients.registro.beni.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

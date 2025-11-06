@@ -10,15 +10,20 @@ Feature: Lettura di un e-service
     When l'utente richiede la lettura di quell'e-service
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
       | GSP  | api          |       200 |
-      | GSP  | security     |       404 |
       | GSP  | api,security |       200 |
       | GSP  | support      |       200 |
       | PA1  | admin        |       200 |
       | PA1  | api          |       200 |
-      | PA1  | security     |       404 |
       | PA1  | api,security |       200 |
       | PA1  | support      |       200 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | security     |       404 |
+      | PA1  | security     |       404 |

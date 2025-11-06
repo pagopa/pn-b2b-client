@@ -36,11 +36,13 @@ public class AgreementSuspensionSteps {
                 () -> clientTokenConfigurator.getAgreementClient().suspendAgreement(sharedStepsContext.getAgreementId(), delegationRef)
         );
 
-        sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
-                res -> res.getState() == AgreementState.SUSPENDED,
-                "The agreement was not suspended!"
-        );
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
+                    res -> res.getState() == AgreementState.SUSPENDED,
+                    "The agreement was not suspended!"
+            );
+        }
     }
 
 }

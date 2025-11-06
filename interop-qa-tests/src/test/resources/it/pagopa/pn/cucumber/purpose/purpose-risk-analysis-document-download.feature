@@ -12,14 +12,20 @@ Feature: Download documento di analisi del rischio sigillato
     When l'utente scarica il documento di analisi del rischio
     Then si ottiene status code <risultato>
 
-    Examples: 
+    @happy-path
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | PA1     | support      |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
-      | PA1     | support      |       200 |
 
+  @happy-path
   @nrt-minimal
   @purpose_risk_analysis_document_download2
   Scenario: [PURPOSE_RISK_ANALYSIS_DOCUMENT_DOWNLOAD_2] Per una finalità precedentemente creata dal fruitore, la quale è stata in passato almeno per un momento ACTIVE, la quale ha avuto un aggiornamento della stima di carico la quale versione è stata almeno per un momento ACTIVE, alla richiesta di lettura del documento di analisi del rischio da parte di un qualsiasi utente dell'ente, va a buon fine; il documento deve essere diverso da quello creato per la versione precedente.

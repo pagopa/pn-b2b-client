@@ -2,11 +2,11 @@ package it.pagopa.interop.authorization.service;
 
 import static java.util.Objects.nonNull;
 
+import it.pagopa.interop.authorization.service.IAuthorizationClient.Users;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
@@ -70,9 +70,9 @@ public class DataPreparationService {
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
+        Users users = new Users().addUserId(userId);
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, inlineObject)),
+                () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, users)),
                 res -> !res.is5xxServerError(),
                 "Failed to add a user to the client!"
         );

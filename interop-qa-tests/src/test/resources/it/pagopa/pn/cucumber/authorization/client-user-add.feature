@@ -9,19 +9,25 @@ Feature: Aggiunta di un membro ad un client
     When l'utente richiede l'aggiunta di un admin di "<ente>" al client
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | admin        |        204 |
+      | PA1  | admin        |        204 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
-      | PA1  | admin        |        204 |
       | PA1  | api          |        403 |
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
 
+  @sad-path
   @nrt-minimal
   Scenario: [CLIENT_USER_ADD_2] Un utente con sufficienti permessi (admin); appartenente all'ente che ha creato il client; aggiunge al client un admin che è associato ad un altro ente. Ottiene un errore
     Given l'utente è un "admin" di "PA1"

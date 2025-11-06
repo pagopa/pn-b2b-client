@@ -10,14 +10,19 @@ Feature: Creazione attributo certificato
     Then si ottiene status code <risultato>
 
     # NOTE 16/04/2025 Nonostante il commento che segue PA1 restituisce esito positivo in ambiente QA
-    Examples: #PA1 e Privato non sono enti certificatori
+    @happy-path
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | PA2     | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
-      | PA2     | admin        |       200 |
       | PA2     | api          |       403 |
       | PA2     | security     |       403 |
       | PA2     | api,security |       403 |
