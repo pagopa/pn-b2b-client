@@ -13,6 +13,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -24,10 +25,9 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -55,9 +55,11 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
@@ -233,18 +235,28 @@ public class SharedSteps {
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV26 getSentNotificationLastVersion() {
-        return b2bClient.getSentNotificationV26(notificationIun);
+    public FullSentNotificationV27 getSentNotificationLastVersion() {
+        return b2bClient.getSentNotificationV27(notificationIun);
+    }
+
+    /**
+     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * ma a differenza del metodo sopra anziché usare il notificationIun di SharedSteps usa uno IUN arbitrario.
+     * Usato in un solo punto del codice
+     */
+    //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
+    public FullSentNotificationV27 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV27(iun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
 
-    private NotificationStepsInterface getNotificationStepInterface() {
+    public NotificationStepsInterface getNotificationStepInterface() {
         NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
         return getNotificationStepInterface(notificationVersion);
     }
@@ -262,10 +274,17 @@ public class SharedSteps {
      * anziché crearla da zero, aspettare che arrivi in ACCEPTED, etc si imposta lo IUN qua e la PA e
      * si può procedere con il resto dei metodi.
      */
-    @Given("imposto lo iun di SharedSteps a {string} e la pa a {paName}")
+    @Given("imposto lo iun di SharedSteps a {string} e la pa a {string}")
     public void impostoIunAndPaForTestPurposes(String iun, String paName) {
-        this.notificationIun = iun;
+        notificationIun = iun;
         setPA(paName);
+        /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
+        e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
+        notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
+        getNotificationStepInterface().prepareNotificationRequest(Map.of(
+                "subject", "MOCKED NOTIFICATION",
+                "senderDenomination", "Comune di Palermo"));
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -352,7 +371,7 @@ public class SharedSteps {
         for (int i = 0; i < numberOfNotification; i++) {
             Thread t = new Thread(() -> {
                 notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-                notificationStepsInterface.waitForTimelineElement(notificationIun, COMPLETELY_UNREACHABLE, 33);
+                notificationStepsInterface.waitForTimelineElement(COMPLETELY_UNREACHABLE, 33);
                 notificationsCounter.getAndIncrement();
             });
             threadList.add(t);
@@ -669,9 +688,9 @@ public class SharedSteps {
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
         selectUser(user);
         try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
+                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalCourtesyAddressWrapper.ChannelType.PEC);
                 log.info("PEC FOUND AND DELETED");
             }
         } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -688,7 +707,7 @@ public class SharedSteps {
         selectUser(user);
         try {
             this.iPnWebUserAttributesClient.getLegalAddressByRecipient().stream()
-                    .filter(address -> LegalChannelType.PEC.equals(address.getChannelType()))
+                    .filter(address -> LegalCourtesyAddressWrapper.ChannelType.PEC.getValue().equals(address.getChannelType().getValue()))
                     .findAny()
                     .orElseThrow(() -> AssertionFailureBuilder.assertionFailure().message("PEC NOT FOUND!").build());
         } catch (Exception exc) {
@@ -697,7 +716,7 @@ public class SharedSteps {
         }
     }
 
-    @And("viene verificata la presenza di {int} recapiti di cortesia inseriti per l'utente {string}")
+    @And("viene verificata la presenza di {int} recapit(o)(i) di cortesia inserit(o)(i) per l'utente {string}")
     public void viewedCourtesyAddress(int expectedItems, String user) {
         selectUser(user);
         List<CourtesyDigitalAddress> courtesyAddressByRecipient = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
@@ -707,11 +726,30 @@ public class SharedSteps {
     @And("viene verificata la presenza di qualunque tipo di recapito inserito per l'utente {string}")
     public void viewedAllAddress(String user) {
         selectUser(user);
-        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
-        Assertions.assertTrue(
-                (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty())
-                        || (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty())
-        );
+        RecipientWrapper addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+
+        if (webRecipientClient instanceof B2BRecipientExternalClientImpl) {
+            Assertions.assertTrue(
+                    (addressesByRecipient.getB2bUserAddress() != null &&
+                            addressesByRecipient.getB2bUserAddress().getCourtesy() != null &&
+                            !addressesByRecipient.getB2bUserAddress().getCourtesy().isEmpty())
+                            ||
+                            (addressesByRecipient.getB2bUserAddress() != null &&
+                                    addressesByRecipient.getB2bUserAddress().getLegal() != null &&
+                                    !addressesByRecipient.getB2bUserAddress().getLegal().isEmpty()),
+                    "Non è presente alcun recapito LEGAL o COURTESY da b2bUserAddress per l'utente " + user
+            );
+        } else {
+            Assertions.assertTrue(
+                    addressesByRecipient.getBffUserAddress() != null &&
+                            addressesByRecipient.getBffUserAddress()
+                                    .stream()
+                                    .map(BffUserAddress::getAddressType)
+                                    .collect(Collectors.toSet())
+                                    .containsAll(Arrays.asList("LEGAL", "COURTESY")),
+                    "Non è presente alcun recapito LEGAL o COURTESY da BFF per l'utente " + user
+            );
+        }
     }
 
     @Then("si verifica la corretta acquisizione della notifica")
@@ -757,8 +795,8 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    /* 8 vecchi metodi sono stati unificati in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
-      E' stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
+    /* Sono stati unificati 8 vecchi metodi in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
+      È stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
       (dalla 21 in su, in quanto i metadati non sono presenti in versioni precedenti)
      */
     private void sendNotificationRefusedDueToError(String errorType) {
@@ -809,8 +847,17 @@ public class SharedSteps {
     }
 
     public HttpStatusCodeException consumeNotificationError() {
-        HttpStatusCodeException value = notificationError;
+        HttpStatusCodeException value = this.notificationError;
         this.notificationError = null;
+
+        if (value != null) {
+            log.info("Consuming HttpStatusCodeException: Status={}, Message={}, ResponseBody={}",
+                    value.getStatusCode(),
+                    value.getMessage(),
+                    value.getResponseBodyAsString()
+            );
+        }
+
         return value;
     }
 
@@ -1106,8 +1153,8 @@ public class SharedSteps {
     }
 
     private static EventId getEventId(String iun, DataTest dataFromTest) {
-        TimelineElementV26 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV27 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV27 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -1129,16 +1176,16 @@ public class SharedSteps {
      * @param dataFromTest          the data filters
      * @return a list of timeline elements that match the given event category and data from test
      */
-    public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
+    public List<TimelineElementV27> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        FullSentNotificationV27 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV27> timelineElementList = fullSentNotification.getTimeline();
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, notificationIun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue())
-                    || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV26 timelineElementDetails = timelineElementFromTest.getDetails();
+            if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)
+                    || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
+                TimelineElementV27 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV27 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem ->
                                 Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
                                         && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
@@ -1149,7 +1196,7 @@ public class SharedSteps {
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
 
-    public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    public TimelineElementV27 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
                 .findAny()
                 .orElse(null);
@@ -1171,7 +1218,7 @@ public class SharedSteps {
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
-        return getNotificationStepInterface().getDatiPagamento(notificationIun, destinatario, pagamento);
+        return getNotificationStepInterface().getDatiPagamento(destinatario, pagamento);
     }
 
     public static void threadWait(int wait) {
@@ -1182,4 +1229,13 @@ public class SharedSteps {
             throw exception;
         }
     }
+
+    public String vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
+        HashMap<String, String> quickAccessLink = pnExternalServiceClient.getQuickAccessLink(iun);
+        log.debug("quickAccessLink: {}", quickAccessLink.toString());
+        String qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]);
+        log.debug("qrCode: {}", qrCode);
+        return qrCode;
+    }
+
 }

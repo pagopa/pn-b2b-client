@@ -11,5 +11,5 @@ public interface IProducerDelegationsApiClient extends SettableBearerToken {
     CreatedResource createProducerDelegation(DelegationSeed delegationSeed);
     void approveProducerDelegation(UUID delegationId);
     void rejectProducerDelegation(UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
-    void revokeProducerDelegation(String delegationId);
+    void revokeProducerDelegation(UUID delegationId);
 }

@@ -35,7 +35,7 @@ public class ClientUsersListingStep {
 
     @Then("si ottiene status code 200 e la lista di {int} utenti")
     public void verifyStatusCodeAndListLength(int userListSize) {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(userListSize, ((List<CompactUser>) httpCallExecutor.getResponse()).size());
     }
 

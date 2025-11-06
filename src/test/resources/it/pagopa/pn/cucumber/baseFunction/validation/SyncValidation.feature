@@ -1039,7 +1039,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale all'allegato di pagamento
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"
 
-
+  @validation
   Scenario: [B2B-PA-SYNC_VALIDATION_71] Invio notifica multidestinatario con allegato uguale all'allegato di pagamento - PN-10162
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1071,14 +1071,51 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
 
-  @validation
-  Scenario: [B2B-PA-SYNC_VALIDATION_74] validazione sincrona campo denomination contenente più di 44 caratteri
+  @validation @pn-15756
+  Scenario: [B2B-PA-SYNC_VALIDATION_PN_15756_1] validazione sincrona campo denomination contenente più di 88 caratteri
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario
-      | denomination | Fieramosca aaaaaaaaaaaaaaa aaaaaaaaaaaaa aaaaaaaa |
-      | taxId        | FRMTTR76M06B715E                                  |
+      | denomination | Fieramosca EttoreXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |
+      | taxId        | FRMTTR76M06B715E                                                                          |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  @validation @pn-15756
+  Scenario: [B2B-PA-SYNC_VALIDATION_PN_15756_2] validazione sincrona campo denomination contenente 88 caratteri
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination | Fieramosca EttoreXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |
+      | taxId        | FRMTTR76M06B715E                                                                         |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'invio della notifica non ha prodotto errori
+
+  @validation @pn-15756
+    # Su dev il limite è conteggiato sulla coppia physycalAddress.at+municipalityDetails dunque il test è da ritenersi opportuno dall'ambiente di TEST in poi
+  Scenario: [B2B-PA-SYNC_VALIDATION_PN_15756_3] validazione sincrona campo physycal address at+municipalityDetails contenente 44 caratteri
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination | Fieramosca Ettore                            |
+      | taxId        | FRMTTR76M06B715E                             |
+      | at           | Via Roma 123 Palazzo Verdi Scala A XXXXXXXXX |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'invio della notifica non ha prodotto errori
+
+  @validation @pn-15756
+    # Su dev il limite è conteggiato sulla coppia physycalAddress.at+municipalityDetails dunque il test è da ritenersi opportuno dall'ambiente di TEST in poi
+  Scenario: [B2B-PA-SYNC_VALIDATION_PN_15756_4] validazione sincrona campo physycal address at+municipalityDetails contenente piu di 44 caratteri
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination | Fieramosca Ettore                             |
+      | taxId        | FRMTTR76M06B715E                              |
+      | at           | Via Roma 123 Palazzo Verdi Scala A XXXXXXXXXX |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 

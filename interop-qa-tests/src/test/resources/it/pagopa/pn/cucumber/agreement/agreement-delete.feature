@@ -10,25 +10,31 @@ Feature: Cancellazione richiesta di fruizione
     When l'utente richiede una operazione di cancellazione della richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples: 
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       204 |
+      | PA1     | admin        |       204 |
+      | Privato | admin        |       204 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | PA1     | admin        |       204 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | Privato | admin        |       204 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
-  @agreement_delete1b
+  @happy-path
+  @agreement_delete1b @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -43,6 +49,7 @@ Feature: Cancellazione richiesta di fruizione
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @sad-path
   @agreement_delete2a
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato PENDING, ACTIVE, SUSPENDED o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -57,6 +64,7 @@ Feature: Cancellazione richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
+  @sad-path
   @agreement_delete2b
   Scenario: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato REJECTED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"

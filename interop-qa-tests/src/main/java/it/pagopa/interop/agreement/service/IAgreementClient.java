@@ -12,14 +12,18 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import org.springframework.http.ResponseEntity;
 
 public interface IAgreementClient extends SettableBearerToken {
     CreatedResource createAgreement(AgreementPayload agreementPayload);
     Agreement getAgreementById(UUID agreementId);
     ResponseEntity<Void> getAgreementContract(UUID agreementId);
+    Agreement activateAgreement(UUID agreementId, DelegationRef delegationRef);
     Agreement activateAgreement(UUID agreementId);
     Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
+    Agreement suspendAgreement(UUID agreementId, DelegationRef delegationRef);
     Agreement suspendAgreement(UUID agreementId);
     Agreement updateAgreement(UUID agreementId, AgreementUpdatePayload agreementUpdatePayload);
     Agreement upgradeAgreement(UUID agreementId);

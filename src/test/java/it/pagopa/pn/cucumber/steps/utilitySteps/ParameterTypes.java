@@ -16,8 +16,8 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 public class ParameterTypes {
 
     @ParameterType("esista|non esista")
-    public static boolean exists(String condition) {
-        return condition.equals("esista");
+    public static boolean exists(String value) {
+        return value.equals("esista");
     }
 
     @ParameterType("abbia|non abbia")
@@ -30,24 +30,44 @@ public class ParameterTypes {
         return value.equals("è");
     }
 
+    @ParameterType("sono|non sono")
+    public static boolean are(String value) {
+        return value.equals("sono");
+    }
+
     @ParameterType("uguale|differente")
-    public static boolean isUguale(String condition) {
-        return condition.equals("uguale");
+    public static boolean isUguale(String value) {
+        return value.equals("uguale");
     }
 
     @ParameterType("contiene|non contiene")
-    public static boolean contains(String condition) {
-        return condition.equals("contiene");
+    public static boolean contains(String value) {
+        return value.equals("contiene");
+    }
+
+    @ParameterType("stato|category")
+    public static String streamEventType(String value) {
+        return value.equals("stato") ? STREAM_EVENT_TYPE_STATUS : STREAM_EVENT_TYPE_TIMELINE;
+    }
+
+    @ParameterType("con|senza")
+    public static boolean with(String value) {
+        return value.equals("con");
+    }
+
+    @ParameterType("analogico|digitale")
+    public static boolean isDigital(String value) {
+        return value.equals("digitale");
     }
 
     @ParameterType("uguale|successivo|precedente")
-    public static Boolean isSuccessivo(String condition) {
-        return condition.equals("uguale") ? null : condition.equals("successivo");
+    public static Boolean isSuccessivo(String value) {
+        return value.equals("uguale") ? null : value.equals("successivo");
     }
 
     @ParameterType("pari|superiore|inferiore")
-    public static Boolean isSuperiore(String condition) {
-        return condition.equals("pari") ? null : condition.equals("superiore");
+    public static Boolean isSuperiore(String value) {
+        return value.equals("pari") ? null : value.equals("superiore");
     }
 
     @ParameterType("giorni|ore|minuti|secondi")

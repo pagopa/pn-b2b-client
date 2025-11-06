@@ -4,7 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
@@ -62,10 +62,7 @@ public class RaddFsuSteps {
 
     @Given("viene richiesto il codice QR per lo IUN {string}")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun) {
-        HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
-        log.debug("quickAccessLink: {}", quickAccessLink.toString());
-        this.qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[0]);
-        log.debug("qrCode: {}", qrCode);
+        this.qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, 0);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti")
@@ -85,8 +82,9 @@ public class RaddFsuSteps {
         }
     }
 
+    //TODO c'è un metodo ad hoc per il taxId in SharedSteps
     private String getRecipientZeroTaxId() {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 

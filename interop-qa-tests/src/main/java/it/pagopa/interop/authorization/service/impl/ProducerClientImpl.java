@@ -4,12 +4,16 @@ import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PersonalDataFilter;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -17,6 +21,10 @@ import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class ProducerClientImpl implements IProducerClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
@@ -47,7 +55,15 @@ public class ProducerClientImpl implements IProducerClient {
 
     @Override
     public ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated) {
-        return eservicesApi.getProducerEServices(offset, limit, q, consumersIds, delegated);
+        /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
+         * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
+        return eservicesApi.getProducerEServices(offset, limit, null, q, consumersIds, delegated);
+    }
+
+    @Override
+    public ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated, Boolean personalData) {
+        PersonalDataFilter filter = personalData == null ? null : PersonalDataFilter.valueOf(personalData.toString().toUpperCase());
+        return eservicesApi.getProducerEServices(offset, limit, filter, q, consumersIds, delegated);
     }
 
     @Override

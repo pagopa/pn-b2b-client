@@ -2,7 +2,6 @@ package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
@@ -106,11 +105,26 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     @Override
+    public void checkFullSentNotificationRelatedElementWithVersion(String relatedTimelineElement) {
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
+
+        boolean found = fullSentNotification.getNotificationStatusHistory().stream()
+                .filter(history -> history.getRelatedTimelineElements() != null)
+                .flatMap(history -> history.getRelatedTimelineElements().stream())
+                .anyMatch(element -> element.contains(relatedTimelineElement));
+
+        assertThat(found)
+                .as("Il controllo sulla fullSentNotification V26 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement +", IUN: "+sharedSteps.getNotificationIun())
+                .isFalse();
+
+    }
+
+    @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
-        checkIfTimelineElementExists(true, null, null);
+        checkIfTimelineElementExists(timelineEventCategory, true, null, null);
     }
 
     @Override
@@ -350,6 +364,9 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
         //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
+        if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)) {
+            pollingStrategy = TIMELINE_SLOW;
+        }
         String strategy = NotificationUtilsV24.getPollingStrategy(pollingStrategy);
         IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
@@ -370,24 +387,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     @Override
-    public void verifyTimelineElementDoesNotExists(boolean mustLoadTimeline, String timelineEventCategory, Map<String, String> dataMap) {
-        DataTestV24 dataTest = DataTestV24.convertMap(dataMap);
-        if (mustLoadTimeline) {
-            loadTimeline(timelineEventCategory, false, dataTest);
-        }
-        getTimelineElementsByEventId(timelineEventCategory, dataTest);
-        log.info("TIMELINE_ELEMENT: " + timelineElement);
-        try {
-            assertThat(timelineElement)
-                    .as("Timeline element with category " + timelineEventCategory + " should be null")
-                    .isNull();
-        } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionError);
-        }
-    }
-
-    @Override
-    public void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams) {
+    public void checkIfTimelineElementExists(String category, boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams) {
         try {
             boolean result;
             //se siamo giunti a questo metodo dopo aver recuperato la timeline da B2B andiamo a valorizzare timelineElement e timelineElementList col risultato del polling
@@ -403,7 +403,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
             if (exists) {
                 assertSoftly(softly -> {
                     assertThat(result)
-                            .as("Il risultato del polling dovrebbe essere valorizzato. Primo controllo: Verificare che l'elemento sia presente in timeline e le tempistiche con cui viene prodotto")
+                            .as(logTimeline(null, category, true))
                             .isTrue();
                     assertThat(timelineElement)
                             .as("L'elemento della timeline non dovrebbe essere null")
@@ -416,7 +416,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
             } else {
                 assertSoftly(softly -> {
                     assertThat(result)
-                            .as("Il risultato del polling dovrebbe essere false. Verificare la correttezza dello scenario di test e i dati passati in input\"")
+                            .as(logTimeline(null, category, false))
                             .isFalse();
                     assertThat(timelineElement)
                             .as("L'elemento di timeline dovrebbe essere null")
@@ -430,50 +430,58 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     @Override
-    public void checkIfTimelineElementExistsFromData(String timelineEventCategory, Map<String, String> dataMap) {
+    public void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         try {
             DataTestV24 dataTest = DataTestV24.convertMap(dataMap);
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
             if (mustLoadTimeline) {
-                loadTimeline(timelineEventCategory, true, dataTest);
+                loadTimeline(timelineEventCategory, exists, dataTest);
             }
             List<TimelineElementV26> timelineElements = getTimelineElementsByEventId(timelineEventCategory, dataTest);
-            assertThat(timelineElements)
-                    .as(logTimeline(dataTest, timelineEventCategory))
-                    .isNotEmpty();
-            if (dataTest != null && dataTest.getTimelineElement() != null) {
-                boolean atLeastOneSuccessful = false;
-                List<AssertionError> assertionErrorList = new LinkedList<>();
-                for (TimelineElementV26 te : timelineElements) {
-                    try {
-                        timelineElement = te;
-                        log.info("TIMELINE_ELEMENT: " + te);
-                        DataTestV24.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
-                        atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
-                        break;
-                    } catch (AssertionError e) {
-                        assertionErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+            if (exists) {
+                assertThat(timelineElements)
+                        .as(logTimeline(dataTest, timelineEventCategory, true))
+                        .isNotEmpty();
+                if (dataTest != null && dataTest.getTimelineElement() != null) {
+                    boolean atLeastOneSuccessful = false;
+                    List<AssertionError> assertionErrorList = new LinkedList<>();
+                    for (TimelineElementV26 te : timelineElements) {
+                        try {
+                            timelineElement = te;
+                            log.info("TIMELINE_ELEMENT: " + te);
+                            DataTestV24.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
+                            atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+                            break;
+                        } catch (AssertionError e) {
+                            assertionErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+                        }
+                    }
+                    if (!atLeastOneSuccessful) {// se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
+                        B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionErrorList, dataTest, timelineEventCategory);
                     }
                 }
-                if (!atLeastOneSuccessful) {// se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
-                    B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionErrorList, dataTest, timelineEventCategory);
-                }
+            } else {
+                log.info("TIMELINE_ELEMENT LIST: " + timelineElements);
+                assertThat(timelineElements)
+                        .as(logTimeline(dataTest, timelineEventCategory, false))
+                        .isEmpty();
             }
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
-    private String logTimeline(DataTestV24 dataTest, String timelineEventCategory) {
+    private String logTimeline(DataTestV24 dataTest, String timelineEventCategory, boolean exists) {
         boolean isWithEventId = dataTest != null && dataTest.getTimelineElement() != null;
-        boolean hasCheckOnDeliveryDetailCode = List.of(SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS).contains(timelineEventCategory);
+        boolean hasCheckOnDeliveryDetailCode = dataTest != null && List.of(SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS).contains(timelineEventCategory);
+        String prefix = exists ? "Non è stato trovato nessun elemento con " : "La ricerca non avrebbe dovuto restituire nessun elemento con ";
         String expectedDdc = "";
         if (hasCheckOnDeliveryDetailCode) {
             expectedDdc = " e DeliveryDetailCode " + dataTest.getTimelineElement().getDetails().getDeliveryDetailCode();
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Non è stato trovato nessun elemento con ")
+        sb.append(prefix)
                 .append(isWithEventId ? "eventId contenente " : "category ")
                 .append(isWithEventId ? dataTest.getTimelineEventId(timelineEventCategory, sharedSteps.getNotificationIun()) : timelineEventCategory)
                 .append(hasCheckOnDeliveryDetailCode ? expectedDdc : "")
@@ -486,14 +494,14 @@ public class B2bStepsV24 implements B2bStepsInterface {
             sb.append(te.getCategory())
                     .append(" EventId: ")
                     .append(te.getElementId())
-                    .append(hasCheckOnDeliveryDetailCode ? actualDdc : "")
+                    .append(actualDdc)
                     .append("\n");
         });
         return sb.toString();
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV24 dataTest) {
-        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+        if (timelineEventCategory.equals(REQUEST_REFUSED) || dataTest.getLoadTimelineFrom().equals(LOAD_FROM_DELIVERY_PUSH)) {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
             readEventsUpToTimelineElementFromDeliveryPush(timelineEventCategory, dataTest, existCheck);
         } else {
@@ -1031,29 +1039,33 @@ public class B2bStepsV24 implements B2bStepsInterface {
         TimelineElementV26 timelineElementForDateCalculation = getTimelineElementsByEventId(timelineElementForDateCalculationCategory, dataTest)
                 .stream().findAny().orElse(null);
         assertThat(timelineElementForDateCalculation)
-                .as(new StringBuilder("L'elemento di timeline ")
-                        .append(timelineElementForDateCalculationCategory)
-                        .append(" da cui viene calcolato il perfezionamento in caso di ")
-                        .append(timelineEventCategory)
-                        .append(" non può essere null")
-                        .toString())
+                .as("L'elemento di timeline " +
+                        timelineElementForDateCalculationCategory +
+                        " da cui viene calcolato il perfezionamento in caso di " +
+                        timelineEventCategory +
+                        " non può essere null")
                 .isNotNull();
 
         OffsetDateTime notificationDate = null;
         Duration schedulingDaysRefinement = null;
 
-        if (timelineEventCategory.equals(DIGITAL_SUCCESS_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
-        } else if (timelineEventCategory.equals(DIGITAL_FAILURE_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getEventTimestamp();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
-        } else if (timelineEventCategory.equals(ANALOG_SUCCESS_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getEventTimestamp();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
-        } else if (timelineEventCategory.equals(ANALOG_FAILURE_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureAnalogRefinement();
+        switch (timelineEventCategory) {
+            case DIGITAL_SUCCESS_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
+            }
+            case DIGITAL_FAILURE_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getEventTimestamp();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
+            }
+            case ANALOG_SUCCESS_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getEventTimestamp();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
+            }
+            case ANALOG_FAILURE_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureAnalogRefinement();
+            }
         }
 
         OffsetDateTime schedulingDate = notificationDate.plus(schedulingDaysRefinement);

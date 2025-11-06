@@ -15,5 +15,7 @@ public interface IdentityService {
 
     UUID getOrganizationId(String tenantType);
 
+    String getKind(String tenantType);
+
     DPoPTokenService.PreparedClient getPreparedClient(UUID clientId);
 }

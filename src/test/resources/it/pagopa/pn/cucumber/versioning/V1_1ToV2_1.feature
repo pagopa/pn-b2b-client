@@ -14,7 +14,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" con la versione "V1"
 
 
-  @version
+  @version @verificaPagamento
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_2] Invio e visualizzazione notifica e verifica amount e effectiveDate da V1 in ambiente con versione superiore
     Given viene generata una nuova notifica con la versione "V1"
       | subject            | invio notifica con cucumber |

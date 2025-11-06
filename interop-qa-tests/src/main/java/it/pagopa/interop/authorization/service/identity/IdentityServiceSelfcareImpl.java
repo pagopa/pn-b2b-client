@@ -69,6 +69,15 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     }
 
     @Override
+    public String getKind(String tenantType) {
+        return tenantList.stream()
+            .filter(tenant -> tenantType.equals(tenant.getName()))
+            .map(Tenant::getKind)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+    }
+
+    @Override
     public DPoPTokenService.PreparedClient getPreparedClient(UUID clientId) {
         throw new RuntimeException("Not implemented yet");
     }

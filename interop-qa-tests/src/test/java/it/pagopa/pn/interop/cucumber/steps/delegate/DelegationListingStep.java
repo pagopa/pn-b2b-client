@@ -14,7 +14,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServices;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationTenants;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Pagination;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class DelegationListingStep {
 
     @And("l'utente visualizza il dettaglio della delega creata")
     public void retrieveDelegationDetails() {
-        String delegationId = String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId());
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
         httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(delegationId));
     }
 

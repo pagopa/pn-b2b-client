@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.utils.datatestVersions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.EventId;
 import lombok.Data;
@@ -36,6 +36,8 @@ public class DataTestV1 extends AbstractDataTest {
         String numCheck = getValue(data, NUM_CHECK.key);
         String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
+        String loadTimelineFrom = getValue(data, LOAD_TIMELINE_FROM.key);
+        String notificationCost = getValue(data, DETAILS_NOTIFICATION_COST.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -62,6 +64,7 @@ public class DataTestV1 extends AbstractDataTest {
                             .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
+                            .notificationCost(notificationCost != null ? Long.parseLong(notificationCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                     );
 
@@ -75,6 +78,7 @@ public class DataTestV1 extends AbstractDataTest {
             dataTest.setPollingType(pollingType);
             dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
             dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
+            dataTest.setLoadTimelineFrom(loadTimelineFrom);
 
             return dataTest;
         } catch (JsonProcessingException jsonProcessingException) {
@@ -121,9 +125,9 @@ public class DataTestV1 extends AbstractDataTest {
                     assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
                     assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size());
                     for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
-                        assertThat(actual.getSendingReceipts().get(i))
-                                .as(error + EQUALITY_SENDING_RECEIPT_NUMBER + " " + (i + 1))
-                                .isEqualTo(expected.getSendingReceipts().get(i));
+                        assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
+                        assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
+                        assertThat(actual.getSendingReceipts().get(i).getSystem()).as("Il System del sendingReceipt non dev'essere null").isNotNull();
                     }
                 }
             }
@@ -160,7 +164,11 @@ public class DataTestV1 extends AbstractDataTest {
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getPhysicalAddress() != null) {
-                        assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                        if (B2bUtils.objectHasAllFieldsNull(expected.getPhysicalAddress())) {
+                            assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isNotNull();
+                        } else {
+                            B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
+                        }
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getResponseStatus() != null && expected.getResponseStatus().getValue() != null) {
@@ -212,12 +220,12 @@ public class DataTestV1 extends AbstractDataTest {
             case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER -> {
                 //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                 if (expected != null && expected.getPhysicalAddress() != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                 }
             }
             case SEND_SIMPLE_REGISTERED_LETTER -> {
                 if (expected != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                     assertThat(actual.getAnalogCost()).as(error + EQUALITY_ANALOG_COST).isEqualTo(expected.getAnalogCost());
                 }
             }

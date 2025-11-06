@@ -16,13 +16,16 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v24.PnPollingServiceWebhookV24;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
+import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -44,7 +47,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClient.class,
-        PnWebPaClientImpl.class,
+        PnPaperTrackerClientImpl.class,
+        PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,
@@ -52,6 +56,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,
         PnRaddAlternativeClientImpl.class,
+        PnRaddAlternativeV2ClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
@@ -129,6 +134,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceStatusExtraRapidV27.class,
         PnPollingServiceTimelineExtraRapidV27.class,
 
+        PnPollingServiceTimelineRapidV28.class,
+        PnPollingServiceStatusRapidV28.class,
+        PnPollingServiceTimelineSlowV28.class,
+        PnPollingServiceTimelineSlowE2eV28.class,
+        PnPollingServiceStatusSlowV28.class,
+        PnPollingServiceValidationStatusV28.class,
+        PnPollingServiceValidationStatusNoAcceptedV28.class,
+        PnPollingServiceValidationStatusAcceptedShortV28.class,
+        PnPollingServiceWebhookV28.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV28.class,
+        PnPollingServiceStatusExtraRapidV28.class,
+        PnPollingServiceTimelineExtraRapidV28.class,
+
         MailSenderConfig.class,
         PnParserService.class,
         LegalFactTokenConfiguration.class,
@@ -154,7 +172,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
-        EmdIntegrationApiImpl.class
+        EmdIntegrationApiImpl.class,
+        SettableAuthTokenRaddCognito.class,
+
+        LambdaInvoker.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -64,7 +64,7 @@ public class TenantEServiceProducerListingSteps {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();
-        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
     }
 }

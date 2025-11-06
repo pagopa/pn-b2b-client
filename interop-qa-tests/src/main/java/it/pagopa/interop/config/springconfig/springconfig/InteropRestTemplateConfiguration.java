@@ -1,6 +1,8 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
 
+import static java.util.List.of;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,10 +23,12 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.utils.StringUtils;
 
 @Configuration
+@EnableRetry
 public class InteropRestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
@@ -42,7 +46,10 @@ public class InteropRestTemplateConfiguration {
         restTemplate.setRequestFactory(requestFactory);
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestResponseLoggingInterceptor());
-        restTemplate.getMessageConverters().add(new FileHttpMessageConverter());
+        restTemplate.getMessageConverters().addAll(of(
+            new FileHttpMessageConverter(),
+            new FileDownloadMultipartConverter()
+            ));
         return restTemplate;
     }
 

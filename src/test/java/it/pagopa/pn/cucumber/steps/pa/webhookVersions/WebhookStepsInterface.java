@@ -9,6 +9,14 @@ import java.util.UUID;
 
 public interface WebhookStepsInterface {
 
+    /**
+     * Ogni classe che implementa WebhookStepsInterface nella propria implementazione dovrà restituire
+     * la fullSentNotification relativa alla propria versione ottenuta chiamando il b2b client.
+     * Vi dovrà poi essere un metodo PRIVATO getFullSentNotificationVersioned che restituisce l'oggetto
+     * castato alla classe corrispondente alla versione in uso.
+     */
+    Object getFullSentNotification();
+
     void initializeStreamRequest(String action, String pa);
 
     void createStreamRequest(List<String> filterValues, int number, String title, String eventType);
@@ -29,9 +37,7 @@ public interface WebhookStepsInterface {
 
     void updateStreams();
 
-    void verifySpecificEventNotInStream(String elementType);
-
-    void checkConsumeStreamStatusValue(boolean isPresente, String status);
+    void checkIfStreamContains(String type, String timelineCategoryOrStatus, boolean contains);
 
     void createStreamRequestWithGroupsPA(List<String> groupIdByPa);
 
@@ -46,6 +52,10 @@ public interface WebhookStepsInterface {
     void getStreamById(UUID streamId);
 
     void consumeEventStream(UUID streamId);
+
+    void consumeEventStreamWithHttpInfo(UUID streamId);
+
+    void checkHeader(boolean contains, String headerParameterName, String headerParameterValue);
 
     void consumeEventStreamAndCheckNumEvents(int numEvents);
 
@@ -81,9 +91,7 @@ public interface WebhookStepsInterface {
 
     void getStreamEventListForStressTest();
 
-    void verificaDeanonimizzazioneEventiTimelineAnalogica(boolean delega);
-
-    void verificaDeanonimizzazioneEventiTimelineDigitale(boolean delega);
+    void verificaDeanonimizzazioneEventiTimeline(boolean isDigitale, boolean delega);
 
     void setProgressResponseElement(Object progressResponseElement);
 
@@ -95,5 +103,5 @@ public interface WebhookStepsInterface {
 
     void verificaPresenzaSercQ(boolean isPresent);
 
-    void checkLegalFactCategory(String timelineCategory, String legalFactCategory);
+    void checkLegalFactCategory(String timelineCategory, String legalFactCategory, boolean arePresent);
 }

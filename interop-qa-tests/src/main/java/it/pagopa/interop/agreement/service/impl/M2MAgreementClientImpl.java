@@ -8,6 +8,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -58,6 +60,7 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
             listRequest.getStates(),
             listRequest.getProducersIds(),
             listRequest.getConsumersIds(),
+            listRequest.getDescriptorsIds(),
             listRequest.getEservicesIds()
         );
     }
@@ -65,6 +68,26 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
     @Override
     public Agreement getAgreementById(UUID id) {
         return agreementsApi.getAgreement(id);
+    }
+
+    @Override
+    public Purposes getAgreementPurposes(UUID agreementId) {
+        return this.getAgreementPurposes(agreementId, 30, 0);
+    }
+
+    @Override
+    public Purposes getAgreementPurposes(UUID agreementId, int limit, int offset) {
+        return this.agreementsApi.getAgreementPurposes(agreementId, limit, offset);
+    }
+
+    @Override
+    public Documents getConsumerDocuments(UUID agreementId) {
+        return this.getConsumerDocuments(agreementId, 0, 30);
+    }
+
+    @Override
+    public Documents getConsumerDocuments(UUID agreementId, int offset, int limit) {
+        return this.agreementsApi.getAgreementConsumerDocuments(agreementId, offset, limit);
     }
 
     @Override

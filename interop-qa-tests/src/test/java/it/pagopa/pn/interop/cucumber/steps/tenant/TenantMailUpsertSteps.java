@@ -88,7 +88,7 @@ public class TenantMailUpsertSteps {
                 res -> Optional.ofNullable(res.getContactMail()).map(Mail::getAddress).filter(address -> address.equals(email)).isPresent(),
                 "Tenant with desired email address not found!"
         );
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
     @Then("aspetta che si aggiorni il readmodel")

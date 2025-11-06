@@ -20,18 +20,26 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class AgreementClientImpl implements IAgreementClient {
     private final AgreementsApi agreementsApi;
     private final RestTemplate restTemplate;
@@ -84,9 +92,13 @@ public class AgreementClientImpl implements IAgreementClient {
         return new ResponseEntity<>(statusRef.get());
     }
 
+    public Agreement activateAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.activateAgreement(agreementId, delegationRef);
+    }
+
     @Override
     public Agreement activateAgreement(UUID agreementId) {
-        return agreementsApi.activateAgreement(agreementId);
+        return agreementsApi.activateAgreement(agreementId, null);
     }
 
     @Override
@@ -94,9 +106,13 @@ public class AgreementClientImpl implements IAgreementClient {
         return agreementsApi.submitAgreement(agreementId, agreementSubmissionPayload);
     }
 
+    public Agreement suspendAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.suspendAgreement(agreementId, delegationRef);
+    }
+
     @Override
     public Agreement suspendAgreement(UUID agreementId) {
-        return agreementsApi.suspendAgreement(agreementId);
+        return agreementsApi.suspendAgreement(agreementId, null);
     }
 
     @Override

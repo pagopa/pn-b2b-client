@@ -163,7 +163,7 @@ public class TemplateEngineSteps {
             } else if (field.equals("delegato")) {
                 Assertions.assertTrue(result.retrieveFormattedText().contains("il " + fieldValue + " ha avuto accesso ai documenti informatici oggetto di notifica"));
             } else {
-                Assertions.assertTrue(result.retrieveFormattedText().contains(fieldValue + field), "il PDF non contiene il campo: " + field + ", valorizzato a " + fieldValue);
+                Assertions.assertTrue(result.retrieveFormattedText().contains(field + " " + fieldValue), "il PDF non contiene il campo: " + field + ", valorizzato a " + fieldValue);
             }
         } else {
             throw new IllegalArgumentException("no valid file to check");

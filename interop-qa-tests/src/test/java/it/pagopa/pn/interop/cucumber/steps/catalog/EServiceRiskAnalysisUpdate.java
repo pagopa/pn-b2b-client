@@ -49,7 +49,7 @@ public class EServiceRiskAnalysisUpdate {
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getRiskAnalysisCommonContext().getRiskAnalysisId(),
                         new EServiceRiskAnalysisSeed()
-                                .name(riskAnalysis.getName())
+                                .name(riskAnalysis.getName() + "- update")
                                 .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
                 )
         );

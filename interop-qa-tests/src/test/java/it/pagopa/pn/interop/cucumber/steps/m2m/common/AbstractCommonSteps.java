@@ -1,19 +1,18 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import it.pagopa.interop.common.client.IClient;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -33,9 +32,8 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
         this.context = context;
     }
 
-
     public void verifyByHttpStatus(int expectedStatusCode) {
-        int actualStatusCode = context.getHttpCallExecutor().getClientResponse().value();
+        int actualStatusCode = context.getHttpCallExecutor().getResponseStatus().value();
 
         boolean isMatch = actualStatusCode == expectedStatusCode;
 

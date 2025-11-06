@@ -8,7 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject5;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
@@ -19,16 +19,22 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenan
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class TenantsApiClientImpl implements ITenantsApi {
     private final TenantsApi tenantsApi;
     private final RestTemplate restTemplate;
@@ -108,7 +114,7 @@ public class TenantsApiClientImpl implements ITenantsApi {
 
     @Override
     public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
-        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new InlineObject2().agreementId(agreementId));
+        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new InlineObject5().agreementId(agreementId));
     }
 
     @Override

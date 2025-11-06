@@ -7,18 +7,21 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDelegationUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptionUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
+import java.util.List;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -56,16 +59,9 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public EServices getAll(EserviceListRequest req) {
         return this.performOperation(SimpleOperation.of(
-                () -> eservicesApi.getEServices(req.getOffset(), req.getLimit(), req.getProducerIds(), req.getTemplateIds()),
-                res -> res
-        )).orElse(null);
-    }
-
-
-    @Override
-    public EServiceDescriptor getDescriptor(UUID eserviceId, UUID descriptorId) {
-        return this.performOperation(SimpleOperation.of(
-                () -> eservicesApi.getEServiceDescriptor(eserviceId, descriptorId),
+                () -> eservicesApi.getEServices(req.getOffset(), req.getLimit(), req.getProducerIds(), req.getTemplateIds(),
+                        req.getName(), req.getEServiceTechnology(), req.getEServiceMode(),
+                        req.getIsSignalHubEnabled(), req.getIsConsumerDelegable(), req.getIsClientAccessDelegable()),
                 res -> res
         )).orElse(null);
     }
@@ -85,7 +81,13 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
                         this.defaultEserviceListRequest.getOffset(),
                         this.defaultEserviceListRequest.getLimit(),
                         this.defaultEserviceListRequest.getProducerIds(),
-                        this.defaultEserviceListRequest.getTemplateIds()
+                        this.defaultEserviceListRequest.getTemplateIds(),
+                        this.defaultEserviceListRequest.getName(),
+                        this.defaultEserviceListRequest.getEServiceTechnology(),
+                        this.defaultEserviceListRequest.getEServiceMode(),
+                        this.defaultEserviceListRequest.getIsSignalHubEnabled(),
+                        this.defaultEserviceListRequest.getIsConsumerDelegable(),
+                        this.defaultEserviceListRequest.getIsClientAccessDelegable()
                 ),
                 EServices::getResults
         )).orElse(List.of());
@@ -94,6 +96,49 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public UUID getId(EService entity) {
         return entity == null ? null : entity.getId();
+    }
+
+    @Override
+    public void delete(UUID id) {
+        this.eservicesApi.deleteEService(id);
+    }
+
+    @Override
+    public Document uploadInterface(EServiceInterfaceUploadRequest body) {
+        return this.eservicesApi.uploadEServiceDescriptorInterface(
+            body.getEServiceId(),
+            body.getDescriptorId(),
+            body.getFile(),
+            body.getPrettyName()
+        );
+    }
+
+    @Override
+    public EService patchEService(UUID eServiceId, EServicePatchRequest body) {
+        return eservicesApi.updateDraftEService(eServiceId, new EServiceDraftUpdateSeed()
+            .technology(body.getTechnology())
+            .isSignalHubEnabled(body.getIsSignalHubEnabled())
+            .mode(body.getMode())
+            .description(body.getDescription())
+            .name(body.getName())
+            .isConsumerDelegable(body.getIsConsumerDelegable())
+            .isClientAccessDelegable(body.getIsClientAccessDelegable()));
+    }
+
+    @Override
+    public EService patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body) {
+        return eservicesApi.updatePublishedEServiceName(eServiceId, new EServiceNameUpdateSeed().name(body.getName()));
+    }
+
+    @Override
+    public EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body) {
+        return eservicesApi.updatePublishedEServiceDelegation(eServiceId, new EServiceDelegationUpdateSeed()
+                .isConsumerDelegable(body.getIsConsumerDelegable()).isClientAccessDelegable(body.getIsClientAccessDelegable()));
+    }
+
+    @Override
+    public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
+        return eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription()));
     }
 
     @Override
