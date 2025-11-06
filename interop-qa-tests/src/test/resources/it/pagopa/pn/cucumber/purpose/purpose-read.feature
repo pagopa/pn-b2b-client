@@ -3,9 +3,9 @@ Feature: Lettura singola finalità
   Tutti gli utenti possono leggere una finalità, l'analisi del rischio è disponibile solo per admin fruitori o erogatori di quella finalità.
 
   @happy-path
+  @nrt-minimal
   @purpose_read1
-  @wait_for_fix
-  Scenario Outline: Per una finalità precedentemente creata dal fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura, va a buon fine, l’analisi del rischio è disponibile solo per gli admin
+  Scenario Outline: [LETTURA_FINALITA_1] Per una finalità precedentemente creata dal fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura, va a buon fine, l’analisi del rischio è disponibile solo per gli admin
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -39,8 +39,9 @@ Feature: Lettura singola finalità
       | PA1  | admin | DRAFT                |
 
   @happy-path
+  @nrt-minimal
   @purpose_read2 @no-parallel
-  Scenario Outline: Per una finalità precedentemente creata da un fruitore, la quale prima versione è in stato NON DRAFT (WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte dell’erogatore, va a buon fine
+  Scenario Outline: [LETTURA_FINALITA_2] Per una finalità precedentemente creata da un fruitore, la quale prima versione è in stato NON DRAFT (WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte dell’erogatore, va a buon fine
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -48,7 +49,7 @@ Feature: Lettura singola finalità
     When l'utente richiede la lettura della finalità
     Then si ottiene status code 200
 
-    Examples: 
+    Examples:
       | statoFinalita        |
       | ACTIVE               |
       | SUSPENDED            |
@@ -56,8 +57,9 @@ Feature: Lettura singola finalità
       | ARCHIVED             |
 
   @sad-path
+  @nrt-minimal
   @purpose_read3 @resource_intensive @wait_for_clarification @PIN-4805
-  Scenario Outline: Per una finalità precedentemente creata da un fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte di un ente che non è né l'erogatore, né il fruitore, va a buon fine ma non ottiene l'analisi del rischio
+  Scenario Outline: [LETTURA_FINALITA_3] Per una finalità precedentemente creata da un fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte di un ente che non è né l'erogatore, né il fruitore, va a buon fine ma non ottiene l'analisi del rischio
     Given l'utente è un "admin" di "GSP"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -65,7 +67,7 @@ Feature: Lettura singola finalità
     When l'utente richiede la lettura della finalità
     Then si ottiene status code 403
 
-    Examples: 
+    Examples:
       | statoFinalita        |
       | DRAFT                |
       | ACTIVE               |

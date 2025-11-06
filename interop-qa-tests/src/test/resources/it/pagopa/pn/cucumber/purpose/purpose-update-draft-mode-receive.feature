@@ -2,8 +2,9 @@
 Feature: Aggiornamento bozza nuova finalità in erogazione inversa
   Tutti gli utenti autorizzati possono aggiornare una finalità in bozza per un e-service in erogazione inversa.
 
+  @nrt-minimal
   @purpose_update_draft_mode_receive1
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = RECEIVE, aggiorna una finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
+  Scenario Outline: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_1] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = RECEIVE, aggiorna una finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     Given "PA1" ha già creato un'analisi del rischio per quell'e-service
@@ -15,7 +16,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
     Then si ottiene status code <risultato>
 
     @happy-path
-    Examples: 
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
       | GSP     | admin        |       200 |
@@ -38,8 +39,9 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
       | Privato | support      |       403 |
 
   @sad-path
+  @nrt-minimal
   @purpose_update_draft_mode_receive2
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato NON DRAFT (ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED) per una versione di e-service, il quale ha mode = RECEIVE, aggiorna una finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore
+  Scenario Outline: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_2] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato NON DRAFT (ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED) per una versione di e-service, il quale ha mode = RECEIVE, aggiorna una finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     Given "PA2" ha già creato un'analisi del rischio per quell'e-service
