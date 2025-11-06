@@ -1,8 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.Given;
@@ -17,18 +16,15 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
@@ -110,7 +106,7 @@ public class ClientCommonSteps {
     @Then("si ottiene response status code {int}")
     public void accuratelyVerifyStatusCode(int statusCode) {
         assertThat(httpCallExecutor.getResponseStatus().value())
-            .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", HttpCallExecutor.class.getSimpleName())
+            .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", httpCallExecutor.getClass().getSimpleName())
             .isEqualTo(statusCode);
     }
 

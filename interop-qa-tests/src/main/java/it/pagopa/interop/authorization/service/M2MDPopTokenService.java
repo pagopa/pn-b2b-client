@@ -1,10 +1,10 @@
 package it.pagopa.interop.authorization.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.KeyType;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.authorization.service.identity.IllegalM2MRole;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
@@ -13,21 +13,17 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
-import static java.util.Objects.nonNull;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 /* Usato per la formulazione di token di tipo m2m. Introdotto durante lo sviluppo dei test di
  * SRS API v2 https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1607860403/DRAFT+SRS+API+V2 .
@@ -178,7 +174,7 @@ public class M2MDPopTokenService {
         // 4. Generazione chiavi
         KeyPairDecorator keyPair = KeyPairDecorator.of(keyType, keySize);
         String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
-        KeySeed keySeed = KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0);
+        KeySeed keySeed = KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0);
         dataPreparationService.addPublicKeyToClient(clientId, keySeed);
 
         return new PreparedClient(clientId, keyPair);

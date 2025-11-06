@@ -77,7 +77,7 @@ public class HttpCallExecutor implements IHttpExecutor {
     }
 
     public void setRawResponse(int statusCode, Object rawBody) {
-        this.clientResponse = HttpStatus.valueOf(statusCode);
+        this.responseStatus = HttpStatus.valueOf(statusCode);
         this.response = rawBody;
     }
 

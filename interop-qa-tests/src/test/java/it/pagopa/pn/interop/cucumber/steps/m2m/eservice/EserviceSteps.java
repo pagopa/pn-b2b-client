@@ -7,7 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
-import it.pagopa.interop.authorization.service.M2MTokenService;
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
@@ -274,7 +274,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service")
-    public void patchEService(String tenant, M2MTokenService.M2MRole m2mRole) {
+    public void patchEService(String tenant, M2MRole m2mRole) {
         EServicePatchRequest request = this.eServicePatchAssistant.buildDefaultPatchRequest();
         String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
         eServicePatchAssistant.patchResource(request, token);
