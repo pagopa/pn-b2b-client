@@ -2,8 +2,10 @@
 Feature: Listing finalità lato erogatore
   Tutti gli utenti di enti PA e GSP possono ottenere la lista di finalità di cui sono erogatori.
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer1 @fixed_in_node
-  Scenario Outline: A fronte di 5 finalità in db, restituisce solo i primi 3 risultati (scopo del test è verificare il corretto funzionamento del parametro limit)
+  Scenario Outline: [PURPOSE_LISTING_PRODUCER_1] A fronte di 5 finalità in db, restituisce solo i primi 3 risultati (scopo del test è verificare il corretto funzionamento del parametro limit)
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -24,8 +26,10 @@ Feature: Listing finalità lato erogatore
       | GSP  | api,security |
       | GSP  | support      |
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer2
-  Scenario: A fronte di 5 finalità in db e una richiesta di offset 2, restituisce solo 3 risultati
+  Scenario: [PURPOSE_LISTING_PRODUCER_2] A fronte di 5 finalità in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -33,8 +37,10 @@ Feature: Listing finalità lato erogatore
     When l'utente erogatore richiede una operazione di listing delle finalità con offset 2
     Then si ottiene status code 200 e la lista di 3 finalità
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer3
-  Scenario: Restituisce le finalità che un erogatore si trova create dai fruitori dei propri e-service (scopo del test è verificare il corretto funzionamento del parametro producersIds) (nserire producerId dell'erogatore)
+  Scenario: [PURPOSE_LISTING_PRODUCER_3] Restituisce le finalità che un erogatore si trova create dai fruitori dei propri e-service (scopo del test è verificare il corretto funzionamento del parametro producersIds) (nserire producerId dell'erogatore)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -44,8 +50,10 @@ Feature: Listing finalità lato erogatore
     When l'utente erogatore richiede una operazione di listing delle finalità sui propri e-service
     Then si ottiene status code 200 e la lista di 4 finalità
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer4 @wait_for_fix @PIN-4806
-  Scenario: Restituisce le finalità che hanno per fruitore uno o più specifici enti (scopo del test è verificare il corretto funzionamento del parametro consumerIds). NB: vengono escluse le finalità in stato DRAFT, anche qualora non fosse valorizzato il parametro states
+  Scenario: [PURPOSE_LISTING_PRODUCER_4] Restituisce le finalità che hanno per fruitore uno o più specifici enti (scopo del test è verificare il corretto funzionamento del parametro consumerIds). NB: vengono escluse le finalità in stato DRAFT, anche qualora non fosse valorizzato il parametro states
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -56,8 +64,10 @@ Feature: Listing finalità lato erogatore
     When l'utente erogatore richiede una operazione di listing delle finalità filtrata per fruitore "PA2"
     Then si ottiene status code 200 e la lista di 2 finalità
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer5
-  Scenario: Restituisce le finalità associate ad alcuni specifici e-service (scopo del test è verificare che funzioni il filtro per e-servicesIds)
+  Scenario: [PURPOSE_LISTING_PRODUCER_5] Restituisce le finalità associate ad alcuni specifici e-service (scopo del test è verificare che funzioni il filtro per e-servicesIds)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -68,8 +78,10 @@ Feature: Listing finalità lato erogatore
     When l'utente erogatore richiede una operazione di listing delle finalità filtrata per il secondo e-service
     Then si ottiene status code 200 e la lista di 1 finalità
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer6
-  Scenario Outline: Restituisce le finalità che sono in uno o più specifici stati (es. ACTIVE e SUSPENDED, scopo del test è verificare che funzioni il filtro per states)
+  Scenario Outline: [PURPOSE_LISTING_PRODUCER_6] Restituisce le finalità che sono in uno o più specifici stati (es. ACTIVE e SUSPENDED, scopo del test è verificare che funzioni il filtro per states)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -84,8 +96,10 @@ Feature: Listing finalità lato erogatore
       | ACTIVE        |
       | SUSPENDED     |
 
+  @happy-path
+  @nrt-minimal
   @purpose_listing_producer7
-  Scenario: Restituisce le finalità che contengono la keyword "test" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
+  Scenario: [PURPOSE_LISTING_PRODUCER_7] Restituisce le finalità che contengono la keyword "test" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -93,8 +107,9 @@ Feature: Listing finalità lato erogatore
     When l'utente erogatore richiede una operazione di listing delle finalità filtrando per la keyword "test"
     Then si ottiene status code 200 e la lista di 1 finalità
 
+  @nrt-minimal
   @purpose_listing_producer8
-  Scenario: Restituisce un insieme vuoto di finalità per una ricerca che non porta risultati (scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
+  Scenario: [PURPOSE_LISTING_PRODUCER_8] Restituisce un insieme vuoto di finalità per una ricerca che non porta risultati (scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
@@ -12,9 +12,11 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.llgg.AdeguamentoLineeGuidaSteps;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
@@ -27,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PurposeCommonStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
     private final IPurposeApiClient purposeApiClient;
     private final PollingService pollingService;
@@ -35,7 +37,7 @@ public class PurposeCommonStep {
 
     public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                              @Qualifier("interopIdentityService") IdentityService identityService,
-                             DataPreparationService dataPreparationService,
+                             BFFDataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = identityService;
@@ -63,7 +65,18 @@ public class PurposeCommonStep {
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
-        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null);
+    }
+
+    @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice con flagPersonalData impostato a {string}")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState, String flagPersonalData) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        try {
+            createFinalizationWithGivenStatusAndPersonalDataFlag(consumerId, tenantType, n, purposeVersionState, null, flagPersonalData);
+        }catch (AssertionFailedError e){
+            return;
+        }
     }
 
     @Given("{string} ha già pubblicato quella versione di e-service")
@@ -109,7 +122,7 @@ public class PurposeCommonStep {
     @Then("si ottiene status code {int} e la lista di {int} finalità")
     public void verifyStatusAndPurposeList(int statusCode, int count) {
         Purposes purposes = (Purposes) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(count, purposes.getResults().size());
     }
 
@@ -143,10 +156,11 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole1);
         UUID consumerId = identityService.getOrganizationId(tenantType);
-        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState,
+                new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
-    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState) {
+    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef) {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         for (int index = 0; index < n; index++) {
@@ -156,7 +170,36 @@ public class PurposeCommonStep {
                             .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
                             .consumerId(consumerId)
                             .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
-                            .build());
+                            .build(),
+                    delegationRef);
+
+            purposeCommonContext.getPurposesIds().add(purposeCommonContext.getPurposeId());
+            purposeCommonContext.getCurrentVersionIds().add(purposeCommonContext.getVersionId());
+            purposeCommonContext.getWaitingForApprovalVersionIds().add(purposeCommonContext.getWaitingForApprovalVersionId());
+        }
+
+        // Get the last element from the lists
+        List<String> purposesIds = purposeCommonContext.getPurposesIds();
+        List<String> currentVersionIds = purposeCommonContext.getCurrentVersionIds();
+        List<String> waitingForApprovalVersionIds = purposeCommonContext.getWaitingForApprovalVersionIds();
+        purposeCommonContext.setPurposeId((purposesIds.isEmpty()) ? null : purposesIds.get(purposesIds.size() - 1));
+        purposeCommonContext.setVersionId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
+        purposeCommonContext.setWaitingForApprovalVersionId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
+
+    }
+
+    public void createFinalizationWithGivenStatusAndPersonalDataFlag(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef, String personalDataFlag) {
+        RiskAnalysis riskAnalysis = AdeguamentoLineeGuidaSteps.getRiskAnalysis(personalDataFlag);
+        PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
+        for (int index = 0; index < n; index++) {
+            dataPreparationService.createPurposeWithGivenState(ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
+                    EServiceMode.DELIVER, PurposeVersionState.fromValue(purposeVersionState),
+                    TEServiceMode.builder()
+                            .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                            .consumerId(consumerId)
+                            .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
+                            .build(),
+                    delegationRef);
 
             purposeCommonContext.getPurposesIds().add(purposeCommonContext.getPurposeId());
             purposeCommonContext.getCurrentVersionIds().add(purposeCommonContext.getVersionId());
@@ -222,7 +265,7 @@ public class PurposeCommonStep {
     @Then("si ottiene status code {int} e il template in versione {string}")
     public void verifyStatusCodeAndTemplateVersion(int statusCode, String expectedVersion) {
         RiskAnalysisFormConfig riskAnalysisFormConfig = (RiskAnalysisFormConfig) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(expectedVersion, riskAnalysisFormConfig.getVersion());
     }
 

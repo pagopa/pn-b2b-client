@@ -57,11 +57,12 @@ public class VoucherService {
     private final String clientAssertionJwtAudience;
     private final String authorizationServerTokenCreationUrl;
     private final RestTemplate restTemplate;
+    private static final String OBJECT_INSPECTION_ERROR = "Ispezione dell'oggetto %s fallita";
 
     public VoucherService(
-        @Value("${client.assertion.jwt.audience}") String clientAssertionJwtAudience,
-        @Value("${authorization.server.token.creation.url}") String authorizationServerTokenCreationUrl,
-        @Autowired RestTemplate restTemplate)
+            @Value("${client.assertion.jwt.audience}") String clientAssertionJwtAudience,
+            @Value("${authorization.server.token.creation.url}") String authorizationServerTokenCreationUrl,
+            @Autowired RestTemplate restTemplate)
     {
         this.clientAssertionJwtAudience = clientAssertionJwtAudience;
         this.authorizationServerTokenCreationUrl = authorizationServerTokenCreationUrl;
@@ -73,13 +74,13 @@ public class VoucherService {
             PublicJwk<PublicKey> publicJwk = Jwks.builder().key(publicKey).build();
 
             LinkedHashMap<String, Object> sortedJwk = publicJwk.entrySet().stream()
-                .sorted(Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                    Entry::getKey,
-                    Entry::getValue,
-                    (e1, e2) -> e1,
-                    LinkedHashMap::new
-                ));
+                    .sorted(Entry.comparingByKey())
+                    .collect(Collectors.toMap(
+                            Entry::getKey,
+                            Entry::getValue,
+                            (e1, e2) -> e1,
+                            LinkedHashMap::new
+                    ));
 
             String jsonJwk = new ObjectMapper().writeValueAsString(sortedJwk);
 
@@ -97,27 +98,27 @@ public class VoucherService {
 
         /* Define JWT body */
         JwtBuilder jwtBuilder = Jwts.builder()
-            .claim("iss", options.getClientId())
-            .claim("sub", options.getClientId())
-            .claim("aud", this.clientAssertionJwtAudience)
-            .claim("jti", UUID.randomUUID().toString())
-            .claim("iat", issuedAt)
-            .claim("exp", issuedAt + 43200 * 60);
+                .claim("iss", options.getClientId())
+                .claim("sub", options.getClientId())
+                .claim("aud", this.clientAssertionJwtAudience)
+                .claim("jti", UUID.randomUUID().toString())
+                .claim("iat", issuedAt)
+                .claim("exp", issuedAt + 43200 * 60);
         if(options.getClientType() == ClientType.CONSUMER) {
             jwtBuilder.claim("purposeId", options.getPurposeId());
         }
         if (options.isDigestIncluded()) {
             jwtBuilder.claim("digest", Map.of(
-                "alg", "SHA256",
-                "value", "5db26201b684761d2b970329ab8596773164ba1b43b1559980e20045941b8065"
+                    "alg", "SHA256",
+                    "value", "5db26201b684761d2b970329ab8596773164ba1b43b1559980e20045941b8065"
             ));
         }
 
         /* Define JWT header */
         jwtBuilder.header()
-            .add("kid", calculateKidFromPublicKey(options.getPublicKey()))
-            .add("alg", "RS256")
-            .add("typ", "JWT");
+                .add("kid", calculateKidFromPublicKey(options.getPublicKey()))
+                .add("alg", "RS256")
+                .add("typ", "JWT");
 
         return jwtBuilder.signWith(options.getPrivateKey()).compact();
     }
@@ -127,33 +128,62 @@ public class VoucherService {
     }
 
     public Map<String, Object> requestVoucher(VoucherRequest request) {
+        return doVoucherRequest(request, null);
+    }
+
+    public Map<String, Object> requestVoucher(VoucherRequest request, String dpopJwt) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("DPoP", dpopJwt);
+        return doVoucherRequest(request, headers);
+    }
+
+    private Map<String, Object> doVoucherRequest(VoucherRequest request, HttpHeaders extraHeaders) {
         ResponseErrorHandler originalErrorHandler = restTemplate.getErrorHandler();
         try {
+
             URI uri = UriComponentsBuilder
-                .fromHttpUrl(this.authorizationServerTokenCreationUrl)
-                .build()
-                .toUri();
+                    .fromHttpUrl(this.authorizationServerTokenCreationUrl)
+                    .build()
+                    .toUri();
+
+            // Header base + eventuali extra (es. DPoP)
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            Map<String, Object> voucherRequestProperties = PropertyUtils.describe(request);
-            MultiValueMap<String, Object> map = voucherRequestProperties.entrySet().stream()
-                .map(e -> Map.entry(
-                    SNAKE_CASE.convertFrom(SOFT_CAMEL_CASE, e.getKey()),
-                    List.of(e.getValue())))
-                .collect(Collectors.toMap(
-                    Entry::getKey,
-                    Entry::getValue,
-                    (e1, e2) -> e1,
-                    LinkedMultiValueMap::new
-                ));
+            if (extraHeaders != null) {
+                headers.addAll(extraHeaders);
+            }
+
+            Map<String, Object> properties = PropertyUtils.describe(request);
+            MultiValueMap<String, Object> map = properties.entrySet().stream()
+                    .map(e -> Map.entry(
+                            SNAKE_CASE.convertFrom(SOFT_CAMEL_CASE, e.getKey()),
+                            List.of(e.getValue())))
+                    .collect(Collectors.toMap(
+                            Entry::getKey,
+                            Entry::getValue,
+                            (e1, e2) -> e1,
+                            LinkedMultiValueMap::new
+                    ));
+
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
 
             restTemplate.setErrorHandler(new NoOpResponseErrorHandler());
-            ResponseEntity<Object> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
-                Object.class);
-            return (Map<String, Object>) exchange.getBody();
+            ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, Object.class);
+
+            Object responseBody = response.getBody();
+            if (responseBody instanceof Map<?, ?> mapResponse) {
+                return mapResponse.entrySet().stream()
+                        .filter(e -> e.getKey() instanceof String)
+                        .collect(Collectors.toMap(
+                                e -> (String) e.getKey(),
+                                Entry::getValue
+                        ));
+            } else {
+                throw new RuntimeException("Risposta non valida: atteso un oggetto JSON (Map<String, Object>)");
+            }
+
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException("Ispezione dell'oggetto %s fallita".formatted(request.getClass().getName()), e);
+            throw new RuntimeException(OBJECT_INSPECTION_ERROR.formatted(request.getClass().getName()), e);
         } finally {
             restTemplate.setErrorHandler(originalErrorHandler);
         }
@@ -162,31 +192,31 @@ public class VoucherService {
     private <T> ResponseEntity<T> requestVoucher(VoucherRequest request, Class<T> clss) {
         try {
             URI uri = UriComponentsBuilder
-                .fromHttpUrl(this.authorizationServerTokenCreationUrl)
-                .build()
-                .toUri();
+                    .fromHttpUrl(this.authorizationServerTokenCreationUrl)
+                    .build()
+                    .toUri();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
             /* TODO 21/05/2025 provare a riformulare la creazione usando Jackson al posto
-            *   di apache.commons e textcaseconverter */
+             *   di apache.commons e textcaseconverter */
             Map<String, Object> voucherRequestProperties = PropertyUtils.describe(request);
             MultiValueMap<String, Object> map = voucherRequestProperties.entrySet().stream()
                     .map(e -> Map.entry(
-                        SNAKE_CASE.convertFrom(SOFT_CAMEL_CASE, e.getKey()),
-                        List.of(e.getValue())))
+                            SNAKE_CASE.convertFrom(SOFT_CAMEL_CASE, e.getKey()),
+                            List.of(e.getValue())))
                     .collect(Collectors.toMap(
-                        Entry::getKey,
-                        Entry::getValue,
-                        (e1, e2) -> e1,
-                        LinkedMultiValueMap::new
+                            Entry::getKey,
+                            Entry::getValue,
+                            (e1, e2) -> e1,
+                            LinkedMultiValueMap::new
                     ));
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
             /*ResponseEntity<T> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
                 clss);*/
             ResponseEntity<Object> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
-                Object.class);
+                    Object.class);
             return (ResponseEntity<T>) exchange;
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException("Ispezione dell'oggetto %s fallita".formatted(request.getClass().getName()), e);

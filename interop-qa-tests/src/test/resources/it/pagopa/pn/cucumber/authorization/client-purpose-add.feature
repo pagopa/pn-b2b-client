@@ -1,8 +1,10 @@
 @client
 Feature: Associazione finalità al client
   Tutti gli utenti autenticati possono associare una finalità ad un client
-  
-  Scenario Outline: Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato ACTIVE o SUSPENDED, richiede l’associazione del client alla finalità. L'operazione va a buon fine
+
+  @nrt-minimal
+  @associa-finalita-client
+  Scenario Outline: [CLIENT_PURPOSE_ADD_2] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato ACTIVE o SUSPENDED, richiede l’associazione del client alla finalità. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -11,27 +13,36 @@ Feature: Associazione finalità al client
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ente | ruolo        | statoFinalita | statusCode |
       | GSP  | admin        | ACTIVE        |        204 |
+      | PA1  | admin        | ACTIVE        |        204 |
+      | PA1  | admin        | SUSPENDED     |        204 |
+
+    @sad-path
+    Examples:
+      | ente | ruolo        | statoFinalita | statusCode |
       | GSP  | api          | ACTIVE        |        403 |
       | GSP  | security     | ACTIVE        |        403 |
       | GSP  | support      | ACTIVE        |        403 |
       | GSP  | api,security | ACTIVE        |        403 |
-      | PA1  | admin        | ACTIVE        |        204 |
       | PA1  | api          | ACTIVE        |        403 |
       | PA1  | security     | ACTIVE        |        403 |
       | PA1  | support      | ACTIVE        |        403 |
       | PA1  | api,security | ACTIVE        |        403 |
 
+    @sad-path
     Examples:
       | ente | ruolo | statoFinalita        | statusCode |
-      | PA1  | admin | SUSPENDED            |        204 |
       | PA1  | admin | DRAFT                |        400 |
       | GSP  | admin | WAITING_FOR_APPROVAL |        400 |
       | PA1  | admin | ARCHIVED             |        400 |
 
-  Scenario: Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato NON ACTIVE, richiede l'associazione del client alla finalità. Ottiene un errore. Chiarimento: è possibile modificare l’associazione/disassociazione dei client ad una finalità solo se questa è attiva
+  @sad-path
+  @nrt-minimal
+  @associa-finalita-client
+  Scenario: [CLIENT_PURPOSE_ADD_3] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato NON ACTIVE, richiede l'associazione del client alla finalità. Ottiene un errore. Chiarimento: è possibile modificare l’associazione/disassociazione dei client ad una finalità solo se questa è attiva
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -41,7 +52,10 @@ Feature: Associazione finalità al client
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
 
-  Scenario: Un utente con sufficienti permessi (admin) non associato all'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato ACTIVE, richiede l'associazione del client alla finalità. Ottiene un errore
+  @sad-path
+  @nrt-minimal
+  @associa-finalita-client
+  Scenario: [CLIENT_PURPOSE_ADD_4] Un utente con sufficienti permessi (admin) non associato all'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato ACTIVE, richiede l'associazione del client alla finalità. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -50,8 +64,11 @@ Feature: Associazione finalità al client
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 403
 
+  @sad-path
+  @nrt-minimal
   @wait_for_fix
-  Scenario: Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo API e attivato una finalità che si trova in stato ACTIVE, richiede l’associazione del client alla finalità. Ottiene un errore. Chiarimento: non è possibile associare client destinati al consumo dell'API Interop ad una finalità
+  @associa-finalita-client
+  Scenario: [CLIENT_PURPOSE_ADD_5] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo API e attivato una finalità che si trova in stato ACTIVE, richiede l’associazione del client alla finalità. Ottiene un errore. Chiarimento: non è possibile associare client destinati al consumo dell'API Interop ad una finalità
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -34,10 +34,16 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 90052 | 918   | CERDA                 | PA       | notifica analogica RECAPITISTA |
       | 06012 | 948   | CERBARA               | PG       | notifica analogica RECAPITISTA |
       | 17011 | 1092  | ALBISOLA CAPO         | SV       | notifica analogica RECAPITISTA |
-      | 87020 | 948   | ACQUAPPESA            | CS       | notifica analogica RECAPITISTA |
+      | 87020 | 1092   | ACQUAPPESA            | CS       | notifica analogica RECAPITISTA |
 
       | 21009 | 967   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
       | 14027 | 987   | TONENGO               | AT       | notifica analogica RECAPITISTA |
+      | 07011 | 1092   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 948   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 948   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 948   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1092   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1092   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoAprile25
@@ -69,7 +75,20 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1155  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1036  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1036  | AOSTA          | AO       | notifica analogica RECAPITISTA |
+      | 11100 | 1086  | AOSTA          | AO       | notifica analogica RECAPITISTA |
+      | 87020 | 1195  | ACQUAPPESA          | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1195   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1036   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1036   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1036   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1195   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1195   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -100,10 +119,23 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 10010 | 1106  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1171  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 90054 | 1030  | GERACI SICULO  | PA       | notifica analogica RECAPITISTA |
-      | 88071 | 1053  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
+      | 88071 | 1212  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
       | 06012 | 1053  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 38097 | 1053  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |
+      | 38097 | 1212  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |
+      | 87020 | 1212  | ACQUAPPESA  | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1212   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1053   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1053   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1053   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1212   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1212   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -135,6 +167,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1174  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
       | 06012 | 1056  | CERBARA        | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1215  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1215   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1056   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1056   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1056   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1215   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1215   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -167,6 +212,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 90072 | 1062  | ALTOFONTE      | PA       | notifica analogica RECAPITISTA |
 
       | 06012 | 1085  | CERBARA        | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1244  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1244   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1085   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1085   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1085   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1244   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1244   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -199,6 +257,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1163  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 86081 | 1221  | AGNONE         | IS       | notifica analogica RECAPITISTA |
+      | 87020 | 1335  | ACQUAPPESA         | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1335   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1163   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1163   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1163   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1335   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1335   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -231,6 +302,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 90082 | 1232  | SANTA CRISTINA GELA | PA       | notifica analogica RECAPITISTA |
 
       | 06012 | 1257  | CERBARA             | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1429  | ACQUAPPESA             | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1429   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1257   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1257   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1257   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1429   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1429   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -263,6 +347,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1261  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 34129 | 1261  | TRIESTE        | TS       | notifica analogica RECAPITISTA |
+      | 87020 | 1433  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1433   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1261   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1261   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1261   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1433   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1433   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -295,6 +392,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 94028 | 1297  | VILLAROSA      | EN       | notifica analogica RECAPITISTA |
 
       | 06012 | 1323  | CERBARA        | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1495  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1495   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1323   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1323   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1323   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1495   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1495   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -325,7 +435,20 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 10010 | 1484  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1561  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1422  | CERBARA        | PG       | notifica analogica RECAPITISTA |
-      | 19126 | 1422  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
+      | 19126 | 1611  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
+      | 87020 | 1611  | ACQUAPPESA      | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1611   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1422   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1422   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1422   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1611   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1611   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -357,6 +480,19 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1983  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
       | 95055 | 1814  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
       | 06012 | 1843  | CERBARA             | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 2033  | ACQUAPPESA             | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 2033   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1843   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1843   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1843   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 2033   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 2033   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-1001GR_12] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -387,6 +523,20 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1986  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
       | 06012 | 1847  | CERBARA        | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 2036  | ACQUAPPESA             | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 2036   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1847   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 1847   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1847   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 2036   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 2036   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
+
 
 
   @costoAnalogicoAprile25
@@ -419,4 +569,18 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 2497  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 09121 | 2497  | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
+      | 87020 | 2686  | ACQUAPPESA             | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 2686   | BONO               | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 2497   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 2497   | FOSSATO DI VICO               | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 2497   | PULA               | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 2686   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 2686   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
+
+
+
+
+
+
+
 

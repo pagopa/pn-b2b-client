@@ -32,7 +32,7 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
                 yield "Accedi subito ai documenti online seguendo le istruzioni, o se preferisci, ritira i documenti in forma cartacea presso uno dei Punti di ritiro SEND (CAF e altri esercenti convenzionati). Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione.";
             }
             case "TEDESCA" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE Empfangsbestätigung Feststellungs • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von string: . Wenn sie nicht in diesem siehe die zugestellten Dokumente Bescheid enthalten sind,";
+                yield "AVVISO DI AVVENUTA RICEZIONE Benachrichtigung über den erfolgten Empfang • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von der Körperschaft string erhalten: . Sollten siehe die zugestellten Dokumente diese Dokumente nicht der vorliegenden Mitteilung beigefügt sein";
             }
             case "SLOVENA" -> {
                 yield "AVVISO DI AVVENUTA RICEZIONE Obvestilo o prejemu: • Avviso di Avvenuta Ricezione (AAR): string Prejeli ste uradno sporočilo od string: . Če niso vključeni v to obvestilo, Prejeli ste uradno sporočilo od do dokumentov .";

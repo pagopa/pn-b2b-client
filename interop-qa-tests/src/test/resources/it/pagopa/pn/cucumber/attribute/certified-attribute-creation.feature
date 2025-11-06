@@ -2,21 +2,27 @@
 Feature: Creazione attributo certificato
   Gli enti certificatori possono creare attributi certificati
 
+  @nrt-minimal
   @certified_attribute_creation1
-  Scenario Outline: Un utente admin di un ente certificatore può creare un attributo certificato
+  Scenario Outline: [ATTRIBUTE_CREATION_1] Un utente admin di un ente certificatore può creare un attributo certificato
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente crea un attributo certificato
     Then si ottiene status code <risultato>
 
     # NOTE 16/04/2025 Nonostante il commento che segue PA1 restituisce esito positivo in ambiente QA
-    Examples: #PA1 e Privato non sono enti certificatori
+    @happy-path
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
+      | PA2     | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
-      | PA2     | admin        |       200 |
       | PA2     | api          |       403 |
       | PA2     | security     |       403 |
       | PA2     | api,security |       403 |

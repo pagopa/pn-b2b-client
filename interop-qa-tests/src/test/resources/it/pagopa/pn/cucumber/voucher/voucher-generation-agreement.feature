@@ -1,6 +1,7 @@
 @voucher
 Feature: Generazione del voucher sulle richieste di fruizione
 
+    @nrt-minimal
     @voucher_generation_agreement1
     Scenario: [VOUCHER_GENERATION_AGREEMENT_01] La generazione del Voucher va a buon fine quando la richiesta di fruizione viene sospesa e poi riattivata dall’erogatore
         Given l'utente è un "admin" di "PA1"
@@ -16,6 +17,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement2
     Scenario: [VOUCHER_GENERATION_AGREEMENT_02] La generazione del Voucher va a buon fine quando la richiesta di fruizione viene sospesa e poi riattivata dal fruitore
         Given l'utente è un "admin" di "PA1"
@@ -31,6 +33,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement3
     Scenario: [VOUCHER_GENERATION_AGREEMENT_03] La generazione del Voucher va a buon fine quando la richiesta di fruizione viene sospesa dall’erogatore e dal fruitore, e poi riattivata sia dall’erogatore che dal fruitore
         Given l'utente è un "admin" di "PA1"
@@ -48,7 +51,8 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
-    @voucher_generation_agreement4 @no-parallel
+    @nrt-minimal
+    @voucher_generation_agreement4 @no-parallel @certifiedAttribute
     Scenario: [VOUCHER_GENERATION_AGREEMENT_04] La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo certificato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
         Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
@@ -66,6 +70,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement5
     Scenario: [VOUCHER_GENERATION_AGREEMENT_05] La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo verificato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
@@ -86,6 +91,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement6 @no-parallel
     Scenario: [VOUCHER_GENERATION_AGREEMENT_06] La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo dichiarato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
@@ -104,6 +110,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement7
     Scenario: [VOUCHER_GENERATION_AGREEMENT_07] La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e l’upgrade viene completato direttamente
         Given l'utente è un "admin" di "PA1"
@@ -119,6 +126,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement8 @wait_for_fix @PIN-5405
     Scenario: [VOUCHER_GENERATION_AGREEMENT_08] La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e la richiesta rimane in attesa di approvazione
         Given l'utente è un "admin" di "PA1"
@@ -136,6 +144,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement9 @wait_for_fix @PIN-5405
     Scenario: [VOUCHER_GENERATION_AGREEMENT_09] La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e la richiesta passa in attesa di approvazione e poi approvata dall’erogatore
         Given l'utente è un "admin" di "PA1"
@@ -156,6 +165,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement10 @wait_for_fix @PIN-5405
     Scenario: [VOUCHER_GENERATION_AGREEMENT_10] La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e la richiesta passa in attesa di approvazione e poi rifiutata dall’erogatore
         Given l'utente è un "admin" di "PA1"
@@ -174,6 +184,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then si ottiene la corretta generazione del voucher
 
+    @nrt-minimal
     @voucher_generation_agreement11
     Scenario: [VOUCHER_GENERATION_AGREEMENT_11] La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa dall’erogatore
         Given l'utente è un "admin" di "PA1"
@@ -188,6 +199,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement12
     Scenario: [VOUCHER_GENERATION_AGREEMENT_12] La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa dal fruitore
         Given l'utente è un "admin" di "PA1"
@@ -202,6 +214,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement13
     Scenario: [VOUCHER_GENERATION_AGREEMENT_13] La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa sia dall’erogatore che dal fruitore
         Given l'utente è un "admin" di "PA1"
@@ -217,6 +230,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement14
     Scenario: [VOUCHER_GENERATION_AGREEMENT_14] La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa sia dall’erogatore che dal fruitore, e poi riattivata dall’erogatore
         Given l'utente è un "admin" di "PA1"
@@ -233,6 +247,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement15
     Scenario: [VOUCHER_GENERATION_AGREEMENT_15] La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa sia dall’erogatore che dal fruitore, e poi riattivata dal fruitore
         Given l'utente è un "admin" di "PA1"
@@ -249,7 +264,8 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
-    @voucher_generation_agreement16 @no-parallel
+    @nrt-minimal
+    @voucher_generation_agreement16 @no-parallel @certifiedAttribute
     Scenario: [VOUCHER_GENERATION_AGREEMENT_16] La generazione del Voucher fallisce quando il fruitore perde un attributo certificato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
         Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
@@ -265,6 +281,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement17 @no-parallel
     Scenario: [VOUCHER_GENERATION_AGREEMENT_17] La generazione del Voucher fallisce quando il fruitore perde un attributo verificato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
@@ -283,6 +300,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement18 @no-parallel
     Scenario: [VOUCHER_GENERATION_AGREEMENT_18] La generazione del Voucher fallisce quando il fruitore perde un attributo dichiarato necessario all’utilizzo dell’EService
         Given l'utente è un "admin" di "PA1"
@@ -299,6 +317,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement19
     Scenario: [VOUCHER_GENERATION_AGREEMENT_19] La generazione del Voucher fallisce quando la richiesta di fruizione viene archiviata dal fruitore
         Given l'utente è un "admin" di "PA1"
@@ -313,6 +332,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         When l'utente richiede la generazione del voucher
         Then la richiesta di generazione del Voucher non va a buon fine
 
+    @nrt-minimal
     @voucher_generation_agreement20
     Scenario: [VOUCHER_GENERATION_AGREEMENT_20] La generazione del Voucher fallisce quando la richiesta di fruizione sospesa subisce un upgrade verso una Versione dell’EService più recente, e l’upgrade viene completato direttamente
         Given l'utente è un "admin" di "PA1"

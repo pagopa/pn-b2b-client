@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -15,7 +16,7 @@ public class ClientUsersListingStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public ClientUsersListingStep(ClientTokenConfigurator clientTokenConfigurator,
                                   SharedStepsContext sharedStepsContext) {
@@ -34,7 +35,7 @@ public class ClientUsersListingStep {
 
     @Then("si ottiene status code 200 e la lista di {int} utenti")
     public void verifyStatusCodeAndListLength(int userListSize) {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(userListSize, ((List<CompactUser>) httpCallExecutor.getResponse()).size());
     }
 

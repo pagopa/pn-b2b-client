@@ -2,6 +2,8 @@
 Feature: Creazione di una nuova versione di finalità
   Tutti gli utenti autorizzati di un ente fruitore possono richiedere un cambio di piano aggiornando le dailyCalls
 
+  @happy-path
+  @nrt-minimal
   @purpose_version_create1a
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_1] Un utente con sufficienti permessi; il cui ente ha già una finalità in stato ACTIVE o SUSPENDED e non ha versioni in stato WAITING_FOR_APPROVAL per una versione di e-service, aggiorna la stima di carico di una finalità. La richiesta va a buon fine e la finalità viene aggiornata con la nuova stima di carico restando nello stato originale.
     Given l'utente è un "admin" di "<ente>"
@@ -21,6 +23,8 @@ Feature: Creazione di una nuova versione di finalità
       | ente | statoFinalitàEsistente | statoNuovaFinalità |
       | PA1  | SUSPENDED              | ACTIVE             |
 
+  @sad-path
+  @nrt-minimal
   @purpose_version_create1b
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_2] Un utente senza sufficienti permessi; il cui ente ha già una finalità in stato ACTIVE o SUSPENDED e non ha versioni in stato WAITING_FOR_APPROVAL per una versione di e-service, aggiorna la stima di carico di una finalità. Ottiene un errore.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -45,6 +49,8 @@ Feature: Creazione di una nuova versione di finalità
       | Privato | api,security |
       | Privato | support      |
 
+  @sad-path
+  @nrt-minimal
   @purpose_version_create2
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_3] Un utente con sufficienti permessi; il cui ente ha già una finalità in stato ACTIVE o SUSPENDED e ha già una versione successiva in stato WAITING_FOR_APPROVAL per una versione di e-service, aggiorna la stima di carico di una finalità. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -60,6 +66,8 @@ Feature: Creazione di una nuova versione di finalità
       | ACTIVE        |
       | SUSPENDED     |
 
+  @sad-path
+  @nrt-minimal
   @purpose_version_create3 @wait_for_fix @IMN-4765
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_4] Un utente con sufficienti permessi; il cui ente ha già una finalità in stato DRAFT, WAITING_FOR_APPROVAL o ARCHIVED per una versione di e-service, aggiorna la stima di carico di una finalità. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
@@ -75,6 +83,8 @@ Feature: Creazione di una nuova versione di finalità
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
+  @happy-path
+  @nrt-minimal
   @purpose_version_create4
   Scenario: [CREAZIONE_VERSIONE_FINALITA_5] Un utente con sufficienti permessi; il cui ente ha già una finalità in stato ACTIVE e non ha versioni in stato WAITING_FOR_APPROVAL per una versione di e-service, aggiorna la stima di carico di una finalità superando la quota massima. La richiesta va a buon fine e la finalità viene aggiornata con la nuova stima di carico andando in WAITING_FOR_APPROVAL.
     Given l'utente è un "admin" di "PA1"

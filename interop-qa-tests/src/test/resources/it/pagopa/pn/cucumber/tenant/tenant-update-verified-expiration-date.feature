@@ -2,6 +2,7 @@
 Feature: Aggiornamento della data di scadenza di un attributo verificato ad un aderente
   Tutti gli utenti autorizzati di enti che possono erogare eservice possono aggiornare la data di scadenza di un proprio attributo verificato
 
+  @nrt-minimal
   @tenant_update_verified_expiration_date1 @no-parallel
   Scenario Outline: [TENANT_UPDATE_VERIFIED_EXPIRATION_DATE_01] Per un attributo verificato precedentemente creato e assegnato da un primo aderente ad un secondo aderente, alla richiesta di aggiornamento di un attributo che non ha data di scadenza ad una data nel futuro da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -25,6 +26,7 @@ Feature: Aggiornamento della data di scadenza di un attributo verificato ad un a
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
 
+  @nrt-minimal
   @tenant_update_verified_expiration_date2 @no-parallel
   Scenario: [TENANT_UPDATE_VERIFIED_EXPIRATION_DATE_02] Per un attributo verificato precedentemente creato e assegnato da un primo aderente ad un secondo aderente, alla richiesta di aggiornamento di un attributo che ha già una scadenza ad un’altra data nel futuro da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -35,6 +37,7 @@ Feature: Aggiornamento della data di scadenza di un attributo verificato ad un a
     When l'utente richiede l'aggiornamento di quell'attributo di "PA2" con una data di scadenza nel futuro
     Then si ottiene status code 204
 
+  @nrt-minimal
   @tenant_update_verified_expiration_date3 @no-parallel
   Scenario: [TENANT_UPDATE_VERIFIED_EXPIRATION_DATE_03] Per un attributo verificato precedentemente creato e assegnato da un primo aderente ad un secondo aderente, alla richiesta di aggiornamento di un attributo che ha già una scadenza rimuovendo la scadenza (expirationDate == undefined) da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "admin" di "PA1"
@@ -45,6 +48,7 @@ Feature: Aggiornamento della data di scadenza di un attributo verificato ad un a
     When l'utente richiede l'aggiornamento di quell'attributo di "PA2" rimuovendo la data di scadenza
     Then si ottiene status code 204
 
+  @nrt-minimal
   @tenant_update_verified_expiration_date4
   Scenario: [TENANT_UPDATE_VERIFIED_EXPIRATION_DATE_04] Per un attributo verificato precedentemente creato e assegnato da un primo aderente ad un secondo aderente, alla richiesta di aggiornamento di un attributo ad una data nel passato da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, ottiene un errore
     Given l'utente è un "admin" di "PA1"

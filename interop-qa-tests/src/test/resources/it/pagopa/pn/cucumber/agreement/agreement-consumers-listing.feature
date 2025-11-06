@@ -2,6 +2,7 @@
 Feature: Listing fruitori con richieste di fruizione
   Tutti gli utenti autorizzati di enti PA e GSP possono ottenere la lista dei fruitori dei propri e-service
 
+  @happy-path
   @agreement_consumers_listing1
   Scenario Outline: A fronte di 4 fruitori, restituisce solo i primi 3 risultati
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -26,6 +27,7 @@ Feature: Listing fruitori con richieste di fruizione
       | PA1  | api,security |
       | PA1  | support      |
 
+  @happy-path
   @agreement_consumers_listing2
   Scenario: A fronte di 4 fruitori con i quali l’erogatore ha almeno una richiesta di fruizione e una richiesta di offset 2, restituisce solo 2 risultati
     Given l'utente è un "admin" di "PA1"
@@ -37,6 +39,7 @@ Feature: Listing fruitori con richieste di fruizione
     When l'utente richiede una operazione di listing dei fruitori dei propri e-service con offset 2
     Then si ottiene status code 200 con la corretta verifica dell'offset
 
+  @happy-path
   @agreement_consumers_listing3
   Scenario: Restituisce un fruitore il cui nome dell’ente contiene la keyword "Comune di Milano" all'interno del nome, con ricerca case insensitive. In questo scenario il nome di PA1 è "Comune di Milano"
     Given l'utente è un "admin" di "PA2"
@@ -46,6 +49,7 @@ Feature: Listing fruitori con richieste di fruizione
     When l'utente richiede una operazione di listing dei fruitori dei propri e-service filtrando per la keyword "Comune di Milano"
     Then si ottiene status code 200 e la lista di 1 fruitore
 
+  @happy-path
   @agreement_consumers_listing4
   Scenario: Restituisce un insieme vuoto di fruitori per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA2"

@@ -2,6 +2,7 @@
 Feature: Listing e-service consumers
   Tutti gli utenti autenticati possono leggere la lista dei aderenti che sono iscritti ad almeno un e-service di cui sono erogatori
 
+  @nrt-minimal
   @tenant_e_service_consumers_listing1a
   Scenario Outline: [TENANT_E_SERVICE_CONSUMERS_LISTING_01A] Restituisce tutti gli aderenti che sono iscritti (agreement solo in stato ACTIVE o SUSPENDED) ad almeno un e-service di cui sono erogatori per qualsiasi livello di permesso e tipologia di ente.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -27,6 +28,7 @@ Feature: Listing e-service consumers
       | ente | ruolo | statoAgreement |
       | PA1  | admin | SUSPENDED      |
 
+  @nrt-minimal
   @tenant_e_service_consumers_listing2
   Scenario: [TENANT_E_SERVICE_CONSUMERS_LISTING_02] A fronte di 3 o più aderenti in db, restituisce solo i primi 2 risultati (scopo del test è verificare il corretto funzionamento del parametro limit)
     Given l'utente è un "admin" di "PA1"
@@ -37,6 +39,7 @@ Feature: Listing e-service consumers
     When l'utente richiede una operazione di listing dei fruitori con limit 2
     Then si ottiene status code 200 e la lista di 2 aderenti
 
+  @nrt-minimal
   @tenant_e_service_consumers_listing3
   Scenario: [TENANT_E_SERVICE_CONSUMERS_LISTING_03] A fronte di più aderenti in db e una richiesta con offset, restituisce il corretto numero di risultati (scopo del test è verificare il corretto funzionamento del parametro offset)
     Given l'utente è un "admin" di "PA1"
@@ -47,6 +50,7 @@ Feature: Listing e-service consumers
     When l'utente richiede una operazione di listing dei fruitori con offset 2
     Then si ottiene status code 200 e il giusto numero di fruitori in base all'offset richiesto
 
+  @nrt-minimal
   @tenant_e_service_consumers_listing4
   Scenario: [TENANT_E_SERVICE_CONSUMERS_LISTING_04] Restituisce gli aderenti che contengono la keyword "PagoPA" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
     Given l'utente è un "admin" di "PA1"
@@ -55,6 +59,7 @@ Feature: Listing e-service consumers
     When l'utente richiede una operazione di listing dei fruitori filtrando per nome aderente "PagoPA S.p.A."
     Then si ottiene status code 200 e la lista di 1 aderente
 
+  @nrt-minimal
   @tenant_e_service_consumers_listing5
   Scenario: [TENANT_E_SERVICE_CONSUMERS_LISTING_05] Restituisce un insieme vuoto di aderenti per una ricerca che non porta risultati (scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
     Given l'utente è un "admin" di "PA1"

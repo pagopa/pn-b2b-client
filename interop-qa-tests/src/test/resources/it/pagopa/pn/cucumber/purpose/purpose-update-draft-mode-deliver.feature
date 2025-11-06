@@ -2,8 +2,10 @@
 Feature: Aggiornamento bozza nuova finalità in erogazione diretta
   Tutti gli utenti autorizzati possono aggiornare una finalità in bozza per un e-service in erogazione diretta.
 
+  @sad-path
+  @nrt-minimal
   @purpose_update_draft_mode_deliver1
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = DELIVER, aggiorna una finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
+  Scenario Outline: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_1] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = DELIVER, aggiorna una finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -17,8 +19,10 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
       | GSP     | admin |
       | Privato | admin |
 
+  @sad-path
+  @nrt-minimal
   @purpose_update_draft_mode_deliver2
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato NON DRAFT (ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED) per una versione di e-service, il quale ha mode = DELIVER, aggiorna una finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
+  Scenario Outline: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_2] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato NON DRAFT (ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED) per una versione di e-service, il quale ha mode = DELIVER, aggiorna una finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -33,8 +37,10 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
+  @sad-path
+  @nrt-minimal
   @purpose_update_draft_mode_deliver3
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = DELIVER, aggiorna una finalità con tutti i campi richiesti correttamente formattati, con una riskAnalysis in versione diversa da quella attualmente pubblicata (es. il fruitore ha compilato la v1, la versione attuale è la v2). Ottiene un errore.
+  Scenario: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_3] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = DELIVER, aggiorna una finalità con tutti i campi richiesti correttamente formattati, con una riskAnalysis in versione diversa da quella attualmente pubblicata (es. il fruitore ha compilato la v1, la versione attuale è la v2). Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

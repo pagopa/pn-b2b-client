@@ -1,8 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
+import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.KeyPairPEM;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
@@ -11,7 +12,7 @@ import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.security.KeyPair;
 import java.util.UUID;
@@ -22,11 +23,11 @@ public class VoucherGenerationClientAndKeysSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
 
     public VoucherGenerationClientAndKeysSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        DataPreparationService dataPreparationService) {
+        BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -87,7 +88,7 @@ public class VoucherGenerationClientAndKeysSteps {
 
         String newKeyId = dataPreparationService.addPublicKeyToClient(
             clientId,
-            KeyPairGeneratorUtil.createKeySeed(publicKey, sharedStepsContext.getTestSeed()).get(0)
+            KeyPairGeneratorUtil.createKeySeed(publicKey, sharedStepsContext.getTestSeed(), KeyType.RSA).get(0)
         );
 
         sharedStepsContext.getClientCommonContext().setNewKeyId(newKeyId);
@@ -203,7 +204,7 @@ public class VoucherGenerationClientAndKeysSteps {
             newClientId,
             KeyPairGeneratorUtil.createKeySeed(
                 KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true),
-                sharedStepsContext.getTestSeed()).get(0)
+                sharedStepsContext.getTestSeed(), KeyType.RSA).get(0)
         );
 
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);

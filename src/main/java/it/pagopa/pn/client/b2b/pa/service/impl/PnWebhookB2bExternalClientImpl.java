@@ -31,7 +31,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
-    private ApiKeyType apiKeySetted;
+    private ApiKeyType apiKeyInUse;
     private final String devBasePath;
     private String bearerTokenInterop;
     private final String enableInterop;
@@ -56,7 +56,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.devBasePath = devBasePath;
         eventsApi = new EventsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         streamsApi = new StreamsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.apiKeySetted = ApiKeyType.MVP_1;
+        this.apiKeyInUse = ApiKeyType.MVP_1;
     }
 
     //@Scheduled(cron = "* * * * * ?")
@@ -68,8 +68,6 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                 this.bearerTokenInterop = tokenInterop;
                 eventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
                 streamsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-//                eventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-//                streamsApiV23.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             }
         }
     }
@@ -412,23 +410,23 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         boolean beenSet = false;
         switch (apiKey) {
             case MVP_1 -> {
-                if (this.apiKeySetted != ApiKeyType.MVP_1) {
+                if (this.apiKeyInUse != ApiKeyType.MVP_1) {
                     setApiKey(apiKeyMvp1);
-                    this.apiKeySetted = ApiKeyType.MVP_1;
+                    this.apiKeyInUse = ApiKeyType.MVP_1;
                 }
                 beenSet = true;
             }
             case MVP_2 -> {
-                if (this.apiKeySetted != ApiKeyType.MVP_2) {
+                if (this.apiKeyInUse != ApiKeyType.MVP_2) {
                     setApiKey(apiKeyMvp2);
-                    this.apiKeySetted = ApiKeyType.MVP_2;
+                    this.apiKeyInUse = ApiKeyType.MVP_2;
                 }
                 beenSet = true;
             }
             case GA -> {
-                if (this.apiKeySetted != ApiKeyType.GA) {
+                if (this.apiKeyInUse != ApiKeyType.GA) {
                     setApiKey(apiKeyGa);
-                    this.apiKeySetted = ApiKeyType.GA;
+                    this.apiKeyInUse = ApiKeyType.GA;
                 }
                 beenSet = true;
             }
@@ -438,7 +436,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.apiKeySetted;
+        return this.apiKeyInUse;
     }
 
     public void setApiKey(String apiKey) {

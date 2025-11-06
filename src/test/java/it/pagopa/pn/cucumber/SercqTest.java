@@ -2,7 +2,7 @@ package it.pagopa.pn.cucumber;
 
 import org.junit.platform.suite.api.*;
 
-        import static io.cucumber.junit.platform.engine.Constants.*;
+import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -13,6 +13,6 @@ import org.junit.platform.suite.api.*;
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @ExcludeTags({"ignore"})
-@IncludeTags({"sercq"})
+@IncludeTags({"sercq","sercqTos"})
 public class SercqTest {
 }

@@ -2,6 +2,7 @@
 Feature: Cancellazione di un documento allegato alla richiesta di fruizione
   Tutti gli utenti autorizzati possono cancellare un documento allegato alla richiesta di fruizione in stato DRAFT
 
+  @nrt-minimal
   @agreement_document_delete1
   Scenario Outline: [AGREEMENT_DOCUMENT_DELETE_01] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato DRAFT, cancella un documento associato alla richiesta di fruizione. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -10,24 +11,31 @@ Feature: Cancellazione di un documento allegato alla richiesta di fruizione
     When l'utente cancella il documento allegato a quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples:
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       204 |
+      | PA1     | admin        |       204 |
+      | Privato | admin        |       204 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | PA1     | admin        |       204 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | Privato | admin        |       204 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @sad-path
+  @nrt-minimal
   @agreement_document_delete2a @wait_for_fix @IMN-310
   Scenario Outline: [AGREEMENT_DOCUMENT_DELETE_02A] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, cancella un documento associato alla richiesta di fruizione. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
@@ -43,7 +51,8 @@ Feature: Cancellazione di un documento allegato alla richiesta di fruizione
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
-  @agreement_document_delete2b
+  @sad-path @nrt-minimal
+  @agreement_document_delete2b @certifiedAttribute
   Scenario Outline: [AGREEMENT_DOCUMENT_DELETE_02B] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, cancella un documento associato alla richiesta di fruizione. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

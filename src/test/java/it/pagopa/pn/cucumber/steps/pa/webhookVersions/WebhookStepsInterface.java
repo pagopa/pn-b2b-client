@@ -53,6 +53,10 @@ public interface WebhookStepsInterface {
 
     void consumeEventStream(UUID streamId);
 
+    void consumeEventStreamWithHttpInfo(UUID streamId);
+
+    void checkHeader(boolean contains, String headerParameterName, String headerParameterValue);
+
     void consumeEventStreamAndCheckNumEvents(int numEvents);
 
     void verifyNoEventsInStream();

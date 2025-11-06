@@ -1,0 +1,56 @@
+{
+  "name": "prova finalita",
+  "riskAnalysisForm": {
+    "answers": {
+      "checkedExistenceMereCorrectnessInteropCatalogue": [
+        "true"
+      ],
+      "confirmPricipleIntegrityAndDiscretion": [
+        "true"
+      ],
+      "dataDownload": [
+        "NO"
+      ],
+      "declarationConfirmGDPR": [
+        "true"
+      ],
+      "deliveryMethod": [
+        "CLEARTEXT"
+      ],
+      "doneDpia": [
+        "NO"
+      ],
+      "institutionalPurpose": [
+        "prova prova prova"
+      ],
+      "isRequestOnBehalfOfThirdParties": [
+        "NO"
+      ],
+      "knowsDataQuantity": [
+        "NO"
+      ],
+      "legalBasis": [
+        "CONTRACT"
+      ],
+      "personalDataTypes": [
+        "WITH_NON_IDENTIFYING_DATA"
+      ],
+      "policyProvided": [
+        "YES"
+      ],
+      "policyProvidedMedium": [
+        "PRINT"
+      ],
+      "purpose": [
+        "INSTITUTIONAL"
+      ],
+      "purposePursuit": [
+        "MERE_CORRECTNESS"
+      ],
+      "usesPersonalData": [
+        "YES"
+      ]
+    },
+    "version": "3.1"
+  }
+}

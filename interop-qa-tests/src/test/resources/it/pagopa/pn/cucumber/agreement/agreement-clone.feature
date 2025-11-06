@@ -2,6 +2,7 @@
 Feature: Clonazione di una richiesta di fruizione.
   Tutti gli utenti autorizzati possono clonare una richiesta di fruizione in stato REJECTED
 
+  @nrt-minimal
   @agreement_clone1
   Scenario Outline: [AGREEMENT_CLONE_01] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato REJECTED. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -11,24 +12,31 @@ Feature: Clonazione di una richiesta di fruizione.
     When l'utente clona quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
+    @happy-path
     Examples:
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       200 |
+      | PA1     | admin        |       200 |
+      | Privato | admin        |       200 |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
-      | PA1     | admin        |       200 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
-      | Privato | admin        |       200 |
       | Privato | api          |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+  @sad-path
+  @nrt-minimal
   @agreement_clone2a
   Scenario Outline: [AGREEMENT_CLONE_02A] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato DRAFT, PENDING, ACTIVE, SUSPENDED, ARCHIVED. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
@@ -45,7 +53,8 @@ Feature: Clonazione di una richiesta di fruizione.
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
-  @agreement_clone2b
+  @sad-path @nrt-minimal
+  @agreement_clone2b @certifiedAttribute
   Scenario Outline: [AGREEMENT_CLONE_02B] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

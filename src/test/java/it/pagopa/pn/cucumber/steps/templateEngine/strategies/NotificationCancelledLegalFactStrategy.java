@@ -34,7 +34,7 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
                 yield "Dichiarazione annullamento notifica sulla piattaforma SEND Con il presente documento, reso disponibile al destinatario esclusivamente sulla Piattaforma SEND, si dichiara che la notifica avente IUN , eseguita nei confronti di:";
             }
             case "TEDESCA" -> {
-                yield "Dichiarazione annullamento notifica sulla piattaforma SEND Mit diesem Dokument, das dem Empfänger ausschließlich auf der Plattform SEND zur Verfügung steht, wird erklärt, dass die Zustellung mit IUN an den Empfänger:";
+                yield "Dichiarazione annullamento notifica sulla piattaforma SEND Mit diesem Dokument, das dem Empfänger ausschließlich auf der SEND-Plattform zur Verfügung steht, wird erklärt, dass die Zustellung mit IUN durchgeführt an den Empfänger:";
             }
             case "SLOVENA" -> {
                 yield "Dichiarazione annullamento notifica sulla piattaforma SEND S tem dokumentom, ki je prejemniku na voljo izključno na platformi SEND, se izjavlja, da je obvestilo z IUN za string prejemnik:";

@@ -3,6 +3,7 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
   Tutti gli utenti autorizzati di enti certificatori possono leggere la lista degli attributi certificati assegnati.
   Ai fini dei test solo PA2 e GSP2 sono certificatori, la quale qualifica non può essere assegnata durante la loro esecuzione.
 
+  @nrt-minimal
   @tenant_requester_certified_attributes_listing1 @wait_for_fix @PIN-5070
   Scenario Outline: [TENANT_REQUESTER_CERTIFIED_ATTRIBUTES_LISTING_01] A fronte di una richiesta di listing di attributi certificati, la richiesta va buon fine solo se il richiedente è un ente certificatore
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -32,7 +33,7 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
       | GSP     | support      |        200 |
       | GSP     | api,security |        403 |
 
-  @tenant_requester_certified_attributes_listing2
+  @nrt-minimal @tenant_requester_certified_attributes_listing2 @certifiedAttribute
   Scenario: [TENANT_REQUESTER_CERTIFIED_ATTRIBUTES_LISTING_02] A fronte di una richiesta di listing di attributi certificati creati e assegnati dall'ente richiedente, va a buon fine e l'attributo creato è contenuto nei risultati
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
