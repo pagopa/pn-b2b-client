@@ -5,6 +5,8 @@ Feature: Lettura singola finalità
   @happy-path
   @nrt-minimal
   @purpose_read1
+  @wait_for_fix
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7087
   Scenario Outline: [LETTURA_FINALITA_1] Per una finalità precedentemente creata dal fruitore, la quale prima versione è in qualsiasi stato (DRAFT, WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura, va a buon fine, l’analisi del rischio è disponibile solo per gli admin
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
