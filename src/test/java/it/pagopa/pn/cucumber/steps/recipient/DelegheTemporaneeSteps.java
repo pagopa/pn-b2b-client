@@ -197,7 +197,8 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    @And("TODO remove test cie utente {string} nonce {string} con {string}")
+    //il metodo viene richiamato da altri step del codice, ma lo step dev'essere invocato solo a fini di debug
+    @And("DEBUGONLY test cie utente {string} nonce {string} con {string}")
     public CIEValidationData getCieValidationData(String delegatorTaxId, String nonce, String inputParamsType) {
         Path path = Path.of("lib/output");
         LocalDate expirationDate = LocalDate.now().plusYears(1L);
@@ -302,7 +303,7 @@ public class DelegheTemporaneeSteps {
 
     //TODO REMOVE: metodi solo per debug, per evitare di aspettare ogni volta che una notifica vada in accepted
 
-    @Given("TODO remove il mandate in uso è quello con id {string} e verificationCode {string}")
+    @Given("DEBUGONLY il mandate in uso è quello con id {string} e verificationCode {string}")
     public void mockMandate(String mandateId, String nonce) {
         mandateDtoB2b = new MandateDto();
         mandateDtoB2b.setMandateId(mandateId);
