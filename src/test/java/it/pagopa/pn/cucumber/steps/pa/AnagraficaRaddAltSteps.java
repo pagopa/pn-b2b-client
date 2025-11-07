@@ -1247,7 +1247,7 @@ public class AnagraficaRaddAltSteps {
         RequestResponse response = raddAltClient.retrieveRequestItems(
                 this.uid
                 , this.requestid
-                , 100
+                , 200
                 , pageIndex);
         pageIndex = Optional.ofNullable(response.getNextPagesKey())
                 .filter(data -> !data.isEmpty())

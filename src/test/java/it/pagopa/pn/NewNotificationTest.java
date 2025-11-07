@@ -59,6 +59,7 @@ import static org.awaitility.Awaitility.await;
         PnRaddFsuClientImpl.class,
         PnRaddAlternativeV2ClientImpl.class,
         PnRaddAlternativeClientImpl.class,
+        PnRaddCapCoverageClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,

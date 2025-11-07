@@ -68,7 +68,7 @@ public class RegistroBeniInstitutionsSteps {
                 .stream()
                 .map(this::createInstitution)
                 .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null, null,
-                        null, null, null, null, null, null, ist.getInstitutionId()))
+                        null, null, null, null, null, null,null, ist.getInstitutionId()))
                 .filter(Objects::nonNull)
                 .map(ProductListDTO::getContent)
                 .filter(Objects::nonNull)
