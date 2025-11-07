@@ -34,16 +34,6 @@ public class CieGeneratorTool {
         NISData convertedNisData = new NISData();
         MRTDData convertedMrtdData = new MRTDData();
 
-//        convertedOutput.setSignedNonce(Base64URL.encode(libraryOutput.getSignedNonce()).toString());
-//
-//        convertedNisData.setNis(Base64URL.encode(libraryOutput.getCieIas().getNis()).toString());
-//        convertedNisData.setPubKey(Base64URL.encode(libraryOutput.getCieIas().getPublicKey()).toString());
-//        convertedNisData.setSod(Base64URL.encode(libraryOutput.getCieIas().getSod()).toString());
-//
-//        convertedMrtdData.setDg1(Base64URL.encode(libraryOutput.getCieMrtd().getDg1()).toString());
-//        convertedMrtdData.setDg11(Base64URL.encode(libraryOutput.getCieMrtd().getDg11()).toString());
-//        convertedMrtdData.setSod(Base64URL.encode(libraryOutput.getCieMrtd().getSod()).toString());
-
         Base64.Encoder encoder = Base64.getUrlEncoder();
 
         //SIGNED NONCE
