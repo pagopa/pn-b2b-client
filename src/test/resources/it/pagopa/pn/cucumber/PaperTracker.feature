@@ -12,8 +12,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>" iun "iun"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>" iun "iun"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName              |
       | ok_AR |
@@ -47,7 +47,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    And si verifica che la risposta trackings sia uguale a quella attesa "OK-GIACENZA-LTE10_890" iun "iun"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK-GIACENZA-LTE10_890"
 
 
   @paperTracker
@@ -64,8 +64,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>" iun "iun"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "<sequenceName>" iun "iun"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName              |
       | OK_RIR |
@@ -88,8 +88,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
-    And si verifica che la risposta trackings sia uguale a quella attesa "OK_RIR_NO_DEMAT" iun "iun"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "OK_RIR_NO_DEMAT" iun "iun"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK_RIR_NO_DEMAT"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT"
 
   @paperTracker
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_B] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
@@ -103,8 +103,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-DiscoveryIrreperibile_AR" iun "iun"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR" iun "iun"
+    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-DiscoveryIrreperibile_AR"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
 
   @paperTracker
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_C] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
@@ -130,8 +130,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_sentAttemptMade    | 1               |
       | details_deliveryDetailCode | RECRN001C       |
       | details_responseStatus     | OK              |
-    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL_IndirizzoInesistenteAR" iun "iun"
-    Then si verifica il corretto salvataggio degli eventi su PnPaperTracker, PnPaperTrackerDryRunOutputs e timeline per la sequence: "FAIL_IndirizzoInesistenteAR" iun "iun"
+    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL_IndirizzoInesistenteAR"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR"
 
   @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
@@ -146,16 +146,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                        |
       | OK-Retry_AR                         |
       | OK-NonRendicontabile_AR             |
       | FAIL_CON996_PCRETRY_FURTO_AR |
-  #WYPN-XKMK-LGVL-202510-H-1
       | OK_PCRETRY_CON996_AR |
-  #XQEP-DGTY-ARDG-202510-T-1
 
   @paperTracker
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2_RIR] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
@@ -172,7 +170,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0 e 1
+    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                        |
@@ -193,9 +191,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-   #da aggiungere anche controllo della timeline e questo test diventa permanente
-    #Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>" "0"
+    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
       | physicalAddress                   | category                             | flowThrow                     |
       | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
@@ -215,9 +211,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-   #da aggiungere anche controllo della timeline e questo test diventa permanente
-    #Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: <category> e flowThrow: "<flowThrow>" "<physicalAddress>" "0"
+    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
       | physicalAddress                   | category                             | flowThrow                     |
       | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
@@ -235,10 +229,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
-    Then si verifica il corretto salvataggio dell'errore su PnPaperTrackingsError con category: NOT_RETRYABLE_EVENT_ERROR e flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" "Via@FAIL_CON996_PCRETRY_AR" "1"
+    Then si verifica che su PaperTrackingsError ci sia un errore con category: NOT_RETRYABLE_EVENT_ERROR, flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" per la sequence: "Via@FAIL_CON996_PCRETRY_AR" e pcRetry: "1"
 
-
-  #TODO: questo scenario andrà incluso nell'NRT totale
+  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4]
     Given viene generata una nuova notifica
@@ -272,11 +265,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | OK_AR_BAD_EVENT                   | Via@OK_AR_BAD_EVENT               | ANALOG_SUCCESS_WORKFLOW |
 
-
-
       | FAIL_IndirizzoInesistenteAR                 | Via@FAIL_IndirizzoInesistenteAR                 | ANALOG_SUCCESS_WORKFLOW |
       | FAIL-DiscoveryIrreperibile_AR               | Via@FAIL-DiscoveryIrreperibile_AR               | ANALOG_FAILURE_WORKFLOW |
-
 
       | OK-WO-Giacenza_AR                           | Via@OK-WO-Giacenza_AR                           | ANALOG_SUCCESS_WORKFLOW |
       | OK-M_AR                                     | Via@OK-M_AR                                     | ANALOG_SUCCESS_WORKFLOW |
@@ -289,8 +279,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR-CON020-ZIP3P                          | Via@OK_AR-CON020-ZIP3P                          | ANALOG_SUCCESS_WORKFLOW |
       | OK-Giacenza_AR_ZIP                          | Via@OK-Giacenza_AR_ZIP                          | ANALOG_SUCCESS_WORKFLOW |
 
-
-
       | FAIL_DECEDUTO_SLOW_AR                       | Via@FAIL_DECEDUTO_SLOW_AR                       | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
       | FAIL_DECEDUTO_AR                            | Via@FAIL_DECEDUTO_AR                            | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
       | FAIL-CON996_PCRETRY_DECEDUTO-AR             | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
@@ -300,7 +288,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   | ANALOG_SUCCESS_WORKFLOW |
       | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           | ANALOG_SUCCESS_WORKFLOW |
 
-  #TODO: questo scenario andrà incluso nell'NRT totale
+  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4_RIR]
     Given viene generata una nuova notifica
@@ -327,7 +315,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
        | OK_PCRETRY_CON996_RIR             |Via@OK_PCRETRY_CON996_RIR          | ANALOG_SUCCESS_WORKFLOW |
 
 
-  #TODO: questo scenario andrà incluso nell'NRT totale
+  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5]
     Given viene generata una nuova notifica
@@ -351,7 +339,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL_CON996_PCRETRY_AR            |Via@FAIL_CON996_PCRETRY_AR           | CON996 |
 
 
-      #TODO: questo scenario andrà incluso nell'NRT totale
+  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5_RIR]
     Given viene generata una nuova notifica
