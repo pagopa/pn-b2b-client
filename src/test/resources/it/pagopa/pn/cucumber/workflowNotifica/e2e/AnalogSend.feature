@@ -170,6 +170,7 @@ Feature: Analog send e2e
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Presente"
     And l'operazione non ha prodotto errori
 
@@ -186,4 +187,20 @@ Feature: Analog send e2e
       | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Futuro"
+    And l'operazione ha prodotto un errore con status code "400"
+
+  @analogFutureDate
+  Scenario: [B2B_ANALOG_SEND_6] Verifica invio notifica chiamando due volte il consolidatore con la stessa request - Esito 400.02
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario
+      | denomination            | Leonardo da Vinci           |
+      | taxId                   | DVNLRD52D15M059P            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    Then viene invocato due volte il consolidatore utilizzando la stessa request
     And l'operazione ha prodotto un errore con status code "400"
