@@ -87,5 +87,20 @@ public class ParameterTypes {
         return paName;
     }
 
+    @ParameterType("corretto|malformato")
+    public static boolean isValidQrCode(String value) {
+        return value.equals("corretto");
+    }
+
+    @ParameterType("delegato|delegante")
+    public static boolean isDelegate(String value) {
+        return value.equals("delegato");
+    }
+
+    @ParameterType("può|non può")
+    public static boolean canBe(String value) {
+        return value.equals("può");
+    }
+
 
 }
