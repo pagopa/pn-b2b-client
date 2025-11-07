@@ -38,6 +38,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import lombok.Data;
+import org.apache.commons.lang.math.RandomUtils;
 import org.jeasy.random.EasyRandom;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -76,13 +77,12 @@ public class EServiceTemplateTestAssistant {
         this.riskAnalysisMapper = riskAnalysisMapper;
     }
 
-    public String nextEServiceTemplateName() {
-        return String.format("eservice-template-%s", this.nextTestResourceNameSuffix());
-    }
-
-    public String nextTestResourceNameSuffix() {
-        int randomInt = this.sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().size();
-        return String.format("%d-%d", sharedStepsContext.getTestSeed(), randomInt);
+    public String buildEServiceTemplateName() {
+        String suffix =
+            + sharedStepsContext.getTestSeed()
+            + "-"
+            + this.sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().size();
+        return String.format("eservice-template-%s", suffix);
     }
 
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
@@ -167,7 +167,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
-        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName, int fileIndex) {
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName, int fileIndex
+    ) {
         String userToken = clientTokenConfigurator.getLastToken();
         Resource doc = buildResource(kind, fileIndex);
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
@@ -299,8 +300,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public String buildPrettyName(EServiceTemplateDocumentKind kind) {
-        return "e-service-template-%s-%s".formatted(kind.toString(),
-            this.nextTestResourceNameSuffix());
+        return "e-service-template-%s-%d-%d".formatted(kind.toString(), sharedStepsContext.getTestSeed(),
+            RandomUtils.nextInt(1_000_000));
     }
 
     public void addRiskAnalysisToEServiceTemplateSuccessfully() {

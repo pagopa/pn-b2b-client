@@ -48,7 +48,7 @@ public class EServiceTemplateNameUpdateSteps {
     public void editEServiceTemplateName() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
-            .name(testAssistant.nextEServiceTemplateName());
+            .name(testAssistant.buildEServiceTemplateName());
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
     }
 

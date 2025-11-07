@@ -163,7 +163,7 @@ public class EServiceTemplateCreateSteps {
 
         httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(templateSeed));
         if (httpCallExecutor.getResponseStatus().isError()) {
-            throw new IllegalArgumentException(httpCallExecutor.getErrorMessage()); // a questo punto si prevede che i passi successivi riconoscano l'errore
+            return; // a questo punto si prevede che i passi successivi riconoscano l'errore, dunque non si lanciano errori
         }
 
         CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();
@@ -194,7 +194,7 @@ public class EServiceTemplateCreateSteps {
      * @return a new {@link EServiceTemplateSeed} instance
      */
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode) {
-        String templateName = testAssistant.nextEServiceTemplateName();
+        String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
@@ -208,7 +208,7 @@ public class EServiceTemplateCreateSteps {
     }
 
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
-        String templateName = testAssistant.nextEServiceTemplateName();
+        String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()

@@ -64,7 +64,7 @@ public class EServiceTemplateDocumentCreateSteps {
         addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, emptyByteArray);
     }
 
-    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando lo stesso nome")
+    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando lo stesso prettyName")
     public void addDocumentToEServiceTemplateVersionWithSameName(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
