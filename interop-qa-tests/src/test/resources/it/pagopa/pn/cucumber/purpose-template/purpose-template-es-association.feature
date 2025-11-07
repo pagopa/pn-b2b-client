@@ -1,7 +1,8 @@
-Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
+Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
-  #21(OK)
-  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_EC_OK]
+  #23(OK)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_OK]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -10,8 +11,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     When si effettua la get degli e-service associati al purpose template creato
     Then la lista di e-service associati contiene l'e-service atteso
 
-  #22(KO)
-  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_EC_KO]
+  #24(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_404]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -20,8 +22,13 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     When si effettua la get degli e-service associati al purpose template inesistente
     Then si ottiene lo status code 404
 
-  #23-24(OK)
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_EC_OK]
+  #25 TODO MATTEO
+  # Richiamare l’API di GET /catalog per restituire l’elenco degli e-service che hanno il flag sui dati personali valorizzato con lo stesso valore settato nel flag durante la creazione del template finalità
+  # Verificare che venga correttamente associato un determinato purpose template in stato draft a uno o più e-service, il cui flag sui dati personali è uguale a quello settato in fase di creazione del template
+
+  #26(OK)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_OK]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -32,8 +39,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
       | DRAFT     |
       | PUBLISHED |
 
-  #25(KO)
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_EC_KO]
+  #27(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_WRONG_STATE]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -45,23 +53,25 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
       | SUSPENDED |
       | ARCHIVED  |
 
-  #26(KO)
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_EC_KO_NO_ADMIN]
+  #28(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_ADMIN]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
     And il purpose template creato viene associato all'e-service
-    Then si ottiene lo status code <statusCode>
+    Then si ottiene lo status code 403
     Examples:
-      | ruolo    | statusCode |
-      | api      | 403        |
-      | support  | 403        |
-      | security | 403        |
+      | ruolo    |
+      | api      |
+      | support  |
+      | security |
 
-  #27(KO)
-  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_EC_KO_NO_CREATOR]
+  #29(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_CREATOR]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
@@ -70,8 +80,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     And il purpose template creato viene associato all'e-service
     Then si ottiene lo status code 403
 
-  #28(KO)
-  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_EC_KO_404]
+  #30(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_404]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -79,8 +90,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     When il purpose template inesistente viene associato all'e-service
     Then si ottiene lo status code 404
 
-  #29(KO)
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_EC_KO_ALREADY_ASSOCIATED]
+  #31(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_ALREADY_ASSOCIATED]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -93,8 +105,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
       | DRAFT     |
       | PUBLISHED |
 
-  #30(OK)
-  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_OK]
+  #32(OK)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_OK]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -106,8 +119,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
       | DRAFT     |
       | PUBLISHED |
 
-  #31(KO)
-  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_KO_WRONG_STATE]
+  #33(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_WRONG_STATE]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -121,8 +135,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
       | SUSPENDED |
       | ARCHIVED  |
 
-  #32(KO)
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_KO_ALREADY_UNLINKED]
+  #34(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_ALREADY_UNLINKED]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -130,10 +145,11 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     And il purpose template creato viene associato all'e-service
     And il purpose template creato viene disassociato dall'e-service
     When il purpose template creato viene disassociato dall'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
-  #33(KO)
-  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_KO_NO_ADMIN]
+  #35(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_ADMIN]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -148,8 +164,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
       | support  |
       | security |
 
-  #34(KO)
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_KO_NO_CREATOR]
+  #36(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_CREATOR]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -159,8 +176,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE EC
     And il purpose template creato viene disassociato dall'e-service
     Then si ottiene lo status code 403
 
-  #35(KO)
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_EC_OK]
+  #37(KO)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_404]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"

@@ -1,23 +1,16 @@
 Feature: finalità agevolata, purpose template ARCHIVIATION
 
-  #54-56(OK-KO)
+  #57(OK)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION]
+  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_OK]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
-    When l'utente è un "<ruolo>" di "PA1"
     And il purpose template creato viene spostato in stato ARCHIVED
-    Then si ottiene lo status code <statusCode>
-    Examples:
-      | ruolo    | statusCode |
-      | admin    | 204        |
-      | api      | 403        |
-      | support  | 403        |
-      | security | 403        |
+    Then si ottiene lo status code 204
 
-  #55(KO)
+  #58(KO)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION_KO_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION_WRONG_STATE]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
     When il purpose template creato viene spostato in stato ARCHIVED
@@ -27,26 +20,40 @@ Feature: finalità agevolata, purpose template ARCHIVIATION
       | DRAFT     |
       | PUBLISHED |
 
-  #57(KO)
+  #59(KO)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_KO_NO_CREATOR]
+  Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION_NO_ADMIN]
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template in stato SUSPENDED
+    When l'utente è un "<ruolo>" di "PA1"
+    And il purpose template creato viene spostato in stato ARCHIVED
+    Then si ottiene lo status code 403
+    Examples:
+      | ruolo    |
+      | api      |
+      | support  |
+      | security |
+
+  #60(KO)
+  @purposeTemplate @purposeTemplateArchiviation
+  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_NO_CREATOR]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
     When l'utente è un "admin" di "GSP"
     And il purpose template creato viene spostato in stato ARCHIVED
     Then si ottiene lo status code 403
 
-  #58(KO)
+  #61(KO)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_KO_404]
+  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_404]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
     When il purpose template inesistente viene spostato in stato ARCHIVED
     Then si ottiene lo status code 404
 
-  #59(KO)
+  #62(KO)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_ALREADY_SUSPENDED]
+  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_ALREADY_ARCHIVED]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
     And il purpose template creato viene spostato in stato ARCHIVED

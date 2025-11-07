@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.utility;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 
 public class ParameterTypesInterop {
 
@@ -10,7 +11,7 @@ public class ParameterTypesInterop {
         return value.equals("contiene");
     }
 
-    @ParameterType("creato|esistente|inesistente")
+    @ParameterType("creato|creata|esistente|inesistente")
     public static boolean exists(String value) {
         return !value.equals("inesistente");
     }
@@ -18,5 +19,10 @@ public class ParameterTypesInterop {
     @ParameterType("DRAFT|PUBLISHED|SUSPENDED|ARCHIVED")
     public static PurposeTemplateState ptState(String state) {
         return PurposeTemplateState.fromValue(state);
+    }
+
+    @ParameterType("ACTIVE|DRAFT|SUSPENDED|REJECTED|WAITING_FOR_APPROVAL|ARCHIVED")
+    public static PurposeVersionState purposeVersionState(String state) {
+        return PurposeVersionState.fromValue(state);
     }
 }

@@ -31,20 +31,62 @@ Feature: finalità agevolata, purpose template GET
       | support  | 403        |
       | security | 403        |
 
-
-  #5(OK) - 6(KO)
-  Scenario Outline: [PURPOSE_TEMPLATE_CREATE]
-    Given l'utente è un "<ruolo>" di "PA1"
+  #105-106
+  @purposeTemplate @purposeTemplateGet
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_CATALOG_WITH_PERSONAL_DATA]
+    Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
+    When si effettua la get di tutti i purpose template con titolo "ANY" e handlePersonalData <personalData>
+    Then si ottiene lo status code 200
+    Examples:
+      | personalData |
+      | "true"       |
+      | "false"      |
+      | "null"       |
+      | "any"        |
+
+  #3-4
+  @purposeTemplate @purposeTemplateCreate
+  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_WITH_PERSONAL_DATA]
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template con handlePersonalData <personalData>
     Then si ottiene lo status code <statusCode>
     Examples:
-      | ruolo    | statusCode |
-      | admin    | 201        |
-      | api      | 403        |
-      | support  | 403        |
-      | security | 403        |
+      | personalData | statusCode |
+      | "true"       | 201        |
+      | "false"      | 201        |
+      | "null"       | 400        |
+      | "any"        | 400        |
 
-  #7(OK)
+  #5(KO)
+  @purposeTemplate @purposeTemplateCreate
+  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_NO_ADMIN]
+    Given l'utente è un "<ruolo>" di "PA1"
+    And viene creato un nuovo purpose template
+    Then si ottiene lo status code 403
+    Examples:
+      | ruolo    |
+      | api      |
+      | support  |
+      | security |
+
+  #6 TODO MATTEO
+  @purposeTemplate @purposeTemplateCreate
+  Scenario: [PURPOSE_TEMPLATE_CREATE_ANSWER_OVER_250]
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template con answer length over 250
+    Then si ottiene lo status code 400
+
+  #7 TODO MATTEO
+  @purposeTemplate @purposeTemplateCreate
+  Scenario: [PURPOSE_TEMPLATE_CREATE_NO_ANSWERS]
+    Given l'utente è un "admin" di "PA1"
+    # Nel body specificare l’answer "usesThirdPartyPersonalData" e non specificare answer "usesPersonalData"
+    # Implementare lo stesso scenario anche con answer "institutionalPurpose" senza specificare answer "purpose"
+    Then si ottiene lo status code 400
+
+  #8(OK)
+  @purposeTemplate @purposeTemplateGet
   Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_ID]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -58,7 +100,8 @@ Feature: finalità agevolata, purpose template GET
       | support  | 403        |
       | security | 403        |
 
-  #8(KO)
+  #9(KO)
+  @purposeTemplate @purposeTemplateGet
   Scenario Outline: [PURPOSE_TEMPLATE_GET_404]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
