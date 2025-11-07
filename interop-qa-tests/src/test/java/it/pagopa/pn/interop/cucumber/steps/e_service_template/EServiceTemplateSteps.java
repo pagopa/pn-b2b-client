@@ -59,7 +59,7 @@ public class EServiceTemplateSteps {
             .map(t -> eServiceTemplateClient.getCreatorEServiceTemplates(
                 0,
                 50,
-                t.name()))
+                t.getName()))
             .map(response -> response.getBody().getResults())
             .flatMap(List::stream)
             .toList();

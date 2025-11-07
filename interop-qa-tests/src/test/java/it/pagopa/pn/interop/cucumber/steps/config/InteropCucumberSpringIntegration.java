@@ -51,7 +51,6 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
@@ -125,7 +124,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceTemplateApiClientImpl.class,
         QAAbstractInteropTracingClient.class,
         DescriptorAttributesMapperImpl.class,
-        EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,
         EServiceTemplateTestAssistant.class,
         EServiceTemplateStepContext.class,
         RiskAnalysisMapperImpl.class,

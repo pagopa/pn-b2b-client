@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import lombok.Data;
@@ -95,15 +94,15 @@ public class EServiceTemplateTestAssistant {
         };
         switch (desiredState) {
             case DRAFT -> { /* no-op: una versione appena creata è automaticamente in questo stato */ }
-            case PUBLISHED -> publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
+            case PUBLISHED -> publisher.accept(lastTemplateManaged.getId(), lastTemplateManaged.getLastVersionId());
             case SUSPENDED -> {
-                publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());    // perché prima di essere sospesa deve essere pubblicata
+                publisher.accept(lastTemplateManaged.getId(), lastTemplateManaged.getLastVersionId());    // perché prima di essere sospesa deve essere pubblicata
                 suspendEServiceTemplate();
             }
             case DEPRECATED -> {
-                publisher.accept(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
-                UUID newVersionId = this.createNewVersion(lastTemplateManaged.id());
-                publisher.accept(lastTemplateManaged.id(), newVersionId);
+                publisher.accept(lastTemplateManaged.getId(), lastTemplateManaged.getLastVersionId());
+                UUID newVersionId = this.createNewVersion(lastTemplateManaged.getId());
+                publisher.accept(lastTemplateManaged.getId(), newVersionId);
             }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
         }
@@ -124,16 +123,16 @@ public class EServiceTemplateTestAssistant {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         this.publishEServiceTemplate(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId());
     }
 
     public void suspendEServiceTemplate() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         this.suspendEServiceTemplate(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId());
     }
 
     /** Adds a document of the specified kind to the last managed e-service template version.
@@ -155,8 +154,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind, int fileIndex) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, fileIndex);
     }
 
@@ -232,8 +231,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         checkDocumentAddedToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId,
             kind);
     }
@@ -310,7 +309,7 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void addRiskAnalysisToEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(getEServiceRiskAnalysisSeed());
         sharedStepsContext.getEServiceTemplateStepContext().incrementLastAddedRiskAnalysisIndex();
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis());
@@ -337,8 +336,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void checkRiskAnalysisAddedToEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         try {
             int lastAddedRiskAnalysisIndex = sharedStepsContext.getEServiceTemplateStepContext()
@@ -459,8 +458,8 @@ public class EServiceTemplateTestAssistant {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()),
                     ResponseEntity::getStatusCode),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {

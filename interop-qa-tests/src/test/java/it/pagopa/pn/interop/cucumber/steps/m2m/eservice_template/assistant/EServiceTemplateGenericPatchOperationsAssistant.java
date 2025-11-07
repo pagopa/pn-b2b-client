@@ -37,7 +37,7 @@ public abstract class EServiceTemplateGenericPatchOperationsAssistant<PATCH_REQU
 
     @Override
     protected UUID getResourceId() {
-        return this.context.getLastTemplateManaged().id();
+        return this.context.getLastTemplateManaged().getId();
     }
 
     @Override

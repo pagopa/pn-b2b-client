@@ -85,8 +85,8 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         sharedStepsContext.getEServiceTemplateStepContext().setLastDescriptorAttributesSeed(attributesSeed);
 
         editEServiceTemplateVersionAttributes(
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastDescriptorAttributesSeed());
     }
 
@@ -102,16 +102,16 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         sharedStepsContext.getEServiceTemplateStepContext().setLastDescriptorAttributesSeed(attributesSeed);
 
         editEServiceTemplateVersionAttributes(
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastDescriptorAttributesSeed());
     }
 
     @When("l'utente tenta la modifica degli attributi della versione dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateVersionAttributesWithEmptySpec() {
         editEServiceTemplateVersionAttributes(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             new DescriptorAttributesSeed());
     }
 
@@ -122,7 +122,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
 
     @When("l'utente tenta la modifica degli attributi di una versione inesistente dell'e-service template")
     public void editEServiceTemplateNonExistentVersionAttributes() {
-        editEServiceTemplateVersionAttributes(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), nextDescriptorAttributesSeed());
+        editEServiceTemplateVersionAttributes(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID(), nextDescriptorAttributesSeed());
     }
 
     @Then("la modifica degli attributi è stata effettuata correttamente")

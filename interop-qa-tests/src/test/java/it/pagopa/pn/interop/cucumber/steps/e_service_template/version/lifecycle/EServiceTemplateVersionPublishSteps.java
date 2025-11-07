@@ -42,8 +42,8 @@ public class EServiceTemplateVersionPublishSteps {
 
     @When("l'utente tenta la pubblicazione della versione dell'e-service template")
     public void publishEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         publishEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
@@ -58,18 +58,18 @@ public class EServiceTemplateVersionPublishSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        publishEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
+        publishEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), null);
     }
 
     @When("l'utente tenta la pubblicazione di una versione inesistente di un e-service template")
     public void publishNonExistentEServiceTemplateVersion() {
-        publishEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
+        publishEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID());
     }
 
     @Then("la pubblicazione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionPublished() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

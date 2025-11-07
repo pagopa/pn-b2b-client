@@ -60,6 +60,7 @@ public class HttpCallExecutor implements IHttpExecutor {
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
+            log.error(errorMessage);
         }
         return promiseResponse;
     }

@@ -82,7 +82,7 @@ public class AdeguamentoLineeGuidaSteps {
 
     @When("viene settato il personalDataFlag a {string} nell'eservice template appena creato")
     public void updatePersonalDataFlagInEserviceTemplate(String flagPersonalData) {
-        UUID templateId = this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID templateId = this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         updatePersonalDataFlagInternal(false, templateId, flagPersonalData, false);
     }
 
@@ -107,8 +107,8 @@ public class AdeguamentoLineeGuidaSteps {
         ProducerEServiceDetails eService = (ProducerEServiceDetails) httpCallExecutor.getResponse();
 
         Assertions.assertThat(eService.getPersonalData())
-                .as("Il flag personalData dell'eService (id=%s) non corrisponde a quello del template (id=%s)", eServiceId, template.id())
-                .isEqualTo(template.personalData());
+                .as("Il flag personalData dell'eService (id=%s) non corrisponde a quello del template (id=%s)", eServiceId, template.getId())
+                .isEqualTo(template.getPersonalData());
     }
 
     @When("verifica che il flagPersonalData presente nell'eService sia {string}")
@@ -164,8 +164,8 @@ public class AdeguamentoLineeGuidaSteps {
         if (lastTemplate == null)
             throw new IllegalStateException("Nessun template gestito trovato nel contesto: impossibile verificare l'eServiceTemplate.");
 
-        UUID eServiceTemplateId = lastTemplate.id();
-        UUID eServiceTemplateVersionId = lastTemplate.lastVersionId();
+        UUID eServiceTemplateId = lastTemplate.getId();
+        UUID eServiceTemplateVersionId = lastTemplate.getLastVersionId();
 
         if (eServiceTemplateId == null)
             throw new IllegalStateException("L'ID del template è nullo: impossibile effettuare la chiamata per i dettagli.");

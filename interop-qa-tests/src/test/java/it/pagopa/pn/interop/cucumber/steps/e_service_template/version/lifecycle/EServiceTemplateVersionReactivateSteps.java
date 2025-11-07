@@ -44,14 +44,14 @@ public class EServiceTemplateVersionReactivateSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         this.testAssistant.activateEServiceTemplate(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId());
     }
 
     @When("l'utente tenta la riattivazione della versione dell'e-service template")
     public void reactivateEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         reactivateEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
@@ -61,7 +61,7 @@ public class EServiceTemplateVersionReactivateSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        reactivateEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
+        reactivateEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), null);
     }
 
     @When("l'utente tenta la riattivazione di una versione di un e-service template inesistente")
@@ -71,15 +71,15 @@ public class EServiceTemplateVersionReactivateSteps {
 
     @When("l'utente tenta la riattivazione di una versione inesistente nell'e-service template")
     public void reactivateNonExistentEServiceTemplateVersion() {
-        reactivateEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
+        reactivateEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID());
     }
 
     // TODO gli step delle classi andrebbero ordinati per Given -> When -> Then, rinominando gli And in modo da rendere chiaro il contesto
 
     @Then("la riattivazione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionReactivated() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

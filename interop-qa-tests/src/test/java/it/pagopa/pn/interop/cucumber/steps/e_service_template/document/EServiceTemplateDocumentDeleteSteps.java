@@ -55,8 +55,8 @@ public class EServiceTemplateDocumentDeleteSteps {
 
     @When("l'utente tenta la cancellazione del documento dell'e-service template")
     public void deleteDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         UUID documentId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id();
         deleteDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
@@ -68,19 +68,19 @@ public class EServiceTemplateDocumentDeleteSteps {
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
         deleteDocumentFromEServiceTemplateVersion(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             null);
     }
 
     @When("l'utente tenta la cancellazione di un documento inesistente nell'e-service template")
     public void deleteNonExistentDocumentFromEServiceTemplateVersion() {
-        deleteDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(), UUID.randomUUID());
+        deleteDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(), UUID.randomUUID());
     }
 
     @When("l'utente tenta la cancellazione del documento da una versione inesistente nell'e-service template")
     public void deleteDocumentFromNonExistentEServiceTemplateVersion() {
-        deleteDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id());
+        deleteDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID(), sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id());
     }
 
     @When("l'utente tenta la cancellazione di un documento da un e-service template inesistente")
@@ -90,8 +90,8 @@ public class EServiceTemplateDocumentDeleteSteps {
 
     @Then("la cancellazione del documento di tipo {eServiceTemplateDocumentKind} dell'e-service template è stata effettuata correttamente")
     public void checkDocumentDeletedFromEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         UUID documentId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id();
         Predicate<EServiceTemplateVersionDetails> noDocument = kind == EServiceTemplateDocumentKind.DOCUMENT
             ? version -> version.getDocs().stream().noneMatch(d -> d.getId().equals(documentId))

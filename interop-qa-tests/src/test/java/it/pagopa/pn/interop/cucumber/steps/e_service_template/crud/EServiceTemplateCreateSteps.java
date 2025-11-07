@@ -117,7 +117,7 @@ public class EServiceTemplateCreateSteps {
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
     public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
-        String lastTemplateNameUsed = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name();
+        String lastTemplateNameUsed = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getName();
         EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
                 .name(lastTemplateNameUsed);
         createEServiceTemplate(sameNameTemplateSeed);
@@ -137,8 +137,8 @@ public class EServiceTemplateCreateSteps {
                 "E-Service template document",
                 "EST doc",
                 (prettyName, resource) -> testAssistant.addDocumentToEserviceTemplateVersion(
-                        lastTemplateManaged.id(),
-                        lastTemplateManaged.lastVersionId(),
+                        lastTemplateManaged.getId(),
+                        lastTemplateManaged.getLastVersionId(),
                         EServiceTemplateDocumentKind.DOCUMENT,
                         prettyName,
                         sharedStepsContext.getUserToken(),
