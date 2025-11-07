@@ -1229,7 +1229,6 @@ Feature: Test API of e-service template
     When l'utente tenta la cancellazione di una versione inesistente dell'e-service template
     Then si ottiene response status code 404
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6483
   @sad-path
   @e-service-template-to-finish
   @e-service-template-version-delete
