@@ -11,7 +11,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
+      | 2431696          | CP1012SA0GR       | CP1012SA0GR          | Lavasciuga       | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
     And viene escluso il prodotto appena aggiunto
     Then si verifica che il prodotto sia marcato come: "REJECTED"
@@ -28,7 +28,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
+      | 2413074          | CP1210WA0ES       | CP1210WA0ES          | Lavasciuga       | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Given viene usata l'utenza: INVITALIA_L1
@@ -45,7 +45,7 @@ Feature: PARI - Portale registro dei beni
       | status      | OK |
     # [TC_58]
     # Recupero del report generato:
-    And si verifica che il report dell'ultimo prodotto aggiunto contenga la descrizione: "Prodotto in stato diverso da ESCLUSO o DA REVISIONARE"
+    And si verifica che il report dell'ultimo prodotto aggiunto contenga la descrizione: "Il prodotto è sottoposto alle verifiche previste"
     Then il report è correttamente popolato
     Then si verifica che il prodotto sia marcato come: "SUPERVISED"
     #lato INVITALIA escludo il prodotto dopo la contrassegnazione
@@ -132,7 +132,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
+      | 2423603          | F2R5FG6J       | F2R5FG6J          | Lavasciuga       | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
@@ -168,57 +168,66 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: INVITALIA_L1
     And viene escluso il prodotto appena aggiunto
 
+    #bug https://pagopa.atlassian.net/browse/RDB-321
   @produttore2 @invitalia1
   Scenario: [TC_ACTION_ON_PRODUCT_8] L'API di esclusione di un prodotto ritorna un KO se i prodotti non sono nello stesso stato.
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
-      | 2423604           | F2R5FG0W       | F2R5FG0W          | Lavasciuga        | IT                   |
+      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
+      | 2195172           | WD90DG6G94BK       | WD90DG6G94BK          | Lavasciuga        | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
-    And viene contrassegnato il prodotto con codice eprel: "2365216"
+    And viene contrassegnato il prodotto con codice eprel: "2195173"
     And viene escluso il prodotto appena aggiunto
     Then si verifica che l'operazione di aggiornamento ritorni i seguenti valori:
       | status      | KO |
-    And viene escluso il prodotto con codice eprel: "2365216"
+      | errorKey    | product.invalid.update.mixedStatus |
+    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "SUPERVISED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2195172" sia: "UPLOADED"
+    And viene escluso il prodotto con codice eprel: "2195173"
+    And viene escluso il prodotto con codice eprel: "2195172"
 
+  #bug https://pagopa.atlassian.net/browse/RDB-321
   @produttore2 @invitalia1
   Scenario: [TC_ACTION_ON_PRODUCT_8] L'API di contrassegnazione di un prodotto ritorna un KO se i prodotti non sono nello stesso stato.
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
-      | 2423604           | F2R5FG0W       | F2R5FG0W          | Lavasciuga        | IT                   |
+      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
+      | 2195172           | WD90DG6G94BK       | WD90DG6G94BK          | Lavasciuga        | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
-    And viene escluso il prodotto con codice eprel: "2365216"
+    And viene escluso il prodotto con codice eprel: "2195173"
     And viene contrassegnato il prodotto appena aggiunto
-    Then si verifica che lo stato del prodotto con codice eprel: "2365216" sia: "REJECTED"
-    Then si verifica che lo stato del prodotto con codice eprel: "2423604" sia: "SUPERVISED"
-    And viene escluso il prodotto con codice eprel: "2365216"
-    And viene escluso il prodotto con codice eprel: "2423604"
+    Then si verifica che l'operazione di aggiornamento ritorni i seguenti valori:
+      | status      | KO |
+      | errorKey    | product.invalid.update.mixedStatus |
+    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "REJECTED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2195172" sia: "UPLOADED"
+    And viene escluso il prodotto con codice eprel: "2195173"
+    And viene escluso il prodotto con codice eprel: "2195172"
 
   @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_9] Un prodotto non può essere contrassegnato da un operatore Invitalia L2
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0           | CP1210WA0              | Lavasciuga       | IT                   |
+      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
     And viene contrassegnato il prodotto appena aggiunto
     Given viene usata l'utenza: INVITALIA_L2
     And viene contrassegnato il prodotto appena aggiunto
     Then si verifica che la chiamata abbia ritornato uno status code: 403
-    Then si verifica che lo stato del prodotto con codice eprel: "2365216" sia: "SUPERVISED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "SUPERVISED"
     Given viene usata l'utenza: INVITALIA_L1
     And viene escluso il prodotto appena aggiunto
-    Then si verifica che lo stato del prodotto con codice eprel: "2365216" sia: "REJECTED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "REJECTED"
 
   @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_10] Un prodotto portato in WAIT_APPROVED da L1 non può più essere escluso da L1 e quindi lo stato non cambia
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2365216          | CP1210WA0           | CP1210WA0              | Lavasciuga       | IT                   |
+      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
     And viene iniziato l'iter di approvazione del prodotto
     And viene escluso il prodotto appena aggiunto
@@ -227,3 +236,18 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: INVITALIA_L2
     And viene ripristinato il prodotto appena aggiunto da L2
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
+
+
+  @produttore2 @invitalia1
+  Scenario: [TC_ACTION_ON_PRODUCT_11] Un utente INVITALIA_L1 esclude più prodotto insieme e si verifica che per ogni prodotto ci sia una sola motivazione
+    Given viene usata l'utenza: PRODUTTORE_2
+    When viene caricato il csv con categoria: "REFRIGERATINGAPPL" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria                           | Paese di Produzione  |
+      | 2390281          | KG36NVIAG           | KG36NVIAG              | Apparecchio di refrigerazione       | IT                   |
+      | 2312227          | KGN36VIDB           | KGN36VIDB              | Apparecchio di refrigerazione       | IT                   |
+    Given viene usata l'utenza: INVITALIA_L1
+    And vengono esclusi i prodotti appena aggiunti
+    Then si verifica che lo stato del prodotto con codice eprel: "2390281" sia: "REJECTED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2312227" sia: "REJECTED"
+    Then si verifica che per il prodotto "2390281" ci sia 1 motivazione
+    Then si verifica che per il prodotto "2312227" ci sia 1 motivazione

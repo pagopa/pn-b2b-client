@@ -39,10 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RegistroBeniProductsUploadSteps {
     private final ApiClientContext apiClientContext;
@@ -80,7 +77,7 @@ public class RegistroBeniProductsUploadSteps {
         );
 
         // Viene aggiunto un delay per dare il tempo al csv di essere validato
-        Thread.sleep(2000);
+        Thread.sleep(5000);
     }
 
     @When("viene caricato di nuovo lo stesso prodotto")
@@ -159,7 +156,7 @@ public class RegistroBeniProductsUploadSteps {
     @Then("si verifica che la risposta abbia:")
     public void verifyResponse(DataTable dataTable) {
         Map<String, String> expectedResults = dataTable.asMap();
-        assertEquals(expectedResults.get("errorKey"), Optional.ofNullable(uploadResponseDTO.getErrorKey()).map(RegisterUploadResponseDTO.ErrorKeyEnum::getValue).orElse(null), "Mismatch on errorKey!");
+        verifyErrorKey(expectedResults.get("errorKey"));
         assertEquals(expectedResults.get("status"), Optional.ofNullable(uploadResponseDTO.getStatus()).map(RegisterUploadResponseDTO.StatusEnum::getValue).orElse(null), "Mismatch on status field!");
         verifyProductFileId(expectedResults.get("productFileId"));
     }
@@ -168,8 +165,20 @@ public class RegistroBeniProductsUploadSteps {
         if ("NOT_NULL".equals(expectedValue)) {
             assertNotNull(uploadResponseDTO.getProductFileId());
             assertFalse(uploadResponseDTO.getProductFileId().isEmpty());
+        }
+        else if ("NULL".equals(expectedValue)) {
+            assertNull(uploadResponseDTO.getProductFileId());
         } else {
             assertEquals(expectedValue, uploadResponseDTO.getProductFileId(), "Mismatch on productFileId!");
+        }
+    }
+
+    private void verifyErrorKey(String expectedValue) {
+        if ("NULL".equals(expectedValue)) {
+            assertNull(uploadResponseDTO.getErrorKey());
+        }
+        else {
+            assertEquals(expectedValue, Optional.ofNullable(uploadResponseDTO.getErrorKey()).map(RegisterUploadResponseDTO.ErrorKeyEnum::getValue).orElse(null), "Mismatch on errorKey!");
         }
     }
 
@@ -201,7 +210,7 @@ public class RegistroBeniProductsUploadSteps {
         csvDTO = apiClientContext.getRegisterPortalOperationClient().downloadErrorReport(lastUpload.getProductFileId());
         assertNotNull(csvDTO);
         assertNotNull(csvDTO.getData());
-        assertTrue(csvDTO.getData().contains("Prodotto associato ad un altro produttore"));
+        assertTrue(csvDTO.getData().contains("Il prodotto indicato è associato ad un altro produttore"));
     }
 
     @Then("si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo")
