@@ -11,7 +11,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2431696          | CP1012SA0GR       | CP1012SA0GR          | Lavasciuga       | IT                   |
+      | 2448138          | LWR73A106V       | LWR73A106V          | Lavasciuga       | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
     And viene escluso il prodotto appena aggiunto
     Then si verifica che il prodotto sia marcato come: "REJECTED"
@@ -86,7 +86,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2474773          | W1D2A854ADPS       | W1D2A854ADPS          | Lavasciuga       | IT                   |
+      | 2468770          | HWD90       | HWD90          | Lavasciuga       | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Given viene usata l'utenza: INVITALIA_L1
@@ -135,7 +135,7 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2423603          | F2R5FG6J       | F2R5FG6J          | Lavasciuga       | IT                   |
+      | 2429174          | EWG701A94A       | EWG701A94A          | Lavasciuga       | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
     Then si verifica che il prodotto sia marcato come: "UPLOADED"
@@ -177,18 +177,18 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
-      | 2195172           | WD90DG6G94BK       | WD90DG6G94BK          | Lavasciuga        | IT                   |
+      | 2404722          | HGWDQ485SB6       | HGWDQ485SB6          | Lavasciuga       | IT                   |
+      | 2389605           | LWR7G944B       | LWR7G944B          | Lavasciuga        | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
-    And viene contrassegnato il prodotto con codice eprel: "2195173"
+    And viene contrassegnato il prodotto con codice eprel: "2404722"
     And viene escluso il prodotto appena aggiunto
     Then si verifica che l'operazione di aggiornamento ritorni i seguenti valori:
       | status      | KO |
       | errorKey    | product.invalid.update.mixedStatus |
-    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "SUPERVISED"
-    Then si verifica che lo stato del prodotto con codice eprel: "2195172" sia: "UPLOADED"
-    And viene escluso il prodotto con codice eprel: "2195173"
-    And viene escluso il prodotto con codice eprel: "2195172"
+    Then si verifica che lo stato del prodotto con codice eprel: "2404722" sia: "SUPERVISED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2389605" sia: "UPLOADED"
+    And viene escluso il prodotto con codice eprel: "2404722"
+    And viene escluso il prodotto con codice eprel: "2389605"
 
   #bug https://pagopa.atlassian.net/browse/RDB-321
   @produttore2 @invitalia1
@@ -214,23 +214,23 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
+      | 2426068          | EW7W4602QU       | EW7W4602QU          | Lavasciuga       | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
     And viene contrassegnato il prodotto appena aggiunto
     Given viene usata l'utenza: INVITALIA_L2
     And viene contrassegnato il prodotto appena aggiunto
     Then si verifica che la chiamata abbia ritornato uno status code: 403
-    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "SUPERVISED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2426068" sia: "SUPERVISED"
     Given viene usata l'utenza: INVITALIA_L1
     And viene escluso il prodotto appena aggiunto
-    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "REJECTED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2426068" sia: "REJECTED"
 
   @produttore2 @invitalia1 @invitalia2
   Scenario: [TC_ACTION_ON_PRODUCT_10] Un prodotto portato in WAIT_APPROVED da L1 non può più essere escluso da L1 e quindi lo stato non cambia
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
+      | 2389603          | EW7W4953DA       | EW7W4953DA          | Lavasciuga       | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
     And viene iniziato l'iter di approvazione del prodotto
     And viene escluso il prodotto appena aggiunto
