@@ -196,17 +196,17 @@ Feature: PARI - Portale registro dei beni
     Given viene usata l'utenza: PRODUTTORE_2
     When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
       | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
-      | 2195173          | WD90DG6G94BB       | WD90DG6G94BB          | Lavasciuga       | IT                   |
+      | 2504170          | CFP03ED100W       | CFP03ED100W          | Lavasciuga       | IT                   |
       | 2195172           | WD90DG6G94BK       | WD90DG6G94BK          | Lavasciuga        | IT                   |
     Given viene usata l'utenza: INVITALIA_L1
-    And viene escluso il prodotto con codice eprel: "2195173"
+    And viene escluso il prodotto con codice eprel: "2504170"
     And viene contrassegnato il prodotto appena aggiunto
     Then si verifica che l'operazione di aggiornamento ritorni i seguenti valori:
       | status      | KO |
       | errorKey    | product.invalid.update.mixedStatus |
-    Then si verifica che lo stato del prodotto con codice eprel: "2195173" sia: "REJECTED"
+    Then si verifica che lo stato del prodotto con codice eprel: "2504170" sia: "REJECTED"
     Then si verifica che lo stato del prodotto con codice eprel: "2195172" sia: "UPLOADED"
-    And viene escluso il prodotto con codice eprel: "2195173"
+    And viene escluso il prodotto con codice eprel: "2504170"
     And viene escluso il prodotto con codice eprel: "2195172"
 
   @produttore2 @invitalia1 @invitalia2
