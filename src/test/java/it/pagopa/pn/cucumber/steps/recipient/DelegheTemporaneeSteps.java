@@ -114,7 +114,7 @@ public class DelegheTemporaneeSteps {
         return switch (environment) {
             case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
             case "test" -> "http://cittadini.test.notifichedigitali.it/io";
-            case "uat" -> "http://cittadini.uat.notifichedigitali.it/io";
+            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io";//UAT SI DIFFERENZIA PER LA S DOPO http
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         };
     }
@@ -320,7 +320,7 @@ public class DelegheTemporaneeSteps {
             case "test" ->
                     System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-151559006927");//BUCKET TEST
             case "uat" ->
-                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-TODO_UAT");//BUCKET UAT
+                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-644374009812 ");//BUCKET UAT
             default -> throw new IllegalArgumentException("Invalid environment param");
         }
         System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
