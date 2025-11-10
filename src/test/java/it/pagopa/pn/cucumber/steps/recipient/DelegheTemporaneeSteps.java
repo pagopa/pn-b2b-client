@@ -320,11 +320,11 @@ public class DelegheTemporaneeSteps {
             case "test" ->
                     System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-151559006927");//BUCKET TEST
             case "uat" ->
-                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-644374009812 ");//BUCKET UAT
+                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-644374009812");//BUCKET UAT
             default -> throw new IllegalArgumentException("Invalid environment param");
         }
         System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
         log.info("Parametri settati");
-        System.getenv().entrySet().forEach(x -> System.out.println("PARAM : " + x));
+        System.getenv().entrySet().forEach(x -> log.info("PARAM : " + x));
     }
 }

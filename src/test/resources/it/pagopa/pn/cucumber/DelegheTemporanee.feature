@@ -348,10 +348,10 @@ Feature: Deleghe Temporanee 15755
 
   Scenario: [DEBUGONLY]
     #STEP PER GENERARE DATI CIE
-    Given DEBUGONLY test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
-    Given DEBUGONLY test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI DI UNA CIE SCADUTA"
+#    Given DEBUGONLY test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
+#    Given DEBUGONLY test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI DI UNA CIE SCADUTA"
     Given DEBUGONLY test cie utente "FRMTTR76M06B715E" nonce "00000" con "DATI VALIDI"
     #STEP PER RECUPERARE DA POST CREAZIONE (IN CASO QUALCOSA SCADA)
-    Given imposto lo iun di SharedSteps a "TODO" e la pa a "Comune_Multi"
-    And DEBUGONLY il mandate in uso è quello con id "ba5dc3ec-b04a-40cf-baaf-3e654fb6cce5" e verificationCode "87980"
+#    Given imposto lo iun di SharedSteps a "TODO" e la pa a "Comune_Multi"
+#    And DEBUGONLY il mandate in uso è quello con id "ba5dc3ec-b04a-40cf-baaf-3e654fb6cce5" e verificationCode "87980"
 
