@@ -114,7 +114,7 @@ public class DelegheTemporaneeSteps {
         return switch (environment) {
             case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
             case "test" -> "http://cittadini.test.notifichedigitali.it/io";
-            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io";//UAT SI DIFFERENZIA PER LA S DOPO http
+            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         };
     }
