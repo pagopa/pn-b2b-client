@@ -95,10 +95,10 @@ public class EserviceTemplateSteps {
     public void getTemplateDocumentsMetadata() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .id();
+            .getId();
         UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .lastVersionId();
+            .getLastVersionId();
         getDocuments(eServiceTemplateId, versionId);
     }
 
@@ -107,7 +107,7 @@ public class EserviceTemplateSteps {
         UUID randomUUID = UUID.randomUUID();
         UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .lastVersionId();
+            .getLastVersionId();
         getDocuments(randomUUID, versionId);
     }
 
@@ -115,7 +115,7 @@ public class EserviceTemplateSteps {
     public void getNonExistentTemplateVersionDocumentsMetadata() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .id();
+            .getId();
         UUID randomUUID = UUID.randomUUID();
         getDocuments(eServiceTemplateId, randomUUID);
     }
@@ -129,10 +129,10 @@ public class EserviceTemplateSteps {
     public void unsuspendEServiceTemplate() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .id();
+            .getId();
         UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .lastVersionId();
+            .getLastVersionId();
         unsuspendEServiceTemplate(eServiceTemplateId, versionId);
     }
 
@@ -141,7 +141,7 @@ public class EserviceTemplateSteps {
         UUID randomUUID = UUID.randomUUID();
         UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .lastVersionId();
+            .getLastVersionId();
         unsuspendEServiceTemplate(randomUUID, versionId);
     }
 
@@ -149,7 +149,7 @@ public class EserviceTemplateSteps {
     public void unsuspendNonExistentTemplateVersion() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .id();
+            .getId();
         UUID randomUUID = UUID.randomUUID();
         unsuspendEServiceTemplate(eServiceTemplateId, randomUUID);
     }
@@ -163,10 +163,10 @@ public class EserviceTemplateSteps {
     public void checkTemplateInState(EServiceTemplateVersionState desiredState) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .id();
+            .getId();
         UUID versionId = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged()
-            .lastVersionId();
+            .getLastVersionId();
         pollingService.makePolling(
             () -> m2mEServiceTemplateClient.getEserviceTemplateVersion(eServiceTemplateId, versionId),
             eServiceTemplateVersion -> eServiceTemplateVersion.getState().equals(desiredState),
@@ -300,7 +300,7 @@ public class EserviceTemplateSteps {
 
     @When("l'utente tenta di effettuare la cancellazione dell'e-service template")
     public void deleteEServiceTemplate() {
-        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         deleteEServiceTemplate(templateId);
     }
 
@@ -316,14 +316,14 @@ public class EserviceTemplateSteps {
 
     @Then("l'e-service template non esiste( più)")
     public void checkEServiceTemplateNotFound() {
-        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         checkEServiceTemplateExistence(templateId, notFound);
     }
 
     @Then("l'e-service template esiste( ancora)")
     public void checkEServiceTemplateFound() {
-        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         HttpStatus notFound = HttpStatus.OK;
         checkEServiceTemplateExistence(templateId, notFound);
     }
@@ -343,7 +343,7 @@ public class EserviceTemplateSteps {
     @And("[si prende nota del {eServiceTemplateVersionsSnapshotType} stato delle versioni dell'e-service template]")
     public void getEServiceTemplateVersions(EServiceTemplateVersionsSnapshotType type) {
         delayService.delay();
-        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         EServiceTemplateVersions eserviceTemplateVersions = m2mEServiceTemplateClient.getEserviceTemplateVersions(
             templateId);
         switch (type) {
@@ -356,7 +356,7 @@ public class EserviceTemplateSteps {
     @When("l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template")
     public void createEServiceTemplateVersion() {
         EServiceTemplateVersionCreationRequest request = buildVersionCreationRequest();
-        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         httpCallExecutor.performCallSavingBodyResponse(() -> m2mEServiceTemplateClient.createEserviceTemplateVersion(templateId, request));
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             this.lastVersionCreationRequest = request;

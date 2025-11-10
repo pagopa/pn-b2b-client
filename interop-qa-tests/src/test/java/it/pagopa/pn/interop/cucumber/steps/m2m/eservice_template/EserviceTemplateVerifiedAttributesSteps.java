@@ -57,7 +57,7 @@ public class EserviceTemplateVerifiedAttributesSteps {
         }
 
         httpExecutor.performCall(
-            () -> templateClient.createVerifiedAttributesGroup(template.id(), template.lastVersionId(),
+            () -> templateClient.createVerifiedAttributesGroup(template.getId(), template.getLastVersionId(),
                 attributesIds));
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
@@ -99,8 +99,8 @@ public class EserviceTemplateVerifiedAttributesSteps {
         EServiceTemplateInfo template = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged();
         return EServiceTemplateAttributesGroupKey.builder()
-            .templateId(template.id())
-            .versionId(template.lastVersionId())
+            .templateId(template.getId())
+            .versionId(template.getLastVersionId())
             .groupIndex(sharedStepsContext.getEServiceTemplateStepContext().getGroupId())
             .build();
     }

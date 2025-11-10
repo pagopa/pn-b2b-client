@@ -46,15 +46,15 @@ public class EServiceTemplateNameUpdateSteps {
 
     @When("l'utente tenta la modifica del nome dell'e-service template")
     public void editEServiceTemplateName() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
-            .name(testAssistant.nextEServiceTemplateName());
+            .name(testAssistant.buildEServiceTemplateName());
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome")
     public void editEServiceTemplateNameWithSameName() {
-        editEServiceTemplateNameWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name());
+        editEServiceTemplateNameWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getName());
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando la stringa vuota")
@@ -74,7 +74,7 @@ public class EServiceTemplateNameUpdateSteps {
 
     @Then("la modifica del nome dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateNameEdited() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -95,7 +95,7 @@ public class EServiceTemplateNameUpdateSteps {
     }
 
     private void editEServiceTemplateNameWith(String name) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
             .name(name);
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);

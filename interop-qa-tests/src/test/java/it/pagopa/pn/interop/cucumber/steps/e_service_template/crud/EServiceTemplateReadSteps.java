@@ -49,7 +49,7 @@ public class EServiceTemplateReadSteps {
 
     @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template")
     public void getEServiceTemplateDetails() {
-        getEServiceTemplateDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
+        getEServiceTemplateDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId());
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli di un e-service template inesistente")
