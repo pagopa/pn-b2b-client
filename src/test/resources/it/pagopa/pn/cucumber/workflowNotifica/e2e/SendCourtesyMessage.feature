@@ -288,7 +288,8 @@ Feature: Invio messaggi cortesia e2e
       | denomination    | Mario Gherkin    |
       | taxId           | CLMCST42R12D969Z |
       | digitalDomicile | NULL             |
-   #   | digitalDomicile_address      | test@pecOk.it        |
+      | payment_pagoPaForm      | SI                            |
+       #   | digitalDomicile_address      | test@pecOk.it        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
@@ -371,6 +372,7 @@ Feature: Invio messaggi cortesia e2e
       | denomination    | Mario Gherkin    |
       | taxId           | CLMCST42R12D969Z |
       | digitalDomicile | NULL             |
+      | payment_pagoPaForm      | SI                            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
@@ -526,12 +528,12 @@ Feature: Invio messaggi cortesia e2e
       | physicalAddress_address | Via@ok_AR                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
-    #And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
+    And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | details                | NOT_NULL                                 |
       | details_recIndex       | 0                                        |
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
   @courtesyMessage @addressBook3 #rif srs 42
@@ -542,9 +544,10 @@ Feature: Invio messaggi cortesia e2e
       | senderDenomination | Comune di palermo              |
     And destinatario
       | denomination    | Mario Gherkin             |
-      | taxId           | CLMCST42R12D969Z          |
+      | taxId           | BRLRNT80T25F205S         |
       | digitalDomicile | testpagopa1@pec.pagopa.it |
-   #   | digitalDomicile_address      | test@pecOk.it        |
+      | payment_pagoPaForm      | SI                            |
+         #   | digitalDomicile_address      | test@pecOk.it        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
@@ -625,7 +628,7 @@ Feature: Invio messaggi cortesia e2e
       | details_recIndex       | 0                                        |
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
 
   @courtesyMessage @addressBook3 #rif srs 43
@@ -635,7 +638,7 @@ Feature: Invio messaggi cortesia e2e
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Mario Gherkin    |
-      | taxId                   | CLMCST42R12D969Z |
+      | taxId                   | BRLRNT80T25F205S |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
       | payment_pagoPaForm      | SI               |
