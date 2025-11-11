@@ -142,7 +142,7 @@ public class PaperTrackerSteps {
 
 
     @Then("si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: {string}")
-    public void checkPaperTrackerEvents(String sequenceName, String iun) {
+    public void checkPaperTrackerEvents(String sequenceName) {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<String> stringaTracking = fullSentNotification.getTimeline().stream().filter(e ->
                 e.getElementId().contains(PREPARE_ANALOG_DOMICILE)).map(e -> e.getElementId() + ".PCRETRY_0").toList();
