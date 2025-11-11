@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -17,9 +18,13 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Getter
@@ -68,6 +73,33 @@ public class SharedStepsContext {
         agreementCommonContext = new AgreementCommonContext();
         riskAnalysisCommonContext = new RiskAnalysisCommonContext();
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
+    }
+
+    @Before
+    public void configLog(Scenario scenario) {
+        MDC.clear();
+        MDC.put("scenarioId", extractScenarioId(scenario.getName()));
+    }
+
+    private static String extractScenarioId(String input) {
+        String regex = "^(\\[.+\\])";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+
+        String id;
+        if (matcher.find()) {
+            id = matcher.group(1);
+        } else {
+            id = RandomStringUtils.insecure().nextAlphanumeric(5);
+            log.warn(
+                "Non è stato possibile estrarre l'ID dello scenario '{}'. "
+                    + "Al suo posto verrà utilizzata la stringa '{}'",
+                input,
+                id);
+        }
+
+        return id;
     }
 
 }
