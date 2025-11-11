@@ -74,7 +74,7 @@ public class RicezioneNotificheWebSteps {
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
-    private static final String TOS_VERSION = "2";
+    private static final String TOS_VERSION = "8";
     private static final String ACCEPT_TOS = "ACCETTA";
 
     @Value("${pn.external.senderId}")
