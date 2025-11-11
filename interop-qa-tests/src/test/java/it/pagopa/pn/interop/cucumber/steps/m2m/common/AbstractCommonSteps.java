@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.client.IClient;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -10,17 +11,21 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
+@Slf4j
 public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
 
     protected final List<T> expectedEntities = new ArrayList<>();
     protected final List<T> actualEntities = new ArrayList<>();
+    protected final List<T> unexpectedEntities = new ArrayList<>();
 
     private final String parameterTypeName;
     private final IClient<T, K> client;
@@ -56,6 +61,29 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
     public void getAll() {
         setActualEntities(client.getAll());
+    }
+
+    public void getAllUntil(Supplier<List<T>> promise,  AssertCheckType mode){
+
+        PollingService.makePolling(
+                () -> {
+                    List<T> result = promise.get();
+                    setActualEntities(result);
+                    return result;
+                },
+                result -> {
+                    try {
+                        assertExpectedEntity(mode);
+                        return true;
+                    } catch (AssertionError e) {
+                        log.warn("Asserzione fallita nel polling: {}", e.getMessage());
+                        return false;
+                    }
+                },
+                "",
+                10,
+                10
+        );
     }
 
     public void getByFirstExpectedId() {
@@ -116,6 +144,26 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
                         .as("I %s restituiti dovrebbero corrispondere a quelli pubblicati (con confronto personalizzato)".formatted(parameterTypeName))
                         .isTrue();
             }
+
+            case EXPECTED_NOT_PRESENT -> {
+                updateUnexpected();
+
+                assertThat(actualEntities)
+                        .as("La lista actual dei %s dovrebbe essere presente".formatted(parameterTypeName))
+                        .isNotNull();
+
+                assertThat(unexpectedEntities)
+                        .as("La lista unexpected dei %s dovrebbe essere presente".formatted(parameterTypeName))
+                        .isNotEmpty();
+
+                boolean noneMatched = unexpectedEntities.stream()
+                        .noneMatch(unexpected -> actualEntities.stream()
+                                .anyMatch(actual -> areEqual(unexpected, actual)));
+
+                assertThat(noneMatched)
+                        .as("Nessuno dei %s attesi dovrebbe essere presente tra gli attuali".formatted(parameterTypeName))
+                        .isTrue();
+            }
         }
     }
 
@@ -156,6 +204,11 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
         expectedEntities.addAll(bindExpected(context));
     }
 
+    private void updateUnexpected() {
+        unexpectedEntities.clear();
+        unexpectedEntities.addAll(bindUnexpected(context));
+    }
+
     // --- Utility setters ---
     private void setActualEntities(List<T> list) {
         actualEntities.clear();
@@ -169,4 +222,8 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
     public abstract void bindActual(SharedStepsContext context, List<T> actualEntities);
 
     public abstract List<T> bindExpected(SharedStepsContext context);
+
+    public List<T> bindUnexpected(SharedStepsContext context) {
+        throw new UnsupportedOperationException("Bind con unexpectedEntitis non implementato");
+    }
 }

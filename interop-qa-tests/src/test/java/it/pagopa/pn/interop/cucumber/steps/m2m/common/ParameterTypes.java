@@ -24,7 +24,7 @@ public class ParameterTypes {
         };
     }
 
-    @ParameterType("invalid|invalido|null|nullo|inesistente")
+    @ParameterType("invalid|invalido|null|nullo|inesistente|valido")
     public EntityIdType entityIdType(String idType) {
         return EntityIdType.fromString(idType);
     }
