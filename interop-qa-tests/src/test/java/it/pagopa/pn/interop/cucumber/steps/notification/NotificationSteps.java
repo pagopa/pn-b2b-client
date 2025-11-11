@@ -27,7 +27,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         }
     }
 
-    @When("l'utente tenta di {word} delle notifiche con almeno un id {entityIdType}")
+    @When("l'utente tenta di {word} le notifiche recuperate specificando almeno un id {entityIdType}")
     public void readOrDeleteNotifications(String op, EntityIdType entityIdType){
         UUID invalidOrNotExistentId = super.generateId(entityIdType);
         UUID validId = super.generateId(null);
@@ -36,7 +36,6 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         ids.add(invalidOrNotExistentId);
         ids.add(validId);
 
-        //TODO: leggere o eliminare
         switch(op){
             case "eliminare" -> {
                 //TODO: inserisco in unexpected le notifiche che saranno eliminate
@@ -46,12 +45,11 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         }
     }
 
-    @When("l'utente tenta di {word} la notifica con un id {entityIdType}")
+    @When("l'utente tenta di {word} la notifica recuperata specificando un id {entityIdType}")
     public void readOrDeleteNotification(String op, EntityIdType entityIdType){
         UUID invalidOrNotExistentId = super.generateId(entityIdType);
         UUID validId = super.generateId(null);
 
-        //TODO: leggere o eliminare dagli actual se presenti altrimenti fare polling automatico
         switch(op){
             case "eliminare" -> {
                 //TODO: inserisco in unexpected le notifiche che saranno eliminate
