@@ -4,6 +4,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -41,10 +42,24 @@ public class ConsolidatoreSteps {
         }
     }
 
+    @Then("viene invocato due volte il consolidatore utilizzando la stessa request")
+    public void vieneInvocatoIlConsolidatoreDueVolte() throws InterruptedException {
+        Map<String, String> mapInfo = populateConsolidatoreMap(Instant.now());
+        try {
+            String response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotification(mapInfo);
+            Assertions.assertTrue(response.contains("200.00"));
+            Thread.sleep(2000);
+            response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotification(mapInfo);
+            Assertions.assertTrue(response.contains("400.02"));
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
     private Map<String, String> populateConsolidatoreMap(Instant date) {
         String iun = sharedSteps.getNotificationIun();
         Map<String, String> mapInfo = new HashMap<>();
-        mapInfo.put("requestId", requestIdConsolidator);
+        mapInfo.put("requestId", String.format("PREPARE_ANALOG_DOMICILE.IUN_%s.RECINDEX_0.ATTEMPT_0.PCRETRY_0", iun));
         mapInfo.put("attachments", null);
         mapInfo.put("clientRequestTimeStamp", B2bUtils.getOffsetDateTimeFromDate(date));
         mapInfo.put("deliveryFailureCause", null);
