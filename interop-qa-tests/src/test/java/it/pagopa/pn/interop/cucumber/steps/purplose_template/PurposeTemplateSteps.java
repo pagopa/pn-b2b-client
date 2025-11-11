@@ -77,6 +77,13 @@ public class PurposeTemplateSteps {
         request.setTargetDescription("targetDescription_CREATE");
         request.setTargetTenantKind(TenantKind.PA);
         request.setPurposeIsFreeOfCharge(false);
+
+        RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed();
+        RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed();
+        RiskAnalysisTemplateAnswerAnnotationSeed annotationSeed = new RiskAnalysisTemplateAnswerAnnotationSeed();
+        
+        request.setPurposeRiskAnalysisForm(riskAnalysisForm);
+
         switch (handlePersonalDataValue.toUpperCase()) {
             case "TRUE" -> request.setHandlesPersonalData(true);
             case "FALSE" -> request.setHandlesPersonalData(false);
