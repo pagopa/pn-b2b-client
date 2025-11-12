@@ -23,6 +23,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
@@ -177,6 +178,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,
         SettableAuthTokenRaddCognito.class,
+        EventTimelineParser.class,
         PnMandateAppIoClientImpl.class,
 
         LambdaInvoker.class,
