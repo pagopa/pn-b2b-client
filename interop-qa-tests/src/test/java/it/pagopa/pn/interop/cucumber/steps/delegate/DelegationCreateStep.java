@@ -113,9 +113,7 @@ public class DelegationCreateStep {
     @Given("l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo")
     public void givenDelegatingTenantHasSuccessfullyRequestedDelegation() {
         givenDelegatingTenantHasRequestedDelegation();
-        if (httpCallExecutor.getResponseStatus().isError()) {
-            throw new IllegalStateException("La richiesta di delega non è stata eseguita correttamente: " + httpCallExecutor.getErrorMessage());
-        }
+        checkDelegation();
     }
 
     @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato")
@@ -216,9 +214,20 @@ public class DelegationCreateStep {
     }
 
     @And("l'ente {string} richiede la creazione di una delega per l'ente {string}")
-    @And("l'ente {string} richiede la creazione di una delega per l'ente {string} con successo")
     public void createDelegate(String delegatorTenantType, String tenantType) {
         createDelegateImpl(delegatorTenantType, tenantType);
+    }
+
+    @And("l'ente {string} richiede la creazione di una delega per l'ente {string} con successo")
+    public void createDelegateSuccessfully(String delegatorTenantType, String tenantType) {
+        createDelegateImpl(delegatorTenantType, tenantType);
+        checkDelegation();
+    }
+
+    private void checkDelegation() {
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException("La richiesta di delega non è stata eseguita correttamente: " + httpCallExecutor.getErrorMessage());
+        }
     }
 
     private void createDelegateImpl(String delegatorTenantType, String tenantType) {
