@@ -54,6 +54,12 @@ public class RegistroBeniInstitutionsSteps {
         institutionResponse = apiClientContext.getRegisterPortalOperationClient().retrieveInstitutionById(institutionDTO.getInstitutionId());
     }
 
+    @When("viene recuperata la lista prodotti in ordine alfabetico {string} di una specifica istituzione tra quelle recuperate precedentemente")
+    public void retrieveInstitutionProductsSorted(String sort) {
+
+    }
+
+
     @When("viene recuperata la lista prodotti di una specifica istituzione tra quelle recuperate precedentemente")
     public void retrieveInstitutionProducts() {
         assertNotNull(institutionsResponse);
@@ -61,8 +67,8 @@ public class RegistroBeniInstitutionsSteps {
                 .orElse(List.of())
                 .stream()
                 .map(this::createInstitution)
-                .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null,
-                        null, null, null, null, null, ist.getInstitutionId()))
+                .map(ist -> apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null, null,
+                        null, null, null, null, null, null,null, ist.getInstitutionId()))
                 .filter(Objects::nonNull)
                 .map(ProductListDTO::getContent)
                 .filter(Objects::nonNull)

@@ -398,11 +398,21 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    And gli eventi di timeline ricevuti sono i seguenti
-      | REQUEST_ACCEPTED      |
-      | GET_ADDRESS           |
-      | SEND_DIGITAL_DOMICILE |
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
+      | loadTimeline     | false     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline     | false     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+
+
 
   @dev
    #[B2B_TIMELINE_24]

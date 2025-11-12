@@ -26,6 +26,7 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
+import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,9 +59,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddFsuClientImpl.class,
         PnRaddAlternativeClientImpl.class,
         PnRaddAlternativeV2ClientImpl.class,
+        PnRaddCapCoverageClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
+        CieGeneratorTool.class,
 
         PnPollingServiceTimelineRapidV1.class,
         PnPollingServiceStatusRapidV1.class,
@@ -176,6 +179,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EmdIntegrationApiImpl.class,
         SettableAuthTokenRaddCognito.class,
         EventTimelineParser.class,
+        PnMandateAppIoClientImpl.class,
 
         LambdaInvoker.class,
 })

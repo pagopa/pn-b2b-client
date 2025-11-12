@@ -46,7 +46,11 @@ Feature: PARI - Portale Esercenti Credenziali Forti (Sede legale)
       | contactSurname | Rossi                                          |
     Then la chiamata ritorna status code: 200
     #SI PROVA LA MODIFICA DI UN PUNTO VENDITA
-    When viene censito un nuovo punto vendita con i seguenti parametri:
+    When viene recuperato l'elenco dei punti vendita
+    ||
+    Then la lista dei punti vendita è correttamente popolata
+    And si recupera il dettaglio di uno specifico punto vendita
+    When vengono modificati i seguenti parametri al punto vendita recuperato:
       | contactSurname | Verde                                          |
     Then la chiamata ritorna status code: 200
 
