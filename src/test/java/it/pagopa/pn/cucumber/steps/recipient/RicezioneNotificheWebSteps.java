@@ -98,6 +98,12 @@ public class RicezioneNotificheWebSteps {
     }
 
     @After("@cleanAddressBook")
+    public void afterAndressBook() {
+        cleanLegalAddressForUser();
+        log.info("clean digital address from @After");
+    }
+
+    @After("@sercqF2")
     public void afterSercQ() {
         cleanLegalAddressForUser();
         log.info("clean digital address from @After");
