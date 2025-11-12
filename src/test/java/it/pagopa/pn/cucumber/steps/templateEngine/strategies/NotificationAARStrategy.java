@@ -1,6 +1,9 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarNotification;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarRecipient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarSender;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAar;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -30,7 +33,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "Hai ricevuto una comunicazione a valore legale da con oggetto: string string Prendi visione della copia dei documenti allegati o accedi ai documenti originali online seguendo le istruzioni. Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione dei documenti.";
+                yield "string COMUNICAZIONE A VALORE LEGALE Identificativo Univoco Notifica: string Codice fiscale - Persona giuridica: string Inviata tramite notifichedigitali.it Hai ricevuto una comunicazione a valore legale da string con oggetto: string Prendi visione della copia dei documenti allegati o accedi ai documenti originali online seguendo le istruzioni. Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione dei documenti. ACCEDI ORA AI DOCUMENTI ONLINE Consultazione online gratuita Inquadra il con la fotocamera del tuo dispositivo oppure vai sul sito web codice QR string Accedi e scarica i documenti: contengono informazioni importanti che ti riguardano Se previsto un pagamento, potrai pagare online o presso i canali abilitati a pagoPA In fase di pagamento l'importo si aggiornerà con i costi di notifica Il presente documento è una comunicazione a valore legale che ti invita a prendere visione dei documenti a te notificati e che avranno conseguenze nei tuoi confronti in ogni caso. Se previsto un pagamento, l'importo da pagare dipenderà dalla modalità che scegli per accedere alla notifica, dalla tipologia dell'eventuale raccomandata a te inviata e scelta dall'ente, dal numero di tentativi di recapito. Hai 120 giorni dalla data in cui la notifica assume valore di legge per accedere ai documenti online. Trascorsi i 120 giorni, i documenti non saranno più disponibili e dovrai rivolgerti all'ente che te li ha inviati. Scopri di più su come calcolare i tempi su www.string";
             }
             case "TEDESCA" -> {
                 yield "AVVISO DI AVVENUTA RICEZIONE Benachrichtigung über den erfolgten Empfang • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von der Körperschaft string erhalten: . Sollten siehe die zugestellten Dokumente diese Dokumente nicht der vorliegenden Mitteilung beigefügt sein, kannst du im Internet über SEND auf diese";

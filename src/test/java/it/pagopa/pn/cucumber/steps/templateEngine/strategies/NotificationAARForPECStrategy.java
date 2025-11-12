@@ -1,6 +1,9 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForPecNotification;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForPecRecipient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForPecSender;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForPec;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -28,16 +31,16 @@ public class NotificationAARForPECStrategy implements ITemplateEngineStrategy {
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "L&#39;ente mittente conosce questo indirizzo PEC perch&eacute; l&#39;hai inserito nei tuoi recapiti di SEND, perch&eacute; fa parte di uno dei registri previsti dal Codice Amministrazione Digitale o perch&eacute; gliel&#39;hai comunicato in passato. Per modificare i recapiti o aggiungerne altri, <a title=\"Continua su Piattaforma Notifiche\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">vai ai tuoi recapiti";
+                yield "L&#39;ente mittente conosce questo indirizzo PEC perch&eacute; l&#39;impresa lo ha inserito nei suoi recapiti di SEND, perch&eacute; fa parte di uno dei registri previsti dal Codice Amministrazione Digitale o perch&eacute; gli &egrave; stato comunicato in passato. Per modificare i recapiti o aggiungerne altri, <a title=\"Continua su Piattaforma Notifiche\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">vai ai tuoi recapiti</a>.";
             }
             case "TEDESCA" -> {
-                yield "Die ausgebende K&#246;rperschaft kennt diese PEC-Adresse, weil du sie in deine SEND-Adressen aufgenommen hast, weil sie Teil eines der im Kodex der digitalen Verwaltung vorgesehenen Register ist oder weil du sie ihr fr&#252;her mitgeteilt hast. Um Adressen zu bearbeiten oder weitere hinzuzuf&#252;gen, <a title=\"Weiter auf der Plattform Benachrichtigungen\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">gehe bitte zu deinen Adressen</a>";
+                yield "Die ausgebende K&#246;rperschaft kennt diese PEC-Adresse, weil Ihr Unternehmen sie in deine SEND-Adressen aufgenommen hat, weil sie Teil eines der im Kodex der digitalen Verwaltung vorgesehenen Register ist oder weil  sie ihr fr&#252;her mitgeteilt wurde. Um Adressen zu bearbeiten oder weitere hinzuzuf&#252;gen, <a title=\"Weiter auf der Plattform Benachrichtigungen\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">gehe bitte zu deinen Adressen</a>.";
             }
             case "SLOVENA" -> {
                 yield "Organizacija po&#353;iljateljica pozna ta naslov PEC, ker ste ga vnesli v svoje kontaktne podatke SEND, ker je del enega od registrov, ki jih dolo&#269;a Kodeks o digitalni upravi, ali ker ste jim ga v preteklosti sporo&#269;ili. &#268;e &#382;elite spremeniti svoje kontaktne podatke ali dodati nove, <a title=\"Nadaljujte na platformo za obvestila\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">pojdite na svoje kontaktne podatke</a>";
             }
             case "FRANCESE" -> {
-                yield "L&#39;entit&eacute; &eacute;mettrice conna&icirc;t cette adresse PEC parce que vous l&#39;avez incluse dans vos coordonn&eacute;es SEND, parce qu&#39;elle fait partie d&#39;un des registres pr&eacute;vus par le Code Administration Num&eacute;rique ou parce que vous la lui avez communiqu&eacute;e dans le pass&eacute;. Pour modifier les coordonn&eacute;es ou en ajouter d&#39;autres, <a title=\"Continuer sur la Plateforme Notifications\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">acc&eacute;dez &agrave; vos coordonn&eacute;es</a>";
+                yield "L&#39;entit&eacute; &eacute;mettrice conna&icirc;t cette adresse PEC parce que l&#39;entreprise l&#39;a incluse dans ses coordonn&eacute;es SEND, parce qu&#39;elle fait partie d&#39;un des registres pr&eacute;vus par le Code Administration Num&eacute;rique ou parce qu&#39;elle lui a &#xE9;t&#xE9; communiqu&eacute;e dans le pass&eacute;. Pour modifier les coordonn&eacute;es ou en ajouter d&#39;autres, <a title=\"Continuer sur la Plateforme Notifications\" class=\"link\" href=\"stringrecapiti\" style=\"color: #0073e6; text-decoration: underline\">acc&eacute;dez &agrave; vos coordonn&eacute;es</a>";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };

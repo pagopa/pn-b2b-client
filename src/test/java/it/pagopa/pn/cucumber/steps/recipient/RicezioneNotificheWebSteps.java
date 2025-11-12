@@ -97,6 +97,12 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @After("@cleanAddressBook")
+    public void afterAndressBook() {
+        cleanLegalAddressForUser();
+        log.info("clean digital address from @After");
+    }
+
     @After("@sercqF2")
     public void afterSercQ() {
         cleanLegalAddressForUser();
@@ -628,6 +634,8 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             case ALDA_MERINI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+            case DINO_SAURO ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
             default -> throw new IllegalArgumentException();
         }
     }
