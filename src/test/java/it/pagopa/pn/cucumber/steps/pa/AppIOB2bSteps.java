@@ -74,7 +74,7 @@ public class AppIOB2bSteps {
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica con versione {string}")
     public void userScanQRCodeWithoutLollipopHeader(Destinatario user, String qrCodeBodyUrlVersion ) {
-        userScanQrCode(user, null, qrCodeBodyUrlVersion );
+        userScanQrCode(user, user.getTaxId(), qrCodeBodyUrlVersion );
     }
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop")

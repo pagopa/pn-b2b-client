@@ -121,10 +121,11 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then si verifica che la chiamata abbia ritornato uno status code: <PARAM_4>
     Examples:
       | PARAM_1                   | PARAM_2 | PARAM_3          | PARAM_4 |
+      | PKMK-AAAA-WJDK-202509-A-1 | 0       | FRMTTR76M06B715E | 404     |
       |                           | 0       | FRMTTR76M06B715E | 400     |
       | ERRA-T000-0000-ERRATO-0-0 |         | FRMTTR76M06B715E | 400     |
       | NAUZ-WNPH-WQZE-202508-Y-1 | 0       |                  | 400     |
-      | PKMK-AAAA-WJDK-202509-A-1 | 0       | FRMTTR76M06B715E | 404     |
+
 
   #[TC_12]
   @appIo
@@ -188,11 +189,12 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then si verifica che la chiamata abbia ritornato uno status code: <PARAM_4>
     Examples:
       | PARAM_1                   | PARAM_2 | PARAM_3          | PARAM_4 |
+      | AAAA-AAAA-WQZE-202508-Y-1 | PAGOPA  | FRMTTR76M06B715E | 404     |
       |                           | F24     | FRMTTR76M06B715E | 400     |
       | ERRA-T000-0000-ERRATO-0-0 | F24     | FRMTTR76M06B715E | 400     |
       | NAUZ-WNPH-WQZE-202508-Y-1 |         | FRMTTR76M06B715E | 400     |
       | NAUZ-WNPH-WQZE-202508-Y-1 | PAGOPA  |                  | 400     |
-      | AAAA-AAAA-WQZE-202508-Y-1 | PAGOPA  | FRMTTR76M06B715E | 404     |
+
 
   @appIo
   Scenario: [QR_CODE_8] Lettura tramite AppIO di una notifica da parte di un delegato PF da un delegatore PF
