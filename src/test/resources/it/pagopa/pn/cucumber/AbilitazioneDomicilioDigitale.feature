@@ -9,6 +9,10 @@ Feature: Abilitazione domicilio digitale
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
@@ -22,6 +26,10 @@ Feature: Abilitazione domicilio digitale
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And viene disabilitato il servizio SERCQ SEND per la PA "Comune_Root"
     And viene verificato che Sercq sia "disabilitato" per la PA "Comune_Root"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
     And viene attivato il servizio SERCQ SEND per la PA "Comune_Root"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_Root"
     And viene disabilitato il servizio SERCQ SEND per la PA "Comune_Root"
@@ -32,6 +40,10 @@ Feature: Abilitazione domicilio digitale
 #    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
     # da rivedere
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then l'utente "CucumberSpa" "NON ACCETTA" i tos per sercq
     And viene attivato il servizio SERCQ SEND per recapito "default" con errore
@@ -43,6 +55,10 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
@@ -54,6 +70,10 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
     And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
@@ -66,6 +86,10 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     Then viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene verificata l'assenza di indirizzi Pec per il comune "default"
@@ -79,6 +103,10 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene verificata l'assenza di indirizzi Pec per il comune "default"
@@ -89,11 +117,14 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
-
 
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_1"
@@ -109,6 +140,10 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
@@ -129,6 +164,10 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserito un recapito legale "example3@pecSuccess.it"
@@ -141,6 +180,10 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserito un recapito legale "example3@pecSuccess.it"
@@ -153,6 +196,10 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     Then viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
@@ -165,6 +212,10 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
@@ -178,6 +229,10 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_Root"
@@ -191,6 +246,10 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
     And viene attivato il servizio SERCQ SEND per la PA "Comune_Root"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_Root"
 
@@ -200,6 +259,8 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
@@ -214,6 +275,8 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
@@ -228,6 +291,8 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
@@ -247,6 +312,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
     And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
@@ -269,6 +336,8 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -284,6 +353,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -296,6 +367,8 @@ Feature: Abilitazione domicilio digitale
 #  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_12] Inserimento indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente
 #    Given si predispone addressbook per l'utente "Galileo Galilei"
 #    And vengono rimossi eventuali recapiti presenti per l'utente
+#    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+#    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
 #    And viene inserito un recapito legale "example@pecSuccess.it"
 #    And viene controllato che siano presenti pec verificate inserite per il comune "default"
 #    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
@@ -308,6 +381,8 @@ Feature: Abilitazione domicilio digitale
 #  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_12] Inserimento indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente
 #    Given si predispone addressbook per l'utente "CucumberSpa"
 #    And vengono rimossi eventuali recapiti presenti per l'utente
+#    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+#   Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 #    And viene inserito un recapito legale "example@pecSuccess.it"
 #    And viene controllato che siano presenti pec verificate inserite per il comune "default"
 #    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
@@ -370,6 +445,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -385,6 +462,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -400,6 +479,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
@@ -411,6 +492,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
@@ -422,6 +505,8 @@ Feature: Abilitazione domicilio digitale
 #    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
 #    And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
 #    And vengono rimossi eventuali recapiti presenti per l'utente
+#   And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+#   Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
 #    Then viene attivato il servizio SERCQ SEND per la PA "default"
 #    And viene verificato che Sercq sia "abilitato" per la PA "default"
 #    And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -437,6 +522,7 @@ Feature: Abilitazione domicilio digitale
 #    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
 #    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
 #    And vengono rimossi eventuali recapiti presenti per l'utente
+#    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
 #    Then viene attivato il servizio SERCQ SEND per recapito principale
 #    And viene verificato che Sercq sia "abilitato" per il comune "default"
 #    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
@@ -450,6 +536,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -471,6 +558,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_1"
     Given viene generata una nuova notifica
@@ -496,6 +585,8 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_1"
     Given viene generata una nuova notifica
@@ -521,6 +612,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -539,6 +631,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
@@ -563,6 +656,8 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_1"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_1"
     Given viene generata una nuova notifica
@@ -579,6 +674,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
@@ -607,6 +703,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
@@ -632,10 +729,12 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+#    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
+#    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
     And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Given viene generata una nuova notifica
@@ -650,7 +749,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                                |
       | details                | NOT_NULL                                            |
-      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
+      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex       | 0                                                   |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
@@ -661,12 +760,15 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Mario Gherkin"
     Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
     And viene disabilitato il servizio SERCQ SEND per la PA "Comune_1"
     And viene verificato che Sercq sia "disabilitato" per la PA "Comune_1"
     And l'utente "Mario Gherkin" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     And  viene verificata l'assenza di indirizzi Pec per il comune "default"
     And  viene verificata l'assenza di indirizzi Pec per il comune "Comune_1"
     And viene attivato il servizio SERCQ SEND per la PA "Comune_2"
@@ -693,6 +795,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -710,6 +813,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -731,6 +835,7 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -751,6 +856,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given si predispone addressbook per l'utente "CucumberSpa"
@@ -774,6 +880,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And l'utente "Galileo Galileii" controlla l'accettazione "positiva" dei tos per sercq v2
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -788,3 +895,217 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" per l'utente 1
+
+
+
+    #    SERCQ FASE 2
+
+  @sercqF2 @sercq @addressBook3
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_1] Attivazione SercQ principale con email di cortesia attiva
+    Given si predispone addressbook per l'utente "Alda Merini"
+    Then l'utente "Alda Merini" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
+    And viene attivato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
+
+  @sercqF2 @sercq @addressBook3
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_2] Attivazione SercQ per ente con email di cortesia attiva e pec principale attiva
+    Given si predispone addressbook per l'utente "Alda Merini"
+    Then l'utente "Alda Merini" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
+
+    And viene attivato il servizio SERCQ SEND per la PA "Comune_2"
+    And viene verificato che Sercq sia "abilitato" per la PA "Comune_2"
+  #  1. Pec per ente specifico o generale?
+
+  @sercqF2 @sercq @addressBook3
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_3] Attivazione pec principale con email di cortesia non attiva
+    Given si predispone addressbook per l'utente "Alda Merini"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Alda Merini"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+  @sercqF2 @sercq @addressBook3
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_4] Attivazione pec per ente con email di cortesia non attiva
+    Given si predispone addressbook per l'utente "Alda Merini"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Alda Merini"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
+
+  @sercqF2 @sercq @addressBook1
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_5] Negata attivazione di SercQ principale con email di cortesia non attiva
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
+    And viene attivato il servizio SERCQ SEND per recapito "default" con errore
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene verificato che Sercq sia "disabilitato" per la PA "default"
+
+
+  @sercqF2 @sercq @addressBook1
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_6] Negata attivazione di SercQ per ente con email di cortesia non attiva e pec principale attiva
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
+
+    And viene attivato il servizio SERCQ SEND per recapito "Comune_Root" con errore
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene verificato che Sercq sia "disabilitato" per la PA "Comune_Root"
+
+
+  @sercqF2 @sercq @addressBook1
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_7] Disattivazione email di cortesia con SercQ principale disattivato
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
+    And viene attivato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
+    And viene disabilitato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "disabilitato" per la PA "default"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
+
+  @sercqF2 @sercq @addressBook1
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_8] Disattivazione email di cortesia con SercQ per ente disattivato e pec principale attiva
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_2"
+    And viene controllato che siano presenti pec verificate inserite per il comune "Comune_2"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
+    And viene attivato il servizio SERCQ SEND per la PA "Comune_2"
+    And viene verificato che Sercq sia "abilitato" per la PA "Comune_2"
+    And viene disabilitato il servizio SERCQ SEND per la PA "Comune_2"
+    And viene verificato che Sercq sia "disabilitato" per la PA "Comune_2"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+
+  @sercqF2 @sercq @addressBook2
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_9] Disattivazione email di cortesia con pec principale attiva
+    Given si predispone addressbook per l'utente "CucumberSpa"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+  @sercqF2 @sercq @addressBook2
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_10] Disattivazione email di cortesia con pec per ente attiva
+    Given si predispone addressbook per l'utente "CucumberSpa"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+  @sercqF2 @sercq @addressBook2
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_11] Negata disattivazione email cortesia con SercQ principale attivo
+    Given si predispone addressbook per l'utente "CucumberSpa"
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    Then l'utente "CucumberSpa" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+    And viene attivato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+  @sercqF2 @sercq @addressBook2
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_12] Negata disattivazione email cortesia con SercQ per ente attivo
+    Given si predispone addressbook per l'utente "CucumberSpa"
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    Then l'utente "CucumberSpa" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+    And viene attivato il servizio SERCQ SEND per la PA "Comune_2"
+    And viene verificato che Sercq sia "abilitato" per la PA "Comune_2"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+  #@sercqF2 @sercq @addressBook2  # Lo sviluppo di questa fix è rimandato a data da definirsi
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_F2_13] Negata disattivazione email cortesia con SercQ per ente attivo
+    Given si predispone addressbook per l'utente "CucumberSpa"
+    Then l'utente "CucumberSpa" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq v2
+
+    And vengono rimossi eventuali recapiti presenti per l'utente
+
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+
+    And viene attivato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
+
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_2"
+    And viene controllato che siano presenti pec verificate inserite per il comune "Comune_2"
+
+    And viene cancellata l'email di cortesia per il comune "default"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"

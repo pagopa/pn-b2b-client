@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.cucumber.java.Before;
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.ParameterType;
-import io.cucumber.java.Transpose;
+import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -98,6 +95,12 @@ public class RicezioneNotificheWebSteps {
             this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
             sharedSteps.setWebRecipientClient(webRecipientClient);
         }
+    }
+
+    @After("@sercqF2")
+    public void afterSercQ() {
+        cleanLegalAddressForUser();
+        log.info("clean digital address from @After");
     }
 
     @Autowired
