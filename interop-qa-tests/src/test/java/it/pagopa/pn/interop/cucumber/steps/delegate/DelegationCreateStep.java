@@ -110,6 +110,14 @@ public class DelegationCreateStep {
         createDelegate(delegator, delegate, producerDelegationsApiClient::createProducerDelegation);
     }
 
+    @Given("l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo")
+    public void givenDelegatingTenantHasSuccessfullyRequestedDelegation() {
+        givenDelegatingTenantHasRequestedDelegation();
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException("La richiesta di delega non è stata eseguita correttamente: " + httpCallExecutor.getErrorMessage());
+        }
+    }
+
     @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato")
     @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo")
     public void givenConsumerDelegatingTenantHasRequestedDelegation() {

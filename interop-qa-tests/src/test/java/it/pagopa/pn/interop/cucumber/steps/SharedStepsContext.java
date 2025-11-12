@@ -81,25 +81,25 @@ public class SharedStepsContext {
         MDC.put("scenarioId", extractScenarioId(scenario.getName()));
     }
 
-    private static String extractScenarioId(String input) {
-        String regex = "^(\\[.+\\])";
+    private static String extractScenarioId(String scenarioName) {
+        String scenarioIdRegex = "^(\\[.+\\])";
 
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
+        Pattern pattern = Pattern.compile(scenarioIdRegex);
+        Matcher matcher = pattern.matcher(scenarioName);
 
-        String id;
+        String scenarioId;
         if (matcher.find()) {
-            id = matcher.group(1);
+            scenarioId = matcher.group(1);
         } else {
-            id = RandomStringUtils.insecure().nextAlphanumeric(5);
+            scenarioId = RandomStringUtils.insecure().nextAlphanumeric(5);
             log.warn(
                 "Non è stato possibile estrarre l'ID dello scenario '{}'. "
                     + "Al suo posto verrà utilizzata la stringa '{}'",
-                input,
-                id);
+                scenarioName,
+                scenarioId);
         }
 
-        return id;
+        return scenarioId;
     }
 
 }
