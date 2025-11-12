@@ -28,7 +28,7 @@ Feature: Gestione delle deleghe in fruizione M2M
 
     # Delega in stato ACTIVE
     Given l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
