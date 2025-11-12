@@ -7,6 +7,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAtt
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -14,17 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
-import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.IterableUtils;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -35,14 +33,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateStepContext {
-    @Mapper(componentModel = "spring")
-    public interface EServiceTemplateInfoMapper {
-        /* TODO 07/03/2025 overhead, se questo mapper continua a servire solo a questo bisognerebbe
-         *  semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
-        @Mapping(source = "newVersionId", target = "lastVersionId")
-        EServiceTemplateInfo withVersionId(EServiceTemplateInfo templateInfo, UUID newVersionId);
-    }
-
     private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
@@ -78,6 +68,17 @@ public class EServiceTemplateStepContext {
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
     private UUID lastAddedRiskAnalysisId;
 
+    private List<DocumentMetadata> documentsMetadata;
+
+    private int groupId; // id dell'ultimo gruppo di attributi creato
+    private List<UUID> certifiedAttributesIds = new ArrayList<>();
+    private List<UUID> declaredAttributesIds = new ArrayList<>();
+    private List<UUID> verifiedAttributesIds = new ArrayList<>();
+
+    private List<UUID> removedCertifiedAttributesIds = new ArrayList<>();
+    private List<UUID> removedDeclaredAttributesIds = new ArrayList<>();
+    private List<UUID> removedVerifiedAttributesIds = new ArrayList<>();
+
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(
             RiskAnalysisFormSeed.class);
@@ -106,6 +107,18 @@ public class EServiceTemplateStepContext {
 
     public void addTemplateManaged(EServiceTemplateInfo templateInfo) {
         this.templatesManaged.add(templateInfo);
+    }
+
+    public void addCertifiedAttributes(List<UUID> attributesIds) {
+        this.certifiedAttributesIds.addAll(attributesIds);
+    }
+
+    public void addDeclaredAttributes(List<UUID> attributesIds) {
+        this.declaredAttributesIds.addAll(attributesIds);
+    }
+
+    public void addVerifiedAttributes(List<UUID> attributesIds) {
+        this.verifiedAttributesIds.addAll(attributesIds);
     }
 
     private <T> T lastOf(List<T> list) {

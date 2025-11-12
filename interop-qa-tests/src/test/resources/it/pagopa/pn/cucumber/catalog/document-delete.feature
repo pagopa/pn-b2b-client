@@ -2,8 +2,9 @@
 Feature: Cancellazione di un documento
   Tutti gli utenti autorizzati di enti erogatori possono cancellare un documento dai propri descrittori
 
+  @nrt-minimal
   @document_delete1
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di cancellazione di un documento precedentemente caricato, l'operazione va a buon fine
+  Scenario Outline: [DESCRIPTOR_DELETE_1] Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di cancellazione di un documento precedentemente caricato, l'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoDescrittore>" e un documento già caricato
     When l'utente cancella quel documento
@@ -35,24 +36,27 @@ Feature: Cancellazione di un documento
       | GSP  | admin | DEPRECATED       |       204 |
 
   @sad-path
+  @nrt-minimal
   @document_delete2
-  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED alla richiesta di cancellazione di un documento precedentemente caricato, si ottiene un errore
+  Scenario: [DESCRIPTOR_DELETE_2] Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED alla richiesta di cancellazione di un documento precedentemente caricato, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "ARCHIVED" e un documento già caricato
     When l'utente cancella quel documento
     Then si ottiene status code 400
 
   @happy-path
+  @nrt-minimal
   @document_delete3
-  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di cancellazione di un'interfaccia precedentemente caricata, l'operazione va a buon fine
+  Scenario: [DESCRIPTOR_DELETE_3] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di cancellazione di un'interfaccia precedentemente caricata, l'operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" con un'interfaccia già caricata
     When l'utente cancella quell'interfaccia
     Then si ottiene status code 204
 
   @sad-path
+  @nrt-minimal
   @document_delete4
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, ARCHIVED, DEPRECATED, SUSPENDED), alla richiesta di cancellazione di un'interfaccia precedentemente caricata, si ottiene un errore
+  Scenario Outline: [DESCRIPTOR_DELETE_4] Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, ARCHIVED, DEPRECATED, SUSPENDED), alla richiesta di cancellazione di un'interfaccia precedentemente caricata, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoDescrittore>" con un'interfaccia già caricata
     When l'utente cancella quell'interfaccia

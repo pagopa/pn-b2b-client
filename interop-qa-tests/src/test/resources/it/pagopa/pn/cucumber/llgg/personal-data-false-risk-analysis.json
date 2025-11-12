@@ -1,0 +1,23 @@
+{
+  "name": "finalita false",
+  "riskAnalysisForm": {
+    "answers": {
+      "institutionalPurpose": [
+        "prova prova prova"
+      ],
+      "isRequestOnBehalfOfThirdParties": [
+        "NO"
+      ],
+      "purpose": [
+        "INSTITUTIONAL"
+      ],
+      "usesPersonalData": [
+        "NO"
+      ],
+      "usesThirdPartyPersonalData": [
+        "NO"
+      ]
+    },
+    "version": "3.1"
+  }
+}

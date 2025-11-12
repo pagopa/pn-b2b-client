@@ -46,7 +46,7 @@ public class EServiceTemplateDeleteSteps {
 
     @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateDeleted() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

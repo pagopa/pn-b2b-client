@@ -1,28 +1,31 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.common.AgreementCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.*;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
@@ -32,6 +35,7 @@ public class SharedStepsContext {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final PollingService pollingService;
+    private final DelayService delayService;
 
     private int testSeed;
     private String tenantType;
@@ -50,10 +54,12 @@ public class SharedStepsContext {
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
             @Qualifier("interopIdentityService") IdentityService identityService,
-            PollingService pollingService) {
+            PollingService pollingService,
+            DelayService delayService) {
         this.httpCallExecutor = httpCallExecutor;
         this.identityService = identityService;
         this.pollingService = pollingService;
+        this.delayService = delayService;
     }
 
     @Before
@@ -67,6 +73,33 @@ public class SharedStepsContext {
         agreementCommonContext = new AgreementCommonContext();
         riskAnalysisCommonContext = new RiskAnalysisCommonContext();
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
+    }
+
+    @Before
+    public void configLog(Scenario scenario) {
+        MDC.clear();
+        MDC.put("scenarioId", extractScenarioId(scenario.getName()));
+    }
+
+    private static String extractScenarioId(String scenarioName) {
+        String scenarioIdRegex = "^(\\[.+\\])";
+
+        Pattern pattern = Pattern.compile(scenarioIdRegex);
+        Matcher matcher = pattern.matcher(scenarioName);
+
+        String scenarioId;
+        if (matcher.find()) {
+            scenarioId = matcher.group(1);
+        } else {
+            scenarioId = RandomStringUtils.insecure().nextAlphanumeric(5);
+            log.warn(
+                "Non è stato possibile estrarre l'ID dello scenario '{}'. "
+                    + "Al suo posto verrà utilizzata la stringa '{}'",
+                scenarioName,
+                scenarioId);
+        }
+
+        return scenarioId;
     }
 
 }

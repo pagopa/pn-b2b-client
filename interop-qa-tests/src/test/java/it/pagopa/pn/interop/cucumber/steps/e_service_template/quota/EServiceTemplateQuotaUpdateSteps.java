@@ -16,7 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
 import lombok.Data;
-import org.jeasy.random.EasyRandom;
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
@@ -27,7 +27,6 @@ public class EServiceTemplateQuotaUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EasyRandom easyRandom;
 
     private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
 
@@ -39,39 +38,37 @@ public class EServiceTemplateQuotaUpdateSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template")
     public void editEServiceTemplateVersionQuotas() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
         editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
     }
 
     private EServiceTemplateVersionQuotasUpdateSeed nextQuotasUpdateSeed() {
-        EServiceTemplateVersionQuotasUpdateSeed seed = easyRandom.nextObject(
-            EServiceTemplateVersionQuotasUpdateSeed.class);
-        seed.setVoucherLifespan(86400);
-        seed.setDailyCallsTotal(abs(seed.getDailyCallsPerConsumer() + 1));
-        seed.setDailyCallsPerConsumer(abs(seed.getDailyCallsPerConsumer()));
-        return seed;
+        int dailyCallsPerConsumer = RandomUtils.nextInt(1_000_000_000); // numero massimo supportato
+        return new EServiceTemplateVersionQuotasUpdateSeed()
+            .voucherLifespan(86400)
+            .dailyCallsTotal(dailyCallsPerConsumer + 1)
+            .dailyCallsPerConsumer(dailyCallsPerConsumer);
     }
 
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateVersionQuotasWithEmptySpec() {
         editEServiceTemplateVersionQuotas(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             new EServiceTemplateVersionQuotasUpdateSeed());
     }
 
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template specificando un \"dailyCallsTotal\" inferiore a \"dailyCallsPerConsumer\"")
     public void editEServiceTemplateVersionQuotasWithDailyCallsTotalLessThanDailyCallsPerConsumer() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
         lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() - 1));
@@ -87,7 +84,7 @@ public class EServiceTemplateQuotaUpdateSteps {
 
     @When("l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template")
     public void editEServiceTemplateNonExistentVersionQuotas() {
-        editEServiceTemplateVersionQuotas(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), nextQuotasUpdateSeed());
+        editEServiceTemplateVersionQuotas(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID(), nextQuotasUpdateSeed());
     }
 
     @Then("la modifica delle quote della versione dell'e-service template è stata effettuata correttamente")
@@ -96,8 +93,8 @@ public class EServiceTemplateQuotaUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()),
                     ResponseEntity::getStatusCode),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {

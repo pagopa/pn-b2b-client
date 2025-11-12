@@ -2,7 +2,7 @@
 Feature: Test API of e-service template
 
   @sad-path
- # @e-service-template-receive
+  @e-service-template-receive
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
@@ -15,9 +15,9 @@ Feature: Test API of e-service template
 #      | security | ricezione  |
 #      | support  | ricezione  |
 
-    @happy-path
-    #@e-service-template-receive
-    @e-service-template-create
+  @happy-path
+  @e-service-template-receive
+  @e-service-template-create
   Scenario Outline: [INTEROP-EST-002] La creazione di un e-service template può essere fatta da un ente in veste di ADMIN o API portando ad un template in stato DRAFT
     Given l'utente è un "<ruolo>" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
@@ -30,10 +30,10 @@ Feature: Test API of e-service template
 #      | admin | ricezione  |
 #      | api   | ricezione  |
 
-    @sad-path
-    @e-service-template-receive
-    @e-service-template-deliver
-    @e-service-template-create
+  @sad-path
+  @e-service-template-receive
+  @e-service-template-deliver
+  @e-service-template-create
   Scenario Outline: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
     Given l'utente è un "admin" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
@@ -221,7 +221,7 @@ Feature: Test API of e-service template
   # TODO accorpabile allo scenario precedente facendo in modo che le modifiche alla versione includano gli attributi
     # e che la verifica finale delle modifiche fatta includa gli attributi
   @happy-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-017-ATT] La modifica degli attributi di una versione di un e-service template in stato DRAFT può essere effettuata da un ente in veste di ADMIN o API usando l'API generica
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -316,7 +316,7 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-receive
-    @e-service-template-riskAnalysis-add
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -359,7 +359,7 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-receive
-    @e-service-template-riskAnalysis-delete
+  @e-service-template-riskAnalysis-delete
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6482
   Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template in stato DRAFT NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -375,7 +375,7 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-receive
-    @e-service-template-riskAnalysis-delete
+  @e-service-template-riskAnalysis-delete
   Scenario Outline: [INTEROP-EST-029] La cancellazione di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -422,7 +422,7 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-receive
-    @e-service-template-riskAnalysis-update
+  @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -440,7 +440,7 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-receive
-    @e-service-template-riskAnalysis-update
+  @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-034] La modifica di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -554,13 +554,11 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-document-create
-  Scenario: [INTEROP-EST-042] L'aggiunta di un documento a una versione di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di un documento precedentemente aggiunto
+  Scenario: [INTEROP-EST-042] L'aggiunta di un documento a una versione di un e-service template in stato DRAFT non può essere fatta specificando lo stesso prettyName di un documento precedentemente aggiunto
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template con successo
-
-    # ATTENZIONE 04/03/2025: al momento per "nome" si sta intendendo il parametro "prettyName"
-    When l'utente tenta l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template specificando lo stesso nome
+    When l'utente tenta l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template specificando lo stesso prettyName
 
     Then si ottiene response status code 409
 
@@ -1057,7 +1055,7 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-receive
-    @e-service-template-version-publish
+  @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-068] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -1072,7 +1070,7 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-receive
-    @e-service-template-version-publish
+  @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-069] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -1202,6 +1200,7 @@ Feature: Test API of e-service template
       | security |
       | support  |
 
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @sad-path
   @e-service-template-version-delete
   Scenario: [INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente diverso dal creatore del template
@@ -1209,7 +1208,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "admin" di "PA2"
     And l'utente tenta la cancellazione della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 404
 
   @sad-path
   @e-service-template-version-delete
@@ -1228,7 +1227,6 @@ Feature: Test API of e-service template
     When l'utente tenta la cancellazione di una versione inesistente dell'e-service template
     Then si ottiene response status code 404
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6483
   @sad-path
   @e-service-template-to-finish
   @e-service-template-version-delete
@@ -1703,15 +1701,18 @@ Feature: Test API of e-service template
   Scenario Outline: [INTEROP-EST-122] La modifica delle quote di una versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+
+    When l'utente è un "security" di "PA1"
+    And l'utente tenta la modifica delle quote della versione dell'e-service template
+    Then si ottiene response status code 403
+
+    When l'utente è un "support" di "PA1"
     And l'utente tenta la modifica delle quote della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
-      | security | PUBLISHED |
-      | support  | PUBLISHED |
-      | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
 
   @sad-path
   @e-service-template-version-quotas-update
@@ -1762,7 +1763,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @happy-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-128-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1782,7 +1783,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @happy-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-128-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1803,7 +1804,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1821,7 +1822,7 @@ Feature: Test API of e-service template
       | support  |
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1840,7 +1841,7 @@ Feature: Test API of e-service template
       | support  |
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-130] La modifica degli attributi di una versione di un e-service template in stato DRAFT non può essere effettuata
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1851,7 +1852,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-131-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1864,7 +1865,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-131-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1878,7 +1879,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-132-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente diverso dal creatore del template
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1891,7 +1892,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-132-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1912,7 +1913,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-version-attributes-update
+  @e-service-template-version-attributes-update @certifiedAttribute
   Scenario: [INTEROP-EST-134] La modifica degli attributi di una versione inesistente di un e-service template non può essere effettuata
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -1981,6 +1982,7 @@ Feature: Test API of e-service template
   @e-service-template-version-create
   Scenario: [INTEROP-EST-139] La creazione di una nuova versione di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta la creazione di una ulteriore versione in un e-service template inesistente
     Then si ottiene response status code 404
 
@@ -2025,20 +2027,26 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-read
-  Scenario Outline: [INTEROP-EST-144] La visualizzazione dei dettagli un e-service template da parte dell'ente creatore rivela tutte le versioni presenti indipendentemente dallo stato, se l'ente è in veste di ADMIN o API
+  Scenario: [INTEROP-EST-144] La visualizzazione dei dettagli un e-service template da parte dell'ente creatore rivela tutte le versioni presenti indipendentemente dallo stato, se l'ente è in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente aggiunge all'e-service template una versione in stato SUSPENDED con successo
     And l'utente aggiunge all'e-service template una versione in stato DRAFT con successo
-    Given l'utente è un "<ruolo>" di "PA1"
+
+    Given l'utente è un "admin" di "PA1"
     When l'utente tenta la visualizzazione dei dettagli dell'e-service template
     Then si ottiene response status code 200
     And i dettagli dell'e-service template contengono esattamente 3 versioni
-    Examples:
-      | ruolo        |
-      | admin        |
-      | api          |
-      | api,security |
+
+    Given l'utente è un "api" di "PA1"
+    When l'utente tenta la visualizzazione dei dettagli dell'e-service template
+    Then si ottiene response status code 200
+    And i dettagli dell'e-service template contengono esattamente 3 versioni
+
+    Given l'utente è un "api,security" di "PA1"
+    When l'utente tenta la visualizzazione dei dettagli dell'e-service template
+    Then si ottiene response status code 200
+    And i dettagli dell'e-service template contengono esattamente 3 versioni
 
   @happy-path
   @e-service-template-read
@@ -2071,22 +2079,26 @@ Feature: Test API of e-service template
   @happy-path
   @e-service-template-version-read
   Scenario Outline: [INTEROP-EST-148] La visualizzazione dei dettagli della versione di un e-service template da parte dell'ente creatore può essere effettuata quale che sia lo stato della versione in questione, se l'ente è in veste di ADMIN o API
-    Given l'utente è un "<ruolo>" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente aggiunge all'e-service template una versione in stato <stato> con successo
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
+    Then si ottiene response status code 200
+
+    Given l'utente è un "api" di "PA1"
+    When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
+    Then si ottiene response status code 200
+
+    Given l'utente è un "api,security" di "PA1"
     When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
     Then si ottiene response status code 200
     Examples:
-      | ruolo        | stato     |
-      | admin        | PUBLISHED |
-      | api          | PUBLISHED |
-      | api,security | PUBLISHED |
-      | admin        | SUSPENDED |
-      | api          | SUSPENDED |
-      | api,security | SUSPENDED |
-      | admin        | DRAFT     |
-      | api          | DRAFT     |
-      | api,security | DRAFT     |
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+      | DRAFT     |
 
   @happy-path
   @e-service-template-version-read
@@ -2263,18 +2275,19 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-instance-upgrade
-  Scenario Outline: [INTEROP-EST-161] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+  Scenario: [INTEROP-EST-161] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+
+    When l'utente è un "security" di "PA1"
     And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     Then si ottiene response status code 403
-    Examples:
-      | ruolo    |
-      | security |
-      | support  |
+
+    When l'utente è un "support" di "PA1"
+    And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    Then si ottiene response status code 403
 
   @sad-path
   @e-service-template-instance-upgrade

@@ -111,7 +111,7 @@ Feature: PARI - Portale registro dei beni
       | 2310946          | AWM10014586GD       | <codice_prodotto>      | <categoria>      | IT                   |
     Then si verifica che la risposta abbia:
       | status           | OK |
-    Then si verifica che la lista di prodotti caricati non sia nulla
+    Then si verifica che la lista di prodotti caricati non sia nulla e che sia ordinata in modo "brand,asc"
     Then si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo
   Examples:
       | categoria_csv       | codice_prodotto     | categoria         |
@@ -195,10 +195,26 @@ Feature: PARI - Portale registro dei beni
       | 8016361967659       |                   | Piano cottura       | IT        | Candy    | x100    |
 
   @produttore1
+  Scenario Outline: [TC_UPLOAD_12_A] Viene invocata l'API di verifica CSV
+    Given viene usata l'utenza: PRODUTTORE_1
+    Given l'utente accetta i ToS con successo
+    When viene verificato il csv con categoria: "REFRIGERATINGAPPL" e dati:
+      | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione       |
+      | <codice_eprel>      | <codice_gtin>          | <codice_prodotto>       | <categoria>         | <paese>                   |
+    Then si verifica che la risposta abbia:
+      | status           | <status_res> |
+      | errorKey           | <errorKey> |
+      | productFileId           | <productFileId> |
+    Examples:
+      | codice_eprel  | codice_gtin         | codice_prodotto     | categoria                          | paese     | status_res | errorKey                    | productFileId |
+      | 2413086       | RC382BSC0EU         | RC382BSC0EU         | Apparecchio di refrigerazione      | IT        | OK         | NULL                        | NULL          |
+      | 1059484       | eiQINTWM149V2       | HWF90Elica          | Cappa da cucina                    |  IT       | KO         | product.invalid.file.report | NOT_NULL      |
+
+  @produttore1
   Scenario Outline: [TC_UPLOAD_12] Verifica di un nuovo file CSV valido per Cappe da cucina
     Given viene usata l'utenza: PRODUTTORE_1
     Given l'utente accetta i ToS con successo
-    When viene verificato il csv con categoria: "RANGEHOODS" e dati:
+    When viene verificato il csv con categoria: "<categoria_csv>" e dati:
       | Codice EPREL        | Codice GTIN/EAN        | Codice Prodotto         | Categoria           | Paese di Produzione       |
       | <codice_eprel>      | <codice_gtin>          | <codice_prodotto>       | <categoria>         | <paese>                   |
     Then si verifica che la risposta abbia:
@@ -206,26 +222,29 @@ Feature: PARI - Portale registro dei beni
       | errorKey         | product.invalid.file.report |
       | productFileId    | NOT_NULL                    |
     Examples:
-      | codice_eprel  | codice_gtin         | codice_prodotto   | categoria           | paese     |
-      |                | eiQINTWM149V2      | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       |                     | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     |           |
+      |categoria_csv      | codice_eprel  | codice_gtin         | codice_prodotto   | categoria           | paese     |
+      | RANGEHOODS        |               | eiQINTWM149V2      | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       |                     | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     |           |
 
-      | AAABBBC       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
-      | 22265\|86     | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
-      | 22265è86      | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
-      | AAAB123       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       | 123456789123234     | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       | aaaaaabbbbbbccc     | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       | aaaaaabbbbbb12c     | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       | aaaaaabbbbbb12c     | HWF90Elica       | Cappa da cucina     | IT        |
-      | 1059484       | eiQè!TWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | AAABBBC       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 22265\|86     | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 22265è86      | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | AAAB123       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       | 123456789123234     | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       | aaaaaabbbbbbccc     | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       | aaaaaabbbbbb12c     | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       | aaaaaabbbbbb12c     | HWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 1059484       | eiQè!TWM149V2       | HWF90Elica       | Cappa da cucina     | IT        |
 
-      | 2226586       | eiQINTWM149V2       | HWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90Elica       | Cappa da cucina     | IT        |
-      | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | ITA     |
-      | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | I%      |
-      | 2226586       | eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM11          | EIQINTWM149       | Cappa da cucina     | IT          |
-      | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa\|Cucina&S     | IT      |
+      | RANGEHOODS        | 2226586       | eiQINTWM149V2       | HWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90ElicaHWF90Elica       | Cappa da cucina     | IT        |
+      | RANGEHOODS        | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | ITA     |
+      | RANGEHOODS        | 2226586       | eiQINTWM149V2       | HWF90Elica       | Cappa da cucina     | I%      |
+      | RANGEHOODS        | 2226586       | eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM149V2eiQINTWM11          | EIQINTWM149       | Cappa da cucina     | IT          |
+      | REFRIGERATINGAPPL | 1059484       | eiQINTWM149V2       | HWF90Elica          | Cappa da cucina                    |  IT       |
+      | REFRIGERATINGAPPL | 2413086       |                     | RC382BSC0EU         | Apparecchio di refrigerazione                    |  IT       |
+      | REFRIGERATINGAPPL | 2413086       | RC382BSC0EU         | RC382BSC0EU                    | Apparecchio di refrigerazione                    |         |
+      | RANGEHOODS | 2413086       | RC382BSC0EU         | RC382BSC0EU                    | Apparecchio di refrigerazione                    |  IT      |
 
   @produttore1
   Scenario Outline: [TC_UPLOAD_13] Inserimento di un nuovo file CSV con intestazione colonne errate
@@ -266,5 +285,77 @@ Feature: PARI - Portale registro dei beni
     When si recupera l'ultimo caricamento effettuato dall'utenza
     Then si verifica che i prodotti non siano stati aggiunti in quanto già caricati da un produttore diverso
 
+  @produttore2
+  Scenario Outline: [TC_UPLOAD_15] Recupero lista dei caricamenti e prodotti precedentemente caricati
+    Given viene usata l'utenza: PRODUTTORE_2
+    Given l'utente accetta i ToS con successo
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
+      | 2423604           | F2R5FG0W       | F2R5FG0W          | Lavasciuga        | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Then si verifica che la lista di prodotti caricati non sia nulla e che sia ordinata in modo "<sort>"
+    Then si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo
+    Examples:
+      | sort                 |
+      | model,asc        |
+      | model,desc        |
+      | brand,asc        |
+      | brand,desc        |
+    #da rivedere category,asc/desc perché apparecchio di refrigerazione non è ordinato
 
 
+  @produttore2
+  Scenario Outline: [TC_UPLOAD_15] Recupero lista dei caricamenti e prodotti precedentemente caricati
+    Given viene usata l'utenza: PRODUTTORE_2
+    Given l'utente accetta i ToS con successo
+    When viene caricato il csv con categoria: "WASHERDRIERS" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria        | Paese di Produzione  |
+      | 2365216          | CP1210WA0       | CP1210WA0          | Lavasciuga       | IT                   |
+      | 2423604           | F2R5FG0W       | F2R5FG0W          | Lavasciuga        | IT                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    Then si verifica che la lista di prodotti caricati non sia nulla e che sia ordinata in modo "<sort>"
+    Then si verifica che nella lista dei caricamenti ne sia stato aggiunto uno nuovo
+    Examples:
+      | sort                 |
+      | model,asc        |
+      | model,desc        |
+      | brand,asc        |
+      | brand,desc        |
+    #da rivedere category,asc/desc perché apparecchio di refrigerazione non è ordinato
+
+
+  @produttore1
+  Scenario: [TC_UPLOAD_16] Recupero lista dei caricamenti e prodotti precedentemente caricati
+    Given viene usata l'utenza: PRODUTTORE_1
+    Given l'utente accetta i ToS con successo
+    # viene aggiunto un apparecchio di refrigerazione di marca Bosch
+    When viene caricato il csv con categoria: "REFRIGERATINGAPPL" e dati:
+      | Codice EPREL     | Codice GTIN/EAN     | Codice Prodotto        | Categoria                          | Paese di Produzione  |
+      | 2300513          | KGN362LAF           | KGN362LAF        | Apparecchio di refrigerazione             | DE                   |
+    Then si verifica che la risposta abbia:
+      | status           | OK |
+    And viene chiamata l'API di recupero prodotti con i seguenti parametri
+      | model           | KGN |
+      | brand           | LG |
+    Then si verifica che la risposta "non contenga" dati
+    # Si verifica che la ricerca con dati corretti produca dei risultati
+    And viene chiamata l'API di recupero prodotti con i seguenti parametri
+      | model           | KGN |
+      | brand           | Bosch |
+    Then si verifica che la risposta "contenga" dati
+    # Si verifica che la ricerca di prodotti passando un modello errato non produca dei risultati
+    And viene chiamata l'API di recupero prodotti con i seguenti parametri
+      | model           | BBB |
+      | brand           | Bosch |
+    Then si verifica che la risposta "non contenga" dati
+    # Si verifica che la ricerca di prodotti passando soltanto un modello corretto produca risultati
+    And viene chiamata l'API di recupero prodotti con i seguenti parametri
+      | model           | KGN362LAF |
+    Then si verifica che la risposta "contenga" dati
+    # Si verifica che la ricerca di prodotti passando soltanto una marca corretta produca risultati
+    And viene chiamata l'API di recupero prodotti con i seguenti parametri
+      | brand           | Bosch |
+    Then si verifica che la risposta "contenga" dati

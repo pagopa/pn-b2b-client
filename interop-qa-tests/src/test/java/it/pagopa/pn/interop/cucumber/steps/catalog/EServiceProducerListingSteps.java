@@ -46,6 +46,15 @@ public class EServiceProducerListingSteps {
         );
     }
 
+    @When("l'utente richiede una operazione di listing sui propri e-services erogati limitata ai primi {int} e-services con flagPersonalData settato a {string}")
+    public void requireOwnEServiceListWithLimit(int limit, String flagPersonalData) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getProducerClient().getProducerEServices(0, limit,
+                        String.valueOf(sharedStepsContext.getTestSeed()), List.of(), null, flagPersonalData.equals("undefined") ? null : flagPersonalData.equalsIgnoreCase("true"))
+        );
+    }
+
     @When("l'utente richiede una operazione di listing sui propri e-services con offset {int}")
     public void requireOwnEServiceListWithOffset(int offset) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

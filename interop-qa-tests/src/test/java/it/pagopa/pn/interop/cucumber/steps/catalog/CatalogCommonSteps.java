@@ -9,18 +9,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLig
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public class CatalogCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -49,24 +46,65 @@ public class CatalogCommonSteps {
     @Given("{string} ha già creato un e-service con un descrittore in stato {string}")
     public void createEserviceWithDescriptor(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        createEServiceWithDescriptor(descriptorState, dataPreparationService,
+            sharedStepsContext.getEServicesCommonContext());
+    }
 
+    @Given("{string} porta il descrittore dell'e-service in stato {string}")
+    public void bringDescriptorToState(String tenantType, String state) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        dataPreparationService.bringDescriptorToGivenState(
+            eserviceId,
+            descriptorId,
+            EServiceDescriptorState.valueOf(state),
+            false);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
+    public static void createEServiceWithDescriptor(
+        String descriptorState,
+        BFFDataPreparationService dataPreparationService,
+        EServicesCommonContext eServiceContext
+    ) {
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
-                eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+                eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
+                descriptorState), false);
+        eServiceContext.setEserviceId(eServiceDescriptor.getEServiceId());
+        eServiceContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string} e un documento già caricato")
     public void createEServiceWithDescriptorAndDocument(String tenantType, String descriptorState) {
+        createEServiceWithDescriptorAndDocuments(tenantType, descriptorState, 1, null, null);
+    }
+
+    @Given("{string} ha già creato un e-service con un descrittore in stato {string} e {int} documenti già caricati")
+    public void createEServiceWithDescriptorAndDocument(String tenantType, String descriptorState, int documents) {
+        String documentNamePrefix = "Document QA test name";
+        String documentPrettyNamePrefix = "Document QA test pretty name";
+        createEServiceWithDescriptorAndDocuments(tenantType, descriptorState, documents, documentNamePrefix,
+            documentPrettyNamePrefix);
+    }
+
+    private void createEServiceWithDescriptorAndDocuments(String tenantType, String descriptorState, int documents,
+        String documentNamePrefix, String documentPrettyNamePrefix) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
-        Map<String, UUID> result = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
-                EServiceDescriptorState.valueOf(descriptorState), true);
+        MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(
+            eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+            EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
+            documentPrettyNamePrefix);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
-        eServicesCommonContext.setDocumentId(Optional.ofNullable(result).map(x -> x.get("documentId")).orElse(null));
+
+        eServicesCommonContext.setDocumentsMetadata(result.getDocumentsMetadata());
+        // necessari per mantenere compatibilità con test scritti secondo un assetto antecedente
+        eServicesCommonContext.setDocumentId(result.getDocumentId(0));
+        eServicesCommonContext.setDocumentId2(result.getDocumentId(1));
     }
 }

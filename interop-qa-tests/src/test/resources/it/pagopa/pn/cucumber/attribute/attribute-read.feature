@@ -4,8 +4,9 @@ Feature: Lettura singolo attributo
 
   # NOTE 16/04/2025 riproduzione dello scenario come presente nel repo interop-qa-tests
   @happy-path
+  @nrt-minimal
   @attribute_read1
-  Scenario Outline: Alla richiesta di un attributo presente in DB, restituisce il risultato
+  Scenario Outline: [ATTRIBUTE_READ_1] Alla richiesta di un attributo presente in DB, restituisce il risultato
     Given l'utente è un "<ruolo>" di "<ente>"
     Given PA1 ha già creato 1 attributo DECLARED
     When l'utente richiede una operazione di lettura di quel attributo

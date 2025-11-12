@@ -3,8 +3,9 @@ Feature: Lista delle finalità lato fruitore
   Tutti gli utenti possono ottenere la lista delle finalità di cui sono fruitori
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing1 @fixed_in_node
-  Scenario Outline: A fronte di 5 finalità in db, restituisce solo i primi 3 risultati (scopo del test è verificare il corretto funzionamento del parametro limit)
+  Scenario Outline: [LISTING_FINALITA_FRUITORE_1] A fronte di 5 finalità in db, restituisce solo i primi 3 risultati (scopo del test è verificare il corretto funzionamento del parametro limit)
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -31,8 +32,9 @@ Feature: Lista delle finalità lato fruitore
       | Privato | support      |
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing2
-  Scenario: A fronte di 5 finalità in db e una richiesta di offset 2, restituisce solo 3 risultati
+  Scenario: [LISTING_FINALITA_FRUITORE_2] A fronte di 5 finalità in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -41,8 +43,9 @@ Feature: Lista delle finalità lato fruitore
     Then si ottiene status code 200 e la lista di 3 finalità
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing3
-  Scenario: Restituisce le finalità che un fruitore ha presentato presso erogatori di e-service (scopo del test è verificare il corretto funzionamento del parametro producersIds) (restituire il listing filtrando per producerIds)
+  Scenario: [LISTING_FINALITA_FRUITORE_3] Restituisce le finalità che un fruitore ha presentato presso erogatori di e-service (scopo del test è verificare il corretto funzionamento del parametro producersIds) (restituire il listing filtrando per producerIds)
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -51,8 +54,9 @@ Feature: Lista delle finalità lato fruitore
     Then si ottiene status code 200 e la lista di 2 finalità
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing4
-  Scenario: Restituisce le finalità associate ad alcuni specifici e-service (scopo del test è verificare che funzioni il filtro per e-servicesIds)
+  Scenario: [LISTING_FINALITA_FRUITORE_4] Restituisce le finalità associate ad alcuni specifici e-service (scopo del test è verificare che funzioni il filtro per e-servicesIds)
     Given l'utente è un "admin" di "GSP"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -64,8 +68,9 @@ Feature: Lista delle finalità lato fruitore
     Then si ottiene status code 200 e la lista di 1 finalità
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing5
-  Scenario Outline: Restituisce le finalità che sono in uno o più specifici stati (es. ACTIVE e SUSPENDED, scopo del test è verificare che funzioni il filtro per states)
+  Scenario Outline: [LISTING_FINALITA_FRUITORE_5] Restituisce le finalità che sono in uno o più specifici stati (es. ACTIVE e SUSPENDED, scopo del test è verificare che funzioni il filtro per states)
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -80,8 +85,9 @@ Feature: Lista delle finalità lato fruitore
       | SUSPENDED     |
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing6
-  Scenario: Restituisce le finalità che contengono la keyword "test" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
+  Scenario: [LISTING_FINALITA_FRUITORE_6] Restituisce le finalità che contengono la keyword "test" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -90,8 +96,9 @@ Feature: Lista delle finalità lato fruitore
     Then si ottiene status code 200 e la lista di 1 finalità
 
   @happy-path
+  @nrt-minimal
   @purpose_consumer_listing7
-  Scenario: Restituisce un insieme vuoto di finalità per una ricerca che non porta risultati (scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
+  Scenario: [LISTING_FINALITA_FRUITORE_7] Restituisce un insieme vuoto di finalità per una ricerca che non porta risultati (scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

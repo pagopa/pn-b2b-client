@@ -58,7 +58,7 @@ Feature: Messaggi di cortesia Banche
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | OK-CompiutaGiacenza_890     |
-      | taxId                   | CLMCST42R12D969Z            |
+      | taxId                   | RSSMRA85T10A562S            |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
       | payment_pagoPaForm      | SI                          |

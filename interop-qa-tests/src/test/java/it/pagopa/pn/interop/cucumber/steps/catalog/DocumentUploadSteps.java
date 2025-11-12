@@ -47,7 +47,7 @@ public class DocumentUploadSteps {
         );
 
         UUID documentId = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
-                EServiceDescriptorState.fromValue(descriptorState), false).get("documentId");
+                EServiceDescriptorState.fromValue(descriptorState), false).getDocumentId(0);
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
         eServicesCommonContext.setDocumentId(documentId);

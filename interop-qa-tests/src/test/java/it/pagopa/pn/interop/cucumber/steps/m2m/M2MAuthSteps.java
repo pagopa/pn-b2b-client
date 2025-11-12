@@ -1,20 +1,25 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
-import static java.util.Objects.requireNonNull;
-
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Role;
-import it.pagopa.interop.authorization.service.M2MTokenService.M2MRole;
+import it.pagopa.interop.authorization.enums.M2MRole;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 public class M2MAuthSteps {
+
+    public static final String INVALID_AUTH_TOKEN = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
+
     @ParameterType("m2m|m2m-admin")
     public static M2MRole m2mRole(String m2mRole) {
         return M2MRole.fromValue(m2mRole.toUpperCase());
@@ -42,21 +47,24 @@ public class M2MAuthSteps {
     @Given("l'utente è un {string} di {string} con ruolo M2M {m2mRole}")
     public void authenticateM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
         String token = identityService.getToken(tenant, m2MRole.toString());
+        UUID clientId = getClientId(token);
+
+        DPoPTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
+        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(selfcareRole.toUpperCase()));
         sharedStepsContext.setTenantType(tenant);
 
-        UUID clientId = getClientId(token);
         sharedStepsContext.getClientCommonContext().addClient(clientId);
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
+    @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
-        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
-        clientTokenConfigurator.setBearerToken(expiredToken);
-        sharedStepsContext.setUserToken(expiredToken);
+        clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
+        sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
     }
 
     @Deprecated(forRemoval = true)
@@ -78,8 +86,7 @@ public class M2MAuthSteps {
         String clientIdField = "client_id";
         Object oClientId = jwtPayload.get(clientIdField);
         requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(clientIdField));
-        UUID clientId = UUID.fromString(oClientId.toString());
-        return clientId;
+        return UUID.fromString(oClientId.toString());
     }
 
 }
