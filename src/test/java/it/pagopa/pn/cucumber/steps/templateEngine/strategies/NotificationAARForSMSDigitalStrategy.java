@@ -10,7 +10,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-//todo t cm
+
 @Component
 public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStrategy {
     private ITemplateEngineClient templateEngineClient;

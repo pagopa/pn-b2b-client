@@ -60,7 +60,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     public String notificationAARForEMAIL(LanguageEnum xLanguage, NotificationAarForEmail notificationAARForEMAIL) throws RestClientException {
         return templateApi.notificationAarForEmailAnalog(xLanguage, notificationAARForEMAIL);
     }
-//todo t cm
+
     @Override
     public String notificationAARForEMAILDigital(LanguageEnum xLanguage, NotificationAarForEmail notificationAARForEMAIL) throws RestClientException {
         return templateApi.notificationAarForEmailDigital(xLanguage, notificationAARForEMAIL);
@@ -76,7 +76,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
         return templateApi.notificationAarForSmsAnalog(xLanguage, notificationAARForSMS);
     }
 
-    @Override//todo t cm
+    @Override
     public String notificationAARForSMSDigital(LanguageEnum xLanguage, NotificationAarForSms notificationAARForSMS) throws RestClientException {
         return templateApi.notificationAarForSmsDigital(xLanguage, notificationAARForSMS);
     }
