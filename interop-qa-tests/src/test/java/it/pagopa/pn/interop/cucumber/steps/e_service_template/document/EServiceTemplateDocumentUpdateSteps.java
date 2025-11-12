@@ -48,16 +48,16 @@ public class EServiceTemplateDocumentUpdateSteps {
 
     @When("l'utente tenta la modifica del documento dell'e-service template")
     public void editDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         lastDocumentUpdateSeed = easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class);
         editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id(), lastDocumentUpdateSeed);
     }
 
     @When("l'utente tenta la modifica del documento dell'e-service template indicando una specifica vuota")
     public void editDocumentWithEmptySpecFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id(), new UpdateEServiceTemplateVersionDocumentSeed());
     }
 
@@ -68,19 +68,19 @@ public class EServiceTemplateDocumentUpdateSteps {
 
     @When("l'utente tenta la modifica del documento da una versione inesistente dell'e-service template")
     public void editDocumentFromNonExistentEServiceTemplateVersion() {
-        editDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
+        editDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID(), sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
     }
 
     @When("l'utente tenta la modifica di un documento inesistente nell'e-service template")
     public void editNonExistentDocumentFromEServiceTemplateVersion() {
-        editDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(), UUID.randomUUID(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
+        editDocumentFromEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(), UUID.randomUUID(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
     }
 
     @When("l'utente tenta la modifica di un documento di tipo {eServiceTemplateDocumentKind} inserendo il nome di un altro documento di tipo {eServiceTemplateDocumentKind}")
     public void editDocumentFromEServiceTemplateVersionWithSameName(EServiceTemplateDocumentKind kind1, EServiceTemplateDocumentKind kind2) {
         DocumentUpdateStrategy updateStrategy = from(kind1, kind2);
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(
@@ -101,8 +101,8 @@ public class EServiceTemplateDocumentUpdateSteps {
 
     @Then("la modifica del documento di tipo {eServiceTemplateDocumentKind} dell'e-service template è stata effettuata correttamente")
     public void checkDocumentEditedFromEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         UUID documentId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id();
 
         try {

@@ -2,15 +2,16 @@
 Feature: Lettura di un documento
   Tutti gli utenti autenticati possono recuperare un'interfaccia o un documento dai propri descrittori
 
+  @nrt-minimal
   @document_read1
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di recupero di un documento precedentemente caricato da parte di un utente autorizzato (api, admin, support dell’ente erogatore di quell’e-service), l'operazione va a buon fine
+  Scenario Outline: [DESCRIPTOR_READ_1] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di recupero di un documento precedentemente caricato da parte di un utente autorizzato (api, admin, support dell’ente erogatore di quell’e-service), l'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT" e un documento già caricato
     When l'utente richiede il documento
     Then si ottiene status code <risultato>
 
     @happy-path
-    Examples: 
+    Examples:
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
       | GSP  | api          |       200 |
@@ -28,8 +29,9 @@ Feature: Lettura di un documento
       | PA1  | security     |       404 |
 
   @happy-path
+  @nrt-minimal
   @document_read2
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), alla richiesta di recupero di un documento precedentemente caricato da parte di un utente autenticato (qualunque livello di permesso di qualunque ente), l'operazione va a buon fine
+  Scenario Outline: [DESCRIPTOR_READ_2] Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), alla richiesta di recupero di un documento precedentemente caricato da parte di un utente autenticato (qualunque livello di permesso di qualunque ente), l'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoDescrittore>" e un documento già caricato
     When l'utente richiede il documento

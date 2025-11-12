@@ -2,8 +2,9 @@
 Feature: Cancellazione richiesta di fruizione
   Tutti gli utenti autorizzati possono cancellare una richiesta di fruizione in stato DRAFT o MISSING_CERTIFIED_ATTRIBUTES
 
+  @nrt-minimal
   @agreement_delete1a
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
+  Scenario Outline: [AGREEMENT_DELETE_01A] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "<ente>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
@@ -11,7 +12,7 @@ Feature: Cancellazione richiesta di fruizione
     Then si ottiene status code <risultato>
 
     @happy-path
-    Examples: 
+    Examples:
       | ente    | ruolo        | risultato |
       | GSP     | admin        |       204 |
       | PA1     | admin        |       204 |
@@ -33,9 +34,9 @@ Feature: Cancellazione richiesta di fruizione
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
-  @happy-path
-  @agreement_delete1b
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
+  @happy-path @nrt-minimal
+  @agreement_delete1b @certifiedAttribute
+  Scenario Outline: [AGREEMENT_DELETE_01B] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
     Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
@@ -45,28 +46,30 @@ Feature: Cancellazione richiesta di fruizione
     When l'utente richiede una operazione di cancellazione della richiesta di fruizione
     Then si ottiene status code 204
 
-    Examples: 
+    Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
   @sad-path
+  @nrt-minimal
   @agreement_delete2a
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato PENDING, ACTIVE, SUSPENDED o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
+  Scenario Outline: [AGREEMENT_DELETE_02A] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato PENDING, ACTIVE, SUSPENDED o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente richiede una operazione di cancellazione della richiesta di fruizione
     Then si ottiene status code 400
 
-    Examples: 
+    Examples:
       | statoAgreement | tipoApprovazione |
       | ACTIVE         | AUTOMATIC        |
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
   @sad-path
+  @nrt-minimal
   @agreement_delete2b
-  Scenario: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato REJECTED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
+  Scenario: [AGREEMENT_DELETE_02B] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato REJECTED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service

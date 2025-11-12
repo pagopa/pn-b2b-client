@@ -2,7 +2,8 @@
 Feature: Cancellazione client
   Tutti gli utenti autorizzati possono cancellare il proprio client
 
-  Scenario Outline: Un utente con sufficienti permessi (admin) dell'ente che ha creato il client, richiede la cancellazione del client. L'operazione va a buon fine
+  @nrt-minimal
+  Scenario Outline: [DELETE_CLIENT_1] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client, richiede la cancellazione del client. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di cancellazione di quel client
@@ -32,7 +33,8 @@ Feature: Cancellazione client
       | Privato | api,security |        403 |
 
   @sad-path
-  Scenario: Un utente con sufficienti permessi (admin) non associato all’ente che ha creato il client, richiede la cancellazione del client. Ottiene un errore
+  @nrt-minimal
+  Scenario: [DELETE_CLIENT_2] Un utente con sufficienti permessi (admin) non associato all’ente che ha creato il client, richiede la cancellazione del client. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di cancellazione di quel client

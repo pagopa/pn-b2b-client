@@ -60,7 +60,7 @@ Feature: Download attestazione richiesta di fruizione sigillata
     Then si ottiene status code 404
 
   @sad-path
-  @agreement_download2c @wait_for_fix @IMN-305
+  @agreement_download2c @wait_for_fix @IMN-305 @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di download dell'attestazione  della richiesta di fruizione sigillata da parte di un utente con sufficienti permessi, ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

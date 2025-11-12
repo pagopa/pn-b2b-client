@@ -66,7 +66,7 @@ public class EServiceTemplateCatalogSteps {
                 eServiceTemplateClient.getEServiceTemplatesCatalog(
                     0,
                     50,
-                    t.name(),
+                    t.getName(),
                     null))
             .map(response -> response.getBody().getResults())
             .flatMap(List::stream)

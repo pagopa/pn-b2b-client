@@ -1,23 +1,8 @@
 package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +25,10 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     CreatedResource createEServiceTemplateVersion(UUID eServiceTemplateId);
 
     ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(UUID eServiceTemplateId);
+
+    void updateEServiceTemplatePersonalDataFlagAfterPublication(UUID eServiceTemplateId, EServiceTemplatePersonalDataFlagUpdateSeed eserviceTemplatePersonalDataFlagUpdateSeed);
+
+    void updateEServiceTemplatePersonalDataFlagAfterPublicationWithInvalidToken(UUID eServiceTemplateId, EServiceTemplatePersonalDataFlagUpdateSeed eserviceTemplatePersonalDataFlagUpdateSeed);
 
     void updateEServiceTemplateVersion(
         UUID eServiceTemplateId,
@@ -201,4 +190,5 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         String q);
 
     ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds);
+    CatalogEServiceTemplates getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds, Boolean personalData);
 }

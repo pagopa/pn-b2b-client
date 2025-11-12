@@ -44,7 +44,7 @@ public class EServiceTemplateInstanceReadSteps {
 
     @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template")
     public void getEServiceTemplateInstances() {
-        getEserviceTemplateInstances(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
+        getEserviceTemplateInstances(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId());
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente")

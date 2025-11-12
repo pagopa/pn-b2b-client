@@ -39,8 +39,8 @@ public class EServiceTemplateVersionStateSteps {
 
     @Then("l'e-service template è in stato di {eServiceTemplateVersionState}")
     public void checkEServiceTemplateState(EServiceTemplateVersionState expectedState) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         /* Attende qualora eventuali chiamate precedenti (creazione, pubblicazione, sospensione...)
          * non abbiano ancora completato il proprio corso */

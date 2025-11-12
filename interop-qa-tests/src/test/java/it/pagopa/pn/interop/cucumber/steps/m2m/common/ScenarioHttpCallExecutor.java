@@ -5,6 +5,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import java.util.function.Function;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -18,6 +19,13 @@ public class ScenarioHttpCallExecutor implements IHttpExecutor {
     private HttpStatus responseStatus;
     private Object response;
     private String errorMessage;
+
+    @Override
+    public <T> T performCallSavingBodyResponse(Supplier<ResponseEntity<T>> promise) {
+        T body = performCall(promise, ResponseEntity::getStatusCode).getBody();
+        response = body;
+        return body;
+    }
 
     /* TODO 11/03/2025: potrebbe essere il caso di restituire sempre una ResponseEntity,
      * eventualmente con body vuoto e statusCode debitamente valorizzato in caso di eccezioni,
@@ -59,5 +67,11 @@ public class ScenarioHttpCallExecutor implements IHttpExecutor {
         }
         return responseStatus;
     }
+
+    public void setRawResponse(int statusCode, Object rawBody) {
+        this.responseStatus = HttpStatus.valueOf(statusCode);
+        this.response = rawBody;
+    }
+
 }
 

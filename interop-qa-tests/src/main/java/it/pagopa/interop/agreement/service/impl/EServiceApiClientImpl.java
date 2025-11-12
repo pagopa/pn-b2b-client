@@ -6,6 +6,7 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
@@ -15,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescription
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
@@ -45,6 +47,17 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+
+import java.io.File;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -142,7 +155,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
     public CatalogEServices getEServicesCatalog(Integer offset, Integer limit, String q, List<UUID> producersIds,
                                                 List<UUID> attributesIds, List<EServiceDescriptorState> states,
                                                 List<AgreementState> agreementStates, EServiceMode mode, Boolean isConsumerDelegable) {
-        return eservicesApi.getEServicesCatalog(offset, limit, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable);
+
+        /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
+         * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
+        return eservicesApi.getEServicesCatalog(offset, limit, null, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable);
     }
 
     public CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
@@ -193,6 +209,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed) {
+        eservicesApi.updateEServicePersonalDataFlagAfterPublication(eServiceId, seed);
+    }
+
+    @Override
     public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
         UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
         /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
@@ -232,8 +253,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     @Override
     public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
-        String eServiceName) {
-        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, eServiceName, null, null);
+            String eServiceName) {
+        /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
+         * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null);
     }
 
     @Override
@@ -274,6 +297,27 @@ public class EServiceApiClientImpl implements IEServiceClient {
         UUID eServiceId, UUID descriptorId,
         TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed) {
         return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
+    }
+
+    @Override
+    public void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId,
+        AgreementApprovalPolicy policy) {
+        eservicesApi.updateAgreementApprovalPolicy(
+            eServiceId,
+            descriptorId,
+            new UpdateEServiceDescriptorAgreementApprovalPolicySeed()
+                .agreementApprovalPolicy(policy)
+        );
+    }
+
+    @Override
+    public ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.getProducerEServiceDescriptor(eServiceId, descriptorId);
+    }
+
+    @Override
+    public void approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        this.eservicesApi.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
     }
 
     @Override

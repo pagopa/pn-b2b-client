@@ -4,9 +4,12 @@ import java.util.function.Function;
 import org.springframework.http.HttpStatus;
 
 import java.util.function.Supplier;
+import org.springframework.http.ResponseEntity;
 
 public interface IHttpExecutor {
     <T> HttpStatus performCall(Supplier<T> promise);
+
+    <T> T performCallSavingBodyResponse(Supplier<ResponseEntity<T>> promise);
 
     /* TODO 11/03/2025: potrebbe essere il caso di restituire sempre una ResponseEntity,
      * eventualmente con body vuoto e statusCode debitamente valorizzato in caso di eccezioni,
@@ -19,4 +22,5 @@ public interface IHttpExecutor {
     HttpStatus getResponseStatus();
     Object getResponse();
     String getErrorMessage();
+    void setRawResponse(int statusCode, Object rawBody);
 }
