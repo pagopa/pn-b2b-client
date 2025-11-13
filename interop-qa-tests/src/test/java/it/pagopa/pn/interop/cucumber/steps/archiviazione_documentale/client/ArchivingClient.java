@@ -1,15 +1,14 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedDocument;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.DocumentType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatchingStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -19,9 +18,7 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +33,7 @@ public class ArchivingClient {
     public static class SearchFileSeed {
 
         @NonNull
-        private DocumentType type;
+        private FileType type;
 
         @NonNull
         private S3BucketInfo bucketInfo;
@@ -59,10 +56,10 @@ public class ArchivingClient {
 
     private final FileMatcher fileMatcher;
 
-    public ArchivedDocument findS3FileInInterval(SearchFileSeed seed) {
+    public ArchivedFile findS3FileInInterval(SearchFileSeed seed) {
 
-        AtomicReference<ArchivedDocument> file = new AtomicReference<>();
-        DocumentType fileType = seed.getType();
+        AtomicReference<ArchivedFile> file = new AtomicReference<>();
+        FileType fileType = seed.getType();
 
         // Inizializzo la finestra di ricerca
         Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
@@ -126,8 +123,8 @@ public class ArchivingClient {
         return file.get();
     }
 
-    private ArchivedDocument buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo) {
-        ArchivedDocument.ArchivedDocumentBuilder builder = ArchivedDocument.builder();
+    private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo) {
+        ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
 
         // Recupero i metadati classici via HeadObject
         HeadObjectResponse headResp = S3Utils.getHeader(s3, bucketInfo);

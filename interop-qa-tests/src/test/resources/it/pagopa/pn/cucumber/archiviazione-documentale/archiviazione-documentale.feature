@@ -1,6 +1,7 @@
+#TODO: da chiarire se mancano i doc: RiskAnalysisDocumentAdded, AgreementContractDocumentAdded
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
-  Scenario: [AGREEMENT_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
+  Scenario: [AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "PA1" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
@@ -10,7 +11,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 SIGNED l'esistenza del file AgreementActivated
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario Outline: [AGREEMENT_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato
+  Scenario Outline: [AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
@@ -25,7 +26,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
-  Scenario: [PURPOSE_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
+  Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -43,7 +44,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 SIGNED l'esistenza del file NewPurposeVersionActivated
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario: [DELEGATION_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
+  Scenario: [DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
@@ -57,8 +58,11 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApproved
     And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApproved
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApprovedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApprovedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario: [DELEGATION_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato
+  Scenario: [DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente delegato con ruolo "admin"
@@ -69,8 +73,11 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationApproved
     And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationApproved
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationApprovedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationApprovedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario: [DELEGATION_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
+  Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -83,8 +90,11 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationRevoked
     And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationRevoked
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationRevokedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationRevokedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario: [DELEGATION_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato
+  Scenario: [DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
@@ -96,64 +106,47 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationRevoked
     And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationRevoked
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationRevokedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationRevokedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario: Attivazione chiave pubblica - archiviazione PDF firmato
+  Scenario: [KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     When l'utente richiede il caricamento di una chiave pubblica di tipo "RSA"
     Then si ottiene status code 204
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file KeysAddedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file KeysAddedEvent
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  Scenario: Cancellazione chiave pubblica - archiviazione PDF firmato
+  Scenario: [KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede una operazione di cancellazione della chiave di quel client
     Then si ottiene status code 204
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file KeyDeletedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file KeyDeletedEvent
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  Scenario: Modifica versione del descrittore di un e-service - archiviazione PDF firmato
-    Given l'utente è un "admin" di "PA1"
-    Given l'utente ha già creato un e-service contenente anche il primo descrittore
-    Given l'utente ha già pubblicato quel descrittore
-    When l'utente crea una versione in bozza per quell'e-service
-    Then si ottiene status code 200 e il descrittore contiene i campi del precedente
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
-
-  Scenario Outline: Lettura descrittore di un e-service in tutti gli stati - archiviazione PDF firmato
+  Scenario Outline:[ESERVICE_EVENT_ARCHIVE_1] Upgrade descrittore eservice - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
-    When l'utente richiede la lettura di quel descrittore
-    Then si ottiene status code 200
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file DescriptorEserviceUpgradedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file DescriptorEserviceUpgradedEvent
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
     Examples:
       | statoVersione |
-      | DRAFT         |
       | PUBLISHED     |
       | SUSPENDED     |
       | DEPRECATED    |
       | ARCHIVED      |
+      | DRAFT         |
 
-  Scenario: Generazione voucher - archiviazione JWT firmato
+  Scenario: [VOUCHER_EVENT_ARCHIVE_1] Generazione voucher - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -164,24 +157,53 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file VoucherEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file VoucherEvent
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
+  Scenario Outline: [PURPOSE_EVENT_ARCHIVE_1] Purpose upgrade - archiviazione ZIP firmato
+    Given l'utente è un "admin" di "PA1"
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA1" ha già creato 1 finalità in stato "<state>" per quell'eservice
+    Then si ottiene status code 200
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeUpgradedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeUpgradedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-    # TC012 - Archiviazione degli eventi di piattaforma: SONO ASSOCIABILI AI TEST STANDARD
+    Examples:
+      | state                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | REJECTED             |
+      | WAITING_FOR_APPROVAL |
+      | ARCHIVED             |
+      | DRAFT                |
 
-     # | tipoEvento                  |
-     # | creazione chiavi            |
-     # | cancellazione chiavi        |
-     # | cancellazione client        |
-     # | attivazione richiesta       |
-     # | cambio stato richiesta      |
-     # | attivazione finalità        |
-     # | cambio stato finalità       |
-     # | creazione descrittore       |
-     # | cambio stato descrittore    |
-     # | attivazione delega          |
-     # | revoca delega               |
+  Scenario Outline: [AGREEMENT_EVENT_ARCHIVE_1] Agreement upgrade - archiviazione ZIP firmato
+    Given l'utente è un "admin" di "PA1"
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA1" ha una richiesta di fruizione in stato "<state>" per quell'e-service
+    Then si ottiene status code 200
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementUpgradedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file AgreementUpgradedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+
+    Examples:
+      | state                        |
+      | ACTIVE                       |
+      | SUSPENDED                    |
+      | REJECTED                     |
+      | MISSING_CERTIFIED_ATTRIBUTES |
+      | ARCHIVED                     |
+      | DRAFT                        |
+      | PENDING                      |
+
+  Scenario: [CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato 1 client "CONSUMER"
+    When l'utente richiede una operazione di cancellazione di quel client
+    Then si ottiene status code 204
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ClientDeletedEvent
+    And verifica nel bucket S3 SIGNED l'esistenza del file ClientDeletedEvent
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione

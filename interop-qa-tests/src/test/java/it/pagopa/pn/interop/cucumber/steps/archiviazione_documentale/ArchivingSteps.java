@@ -1,13 +1,12 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale;
 
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.DocumentArchivingContext;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.DocumentType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedDocument;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import org.assertj.core.api.Assertions;
 
@@ -18,11 +17,11 @@ import static org.assertj.core.api.Assertions.within;
 
 public class ArchivingSteps {
 
-    private final DocumentArchivingContext context;
+    private final ArchivingContext context;
     private final ArchivingClient client;
     private final FileMatcher fileMatcher;
 
-    public ArchivingSteps(SharedStepsContext sharedStepsContext, DocumentArchivingContext context) {
+    public ArchivingSteps(SharedStepsContext sharedStepsContext, ArchivingContext context) {
         this.context = context;
         context.setSharedStepsContext(sharedStepsContext);
 
@@ -31,13 +30,13 @@ public class ArchivingSteps {
     }
 
     @Then("verifica nel bucket S3 {bucketType} l'esistenza del file {documentType}")
-    public void checkS3Bucket(boolean isSigned, DocumentType documentType){
-        S3BucketInfo bucketInfo = isSigned ? context.getWormBuckets().get(documentType) : context.getBuckets().get(documentType);
+    public void checkS3Bucket(boolean isSigned, FileType fileType){
+        S3BucketInfo bucketInfo = isSigned ? context.getWormBuckets().get(fileType) : context.getBuckets().get(fileType);
         ArchivingClient.SearchFileSeed seed =
                 ArchivingClient.SearchFileSeed.builder()
-                        .bucketInfo(bucketInfo).type(documentType).isSigned(isSigned).build();
+                        .bucketInfo(bucketInfo).type(fileType).isSigned(isSigned).build();
 
-        ArchivedDocument file = client.findS3FileInInterval(seed);
+        ArchivedFile file = client.findS3FileInInterval(seed);
         Assertions.assertThat(file)
                 .as("Atteso file %s nel bucket %s ma non è stato trovato", bucketInfo.getKey(), bucketInfo.getBucket())
                 .isNotNull();

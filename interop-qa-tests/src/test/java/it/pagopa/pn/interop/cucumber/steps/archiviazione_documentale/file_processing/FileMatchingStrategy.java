@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.DocumentType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ public interface FileMatchingStrategy {
     @AllArgsConstructor
     class MatchingStrategySeed{
         S3Client s3;
-        DocumentType documentType;
+        FileType fileType;
         S3BucketInfo bucketName;
     }
 

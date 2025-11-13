@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.DocumentType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,9 +9,9 @@ import java.time.Instant;
 
 @Getter
 @Builder
-public class ArchivedDocument {
+public class ArchivedFile {
     private S3BucketInfo bucketInfo;
-    private DocumentType type;
+    private FileType type;
     private long contentLength;
     private String contentType;
     private Instant creationDate;
