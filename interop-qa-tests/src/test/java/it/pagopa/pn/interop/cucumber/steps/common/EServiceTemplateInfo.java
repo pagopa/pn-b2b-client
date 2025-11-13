@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class EServiceTemplateInfo {
     private String name;
     private String intendedTarget;
     private String eServiceDescription;
+    private EServiceMode mode;
     private UUID id;
     private java.util.UUID lastVersionId;
+    private Boolean personalData;
 }

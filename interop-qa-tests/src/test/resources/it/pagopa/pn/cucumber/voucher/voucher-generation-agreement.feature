@@ -48,7 +48,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
-@voucher_generation_agreement4 @no-parallel
+@voucher_generation_agreement4 @no-parallel @certifiedAttribute
 Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo certificato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
@@ -249,7 +249,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione �
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
-@voucher_generation_agreement16 @no-parallel
+@voucher_generation_agreement16 @no-parallel @certifiedAttribute
 Scenario: La generazione del Voucher fallisce quando il fruitore perde un attributo certificato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"

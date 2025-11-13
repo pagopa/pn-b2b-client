@@ -50,7 +50,7 @@ Feature: Cancellazione di un documento allegato alla richiesta di fruizione
       | ARCHIVED       | AUTOMATIC        |
 
   @sad-path
-  @agreement_document_delete2b
+  @agreement_document_delete2b @certifiedAttribute
   Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, cancella un documento associato alla richiesta di fruizione. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

@@ -1,44 +1,14 @@
 package it.pagopa.interop.agreement.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
-import org.springframework.http.ResponseEntity;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 
 import java.io.File;
-import java.util.List;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 
 public interface IEServiceClient extends SettableBearerToken {
-
     CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed);
     void deleteEService(UUID eServiceId);
     void deleteEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);
@@ -67,6 +37,7 @@ public interface IEServiceClient extends SettableBearerToken {
     void updateEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId, EServiceRiskAnalysisSeed eserviceRiskAnalysisSeed);
     PresignedUrl getImportEservicePresignedUrl(String fileName);
     CreatedEServiceDescriptor importEService(FileResource fileResource);
+    void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed);
 
     ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
         UUID templateId, InstanceEServiceSeed instanceEServiceSeed);
@@ -108,4 +79,6 @@ public interface IEServiceClient extends SettableBearerToken {
 
     ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
         UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed);
+
+    void approveDelegatedEServiceDescriptor(UUID eserviceId, UUID descriptorId);
 }

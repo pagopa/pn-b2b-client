@@ -11,11 +11,11 @@ Feature: Lettura del template di analisi del rischio più recente
 
     Examples:
       | ente    | ruolo        | versione |
-      | PA1     | admin        |      3.0 |
-      | PA1     | api          |      3.0 |
-      | PA1     | security     |      3.0 |
-      | PA1     | api,security |      3.0 |
-      | PA1     | support      |      3.0 |
+      | PA1     | admin        |      3.1 |
+      | PA1     | api          |      3.1 |
+      | PA1     | security     |      3.1 |
+      | PA1     | api,security |      3.1 |
+      | PA1     | support      |      3.1 |
       | GSP     | admin        |      2.0 |
       | GSP     | api          |      2.0 |
       | GSP     | security     |      2.0 |

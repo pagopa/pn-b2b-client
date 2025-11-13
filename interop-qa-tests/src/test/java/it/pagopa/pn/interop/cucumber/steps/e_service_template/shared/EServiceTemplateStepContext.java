@@ -7,6 +7,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAtt
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -14,9 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
-import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,6 +77,8 @@ public class EServiceTemplateStepContext {
     private EServiceTemplateRiskAnalysisSeed lastAddedRiskAnalysis;
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
     private UUID lastAddedRiskAnalysisId;
+
+    private List<DocumentMetadata> documentsMetadata;
 
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(

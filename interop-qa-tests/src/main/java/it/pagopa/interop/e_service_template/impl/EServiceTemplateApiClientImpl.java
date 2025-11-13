@@ -4,23 +4,8 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 )
 public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     private final EserviceTemplatesApi eserviceTemplatesApi;
+    private final EserviceTemplatesApi apiWithInvalidToken;
     private final RestTemplate restTemplate;
     private final String basePath;
 
@@ -51,6 +37,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.eserviceTemplatesApi = new EserviceTemplatesApi(createApiClient("dummyBearer"));
+        this.apiWithInvalidToken = new EserviceTemplatesApi(createApiClient("invalidToken"));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -66,8 +53,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
-    public void updateEServiceTemplate(UUID eServiceTemplateId,
-        UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
+    public void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
         eserviceTemplatesApi.updateEServiceTemplate(eServiceTemplateId, updateEServiceTemplateSeed);
     }
 
@@ -86,6 +72,16 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(
         UUID eServiceTemplateId) {
         return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(eServiceTemplateId);
+    }
+
+    @Override
+    public void updateEServiceTemplatePersonalDataFlagAfterPublication(UUID eServiceTemplateId, EServiceTemplatePersonalDataFlagUpdateSeed eserviceTemplatePersonalDataFlagUpdateSeed) {
+        eserviceTemplatesApi.updateEServiceTemplatePersonalDataFlagAfterPublication(eServiceTemplateId, eserviceTemplatePersonalDataFlagUpdateSeed);
+    }
+
+    @Override
+    public void updateEServiceTemplatePersonalDataFlagAfterPublicationWithInvalidToken(UUID eServiceTemplateId, EServiceTemplatePersonalDataFlagUpdateSeed eserviceTemplatePersonalDataFlagUpdateSeed) {
+        apiWithInvalidToken.updateEServiceTemplatePersonalDataFlagAfterPublication(eServiceTemplateId, eserviceTemplatePersonalDataFlagUpdateSeed);
     }
 
     @Override
@@ -407,7 +403,15 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(
         Integer offset, Integer limit, String q, List<UUID> creatorsIds) {
-        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(offset, limit, q, creatorsIds);
+        /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
+         * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(offset, limit, null, q, creatorsIds);
+    }
+
+    @Override
+    public CatalogEServiceTemplates getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds, Boolean personalData) {
+        PersonalDataFilter filter = personalData == null ? null : PersonalDataFilter.valueOf(personalData.toString().toUpperCase());
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalog(offset, limit, filter, q, creatorsIds);
     }
 
     @Override

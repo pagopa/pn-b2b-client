@@ -6,23 +6,21 @@ import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.common.AgreementCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.*;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
@@ -32,6 +30,7 @@ public class SharedStepsContext {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final PollingService pollingService;
+    private final DelayService delayService;
 
     private int testSeed;
     private String tenantType;
@@ -50,10 +49,12 @@ public class SharedStepsContext {
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
             @Qualifier("interopIdentityService") IdentityService identityService,
-            PollingService pollingService) {
+            PollingService pollingService,
+            DelayService delayService) {
         this.httpCallExecutor = httpCallExecutor;
         this.identityService = identityService;
         this.pollingService = pollingService;
+        this.delayService = delayService;
     }
 
     @Before

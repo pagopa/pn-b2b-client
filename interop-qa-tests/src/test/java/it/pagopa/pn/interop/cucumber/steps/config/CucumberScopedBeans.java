@@ -1,11 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
-import io.cucumber.spring.ScenarioScope;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceSteps;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 
 @TestConfiguration
 /**
@@ -24,10 +19,12 @@ import org.springframework.context.annotation.Bean;
  */
 public class CucumberScopedBeans {
 
+    /* 22/07/2025: non più necessario a partire da API v2 parte 2, rimuovere
     @Bean(name = "eserviceSteps")
     @ScenarioScope
-    public EserviceSteps eserviceSteps(SharedStepsContext sharedStepsContext,
-                                       ClientTokenConfigurator clientTokenConfigurator) {
-        return new EserviceSteps(sharedStepsContext, clientTokenConfigurator);
-    }
+    public EserviceSteps eserviceSteps( SharedStepsContext sharedStepsContext,
+                                        ClientTokenConfigurator clientTokenConfigurator,
+                                        BlobFileCreator blobFileCreator) {
+        return new EserviceSteps(sharedStepsContext, clientTokenConfigurator, blobFileCreator);
+    }*/
 }

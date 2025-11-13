@@ -43,7 +43,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
     Then si ottiene status code 400
 
   @sad-path
-  @agreement_update2b
+  @agreement_update2b @certifiedAttribute
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
