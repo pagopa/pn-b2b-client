@@ -262,7 +262,7 @@ public class EServiceTemplateTestAssistant {
                                 EServiceTemplateDocumentKind.class.getSimpleName(),
                                 kind));
                         };
-                        return doc.getPrettyName().equals(lastAddedDocument.prettyName());
+                        return nonNull(doc) && doc.getPrettyName().equals(lastAddedDocument.prettyName());
                     }
                     return false;
 

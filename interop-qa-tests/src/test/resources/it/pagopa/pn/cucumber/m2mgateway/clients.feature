@@ -1,6 +1,6 @@
 Feature: Gestione dei clients attraverso APIs M2M V2
 
-  @m2m-agreements-parte2-luglio @failed-nrt-03112025
+  @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_CLIENTS_PURPOSES_1] Le finalità correlate ad un certo client possono essere visualizzate da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 28)
   Given l'utente è un "admin" di "PA1"
   And "PA1" ha già creato e pubblicato 1 e-service
