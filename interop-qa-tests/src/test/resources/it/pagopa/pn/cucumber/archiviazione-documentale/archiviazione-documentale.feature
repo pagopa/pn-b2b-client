@@ -1,10 +1,5 @@
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
-  Background:
-    Given il sistema è correttamente configurato
-    And il bucket S3 di documenti "interop-application-documents-<envName>-es1" è accessibile
-    And il bucket S3 WORM di documenti firmati "interop-signed-application-documents-<envName>-es1" è accessibile
-    And il servizio SafeStorage è disponibile
 
   # TC001 - Attivazione richiesta di fruizione (puo essere considerato come sottoinsieme di TC002 e quindi unito)
   @tc001
@@ -14,20 +9,20 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Given "PA1" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     When l'utente inoltra quella richiesta di fruizione
     Then la richiesta di fruizione assume lo stato "ACTIVE"
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementActivated
+    And verifica nel bucket S3 SIGNED l'esistenza del file AgreementActivated
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
     And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
   # TC002 - Cambio stato richiesta di fruizione
   @tc002
- Scenario Outline: Cambio stato richiesta di fruizione - archiviazione PDF firmato
+  Scenario Outline: Cambio stato richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementUpgraded
+    And verifica nel bucket S3 SIGNED l'esistenza del file AgreementUpgraded
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
     And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
@@ -39,35 +34,54 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
-   # TC003 - Attivazione analisi del rischio di una finalità
-  @tc003
-  Scenario: Attivazione analisi del rischio - archiviazione PDF firmato
+     # TC003 - Attivazione finalità
+  #TODO: verificare se gli eventi cosi vengono generati
+  Scenario: Attivazione nuova versione finalità
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente scarica il documento di analisi del rischio
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeActivated
+    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeActivated
+    When l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
+    And si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeVersionActivated
+    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeVersionActivated
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
+    And l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
+    And si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file NewPurposeVersionActivated
+    And verifica nel bucket S3 SIGNED l'esistenza del file NewPurposeVersionActivated
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
   # TC004 - Sospensione analisi del rischio di una finalità
-  @tc004
-  Scenario: Sospensione analisi del rischio - archiviazione PDF firmato
-    Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato e pubblicato 1 e-service
-    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When l'utente sospende quella finalità in stato "ACTIVE"
+  #TODO: da correggere, non ci sono documenti creati per questo evento (vedendo il task su SRS)
+
+  #TC004 - Deleghe
+  Scenario: Delega in fruizione
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'utente è un "<ruolo>" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 200
-    And l'utente scarica il documento di analisi del rischio
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApproved
+    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApproved
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
+
+  Scenario: Attivazione delega - archiviazione PDF firmato
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And un utente dell'ente delegato con ruolo "admin"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'ente "PA2" accetta la delega
+    Then si ottiene status code 200
 
   # TC005 - Attivazione delega
   @tc005

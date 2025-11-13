@@ -4,9 +4,11 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.FileContext;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileTypes;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.DocumentArchivingContext;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.DocumentType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedDocument;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import org.assertj.core.api.Assertions;
 
 import java.time.Instant;
@@ -16,35 +18,42 @@ import static org.assertj.core.api.Assertions.within;
 
 public class ArchivingSteps {
 
-    private final SharedStepsContext sharedStepsContext;
+    private final DocumentArchivingContext context;
     private final ArchivingClient client;
     private final FileMatcher fileMatcher;
 
-    public ArchivingSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
-        this.sharedStepsContext = sharedStepsContext;
-        this.fileMatcher = new FileMatcher();
+    public ArchivingSteps(SharedStepsContext sharedStepsContext, DocumentArchivingContext context) {
+        this.context = context;
+        context.setSharedStepsContext(sharedStepsContext);
+
+        this.fileMatcher = new FileMatcher(sharedStepsContext);
         this.client = new ArchivingClient(fileMatcher);
     }
 
-    @Then("verifica nel bucket S3 {string} l'esistenza del file unsigned {string} con estensione {string}")
-    @Then("verifica nel bucket S3 WORM {string} l'esistenza del file signed {string} con estensione {string}")
-    public void checkS3Bucket(String bucketName, String regex, FileTypes fileType){
-        boolean finded = client.matchS3FileInInterval(bucketName, fileType, regex, "", 100,100,100 );
-        Assertions.assertThat(finded)
-                .as("Atteso file %s nel bucket %s con pattern %s ma non è stato trovato", fileType, bucketName, regex)
-                .isTrue();
+    @Then("verifica nel bucket S3 {bucketType} l'esistenza del file {documentType}")
+    public void checkS3Bucket(boolean isSigned, DocumentType documentType){
+        S3BucketInfo bucketInfo = isSigned ? context.getWormBuckets().get(documentType) : context.getBuckets().get(documentType);
+        ArchivingClient.SearchFileSeed seed =
+                ArchivingClient.SearchFileSeed.builder()
+                        .bucketInfo(bucketInfo).type(documentType).isSigned(isSigned).build();
+
+        ArchivedDocument file = client.findS3FileInInterval(seed);
+        Assertions.assertThat(file)
+                .as("Atteso file %s nel bucket %s ma non è stato trovato", bucketInfo.getKey(), bucketInfo.getBucket())
+                .isNotNull();
     }
 
+    @Then("verifica che il file nel bucket SIGNED abbia la proprietà \"Retain until date\" pari a 10 anni dalla data di creazione")
     @Then("verifica che il file nel bucket WORM abbia la proprietà \"Retain until date\" pari a 10 anni dalla data di creazione")
     public void checkRetainUntilDate() {
-        FileContext ctx = fileMatcher.getContext();
 
-        Instant creationDate = ctx.getCreationDate();
+        Instant creationDate = context.getCurrentFile().getCreationDate();
         Instant expectedRetainUntil = creationDate.plus(10, ChronoUnit.YEARS);
+        Instant actualRetainUntilDate = context.getCurrentFile().getRetainUntilDate();
 
         // Tolleranza di 1 giorno
-        Assertions.assertThat(ctx.getRetainUntilDate())
-                .as("La Retain until date non è 10 anni dopo la creation date. Creation=%s, Retain=%s", creationDate, ctx.getRetainUntilDate())
+        Assertions.assertThat(actualRetainUntilDate)
+                .as("La Retain until date non è 10 anni dopo la creation date. Creation=%s, Retain=%s", creationDate, actualRetainUntilDate)
                 .isCloseTo(expectedRetainUntil, within(1, ChronoUnit.DAYS));
     }
 
