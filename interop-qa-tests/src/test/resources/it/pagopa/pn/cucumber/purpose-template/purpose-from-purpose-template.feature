@@ -16,7 +16,7 @@ Feature: finalità agevolata, purpose from purpose template
     Examples:
       | personalData | statusCode |
       | "true"       | 200        |
-      | "false"      | 409        |
+      | "false"      | 400        |
 
   #109 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
@@ -30,20 +30,20 @@ Feature: finalità agevolata, purpose from purpose template
     #consumerId
     #riskAnalysisForm
     #title
-    Then si ottiene response status code 400
+    Then si ottiene response status code 404
     Examples:
       | state     |
       | DRAFT     |
       | SUSPENDED |
       | ARCHIVED  |
 
-  #110 (KO) TODO MATTEO, dice 400, ma secondo me restituisce 404
+  #110 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WRONG_INPUT]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con handlePersonalData "true"
     And il purpose template creato viene spostato in stato PUBLISHED
-    When si crea una finalità a partire dal purpose template creato passando "DATI INESISTENTI"
+    When si crea una finalità a partire dal purpose template creato passando "DATI NULL"
     Then si ottiene response status code 400
 
   #111 (KO)
@@ -99,7 +99,7 @@ Feature: finalità agevolata, purpose from purpose template
     And si crea una finalità a partire dal purpose template esistente
     And la finalità viene portata in stato <state>
     When si modifica la finalità creata
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
     Examples:
       | state                |
       | DRAFT                |

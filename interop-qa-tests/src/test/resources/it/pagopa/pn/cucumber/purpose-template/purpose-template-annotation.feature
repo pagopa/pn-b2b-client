@@ -1,6 +1,6 @@
 Feature: finalità agevolata, purpose template ANNOTATION
 
-  #TODO todo Matteo -> 63-64 rimangono da fare
+  #TODO MATTEO -> #63- #64 rimangono da fare
 
   #66-67 (OK-KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
@@ -20,7 +20,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <status>
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI" per il purpose template creato
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | status    |
       | PUBLISHED |
@@ -100,7 +100,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI" per il purpose template creato
     When il purpose template creato viene spostato in stato <ptState>
     And viene "modificata" un'annotation "ENTRO I LIMITI CONSENTITI" per il purpose template esistente
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | ptState   |
       | PUBLISHED |
@@ -174,7 +174,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI" per il purpose template creato
     When il purpose template creato viene spostato in stato <state>
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotation esistente
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | state     |
       | PUBLISHED |

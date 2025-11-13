@@ -14,7 +14,7 @@ Feature: finalità agevolata, purpose template SUSPENSION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
     When il purpose template creato viene spostato in stato SUSPENDED
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | state    |
       | DRAFT    |

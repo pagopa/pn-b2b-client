@@ -18,7 +18,7 @@ Feature: finalità agevolata, purpose template UPDATE
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
     When si aggiorna il purpose template creato
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | state     |
       | PUBLISHED |

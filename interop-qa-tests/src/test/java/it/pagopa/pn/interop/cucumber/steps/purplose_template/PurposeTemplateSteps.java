@@ -81,7 +81,7 @@ public class PurposeTemplateSteps {
         RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed();
         RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed();
         RiskAnalysisTemplateAnswerAnnotationSeed annotationSeed = new RiskAnalysisTemplateAnswerAnnotationSeed();
-        
+
         request.setPurposeRiskAnalysisForm(riskAnalysisForm);
 
         switch (handlePersonalDataValue.toUpperCase()) {
@@ -374,8 +374,8 @@ public class PurposeTemplateSteps {
 
         String text = "";
         switch (answerType.toUpperCase()) {
-            case "ENTRO I LIMITI CONSENTITI" -> text = "A".repeat(250);
-            case "OLTRE I LIMITI CONSENTITI" -> text = "B".repeat(251);
+            case "ENTRO I LIMITI CONSENTITI" -> text = "A".repeat(2000);
+            case "OLTRE I LIMITI CONSENTITI" -> text = "B".repeat(2001);
             case "CONTENENTE HYPER LINK" -> text = "https://www.google.com";
         }
         request.getAnswerData().getAnnotation().setText(text);
@@ -519,9 +519,9 @@ public class PurposeTemplateSteps {
         fromSeed.setTitle("PurposeFromTemplateSeed" + DateTime.now());
         fromSeed.setDailyCalls(10);
         switch (parameterType.toUpperCase()) {
-            case "DATI INESISTENTI" -> {
-                fromSeed.setEserviceId(UUID.randomUUID());
-                fromSeed.setConsumerId(UUID.randomUUID());
+            case "DATI NULL" -> {
+                fromSeed.setTitle(null);
+                fromSeed.setDailyCalls(null);
             }
             case "TITOLO ESISTENTE" -> fromSeed.setTitle("Duplicated Title");
             default -> {

@@ -47,7 +47,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
     When il purpose template creato viene associato all'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | state     |
       | SUSPENDED |
@@ -129,7 +129,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
     And il purpose template creato viene associato all'e-service
     And il purpose template creato viene spostato in stato <state>
     When il purpose template creato viene disassociato dall'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | state     |
       | SUSPENDED |
