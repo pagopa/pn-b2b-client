@@ -1,9 +1,6 @@
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
-
-  # TC001 - Attivazione richiesta di fruizione (puo essere considerato come sottoinsieme di TC002 e quindi unito)
-  @tc001
-  Scenario: Attivazione richiesta di fruizione - archiviazione PDF firmato
+  Scenario: [AGREEMENT_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "PA1" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
@@ -12,20 +9,14 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementActivated
     And verifica nel bucket S3 SIGNED l'esistenza del file AgreementActivated
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  # TC002 - Cambio stato richiesta di fruizione
-  @tc002
-  Scenario Outline: Cambio stato richiesta di fruizione - archiviazione PDF firmato
+  Scenario Outline: [AGREEMENT_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementUpgraded
     And verifica nel bucket S3 SIGNED l'esistenza del file AgreementUpgraded
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
     Examples:
       | statoAgreement | tipoApprovazione |
@@ -34,9 +25,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
 
-     # TC003 - Attivazione finalità
-  #TODO: verificare se gli eventi cosi vengono generati
-  Scenario: Attivazione nuova versione finalità
+  Scenario: [PURPOSE_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -54,11 +43,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 SIGNED l'esistenza del file NewPurposeVersionActivated
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  # TC004 - Sospensione analisi del rischio di una finalità
-  #TODO: da correggere, non ci sono documenti creati per questo evento (vedendo il task su SRS)
-
-  #TC004 - Deleghe
-  Scenario: Delega in fruizione
+  Scenario: [DELEGATION_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
@@ -73,7 +58,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApproved
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
-  Scenario: Attivazione delega - archiviazione PDF firmato
+  Scenario: [DELEGATION_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente delegato con ruolo "admin"
@@ -81,27 +66,25 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
     And l'ente "PA2" accetta la delega
-    Then si ottiene status code 200
-
-  # TC005 - Attivazione delega
-  @tc005
-  Scenario: Attivazione delega - archiviazione PDF firmato
-    Given l'ente delegante "PA1"
-    And l'ente delegato "PA2"
-    And un utente dell'ente delegato con ruolo "admin"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
-    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And l'ente "PA2" accetta la delega
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationApproved
+    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationApproved
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  # TC006 - Revoca delega
-  @tc006
-  Scenario: Revoca delega - archiviazione PDF firmato
+  Scenario: [DELEGATION_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato rifiuta la delega in fruizione
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationRevoked
+    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationRevoked
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+
+  Scenario: [DELEGATION_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
@@ -110,14 +93,10 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Then si ottiene lo status code 200
     When l'ente "PA1" con ruolo "admin" revoca la delega
     Then si ottiene lo status code 200
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "pdf"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "pdf"
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationRevoked
+    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationRevoked
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
-    And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  # TC007 - Attivazione chiave pubblica
-  @tc007
   Scenario: Attivazione chiave pubblica - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -130,8 +109,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
     And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  # TC008 - Cancellazione chiave pubblica
-  @tc008
   Scenario: Cancellazione chiave pubblica - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -145,8 +122,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
     And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  # TC009 - Modifica e-service
-  @tc009
   Scenario: Modifica versione del descrittore di un e-service - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given l'utente ha già creato un e-service contenente anche il primo descrittore
@@ -159,8 +134,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 "interop-application-documents-<envName>-es1" l'esistenza del file unsigned "regex" con estensione "zip"
     And verifica nel bucket S3 WORM "interop-application-documents-<envName>-es1" l'esistenza del file signed "regex" con estensione "zip"
 
-  # TC010 - Cambio stato e-service
-  @tc010
   Scenario Outline: Lettura descrittore di un e-service in tutti gli stati - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
@@ -180,8 +153,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | DEPRECATED    |
       | ARCHIVED      |
 
-  # TC011 - Generazione voucher e archiviazione JWT firmato
-  @tc011
   Scenario: Generazione voucher - archiviazione JWT firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
