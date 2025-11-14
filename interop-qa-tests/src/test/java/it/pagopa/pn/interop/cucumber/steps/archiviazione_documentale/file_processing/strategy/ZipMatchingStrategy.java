@@ -1,13 +1,6 @@
-package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing;
-
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy;
 
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class ZipMatchingStrategy implements FileMatchingStrategy {
     @Override

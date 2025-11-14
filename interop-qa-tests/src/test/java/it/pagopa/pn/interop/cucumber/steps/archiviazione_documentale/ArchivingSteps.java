@@ -19,14 +19,11 @@ public class ArchivingSteps {
 
     private final ArchivingContext context;
     private final ArchivingClient client;
-    private final FileMatcher fileMatcher;
 
     public ArchivingSteps(SharedStepsContext sharedStepsContext, ArchivingContext context) {
         this.context = context;
         context.setSharedStepsContext(sharedStepsContext);
-
-        this.fileMatcher = new FileMatcher(sharedStepsContext);
-        this.client = new ArchivingClient(fileMatcher);
+        this.client = new ArchivingClient(sharedStepsContext);
     }
 
     @Then("verifica nel bucket S3 {bucketType} l'esistenza del file {documentType}")

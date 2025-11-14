@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -212,6 +214,211 @@ public class FileUtils {
     public static <T> T readJsonAsSafe(String pathRelativo, Class<T> valueType) {
         synchronized (getFileLock(pathRelativo)) {
             return readJsonAs(pathRelativo, valueType);
+        }
+    }
+
+    /**
+     * Legge un PDF da uno {@link InputStream} ed estrae il testo,
+     * verificando che TUTTE le parole specificate siano presenti.
+     *
+     * @param inputStream InputStream contenente il PDF da analizzare
+     * @param words lista di parole da verificare (tutte devono essere presenti)
+     * @return true se tutte le parole sono contenute nel PDF, false altrimenti
+     * @throws RuntimeException in caso di errore nella lettura del PDF
+     */
+    public static boolean pdfContainsAllWords(InputStream inputStream, List<String> words) {
+        try (PDDocument document = PDDocument.load(inputStream)) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            String text = stripper.getText(document).toLowerCase();
+
+            for (String word : words) {
+                if (!text.contains(word.toLowerCase())) {
+                    return false;
+                }
+            }
+            return true;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Errore durante la lettura del PDF", e);
+        }
+    }
+
+    /**
+     * Versione thread-safe di {@link #pdfContainsAllWords(InputStream, List)}.
+     * Legge il PDF da src/test/resources e verifica che tutte le parole siano presenti.
+     *
+     * @param pathRelativo percorso del PDF relativo a src/test/resources
+     * @param words lista di parole da verificare
+     * @return true se tutte le parole sono presenti, false altrimenti
+     */
+    public static boolean pdfContainsAllWordsSafe(String pathRelativo, List<String> words) {
+        synchronized (getFileLock(pathRelativo)) {
+            File file = new File("src/test/resources/" + pathRelativo);
+            try (InputStream in = new FileInputStream(file)) {
+                return pdfContainsAllWords(in, words);
+            } catch (Exception e) {
+                throw new RuntimeException("Errore durante la lettura del PDF", e);
+            }
+        }
+    }
+
+
+    /**
+     * Recupera un nodo JSON tramite un percorso "path" annidato.
+     * Supporta sia oggetti che array tramite notazione es: "a.b[2].c".
+     *
+     * Esempi validi:
+     * - "utente.nome"
+     * - "ordine.articoli[0].prezzo"
+     * - "a.b.c[2].x"
+     *
+     * @param root nodo JSON radice
+     * @param path percorso annidato, usando "." per gli oggetti e "[index]" per gli array
+     * @return il nodo JSON corrispondente, oppure null se non trovato
+     */
+    public static JsonNode getNodeByPath(JsonNode root, String path) {
+        String[] tokens = path.split("\\.");
+
+        JsonNode current = root;
+
+        for (String token : tokens) {
+
+            // Gestione array: es "items[3]"
+            if (token.contains("[") && token.contains("]")) {
+                String fieldName = token.substring(0, token.indexOf("["));
+                int index = Integer.parseInt(token.substring(token.indexOf("[") + 1, token.indexOf("]")));
+
+                current = current.get(fieldName);
+                if (current == null || !current.isArray() || index >= current.size()) {
+                    return null;
+                }
+                current = current.get(index);
+
+            } else {
+                // Accesso chiave oggetto semplice
+                current = current.get(token);
+            }
+
+            if (current == null) {
+                return null;
+            }
+        }
+
+        return current;
+    }
+
+    /**
+     * Verifica che un oggetto JSON contenga TUTTE le coppie chiave-valore specificate.
+     * La chiave può essere un path annidato usando "." e "[index]".
+     *
+     * Esempi di path:
+     * - "utente.nome"
+     * - "ordine.articoli[1].descrizione"
+     *
+     * @param json oggetto JSON da verificare
+     * @param conditions mappa di path → valore atteso
+     * @return true se tutte le condizioni sono soddisfatte, false altrimenti
+     */
+    public static boolean jsonMatchesAll(JsonNode json, Map<String, String> conditions) {
+        for (Map.Entry<String, String> entry : conditions.entrySet()) {
+
+            JsonNode node = getNodeByPath(json, entry.getKey());
+            if (node == null || node.isMissingNode()) {
+                return false;
+            }
+
+            if (!node.asText().equals(entry.getValue())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Legge un file NDJSON da uno {@link InputStream} e verifica se
+     * almeno una riga soddisfa tutte le condizioni specificate.
+     *
+     * <p>Ogni riga del NDJSON deve contenere un oggetto JSON valido.</p>
+     *
+     * <p>Le condizioni sono espresse tramite una mappa nella forma
+     * {@code path → valoreAtteso}, dove il path può essere semplice
+     * (es. "id") oppure annidato, usando "." per gli oggetti e "[index]"
+     * per accedere agli array.</p>
+     *
+     * <p><b>Esempi di path supportati:</b></p>
+     * <ul>
+     *   <li>"id"</li>
+     *   <li>"utente.nome"</li>
+     *   <li>"utente.indirizzi[1].citta"</li>
+     *   <li>"ordine.articoli[0].prezzo"</li>
+     *   <li>"ordine.articoli[2].varianti[1].colore"</li>
+     * </ul>
+     *
+     * <p><b>Esempio completo di costruzione della mappa {@code conditions}
+     * per JSON complessi:</b></p>
+     *
+     * <pre>{@code
+     * Map<String, String> conditions = Map.of(
+     *     // Oggetti annidati
+     *     "utente.info.nome", "Mario",
+     *
+     *     // Accesso a un array (secondo elemento)
+     *     "utente.indirizzi[1].citta", "Milano",
+     *
+     *     // Oggetto dentro array
+     *     "ordine.articoli[0].codice", "ABC123",
+     *
+     *     // Array annidati
+     *     "ordine.articoli[2].varianti[1].colore", "rosso"
+     * );
+     * }</pre>
+     *
+     * <p>Il metodo restituirà {@code true} se almeno una riga del NDJSON
+     * contiene tutte le coppie path → valore indicate.</p>
+     *
+     * @param inputStream InputStream contenente il NDJSON da analizzare
+     * @param conditions mappa path → valore atteso (vedi esempi sopra)
+     * @return true se almeno una riga soddisfa tutte le condizioni, false altrimenti
+     * @throws RuntimeException in caso di errore di parsing o I/O
+     */
+    public static boolean ndjsonContainsAll(InputStream inputStream, Map<String, String> conditions) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                JsonNode json = objectMapper.readTree(line);
+
+                if (jsonMatchesAll(json, conditions)) {
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante la lettura del NDJSON da InputStream", e);
+        }
+
+        return false;
+    }
+
+    /**
+     * Versione thread-safe di {@link #ndjsonContainsAll(InputStream, Map)}.
+     * Legge il NDJSON da src/test/resources/pathRelativo.
+     *
+     * @param pathRelativo percorso del file NDJSON
+     * @param conditions mappa path → valore atteso
+     * @return true se matcha almeno una riga, false altrimenti
+     */
+    public static boolean ndjsonContainsAllSafe(String pathRelativo, Map<String, String> conditions) {
+        synchronized (getFileLock(pathRelativo)) {
+            File file = new File("src/test/resources/" + pathRelativo);
+
+            try (InputStream in = new FileInputStream(file)) {
+                return ndjsonContainsAll(in, conditions);
+            } catch (Exception e) {
+                throw new RuntimeException("Errore durante la lettura del NDJSON (safe): " + pathRelativo, e);
+            }
         }
     }
 

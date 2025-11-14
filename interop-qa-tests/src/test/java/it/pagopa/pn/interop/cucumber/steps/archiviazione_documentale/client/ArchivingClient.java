@@ -1,10 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client;
 
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatchingStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.FileMatchingStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
@@ -30,6 +31,7 @@ public class ArchivingClient {
 
     @Data
     @Builder
+    @RequiredArgsConstructor
     public static class SearchFileSeed {
 
         @NonNull
@@ -54,7 +56,8 @@ public class ArchivingClient {
         private long pollIntervalMs = 1_000;
     }
 
-    private final FileMatcher fileMatcher;
+    private final FileMatcher fileMatcher = new FileMatcher();
+    private final SharedStepsContext sharedStepsContext;
 
     public ArchivedFile findS3FileInInterval(SearchFileSeed seed) {
 
@@ -102,7 +105,7 @@ public class ArchivingClient {
             if (!matchingFiles.isEmpty()) {
                 for (String key : matchingFiles) {
                     try {
-                        FileMatchingStrategy.MatchingStrategySeed strategySeed = new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, bucketInfo);
+                        FileMatchingStrategy.MatchingStrategySeed strategySeed = new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, bucketInfo, sharedStepsContext);
                         boolean match = fileMatcher.match(strategySeed);
                         if (match) file.set(buildArchivedDocument(s3, bucketInfo));
 

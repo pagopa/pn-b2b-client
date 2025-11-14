@@ -1,5 +1,6 @@
-package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing;
+package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy;
 
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public interface FileMatchingStrategy {
         S3Client s3;
         FileType fileType;
         S3BucketInfo bucketName;
+        SharedStepsContext sharedStepsContext;
     }
 
     boolean match(MatchingStrategySeed seed) throws IOException;

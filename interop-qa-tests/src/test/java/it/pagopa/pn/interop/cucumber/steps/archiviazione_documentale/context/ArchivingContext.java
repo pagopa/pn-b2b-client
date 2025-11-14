@@ -20,6 +20,7 @@ public class ArchivingContext {
     SharedStepsContext sharedStepsContext;
     ArchivedFile currentFile;
 
+    //TODO: inizializzare i path per ogni file
     public ArchivingContext(
             @Value("${s3.unsigned-document-base-path}") String unsignedDocumentBasePath,
             @Value("${s3.signed-document-base-path}") String signedDocumentBasePath) {
