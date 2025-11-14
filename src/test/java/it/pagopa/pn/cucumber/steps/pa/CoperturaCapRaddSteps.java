@@ -20,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -43,6 +41,7 @@ public class CoperturaCapRaddSteps {
     private String cap;
     private String locality;
     private String randomLocality;
+    private LocalDate searchDate = null;
 
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final int LENGTH = 6;
@@ -161,6 +160,14 @@ public class CoperturaCapRaddSteps {
 
     }
 
+    @And("setto la data per la quale voglio verificare la copertura al {string}")
+    public void setSearchDate(String searchDateStr) {
+
+        if(!searchDateStr.equalsIgnoreCase("OGGI"))
+        searchDate = LocalDate.parse(searchDateStr);
+    }
+
+
     @Then("creo una nuova copertura Radd")
     public void newCoverage() {
         Assertions.assertDoesNotThrow(() -> {
@@ -246,7 +253,7 @@ public class CoperturaCapRaddSteps {
     @And("invoco l'API di verifica copertura cap Radd Complete mode con errore")
     public void invokeVerifyCoverageApiCError() {
         try {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest);
+            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest, searchDate);
 
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -256,7 +263,7 @@ public class CoperturaCapRaddSteps {
     @Then("invoco l'API di verifica copertura cap Radd Complete mode")
     public void invokeVerifyCoverageApiC() {
         Assertions.assertDoesNotThrow(() -> {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest);
+            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest, searchDate);
             assertNotNull(checkCoverageResponse, "La response non deve essere null");
 //            assertTrue(checkCoverageResponse.getStatusCode().is2xxSuccessful(),
 //                    "La chiamata non ha restituito un codice 2xx. Codice ricevuto: " + response.getStatusCodeValue());
@@ -266,7 +273,7 @@ public class CoperturaCapRaddSteps {
     @And("invoco l'API di verifica copertura cap Radd Light mode con errore")
     public void invokeVerifyCoverageApiLError() {
         try {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, checkCoverageRequest);
+            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, checkCoverageRequest, searchDate);
 
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -276,7 +283,7 @@ public class CoperturaCapRaddSteps {
     @And("invoco l'API di verifica copertura cap Radd mode: NULL con errore")
     public void invokeVerifyCoverageApiLModeError() {
         try {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(null, checkCoverageRequest);
+            checkCoverageResponse = raddCapCoverageClient.checkCoverage(null, checkCoverageRequest, searchDate);
 
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -286,7 +293,7 @@ public class CoperturaCapRaddSteps {
     @Then("invoco l'API di verifica copertura cap Radd Light mode")
     public void invokeVerifyCoverageApiL() {
         Assertions.assertDoesNotThrow(() -> {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, checkCoverageRequest);
+            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, checkCoverageRequest, searchDate);
             assertNotNull(checkCoverageResponse, "La response non deve essere null");
 //            assertTrue(checkCoverageResponse.getStatusCode().is2xxSuccessful(),
 //                    "La chiamata non ha restituito un codice 2xx. Codice ricevuto: " + response.getStatusCodeValue());
@@ -386,11 +393,13 @@ public class CoperturaCapRaddSteps {
 
             if (localityTmp != null) {
                 checkCoverageRequest.city(localityTmp);
-            }else{checkCoverageRequest.city("ND");}
+            } else {
+                checkCoverageRequest.city("ND");
+            }
 
             SearchMode mode = (localityTmp == null) ? SearchMode.LIGHT : SearchMode.COMPLETE;
 
-            CheckCoverageResponse responseTmp = raddCapCoverageClient.checkCoverage(mode, checkCoverageRequest);
+            CheckCoverageResponse responseTmp = raddCapCoverageClient.checkCoverage(mode, checkCoverageRequest, searchDate);
 
             boolean actualCoverage = responseTmp.getHasCoverage() != null && responseTmp.getHasCoverage();
 
@@ -478,6 +487,85 @@ public class CoperturaCapRaddSteps {
         System.out.println("Record saltati (409 Conflict): " + skipped);
         System.out.println("Record falliti: " + failed);
         System.out.println("Inserimento dati CSV completato con successo.");
+    }
+
+    @Given("leggo il file csv con cap e localita ed effettuo chiamate light e complete con report")
+    public void checkCoverageLightAndComplete() throws IOException {
+
+        String inputFile = "src/main/resources/TEST-cap-localita.csv";
+        String outputFile = "src/main/resources/output/risultati_copertura.csv";
+
+        File outputDir = new File("src/main/resources/output");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+
+            String line;
+            boolean isHeader = true;
+
+            bw.write("CAP,LOCALITA,ESITO_COMPLETE,ESITO_LIGHT");
+            bw.newLine();
+
+            while ((line = br.readLine()) != null) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+
+                String[] values = line.split(";(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                if (values.length < 2) continue;
+
+                String cap = values[0].replace("\"", "").trim();
+                String locality = values[1].replace("\"", "").trim();
+
+                if (cap.isEmpty()) continue;
+
+                // **** Chiamata con SearchMode.COMPLETE ****
+                CheckCoverageRequest completeReq = new CheckCoverageRequest()
+                        .cap(cap)
+                        .city(locality);
+
+                CheckCoverageResponse completeResp = assertDoesNotThrow(
+                        () -> raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, completeReq, searchDate),
+                        "Errore nella chiamata COMPLETE per CAP " + cap + ", LOCALITA " + locality
+                );
+
+                if (completeResp.getHasCoverage() == null) {
+                    throw new AssertionError("Campo hasCoverage nullo per COMPLETE - CAP " + cap + ", LOCALITA " + locality);
+                }
+
+                String esitoComplete = (completeResp.getHasCoverage() != null && completeResp.getHasCoverage())
+                        ? "SI" : "NO";
+
+                // **** Chiamata con SearchMode.LIGHT ****
+                CheckCoverageRequest lightReq = new CheckCoverageRequest()
+                        .cap(cap)
+                        .city(locality);
+
+                CheckCoverageResponse lightResp = assertDoesNotThrow(
+                        () -> raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, lightReq, searchDate),
+                        "Errore nella chiamata LIGHT per CAP " + cap + ", LOCALITA " + locality
+                );
+                if (lightResp.getHasCoverage() == null) {
+                    throw new AssertionError("Campo hasCoverage nullo per LIGHT - CAP " + cap + ", LOCALITA " + locality);
+                }
+
+                String esitoLight = (lightResp.getHasCoverage() != null && lightResp.getHasCoverage())
+                        ? "SI" : "NO";
+
+                // **** Scrittura risultati nel file CSV ****
+                bw.write(String.format("%s,%s,%s,%s", cap, locality, esitoComplete, esitoLight));
+                bw.newLine();
+
+                System.out.printf("CAP %s (%s): COMPLETE=%s, LIGHT=%s%n", cap, locality, esitoComplete, esitoLight);
+            }
+
+            System.out.println("===== REPORT COMPLETATO =====");
+            System.out.println("File risultati generato in: " + outputFile);
+        }
     }
 
 }

@@ -16,12 +16,23 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
  # HOTFIX -> username: "admin@hotfix.pagopa.it" , password: "Admin-hotfixcognito1" , clientId/poolId: ""
  #     -> xPagopaPnCxId/parentId: ""
 
-#todo t cap
 
-
+  #Tebelle di riferimento: pn-AttachmentsConfig e pn-RaddCoverage
 
   Scenario: [RADD_ANAGRAFICA] Testing Autenticazione con parametri
     Given l' utente con username "test@test.com" password "Test_Cognito_1.!" e clientId "77j22r1r812dt3vo8d4s985ap4" richiede e riceve un token valido tramite cognito
+
+
+ #                *** Validazione Api Verifica da file ***
+
+
+    ##  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST-cap-localita.csv
+    ##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cap-localita.csv
+    ##  Viene generato un file di report in: src/main/resources/output/risultati_copertura.csv
+  Scenario: [RADD_API_COPERTURA_CAP_VALIDATION] Creazione report di coperture cap radd da file csv
+    Given setto la data per la quale voglio verificare la copertura al "OGGI"
+    Then leggo il file csv con cap e localita ed effettuo chiamate light e complete con report
+
 
 
   #                 *** CREAZIONE ***
@@ -403,6 +414,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city    | city2 | pr   | country |
       | null     | null       | null        | 00100 | BF-APJJ | null  | null | null    |
+
+    Then setto la data per la quale voglio verificare la copertura al "2025-01-12"
 
     And invoco l'API di verifica copertura cap Radd Light mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
