@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 public class S3Polling extends AbstractPolling<S3Client> {
 
     public S3Polling(Region region, Predicate<S3Client> condition) {
+        // usa il default credentials provider chain
         super(S3Client.builder().region(region).build(), condition);
     }
 }

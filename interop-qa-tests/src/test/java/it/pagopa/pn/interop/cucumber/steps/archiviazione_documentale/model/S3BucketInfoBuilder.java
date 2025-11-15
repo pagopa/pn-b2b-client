@@ -63,11 +63,7 @@ public class S3BucketInfoBuilder {
             }
         }
 
-        return S3BucketInfo.builder()
-                .bucket(bucket)
-                .prefix(prefix)
-                .key(key)
-                .build();
+        return new S3BucketInfo(bucket, prefix, key);
     }
 
     private String replaceDateTokens(String input) {

@@ -76,8 +76,8 @@ public class ArchivingClient {
         S3Polling polling = new S3Polling(Region.EU_CENTRAL_1, s3 -> {
             ListObjectsV2Response res = s3.listObjectsV2(
                     ListObjectsV2Request.builder()
-                            .bucket(bucketInfo.getBucket())
-                            .prefix(bucketInfo.getPrefix())
+                            .bucket(bucketInfo.bucket())
+                            .prefix(bucketInfo.prefix())
                             .build()
             );
 

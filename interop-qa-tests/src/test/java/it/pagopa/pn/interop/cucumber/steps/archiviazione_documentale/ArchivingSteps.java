@@ -5,10 +5,10 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import org.assertj.core.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -20,22 +20,23 @@ public class ArchivingSteps {
     private final ArchivingContext context;
     private final ArchivingClient client;
 
-    public ArchivingSteps(SharedStepsContext sharedStepsContext, ArchivingContext context) {
-        this.context = context;
-        context.setSharedStepsContext(sharedStepsContext);
+    public ArchivingSteps( @Value("${s3.unsigned-document-base-path}") String unsignedDocumentBasePath,
+                           @Value("${s3.signed-document-base-path}") String signedDocumentBasePath,
+                           SharedStepsContext sharedStepsContext ) {
+        this.context = new ArchivingContext(unsignedDocumentBasePath, signedDocumentBasePath, sharedStepsContext);
         this.client = new ArchivingClient(sharedStepsContext);
     }
 
     @Then("verifica nel bucket S3 {bucketType} l'esistenza del file {documentType}")
     public void checkS3Bucket(boolean isSigned, FileType fileType){
-        S3BucketInfo bucketInfo = isSigned ? context.getWormBuckets().get(fileType) : context.getBuckets().get(fileType);
+        S3BucketInfo bucketInfo = context.getBucket(isSigned, fileType);
         ArchivingClient.SearchFileSeed seed =
                 ArchivingClient.SearchFileSeed.builder()
                         .bucketInfo(bucketInfo).type(fileType).isSigned(isSigned).build();
 
         ArchivedFile file = client.findS3FileInInterval(seed);
         Assertions.assertThat(file)
-                .as("Atteso file %s nel bucket %s ma non è stato trovato", bucketInfo.getKey(), bucketInfo.getBucket())
+                .as("Atteso file %s nel bucket %s ma non è stato trovato", bucketInfo.key(), bucketInfo.bucket())
                 .isNotNull();
     }
 

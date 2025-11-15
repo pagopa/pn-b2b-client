@@ -13,8 +13,8 @@ public class S3Utils {
         validateInput(s3, bucketInfo);
 
         GetObjectRequest req = GetObjectRequest.builder()
-                .bucket(bucketInfo.getBucket())
-                .key(bucketInfo.getKey())
+                .bucket(bucketInfo.bucket())
+                .key(bucketInfo.key())
                 .build();
 
         return s3.getObject(req);
@@ -25,15 +25,15 @@ public class S3Utils {
 
         try {
             GetObjectRetentionRequest retentionReq = GetObjectRetentionRequest.builder()
-                    .bucket(bucketInfo.getBucket())
-                    .key(bucketInfo.getKey())
+                    .bucket(bucketInfo.bucket())
+                    .key(bucketInfo.key())
                     .build();
 
             return s3.getObjectRetention(retentionReq);
 
         } catch (S3Exception e) {
             System.out.println("Retention info non disponibile per " +
-                    bucketInfo.getBucket() + "/" + bucketInfo.getKey() +
+                    bucketInfo.bucket() + "/" + bucketInfo.key() +
                     ": " + e.awsErrorDetails().errorMessage());
             return null;
         }
@@ -44,15 +44,15 @@ public class S3Utils {
 
         try {
             GetObjectLegalHoldRequest holdReq = GetObjectLegalHoldRequest.builder()
-                    .bucket(bucketInfo.getBucket())
-                    .key(bucketInfo.getKey())
+                    .bucket(bucketInfo.bucket())
+                    .key(bucketInfo.key())
                     .build();
 
             return s3.getObjectLegalHold(holdReq);
 
         } catch (S3Exception e) {
             System.out.println("Legal hold non disponibile per " +
-                    bucketInfo.getBucket() + "/" + bucketInfo.getKey() +
+                    bucketInfo.bucket() + "/" + bucketInfo.key() +
                     ": " + e.awsErrorDetails().errorMessage());
             return null;
         }
@@ -62,8 +62,8 @@ public class S3Utils {
         validateInput(s3, bucketInfo);
 
         HeadObjectRequest headReq = HeadObjectRequest.builder()
-                .bucket(bucketInfo.getBucket())
-                .key(bucketInfo.getKey())
+                .bucket(bucketInfo.bucket())
+                .key(bucketInfo.key())
                 .build();
 
         return s3.headObject(headReq);
@@ -73,11 +73,11 @@ public class S3Utils {
         Objects.requireNonNull(s3, "S3 client must not be null");
         Objects.requireNonNull(bucketInfo, "BucketInfo must not be null");
 
-        if (bucketInfo.getBucket() == null || bucketInfo.getBucket().isBlank()) {
+        if (bucketInfo.bucket() == null || bucketInfo.bucket().isBlank()) {
             throw new IllegalArgumentException("Bucket name must not be null or empty");
         }
 
-        if (bucketInfo.getKey() == null || bucketInfo.getKey().isBlank()) {
+        if (bucketInfo.key() == null || bucketInfo.key().isBlank()) {
             throw new IllegalArgumentException("Object key must not be null or empty");
         }
     }

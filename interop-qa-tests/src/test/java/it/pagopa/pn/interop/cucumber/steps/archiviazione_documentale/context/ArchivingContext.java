@@ -1,33 +1,38 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context;
 
+
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType.*;
+
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfoBuilder;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
 import java.util.Map;
 
-@Getter
-@Setter
 public class ArchivingContext {
-    private final String UNSIGNED_DOCUMENT_S3_BASE_PATH;
-    private final String SIGNED_DOCUMENT_S3_BASE_PATH;
-    final Map<FileType, S3BucketInfo> wormBuckets;
-    final Map<FileType, S3BucketInfo> buckets;
-    SharedStepsContext sharedStepsContext;
-    ArchivedFile currentFile;
+    private final TokenResolver tokenResolver;
+    private final Map<FileType, String> wormBuckets;
+    private final Map<FileType, String> buckets;
+    @Getter @Setter private ArchivedFile currentFile;
 
     //TODO: inizializzare i path per ogni file
-    public ArchivingContext(
-            @Value("${s3.unsigned-document-base-path}") String unsignedDocumentBasePath,
-            @Value("${s3.signed-document-base-path}") String signedDocumentBasePath) {
-        this.UNSIGNED_DOCUMENT_S3_BASE_PATH = unsignedDocumentBasePath;
-        this.SIGNED_DOCUMENT_S3_BASE_PATH = signedDocumentBasePath;
+    public ArchivingContext(String unsignedDocumentBasePath, String signedDocumentBasePath, SharedStepsContext sharedStepsContext) {
+        tokenResolver = new TokenResolver(sharedStepsContext);
+        wormBuckets = Map.of(AGREEMENT_ACTIVATED, "/path/relativo/completo");
+        buckets = Map.of(AGREEMENT_ACTIVATED, "/path/relativo/completo");
+    }
 
-        wormBuckets = Map.of();
-        buckets = Map.of();
+    public S3BucketInfo getBucket(boolean isWorm, FileType fileType) {
+        String fullPath = isWorm ? wormBuckets.get(fileType) : buckets.get(fileType);
+        List<String> splitResolvedPath = tokenResolver.resolve(List.of(fullPath.split("/")));
+        String resolvedFullPath = String.join("/", splitResolvedPath);
+
+        return S3BucketInfoBuilder.builder().fullPath(resolvedFullPath).build();
     }
 }
