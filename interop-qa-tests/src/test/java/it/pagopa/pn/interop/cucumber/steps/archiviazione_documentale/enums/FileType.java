@@ -5,33 +5,35 @@ import lombok.Getter;
 @Getter
 public enum FileType {
     // Documenti
-    AGREEMENT_ACTIVATED("pdf" ),
-    AGREEMENT_UPGRADED("pdf"),
-    PURPOSE_ACTIVATED("pdf"),
-    NEW_PURPOSE_VERSION_ACTIVATED("pdf"),
-    PURPOSE_VERSION_ACTIVATED("pdf"),
-    PRODUCER_DELEGATION_APPROVED("pdf"),
-    CONSUMER_DELEGATION_APPROVED("pdf"),
-    CONSUMER_DELEGATION_REVOKED("pdf"),
-    PRODUCER_DELEGATION_REVOKED("pdf"),
-    PURPOSE_TEMPLATE_PUBLISHED("pdf"),
+    AGREEMENT_ACTIVATED("pdf", "name" ),
+    AGREEMENT_UPGRADED("pdf", "name"),
+    PURPOSE_ACTIVATED("pdf", "name"),
+    NEW_PURPOSE_VERSION_ACTIVATED("pdf", "name"),
+    PURPOSE_VERSION_ACTIVATED("pdf", "name"),
+    PRODUCER_DELEGATION_APPROVED("pdf", "name"),
+    CONSUMER_DELEGATION_APPROVED("pdf", "name"),
+    CONSUMER_DELEGATION_REVOKED("pdf", "name"),
+    PRODUCER_DELEGATION_REVOKED("pdf", "name"),
+    PURPOSE_TEMPLATE_PUBLISHED("pdf", "name"),
 
     // Eventi (potrebbero mancare RISK_ANALYSIS_DOCUMENT_ADDED, AGREEMENT_CONTRACT_ADDED)
-    VOUCHER_EVENT("zip"),
-    KEYS_ADDED_EVENT("zip"),
-    KEY_DELETED_EVENT("zip"),
-    CLIENT_DELETED_EVENT("zip"),
-    AGREEMENT_UPGRADED_EVENT("zip"),
-    PURPOSE_UPGRADED_EVENT("zip"),
-    DESCRIPTOR_ESERVICE_UPGRADED_EVENT("zip"),
-    PRODUCER_DELEGATION_APPROVED_EVENT("zip"),
-    CONSUMER_DELEGATION_APPROVED_EVENT("zip"),
-    CONSUMER_DELEGATION_REVOKED_EVENT("zip"),
-    PRODUCER_DELEGATION_REVOKED_EVENT("zip");
+    VOUCHER_EVENT("zip", "name"),
+    KEYS_ADDED_EVENT("zip", "name"),
+    KEY_DELETED_EVENT("zip", "name"),
+    CLIENT_DELETED_EVENT("zip", "name"),
+    AGREEMENT_UPGRADED_EVENT("zip", "name"),
+    PURPOSE_UPGRADED_EVENT("zip", "name"),
+    DESCRIPTOR_ESERVICE_UPGRADED_EVENT("zip", "name"),
+    PRODUCER_DELEGATION_APPROVED_EVENT("zip", "name"),
+    CONSUMER_DELEGATION_APPROVED_EVENT("zip", "name"),
+    CONSUMER_DELEGATION_REVOKED_EVENT("zip", "name"),
+    PRODUCER_DELEGATION_REVOKED_EVENT("zip", "name");
 
     private final String extension;
+    private final String expectedBaseName; //nome del file (ignorando il timestamp)
 
-    FileType(String extension) {
+    FileType(String extension, String expectedBaseName) {
         this.extension = extension;
+        this.expectedBaseName = expectedBaseName;
     }
 }

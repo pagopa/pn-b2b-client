@@ -17,21 +17,17 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils.TS_FORMAT;
 
 @RequiredArgsConstructor
 public class ArchivingClient {
 
     @Data
     @Builder
-    @RequiredArgsConstructor
     public static class SearchFileSeed {
 
         @NonNull
@@ -68,12 +64,13 @@ public class ArchivingClient {
         Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
         Instant start = center.minusSeconds(seed.getDeltaSeconds());
         Instant end = center.plusSeconds(seed.getDeltaSeconds());
-        Pattern timestampPattern = Pattern.compile("(\\d{14})");
 
         // Inizializzo il polling
         S3BucketInfo bucketInfo = seed.getBucketInfo();
+        Set<String> checkedKeys = new HashSet<>();
 
         S3Polling polling = new S3Polling(Region.EU_CENTRAL_1, s3 -> {
+
             ListObjectsV2Response res = s3.listObjectsV2(
                     ListObjectsV2Request.builder()
                             .bucket(bucketInfo.bucket())
@@ -83,33 +80,37 @@ public class ArchivingClient {
 
             List<String> matchingFiles = res.contents().stream()
                     .map(S3Object::key)
-                    // filtro per estensione
-                    .filter(key -> key.endsWith(fileType.getExtension()))
-                    // filtro per timestamp
+                    // Skip oggetti gia controllati
                     .filter(key -> {
-                        Matcher m = timestampPattern.matcher(key);
-                        if (m.find()) {
-                            String tsString = m.group(1);
-                            try {
-                                LocalDateTime ldt = LocalDateTime.parse(tsString, TS_FORMAT);
-                                Instant fileTs = ldt.toInstant(ZoneOffset.UTC);
-                                return !fileTs.isBefore(start) && !fileTs.isAfter(end);
-                            } catch (Exception e) {
-                                return false;
-                            }
-                        }
-                        return false;
+                        if (checkedKeys.contains(key)) return false;
+                        checkedKeys.add(key);
+                        return true;
                     })
+                    // Filtro per baseName ed estensione
+                    .filter(key -> {
+                        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
+                        return ArchivingUtils.matchesBaseName(filename, fileType);
+                    })
+                    // Filtro per timestamp
+                    .filter(key -> ArchivingUtils.extractTimestampFromS3Key(key)
+                            .map(fileTs -> !fileTs.isBefore(start) && !fileTs.isAfter(end))
+                            .orElse(false)
+                    )
                     .toList();
 
             if (!matchingFiles.isEmpty()) {
                 for (String key : matchingFiles) {
                     try {
-                        FileMatchingStrategy.MatchingStrategySeed strategySeed = new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, bucketInfo, sharedStepsContext);
-                        boolean match = fileMatcher.match(strategySeed);
-                        if (match) file.set(buildArchivedDocument(s3, bucketInfo));
+                        FileMatchingStrategy.MatchingStrategySeed strategySeed =
+                                new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, bucketInfo, sharedStepsContext);
 
-                        return match;
+                        boolean match = fileMatcher.match(strategySeed);
+
+                        if (match) {
+                            file.set(buildArchivedDocument(s3, bucketInfo));
+                            return true;
+                        }
+
                     } catch (IOException e) {
                         throw new RuntimeException("Errore handler " + key, e);
                     }
@@ -118,13 +119,14 @@ public class ArchivingClient {
 
             return false;
         });
-        polling.executePolling(5, 2000);
 
+        // Polling
         long maxAttempts = seed.getTimeoutMs() / seed.getPollIntervalMs();
         polling.executePolling((int) maxAttempts, seed.getPollIntervalMs());
 
         return file.get();
     }
+
 
     private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo) {
         ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
