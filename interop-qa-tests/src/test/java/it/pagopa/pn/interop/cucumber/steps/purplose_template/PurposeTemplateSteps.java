@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.steps.purplose_template;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -54,10 +53,11 @@ public class PurposeTemplateSteps {
 
     private final IHttpExecutor httpCallExecutor;
 
-    public PurposeTemplateSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, BlobFileCreator blobFileCreator) {
+    public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
+                                ClientTokenConfigurator clientTokenConfigurator,
+                                BlobFileCreator blobFileCreator) {
         this.sharedStepsContext = sharedStepsContext;
         this.blobFileCreator = blobFileCreator;
-        IdentityService identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.purposeTemplateClient = clientTokenConfigurator.getPurposeTemplateClient();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
@@ -91,8 +91,6 @@ public class PurposeTemplateSteps {
         httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(request));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             createdPurposeTemplate = (CreatedResource) httpCallExecutor.getResponse();
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -104,8 +102,6 @@ public class PurposeTemplateSteps {
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
             assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
