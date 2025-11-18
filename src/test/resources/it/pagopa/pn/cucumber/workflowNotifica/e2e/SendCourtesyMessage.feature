@@ -262,7 +262,7 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
 
 
-  @addressBook3 @courtesyMessage @cleanAddressBook #rif srs 39
+  @addressBook3 @courtesyMessage @cleanAddressBook @bankCourtesyMessage #rif srs 39
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_12] Verifica successione elementi - Invio DIGITALE con SEND, cortesia TPP solo PF
     Given si predispone addressbook per l'utente "Dino Sauro"
     Then l'utente "Dino Sauro" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
@@ -341,7 +341,7 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
 
 
-  @addressBook3 @courtesyMessage @cleanAddressBook #rif srs 40
+  @addressBook3 @courtesyMessage @cleanAddressBook @bankCourtesyMessage #rif srs 40
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_16] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia TPP solo PF
     Given si predispone addressbook per l'utente "Dino Sauro"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -502,7 +502,7 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
 
-  @courtesyMessage @addressBook3 #rif srs 42
+  @courtesyMessage @addressBook3 @bankCourtesyMessage #rif srs 42
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_24] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC SPECIALE, cortesia TPP solo PF
     Then viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
@@ -590,7 +590,7 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
 
-  @courtesyMessage @addressBook3 #rif srs 43
+  @courtesyMessage @addressBook3 @bankCourtesyMessage #rif srs 43
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_28] Verifica successione elementi - Invio ANALOGICO, cortesia TPP solo PF
     Given si predispone addressbook per l'utente "Dino Sauro"
     Then l'utente "Dino Sauro" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
