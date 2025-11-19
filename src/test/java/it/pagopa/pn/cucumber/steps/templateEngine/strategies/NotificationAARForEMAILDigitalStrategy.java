@@ -1,8 +1,8 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailNotification;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailSender;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForEmail;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailNotificationDigital;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailSenderDigital;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForEmailDigital;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -21,7 +21,7 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
 
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        NotificationAarForEmail legalFact = createRequest(body, context);
+        NotificationAarForEmailDigital legalFact = createRequest(body, context);
         String result = templateEngineClient.notificationAARForEMAILDigital(selectLanguage(language), legalFact);
         return new TemplateEngineResult(result);
     }
@@ -45,11 +45,11 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
         };
     }
 
-    private NotificationAarForEmail createRequest(boolean body, TemplateRequestContext context) {
+    private NotificationAarForEmailDigital createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new NotificationAarForEmail()
+        return new NotificationAarForEmailDigital()
                 .notification(createAarForEmailNotification(context))
                 .pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
@@ -57,17 +57,17 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
                 .perfezionamentoURL(context.getPerfezionamentoURL());
     }
 
-    private AarForEmailNotification createAarForEmailNotification(TemplateRequestContext context) {
+    private AarForEmailNotificationDigital createAarForEmailNotification(TemplateRequestContext context) {
         return Optional.ofNullable(context.getNotification())
-                .map(data -> new AarForEmailNotification()
+                .map(data -> new AarForEmailNotificationDigital()
                         .iun(data.getIun())
                         .sender(createSender(data)))
                 .orElse(null);
     }
 
-    private AarForEmailSender createSender(TemplateNotification notification) {
+    private AarForEmailSenderDigital createSender(TemplateNotification notification) {
         return Optional.ofNullable(notification.getSender())
-                .map(data -> new AarForEmailSender()
+                .map(data -> new AarForEmailSenderDigital()
                         .paDenomination(data.getPaDenomination()))
                 .orElse(null);
     }

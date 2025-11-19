@@ -50,27 +50,58 @@ public class TemplateEngineSteps {
         this.contextFactory = contextFactory;
         this.templateEngineObjectFields = templateEngineObjectFields;
     }
-
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")
     public void recuperoIlTemplatePerInLinguaConIlBody(String templateType, String language, String body) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         retrieveTemplate(templateTypeObject, language, body, "semplice", new HashMap<>());
     }
 
+    @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string} con recipient Type {string}")
+    public void recuperoIlTemplatePerInLinguaConIlBodyRecType(String templateType, String language, String body,String recipientType) {
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("context_recipientType", recipientType); // todo t mc.
+
+        retrieveTemplate(templateTypeObject, language, body, "semplice", parameters);
+    }
     @When("recupero (il template)(l'oggetto) per {string} di tipo {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String notificationType, String language) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, new HashMap<>());
     }
 
+    @When("recupero (il template)(l'oggetto) per {string} di tipo {string} in lingua {string} con recipient Type {string}")
+    public void recuperoIlTemplatePerInLinguaRecType(String templateType, String notificationType, String language,String recipientType) {
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("context_recipientType", recipientType); // todo t mc.
+
+        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, parameters);
+    }
+
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String language) {
         recuperoIlTemplatePerInLingua(templateType, "semplice", language);
+    }
+    @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con recipient Type {string}")
+    public void recuperoIlTemplatePerInLinguaRecType(String templateType, String language,String recipientType) {
+        recuperoIlTemplatePerInLinguaRecType(templateType, "semplice", language,recipientType);
     }
 
     @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:")
     public void recuperoIlTemplateConIValoriNelRequestBody(String templateType, Map<String, String> parameters) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
+    }
+
+    @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:con recipient Type {string}")
+    public void recuperoIlTemplateConIValoriNelRequestBodyRecType(String templateType, Map<String, String> parameters, String recipientType) {
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+
+        parameters.putIfAbsent("context_recipientType",recipientType ); // todo t rc
+
         retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
     }
 
@@ -81,6 +112,18 @@ public class TemplateEngineSteps {
                 .forEach(data -> {
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put(data, "null");
+                    retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
+                });
+    }
+
+    @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body errati con recipient Type {string}")
+    public void recuperoIlTemplateConIValoriNelRequestBodyErratiRecType(String templateType, String recipientType) {
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        templateEngineObjectFields.get(templateTypeObject)
+                .forEach(data -> {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(data, "null");
+                    parameters.putIfAbsent("context_recipientType", recipientType); //todo t rc.
                     retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
                 });
     }
