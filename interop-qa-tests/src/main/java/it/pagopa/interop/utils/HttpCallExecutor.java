@@ -4,8 +4,6 @@ import static java.util.Objects.isNull;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import lombok.Data;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -14,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Slf4j
 @Getter

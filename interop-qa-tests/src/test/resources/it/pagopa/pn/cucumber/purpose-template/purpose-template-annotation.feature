@@ -1,7 +1,5 @@
 Feature: finalità agevolata, purpose template ANNOTATION
 
-  #TODO MATTEO -> #63- #64
-
   #66-67 (OK-KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_LIMITS]
@@ -13,7 +11,6 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | statusCode | answerType                            |
       | 200        | "ENTRO I LIMITI CONSENTITI FREE TEXT" |
       | 400        | "OLTRE I LIMITI CONSENTITI FREE TEXT" |
-    #TODO MATTEO
 #      | 200        | "ENTRO I LIMITI CONSENTITI MULTI"     |
 #      | 400        | "OLTRE I LIMITI CONSENTITI MULTI"     |
 

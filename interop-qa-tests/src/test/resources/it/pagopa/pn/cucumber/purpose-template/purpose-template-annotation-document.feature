@@ -26,7 +26,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
     And si ottiene lo status code 200
-    When il purpose template creato viene spostato in stato <state>
+    When il purpose template viene gradualmente spostato in stato <state>
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     Then si ottiene lo status code 409
     Examples:
@@ -96,7 +96,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
-    When il purpose template creato viene spostato in stato <state>
+    When il purpose template viene gradualmente spostato in stato <state>
     And viene eliminata l'annotazione esistente per il purpose template
     Then si ottiene lo status code 409
     Examples:
@@ -182,7 +182,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
-    When il purpose template creato viene spostato in stato <state>
+    When il purpose template viene gradualmente spostato in stato <state>
     And viene eliminato il documento esistente dell'annotazione precedentemente creata
     Then si ottiene lo status code 409
     Examples:
@@ -269,4 +269,4 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene recuperato il documento inesistente dell'annotazione precedentemente creata
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 404

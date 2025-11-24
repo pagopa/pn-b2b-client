@@ -21,7 +21,7 @@ import java.util.UUID;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Retryable(
-        retryFor = { HttpServerErrorException.class },
+        retryFor = {HttpServerErrorException.class},
         backoff = @Backoff(delay = 2000)
 )
 public class PurposeApiClientImpl implements IPurposeApiClient {
@@ -149,7 +149,6 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     public PurposeVersionResource patchUpdatePurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPurposeUpdateFromTemplateContent) throws RestClientException {
         return purposesApi.patchUpdatePurposeFromTemplate(purposeTemplateId, purposeId, patchPurposeUpdateFromTemplateContent);
     }
-
 
     @Override
     public void setBearerToken(String bearerToken) {

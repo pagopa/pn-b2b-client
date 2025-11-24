@@ -294,8 +294,8 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @When("si cancella {isFirstTime} il purpose template {exists}")
-    public void deletePurposeTemplate(boolean isFirstTime, boolean exists) {
+    @When("si cancella il purpose template {exists}")
+    public void deletePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.deletePurposeTemplate(ptId));
         if (exists) {
@@ -454,9 +454,11 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.unsuspendPurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
-            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta attivo").isEqualTo(PurposeTemplateState.PUBLISHED);
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> getPurposeTemplateById(ptId, exists),
+                    res -> res.getState() == PurposeTemplateState.PUBLISHED,
+                    "Il purpose template non risulta riattivato"
+            );
         }
     }
 
@@ -464,9 +466,11 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.publishPurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
-            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta attivo").isEqualTo(PurposeTemplateState.PUBLISHED);
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> getPurposeTemplateById(ptId, exists),
+                    res -> res.getState() == PurposeTemplateState.PUBLISHED,
+                    "Il purpose template non risulta attivo"
+            );
         }
     }
 
@@ -474,9 +478,11 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
-            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta sospeso").isEqualTo(PurposeTemplateState.SUSPENDED);
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> getPurposeTemplateById(ptId, exists),
+                    res -> res.getState() == PurposeTemplateState.SUSPENDED,
+                    "Il purpose template non risulta sospeso"
+            );
         }
     }
 
@@ -484,9 +490,11 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
-            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta archiviato").isEqualTo(PurposeTemplateState.ARCHIVED);
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> getPurposeTemplateById(ptId, exists),
+                    res -> res.getState() == PurposeTemplateState.ARCHIVED,
+                    "Il purpose template non risulta archiviato"
+            );
         }
     }
 
