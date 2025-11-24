@@ -223,7 +223,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene status code 401
 
   Scenario: [M2MG_ESERVICES_22] La cancellazione di un e-service precedentemente rimosso non può essere effettuata (Parte2#Scenario intorno a 37)
-    Given "PA1" ha già creato e pubblicato 1 e-services
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente effettua la cancellazione dell'e-service con successo
     When l'utente tenta di effettuare la cancellazione dell'e-service
