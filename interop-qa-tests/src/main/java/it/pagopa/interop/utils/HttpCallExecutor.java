@@ -30,6 +30,7 @@ public class HttpCallExecutor implements IHttpExecutor {
         try {
             response = promise.get();
             responseStatus = HttpStatus.OK;
+            errorMessage = null;
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();

@@ -61,6 +61,7 @@ public class AgreementCommonSteps {
     @Builder
     public static class EServiceConfig {
         private Boolean delegable;
+        private Boolean personalData;
         private Boolean clientAccessDelegable;
         private AgreementApprovalPolicy agreementApprovalPolicy;
     }
@@ -118,6 +119,14 @@ public class AgreementCommonSteps {
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.empty());
     }
 
+    @Given("{string} ha già creato e pubblicato {int} e-service(s) con personalData {bool}")
+    public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices, Boolean personalData) {
+        EServiceConfig build = EServiceConfig.builder()
+                .personalData(personalData)
+                .build();
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
+    }
+
     @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione con approvazione {agreementApprovalPolicy}")
     public void tenantHasAlreadyCreatedAndPublishedDelegableEService(String tenantType, int totalEservices, AgreementApprovalPolicy agreementApprovalPolicy) {
         EServiceConfig build = EServiceConfig.builder()
@@ -154,6 +163,7 @@ public class AgreementCommonSteps {
             String eserviceName = String.format("eservice-%d-%d-%d", i, sharedStepsContext.getTestSeed(), randomInt);
             EServiceSeed eserviceSeed = new EServiceSeed()
                 .name(eserviceName)
+                .personalData(eServiceConfig.map(EServiceConfig::getPersonalData).orElse(false))
                 .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
                 .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(

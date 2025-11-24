@@ -3,20 +3,7 @@ package it.pagopa.interop.purpose.service.impl;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purposes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -24,6 +11,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -151,6 +139,17 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     public PurposeVersionResource updateReversePurpose(UUID purposeId, ReversePurposeUpdateContent reversePurposeUpdateContent) {
         return purposesApi.updateReversePurpose(purposeId, reversePurposeUpdateContent);
     }
+
+    @Override
+    public CreatedResource createPurposeFromTemplate(UUID purposeTemplateId, PurposeFromTemplateSeed purposeFromTemplateSeed) throws RestClientException {
+        return purposesApi.createPurposeFromTemplate(purposeTemplateId, purposeFromTemplateSeed);
+    }
+
+    @Override
+    public PurposeVersionResource patchUpdatePurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPurposeUpdateFromTemplateContent) throws RestClientException {
+        return purposesApi.patchUpdatePurposeFromTemplate(purposeTemplateId, purposeId, patchPurposeUpdateFromTemplateContent);
+    }
+
 
     @Override
     public void setBearerToken(String bearerToken) {
