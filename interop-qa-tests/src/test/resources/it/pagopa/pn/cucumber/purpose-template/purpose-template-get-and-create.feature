@@ -38,10 +38,10 @@ Feature: finalità agevolata, purpose template GET
     When si effettua la get di tutti i purpose template con titolo "ANY" e handlePersonalData <personalData>
     Then si ottiene lo status code 200
     Examples:
-      | personalData | statusCode |
-      | true         | 200        |
-      | false        | 200        |
-      | null         | 400        |
+      | personalData |
+      | true         |
+      | false        |
+      | null         |
 
   #3-4
   @purposeTemplate @purposeTemplateCreate
