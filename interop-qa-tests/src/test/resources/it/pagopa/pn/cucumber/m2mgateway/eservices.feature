@@ -637,7 +637,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
   @m2m-parte2-agosto-rilascio2
