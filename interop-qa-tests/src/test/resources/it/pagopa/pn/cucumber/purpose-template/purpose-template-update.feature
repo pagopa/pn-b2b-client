@@ -8,9 +8,21 @@ Feature: finalità agevolata, purpose template UPDATE
     When si aggiorna il purpose template creato
     Then si ottiene lo status code 200
 
-  #11 TODO MATTEO
-  # Nel body specificare l’answer "usesThirdPartyPersonalData" e non specificare answer "usesPersonalData"
-  # Implementare lo stesso scenario anche con answer "institutionalPurpose" senza specificare answer "purpose"
+  #11(KO)
+  @purposeTemplate @purposeTemplateUpdate
+  Scenario: [UPDATE_PURPOSE_TEMPLATE_ERROR_NO_PERSONAL_DATA_ANSWER]
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    When si aggiorna il purpose template creato con errore di tipo NO PERSONAL DATA ANSWER
+    Then si ottiene lo status code 400
+
+  #11bis(KO)
+  @purposeTemplate @purposeTemplateUpdate
+  Scenario: [UPDATE_PURPOSE_TEMPLATE_ERROR_NO_PURPOSE_ANSWER]
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    When si aggiorna il purpose template creato con errore di tipo NO PURPOSE ANSWER
+    Then si ottiene lo status code 400
 
   #12(KO)
   @purposeTemplate @purposeTemplateUpdate
@@ -58,9 +70,9 @@ Feature: finalità agevolata, purpose template UPDATE
 
   #16(KO)
   @purposeTemplate @purposeTemplateUpdate
-  Scenario: [UPDATE_PURPOSE_TEMPLATE_ALREADY_UPDATED]
+  Scenario: [UPDATE_PURPOSE_TEMPLATE_EXISTING_VALUE]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And si aggiorna il purpose template creato
-    When si aggiorna il purpose template creato
+    When si aggiorna il purpose template creato con errore di tipo UPDATE WITH EXISTING TITLE
     Then si ottiene lo status code 409

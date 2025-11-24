@@ -8,7 +8,8 @@ Feature: finalità agevolata, purpose template ACTIVATION
     When il purpose template creato viene spostato in stato PUBLISHED
     Then si ottiene lo status code 204
 
-  #39(KO) TODO MATTEO: L’obiettivo del test è quello di inibire la pubblicazione di un determinato purpose template in stato draft, richiamando la corretta API, con il valore del flag dei dati personali diverso dal valore settato nella domanda sui dati personali presenti nell’analisi del rischio
+  #39(KO)
+  #non implementabile, vedi note su scenario SRS
 
   #40(KO)
   @purposeTemplate @purposeTemplateActivation

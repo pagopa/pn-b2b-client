@@ -51,12 +51,12 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
 
     @Override
     public RiskAnalysisTemplateAnswerResponse addPurposeTemplateRiskAnalysisAnswer(UUID purposeTemplateId, RiskAnalysisTemplateAnswerRequest riskAnalysisTemplateAnswerRequest) throws RestClientException {
-        return purposesTemplateApi.addPurposeTemplateRiskAnalysisAnswer(purposeTemplateId, new RiskAnalysisTemplateAnswerRequest());
+        return purposesTemplateApi.addPurposeTemplateRiskAnalysisAnswer(purposeTemplateId, riskAnalysisTemplateAnswerRequest);
     }
 
     @Override
-    public RiskAnalysisTemplateAnswerAnnotation addPurposeTemplateRiskAnalysisAnswerAnnotation(UUID purposeTemplateId, UUID answerId, RiskAnalysisTemplateAnswerAnnotationText riskAnalysisTemplateAnswerAnnotationText) throws RestClientException {
-        return purposesTemplateApi.addPurposeTemplateRiskAnalysisAnswerAnnotation(purposeTemplateId, answerId, riskAnalysisTemplateAnswerAnnotationText);
+    public RiskAnalysisTemplateAnswerAnnotation addPurposeTemplateRiskAnalysisAnswerAnnotation(UUID purposeTemplateId, UUID answerId, RiskAnalysisTemplateAnswerAnnotationSeed riskAnalysisTemplateAnswerAnnotationSeed) throws RestClientException {
+        return purposesTemplateApi.addPurposeTemplateRiskAnalysisAnswerAnnotation(purposeTemplateId, answerId, riskAnalysisTemplateAnswerAnnotationSeed);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public PurposeTemplate archivePurposeTemplate(UUID purposeTemplateId) throws RestClientException {
-        return purposesTemplateApi.archivePurposeTemplate(purposeTemplateId);
+    public void archivePurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        purposesTemplateApi.archivePurposeTemplate(purposeTemplateId);
     }
 
     @Override
@@ -120,13 +120,13 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public PurposeTemplate publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
-        return purposesTemplateApi.publishPurposeTemplate(purposeTemplateId);
+    public void publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        purposesTemplateApi.publishPurposeTemplate(purposeTemplateId);
     }
 
     @Override
-    public PurposeTemplate suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
-        return purposesTemplateApi.suspendPurposeTemplate(purposeTemplateId);
+    public void suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        purposesTemplateApi.suspendPurposeTemplate(purposeTemplateId);
     }
 
     @Override
@@ -135,8 +135,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public PurposeTemplate unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
-        return purposesTemplateApi.unsuspendPurposeTemplate(purposeTemplateId);
+    public void unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException {
+        purposesTemplateApi.unsuspendPurposeTemplate(purposeTemplateId);
     }
 
     @Override

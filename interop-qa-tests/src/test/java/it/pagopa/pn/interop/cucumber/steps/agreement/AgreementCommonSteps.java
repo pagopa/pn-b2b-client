@@ -1,33 +1,24 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
-import static java.time.OffsetDateTime.now;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.time.OffsetDateTime.now;
 
 @Data
 public class AgreementCommonSteps {
@@ -53,6 +44,7 @@ public class AgreementCommonSteps {
     @Builder
     public static class EServiceConfig {
         private Boolean delegable;
+        private Boolean personalData;
         private Boolean clientAccessDelegable;
         private AgreementApprovalPolicy agreementApprovalPolicy;
     }
@@ -74,11 +66,11 @@ public class AgreementCommonSteps {
     private void tenantAlreadyHasFruitionRequestWithState(String agreementState, String token, UUID delegationId) {
         clientTokenConfigurator.setBearerToken(token);
         UUID agreementId = dataPreparationService.createAgreementWithGivenState(
-            AgreementState.fromValue(agreementState),
-            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-            sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-            delegationId,
-            null);
+                AgreementState.fromValue(agreementState),
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                delegationId,
+                null);
         sharedStepsContext.setAgreementId(agreementId);
         sharedStepsContext.getAgreementCommonContext().setAgreementCreationTime(now());
     }
@@ -100,7 +92,7 @@ public class AgreementCommonSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         UUID tenantId = identityService.getOrganizationId(tenantType);
         Attribute attribute = dataPreparationService.createAttribute(
-            attributeKind, null);
+                attributeKind, null);
         sharedStepsContext.getAttributeCommonContext().addCreatedAttribute(attribute);
         dataPreparationService.assignDeclaredAttributeToTenant(tenantId, attribute.getId());
     }
@@ -108,6 +100,14 @@ public class AgreementCommonSteps {
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices) {
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.empty());
+    }
+
+    @Given("{string} ha già creato e pubblicato {int} e-service(s) con personalData {bool}")
+    public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices, Boolean personalData) {
+        EServiceConfig build = EServiceConfig.builder()
+                .personalData(personalData)
+                .build();
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
     }
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione con approvazione {agreementApprovalPolicy}")
@@ -122,17 +122,17 @@ public class AgreementCommonSteps {
     @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione")
     public void tenantHasAlreadyCreatedAndPublishedDelegableEService(String tenantType, int totalEservices) {
         EServiceConfig build = EServiceConfig.builder()
-            .delegable(true)
-            .build();
+                .delegable(true)
+                .build();
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
     }
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione con client del delegato utilizzabile")
     public void tenantHasAlreadyCreatedAndPublishedDelegableEServiceWithClientAccessDelegable(String tenantType, int totalEservices) {
         EServiceConfig build = EServiceConfig.builder()
-            .delegable(true)
-            .clientAccessDelegable(true)
-            .build();
+                .delegable(true)
+                .clientAccessDelegable(true)
+                .build();
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
     }
 
@@ -145,14 +145,15 @@ public class AgreementCommonSteps {
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
             String eserviceName = String.format("eservice-%d-%d-%d", i, sharedStepsContext.getTestSeed(), randomInt);
             EServiceSeed eserviceSeed = new EServiceSeed()
-                .name(eserviceName)
-                .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
-                .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
+                    .name(eserviceName)
+                    .personalData(eServiceConfig.map(EServiceConfig::getPersonalData).orElse(false))
+                    .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
+                    .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                eserviceSeed, new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(eServiceConfig.map(EServiceConfig::getAgreementApprovalPolicy).orElse(null)));
+                    eserviceSeed, new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(eServiceConfig.map(EServiceConfig::getAgreementApprovalPolicy).orElse(null)));
             // Set the descriptor to "PUBLISHED" state
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
-                eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
+                    eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Add the e-service to the list of published ones
             eServiceDescriptorList.add(eServiceDescriptor);
         }
@@ -220,13 +221,13 @@ public class AgreementCommonSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
 
         List<UUID> agreementIds = sharedStepsContext.getEServicesCommonContext().getPublishedEservicesIds()
-                        .stream()
-                        .map(eServiceDescriptor -> dataPreparationService.createAgreementWithGivenState(
-                                AgreementState.fromValue(agreementState),
-                                eServiceDescriptor.getEServiceId(),
-                                eServiceDescriptor.getDescriptorId(),
-                                null))
-                        .toList();
+                .stream()
+                .map(eServiceDescriptor -> dataPreparationService.createAgreementWithGivenState(
+                        AgreementState.fromValue(agreementState),
+                        eServiceDescriptor.getEServiceId(),
+                        eServiceDescriptor.getDescriptorId(),
+                        null))
+                .toList();
         sharedStepsContext.getAgreementCommonContext().setAgreementIds(agreementIds);
     }
 }

@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.purplose_template;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -10,24 +11,37 @@ import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Slf4j
 public class PurposeTemplateSteps {
 
+    private final ClientTokenConfigurator clientTokenConfigurator;
+
     private final IPurposeTemplateClient purposeTemplateClient;
 
     private final IPurposeApiClient purposeApiClient;
 
     private final BlobFileCreator blobFileCreator;
+
+    private final SharedStepsContext sharedStepsContext;
+
+    private final IHttpExecutor httpCallExecutor;
+
+    private final PollingService pollingService;
+
+    private PurposeTemplateSeed purposeTemplateCreationRequest;
 
     private CreatedResource createdPurposeTemplate;
 
@@ -43,66 +57,175 @@ public class PurposeTemplateSteps {
 
     private RiskAnalysisTemplateAnswerResponse riskAnalysis;
 
+    private RiskAnalysisTemplateAnswerAnnotation annotation;
+
     private RiskAnalysisTemplateAnswerAnnotationDocument uploadedDocument;
 
     private File retrievedDocument;
 
     private List<CompactPurposeTemplateEService> linkedEServices;
 
-    private final SharedStepsContext sharedStepsContext;
+    /**
+     * Quando voglio simulare una casistica di titolo duplicato, la prima volta ne creo uno (con timestamp) e lo setto qua.
+     * La seconda volta, quando questa variabile non è più null, ri-applico lo stesso titolo.
+     */
+    private String duplicatedTitleForPurpose;
 
-    private final IHttpExecutor httpCallExecutor;
-
-    public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
+    public PurposeTemplateSteps(ClientTokenConfigurator clientTokenConfigurator1, SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
                                 BlobFileCreator blobFileCreator) {
+        this.clientTokenConfigurator = clientTokenConfigurator1;
         this.sharedStepsContext = sharedStepsContext;
         this.blobFileCreator = blobFileCreator;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
         this.purposeTemplateClient = clientTokenConfigurator.getPurposeTemplateClient();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
     }
 
+    @AllArgsConstructor
+    @Getter
+    public enum PurposeTemplateErrorTypes {
+
+        ANSWER_OVER_250("ANSWER OVER 250"),
+        NO_PURPOSE_ANSWER("NO PURPOSE ANSWER"),
+        NO_PERSONAL_DATA_ANSWER("NO PERSONAL DATA ANSWER"),
+        PERSONAL_DATA_CONFLICT("PERSONAL DATA CONFLICT"),
+        UPDATE_WITH_EXISTING_TITLE("UPDATE WITH EXISTING TITLE");
+
+        private final String value;
+    }
+
     @When("viene creato un nuovo purpose template")
     public void createPurposeTemplate() {
-        createPurposeTemplateWithHandlePersonalData("true");
+        prepareCreationRequest(false);
+        invokeCreatePurposeTemplate();
     }
 
     //Il seguente metodo crea un purpose template in stato draft
-    @When("viene creato un nuovo purpose template con handlePersonalData {string}")
-    public void createPurposeTemplateWithHandlePersonalData(String handlePersonalDataValue) {
-        PurposeTemplateSeed request = new PurposeTemplateSeed();
-        request.setPurposeTitle("purposeTitle" + DateTime.now());
-        request.setPurposeDescription("purposeDescription_CREATE");
-        request.setTargetDescription("targetDescription_CREATE");
-        request.setTargetTenantKind(TenantKind.PA);
-        request.setPurposeIsFreeOfCharge(false);
+    @When("viene creato un nuovo purpose template con handlePersonalData {bool}")
+    public void createPurposeTemplateWithHandlePersonalData(Boolean handlePersonalDataValue) {
+        prepareCreationRequest(handlePersonalDataValue);
+        invokeCreatePurposeTemplate();
+    }
 
-        RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed();
-        RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed();
-        RiskAnalysisTemplateAnswerAnnotationSeed annotationSeed = new RiskAnalysisTemplateAnswerAnnotationSeed();
+    @When("viene creato un nuovo purpose template con errore di tipo {purposeTemplateError}")
+    public void createPurposeTemplateWithError(PurposeTemplateErrorTypes error) {
+        prepareCreationRequest(false);
+        insertErrorsOnPurpose(error);
+        invokeCreatePurposeTemplate();
+    }
 
-        request.setPurposeRiskAnalysisForm(riskAnalysisForm);
-
-        switch (handlePersonalDataValue.toUpperCase()) {
-            case "TRUE" -> request.setHandlesPersonalData(true);
-            case "FALSE" -> request.setHandlesPersonalData(false);
+    private void insertErrorsOnPurpose(PurposeTemplateErrorTypes error) {
+        switch (error) {
+            case PERSONAL_DATA_CONFLICT ->
+                    purposeTemplateCreationRequest.setHandlesPersonalData(!purposeTemplateCreationRequest.getHandlesPersonalData());
+            case NO_PERSONAL_DATA_ANSWER ->
+                    purposeTemplateCreationRequest.getPurposeRiskAnalysisForm().getAnswers().remove("usesPersonalData");
+            case NO_PURPOSE_ANSWER ->
+                    purposeTemplateCreationRequest.getPurposeRiskAnalysisForm().getAnswers().remove("purpose");
+            case ANSWER_OVER_250 ->
+                    purposeTemplateCreationRequest.getPurposeRiskAnalysisForm().getAnswers().put("institutionalPurpose",
+                            new RiskAnalysisTemplateAnswerSeed().editable(true).suggestedValues(
+                                    Arrays.asList("Answer 1", "A".repeat(251))));
+            case UPDATE_WITH_EXISTING_TITLE -> {
+                httpCallExecutor.performCall(() -> purposeTemplateClient.getCreatorPurposeTemplates(0, 10, null, null, null));
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).isTrue();
+                CreatorPurposeTemplates list = (CreatorPurposeTemplates) httpCallExecutor.getResponse();
+                assertThat(list).as("Il risultato della get by creator non dev'essere null");
+                assertThat(list.getResults()).as("").isNotNull();
+                CreatorPurposeTemplate previouslyCreatedPurposeTemplate = list.getResults().stream().filter(x ->
+                        !x.getPurposeTitle().equals(purposeTemplateCreationRequest.getPurposeTitle())).findFirst().orElse(null);
+                assertThat(previouslyCreatedPurposeTemplate).as("Nessun purpose template creato in precedenza con titolo diverso da quello attuale trovato").isNotNull();
+                purposeTemplateCreationRequest.setPurposeTitle(previouslyCreatedPurposeTemplate.getPurposeTitle());
+            }
         }
-        httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(request));
+    }
+
+    private void prepareCreationRequest(Boolean handlePersonalDataValue) {
+        purposeTemplateCreationRequest = new PurposeTemplateSeed();
+        purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
+        purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
+        purposeTemplateCreationRequest.setTargetDescription("targetDescription_CREATE");
+        purposeTemplateCreationRequest.setTargetTenantKind(TenantKind.PA);
+        purposeTemplateCreationRequest.setPurposeIsFreeOfCharge(true);
+        purposeTemplateCreationRequest.setPurposeDailyCalls(10);
+
+        purposeTemplateCreationRequest.setHandlesPersonalData(handlePersonalDataValue);
+        purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("Sono una Pubblica Amministrazione");
+
+        if (handlePersonalDataValue != null) {
+            RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
+                    .version("3.1")
+                    .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
+            purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
+        }
+    }
+
+    private void invokeCreatePurposeTemplate() {
+        httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(purposeTemplateCreationRequest));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             createdPurposeTemplate = (CreatedResource) httpCallExecutor.getResponse();
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(createdPurposeTemplate.getId())),
+                    res -> res.is2xxSuccessful(),
+                    "Failed to retrieve the purpose template from client!"
+            );
         }
+    }
+
+    private Map<String, RiskAnalysisTemplateAnswerSeed> getRiskAnalysysTemplateFormAnswerMap(boolean handlePersonalData) {
+
+        Map<String, RiskAnalysisTemplateAnswerSeed> answersMap = new HashMap<>();
+
+        RiskAnalysisTemplateAnswerSeed answerPurpose = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("INSTITUTIONAL"));
+        RiskAnalysisTemplateAnswerSeed answerInstitutionalPurpose = new RiskAnalysisTemplateAnswerSeed().editable(false).suggestedValues(Arrays.asList("Answer1", "Answer2"));
+        RiskAnalysisTemplateAnswerSeed answerPersonalData = new RiskAnalysisTemplateAnswerSeed().editable(false).values(handlePersonalData ? List.of("YES") : List.of("NO"));
+        RiskAnalysisTemplateAnswerSeed answerThirdParties = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("NO"));
+        RiskAnalysisTemplateAnswerSeed answerThirdPartiesPersonalData = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("NO"));
+
+        answersMap.put("purpose", answerPurpose);
+        answersMap.put("institutionalPurpose", answerInstitutionalPurpose);
+        answersMap.put("usesPersonalData", answerPersonalData);
+        answersMap.put("isRequestOnBehalfOfThirdParties", answerThirdParties);
+        answersMap.put("usesThirdPartyPersonalData", answerThirdPartiesPersonalData);
+
+        if (handlePersonalData) {
+            RiskAnalysisTemplateAnswerSeed answerCheckedExistenceMereCorrectnessInteropCatalogue = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("true"));
+            RiskAnalysisTemplateAnswerSeed answerDoneDpia = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("NO"));
+            RiskAnalysisTemplateAnswerSeed answerConfirmPricipleIntegrityAndDiscretion = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("true"));
+            RiskAnalysisTemplateAnswerSeed answerPolicyProvided = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("YES"));
+            RiskAnalysisTemplateAnswerSeed answerDataDownload = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("NO"));
+            RiskAnalysisTemplateAnswerSeed answerPolicyProvidedMedium = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("PRINT"));
+            RiskAnalysisTemplateAnswerSeed answerDeliveryMethod = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("CLEARTEXT"));
+            RiskAnalysisTemplateAnswerSeed answerDeclarationConfirmGDPR = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("true"));
+            RiskAnalysisTemplateAnswerSeed answerPurposePursuit = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("MERE_CORRECTNESS"));
+            RiskAnalysisTemplateAnswerSeed answerKnowsDataQuantity = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("NO"));
+            RiskAnalysisTemplateAnswerSeed answerLegalBasis = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("CONSENT"));
+            RiskAnalysisTemplateAnswerSeed answerPersonalDataTypes = new RiskAnalysisTemplateAnswerSeed().editable(false).values(List.of("WITH_NON_IDENTIFYING_DATA"));
+
+            answersMap.put("checkedExistenceMereCorrectnessInteropCatalogue", answerCheckedExistenceMereCorrectnessInteropCatalogue);
+            answersMap.put("doneDpia", answerDoneDpia);
+            answersMap.put("confirmPricipleIntegrityAndDiscretion", answerConfirmPricipleIntegrityAndDiscretion);
+            answersMap.put("policyProvided", answerPolicyProvided);
+            answersMap.put("dataDownload", answerDataDownload);
+            answersMap.put("policyProvidedMedium", answerPolicyProvidedMedium);
+            answersMap.put("deliveryMethod", answerDeliveryMethod);
+            answersMap.put("declarationConfirmGDPR", answerDeclarationConfirmGDPR);
+            answersMap.put("purposePursuit", answerPurposePursuit);
+            answersMap.put("knowsDataQuantity", answerKnowsDataQuantity);
+            answersMap.put("legalBasis", answerLegalBasis);
+            answersMap.put("personalDataTypes", answerPersonalDataTypes);
+
+            answersMap.remove("usesThirdPartyPersonalData");
+        }
+        return answersMap;
     }
 
     @When("si effettua la get del purpose template {exists}")
     public void getPurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
-            assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
-        }
+        getPurposeTemplateById(ptId, exists);
     }
 
     @When("si effettua la get by creator di tutti i purpose template in stato {string}")
@@ -116,117 +239,131 @@ public class PurposeTemplateSteps {
             case "ARCHIVED" -> state = List.of(PurposeTemplateState.ARCHIVED);
             default -> throw new IllegalArgumentException("Invalid PurposeTemplateState: " + status);
         }
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getCreatorPurposeTemplates(1, 10, null, null, state));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getCreatorPurposeTemplates(0, 10, null, null, state));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             CreatorPurposeTemplates creatorPurposeTemplates = (CreatorPurposeTemplates) httpCallExecutor.getResponse();
             assertThat(creatorPurposeTemplates).as("Il risultato della get dei purpose template by Creator" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
     @When("si effettua la get di tutti i purpose template con titolo {string}")
     public void getCatalogPurposeTemplate(String title) {
-        getCatalogPurposeTemplateWithPersonalData(title, "true");
+        getCatalogPurposeTemplateWithPersonalData(title, true);
     }
 
-    @When("si effettua la get di tutti i purpose template con titolo {string} e handlePersonalData {string}")
-    public void getCatalogPurposeTemplateWithPersonalData(String title, String handlePersonalDataValue) {
-        Boolean handlePersonalData;
-        switch (handlePersonalDataValue.toUpperCase()) {
-            case "TRUE" -> handlePersonalData = true;
-            case "FALSE" -> handlePersonalData = false;
-            default -> handlePersonalData = null;
-        }
+    @When("si effettua la get di tutti i purpose template con titolo {string} e handlePersonalData {bool}")
+    public void getCatalogPurposeTemplateWithPersonalData(String title, Boolean handlePersonalData) {
         String titleFilter = title.equalsIgnoreCase("ANY") ? null : title;
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getCatalogPurposeTemplates(1, 10, titleFilter, null, null, null, true, handlePersonalData));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getCatalogPurposeTemplates(0, 10, titleFilter, null, null, null, true, handlePersonalData));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             catalogPurposeTemplates = (CatalogPurposeTemplates) httpCallExecutor.getResponse();
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
-
     @When("si aggiorna il purpose template {exists}")
-    public void updatePurposeTemplate(boolean exists) {
-        PurposeTemplateSeed updateRequest = new PurposeTemplateSeed();
-        updateRequest.setPurposeTitle("updated_purposeTitle" + DateTime.now());
-        updateRequest.setPurposeDescription("updated_purposeDescription" + DateTime.now());
+    public void updatePurposeTemplateRequest(boolean exists) {
+        purposeTemplateCreationRequest.setPurposeTitle("updated_purposeTitle_" + DateTime.now());
+        purposeTemplateCreationRequest.setPurposeDescription("updated_purposeDescription_" + DateTime.now());
+        purposeTemplateCreationRequest.setTargetDescription("updated_targetDescription_" + DateTime.now());
+        purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("updated_purposeFreeOfChargeReason_" + DateTime.now());
+        purposeTemplateCreationRequest.setTargetTenantKind(TenantKind.GSP);
+        invokeUpdatePurposeTemplate(exists);
+    }
 
+    @When("si aggiorna il purpose template {exists} con errore di tipo {purposeTemplateError}")
+    public void updatePurposeTemplateWithError(boolean exists, PurposeTemplateErrorTypes error) {
+        insertErrorsOnPurpose(error);
+        invokeUpdatePurposeTemplate(exists);
+    }
+
+    private void invokeUpdatePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-        httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, updateRequest));
+        if (exists) {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest)),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
+        } else {
+            httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest));
+        }
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
             assertThat(purposeTemplate).as("Il template aggiornato non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getPurposeTitle()).as("Il titolo deve risultare aggiornato").contains("updated_title");
-            assertThat(purposeTemplate.getPurposeDescription()).as("La descrizione deve risultare aggiornata").contains("updated_description");
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
+            assertThat(purposeTemplate.getPurposeTitle()).as("Il titolo deve risultare aggiornato").contains("updated_purposeTitle");
         }
     }
 
-    @When("si cancella il purpose template {exists}")
-    public void deletePurposeTemplate(boolean exists) {
+    @When("si cancella {isFirstTime} il purpose template {exists}")
+    public void deletePurposeTemplate(boolean isFirstTime, boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.deletePurposeTemplate(ptId));
         if (exists) {
-            PurposeTemplateWithCompactCreator pt = getPurposeTemplateById(ptId);
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-                assertThat(pt).as("Dopo la delete (OK), il result della get del purpose template con id " + ptId + " dovrebbe essere null").isNull();
-            } else {
-                assertThat(pt).as("Dopo la delete (KO), il result della get del purpose template con id " + ptId + " non dovrebbe essere null").isNotNull();
+                purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, false);
+                assertThat(purposeTemplateWithCompactCreator).as("Il purpose template non risulta essere stato eliminato").isNull();
             }
         }
     }
 
-    public PurposeTemplateWithCompactCreator getPurposeTemplateById(UUID ptId) {
-        PurposeTemplateWithCompactCreator pt = null;
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+    public PurposeTemplateWithCompactCreator getPurposeTemplateById(UUID ptId, boolean exists) {
+        if (exists) {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId)),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
             purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
+            assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
             return purposeTemplateWithCompactCreator;
         } else {
-            log.info("Failed to get PurposeTemplate with id " + ptId);
-            log.info(httpCallExecutor.getErrorMessage());
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId)),
+                    res -> res == HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
             return null;
         }
+//        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+//            purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
+//            assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
+//            return purposeTemplateWithCompactCreator;
+//        }
+//        return null;
+    }
+
+    @And("il purpose template {exists} viene associato a un e-service con personalData {bool}")
+    public void linkPurposeTemplateToEserviceWithPersonalData(boolean exists, Boolean personalData) {
+        //TODO MATTEO
+//        httpCallExecutor.performCall(() -> purposeTemplateClient.getCatalogPurposeTemplates(0))
     }
 
     @And("il purpose template {exists} viene associato all'e-service")
     public void linkPurposeTemplateToEservice(boolean exists) {
         assertThat(sharedStepsContext.getEServicesCommonContext().getEserviceId()).as("L'id dell'eService creato non dev'essere null").isNotNull();
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
         InlineObject2 inlineObject = new InlineObject2();
         inlineObject.setEserviceId(eServiceId);
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject));
-        if (exists) {
-            EServiceDescriptorPurposeTemplate esdPt = (EServiceDescriptorPurposeTemplate) httpCallExecutor.getResponse();
-        }
-        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject));
-        if (exists) {
-            EServiceDescriptorsPurposeTemplate esDescriptorsPt = purposeTemplateClient.getPurposeTemplateEServices(ptId, 1, 10, null, null);
-            assertThat(esDescriptorsPt).as("L'output della get degli e-service associati non dev'essere null").isNotNull();
-            assertThat(esDescriptorsPt.getResults()).as("Il result dell'output della get degli e-service associati non dev'essere null").isNotNull();
-            List<EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor> resultList = esDescriptorsPt.getResults();
-            CompactPurposeTemplateEService linkedEService = resultList.stream().filter(x -> x.getEservice().getId().equals(eServiceId)).findFirst().orElse(null).getEservice();
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-                assertThat(linkedEService).as("L'e-service con id " + eServiceId + " non risulta associato al purpose template con id " + ptId).isNotNull();
-            } else {
-                assertThat(linkedEService).as("L'e-service con id " + eServiceId + " risulta associato al purpose template con id " + ptId).isNull();
-            }
-        }
     }
 
 
     @Then("si effettua la get degli e-service associati al purpose template {exists}")
     public void getPurposeTemplateEservices(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 1, 10, null, null));
+        if (exists) {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null)),
+                    res -> ((EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse()).getResults().size() > 0,
+                    "Failed to retrieve the client!"
+            );
+        } else {
+            httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null));
+        }
+
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             EServiceDescriptorsPurposeTemplate esDescriptorsPt = (EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse();
             assertThat(esDescriptorsPt).as("L'output della get degli e-service associati non dev'essere null").isNotNull();
@@ -234,8 +371,6 @@ public class PurposeTemplateSteps {
             List<EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor> resultList = esDescriptorsPt.getResults();
             linkedEServices = resultList.stream().map(EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor::getEservice).toList();
             checkEServicesList(true);
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -266,17 +401,14 @@ public class PurposeTemplateSteps {
         o3.setEserviceId(eServiceId);
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, o3));
-
         if (exists) {
-            EServiceDescriptorsPurposeTemplate esDescriptorsPt = purposeTemplateClient.getPurposeTemplateEServices(ptId, 1, 10, null, null);
-            assertThat(esDescriptorsPt).as("L'output della get degli e-service associati non dev'essere null").isNotNull();
-            assertThat(esDescriptorsPt.getResults()).as("Il result dell'output della get degli e-service associati non dev'essere null").isNotNull();
-            List<EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor> resultList = esDescriptorsPt.getResults();
-            CompactPurposeTemplateEService linkedEService = resultList.stream().filter(x -> x.getEservice().getId().equals(eServiceId)).findFirst().orElse(null).getEservice();
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-                assertThat(linkedEService).as("L'e-service con id " + eServiceId + " risulta ancora associato al purpose template con id " + ptId).isNull();
-            } else {
-                assertThat(linkedEService).as("L'e-service con id " + eServiceId + "non risulta più associato al purpose template con id " + ptId).isNotNull();
+                pollingService.makePolling(
+                        () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null)),
+                        res -> ((EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse()).getResults().stream().filter(
+                                x -> x.getEservice().getId().equals(eServiceId)).toList().isEmpty(),
+                        "Error while checking if the eService is correctly unlinked from purpose template"
+                );
             }
         }
     }
@@ -284,10 +416,36 @@ public class PurposeTemplateSteps {
     @And("il purpose template {exists} viene spostato in stato {ptState}")
     public void changePurposeTemplateState(boolean exists, PurposeTemplateState ptState) {
         switch (ptState) {
-            case DRAFT -> log.info("already in DRAFT");
             case PUBLISHED -> activatePurposeTemplate(exists);
             case SUSPENDED -> suspendPurposeTemplate(exists);
             case ARCHIVED -> archivePurposeTemplate(exists);
+        }
+    }
+
+    /**
+     * Come il metodo di sopra, ma esegue il passaggio da uno stato all'altro nell'ordine corretto
+     */
+    @And("il purpose template viene gradualmente spostato in stato {ptState}")
+    public void changePurposeTemplateStateGradually(PurposeTemplateState ptState) {
+        switch (ptState) {
+            case PUBLISHED -> {
+                activatePurposeTemplate(true);
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La pubblicazione non è andata a buon fine").isTrue();
+            }
+            case SUSPENDED -> {
+                activatePurposeTemplate(true);
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La pubblicazione non è andata a buon fine").isTrue();
+                suspendPurposeTemplate(true);
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La sospensione non è andata a buon fine").isTrue();
+            }
+            case ARCHIVED -> {
+                activatePurposeTemplate(true);
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La pubblicazione non è andata a buon fine").isTrue();
+                suspendPurposeTemplate(true);
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La sospensione non è andata a buon fine").isTrue();
+                archivePurposeTemplate(true);
+                assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("L'archiviazione non è andata a buon fine").isTrue();
+            }
         }
     }
 
@@ -296,11 +454,9 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.unsuspendPurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
-            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").isEqualTo(PurposeTemplateState.PUBLISHED);
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
+            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
+            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta attivo").isEqualTo(PurposeTemplateState.PUBLISHED);
         }
     }
 
@@ -308,11 +464,9 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.publishPurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
-            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta attivo").isEqualTo(PurposeTemplateState.PUBLISHED);
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
+            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
+            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta attivo").isEqualTo(PurposeTemplateState.PUBLISHED);
         }
     }
 
@@ -320,11 +474,9 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
-            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta sospeso").isEqualTo(PurposeTemplateState.SUSPENDED);
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
+            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
+            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta sospeso").isEqualTo(PurposeTemplateState.SUSPENDED);
         }
     }
 
@@ -332,108 +484,143 @@ public class PurposeTemplateSteps {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
-            assertThat(purposeTemplate).as("Il purpose template restituito non dev'essere null").isNotNull();
-            assertThat(purposeTemplate.getState()).as("Il purpose template non risulta archiviato").isEqualTo(PurposeTemplateState.ARCHIVED);
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
+            purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, exists);
+            assertThat(purposeTemplateWithCompactCreator).as("Il purpose template restituito non dev'essere null").isNotNull();
+            assertThat(purposeTemplateWithCompactCreator.getState()).as("Il purpose template non risulta archiviato").isEqualTo(PurposeTemplateState.ARCHIVED);
         }
     }
 
     @And("viene creato un nuovo purpose template in stato {ptState}")
     public void vieneCreatoUnNuovoPurposeTemplateInStato(PurposeTemplateState ptState) {
         createPurposeTemplate();
-        switch (ptState) {
-            case PUBLISHED -> activatePurposeTemplate(true);
-            case SUSPENDED -> {
-                activatePurposeTemplate(true);
-                suspendPurposeTemplate(true);
-            }
-            case ARCHIVED -> {
-                activatePurposeTemplate(true);
-                suspendPurposeTemplate(true);
-                archivePurposeTemplate(true);
-            }
-        }
+        changePurposeTemplateStateGradually(ptState);
     }
 
-    //TODO MATTEO, non è così che va creata la request, editare a tempo debito
     @And("viene creata una risposta di analisi del rischio {string} per il purpose template {exists}")
     public void createRiskAnalysisAnswer(String answerType, boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
+
+        Map<String, RiskAnalysisTemplateAnswerSeed> answersMap = getRiskAnalysysTemplateFormAnswerMap(false);
         RiskAnalysisTemplateAnswerRequest request = new RiskAnalysisTemplateAnswerRequest();
-        String answerKey = "TODO MATTEO che ci devo mettere ???";
-        RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed();
-        answerSeed.setEditable(true);
-        answerSeed.setAnnotation(new RiskAnalysisTemplateAnswerAnnotationSeed());
-        request.setAnswerData(answerSeed);
-
-        String text = "";
         switch (answerType.toUpperCase()) {
-            case "ENTRO I LIMITI CONSENTITI" -> text = "A".repeat(2000);
-            case "OLTRE I LIMITI CONSENTITI" -> text = "B".repeat(2001);
-            case "CONTENENTE HYPER LINK" -> text = "https://www.google.com";
+            case "ENTRO I LIMITI CONSENTITI FREE TEXT" -> {
+                String key = "institutionalPurpose";
+                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
+                answer.setSuggestedValues(
+                        Stream.concat(answer.getSuggestedValues().stream(), Stream.of("Y".repeat(250))).toList());
+                request.setAnswerKey(key);
+                request.setAnswerData(answer);
+            }
+            case "OLTRE I LIMITI CONSENTITI FREE TEXT" -> {
+                String key = "institutionalPurpose";
+                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
+                answer.setSuggestedValues(
+                        Stream.concat(answer.getSuggestedValues().stream(), Stream.of("N".repeat(251))).toList());
+                request.setAnswerKey(key);
+                request.setAnswerData(answer);
+            }
+//            case "ENTRO I LIMITI CONSENTITI MULTI" -> {
+//                String key = "usesThirdPartyPersonalData";
+//                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
+//                answer.setValues(
+//                        Stream.concat(answer.getValues().stream(), Stream.of("A".repeat(250))).toList());
+//                request.setAnswerKey(key);
+//                request.setAnswerData(answer);
+//            }
+//            case "OLTRE I LIMITI CONSENTITI MULTI" -> {
+//                String key = "institutionalPurpose";
+//                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
+//                answer.setSuggestedValues(Arrays.asList("Answer1", "A".repeat(251)));
+//                request.setAnswerKey(key);
+//                request.setAnswerData(answer);
+//            }
+            case "CONTENENTE HYPER LINK" -> {
+                String key = "institutionalPurpose";
+                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
+                answer.setSuggestedValues(
+                        Stream.concat(answer.getSuggestedValues().stream(), Stream.of("https://www.google.com")).toList());
+                request.setAnswerKey(key);
+                request.setAnswerData(answer);
+            }
         }
-        request.getAnswerData().getAnnotation().setText(text);
-
         httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswer(ptId, request));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             riskAnalysis = (RiskAnalysisTemplateAnswerResponse) httpCallExecutor.getResponse();
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId)),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
         }
     }
 
-    @And("viene {string} un'annotation {string} per il purpose template {exists}")
-    public void createRiskAnalysisAnswerAnnotation(String action, String annotationTextType, boolean exists) {
-        UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
+    @And("viene {string} un'annotazione con testo {isInRange} i {int} caratteri per il purpose template {exists}")
+    public void createRiskAnalysisAnswerAnnotation(String action, boolean inRange, int maxLimit, boolean ptExists) {
+        boolean answerExists = false;
+        UUID ptId = ptExists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         UUID answerId;
-        if (action.equalsIgnoreCase("MODIFICATA")) {
+        if (action.equalsIgnoreCase("MODIFICATA") || action.equalsIgnoreCase("CREATA")) {
             assertThat(riskAnalysis).as("La risposta di analisi del rischio non dev'essere null").isNotNull();
             answerId = riskAnalysis.getId();
-        } else if (action.equalsIgnoreCase("MODIFICATA 404")) {
-            answerId = UUID.randomUUID();
+            answerExists = true;
         } else {
-            answerId = null;
+            answerId = UUID.randomUUID();
         }
-
-        RiskAnalysisTemplateAnswerAnnotationText annotationText = new RiskAnalysisTemplateAnswerAnnotationText();
-        String text = "";
-        switch (annotationTextType.toUpperCase()) {
-            case "ENTRO I LIMITI CONSENTITI" -> text = "A".repeat(250);
-            case "OLTRE I LIMITI CONSENTITI" -> text = "B".repeat(251);
-            case "CONTENENTE HYPER LINK" -> text = "https://www.google.com";
-            case "RIMUOVENDO IL TESTO" -> text = "";
-        }
+        RiskAnalysisTemplateAnswerAnnotationSeed annotationText = new RiskAnalysisTemplateAnswerAnnotationSeed();
+        String text = inRange ? "Y".repeat(maxLimit) : "N".repeat(maxLimit + 1);
+//        switch (annotationTextType.toUpperCase()) {
+//            case "ENTRO I LIMITI CONSENTITI FREE TEXT" -> text = "Y".repeat(maxLimit);
+//            case "OLTRE I LIMITI CONSENTITI FREE TEXT" -> text = "N".repeat(maxLimit + 1);
+//            case "CONTENENTE HYPER LINK" -> text = "https://www.google.com";
+//            case "RIMUOVENDO IL TESTO" -> text = "";
+//        }
         annotationText.setText(text);
-        httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText));
+        if (answerExists && ptExists) {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText)),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                annotation = (RiskAnalysisTemplateAnswerAnnotation) httpCallExecutor.getResponse();
+            }
+        } else {
+            httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText));
+        }
     }
 
-    @Then("vengono caricati {int} documenti {string} associati all'annotation {exists}")
+    @Then("vengono caricati {int} documenti {string} associati all'annotazione {exists}")
     public void uploadAnnotationDocument(int docNumber, String casistica, boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
 
         for (int i = 1; i <= docNumber; i++) {
-            String prettyName = getPrettyName(casistica, i);
             org.springframework.core.io.Resource doc = getDocument(casistica, i);
-            httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc));
+            String prettyName = getPrettyName(casistica, i);
+            if (exists) {
+                pollingService.makePolling(
+                        () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc)),
+                        res -> res != HttpStatus.NOT_FOUND,
+                        "Failed to retrieve the client!"
+                );
+            } else {
+                httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc));
+            }
             //supponiamo di voler caricare 3 documenti (dove il terzo genera errore), devo accertarmi che i primi due siano andati a buon fine
             if (i < docNumber) {
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("L'upload del documento " + i + " è fallito: " + httpCallExecutor.getErrorMessage()).isTrue();
-            }
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 uploadedDocument = (RiskAnalysisTemplateAnswerAnnotationDocument) httpCallExecutor.getResponse();
-                getAnnotationDocument(true);
-            } else {
-                log.info(httpCallExecutor.getErrorMessage());
             }
+        }
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            uploadedDocument = (RiskAnalysisTemplateAnswerAnnotationDocument) httpCallExecutor.getResponse();
+            getAnnotationDocument(true);
         }
     }
 
     private String getPrettyName(String errorType, int docNum) {
         return switch (errorType.toUpperCase()) {
-            case "DIVERSI CON NOME DIVERSO", "UGUALI CON NOME DIVERSO" -> "prettyName_" + docNum;
+            case "DIVERSI CON NOME DIVERSO", "UGUALI CON NOME DIVERSO" -> "prettyName_" + docNum + "_" + DateTime.now();
             case "DIVERSI CON NOME UGUALE" -> "prettyNameUguale";
             case "DI TIPO NON PDF" -> "prettyNameTxt" + docNum;
             default -> throw new IllegalStateException("Unexpected value: " + errorType.toUpperCase());
@@ -461,11 +648,10 @@ public class PurposeTemplateSteps {
             }
             default -> throw new IllegalStateException("Unexpected value: " + errorType.toUpperCase());
         }
-        ;
         return resource;
     }
 
-    @When("viene eliminata l'annotation {exists} per il purpose template")
+    @When("viene eliminata l'annotazione {exists} per il purpose template")
     public void deleteAnnotation(boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
@@ -473,12 +659,10 @@ public class PurposeTemplateSteps {
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotation(ptId, answerId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             //TODO MATTEO
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
-    @When("viene eliminato il documento {exists} dell'annotation precedentemente creata")
+    @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata")
     public void deleteAnnotationDocument(boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = riskAnalysis.getId();
@@ -487,19 +671,22 @@ public class PurposeTemplateSteps {
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId));
     }
 
-    @When("viene recuperato il documento {exists} dell'annotation precedentemente creata")
+    @When("viene recuperato il documento {exists} dell'annotazione precedentemente creata")
     public void getAnnotationDocument(boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = riskAnalysis.getId();
         UUID docId = exists ? uploadedDocument.getId() : UUID.randomUUID();
 
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId));
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId)),
+                res -> res != HttpStatus.NOT_FOUND,
+                "Failed to retrieve the client!"
+        );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             retrievedDocument = (File) httpCallExecutor.getResponse();
             assertThat(retrievedDocument).as("Il documento recuperato con id " + docId + " non dev'essere null").isNotNull();
         } else {
             retrievedDocument = null;
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -514,25 +701,43 @@ public class PurposeTemplateSteps {
         PurposeFromTemplateSeed fromSeed = new PurposeFromTemplateSeed();
         fromSeed.setTitle("PurposeFromTemplateSeed" + DateTime.now());
         fromSeed.setDailyCalls(10);
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        assertThat(eServiceId).as("L'id dell'eService creato risulta null").isNotNull();
+        fromSeed.setEserviceId(eServiceId);
+        UUID agreementId = sharedStepsContext.getAgreementId();
+        assertThat(agreementId).as("L'id dell'agreement creato risulta null").isNotNull();
+        Agreement agreement = clientTokenConfigurator.getAgreementClient().getAgreementById(agreementId);
+        assertThat(agreement).as("L'agreement restituito risulta null").isNotNull();
+        UUID consumerId = agreement.getConsumer().getId();
+        assertThat(consumerId).as("Il consumerId restituito risulta null").isNotNull();
+        fromSeed.setConsumerId(consumerId);
         switch (parameterType.toUpperCase()) {
             case "DATI NULL" -> {
                 fromSeed.setTitle(null);
                 fromSeed.setDailyCalls(null);
-            }
-            case "TITOLO ESISTENTE" -> fromSeed.setTitle("Duplicated Title");
-            default -> {
-                //TODO MATTEO, recuperare questi dati
                 fromSeed.setEserviceId(null);
                 fromSeed.setConsumerId(null);
             }
+            case "TITOLO ESISTENTE" -> {
+                if (duplicatedTitleForPurpose == null) {
+                    duplicatedTitleForPurpose = "DuplicatedTitle_" + DateTime.now();
+                }
+                fromSeed.setTitle(duplicatedTitleForPurpose);
+            }
         }
-
-        httpCallExecutor.performCall(() -> purposeApiClient.createPurposeFromTemplate(ptId, fromSeed));
+        if (exists) {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeApiClient.createPurposeFromTemplate(ptId, fromSeed)),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
+        } else {
+            httpCallExecutor.performCall(() -> purposeApiClient.createPurposeFromTemplate(ptId, fromSeed));
+        }
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             createdPurposeFromPurposeTemplate = (CreatedResource) httpCallExecutor.getResponse();
             movePurposeToState(PurposeVersionState.DRAFT);
-        } else {
-            log.info(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -548,18 +753,26 @@ public class PurposeTemplateSteps {
 
         PatchPurposeUpdateFromTemplateContent patch = new PatchPurposeUpdateFromTemplateContent();
         switch (parameterType.toUpperCase()) {
-            case "DATI NULL" -> {
+            case "EMPTY TITLE" -> {
+                patch.setTitle("");
+            }
+            case "ZERO DAILY CALLS" -> {
+                patch.setDailyCalls(0);
+            }
+            case "VALORI NULL" -> {
                 patch.setTitle(null);
                 patch.setDailyCalls(null);
                 patch.setRiskAnalysisForm(null);
             }
             case "TITLE ESISTENTE" -> {
-                patch.setTitle("PurposeTitleUpdateFail");
+                UUID lastCreatedPurposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+                Purpose purposeWithTitleToBeCopied = clientTokenConfigurator.getPurposeApiClient().getPurpose(lastCreatedPurposeId);
+                assertThat(purposeWithTitleToBeCopied).isNotNull();
+                patch.setTitle(purposeWithTitleToBeCopied.getTitle());
             }
             default -> {
                 patch.setTitle(purpose.getTitle() + "_updated");
                 patch.setDailyCalls(20);
-                //TODO MATTEO settare restanti proprietà
             }
         }
         httpCallExecutor.performCall(() -> purposeApiClient.patchUpdatePurposeFromTemplate(ptId, purposeId, patch));
@@ -568,7 +781,11 @@ public class PurposeTemplateSteps {
     @And("la finalità viene portata in stato {purposeVersionState}")
     public void movePurposeToState(PurposeVersionState state) {
         assertThat(createdPurposeFromPurposeTemplate).as("La finalità creata a partire da una finalità agevolata non dev'essere null").isNotNull();
-        httpCallExecutor.performCall(() -> purposeApiClient.getPurpose(createdPurposeFromPurposeTemplate.getId()));
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeApiClient.getPurpose(createdPurposeFromPurposeTemplate.getId())),
+                res -> res.is2xxSuccessful(),
+                "Failed to retrieve the purpose template from client!"
+        );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purpose = (Purpose) httpCallExecutor.getResponse();
         } else {
@@ -578,10 +795,15 @@ public class PurposeTemplateSteps {
             case DRAFT -> log.info("Created Purpose: " + purpose);
             case ACTIVE ->
                     httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
-            case SUSPENDED ->
-                    httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
-            case ARCHIVED ->
-                    httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+            case SUSPENDED -> {
+                httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+            }
+            case ARCHIVED -> {
+                httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+            }
         }
         assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La chiamata per spostare la finalità in stato " + state + " non è andata a buon fine").isTrue();
     }

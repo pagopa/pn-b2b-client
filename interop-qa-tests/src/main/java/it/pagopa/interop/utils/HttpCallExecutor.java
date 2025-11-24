@@ -2,8 +2,6 @@ package it.pagopa.interop.utils;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import lombok.Data;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -11,6 +9,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Slf4j
 @Getter
@@ -27,6 +28,7 @@ public class HttpCallExecutor implements IHttpExecutor {
         try {
             response = promise.get();
             responseStatus = HttpStatus.OK;
+            errorMessage = null;
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();

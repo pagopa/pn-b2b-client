@@ -2,23 +2,23 @@ Feature: finalità agevolata, purpose template ARCHIVIATION
 
   #57(OK)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_OK]
+  Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION_OK]
     Given l'utente è un "admin" di "PA1"
-    And viene creato un nuovo purpose template in stato SUSPENDED
+    And viene creato un nuovo purpose template in stato <ptState>
     And il purpose template creato viene spostato in stato ARCHIVED
     Then si ottiene lo status code 204
+    Examples:
+      | ptState   |
+      | PUBLISHED |
+      | SUSPENDED |
 
   #58(KO)
   @purposeTemplate @purposeTemplateArchiviation
-  Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION_WRONG_STATE]
+  Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_WRONG_STATE]
     Given l'utente è un "admin" di "PA1"
-    And viene creato un nuovo purpose template in stato <state>
+    And viene creato un nuovo purpose template in stato DRAFT
     When il purpose template creato viene spostato in stato ARCHIVED
     Then si ottiene lo status code 409
-    Examples:
-      | state     |
-      | DRAFT     |
-      | PUBLISHED |
 
   #59(KO)
   @purposeTemplate @purposeTemplateArchiviation

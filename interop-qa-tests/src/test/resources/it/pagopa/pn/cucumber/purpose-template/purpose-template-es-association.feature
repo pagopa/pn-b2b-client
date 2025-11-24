@@ -5,9 +5,10 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
   Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_OK]
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
-    Given l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And il purpose template creato viene associato all'e-service
+    And si ottiene lo status code 200
     When si effettua la get degli e-service associati al purpose template creato
     Then la lista di e-service associati contiene l'e-service atteso
 
@@ -22,9 +23,22 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
     When si effettua la get degli e-service associati al purpose template inesistente
     Then si ottiene lo status code 404
 
-  #25 TODO MATTEO
-  # Richiamare l’API di GET /catalog per restituire l’elenco degli e-service che hanno il flag sui dati personali valorizzato con lo stesso valore settato nel flag durante la creazione del template finalità
-  # Verificare che venga correttamente associato un determinato purpose template in stato draft a uno o più e-service, il cui flag sui dati personali è uguale a quello settato in fase di creazione del template
+  #25(OK)
+  @purposeTemplate @purposeTemplateEservice
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_WITH_FLAG_OK]
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData <personalData>
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template con handlePersonalData <personalData>
+    And il purpose template creato viene associato a un e-service con personalData <personalData>
+    And si ottiene lo status code 200
+    When si effettua la get degli e-service associati al purpose template creato
+    Then la lista di e-service associati contiene l'e-service atteso
+    Examples:
+      | personalData |
+      | true         |
+      | false        |
+
 
   #26(OK)
   @purposeTemplate @purposeTemplateEservice
