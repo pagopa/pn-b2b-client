@@ -527,11 +527,12 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+
   Scenario Outline: [M2MG_ESERVICES_47_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service in stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
     Examples:
       | stato       |
