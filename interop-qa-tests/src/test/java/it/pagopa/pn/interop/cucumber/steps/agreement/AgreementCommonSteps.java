@@ -9,6 +9,7 @@ import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -260,19 +261,19 @@ public class AgreementCommonSteps {
 
     private void editAgreementApprovalPolicy(String agreementApprovalPolicy, UUID eserviceId, UUID descriptorId) {
         httpCallExecutor.performCall(() -> eserviceClient.editAgreementApprovalPolicy(
-            eserviceId,
-            descriptorId,
-            AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)));
+                eserviceId,
+                descriptorId,
+                AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)));
     }
 
     @Then("il valore di agreementApprovalPolicy dell'e-service è adesso {string}")
     public void checkAgreementApprovalPolicy(String agreementApprovalPolicy) {
         pollingService.makePolling(() -> eserviceClient.getEServiceDescriptor(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId())
-            .getAgreementApprovalPolicy(),
-            res -> res.equals(AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)),
-            "The agreementApprovalPolicy was not updated");
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                                sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+                        .getAgreementApprovalPolicy(),
+                res -> res.equals(AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)),
+                "The agreementApprovalPolicy was not updated");
     }
 
     @And("l'utente crea una nuova versione dell'e-service")
