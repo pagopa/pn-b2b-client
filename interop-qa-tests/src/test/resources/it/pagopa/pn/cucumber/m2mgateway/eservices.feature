@@ -197,11 +197,20 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di recuperare l'e-service creato
     Then si ottiene lo status code 404
 
+
+#  Forma precedente di seguito, il 401 è stato segnalato come non corretto
+#  https://pagopa.atlassian.net/browse/PIN-8604
+#  Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 34)
+#    Given "PA1" ha già creato e pubblicato 1 e-services
+#    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+#    When l'utente tenta di effettuare la cancellazione dell'e-service
+#    Then si ottiene lo status code 401
+
   Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 34)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la cancellazione dell'e-service
-    Then si ottiene lo status code 401
+    Then si ottiene lo status code 403
 
   Scenario: [M2MG_ESERVICES_20] La cancellazione di un e-service non può essere effettuata specificando un id inesistente (Parte2#Scenario intorno a 35)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
