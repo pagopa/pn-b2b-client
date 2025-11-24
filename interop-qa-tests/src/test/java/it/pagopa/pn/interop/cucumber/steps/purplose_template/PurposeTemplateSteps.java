@@ -294,8 +294,8 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @When("si cancella {isFirstTime} il purpose template {exists}")
-    public void deletePurposeTemplate(boolean isFirstTime, boolean exists) {
+    @When("si cancella il purpose template {exists}")
+    public void deletePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.deletePurposeTemplate(ptId));
         if (exists) {
@@ -324,18 +324,6 @@ public class PurposeTemplateSteps {
             );
             return null;
         }
-//        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-//            purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
-//            assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
-//            return purposeTemplateWithCompactCreator;
-//        }
-//        return null;
-    }
-
-    @And("il purpose template {exists} viene associato a un e-service con personalData {bool}")
-    public void linkPurposeTemplateToEserviceWithPersonalData(boolean exists, Boolean personalData) {
-        //TODO MATTEO
-//        httpCallExecutor.performCall(() -> purposeTemplateClient.getCatalogPurposeTemplates(0))
     }
 
     @And("il purpose template {exists} viene associato all'e-service")
@@ -568,12 +556,6 @@ public class PurposeTemplateSteps {
         }
         RiskAnalysisTemplateAnswerAnnotationSeed annotationText = new RiskAnalysisTemplateAnswerAnnotationSeed();
         String text = inRange ? "Y".repeat(maxLimit) : "N".repeat(maxLimit + 1);
-//        switch (annotationTextType.toUpperCase()) {
-//            case "ENTRO I LIMITI CONSENTITI FREE TEXT" -> text = "Y".repeat(maxLimit);
-//            case "OLTRE I LIMITI CONSENTITI FREE TEXT" -> text = "N".repeat(maxLimit + 1);
-//            case "CONTENENTE HYPER LINK" -> text = "https://www.google.com";
-//            case "RIMUOVENDO IL TESTO" -> text = "";
-//        }
         annotationText.setText(text);
         if (answerExists && ptExists) {
             pollingService.makePolling(
@@ -657,8 +639,15 @@ public class PurposeTemplateSteps {
         UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotation(ptId, answerId));
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            //TODO MATTEO
+        if (exists) {
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                purposeTemplateWithCompactCreator = getPurposeTemplateById(ptId, true);
+                RiskAnalysisFormTemplate raTemplate = purposeTemplateWithCompactCreator.getPurposeRiskAnalysisForm();
+                assertThat(raTemplate).as("L'analisi del rischio del purpose template non dev'essere null").isNotNull();
+                RiskAnalysisTemplateAnswer answer = raTemplate.getAnswers().values().stream().filter(a -> a.getId().equals(answerId)).findFirst().orElse(null);
+                assertThat(answer).as("L'answer deve risultare ancora presente").isNotNull();
+                assertThat(answer.getAnnotation()).as("L'annotazione deve risultare eliminata").isNull();
+            }
         }
     }
 
@@ -676,12 +665,15 @@ public class PurposeTemplateSteps {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = riskAnalysis.getId();
         UUID docId = exists ? uploadedDocument.getId() : UUID.randomUUID();
-
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId)),
-                res -> res != HttpStatus.NOT_FOUND,
-                "Failed to retrieve the client!"
-        );
+        if (exists) {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId)),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
+        } else {
+            httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId));
+        }
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             retrievedDocument = (File) httpCallExecutor.getResponse();
             assertThat(retrievedDocument).as("Il documento recuperato con id " + docId + " non dev'essere null").isNotNull();
