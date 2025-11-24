@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -83,6 +84,15 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
+    public EServiceTemplateVersions getEserviceTemplateVersions(UUID templateId) {
+        return this.getEserviceTemplateVersions(EserviceTemplateListRequest.builder()
+            .templateId(templateId)
+            .offset(0)
+            .limit(30)
+            .build());
+    }
+
+    @Override
     public EServiceTemplateVersion getEserviceTemplateVersion(UUID templateId, UUID versionId) {
         return eserviceTemplatesApi.getEServiceTemplateVersion(templateId, versionId);
     }
@@ -90,6 +100,15 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     @Override
     public CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload) {
         return bffEserviceTemplatesApi.createEServiceTemplate(payload);
+    }
+
+    @Override
+    public ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
+        UUID templateId,
+        EServiceTemplateVersionCreationRequest request) {
+        return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(
+            templateId,
+            this.mapper.mapCreationRequestToSeed(request));
     }
 
     @Override
@@ -136,5 +155,10 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
                 .voucherLifespan(patchRequest.getVoucherLifespan())
                 .dailyCallsTotal(patchRequest.getDailyCallsTotal())
         );
+    }
+
+    @Override
+    public void deleteEServiceTemplate(UUID templateId) {
+        eserviceTemplatesApi.deleteEServiceTemplate(templateId);
     }
 }

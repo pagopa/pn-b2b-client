@@ -81,7 +81,7 @@ public class EServiceTemplateInstanceUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId()),
                     ResponseEntity::getStatusCode),
                 res ->
                     res.getStatusCode().is2xxSuccessful() &&

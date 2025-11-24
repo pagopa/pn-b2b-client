@@ -412,7 +412,7 @@ Feature: Test API Availability in Use of E-Service
 #      | api,security|        403 |
 #      | support     |        403 |
 
-    @happy-path @deleghe1
+    @happy-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_64] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegato
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
@@ -432,7 +432,7 @@ Feature: Test API Availability in Use of E-Service
     Then si ottiene status code 200
 
     # Ticket aperto https://pagopa.atlassian.net/browse/QA-9269
-    @sad-path @deleghe1
+    @sad-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_64_BIS] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegante
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -452,7 +452,7 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 403
 
-    @sad-path @deleghe1
+    @sad-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_65] Richiamare l’API di associazione di un client creato dal delegato NON avendo i permessi di associare un client da delegato all' e-service
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -526,7 +526,7 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede la creazione di un client "CONSUMER"
     Then si ottiene status code 200
 
-    @happy-path @deleghe1
+    @happy-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_69] Richiamare l’API di associazione di un client da parte del delegante alla fruizione
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -546,7 +546,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 200
 
-    @happy-path @deleghe1
+    @happy-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_70] Un ente delegante deve poter associare un proprio client ad una finalità creata da un ente delegato per un e-service a cui è delegato
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione

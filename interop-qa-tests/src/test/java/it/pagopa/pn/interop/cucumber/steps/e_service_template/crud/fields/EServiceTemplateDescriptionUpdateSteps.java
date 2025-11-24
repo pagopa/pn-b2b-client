@@ -43,7 +43,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
 
     @When("l'utente tenta la modifica della descrizione dell'e-service template")
     public void editEServiceTemplateDescription() {
-        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().getId();
         lastTemplateDescriptionUpdateSeed = easyRandom.nextObject(
             EServiceTemplateDescriptionUpdateSeed.class);
         editEServiceTemplateDescription(eServiceTemplateId, lastTemplateDescriptionUpdateSeed);
@@ -51,7 +51,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
 
     @When("l'utente tenta la modifica della descrizione dell'e-service template specificando la stessa descrizione")
     public void editEServiceTemplateDescriptionWithSameDescription() {
-        editEServiceTemplateDescriptionWith(getTemplateContext().getLastTemplateManaged().eServiceDescription());
+        editEServiceTemplateDescriptionWith(getTemplateContext().getLastTemplateManaged().getEServiceDescription());
     }
 
     @When("l'utente tenta la modifica della descrizione dell'e-service template specificando la stringa vuota")
@@ -71,7 +71,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
 
     @Then("la modifica della descrizione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateDescriptionEdited() {
-        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().getId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -94,7 +94,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
     }
 
     private void editEServiceTemplateDescriptionWith(String description) {
-        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().getId();
         lastTemplateDescriptionUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class)
             .description(description);
         editEServiceTemplateDescription(eServiceTemplateId, lastTemplateDescriptionUpdateSeed);

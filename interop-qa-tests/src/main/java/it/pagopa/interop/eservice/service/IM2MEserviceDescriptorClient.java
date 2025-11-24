@@ -6,15 +6,15 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApp
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
+import java.util.List;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
-import java.util.UUID;
-
 public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor, Pair<UUID,UUID>> {
+
     @Data
     @Builder
     class EserviceDescriptorsListRequest {

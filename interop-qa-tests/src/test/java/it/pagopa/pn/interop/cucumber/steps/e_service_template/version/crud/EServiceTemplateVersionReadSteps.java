@@ -15,7 +15,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -32,7 +31,6 @@ public class EServiceTemplateVersionReadSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateInfoMapper templateInfoMapper;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
 
     /* TODO 13/03/2025: molte di queste assegnazioni sono condivise da tutte la classi di step.
@@ -41,7 +39,6 @@ public class EServiceTemplateVersionReadSteps {
     public EServiceTemplateVersionReadSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateInfoMapper templateInfoMapper,
         DescriptorAttributesMapper descriptorAttributesMapper
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -50,7 +47,6 @@ public class EServiceTemplateVersionReadSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateInfoMapper = templateInfoMapper;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
     }
 
@@ -58,7 +54,7 @@ public class EServiceTemplateVersionReadSteps {
     public void getEServiceTemplateVersionDetails() {
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged();
-        getEServiceTemplateVersionDetails(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
+        getEServiceTemplateVersionDetails(lastTemplateManaged.getId(), lastTemplateManaged.getLastVersionId());
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto")
@@ -67,7 +63,7 @@ public class EServiceTemplateVersionReadSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        getEServiceTemplateVersionDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
+        getEServiceTemplateVersionDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), null);
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente")

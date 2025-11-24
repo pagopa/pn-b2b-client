@@ -48,8 +48,8 @@ public class EServiceTemplateVersionSuspendSteps {
 
     @When("l'utente tenta la sospensione della versione dell'e-service template")
     public void suspendEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         suspendEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
@@ -59,7 +59,7 @@ public class EServiceTemplateVersionSuspendSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        suspendEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
+        suspendEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), null);
     }
 
 
@@ -70,13 +70,13 @@ public class EServiceTemplateVersionSuspendSteps {
 
     @When("l'utente tenta la sospensione di una versione inesistente nell'e-service template")
     public void suspendNonExistentEServiceTemplateVersion() {
-        suspendEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
+        suspendEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID());
     }
 
     @Then("la sospensione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionSuspended() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

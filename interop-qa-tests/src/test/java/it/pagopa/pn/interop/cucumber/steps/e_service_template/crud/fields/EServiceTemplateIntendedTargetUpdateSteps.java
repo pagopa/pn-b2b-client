@@ -42,7 +42,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template")
     public void editEServiceTemplateIntendedTarget() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(
             EServiceTemplateIntendedTargetUpdateSeed.class);
         editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);
@@ -50,7 +50,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stessa descrizione")
     public void editEServiceTemplateIntendedTargetWithSameIntendedTarget() {
-        editEServiceTemplateIntendedTargetWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().intendedTarget());
+        editEServiceTemplateIntendedTargetWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getIntendedTarget());
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stringa vuota")
@@ -70,7 +70,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
 
     @Then("la modifica della descrizione dello scopo dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateIntendedTargetEdited() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -93,7 +93,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
     }
 
     private void editEServiceTemplateIntendedTargetWith(String description) {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateIntendedTargetUpdateSeed.class)
             .intendedTarget(description);
         editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);

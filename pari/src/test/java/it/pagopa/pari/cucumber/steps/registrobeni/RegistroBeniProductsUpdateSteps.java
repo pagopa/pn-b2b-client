@@ -132,7 +132,7 @@ public class RegistroBeniProductsUpdateSteps {
     private void searchAndmarkProduct(Function<ProductsUpdateDTO, UpdateResponseDTO> operation) {
         List<String> gtinCodes = sharedCommonContext.getLastProductsUploaded().stream().map(ProductDTO::getGtinCode).toList();
         for (String gtinCode : gtinCodes) {
-            ProductListDTO productListDTO = apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null, null, gtinCode, null, null, null, null, null, null);
+            ProductListDTO productListDTO = apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, null, null, null, gtinCode, null, null, null, null, null, null, null);
             ProductStatus productStatus = productListDTO.getContent().stream().filter(item -> gtinCode.equalsIgnoreCase(item.getGtinCode())).map(ProductDTO::getStatus).findAny().orElse(null);
             Assertions.assertNotNull(productStatus, "Invalid product state!");
             ProductsUpdateDTO productsUpdateDTO = new ProductsUpdateDTO().gtinCodes(gtinCodes).currentStatus(productStatus).motivation(PRODUCT_MOTIVATION);
@@ -143,7 +143,7 @@ public class RegistroBeniProductsUpdateSteps {
     private ProductListDTO getProductByEprelCode(String eprelCode, String sort) {
         String gtinCode = sharedCommonContext.getLastProductsUploaded().stream().filter(product -> product.getEprelCode().equals(eprelCode)).map(ProductDTO::getGtinCode).findFirst().orElse(null);
         Assertions.assertNotNull(gtinCode, "Product with the desired eprelCode not found!");
-        return apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, sort, null, null, null, null, gtinCode, null, null, null, null);
+        return apiClientContext.getRegisterPortalOperationClient().getProducts(0, 10, sort, null, null, null, null, gtinCode, null, null, null, null, null);
     }
 
     @Then("si verifica che la chiamata abbia ritornato uno status code: {int}")

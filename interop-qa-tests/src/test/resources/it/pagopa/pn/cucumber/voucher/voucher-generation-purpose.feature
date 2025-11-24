@@ -1,8 +1,9 @@
 @voucher
 Feature: Generazione del voucher richiesta da un Ente
 
+  @nrt-minimal
   @voucher_generation_purpose1
-  Scenario: La generazione del Voucher va a buon fine quando la finalità è attiva e ha una versione in attesa di approvazione
+  Scenario: [VOUCHER_GENERATION_PURPOSE_01] La generazione del Voucher va a buon fine quando la finalità è attiva e ha una versione in attesa di approvazione
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -15,8 +16,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose2
-  Scenario: La generazione del Voucher va a buon fine quando la finalità è attiva, ha una versione in attesa di approvazione e questa viene eliminata
+  Scenario: [VOUCHER_GENERATION_PURPOSE_02] La generazione del Voucher va a buon fine quando la finalità è attiva, ha una versione in attesa di approvazione e questa viene eliminata
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -30,8 +32,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose3
-  Scenario: La generazione del Voucher va a buon fine quando la finalità è attiva, ha una versione in attesa di approvazione e questa viene approvata
+  Scenario: [VOUCHER_GENERATION_PURPOSE_03] La generazione del Voucher va a buon fine quando la finalità è attiva, ha una versione in attesa di approvazione e questa viene approvata
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -45,8 +48,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose4
-  Scenario: La generazione del Voucher va a buon fine quando la finalità è attiva e la variazione della stima di carico viene attivata senza necessità di approvazione
+  Scenario: [VOUCHER_GENERATION_PURPOSE_04] La generazione del Voucher va a buon fine quando la finalità è attiva e la variazione della stima di carico viene attivata senza necessità di approvazione
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -59,8 +63,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose5
-  Scenario: La generazione del Voucher va a buon fine quando la finalità è attiva e ha una versione in attesa di approvazione, che viene rifiutata dall’erogatore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_05] La generazione del Voucher va a buon fine quando la finalità è attiva e ha una versione in attesa di approvazione, che viene rifiutata dall’erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -74,8 +79,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose6
-  Scenario: La generazione del Voucher va a buon fine quando la finalità viene sospesa e poi riattivata dall’erogatore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_06] La generazione del Voucher va a buon fine quando la finalità viene sospesa e poi riattivata dall’erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -89,8 +95,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose7
-  Scenario: La generazione del Voucher va a buon fine quando la finalità viene sospesa e poi riattivata dal fruitore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_07] La generazione del Voucher va a buon fine quando la finalità viene sospesa e poi riattivata dal fruitore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -104,8 +111,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose8
-  Scenario: La generazione del Voucher va a buon fine quando la finalità viene sospesa dall’erogatore e dal fruitore, e poi riattivata sia dall’erogatore che dal fruitore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_08] La generazione del Voucher va a buon fine quando la finalità viene sospesa dall’erogatore e dal fruitore, e poi riattivata sia dall’erogatore che dal fruitore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -121,8 +129,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+  @nrt-minimal
   @voucher_generation_purpose9
-  Scenario: La generazione del Voucher fallisce quando la finalità è valida ma non assegnata al client
+  Scenario: [VOUCHER_GENERATION_PURPOSE_09] La generazione del Voucher fallisce quando la finalità è valida ma non assegnata al client
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -135,8 +144,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose10
-  Scenario: La generazione del Voucher fallisce quando la finalità è valida ma non assegnata al client, e il client non ha finalità associate
+  Scenario: [VOUCHER_GENERATION_PURPOSE_10] La generazione del Voucher fallisce quando la finalità è valida ma non assegnata al client, e il client non ha finalità associate
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -147,8 +157,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose11
-  Scenario: La generazione del Voucher fallisce quando la finalità è archiviata
+  Scenario: [VOUCHER_GENERATION_PURPOSE_11] La generazione del Voucher fallisce quando la finalità è archiviata
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -161,8 +172,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose12 @no-parallel
-  Scenario: La generazione del Voucher fallisce quando la finalità viene sospesa dall’erogatore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_12] La generazione del Voucher fallisce quando la finalità viene sospesa dall’erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -175,8 +187,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose13
-  Scenario: La generazione del Voucher fallisce quando la finalità viene sospesa dal fruitore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_13] La generazione del Voucher fallisce quando la finalità viene sospesa dal fruitore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -189,8 +202,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose14
-  Scenario: La generazione del Voucher fallisce quando la finalità viene sospesa dall’erogatore e dal fruitore, e poi riattivata dall’erogatore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_14] La generazione del Voucher fallisce quando la finalità viene sospesa dall’erogatore e dal fruitore, e poi riattivata dall’erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -205,8 +219,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose15
-  Scenario: La generazione del Voucher fallisce quando la finalità viene sospesa dall’erogatore e dal fruitore, e poi riattivata dal fruitore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_15] La generazione del Voucher fallisce quando la finalità viene sospesa dall’erogatore e dal fruitore, e poi riattivata dal fruitore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -221,8 +236,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose16 @wait_for_fix @PIN-5318
-  Scenario: La generazione del Voucher fallisce quando la finalità sospesa dal fruitore con una stima di carico superiore ai limiti della Versione dell’EService viene riattivata dal fruitore
+  Scenario: [VOUCHER_GENERATION_PURPOSE_16] La generazione del Voucher fallisce quando la finalità sospesa dal fruitore con una stima di carico superiore ai limiti della Versione dell’EService viene riattivata dal fruitore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -237,8 +253,9 @@ Feature: Generazione del voucher richiesta da un Ente
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+  @nrt-minimal
   @voucher_generation_purpose17
-  Scenario: La generazione del Voucher fallisce quando la finalità non esiste
+  Scenario: [VOUCHER_GENERATION_PURPOSE_17] La generazione del Voucher fallisce quando la finalità non esiste
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

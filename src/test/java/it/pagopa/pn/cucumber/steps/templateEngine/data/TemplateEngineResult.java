@@ -15,15 +15,21 @@ public class TemplateEngineResult {
     }
 
     public TemplateEngineResult(String templateHtmlReturned) {
-        this.templateHtmlReturned = templateHtmlReturned;
+        this.templateHtmlReturned = templateHtmlReturned;this.fileTextRetrieved = templateHtmlReturned;
     }
 
     public String retrieveFormattedText() {
-        return fileTextRetrieved
+        if (fileTextRetrieved == null) return "";
+
+        String text = fileTextRetrieved;
+
+        text = text.replaceAll("<[^>]*>", " ");
+
+        return text
                 .replaceAll("\\r\\n", " ")
                 .replaceAll("\\n", " ")
                 .replaceAll("\\r", " ")
                 .replaceAll("\\s+", " ")
                 .trim();
     }
-}
+    }

@@ -1,8 +1,5 @@
 Feature: Radd Alternative Anagrafica Sportelli
 
-  # far riferimento alle tabelle: pn-RaddRegistryRequest e pn-RaddRegistryImport
-
-
   # [ADEG-RADD-VAL-FIELD-1]
   @raddAnagrafica @raddAlternativeCsv @puliziaSportelliCsv
   Scenario: [RADD_ANAGRAFICA_CSV_1] caricamento CSV con 2 sportelli

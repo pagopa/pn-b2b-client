@@ -3,8 +3,9 @@ Feature: Caricamento di un documento di interfaccia
   Tutti gli utenti autorizzati di enti erogatori possono caricare un documento di interfaccia ai propri descrittori
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7757
+  @nrt-minimal
   @document_upload1
-  Scenario Outline: Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo solo per lo stato DRAFT, altrimenti restituirà errore.
+  Scenario Outline: [DESCRIPTOR_UPLOAD_1] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo solo per lo stato DRAFT, altrimenti restituirà errore.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoDescrittore>" e tecnologia "REST"
     When l'utente carica un documento di interfaccia di tipo "yaml"
@@ -37,8 +38,9 @@ Feature: Caricamento di un documento di interfaccia
       | PA1  | admin | DEPRECATED       |       400 |
       | PA1  | admin | ARCHIVED         |       400 |
 
+  @nrt-minimal
   @document_upload2
-  Scenario Outline: Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo altrimenti restituirà errore.
+  Scenario Outline: [DESCRIPTOR_UPLOAD_2] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo altrimenti restituirà errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "<technology>"
     When l'utente carica un documento di interfaccia di tipo "<tipoFile>"
@@ -61,8 +63,9 @@ Feature: Caricamento di un documento di interfaccia
       | SOAP       | json     |       400 |
 
   @sad-path
+  @nrt-minimal
   @document_upload3
-  Scenario Outline: Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, ma contenente il termine localhost, l'operazione restituirà errore.
+  Scenario Outline: [DESCRIPTOR_UPLOAD_3] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, ma contenente il termine localhost, l'operazione restituirà errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "<technology>"
     When l'utente carica un documento di interfaccia di tipo "<tipoFile>" che contiene il termine localhost
@@ -76,8 +79,9 @@ Feature: Caricamento di un documento di interfaccia
       | SOAP       | xml      |
 
   @sad-path
+  @nrt-minimal
   @document_upload4
-  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale è già stato caricato un documento di interfaccia, alla richiesta di caricamento di un nuovo documento di interfaccia, l’operazione restituirà errore.
+  Scenario: [DESCRIPTOR_UPLOAD_4] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale è già stato caricato un documento di interfaccia, alla richiesta di caricamento di un nuovo documento di interfaccia, l’operazione restituirà errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     Given "PA1" ha già caricato un'interfaccia per quel descrittore
@@ -85,8 +89,9 @@ Feature: Caricamento di un documento di interfaccia
     Then si ottiene status code 409
 
   @sad-path
+  @nrt-minimal
   @document_upload5
-  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale è già stato caricato un documento, alla richiesta di caricamento di un nuovo documento con lo stesso nome, l’operazione restituirà errore.
+  Scenario: [DESCRIPTOR_UPLOAD_5] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale è già stato caricato un documento, alla richiesta di caricamento di un nuovo documento con lo stesso nome, l’operazione restituirà errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     Given "PA1" ha già caricato un documento con nome "test" in quel descrittore

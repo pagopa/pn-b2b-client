@@ -134,7 +134,7 @@ public class AgreementCreationStep {
                 new UpdateEServiceDescriptorSeed()
                         .attributes(new DescriptorAttributesSeed()
                                 .addCertifiedItem(List.of(new DescriptorAttributeSeed()
-                                .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
+                                .setId(sharedStepsContext.getAttributeCommonContext().getAttributeId())
                                 .explicitAttributeVerification(true)))
                         )
                         .agreementApprovalPolicy(agreementApprovalPolicy)

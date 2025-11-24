@@ -13,9 +13,11 @@ import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IM2MDelegationClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateAttributeClient;
+import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
@@ -54,6 +56,8 @@ public class ClientTokenConfigurator {
     private final IM2MDelegationClient m2mDelegationClient;
     private final IM2MClientsClient m2MClientsClient;
     private final IM2MTenantClient m2mTenantClient;
+    private final IM2MEServiceAttributeClient m2mEServiceAttributeClient;
+    private final IM2MEServiceTemplateAttributeClient m2mEServiceTemplateAttributeClient;
     private final ISelfcareClient iSelfcareClient;
     private final IPurposeTemplateClient purposeTemplateClient;
 
@@ -82,6 +86,8 @@ public class ClientTokenConfigurator {
         m2mDelegationClient.setBearerToken(token);
         m2MClientsClient.setBearerToken(token);
         m2mTenantClient.setBearerToken(token);
+        m2mEServiceAttributeClient.setBearerToken(token);
+        m2mEServiceTemplateAttributeClient.setBearerToken(token);
         iSelfcareClient.setBearerToken(token);
         purposeTemplateClient.setBearerToken(token);
     }

@@ -47,7 +47,7 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
 
     @When("l'utente tenta la cancellazione della risk analysis dell'e-service template")
     public void deleteRiskAnalysisFromEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         UUID riskAnalysisId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisId();
             deleteRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId);
     }
@@ -58,17 +58,17 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
          * è una BAD_REQUEST annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi generato. */
-        deleteRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
+        deleteRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), null);
     }
 
     @When("l'utente tenta la cancellazione di una risk analysis inesistente nell'e-service template")
     public void deleteNonExistentRiskAnalysisFromEServiceTemplate() {
-        deleteRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
+        deleteRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID.randomUUID());
     }
 
     @Then("la cancellazione della risk analysis dell'e-service è stata effettuata correttamente")
     public void checkRiskAnalysisDeletedFromEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         try {
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(

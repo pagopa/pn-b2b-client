@@ -2,7 +2,8 @@
 Feature: Creazione di un client
   Tutti gli admin possono creare un client
 
-  Scenario Outline: Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo CONSUMER. L'operazione va a buon fine
+  @nrt-minimal
+  Scenario Outline: [CREATE_CLIENT_1] Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo CONSUMER. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede la creazione di un client "CONSUMER"
     Then si ottiene status code <statusCode>
@@ -25,7 +26,8 @@ Feature: Creazione di un client
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
 
-  Scenario Outline: Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo API. L'operazione va a buon fine
+  @nrt-minimal
+  Scenario Outline: [CREATE_CLIENT_2] Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo API. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede la creazione di un client "API"
     Then si ottiene status code <statusCode>

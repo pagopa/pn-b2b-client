@@ -3,8 +3,9 @@ Feature: Cancellazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono cancellare i propri descrittori e, potenzialmente, gli e-services
 
   @happy-path
+  @nrt-minimal
   @descriptor_deletion1
-  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, la richiesta di cancellazione del descrittore cancella contestualmente anche l'e-service del quale fa parte
+  Scenario: [DESCRIPTOR_DELETION_1] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, la richiesta di cancellazione del descrittore cancella contestualmente anche l'e-service del quale fa parte
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente cancella il descrittore di quell'e-service
@@ -12,8 +13,9 @@ Feature: Cancellazione di un descrittore
     Then il descrittore è stato cancellato, e anche l'eservice
 
   @happy-path
+  @nrt-minimal
   @descriptor_deletion2
-  Scenario: Per un e-service che ha più di un descrittore, l’ultimo dei quali è in stato DRAFT, la richiesta di cancellazione del descrittore cancella solo il descrittore stesso e non l’e-service del quale fa parte né nessuno degli altri descrittori dell’e-service
+  Scenario: [DESCRIPTOR_DELETION_2] Per un e-service che ha più di un descrittore, l’ultimo dei quali è in stato DRAFT, la richiesta di cancellazione del descrittore cancella solo il descrittore stesso e non l’e-service del quale fa parte né nessuno degli altri descrittori dell’e-service
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     Given "PA1" ha già creato una versione in "DRAFT" per quell'e-service
@@ -22,8 +24,9 @@ Feature: Cancellazione di un descrittore
     Then quell'e-service non è stato cancellato
 
   @sad-path
+  @nrt-minimal
   @descriptor_deletion3
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), la richiesta di cancellazione del descrittore restituisce errore
+  Scenario Outline: [DESCRIPTOR_DELETION_3] Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), la richiesta di cancellazione del descrittore restituisce errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
     When l'utente cancella il descrittore di quell'e-service
