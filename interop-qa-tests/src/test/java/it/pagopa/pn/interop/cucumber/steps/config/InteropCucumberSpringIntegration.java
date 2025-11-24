@@ -176,7 +176,8 @@ import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
         EServiceTemplateVersionQuotasPatchOperationsAssistant.class,
         EServiceDescriptorQuotasPatchOperationsAssistant.class,
         ISelfcareClient.class,
-        SelfcareClientImpl.class
+        SelfcareClientImpl.class,
+        PurposeTemplateClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
