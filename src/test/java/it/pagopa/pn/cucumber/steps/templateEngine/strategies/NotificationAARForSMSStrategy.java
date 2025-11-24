@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsNotificationAnalog;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsRecipientAnalog;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsSenderAnalog;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForSmsAnalog;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
@@ -27,8 +28,11 @@ public class NotificationAARForSMSStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
-        return "Hai ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
+    public String getTextToCheckLanguage(String language, String recipientType) {
+        return switch (recipientType.toUpperCase()) {
+            case "PG" -> "La tua impresa ha ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
+            default -> "Hai ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
+        };
     }
 
     private NotificationAarForSmsAnalog createRequest(boolean body, TemplateRequestContext context) {
@@ -36,6 +40,7 @@ public class NotificationAARForSMSStrategy implements ITemplateEngineStrategy {
             return null;
 
         return new NotificationAarForSmsAnalog()
+                .recipient(new AarForSmsRecipientAnalog().recipientType(context.getRecipientType()))
                 .notification(createNotification(context));
     }
 

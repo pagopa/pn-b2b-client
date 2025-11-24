@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailNotificationDigital;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailRecipientDigital;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailSenderDigital;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForEmailDigital;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
@@ -27,7 +28,7 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
                 yield "ll termine per il pagamento, se previsto, e per eventuali impugnazioni &egrave; indicato nei documenti.";
@@ -54,7 +55,8 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
                 .pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
                 .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL());
+                .perfezionamentoURL(context.getPerfezionamentoURL())
+                .recipient(new AarForEmailRecipientDigital().recipientType(context.getRecipientType()));
     }
 
     private AarForEmailNotificationDigital createAarForEmailNotification(TemplateRequestContext context) {

@@ -43,6 +43,7 @@ public class TemplateEngineSteps {
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
     private List<HttpStatusCodeException> templateFileExceptions = new ArrayList<>();
+    private String recipientType = "PF";
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
                                TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
@@ -68,16 +69,8 @@ public class TemplateEngineSteps {
     @When("recupero (il template)(l'oggetto) per {string} di tipo {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String notificationType, String language) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, new HashMap<>());
-    }
-
-    @When("recupero (il template)(l'oggetto) per {string} di tipo {string} in lingua {string} con recipient Type {string}")
-    public void recuperoIlTemplatePerInLinguaRecType(String templateType, String notificationType, String language,String recipientType) {
-        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-
         Map<String, String> parameters = new HashMap<>();
         parameters.put("context_recipientType", recipientType); // todo t mc.
-
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, parameters);
     }
 
@@ -86,8 +79,12 @@ public class TemplateEngineSteps {
         recuperoIlTemplatePerInLingua(templateType, "semplice", language);
     }
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con recipient Type {string}")
-    public void recuperoIlTemplatePerInLinguaRecType(String templateType, String language,String recipientType) {
-        recuperoIlTemplatePerInLinguaRecType(templateType, "semplice", language,recipientType);
+    public void recuperoIlTemplatePerInLinguaRecType(String templateType, String language, String recipientType) {
+        this.recipientType = recipientType;
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("context_recipientType", recipientType); // todo t mc.
+        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
 
     @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:")
@@ -193,8 +190,8 @@ public class TemplateEngineSteps {
                 .count() - 1;
     }
 
-    private String getTextToRetrieve(String language, TemplateType templateType) {
-        return templateEngineStrategy.get(templateType).getTextToCheckLanguage(language);
+    private String getTextToRetrieve(String language, TemplateType templateType, String recipientType) {
+        return templateEngineStrategy.get(templateType).getTextToCheckLanguage(language, recipientType);
     }
 
     @And("controllo che nel file {string} contenga il (campo)(testo) {string} valorizzato (a)(con) {string}")
@@ -221,7 +218,7 @@ public class TemplateEngineSteps {
     @And("controllo che per il template {string} il file {string} sia in lingua {string}")
     public void controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua(String templateType, String fileType, String languange) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        String textToFind = getTextToRetrieve(languange, templateTypeObject);
+        String textToFind = getTextToRetrieve(languange, templateTypeObject, recipientType);
         if (fileType.equals("pdf")) {
             assertThat(result.getFileTextRetrieved()).isNotNull();
             assertThat(result.retrieveFormattedText())

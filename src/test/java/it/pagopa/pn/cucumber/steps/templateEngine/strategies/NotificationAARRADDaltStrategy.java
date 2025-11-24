@@ -26,7 +26,7 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
                 yield "Accedi subito ai documenti online seguendo le istruzioni, o se preferisci, ritira i documenti in forma cartacea presso uno dei Punti di ritiro SEND (CAF e altri esercenti convenzionati). Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione.";

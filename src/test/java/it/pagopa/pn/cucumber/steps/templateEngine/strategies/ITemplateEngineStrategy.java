@@ -8,7 +8,7 @@ public interface ITemplateEngineStrategy {
 
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context);
 
-    public String getTextToCheckLanguage(String language);
+    public String getTextToCheckLanguage(String language, String recipientType);
 
     default LanguageEnum selectLanguage(String language) {
         return switch (language.toUpperCase()) {

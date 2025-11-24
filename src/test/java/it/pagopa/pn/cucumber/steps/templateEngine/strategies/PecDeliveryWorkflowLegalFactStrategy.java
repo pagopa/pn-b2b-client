@@ -28,7 +28,7 @@ public class PecDeliveryWorkflowLegalFactStrategy implements ITemplateEngineStra
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
                 yield "Attestazione opponibile a terzi: mancato recapito digitale Ai sensi dell’art. 26, comma 11, del decreto-legge 76/2020 s.m.i., la PagoPA S.p.A. nella sua qualità di gestore ex lege della Piattaforma Notifiche Digitali di cui allo stesso art. 26 (anche nota come SEND - Servizio Notifiche Digitali), con ogni valore legale per l'opponibilità a terzi, ATTESTA CHE";

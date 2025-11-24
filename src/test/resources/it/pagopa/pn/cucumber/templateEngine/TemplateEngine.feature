@@ -545,7 +545,7 @@ Feature: Template engine
     And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-sms
-  Scenario: [TEMPLATE-ENGINE_40] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
+  Scenario: [TEMPLATE-ENGINE_40] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana (PG)
     When recupero il template per "avviso di cortesia SMS" in lingua "italiana" con recipient Type "PG"
     Then verifico che il template è in formato "text"
     And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "italiana"
@@ -600,7 +600,7 @@ Feature: Template engine
     And il corpo del messaggio contiene il testo "accedi con SPID"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
-  Scenario: [TEMPLATE-ENGINE_41] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
+  Scenario: [TEMPLATE-ENGINE_41] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese (PF)
     When recupero il template per "avviso di cortesia EMAIL" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"

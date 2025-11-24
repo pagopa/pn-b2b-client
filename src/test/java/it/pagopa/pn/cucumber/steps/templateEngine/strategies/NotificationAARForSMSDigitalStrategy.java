@@ -23,7 +23,7 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         NotificationAarForSmsDigital notificationAarForSmsDigital = createRequest(body, context);
-        String file = templateEngineClient.notificationAARForSMSDigital(selectLanguage(language), new NotificationAarForSmsDigital());
+        String file = templateEngineClient.notificationAARForSMSDigital(selectLanguage(language), notificationAarForSmsDigital);
         return new TemplateEngineResult(file);
     }
 
@@ -33,8 +33,11 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
 //    }
 
         @Override
-    public String getTextToCheckLanguage(String language) {
-        return "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
+    public String getTextToCheckLanguage(String language, String recipientType) {
+        return switch (recipientType.toUpperCase()) {
+            case "PG" -> "La tua impresa ha ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata  dopo 7 giorni dalla ricezione.";
+            default -> "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
+        };
     }
 
     private NotificationAarForSmsDigital createRequest(boolean body, TemplateRequestContext context) {
