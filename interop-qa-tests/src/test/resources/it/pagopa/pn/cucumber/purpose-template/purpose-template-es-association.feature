@@ -30,7 +30,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con handlePersonalData <personalData>
-    And il purpose template creato viene associato a un e-service con personalData <personalData>
+    And il purpose template creato viene associato all'e-service
     And si ottiene lo status code 200
     When si effettua la get degli e-service associati al purpose template creato
     Then la lista di e-service associati contiene l'e-service atteso
