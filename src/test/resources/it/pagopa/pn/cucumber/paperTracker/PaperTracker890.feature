@@ -24,11 +24,11 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | FAIL_IndirizzoInesatto890             |
       | FAIL-Irreperibile_890                 |
       | FAIL-Discovery_890                    |
-      | FAIL-DiscoveryIrreperibile_890        |
+#      | FAIL-DiscoveryIrreperibile_890        |
       | FAIL-DiscoveryIrreperibileBadCAP_890  |
       | OK-Retry_890                          |
-      | OK-Giacenza-lte10_890                 |
-      | OK-Giacenza-gt10_890                  |
+#      | OK-Giacenza-lte10_890                 |
+#      | OK-Giacenza-gt10_890                  |
       | OK-Giacenza-gt10-23L_890              |
       | OK-GiacenzaDelegato-lte10_890         |
       | OK-GiacenzaDelegato-gt10_890          |
@@ -45,6 +45,292 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-Giacenza-gt10_890_ZIP              |
       | OK_890_ZIP                            |
       | OK-GiacenzaCAD-lte10_890              |
+
+    # Test da lanciare in modalità DRY-RUN con filtro ec: ATTIVO
+  @paperTracker890
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2_890] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequenceName> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    Examples:
+      | sequenceName                          |
+      | FAIL-DiscoveryIrreperibile_890        |
+
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-GIACENZA-LTE10_890    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG010                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "23L"}]    |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005C                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012                       |
+      | details_sentAttemptMade    | 0                              |
+      | details_responseStatus     | OK                             |
+
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_4_890] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-GIACENZA-GT10_890    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG010                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "ARCAD"}]    |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "23L"}]      |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005C                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012                       |
+      | details_sentAttemptMade    | 0                              |
+      | details_responseStatus     | OK                             |
+
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_5_890] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-GIACENZA-GT10_890    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG010                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "ARCAD"}]    |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "23L"}]      |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG005C                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012                       |
+      | details_sentAttemptMade    | 0                              |
+      | details_responseStatus     | OK                             |
+
+
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_6_890] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-GIACENZA-GT10_890    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG010                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG007C                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "ARCAD"}]    |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG011B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "23L"}]      |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG007A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG007B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "Plico"}]    |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG012                       |
+      | details_sentAttemptMade    | 0                              |
+      | details_responseStatus     | OK                             |
 
 
 # Test da lanciare in modalità RUN con filtro ec: DISATTIVO
