@@ -73,6 +73,5 @@ Feature: finalità agevolata, purpose template UPDATE
   Scenario: [UPDATE_PURPOSE_TEMPLATE_EXISTING_VALUE]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    And si aggiorna il purpose template creato
     When si aggiorna il purpose template creato con errore di tipo UPDATE WITH EXISTING TITLE
     Then si ottiene lo status code 409

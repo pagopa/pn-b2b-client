@@ -107,8 +107,6 @@ Feature: finalità agevolata, purpose from purpose template
       | ACTIVE    |
       | SUSPENDED |
       | ARCHIVED  |
-#      | REJECTED             |
-#      | WAITING_FOR_APPROVAL |
 
   #116 (KO)
   @purposeTemplate @purposeFromPurposeTemplate

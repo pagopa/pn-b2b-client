@@ -71,7 +71,8 @@ public class PurposeTemplateSteps {
      */
     private String duplicatedTitleForPurpose;
 
-    public PurposeTemplateSteps(ClientTokenConfigurator clientTokenConfigurator1, SharedStepsContext sharedStepsContext,
+    public PurposeTemplateSteps(ClientTokenConfigurator clientTokenConfigurator1,
+                                SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
                                 BlobFileCreator blobFileCreator) {
         this.clientTokenConfigurator = clientTokenConfigurator1;
@@ -133,7 +134,7 @@ public class PurposeTemplateSteps {
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).isTrue();
                 CreatorPurposeTemplates list = (CreatorPurposeTemplates) httpCallExecutor.getResponse();
                 assertThat(list).as("Il risultato della get by creator non dev'essere null");
-                assertThat(list.getResults()).as("").isNotNull();
+                assertThat(list.getResults()).as("I results della lista non devono essere null").isNotNull();
                 CreatorPurposeTemplate previouslyCreatedPurposeTemplate = list.getResults().stream().filter(x ->
                         !x.getPurposeTitle().equals(purposeTemplateCreationRequest.getPurposeTitle())).findFirst().orElse(null);
                 assertThat(previouslyCreatedPurposeTemplate).as("Nessun purpose template creato in precedenza con titolo diverso da quello attuale trovato").isNotNull();
@@ -278,15 +279,11 @@ public class PurposeTemplateSteps {
 
     private void invokeUpdatePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-        if (exists) {
-            pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest)),
-                    res -> res != HttpStatus.NOT_FOUND,
-                    "Failed to retrieve the client!"
-            );
-        } else {
-            httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest));
-        }
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest)),
+                res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
+                "Failed to retrieve the client!"
+        );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
             assertThat(purposeTemplate).as("Il template aggiornato non dev'essere null").isNotNull();
@@ -324,18 +321,6 @@ public class PurposeTemplateSteps {
             );
             return null;
         }
-//        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-//            purposeTemplateWithCompactCreator = (PurposeTemplateWithCompactCreator) httpCallExecutor.getResponse();
-//            assertThat(purposeTemplateWithCompactCreator).as("Il risultato della get del purpose con id" + createdPurposeTemplate.getId() + " non dev'essere null").isNotNull();
-//            return purposeTemplateWithCompactCreator;
-//        }
-//        return null;
-    }
-
-    @And("il purpose template {exists} viene associato a un e-service con personalData {bool}")
-    public void linkPurposeTemplateToEserviceWithPersonalData(boolean exists, Boolean personalData) {
-        //TODO MATTEO
-//        httpCallExecutor.performCall(() -> purposeTemplateClient.getCatalogPurposeTemplates(0))
     }
 
     @And("il purpose template {exists} viene associato all'e-service")
@@ -349,7 +334,6 @@ public class PurposeTemplateSteps {
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject));
     }
-
 
     @Then("si effettua la get degli e-service associati al purpose template {exists}")
     public void getPurposeTemplateEservices(boolean exists) {
@@ -576,12 +560,6 @@ public class PurposeTemplateSteps {
         }
         RiskAnalysisTemplateAnswerAnnotationSeed annotationText = new RiskAnalysisTemplateAnswerAnnotationSeed();
         String text = inRange ? "Y".repeat(maxLimit) : "N".repeat(maxLimit + 1);
-//        switch (annotationTextType.toUpperCase()) {
-//            case "ENTRO I LIMITI CONSENTITI FREE TEXT" -> text = "Y".repeat(maxLimit);
-//            case "OLTRE I LIMITI CONSENTITI FREE TEXT" -> text = "N".repeat(maxLimit + 1);
-//            case "CONTENENTE HYPER LINK" -> text = "https://www.google.com";
-//            case "RIMUOVENDO IL TESTO" -> text = "";
-//        }
         annotationText.setText(text);
         if (answerExists && ptExists) {
             pollingService.makePolling(
@@ -605,15 +583,11 @@ public class PurposeTemplateSteps {
         for (int i = 1; i <= docNumber; i++) {
             org.springframework.core.io.Resource doc = getDocument(casistica, i);
             String prettyName = getPrettyName(casistica, i);
-            if (exists) {
-                pollingService.makePolling(
-                        () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc)),
-                        res -> res != HttpStatus.NOT_FOUND,
-                        "Failed to retrieve the client!"
-                );
-            } else {
-                httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc));
-            }
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc)),
+                    res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
             //supponiamo di voler caricare 3 documenti (dove il terzo genera errore), devo accertarmi che i primi due siano andati a buon fine
             if (i < docNumber) {
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("L'upload del documento " + i + " è fallito: " + httpCallExecutor.getErrorMessage()).isTrue();
@@ -666,7 +640,12 @@ public class PurposeTemplateSteps {
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotation(ptId, answerId));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            //TODO MATTEO
+            PurposeTemplateWithCompactCreator ptWithDeletedAnnotation = getPurposeTemplateById(ptId, true);
+            RiskAnalysisFormTemplate raTemplate = ptWithDeletedAnnotation.getPurposeRiskAnalysisForm();
+            assertThat(raTemplate).as("Il template di analisi del rischio della finalità agevolata non dev'essere null").isNotNull();
+            RiskAnalysisTemplateAnswer raAnswer = raTemplate.getAnswers().values().stream().filter(a -> a.getId().equals(answerId)).findFirst().orElse(null);
+            assertThat(raAnswer).as("La risposta di analisi del rischio del purpose template non dev'essere null").isNotNull();
+            assertThat(raAnswer.getAnnotation()).as("L'annotazione della risposta di analisi del rischio dev'essere null").isNull();
         }
     }
 
@@ -687,7 +666,7 @@ public class PurposeTemplateSteps {
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId)),
-                res -> res != HttpStatus.NOT_FOUND,
+                res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
                 "Failed to retrieve the client!"
         );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
@@ -720,6 +699,7 @@ public class PurposeTemplateSteps {
         UUID consumerId = agreement.getConsumer().getId();
         assertThat(consumerId).as("Il consumerId restituito risulta null").isNotNull();
         fromSeed.setConsumerId(consumerId);
+        fromSeed.setRiskAnalysisForm(getRiskAnalysisForTemplateFromPurposeTemplate());
         switch (parameterType.toUpperCase()) {
             case "DATI NULL" -> {
                 fromSeed.setTitle(null);
@@ -734,19 +714,22 @@ public class PurposeTemplateSteps {
                 fromSeed.setTitle(duplicatedTitleForPurpose);
             }
         }
-        if (exists) {
-            pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(() -> purposeApiClient.createPurposeFromTemplate(ptId, fromSeed)),
-                    res -> res != HttpStatus.NOT_FOUND,
-                    "Failed to retrieve the client!"
-            );
-        } else {
-            httpCallExecutor.performCall(() -> purposeApiClient.createPurposeFromTemplate(ptId, fromSeed));
-        }
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeApiClient.createPurposeFromTemplate(ptId, fromSeed)),
+                res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
+                "Failed to retrieve the client!"
+        );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             createdPurposeFromPurposeTemplate = (CreatedResource) httpCallExecutor.getResponse();
             movePurposeToState(PurposeVersionState.DRAFT);
         }
+    }
+
+    private RiskAnalysisFormSeed getRiskAnalysisForTemplateFromPurposeTemplate() {
+        RiskAnalysisFormSeed riskAnalysisFormSeed = new RiskAnalysisFormSeed()
+                .version("3.1")
+                .answers(Map.of("institutionalPurpose", List.of("Answer1")));
+        return riskAnalysisFormSeed;
     }
 
     @When("si modifica la finalità {exists}")
@@ -801,16 +784,59 @@ public class PurposeTemplateSteps {
         }
         switch (state) {
             case DRAFT -> log.info("Created Purpose: " + purpose);
-            case ACTIVE ->
-                    httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+            case ACTIVE -> {
+                httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                    sharedStepsContext.getPollingService().makePolling(
+                            () -> purposeApiClient.getPurpose(purpose.getId()),
+                            res -> res.getCurrentVersion().getState() == PurposeVersionState.ACTIVE,
+                            "La finalità creata dal purpose non risulta attiva"
+                    );
+                }
+            }
             case SUSPENDED -> {
                 httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                    sharedStepsContext.getPollingService().makePolling(
+                            () -> purposeApiClient.getPurpose(purpose.getId()),
+                            res -> res.getCurrentVersion().getState() == PurposeVersionState.ACTIVE,
+                            "La finalità creata dal purpose non risulta attiva"
+                    );
+                }
                 httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                    sharedStepsContext.getPollingService().makePolling(
+                            () -> purposeApiClient.getPurpose(purpose.getId()),
+                            res -> res.getCurrentVersion().getState() == PurposeVersionState.SUSPENDED,
+                            "La finalità creata dal purpose non risulta sospesa"
+                    );
+                }
             }
             case ARCHIVED -> {
                 httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                    sharedStepsContext.getPollingService().makePolling(
+                            () -> purposeApiClient.getPurpose(purpose.getId()),
+                            res -> res.getCurrentVersion().getState() == PurposeVersionState.ACTIVE,
+                            "La finalità creata dal purpose non risulta attiva"
+                    );
+                }
                 httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                    sharedStepsContext.getPollingService().makePolling(
+                            () -> purposeApiClient.getPurpose(purpose.getId()),
+                            res -> res.getCurrentVersion().getState() == PurposeVersionState.SUSPENDED,
+                            "La finalità creata dal purpose non risulta sospesa"
+                    );
+                }
                 httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
+                if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                    sharedStepsContext.getPollingService().makePolling(
+                            () -> purposeApiClient.getPurpose(purpose.getId()),
+                            res -> res.getCurrentVersion().getState() == PurposeVersionState.ARCHIVED,
+                            "La finalità creata dal purpose non risulta archiviata"
+                    );
+                }
             }
         }
         assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La chiamata per spostare la finalità in stato " + state + " non è andata a buon fine").isTrue();

@@ -249,7 +249,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #103 (OK)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_GET_OK]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_OK]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -261,7 +261,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #104 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_GET_404]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_404]
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
