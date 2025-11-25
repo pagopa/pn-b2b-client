@@ -18,7 +18,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@IncludeTags({"paperTrackerRunMode"})
+@IncludeTags({"paperTrackerRunMode890"})
 public class PaperTrackerNonDryRunTest {
 
 }
