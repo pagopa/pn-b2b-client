@@ -163,8 +163,8 @@ public class CoperturaCapRaddSteps {
     @And("setto la data per la quale voglio verificare la copertura al {string}")
     public void setSearchDate(String searchDateStr) {
 
-        if(!searchDateStr.equalsIgnoreCase("OGGI"))
-        searchDate = LocalDate.parse(searchDateStr);
+        if (!searchDateStr.equalsIgnoreCase("OGGI"))
+            searchDate = LocalDate.parse(searchDateStr);
     }
 
 
@@ -506,7 +506,7 @@ public class CoperturaCapRaddSteps {
             String line;
             boolean isHeader = true;
 
-            bw.write("CAP,LOCALITA,ESITO_COMPLETE,ESITO_LIGHT");
+            bw.write("CAP;LOCALITA;ESITO_LIGHT;ESITO_COMPLETE");
             bw.newLine();
 
             while ((line = br.readLine()) != null) {
@@ -557,10 +557,10 @@ public class CoperturaCapRaddSteps {
                         ? "SI" : "NO";
 
                 // **** Scrittura risultati nel file CSV ****
-                bw.write(String.format("%s,%s,%s,%s", cap, locality, esitoComplete, esitoLight));
+                bw.write(String.format("%s;%s;%s;%s", cap, locality, esitoLight, esitoComplete));
                 bw.newLine();
 
-                System.out.printf("CAP %s (%s): COMPLETE=%s, LIGHT=%s%n", cap, locality, esitoComplete, esitoLight);
+                System.out.printf("CAP %s (%s): COMPLETE=%s, LIGHT=%s%n", cap, locality, esitoLight, esitoComplete);
             }
 
             System.out.println("===== REPORT COMPLETATO =====");
