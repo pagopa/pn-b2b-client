@@ -275,7 +275,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED            |
       | ARCHIVED              |
 
-  @m2m-parte2-agosto-rilascio1 @deleghe2 @failed-nrt-03112025
+  @m2m-parte2-agosto-rilascio1 @deleghe2
   Scenario: [M2MG_ESERVICES_29_B] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -342,7 +342,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | SUSPENDED   |
       | ARCHIVED    |
 
-  @m2m-parte2-agosto-rilascio2 @deleghe2 @failed-nrt-03112025
+  @m2m-parte2-agosto-rilascio2 @deleghe2
   Scenario: [M2MG_ESERVICES_35_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 76)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin

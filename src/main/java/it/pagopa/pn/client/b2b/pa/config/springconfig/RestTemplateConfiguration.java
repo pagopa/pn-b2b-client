@@ -34,7 +34,7 @@ public class RestTemplateConfiguration {
 
     @Bean(name = "customRestTemplate")
     @Primary
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
         RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
@@ -86,7 +86,7 @@ public class RestTemplateConfiguration {
     }
 
     @Bean(name = "defaultRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate defaultRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
