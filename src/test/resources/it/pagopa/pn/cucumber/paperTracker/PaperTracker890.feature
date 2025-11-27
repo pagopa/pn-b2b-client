@@ -7,7 +7,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@<sequenceName> |
       | digitalDomicile         | NULL              |
@@ -51,7 +51,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@<sequenceName> |
       | digitalDomicile         | NULL              |
@@ -70,7 +70,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@<sequenceName> |
       | digitalDomicile         | NULL              |
@@ -87,7 +87,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK-GIACENZA-LTE10_890    |
       | digitalDomicile         | NULL              |
@@ -152,7 +152,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK-GIACENZA-GT10_890    |
       | digitalDomicile         | NULL              |
@@ -217,7 +217,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK-GIACENZA-GT10_890    |
       | digitalDomicile         | NULL              |
@@ -283,7 +283,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@FAIL-GIACENZA-GT10_890    |
       | digitalDomicile         | NULL              |
@@ -356,7 +356,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@<sequence> |
       | digitalDomicile         | NULL              |
