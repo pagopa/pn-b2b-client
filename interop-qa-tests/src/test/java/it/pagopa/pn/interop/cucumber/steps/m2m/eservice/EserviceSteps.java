@@ -37,10 +37,12 @@ import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomUtils;
+import org.assertj.core.api.Assertions;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
@@ -92,9 +94,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         deleteEService();
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         pollingService.makePolling(
-            () -> httpExecutor.performCall(() -> this.client.get(eserviceId)),
-            status -> status.equals(NOT_FOUND),
+            () -> httpExecutor.performCallSavingBodyResponse(() -> client.getWithHttpInfo(eserviceId)),
+                Objects::isNull,
             "Non è stato possibile eliminare l'e-service. Consultare i log per maggiori dettagli.");
+
+        Assertions.assertThat(this.httpExecutor.getResponseStatus()).isEqualTo(NOT_FOUND);
     }
 
     @When("l'utente tenta di effettuare la cancellazione di un e-service inesistente")

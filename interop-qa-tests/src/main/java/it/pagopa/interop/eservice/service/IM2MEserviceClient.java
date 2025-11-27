@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 public interface IM2MEserviceClient extends IClient<EService, UUID> {
     @Data
@@ -91,6 +92,8 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     EServices getAll(EserviceListRequest payload);
 
     void delete(UUID id);
+
+    ResponseEntity<EService> getWithHttpInfo(UUID id);
 
     Document uploadInterface(EServiceInterfaceUploadRequest body);
 
