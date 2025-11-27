@@ -635,11 +635,19 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | ARCHIVED    |
 
   @deleghe2
-  Scenario: [M2MG_ESERVICES_48_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
+  Scenario: [M2MG_ESERVICES_48_B] Un utente dell'ente creatore con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
     Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+
+  @deleghe2
+  Scenario: [M2MG_ESERVICES_48_C] Un utente delegato con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
 
   @m2m-parte2-agosto-rilascio2
