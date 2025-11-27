@@ -24,11 +24,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | FAIL_IndirizzoInesatto890             |
       | FAIL-Irreperibile_890                 |
       | FAIL-Discovery_890                    |
-#      | FAIL-DiscoveryIrreperibile_890        |
+      | FAIL-DiscoveryIrreperibile_890        |
       | FAIL-DiscoveryIrreperibileBadCAP_890  |
-      | OK-Retry_890                          |
-#      | OK-Giacenza-lte10_890                 |
-#      | OK-Giacenza-gt10_890                  |
+      | OK-Giacenza-lte10_890                 |
+      | OK-Giacenza-gt10_890                  |
       | OK-Giacenza-gt10-23L_890              |
       | OK-GiacenzaDelegato-lte10_890         |
       | OK-GiacenzaDelegato-gt10_890          |
@@ -64,6 +63,24 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Examples:
       | sequenceName                          |
       | FAIL-DiscoveryIrreperibile_890        |
+
+  @paperTracker890
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
+  si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequenceName> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
+    Examples:
+      | sequenceName                        |
+      | OK-Retry_890                        |
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo

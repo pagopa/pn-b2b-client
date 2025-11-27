@@ -79,7 +79,7 @@ public class PaperTrackerSteps {
                 }
             }
             return true;
-        });
+        }, errorMessage);
     }
 
 
