@@ -3,8 +3,9 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
 
   Scenario: [AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    Given "PA1" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    Given l'utente è un "admin" di "PA2"
+    Given "PA2" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     When l'utente inoltra quella richiesta di fruizione
     Then la richiesta di fruizione assume lo stato "ACTIVE"
     And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementActivated
