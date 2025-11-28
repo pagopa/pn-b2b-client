@@ -24,6 +24,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -158,9 +159,12 @@ public class AgreementCommonSteps {
                 .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                 eserviceSeed, new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(eServiceConfig.map(EServiceConfig::getAgreementApprovalPolicy).orElse(null)));
+            sharedStepsContext.getEServicesCommonContext().setCreationTimestamp(OffsetDateTime.now());
+
             // Set the descriptor to "PUBLISHED" state
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
+            sharedStepsContext.getEServicesCommonContext().setPublicationTimestamp(OffsetDateTime.now());
             // Add the e-service to the list of published ones
             eServiceDescriptorList.add(eServiceDescriptor);
         }
