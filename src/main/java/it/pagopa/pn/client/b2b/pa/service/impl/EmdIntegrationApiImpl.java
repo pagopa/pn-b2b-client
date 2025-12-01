@@ -43,6 +43,6 @@ public class EmdIntegrationApiImpl {
     }
 
     public ResponseEntity<PaymentUrlResponse> getPaymentUrl(String retrievalId, String noticeCode, String paTaxId) {
-        return paymentApi.getPaymentUrlWithHttpInfo(retrievalId, noticeCode, paTaxId);
+        return paymentApi.getPaymentUrlWithHttpInfo(retrievalId, noticeCode, paTaxId, null);
     }
 }
