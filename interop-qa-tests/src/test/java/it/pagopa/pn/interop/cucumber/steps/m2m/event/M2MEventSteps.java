@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 public class M2MEventSteps {
     public static final String E_SERVICE_CREATION_EVENT_TYPE = "ESERVICE_ADDED";
+    public static final String E_SERVICE_UPDATE_EVENT_TYPE = "DRAFT_ESERVICE_UPDATED";
 
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -60,6 +61,7 @@ public class M2MEventSteps {
 
         M2MEvent lastEvent = eventRetriever.apply(startingRequest).getLastEvent();
         this.lastEventId = isNull(lastEvent) ? null : lastEvent.getId();
+        log.info("{} last event id: {}", entityKind, this.lastEventId);
 
         clientTokenConfigurator.setBearerToken(lastToken);
     }
@@ -75,8 +77,22 @@ public class M2MEventSteps {
         checkPublicationEvent(tenantType, delegationConfig);
     }
 
+    @When("{string} visualizza correttamente l'evento di modifica dell'e-service {m2mEventDelegationConfig}")
+    public void eServiceEditEventPresent(String tenantType, M2MDelegationEventConfig delegationConfig) {
+        checkEServiceEditEvent(tenantType, delegationConfig);
+    }
+
     @When("{string} non visualizza l'evento di creazione")
     public void eServiceCreationEventAbsent(String tenantType) {
+        checkNoEServiceEvent(tenantType, E_SERVICE_CREATION_EVENT_TYPE);
+    }
+
+    @When("{string} non visualizza l'evento di modifica dell'e-service")
+    public void eServiceEditEventAbsent(String tenantType) {
+        checkNoEServiceEvent(tenantType, E_SERVICE_UPDATE_EVENT_TYPE);
+    }
+
+    private void checkNoEServiceEvent(String tenantType, String eServiceCreationEventType) {
         String lastToken = clientTokenConfigurator.getLastToken();
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, M2MRole.M2M_ADMIN.toString()));
 
@@ -93,7 +109,7 @@ public class M2MEventSteps {
             .isTrue();
 
         M2MEvents events = (M2MEvents) httpCallExecutor.getResponse();
-        M2MEvents filteredEvents = events.find(E_SERVICE_CREATION_EVENT_TYPE, eServiceId);
+        M2MEvents filteredEvents = events.find(eServiceCreationEventType, eServiceId);
         assertThat(filteredEvents.getEvents())
             .as("Verifica che non sia stato restituito alcun evento inerente l'e-service")
             .isEmpty();
@@ -106,6 +122,13 @@ public class M2MEventSteps {
             .getCreationTimestamp();
 
         checkEServiceEvent(tenantType, E_SERVICE_CREATION_EVENT_TYPE, creationTimestamp, delegationConfig);
+    }
+
+    private void checkEServiceEditEvent(String tenantType, M2MDelegationEventConfig delegationConfig) {
+        OffsetDateTime updateTimestamp = sharedStepsContext.getEServicesCommonContext()
+            .getEServiceEditTimestamp();
+
+        checkEServiceEvent(tenantType, E_SERVICE_UPDATE_EVENT_TYPE, updateTimestamp, delegationConfig);
     }
 
     private void checkPublicationEvent(String tenantType, M2MDelegationEventConfig delegationConfig) {

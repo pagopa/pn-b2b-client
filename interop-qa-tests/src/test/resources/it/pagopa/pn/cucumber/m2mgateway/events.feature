@@ -5,8 +5,9 @@ Feature: Eventi M2M
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_01] A seguito di pubblicazione di un e-service vengono correttamente visualizzati gli
-  eventi correlati in relazione alle regole di visibilità previste per l'attore che ne fa richiesta;
-  inoltre, i campi relativi alle deleghe sono valorizzati soltanto in caso di delega attiva
+  eventi correlati in relazione alle regole di visibilità previste per l'attore che ne fa richiesta.
+  In caso di attivazione a posteriori di una delega in erogazione, la visibilità e la struttura
+  degli eventi precedentemente generati non deve subire mutamenti.
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And ["PA1" prende nota dell'ultimo evento presente di tipo e-service]
 
@@ -15,25 +16,72 @@ Feature: Eventi M2M
     And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
     And "PA2" non visualizza l'evento di creazione
 
-#    When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
-#    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
-#    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
-#    And "PA2" non visualizza l'evento di creazione
+    When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
+    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
+    And "PA2" non visualizza l'evento di creazione
 
-#    When l'ente "PA2" rifiuta la delega in erogazione con successo
-#    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
-#    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
-#    And "PA2" non visualizza l'evento di creazione
+    When l'ente "PA2" rifiuta la delega in erogazione con successo
+    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
+    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
+    And "PA2" non visualizza l'evento di creazione
 
-#    Given l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
-#    When l'ente "PA2" accetta la delega in erogazione con successo
-#    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione con delega in erogazione
-#    Then "PA2" visualizza correttamente sia l'evento di creazione che quello di pubblicazione con delega in erogazione
+    Given l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    When l'ente "PA2" accetta la delega in erogazione con successo
+    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
+    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
+    And "PA2" non visualizza l'evento di creazione
 
-#    When l'ente "PA1" revoca la delega in erogazione con successo
-#    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
-#    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
-#    And "PA2" non visualizza l'evento di creazione
+    When l'ente "PA1" revoca la delega in erogazione con successo
+    Then "PA1" visualizza correttamente sia l'evento di creazione che quello di pubblicazione senza delega in erogazione
+    And "PA2" visualizza correttamente l'evento di pubblicazione senza delega in erogazione
+    And "PA2" non visualizza l'evento di creazione
+
+  @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_02] In caso di delega in erogazione attiva, l'ente delegato deve
+  aver visibilità su tutti gli eventi inerenti l'e-service scatenati dopo l'attivazione della
+  delega; inoltre, il campo producerDelegationId deve essere valorizzato su quegli eventi.
+  Se la delega viene revocata, la visibilità acquisita deve andare persa e suddetto campo non
+  essere più visibile.
+    Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And ["PA1" prende nota dell'ultimo evento presente di tipo e-service]
+    And "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    When "PA2" aggiorna quell'e-service
+
+    Then "PA1" visualizza correttamente l'evento di modifica dell'e-service con delega in erogazione
+    And "PA2" visualizza correttamente l'evento di modifica dell'e-service con delega in erogazione
+
+    When l'ente "PA1" revoca la delega in erogazione con successo
+    Then "PA1" visualizza correttamente l'evento di modifica dell'e-service senza delega in erogazione
+    And "PA2" non visualizza l'evento di modifica dell'e-service
+
+  @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_03] In caso di delega in erogazione non attiva o rifiutata,
+  l'ente delegato non deve aver visibilità sugli eventi inerenti l'e-service tipicamente visibili
+  a un delegato con delega attiva; inoltre, il campo producerDelegationId non deve essere valorizzato.
+    Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And ["PA1" prende nota dell'ultimo evento presente di tipo e-service]
+    And "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    When "PA1" aggiorna quell'e-service
+    Then "PA1" visualizza correttamente l'evento di modifica dell'e-service senza delega in erogazione
+    And "PA2" non visualizza l'evento di modifica dell'e-service
+
+  # FIXME solo per facilitare i test manuali di e-service template
+  Scenario: Crea e-service template
+    Given ["PA1" prende nota dell'ultimo evento presente di tipo e-service template]
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+
+  # FIXME solo per facilitare i test manuali di e-service template
+  Scenario: Pubblica e-service template
+    #Given ["PA1" prende nota dell'ultimo evento presente di tipo e-service]
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
 
   # FIXME solo per facilitare la creazione di token da utilizzare nei test manuali
   Scenario: Genera token
