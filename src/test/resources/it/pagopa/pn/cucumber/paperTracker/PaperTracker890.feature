@@ -24,13 +24,11 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | FAIL_IndirizzoInesatto890             |
       | FAIL-Irreperibile_890                 |
       | FAIL-Discovery_890                    |
-      | FAIL-DiscoveryIrreperibile_890        |
       | FAIL-DiscoveryIrreperibileBadCAP_890  |
       | OK-Giacenza-lte10_890                 |
       | OK-Giacenza-gt10_890                  |
       | OK-Giacenza-gt10-23L_890              |
       | OK-GiacenzaDelegato-lte10_890         |
-      | OK-GiacenzaDelegato-gt10_890          |
       | OK-GiacenzaDelegato-gt10-23L_890      |
       | FAIL-Giacenza-lte10_890               |
       | FAIL-Giacenza-gt10_890                |
@@ -39,7 +37,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-NonRendicontabile_890              |
       | OK-CausaForzaMaggiore_890             |
       | FAIL-EVENTO-INESISTENTE               |
-      | OK-CAUSE-EVENTO-NO-MAPPA              |
       | OK-REC008_890-E                       |
       | OK-Giacenza-gt10_890_ZIP              |
       | OK_890_ZIP                            |
@@ -57,12 +54,31 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName                          |
       | FAIL-DiscoveryIrreperibile_890        |
+      | OK-GiacenzaDelegato-gt10_890        |
+
+
+  @paperTracker890
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3222] Si verifica che i dati ritornati da /errors siano quelli attesi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | <physicalAddress> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
+    Examples:
+      | physicalAddress                   | category                             | flowThrow                     |
+      | Via@OK-CAUSE-EVENTO-NO-MAPPA      | DELIVERY_FAILURE_CAUSE_ERROR         |  SEQUENCE_VALIDATION          |
 
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
