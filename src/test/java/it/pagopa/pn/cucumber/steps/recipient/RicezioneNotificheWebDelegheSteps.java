@@ -16,6 +16,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
@@ -67,6 +68,8 @@ public class RicezioneNotificheWebDelegheSteps {
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
+    private boolean isUseB2BFlag;
+
     @Before("@useB2B")
     public void beforeMethod() {
         this.webMandateClient = context.getBean(B2bMandateServiceClientImpl.class);
@@ -74,6 +77,7 @@ public class RicezioneNotificheWebDelegheSteps {
             this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
             sharedSteps.setWebRecipientClient(webRecipientClient);
         }
+        isUseB2BFlag = true;
     }
 
     @Autowired
@@ -109,39 +113,44 @@ public class RicezioneNotificheWebDelegheSteps {
 
     public boolean setBearerToken(String user) {
         return switch (user.trim()) {
-            case MARIO_CUCUMBER -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case MARIO_GHERKIN -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case GHERKIN_SRL -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case CUCUMBER_SPA -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case MARIO_CUCUMBER -> {
+                setRequiredAPI(false);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            }
+            case MARIO_GHERKIN -> {
+                setRequiredAPI(false);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            }
+            case GHERKIN_SRL -> {
+                setRequiredAPI(isUseB2BFlag);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            }
+            case CUCUMBER_SPA -> {
+                setRequiredAPI(isUseB2BFlag);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
             default -> throw new IllegalArgumentException();
         };
+    }
+
+    private void setRequiredAPI(boolean isB2BRequired) {
+        IPnWebMandateClient mandateClient;
+        IPnWebRecipientClient recipientClient;
+        if (isB2BRequired) {
+            mandateClient = context.getBean(B2bMandateServiceClientImpl.class);
+            recipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        } else {
+            mandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
+            recipientClient = context.getBean(PnWebRecipientExternalClientImpl.class);
+        }
+        this.webMandateClient = mandateClient;
+        this.webRecipientClient = recipientClient;
+        sharedSteps.setWebRecipientClient(webRecipientClient);
     }
 
     @Then("si verifica che lo status code sia: {int}")
     public void checkStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
-    }
-
-    @And("{string} viene delegato da user")
-    public void delegateUserCustom(String delegator) {
-        setBearerToken(delegator);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByUser(delegator)))
-                .delegate(userDtoCustom)
-                .verificationCode(verificationCode)
-                .datefrom(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .dateto(sdf.format(DateUtils.addDays(new Date(), 1))
-                );
-
-        System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
     }
 
     @And("{string} viene delegato da {string}")
@@ -157,27 +166,6 @@ public class RicezioneNotificheWebDelegheSteps {
                 .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1)));
 
-        System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
-    }
-
-    @And("{string} viene delegato da {string} con data di fine delega antecedente a quella di inizio")
-    public void delegateUserWithInvalidDateRange(String delegate, String delegator) {
-        setBearerToken(delegator);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByUser(delegator)))
-                .delegate(getUserDtoByUser(delegate))
-                .verificationCode(verificationCode)
-                .dateto(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .datefrom(sdf.format(DateUtils.addDays(new Date(), 1))
-                );
         System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
@@ -230,13 +218,6 @@ public class RicezioneNotificheWebDelegheSteps {
             this.sharedSteps.setNotificationError(e);
         }
     }
-
-    @Given("{string} rifiuta se presente la delega ricevuta {string} da portale")
-    public void userRejectMandateFromUI(String delegate, String delegator) {
-        this.webMandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
-        userRejectIfPresentMandateOfAnotherUser(delegate, delegator);
-    }
-
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
     public void userRejectIfPresentMandateOfAnotherUser(String delegate, String delegator) {

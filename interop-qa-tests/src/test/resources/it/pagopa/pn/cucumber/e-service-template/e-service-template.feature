@@ -1429,6 +1429,18 @@ Feature: Test API of e-service template
   #    | PUBLISHED |
   #    | SUSPENDED |
 
+  # La forma indicata di seguito è stata di nuovo invalidata e si è dunque tornati al caso originale
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6485
+  #Scenario Outline: [INTEROP-EST-100] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED specificando il nome già presente non può essere effettuata
+  #  Given l'utente è un "admin" di "PA1"
+  #  And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+  #  When l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome
+  #  Then si ottiene response status code 204
+  #  Examples:
+  #    | stato     |
+  #    | PUBLISHED |
+  #    | SUSPENDED |
+
     # TODO [INTEROP-EST-013] accorpabile? Verificare
   @happy-path
   @e-service-template-name-update
@@ -1436,7 +1448,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome
-    Then si ottiene response status code 204
+    Then si ottiene response status code 409
     Examples:
       | stato     |
       | PUBLISHED |
