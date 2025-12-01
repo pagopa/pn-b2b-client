@@ -220,13 +220,13 @@ public class PaperTrackerSteps {
 
     private List<String> createAttachmentUrlTracking(List<Attachment> attachmentList) {
         return Optional.ofNullable(attachmentList).orElse(List.of()).stream()
-                .map(att -> att.getUrl())
+                .map(Attachment::getUri)
                 .toList();
     }
 
     private List<String> createAttachmentUrl(List<AttachmentDetails> attachmentList) {
         return Optional.ofNullable(attachmentList).orElse(List.of()).stream()
-                .map(att -> att.getUrl())
+                .map(AttachmentDetails::getUrl)
                 .toList();
     }
 
@@ -251,7 +251,7 @@ public class PaperTrackerSteps {
 
         List<String> categories = errorsResponse.getResults().stream()
                 .flatMap(res -> res.getErrors().stream())
-                .map(err -> err.getCategory())
+                .map(TrackingError::getErrorCategory)
                 .toList();
 
         List<String> flowThrows = errorsResponse.getResults().stream()

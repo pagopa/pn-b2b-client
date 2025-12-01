@@ -27,6 +27,7 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.nio.file.Path;
@@ -50,6 +51,8 @@ public class DelegheTemporaneeSteps {
 
     private final CieGeneratorTool cieGeneratorTool;
 
+    private final String bucketS3;
+
     private String qrCode;
 
     private MandateCreationResponse mandateCreationResponse;
@@ -64,16 +67,18 @@ public class DelegheTemporaneeSteps {
 
     private static final String WRONG_NONCE_00000 = "SHfG4qyZtIRQHVsM6XDhZUrlqX0A-rHvenifCW_1PIOG-hPXrICO2NfQVwlTqFehQOVJeT2pL71C0JQcqdqOE85xB5UPhwOcQRCTxXm7Dsl3Z3_daMwQFrCVhIjv6EPWOIrJB-ieAmo0RxBSAggaPUFegGz3ce5vFiXeYAmBOY3DpfuGj3webTj4VgXEvhy-iDegHUCyIVTZLPkbCiB_E_PpSt3clGDf8iS8yGK-iE9ODWRe7at_spFaTb9DCHxVYSXbdVIBVy8oA14uo9GVN1xsV-XN772BUIjLqlcRLqyVwn6a-vrYqCN3ywtdcGdN_AcrWeKUANUIad2m0K3FTA==";
 
-    private static final String QRCODE_FROM_HOTFIX = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
+    private static final String VALID_QRCODE_404 = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
     @Autowired
     public DelegheTemporaneeSteps(SharedSteps sharedSteps,
                                   RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps,
-                                  PnMandateAppIoClientImpl mandateAppIoClient, CieGeneratorTool cieGeneratorTool) {
+                                  PnMandateAppIoClientImpl mandateAppIoClient, CieGeneratorTool cieGeneratorTool,
+                                  @Value("${pn-deleghe-temporanee-bucket-s3}") String bucketS3) {
         this.sharedSteps = sharedSteps;
         this.mandateAppIoClient = mandateAppIoClient;
         this.ricezioneNotificheWebDelegheSteps = ricezioneNotificheWebDelegheSteps;
         this.cieGeneratorTool = cieGeneratorTool;
+        this.bucketS3 = bucketS3;
     }
 
     //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
@@ -90,7 +95,7 @@ public class DelegheTemporaneeSteps {
         switch (inputParamsType.toUpperCase()) {
             //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
             case "QRCODE INESISTENTE" ->
-                    mandateCreationRequest.setAarQrCodeValue(getQRPathEnvironmentBased() + QRCODE_FROM_HOTFIX);
+                    mandateCreationRequest.setAarQrCodeValue(getQRPathEnvironmentBased() + VALID_QRCODE_404);
             case "QRCODE NON VALIDO" -> mandateCreationRequest.setAarQrCodeValue("invalid");
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
@@ -114,7 +119,7 @@ public class DelegheTemporaneeSteps {
         return switch (environment) {
             case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
             case "test" -> "http://cittadini.test.notifichedigitali.it/io";
-            case "uat" -> "http://cittadini.uat.notifichedigitali.it/io";
+            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         };
     }
@@ -313,18 +318,9 @@ public class DelegheTemporaneeSteps {
     @Given("vengono settati i parametri per il tool CIE")
     public void setToolCieParameter() {
         log.info("Inizio il setting dei parametri");
-        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
-        switch (environment) {
-            case "dev" ->
-                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-830192246553");//BUCKET DEV
-            case "test" ->
-                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-151559006927");//BUCKET TEST
-            case "uat" ->
-                    System.setProperty("cie.generator.bucket", "pn-runtime-environment-variables-eu-south-1-TODO_UAT");//BUCKET UAT
-            default -> throw new IllegalArgumentException("Invalid environment param");
-        }
+        System.setProperty("cie.generator.bucket", bucketS3);
         System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
         log.info("Parametri settati");
-        System.getenv().entrySet().forEach(x -> System.out.println("PARAM : " + x));
+        System.getenv().entrySet().forEach(x -> log.info("PARAM : " + x));
     }
 }
