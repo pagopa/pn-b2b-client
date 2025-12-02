@@ -19,8 +19,6 @@ public class DelayerContext {
     public Map<String, List<DelayerPaperDelivery>> groupedBySeed = new HashMap<>();
     public Map<String, Map<String, List<DelayerPaperDelivery>>> expectedPianification = new HashMap<>();
     public Map<String, Map<String, List<DelayerPaperDelivery>>> actualPianification = new HashMap<>();
-    public List<DelayerPaperDelivery> expectedTotalPreparePhase2 = new ArrayList<>();
-    public List<DelayerPaperDelivery> actualTotalPreparePhase2 = new ArrayList<>();
     public Map<String, String> failPianification = new HashMap<>();
 
     public Map<String, List<String>> priorityConfigMap = Map.of(
@@ -28,4 +26,10 @@ public class DelayerContext {
             "2", List.of("PRODUCT_AR.ATTEMPT_1", "PRODUCT_890.ATTEMPT_1"),
             "3", List.of("PRODUCT_AR.ATTEMPT_0", "PRODUCT_890.ATTEMPT_0")
     );
+
+    public List<DelayerPaperDelivery> getExpectedByWorkflowStep(WorkflowSteps  step) {
+        return expectedPianification.values().stream()
+                .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream())
+                .toList();
+    }
 }

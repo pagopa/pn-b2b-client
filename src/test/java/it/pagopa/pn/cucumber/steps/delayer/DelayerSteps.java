@@ -240,9 +240,7 @@ public class DelayerSteps {
     @Then("vengono recuperate le notifiche al workflow step {string}")
     public void fetchNotification(String ws) throws Exception {
         WorkflowSteps step = valueOf(ws);
-        List<DelayerPaperDelivery> expected = context.expectedPianification.values().stream()
-                .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream())
-                .toList();
+        List<DelayerPaperDelivery> expected = context.getExpectedByWorkflowStep(step);
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
         List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, POLLING_MAX_MINUTES);
