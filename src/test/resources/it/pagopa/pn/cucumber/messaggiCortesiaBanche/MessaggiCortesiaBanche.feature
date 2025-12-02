@@ -1,7 +1,5 @@
 Feature: Messaggi di cortesia Banche
 
-  #TODO MATTEO, appena saranno disponibili le nuove api, modificare quelle
-
   @bankCourtesyMessageEnabled
   Scenario Outline: [BANK_COURTESY_MESSAGE-1] Viene invocato l'endpoint EMD di sendMessage
     When viene invocato l'endpoint sendMessage con i seguenti parametri

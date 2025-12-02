@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche;
 
-import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,7 +13,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class MessaggiCortesiaBancheSteps {
     private final EmdIntegrationApiImpl emdIntegrationApi;
@@ -47,9 +45,9 @@ public class MessaggiCortesiaBancheSteps {
 
     @When("viene invocato l'endpoint paymentUrl con i seguenti parametri")
     public void callEmdPaymentUrl(Map<String, String> row) {
+        String amountString = row.get("amount");
+        Integer amount = amountString == null || amountString.isEmpty() ? null : Integer.valueOf(amountString);
         try {
-            String amountString = row.get("amount");
-            Integer amount = amountString == null || amountString.isEmpty() ? null : Integer.valueOf(amountString);
             emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"), amount);
         } catch (HttpStatusCodeException e) {
             emdResponseEntity = new ResponseEntity<>(e.getStatusCode());
@@ -65,15 +63,4 @@ public class MessaggiCortesiaBancheSteps {
     public void verifyOutcomeResponse(String outcome) {
         Assertions.assertEquals(SendMessageResponse.OutcomeEnum.valueOf(outcome), ((SendMessageResponse) emdResponseEntity.getBody()).getOutcome());
     }
-
-    @DataTableType
-    public SendMessageRequestBody getSendMessageRequestBody(Map<String, String> row) {
-        return new SendMessageRequestBody()
-                .internalRecipientId(row.get("internalRecipientId"))
-                .recipientId(row.get("recipientId"))
-                .senderDescription(row.get("senderDescription"))
-                .originId(row.get("originId"))
-                .associatedPayment(Optional.ofNullable(row.get("associatedPayment")).map(Boolean::parseBoolean).orElse(null));
-    }
-
 }
