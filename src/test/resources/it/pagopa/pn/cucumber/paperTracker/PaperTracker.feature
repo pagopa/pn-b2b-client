@@ -287,6 +287,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   | ANALOG_SUCCESS_WORKFLOW |
       | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR_ALL_CON                     |Via@OK_AR_ALL_CON                  | ANALOG_SUCCESS_WORKFLOW |
 
   #questo scenario andrà incluso nell'NRT totale
   @paperTrackerRunMode
