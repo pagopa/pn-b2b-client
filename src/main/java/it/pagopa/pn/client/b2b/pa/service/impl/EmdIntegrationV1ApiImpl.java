@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class EmdIntegrationApiImpl {
+public class EmdIntegrationV1ApiImpl {
     private final MessageApi messageApi;
     private final CheckTppApi checkTppApi;
     private final PaymentApi paymentApi;
 
-    public EmdIntegrationApiImpl(RestTemplate restTemplate,
-                                 @Value("${pn.delivery.base-url}") String basePath) {
+    public EmdIntegrationV1ApiImpl(RestTemplate restTemplate,
+                                   @Value("${pn.delivery.base-url}") String basePath) {
         this.messageApi = new MessageApi(createApiClient(restTemplate, basePath));
         this.checkTppApi = new CheckTppApi(createApiClient(restTemplate, basePath));
         this.paymentApi = new PaymentApi(createApiClient(restTemplate, basePath));

@@ -4,7 +4,7 @@ import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationV1ApiImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageRequestBody;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageResponse;
 import it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain.EmdCheckTppEndpoint;
@@ -16,15 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MessaggiCortesiaBancheSteps {
-    private final EmdIntegrationApiImpl emdIntegrationApi;
+public class MessaggiCortesiaBancheV1Steps {
+    private final EmdIntegrationV1ApiImpl emdIntegrationApi;
     private ResponseEntity<?> emdResponseEntity;
 
-    public MessaggiCortesiaBancheSteps(EmdIntegrationApiImpl emdIntegrationApi) {
+    public MessaggiCortesiaBancheV1Steps(EmdIntegrationV1ApiImpl emdIntegrationApi) {
         this.emdIntegrationApi = emdIntegrationApi;
     }
 
-    @When("viene invocato l'endpoint sendMessage con i seguenti parametri")
+    @When("viene invocato l'endpoint sendMessage V1 con i seguenti parametri")
     public void callEmdSendMessage(List<SendMessageRequestBody> requestBodyList) {
         try {
             emdResponseEntity = emdIntegrationApi.sendMessage(requestBodyList.get(0));
@@ -33,7 +33,7 @@ public class MessaggiCortesiaBancheSteps {
         }
     }
 
-    @When("viene invocato l'endpoint {emdCheckTppEndpoint} con retrievalId: {string}")
+    @When("viene invocato l'endpoint {emdCheckTppEndpoint} V1 con retrievalId: {string}")
     public void callEmdCheckTPP(EmdCheckTppEndpoint emdCheckTppEndpoint, String retrievalId) {
         try {
             if (emdCheckTppEndpoint == EmdCheckTppEndpoint.TOKEN_CHECK_TPP)
@@ -45,23 +45,22 @@ public class MessaggiCortesiaBancheSteps {
         }
     }
 
-    @When("viene invocato l'endpoint paymentUrl con i seguenti parametri")
+    @When("viene invocato l'endpoint paymentUrl V1 con i seguenti parametri")
     public void callEmdPaymentUrl(Map<String, String> row) {
         try {
-            String amountString = row.get("amount");
-            Integer amount = amountString == null || amountString.isEmpty() ? null : Integer.valueOf(amountString);
-            emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"), amount);
+            //TODO MATTEO CORTESIA
+            emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"), null);
         } catch (HttpStatusCodeException e) {
             emdResponseEntity = new ResponseEntity<>(e.getStatusCode());
         }
     }
 
-    @Then("si ottiene status code {int}")
+    @Then("si ottiene status code {int} V1")
     public void verifyStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, emdResponseEntity.getStatusCode().value());
     }
 
-    @And("la risposta contiene outcome uguale a {string}")
+    @And("la risposta contiene outcome uguale a {string} V1")
     public void verifyOutcomeResponse(String outcome) {
         Assertions.assertEquals(SendMessageResponse.OutcomeEnum.valueOf(outcome), ((SendMessageResponse) emdResponseEntity.getBody()).getOutcome());
     }

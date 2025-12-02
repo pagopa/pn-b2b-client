@@ -1,13 +1,11 @@
 Feature: Messaggi di cortesia Banche
 
-  #TODO MATTEO, appena saranno disponibili le nuove api, modificare quelle
-
-  @bankCourtesyMessageEnabled
+  @bankCourtesyMessageEnabledV1
   Scenario Outline: [BANK_COURTESY_MESSAGE-1] Viene invocato l'endpoint EMD di sendMessage
-    When viene invocato l'endpoint sendMessage con i seguenti parametri
+    When viene invocato l'endpoint sendMessage V1 con i seguenti parametri
       | internalRecipientId   | recipientId   | senderDescription   | originId   | associatedPayment   |
       | <internalRecipientId> | <recipientId> | <senderDescription> | <originId> | <associatedPayment> |
-    Then si ottiene status code <statusCode>
+    Then si ottiene status code <statusCode> V1
     Examples:
       | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment | statusCode |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | 200        |
@@ -17,45 +15,43 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  |                           | true              | 400        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 |                   | 400        |
 
-  @bankCourtesyMessageEnabled
+  @bankCourtesyMessageEnabledV1
   Scenario Outline: [BANK_COURTESY_MESSAGE-2] Viene invocato l'endpoint EMD di /token/check-tpp
-    When viene invocato l'endpoint tokenCheckTPP con retrievalId: "<retrievalId>"
-    Then si ottiene status code <statusCode>
+    When viene invocato l'endpoint tokenCheckTPP V1 con retrievalId: "<retrievalId>"
+    Then si ottiene status code <statusCode> V1
     Examples:
       | retrievalId                                        | statusCode |
       | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
       |                                                    | 400        |
 
-  @bankCourtesyMessageEnabled
+  @bankCourtesyMessageEnabledV1
   Scenario Outline: [BANK_COURTESY_MESSAGE-3] Viene invocato l'endpoint EMD di /emd/check-tpp
-    When viene invocato l'endpoint emdCheckTPP con retrievalId: "<retrievalId>"
-    Then si ottiene status code <statusCode>
+    When viene invocato l'endpoint emdCheckTPP V1 con retrievalId: "<retrievalId>"
+    Then si ottiene status code <statusCode> V1
     Examples:
       | retrievalId                                        | statusCode |
       | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
       |                                                    | 400        |
 
-  @bankCourtesyMessageEnabled
+  @bankCourtesyMessageEnabledV1
   Scenario Outline: [BANK_COURTESY_MESSAGE-4] Viene invocato l'endpoint EMD di /payment-url
-    When viene invocato l'endpoint paymentUrl con i seguenti parametri
+    When viene invocato l'endpoint paymentUrl V1 con i seguenti parametri
       | retrievalId | <retrievalId> |
       | noticeCode  | <noticeCode>  |
       | paTaxId     | <paTaxId>     |
-      | amount      | <amount>      |
-    Then si ottiene status code <statusCode>
+    Then si ottiene status code <statusCode> V1
     Examples:
-      | retrievalId                                        | noticeCode         | paTaxId     | amount | statusCode |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 10     | 200        |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 |        | 200        |
-      |                                                    | 302000100000019421 | 77777777777 | 10     | 400        |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |                    | 77777777777 | 10     | 400        |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 |             | 10     | 400        |
+      | retrievalId                                        | noticeCode         | paTaxId     | statusCode |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 200        |
+      |                                                    | 302000100000019421 | 77777777777 | 400        |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |                    | 77777777777 | 400        |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 |             | 400        |
 
   #  Scenario to validate calls to the following endpoints:
   #     GET /bff/v1/notifications/received/{iun}
   #     GET /bff/v1/notifications/received/{iun}/documents/{documentType}
   #     GET /bff/v1/notifications/received/{iun}/payments/{attachmentName}
-  @bankCourtesyMessageEnabled
+  @bankCourtesyMessageEnabledV1
   Scenario: [BANK_COURTESY_MESSAGE-5] Vengono invocati gli endpoint di recupero notifica, lettura AAR e recupero avviso di pagamento da API web (BFF)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -79,28 +75,28 @@ Feature: Messaggi di cortesia Banche
 # =====================================================
 #  Gruppo di tests in caso di feature flag disattivato
 # =====================================================
-  @bankCourtesyMessageDisabled
+  @bankCourtesyMessageDisabledV1
   Scenario: [BANK_COURTESY_MESSAGE-6] Viene invocato l'endpoint EMD di sendMessage quando la funzionalità è disattiva
-    When viene invocato l'endpoint sendMessage con i seguenti parametri
+    When viene invocato l'endpoint sendMessage V1 con i seguenti parametri
       | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              |
-    Then si ottiene status code 200
-    And la risposta contiene outcome uguale a "NO_CHANNELS_ENABLED"
+    Then si ottiene status code 200 V1
+    And la risposta contiene outcome uguale a "NO_CHANNELS_ENABLED" V1
 
-  @bankCourtesyMessageDisabled
+  @bankCourtesyMessageDisabledV1
   Scenario: [BANK_COURTESY_MESSAGE-2] Viene invocato l'endpoint EMD di /token/check-tpp quando la funzionalità è disattiva
-    When viene invocato l'endpoint tokenCheckTPP con retrievalId: "YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa"
-    Then si ottiene status code 404
+    When viene invocato l'endpoint tokenCheckTPP V1 con retrievalId: "YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa"
+    Then si ottiene status code 404 V1
 
-  @bankCourtesyMessageDisabled
+  @bankCourtesyMessageDisabledV1
   Scenario: [BANK_COURTESY_MESSAGE-3] Viene invocato l'endpoint EMD di /emd/check-tpp quando la funzionalità è disattiva
-    When viene invocato l'endpoint emdCheckTPP con retrievalId: "YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa"
-    Then si ottiene status code 404
+    When viene invocato l'endpoint emdCheckTPP V1 con retrievalId: "YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa"
+    Then si ottiene status code 404 V1
 
-  @bankCourtesyMessageDisabled
+  @bankCourtesyMessageDisabledV1
   Scenario: [BANK_COURTESY_MESSAGE-4] Viene invocato l'endpoint EMD di /payment-url quando la funzionalità è disattiva
-    When viene invocato l'endpoint paymentUrl con i seguenti parametri
+    When viene invocato l'endpoint paymentUrl V1 con i seguenti parametri
       | retrievalId | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |
       | noticeCode  | 302000100000019421                                 |
       | paTaxId     | 77777777777                                        |
-    Then si ottiene status code 500
+    Then si ottiene status code 500 V1
