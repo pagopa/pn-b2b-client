@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class M2MEventRequest {
+    public static final int EVENTS_MAX_LIMIT = 500;
+
     @Nullable       private UUID lastEventId;
-    @Nonnull        private int limit = 500;
+    @Nonnull        private int limit = EVENTS_MAX_LIMIT;
     @Nullable       private UUID delegationId;
 
     public static M2MEventRequest minimal() {

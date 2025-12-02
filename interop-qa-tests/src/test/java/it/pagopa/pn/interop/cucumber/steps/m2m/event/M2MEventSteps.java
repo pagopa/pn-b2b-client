@@ -59,8 +59,14 @@ public class M2MEventSteps {
         M2MEventRequest startingRequest = M2MEventRequest.minimal();
         Function<M2MEventRequest, M2MEvents> eventRetriever = getM2MEventsFunction(entityKind);
 
-        M2MEvent lastEvent = eventRetriever.apply(startingRequest).getLastEvent();
-        this.lastEventId = isNull(lastEvent) ? null : lastEvent.getId();
+        M2MEvents events;
+        do {
+            events = eventRetriever.apply(startingRequest);
+            M2MEvent lastEvent = events.getLastEvent();
+            this.lastEventId = isNull(lastEvent) ? this.lastEventId : lastEvent.getId();
+            startingRequest.setLastEventId(this.lastEventId);
+        } while((events.getEvents().size() == M2MEventRequest.EVENTS_MAX_LIMIT));
+
         log.info("{} last event id: {}", entityKind, this.lastEventId);
 
         clientTokenConfigurator.setBearerToken(lastToken);
