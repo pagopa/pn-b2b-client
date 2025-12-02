@@ -29,7 +29,7 @@ public class DelayerLambdaClient {
 
     public int getAvailableCapacity(String driver, String provincia, String deliveryDate) {
         try {
-            String response = invoke("GET_USED_CAPACITY", driver, provincia, deliveryDate);
+            String response = invoke("GET_USED_CAPACITY", "pn-PaperDeliveryDriverUsedCapacities", driver, provincia, deliveryDate);
             JsonNode body = extractBody(response);
             int declared = body.path("declaredCapacity").asInt(-1);
             int used = body.path("usedCapacity").asInt(-1);
