@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche;
 
-import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,7 +13,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class MessaggiCortesiaBancheV1Steps {
     private final EmdIntegrationV1ApiImpl emdIntegrationApi;
@@ -64,15 +62,4 @@ public class MessaggiCortesiaBancheV1Steps {
     public void verifyOutcomeResponse(String outcome) {
         Assertions.assertEquals(SendMessageResponse.OutcomeEnum.valueOf(outcome), ((SendMessageResponse) emdResponseEntity.getBody()).getOutcome());
     }
-
-    @DataTableType
-    public SendMessageRequestBody getSendMessageRequestBody(Map<String, String> row) {
-        return new SendMessageRequestBody()
-                .internalRecipientId(row.get("internalRecipientId"))
-                .recipientId(row.get("recipientId"))
-                .senderDescription(row.get("senderDescription"))
-                .originId(row.get("originId"))
-                .associatedPayment(Optional.ofNullable(row.get("associatedPayment")).map(Boolean::parseBoolean).orElse(null));
-    }
-
 }

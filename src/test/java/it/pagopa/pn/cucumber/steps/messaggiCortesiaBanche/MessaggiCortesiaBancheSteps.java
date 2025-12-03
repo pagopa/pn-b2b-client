@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche;
 
+import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -7,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageRequestBody;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageResponse;
 import it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain.EmdCheckTppEndpoint;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -62,5 +64,17 @@ public class MessaggiCortesiaBancheSteps {
     @And("la risposta contiene outcome uguale a {string}")
     public void verifyOutcomeResponse(String outcome) {
         Assertions.assertEquals(SendMessageResponse.OutcomeEnum.valueOf(outcome), ((SendMessageResponse) emdResponseEntity.getBody()).getOutcome());
+    }
+
+    @DataTableType
+    public SendMessageRequestBody getSendMessageRequestBody(Map<String, String> row) {
+        return new SendMessageRequestBody()
+                .internalRecipientId(row.get("internalRecipientId"))
+                .recipientId(row.get("recipientId"))
+                .senderDescription(row.get("senderDescription"))
+                .originId(row.get("originId"))
+                .associatedPayment(row.get("associatedPayment") != null ? Boolean.valueOf(row.get("associatedPayment")) : null)
+                .deliveryMode(row.get("deliveryMode") != null ? SendMessageRequestBody.DeliveryModeEnum.valueOf(row.get("deliveryMode")) : null)
+                .schedulingAnalogDate(row.get("schedulingAnalogDate") != null ? DateTime.now().toString() : null);
     }
 }
