@@ -35,7 +35,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     public B2bMandateServiceClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.external.dest.base-url}") String b2bBasePath,
                                        @Value("${pn.webapi.external.base-url}") String webBasePath,
-                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                       @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
                                        @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken,
                                        @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                        @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken) {
@@ -139,7 +139,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     public boolean setBearerToken(BearerTokenType bearerToken) {
         switch (bearerToken) {
             case PG_1 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
             }
             case PG_2 -> {
