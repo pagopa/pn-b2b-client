@@ -70,8 +70,8 @@ public class DelayerValidator {
     }
 
     public List<String> checkSilently(WorkflowSteps step, String seed) {
-        var actual = context.actualPianification.getOrDefault(seed, Map.of()).get(step.name());
-        var expected = context.expectedPianification.getOrDefault(seed, Map.of()).get(step.name());
+        var actual = step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) ? context.getActualInPhase2() : context.actualPianification.getOrDefault(seed, Map.of()).get(step.name());
+        var expected = step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) ? context.getExpectedInPhase2() : context.expectedPianification.getOrDefault(seed, Map.of()).get(step.name());
 
         // Normalizza i null a liste vuote
         List<DelayerPaperDelivery> exp = expected == null ? List.of() : expected;
@@ -118,7 +118,7 @@ public class DelayerValidator {
         return problems;
     }
 
-    public Map<String, List<String>> checkSilentlyAll(WorkflowSteps step) {
+    public void checkSilentlyAll(WorkflowSteps step) {
         Set<String> validSeeds = context.groupedBySeed.keySet().stream()
                 .filter(s -> !context.failPianification.containsKey(s))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -138,7 +138,6 @@ public class DelayerValidator {
             assertPianifications();
         }
 
-        return result;
     }
 
     public void checkNotExistSilently(List<DelayerPaperDelivery> notifications, String seed, WorkflowSteps ws) {

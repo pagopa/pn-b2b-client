@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+
 import java.util.*;
 
 public class DelayerContext {
@@ -8,7 +11,13 @@ public class DelayerContext {
 
     public String expectedDeliveryDate;
     public Integer printCapacity = STANDARD_PRINT_CAPACITY;
+    public Integer weeklyPrintCapacity = printCapacity*7;
     public Integer numeroNotifiche;
+
+    public final int dailyExecution = 17;
+    public int expectedExecutions = 1;
+    public int currentStepFunction2ExecutionIndex = 0;
+    public int maxDeliveryToPhase2ForExecution = (int) Math.ceil(printCapacity/dailyExecution);
 
     public List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
 
@@ -28,8 +37,53 @@ public class DelayerContext {
     );
 
     public List<DelayerPaperDelivery> getExpectedByWorkflowStep(WorkflowSteps  step) {
-        return expectedPianification.values().stream()
-                .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream())
+        return step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) ?
+                getExpectedInPhase2() :
+                expectedPianification.values().stream()
+                    .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream())
+                    .toList();
+    }
+
+    public void setMaxDeliveryToPhase2ForExecution(int limit) {
+        if(limit <= 0) throw new IllegalArgumentException("Limit non valido");
+        printCapacity = limit * dailyExecution;
+        weeklyPrintCapacity = printCapacity*7;
+        this.maxDeliveryToPhase2ForExecution = limit;
+    }
+
+    public List<DelayerPaperDelivery> getExpectedInPhase2() {
+        WorkflowSteps step = WorkflowSteps.SENT_TO_PREPARE_PHASE_2;
+        int batchSize = maxDeliveryToPhase2ForExecution;
+        int currentIndex = Math.max(currentStepFunction2ExecutionIndex, 1); // parte da 1
+        int toSkip = (currentIndex - 1) * batchSize;
+
+        List<DelayerPaperDelivery> toPhase2Weekly = DelayerPaperDeliveryUtils.sortByPriority(expectedPianification.values().stream()
+                .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream()).toList());
+
+        return toPhase2Weekly.stream()
+                .skip(toSkip)
+                .limit(batchSize)
                 .toList();
+    }
+
+    public List<DelayerPaperDelivery> getActualInPhase2() {
+        WorkflowSteps step = WorkflowSteps.SENT_TO_PREPARE_PHASE_2;
+        int batchSize = maxDeliveryToPhase2ForExecution;
+        int currentIndex = Math.max(currentStepFunction2ExecutionIndex, 1); // parte da 1
+        int toSkip = (currentIndex - 1) * batchSize;
+
+        List<DelayerPaperDelivery> toPhase2Weekly = DelayerPaperDeliveryUtils.sortByPriority(actualPianification.values().stream()
+                .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream()).toList());
+
+        return toPhase2Weekly.stream()
+                .skip(toSkip)
+                .limit(batchSize)
+                .toList();
+    }
+
+    public void setPrintCapacity(int printCapacity) {
+        this.printCapacity = printCapacity;
+        this.weeklyPrintCapacity = printCapacity*7;
+        this.maxDeliveryToPhase2ForExecution = (int) Math.ceil(printCapacity/ dailyExecution);
     }
 }

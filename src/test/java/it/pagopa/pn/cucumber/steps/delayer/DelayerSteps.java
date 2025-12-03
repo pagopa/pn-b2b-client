@@ -22,6 +22,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
@@ -210,8 +211,13 @@ public class DelayerSteps {
 
     @And("si presuppone che la capacità di stampa giornaliera sia {word} {int}")
     public void initPrintCapacity(String compare, int limit) {
-        context.printCapacity = calculateLimitByComparativo(compare, limit);
+        context.setPrintCapacity(calculateLimitByComparativo(compare, limit));
         if (context.printCapacity < 0) throw new IllegalArgumentException("Capacità di stampa non valida");
+    }
+
+    @And("viene impostato il limite massimo di {int} spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine")
+    public void setMaxToPhase2(int maxToPhase2) {
+        context.setMaxDeliveryToPhase2ForExecution(maxToPhase2);
     }
 
     @And("vengono simulate internamente le operazioni di BatchWorkflowStateMachine")
@@ -235,6 +241,26 @@ public class DelayerSteps {
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
         lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
+    }
+
+    @When("vengono avviate le {int} esecuzioni della step function DelayerToPaperChannelStateMachine")
+    public void runSecondStepFunctionWithLimit(int expectedExecutions) throws Exception {
+        context.expectedExecutions = expectedExecutions;
+
+        while (context.currentStepFunction2ExecutionIndex < context.expectedExecutions) {
+            // Avvio la seconda step function
+            runSecondStepFunction();
+            ++context.currentStepFunction2ExecutionIndex;
+
+            // Prelevo tutte le notifiche in SENT_TO_PREPARE_PHASE_2
+            fetchNotification(SENT_TO_PREPARE_PHASE_2.name());
+
+            // Verifico che siano elaborate le notifiche secondo i limiti e secondo il ranking
+            checkRanking(SENT_TO_PREPARE_PHASE_2.name(), null);
+
+            // TODO: sostituire la sleep con l'operazione di verifica stato della lambda
+            TimeUnit.MINUTES.sleep(20);
+        }
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")
@@ -290,6 +316,4 @@ public class DelayerSteps {
     public void assertAll() {
         validator.assertPianifications();
     }
-
-
 }
