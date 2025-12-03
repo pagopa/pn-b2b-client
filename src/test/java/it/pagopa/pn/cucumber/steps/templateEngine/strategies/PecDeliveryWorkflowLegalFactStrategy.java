@@ -40,7 +40,7 @@ public class PecDeliveryWorkflowLegalFactStrategy implements ITemplateEngineStra
                 yield "Attestazione opponibile a terzi: mancato recapito digitale V skladu z 11. odstavkom 26. člena zakonskega odloka 76/2020 s spremembami, družba PagoPA S.p.A. kot zakoniti upravljavec Platforme za digitalno obveščanje, opredeljene v istem 26. členu (znana tudi kot SEND - Servizio Notifiche Digitali), z vsemi pravnimi učinki za veljavnost do tretjih oseb, POTRJUJE, DA:";
             }
             case "FRANCESE" -> {
-                yield "Attestazione opponibile a terzi: mancato recapito digitale Conformément à l’art. 26, paragraphe 11, du décret-loi italien 76/2020 tel que modifié et complété, la société PagoPA S. p.A., en sa qualité d’opérateur ex lege de la Plateforme Notifications Numériques visée audit article 26 (également connue sous le nom de SEND - Servizio Notifiche Digitali), avec plein effet juridique quant à l’opposabilité aux tiers, CERTIFIE QUE";
+                yield "Attestazione opponibile a terzi: mancato recapito digitale Conformément à l’art. 26, paragraphe 11, du décret-loi italien 76/2020 tel que modifié et complété, la société PagoPA , en sa qualité d’opérateur ex lege de la Plateforme Notifications Numériques visée audit article 26 (également S.p.A. connue sous le nom de SEND - Servizio Notifiche Digitali), avec plein effet juridique quant à l’opposabilité aux tiers, CERTIFIE QUE";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
