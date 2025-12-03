@@ -36,7 +36,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-CompiutaGiacenza_890               |
       | OK-NonRendicontabile_890              |
       | OK-CausaForzaMaggiore_890             |
-      | FAIL-EVENTO-INESISTENTE               |
       | OK-REC008_890-E                       |
       | OK-Giacenza-gt10_890_ZIP              |
       | OK_890_ZIP                            |
@@ -60,15 +59,30 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Examples:
       | sequenceName                          |
       | FAIL-DiscoveryIrreperibile_890        |
-      | OK-GiacenzaDelegato-gt10_890        |
-
+      | OK-GiacenzaDelegato-gt10_890          |
 
   @paperTracker890
-  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3222] Si verifica che i dati ritornati da /errors siano quelli attesi
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Per la sequence FAIL-EVENTO-INESISTENTE verifico che l'ultimo evento di SEND_ANALOG_PROGRESS contenga RECAG001B
+  e controllo la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER     |
+      | physicalCommunication | REGISTERED_LETTER_890     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-EVENTO-INESISTENTE |
+      | digitalDomicile         | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
+    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-EVENTO-INESISTENTE"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-EVENTO-INESISTENTE"
+
+  @paperTracker
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Si verifica che i dati ritornati da /errors siano quelli attesi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | <physicalAddress> |
       | digitalDomicile         | NULL              |
@@ -77,8 +91,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
-      | physicalAddress                   | category                             | flowThrow                     |
-      | Via@OK-CAUSE-EVENTO-NO-MAPPA      | DELIVERY_FAILURE_CAUSE_ERROR         |  SEQUENCE_VALIDATION          |
+      | physicalAddress                              | category                             | flowThrow                     |
+      | Via@FAIL-Irreperibile_890                    | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
+      | Via@FAIL-Giacenza-lte10_890                  | INCONSISTENT_STATE                   |  SEQUENCE_VALIDATION          |
+      | Via@OK-REC008_890-E                          | INCONSISTENT_STATE                   |  SEQUENCE_VALIDATION          |
+      | Via@FAIL-DiscoveryIrreperibile_890           | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
+      | Via@OK-CAUSE-EVENTO-NO-MAPPA                 | DELIVERY_FAILURE_CAUSE_ERROR         |  SEQUENCE_VALIDATION          |
+
 
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
@@ -97,6 +116,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Examples:
       | sequenceName                        |
       | OK-Retry_890                        |
+      | OK-NonRendicontabile_890            |
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
