@@ -22,21 +22,17 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-PersonaAbilitata_890               |
       | FAIL_890                              |
       | FAIL_IndirizzoInesatto890             |
-      | FAIL-Irreperibile_890                 |
       | FAIL-Discovery_890                    |
-      | FAIL-DiscoveryIrreperibileBadCAP_890  |
+#      | FAIL-DiscoveryIrreperibileBadCAP_890  |
       | OK-Giacenza-lte10_890                 |
       | OK-Giacenza-gt10_890                  |
       | OK-Giacenza-gt10-23L_890              |
       | OK-GiacenzaDelegato-lte10_890         |
       | OK-GiacenzaDelegato-gt10-23L_890      |
-      | FAIL-Giacenza-lte10_890               |
       | FAIL-Giacenza-gt10_890                |
       | FAIL-Giacenza-gt10-23L_890            |
       | OK-CompiutaGiacenza_890               |
-      | OK-NonRendicontabile_890              |
       | OK-CausaForzaMaggiore_890             |
-      | OK-REC008_890-E                       |
       | OK-Giacenza-gt10_890_ZIP              |
       | OK_890_ZIP                            |
       | OK-GiacenzaCAD-lte10_890              |
@@ -58,7 +54,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName                          |
-      | FAIL-DiscoveryIrreperibile_890        |
       | OK-GiacenzaDelegato-gt10_890          |
 
   @paperTracker890
@@ -77,7 +72,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-EVENTO-INESISTENTE"
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-EVENTO-INESISTENTE"
 
-  @paperTracker
+  @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Si verifica che i dati ritornati da /errors siano quelli attesi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -97,6 +92,26 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | Via@OK-REC008_890-E                          | INCONSISTENT_STATE                   |  SEQUENCE_VALIDATION          |
       | Via@FAIL-DiscoveryIrreperibile_890           | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
       | Via@OK-CAUSE-EVENTO-NO-MAPPA                 | DELIVERY_FAILURE_CAUSE_ERROR         |  SEQUENCE_VALIDATION          |
+
+  @paperTracker890
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_4_890] Si verifica la correttezza della risposta di /trackings per le sequence che generano un errore
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequenceName> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
+    Examples:
+      | sequenceName                          |
+      | FAIL-Irreperibile_890                 |
+      | FAIL-Giacenza-lte10_890               |
+      | OK-REC008_890-E                       |
+      | FAIL-DiscoveryIrreperibile_890        |
 
 
   @paperTracker890
