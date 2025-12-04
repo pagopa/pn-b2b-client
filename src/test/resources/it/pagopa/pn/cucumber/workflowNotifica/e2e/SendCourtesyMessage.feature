@@ -264,11 +264,11 @@ Feature: Invio messaggi cortesia e2e
 
   @addressBook3 @courtesyMessage @cleanAddressBook @bankCourtesyMessage #rif srs 39
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_12] Verifica successione elementi - Invio DIGITALE con SEND, cortesia TPP solo PF
-    Given si predispone addressbook per l'utente "Dino Sauro"
-    Then l'utente "Dino Sauro" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    Given si predispone addressbook per l'utente "Mario Gherkin"
+    Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Dino Sauro"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
@@ -341,7 +341,7 @@ Feature: Invio messaggi cortesia e2e
 
   @addressBook3 @courtesyMessage @cleanAddressBook @bankCourtesyMessage #rif srs 40
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_16] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia TPP solo PF
-    Given si predispone addressbook per l'utente "Dino Sauro"
+    Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"

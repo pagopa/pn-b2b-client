@@ -506,8 +506,7 @@ public class CoperturaCapRaddSteps {
             String line;
             boolean isHeader = true;
 
-            bw.write("CAP;LOCALITA;ESITO_LIGHT;ESITO_COMPLETE");//TODO MATTEO RIPRISTINARE
-//            bw.write("CAP;ESITO_LIGHT");
+            bw.write("CAP;LOCALITA;ESITO_LIGHT;ESITO_COMPLETE");
             bw.newLine();
 
             while ((line = br.readLine()) != null) {
@@ -517,12 +516,10 @@ public class CoperturaCapRaddSteps {
                 }
 
                 String[] values = line.split(";(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                if (values.length < 2) continue;//TODO MATTEO RIPRISTINARE
-//                if (values.length < 1) continue;
+                if (values.length < 2) continue;
 
                 String cap = values[0].replace("\"", "").trim();
-                String locality = values[1].replace("\"", "").trim();//TODO MATTEO RIPRISTINARE
-//                locality = "ROMA";
+                String locality = values[1].replace("\"", "").trim();
 
                 if (cap.isEmpty()) continue;
                 //Talvolta gli editor csv interpretano i cap come numeri e rimuovono gli 0 iniziali.
@@ -530,10 +527,6 @@ public class CoperturaCapRaddSteps {
                 if (cap.length() < 5) {
                     cap = "0".repeat(5 - cap.length()) + cap;
                 }
-
-
-                //TODO MATTEO RIPRISTINARE
-//                /*
 
                 // **** Chiamata con SearchMode.COMPLETE ****
                 CheckCoverageRequest completeReq = new CheckCoverageRequest()
@@ -552,7 +545,6 @@ public class CoperturaCapRaddSteps {
 
                 String esitoComplete = (completeResp.getHasCoverage() != null && completeResp.getHasCoverage())
                         ? "SI" : "NO";
-//                 */
 
                 // **** Chiamata con SearchMode.LIGHT ****
                 CheckCoverageRequest lightReq = new CheckCoverageRequest()
@@ -571,12 +563,10 @@ public class CoperturaCapRaddSteps {
                         ? "SI" : "NO";
 
                 // **** Scrittura risultati nel file CSV ****
-                bw.write(String.format("%s;%s;%s;%s", cap, locality, esitoLight, esitoComplete));//TODO MATTEO RIPRISTINARE
-//                bw.write(String.format("%s;%s", cap, esitoLight));
+                bw.write(String.format("%s;%s;%s;%s", cap, locality, esitoLight, esitoComplete));
                 bw.newLine();
 
-                System.out.printf("CAP %s (%s): COMPLETE=%s, LIGHT=%s%n", cap, locality, esitoLight, esitoComplete);//TODO MATTEO RIPRISTINARE
-//                System.out.printf("CAP %s: LIGHT=%s%n", cap, esitoLight);
+                System.out.printf("CAP %s (%s): COMPLETE=%s, LIGHT=%s%n", cap, locality, esitoLight, esitoComplete);
             }
 
             System.out.println("===== REPORT COMPLETATO =====");
