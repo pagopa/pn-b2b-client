@@ -58,7 +58,7 @@ Feature: Eventi M2M
     And "PA2" non visualizza l'evento di modifica dell'e-service
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_03] In caso di delega in erogazione non attiva o rifiutata,
+  Scenario: [M2M_E-SERVICE_EVENTS_03] In caso di delega in erogazione non attiva,
   l'ente delegato non deve aver visibilità sugli eventi inerenti l'e-service tipicamente visibili
   a un delegato con delega attiva; inoltre, il campo producerDelegationId non deve essere valorizzato.
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -68,25 +68,4 @@ Feature: Eventi M2M
     When "PA1" aggiorna quell'e-service
     Then "PA1" visualizza correttamente l'evento di modifica dell'e-service senza delega in erogazione
     And "PA2" non visualizza l'evento di modifica dell'e-service
-
-  # FIXME solo per facilitare i test manuali di e-service template
-  Scenario: Crea e-service template
-    Given ["PA1" prende nota dell'ultimo evento presente di tipo e-service template]
-    And l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-
-  # FIXME solo per facilitare i test manuali di e-service template
-  Scenario: Pubblica e-service template
-    #Given ["PA1" prende nota dell'ultimo evento presente di tipo e-service]
-    And l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    And l'utente effettua la pubblicazione dell'e-service template
-
-  # FIXME solo per facilitare la creazione di token da utilizzare nei test manuali
-  Scenario: Genera token
-    Then l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
-    And l'utente è un "admin" di "GSP2" con ruolo M2M m2m-admin
 
