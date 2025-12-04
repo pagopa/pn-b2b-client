@@ -1,9 +1,11 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DelayerPrintCapacityCounter {
     private String pk;
     private String sk;
