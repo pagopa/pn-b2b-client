@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.delayer.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +40,28 @@ public class DelayerLambdaClient {
             throw new RuntimeException("Errore durante GET_USED_CAPACITY per driver %s".formatted(driver), e);
         }
     }
+
+    public DelayerPrintCapacityCounter getPrintCapacityCounter(String deliveryDate) {
+        try {
+            String response = invoke("GET_PRINT_CAPACITY_COUNTER", "pn-PaperDeliveryCounters", deliveryDate);
+            JsonNode body = extractBody(response);
+
+            if (body.isMissingNode() || body.isNull()) {
+                log.warn("Nessun contatore trovato per deliveryDate {}", deliveryDate);
+                return null;
+            }
+
+            return objectMapper.treeToValue(body, DelayerPrintCapacityCounter.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"
+                            .formatted(deliveryDate),
+                    e
+            );
+        }
+    }
+
 
     public List<DelayerPaperDelivery> pollByRequestId(String requestId, int maxAttempts, int sleepMillis) throws Exception {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
