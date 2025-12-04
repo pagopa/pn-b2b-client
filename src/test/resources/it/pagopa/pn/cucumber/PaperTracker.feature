@@ -32,6 +32,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_GIACENZA_AR_3 |
       | OK_GIACENZA_AR_4 |
       | OK_AR_BAD_EVENT |
+      | OK_AR_ALL_CON |
 
 
   @paperTracker @paperTrackerRunMode

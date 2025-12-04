@@ -173,7 +173,7 @@ public class PaperTrackerSteps {
             if (List.of("OK_AR_INVALID_DATETIME", "OK_AR_NO_EVENT_B", "OK_AR_TIMESTAMP_ERR", "OK_RIR_TIMESTAMP_ERR", "OK_RIR_INVALID_DATETIME").contains(sequenceName)) {
                 filteredOutputs = sanitizeList(filteredOutputs, List.of("RECRN001C", "RECRI003C"));
             }
-            if (sequenceName.contains("OK_GIACENZA_AR_4")) {
+            if (List.of("OK_AR_ALL_CON", "OK_GIACENZA_AR_4").contains(sequenceName)) {
                 assertSameElements(sanitizeList(filteredOutputs, List.of("CON018")), mapOutput.get(attempt), OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND);
             }
             else {
