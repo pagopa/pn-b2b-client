@@ -80,8 +80,8 @@ Feature: Messaggi di cortesia Banche
   @bankCourtesyMessageDisabled
   Scenario: [BANK_COURTESY_MESSAGE-6] Viene invocato l'endpoint EMD di sendMessage quando la funzionalità è disattiva
     When viene invocato l'endpoint sendMessage con i seguenti parametri
-      | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              |
+      | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment | deliveryMode |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | DIGITAL      |
     Then si ottiene status code 200
     And la risposta contiene outcome uguale a "NO_CHANNELS_ENABLED"
 
