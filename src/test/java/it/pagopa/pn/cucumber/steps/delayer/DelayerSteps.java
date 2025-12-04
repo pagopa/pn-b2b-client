@@ -9,6 +9,7 @@ import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
@@ -16,6 +17,7 @@ import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -250,6 +252,20 @@ public class DelayerSteps {
         lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
     }
 
+    @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
+    public void checkPrintCapacityCounter(){
+        DelayerPrintCapacityCounter tupla = lambdaClient.getPrintCapacityCounter(context.expectedDeliveryDate);
+        Assertions.assertThat(tupla).isNotNull();
+
+        Assertions.assertThat(tupla.getDailyExecutionNumber())
+                .as("DailyExecutionCounter deve essere uguale allo STANDARD_DAILY_EXECUTIONS")
+                .isEqualTo(DelayerContext.STANDARD_DAILY_EXECUTIONS);
+
+        Assertions.assertThat(tupla.getDailyExecutionCounter())
+                .as("DailyExecutionNumber deve essere uguale a quello calcolato internamente")
+                .isEqualTo(context.currentStepFunction2ExecutionIndex);
+    }
+
     @When("vengono avviate le {int} esecuzioni della step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunctionWithLimit(int expectedExecutions) throws Exception {
         context.expectedExecutions = expectedExecutions;
@@ -257,6 +273,7 @@ public class DelayerSteps {
         while (context.currentStepFunction2ExecutionIndex < context.expectedExecutions) {
             // Avvio la seconda step function
             runSecondStepFunction();
+            checkPrintCapacityCounter();
             ++context.currentStepFunction2ExecutionIndex;
 
             // Prelevo tutte le notifiche in SENT_TO_PREPARE_PHASE_2
@@ -266,7 +283,7 @@ public class DelayerSteps {
             checkRanking(SENT_TO_PREPARE_PHASE_2.name(), null);
 
             // TODO: sostituire la sleep con l'operazione di verifica stato della lambda
-            TimeUnit.MINUTES.sleep(20);
+            TimeUnit.MINUTES.sleep(5);
         }
     }
 
