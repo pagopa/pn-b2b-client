@@ -45,7 +45,7 @@ public class DelayerContext {
     }
 
     public void setMaxDeliveryToPhase2ForExecution(int limit) {
-        if(limit <= 0) throw new IllegalArgumentException("Limit non valido");
+        if(limit < 0) throw new IllegalArgumentException("Limit non valido");
         printCapacity = limit * dailyExecution;
         weeklyPrintCapacity = printCapacity*7;
         this.maxDeliveryToPhase2ForExecution = limit;
