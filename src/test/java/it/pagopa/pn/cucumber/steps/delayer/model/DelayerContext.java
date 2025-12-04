@@ -7,14 +7,15 @@ import java.util.*;
 
 public class DelayerContext {
 
-    private static final int STANDARD_PRINT_CAPACITY = 180_000;
+    public static final int STANDARD_PRINT_CAPACITY = 180_000;
+    public static final int STANDARD_DAILY_EXECUTIONS = 17;
 
     public String expectedDeliveryDate;
     public Integer printCapacity = STANDARD_PRINT_CAPACITY;
     public Integer weeklyPrintCapacity = printCapacity*7;
     public Integer numeroNotifiche;
 
-    public final int dailyExecution = 17;
+    public int dailyExecution = STANDARD_DAILY_EXECUTIONS;
     public int expectedExecutions = 1;
     public int currentStepFunction2ExecutionIndex = 0;
     public int maxDeliveryToPhase2ForExecution = (int) Math.ceil(printCapacity/dailyExecution);
