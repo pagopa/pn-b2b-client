@@ -86,4 +86,10 @@ public class DelayerContext {
         this.weeklyPrintCapacity = printCapacity*7;
         this.maxDeliveryToPhase2ForExecution = (int) Math.ceil(printCapacity/ dailyExecution);
     }
+
+    public void setWeeklyPrintCapacity(int weeklyPrintCapacity) {
+        this.weeklyPrintCapacity = weeklyPrintCapacity;
+        this.printCapacity = (int) Math.ceil(weeklyPrintCapacity / 7);
+        this.maxDeliveryToPhase2ForExecution = (int) Math.ceil(printCapacity/ dailyExecution);
+    }
 }

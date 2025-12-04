@@ -215,6 +215,13 @@ public class DelayerSteps {
         if (context.printCapacity < 0) throw new IllegalArgumentException("Capacità di stampa non valida");
     }
 
+    @And("viene impostata la capacità di stampa settimanale in modo che sia {word} {int}")
+    public void setWeeklyPrintCapacity(String compare, int limit) {
+        int weeklyPrintCapacity = calculateLimitByComparativo(compare, limit);
+        if (weeklyPrintCapacity < 0) throw new IllegalArgumentException("Capacità di stampa non valida");
+        context.setWeeklyPrintCapacity(weeklyPrintCapacity);
+    }
+
     @And("viene impostato il limite massimo di {int} spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine")
     public void setMaxToPhase2(int maxToPhase2) {
         context.setMaxDeliveryToPhase2ForExecution(maxToPhase2);
