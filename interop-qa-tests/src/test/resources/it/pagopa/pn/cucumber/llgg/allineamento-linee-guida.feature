@@ -365,13 +365,14 @@ Feature: Allineamento linee guida
       | false            |
 
   @llgg
+  @deleghe2
   Scenario Outline: [LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all'erogazione settando il flag personal data
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
-    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega
     And l'utente è un "admin" di "PA2"
     When l'utente pubblica l'e-service

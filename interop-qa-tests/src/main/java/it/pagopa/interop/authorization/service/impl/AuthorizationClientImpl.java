@@ -124,8 +124,8 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(UUID clientId, InlineObject7 inlineObject) {
-        return clientsApi.addUsersToClient(clientId, inlineObject);
+    public CreatedResource addUsersToClient(UUID clientId, Users users) {
+        return clientsApi.addUsersToClient(clientId, new InlineObject7().userIds(users.getUserIds()));
     }
 
     @Override

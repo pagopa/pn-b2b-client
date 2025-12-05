@@ -13,17 +13,31 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemp
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.springframework.http.ResponseEntity;
 
 public interface IM2MEServiceTemplateClient extends SettableBearerToken {
+    @Data
+    @Builder
+    class EServiceTemplateVersionCreationRequest {
+        private String description;
+        private Integer voucherLifespan;
+        private Integer dailyCallsPerConsumer;
+        private Integer dailyCallsTotal;
+        private AgreementApprovalPolicy agreementApprovalPolicy;
+    }
+
     @Data
     @EqualsAndHashCode(callSuper = true)
     @SuperBuilder
     class EserviceTemplateListRequest extends ListRequest {
         private UUID templateId;
+
+        @Nullable
         private EServiceTemplateVersionState state;
     }
 
@@ -60,11 +74,17 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
 
     EServiceTemplateVersions getEserviceTemplateVersions(EserviceTemplateListRequest request);
 
+    EServiceTemplateVersions getEserviceTemplateVersions(UUID templateId);
+
     EServiceTemplateVersion getEserviceTemplateVersion(UUID templateId, UUID versionId);
 
     // API BFF
     // TODO: aggiornare ad API m2m appena disponibili
     CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload);
+
+    ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
+        UUID templateId,
+        EServiceTemplateVersionCreationRequest request);
 
     Documents getDocuments(UUID templateId, UUID versionId);
 
@@ -75,4 +95,6 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId, EServiceTemplateVersionPatchRequest patchRequest);
 
     EServiceTemplateVersion patchEServiceTemplateVersionQuotas(UUID templateId, UUID versionId, EServiceTemplateVersionQuotasPatchRequest patchRequest);
+
+    void deleteEServiceTemplate(UUID templateId);
 }

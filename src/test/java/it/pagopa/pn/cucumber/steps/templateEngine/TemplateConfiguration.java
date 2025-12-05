@@ -41,6 +41,9 @@ public class TemplateConfiguration {
         map.put(TemplateType.OTP_CONFERMA_PEC_OBJECT, new ConfirmPecBodyObjectStrategy(templateEngineClient));
         map.put(TemplateType.PEC_VALIDA_OBJECT, new ValidPecBodyObjectStrategy(templateEngineClient));
         map.put(TemplateType.PEC_NON_VALIDA_OBJECT, new PecBodyRejectObjectStrategy(templateEngineClient));
+
+        map.put(TemplateType.AVVISO_CORTESIA_EMAIL_DIGITALE, new NotificationAARForEMAILDigitalStrategy(templateEngineClient));
+        map.put(TemplateType.AVVISO_CORTESIA_SMS_DIGITALE, new NotificationAARForSMSDigitalStrategy(templateEngineClient));
         return map;
     }
 

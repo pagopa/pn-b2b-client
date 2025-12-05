@@ -177,6 +177,16 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | m2m       |
       | m2m-admin |
 
+  Scenario: [M2M_ESERVICES_18] Un e-service può essere visionato anche da un ente diverso dal creatore
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+
+    When l'utente tenta di recuperare il record di eService creato
+    Then si ottiene lo status code 200
+
+    When l'utente tenta di recuperare il record di descriptor creato
+    Then si ottiene lo status code 200
+
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_18] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 32)
@@ -187,11 +197,20 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di recuperare l'e-service creato
     Then si ottiene lo status code 404
 
+
+#  Forma precedente di seguito, il 401 è stato segnalato come non corretto
+#  https://pagopa.atlassian.net/browse/PIN-8604
+#  Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 34)
+#    Given "PA1" ha già creato e pubblicato 1 e-services
+#    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+#    When l'utente tenta di effettuare la cancellazione dell'e-service
+#    Then si ottiene lo status code 401
+
   Scenario: [M2MG_ESERVICES_19] Un utente con ruolo M2M non può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 34)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la cancellazione dell'e-service
-    Then si ottiene lo status code 401
+    Then si ottiene lo status code 403
 
   Scenario: [M2MG_ESERVICES_20] La cancellazione di un e-service non può essere effettuata specificando un id inesistente (Parte2#Scenario intorno a 35)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -204,7 +223,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene status code 401
 
   Scenario: [M2MG_ESERVICES_22] La cancellazione di un e-service precedentemente rimosso non può essere effettuata (Parte2#Scenario intorno a 37)
-    Given "PA1" ha già creato e pubblicato 1 e-services
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente effettua la cancellazione dell'e-service con successo
     When l'utente tenta di effettuare la cancellazione dell'e-service
@@ -265,7 +284,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED            |
       | ARCHIVED              |
 
-  @m2m-parte2-agosto-rilascio1 @deleghe2 @failed-nrt-03112025
+  @m2m-parte2-agosto-rilascio1 @deleghe2
   Scenario: [M2MG_ESERVICES_29_B] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -332,7 +351,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | SUSPENDED   |
       | ARCHIVED    |
 
-  @m2m-parte2-agosto-rilascio2 @deleghe2 @failed-nrt-03112025
+  @m2m-parte2-agosto-rilascio2 @deleghe2
   Scenario: [M2MG_ESERVICES_35_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 76)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -404,23 +423,33 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+    # Corretto 400 in 409
+    # Bug https://pagopa.atlassian.net/browse/PIN-8606
   Scenario Outline: [M2MG_ESERVICES_41_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in uno stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
     Examples:
       | stato       |
       | DRAFT       |
       | ARCHIVED    |
 
+  # Per interazioni con un altro bug si è chiarito che quando il ruolo non è esatto il codice di riferimento è il 403
+  # https://pagopa.atlassian.net/browse/PIN-8604
+  #Scenario: [M2MG_ESERVICES_41_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in stato WAITING_FOR_APPROVAL
+  #  Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+  #  And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  #  When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
+  #  Then si ottiene lo status code 400
+  #  And l'e-service non ha subito modifiche
   @deleghe2
   Scenario: [M2MG_ESERVICES_41_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
   @m2m-parte2-agosto-rilascio2
@@ -500,11 +529,12 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+
   Scenario Outline: [M2MG_ESERVICES_47_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service in stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
     Examples:
       | stato       |
@@ -516,7 +546,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del nome dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
   @m2m-parte2-agosto-rilascio2
@@ -592,11 +622,12 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED  |
       | SUSPENDED   |
 
+    # BUG: https://pagopa.atlassian.net/browse/PIN-8607
   Scenario Outline: [M2MG_ESERVICES_48_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
     Examples:
       | stato       |
@@ -604,11 +635,19 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | ARCHIVED    |
 
   @deleghe2
-  Scenario: [M2MG_ESERVICES_48_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
+  Scenario: [M2MG_ESERVICES_48_B] Un utente dell'ente creatore con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+
+  @deleghe2
+  Scenario: [M2MG_ESERVICES_48_C] Un utente delegato con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della descrizione dell'e-service
+    Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
 
   @m2m-parte2-agosto-rilascio2

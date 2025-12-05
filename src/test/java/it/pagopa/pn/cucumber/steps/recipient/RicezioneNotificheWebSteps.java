@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.cucumber.java.Before;
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.ParameterType;
-import io.cucumber.java.Transpose;
+import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,11 +13,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.Notifi
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
@@ -28,11 +21,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -44,7 +33,6 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -59,11 +47,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -90,7 +74,7 @@ public class RicezioneNotificheWebSteps {
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
-    private static final String TOS_VERSION = "2";
+    private static final String TOS_VERSION = "8";
     private static final String ACCEPT_TOS = "ACCETTA";
 
     @Value("${pn.external.senderId}")
@@ -111,6 +95,18 @@ public class RicezioneNotificheWebSteps {
             this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
             sharedSteps.setWebRecipientClient(webRecipientClient);
         }
+    }
+
+    @After("@cleanAddressBook")
+    public void afterAndressBook() {
+        cleanLegalAddressForUser();
+        log.info("clean digital address from @After");
+    }
+
+    @After("@sercqF2")
+    public void afterSercQ() {
+        cleanLegalAddressForUser();
+        log.info("clean digital address from @After");
     }
 
     @Autowired
@@ -638,6 +634,8 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             case ALDA_MERINI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+            case DINO_SAURO ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
             default -> throw new IllegalArgumentException();
         }
     }

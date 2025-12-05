@@ -41,15 +41,15 @@ public class EServiceTemplateDocumentReadSteps {
 
     @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template")
     public void getDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id());
     }
 
     @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template indicando un identificativo vuoto")
     public void getUnspecifiedDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
          * annunciata, in quanto è il comportamento di default del client OpenApi
@@ -65,8 +65,8 @@ public class EServiceTemplateDocumentReadSteps {
 
     @When("l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template")
     public void getNonExistentDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, UUID.randomUUID());
     }
 

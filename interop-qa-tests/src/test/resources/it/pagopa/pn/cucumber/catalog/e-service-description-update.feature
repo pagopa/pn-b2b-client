@@ -2,8 +2,9 @@
 Feature: Aggiornamento della descrizione di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare la descrizione un proprio e-service a catalogo
 
+  @nrt-minimal
   @eservice_description_update1
-  Scenario Outline: A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell’ente che lo eroga, va a buon fine solo per un e-service con descrittori in stato PUBLISHED, SUSPENDED e DEPRECATED
+  Scenario Outline: [ESERVICE_DESCRIPTION_UPDATE_1] A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell’ente che lo eroga, va a buon fine solo per un e-service con descrittori in stato PUBLISHED, SUSPENDED e DEPRECATED
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoDescrittore>"
     When l'utente aggiorna la descrizione di quell'e-service
@@ -39,8 +40,9 @@ Feature: Aggiornamento della descrizione di un e-service
       | PA1  | admin | DRAFT            |       409 |
 
   @sad-path
+  @nrt-minimal
   @eservice_description_update2
-  Scenario: A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell’ente che lo eroga, per un e-service con un descrittore in DRAFT, ottiene un errore
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_2] A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell’ente che lo eroga, per un e-service con un descrittore in DRAFT, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in DRAFT
     When l'utente aggiorna la descrizione di quell'e-service

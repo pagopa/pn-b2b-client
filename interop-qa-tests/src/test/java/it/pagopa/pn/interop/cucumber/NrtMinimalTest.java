@@ -12,19 +12,21 @@ import org.junit.platform.suite.api.IncludeTags;
 import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 
-/* TODO Specifica per bugifx https://pagopa.atlassian.net/browse/PIN-8078. Considerarne rimozione a seguito di risoluzione. */
-
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("it/pagopa/pn/cucumber")
 @ConfigurationParameters({
-    @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-    @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
-        "html:target/cucumber-report.html"),
-    @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
-    @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
+        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
+        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
+                "html:target/cucumber-report.html"),
+        @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
-@ExcludeTags({"wait_for_fix", "e-service-template-receive"})
-@IncludeTags({"associa-finalita-client"})
-public class AssociaFinalitaTest {
+@ExcludeTags({"wait_for_fix"})
+@IncludeTags({"nrt-minimal",
+
+    // M2M
+    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices"
+})
+public class NrtMinimalTest {
 }

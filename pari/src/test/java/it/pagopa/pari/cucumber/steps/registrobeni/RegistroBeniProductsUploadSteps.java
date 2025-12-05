@@ -86,7 +86,7 @@ public class RegistroBeniProductsUploadSteps {
         Resource csvFile = generaCsv(createProductMap(productDTOList), ".csv");
         uploadResponseDTO = apiClientContext.getRegisterPortalOperationClient().uploadProductList(csvFile, sharedCommonContext.getCategory());
         // Viene aggiunto un delay per dare il tempo al csv di essere validato
-        Thread.sleep(2000);
+        Thread.sleep(5000);
 
     }
 

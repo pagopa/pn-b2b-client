@@ -25,6 +25,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
     private final String marioGherkinBearerToken;
+    private final String marioCucumberBearerToken;
     private final String b2bBasePath;
     private final String webBasePath;
     private final MandateServiceApi mandateServiceApi;
@@ -34,8 +35,9 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     public B2bMandateServiceClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.external.dest.base-url}") String b2bBasePath,
                                        @Value("${pn.webapi.external.base-url}") String webBasePath,
-                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                       @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
                                        @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken,
+                                       @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                        @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken) {
         this.restTemplate = restTemplate;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
@@ -43,6 +45,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         this.b2bBasePath = b2bBasePath;
         this.webBasePath = webBasePath;
         this.bearerTokenSetted = BearerTokenType.PG_1;
+        this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
     }
@@ -136,12 +139,16 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     public boolean setBearerToken(BearerTokenType bearerToken) {
         switch (bearerToken) {
             case PG_1 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
             }
             case PG_2 -> {
                 this.mandateServiceApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
+            }
+            case USER_1 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
             }
             case USER_2 -> {
                 this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));

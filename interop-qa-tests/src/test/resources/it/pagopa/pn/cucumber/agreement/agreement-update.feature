@@ -2,8 +2,9 @@
 Feature: Aggiornamento di una richiesta di fruizione in bozza
   Tutti gli utenti autorizzati possono aggiornare una propria richiesta di fruizione in bozza con un messaggio
 
+  @nrt-minimal
   @agreement_update1
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, va a buon fine
+  Scenario Outline: [AGREEMENT_UPDATE_01] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "<ente>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
@@ -11,7 +12,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
     Then si ottiene status code <risultato>
 
     @happy-path
-    Examples: 
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
       | GSP     | admin        |       200 |
@@ -33,8 +34,9 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
       | Privato | support      |       403 |
 
   @sad-path
+  @nrt-minimal
   @agreement_update2a
-  Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
+  Scenario: [AGREEMENT_UPDATE_02A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
@@ -42,9 +44,9 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
     When l'utente richiede una operazione di aggiornamento di quella richiesta di fruizione con messaggio
     Then si ottiene status code 400
 
-  @sad-path
+  @sad-path @nrt-minimal
   @agreement_update2b @certifiedAttribute
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
+  Scenario Outline: [AGREEMENT_UPDATE_02B]  Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
     Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
@@ -54,20 +56,21 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
     When l'utente richiede una operazione di aggiornamento di quella richiesta di fruizione con messaggio
     Then si ottiene status code 400
 
-    Examples: 
+    Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
   @sad-path
+  @nrt-minimal
   @agreement_update2c
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato NON DRAFT (PENDING, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
+  Scenario Outline: [AGREEMENT_UPDATE_02C] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato NON DRAFT (PENDING, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente richiede una operazione di aggiornamento di quella richiesta di fruizione con messaggio
     Then si ottiene status code 400
 
-    Examples: 
+    Examples:
       | statoAgreement | tipoApprovazione |
       | PENDING        | MANUAL           |
       | ACTIVE         | AUTOMATIC        |
