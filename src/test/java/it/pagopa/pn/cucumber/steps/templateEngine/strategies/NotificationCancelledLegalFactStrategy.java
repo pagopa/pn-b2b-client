@@ -28,7 +28,7 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
                 yield "Dichiarazione annullamento notifica sulla piattaforma SEND Con il presente documento, reso disponibile al destinatario esclusivamente sulla Piattaforma SEND, si dichiara che la notifica avente IUN , eseguita nei confronti di:";
