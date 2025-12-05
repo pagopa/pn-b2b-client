@@ -46,7 +46,6 @@ public class MessaggiCortesiaBancheV1Steps {
     @When("viene invocato l'endpoint paymentUrl V1 con i seguenti parametri")
     public void callEmdPaymentUrl(Map<String, String> row) {
         try {
-            //TODO MATTEO CORTESIA
             emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"), null);
         } catch (HttpStatusCodeException e) {
             emdResponseEntity = new ResponseEntity<>(e.getStatusCode());
