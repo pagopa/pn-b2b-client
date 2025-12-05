@@ -2,7 +2,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #38(OK)
   @purposeTemplate @purposeTemplateActivation
-  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_OK]
+  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_OK] Attivazione di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When il purpose template creato viene spostato in stato PUBLISHED
@@ -13,7 +13,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #40(KO)
   @purposeTemplate @purposeTemplateActivation
-  Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_WRONG_STATE] Attivazione di una finalità agevolata in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
     When il purpose template creato viene spostato in stato PUBLISHED
@@ -25,7 +25,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #41(KO)
   @purposeTemplate @purposeTemplateActivation
-  Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_NO_ADMIN] Attivazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
@@ -39,7 +39,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #42(KO)
   @purposeTemplate @purposeTemplateActivation
-  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_NO_CREATOR]
+  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_NO_CREATOR] Attivazione di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
@@ -48,7 +48,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #43(KO)
   @purposeTemplate @purposeTemplateActivation
-  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_404]
+  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_404] Attivazione di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When il purpose template inesistente viene spostato in stato PUBLISHED
@@ -56,7 +56,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #44(KO)
   @purposeTemplate @purposeTemplateActivation
-  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_ALREADY_PUBLISHED]
+  Scenario: [PURPOSE_TEMPLATE_ACTIVATION_ALREADY_PUBLISHED] Attivazione di una finalità agevolata che risulta già in stato PUBLISHED (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED

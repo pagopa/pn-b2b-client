@@ -2,7 +2,7 @@ Feature: finalità agevolata, purpose template GET
 
   #1
   @purposeTemplate @purposeTemplateGet
-  Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_CREATOR]
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_CREATOR] Recupero di una finalità agevolata da un membro della PA creatrice della finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
@@ -17,7 +17,7 @@ Feature: finalità agevolata, purpose template GET
 
   #2
   @purposeTemplate @purposeTemplateGet
-  Scenario Outline: [PURPOSE_TEMPLATE_GET_CATALOG]
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_CATALOG] Recupero di tutte le finalità agevolata, con possibilità di specificare filtri per la ricerca (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
@@ -32,7 +32,7 @@ Feature: finalità agevolata, purpose template GET
 
   #105-106
   @purposeTemplate @purposeTemplateGet
-  Scenario Outline: [PURPOSE_TEMPLATE_GET_CATALOG_WITH_PERSONAL_DATA]
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_CATALOG_WITH_PERSONAL_DATA] Recupero di una finalità agevolata con flag personalData pari al valore passato in input (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When si effettua la get di tutti i purpose template con titolo "ANY" e handlePersonalData <personalData>
@@ -45,7 +45,7 @@ Feature: finalità agevolata, purpose template GET
 
   #3-4
   @purposeTemplate @purposeTemplateCreate
-  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_WITH_PERSONAL_DATA]
+  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_WITH_PERSONAL_DATA] Creazione di una finalità agevolata specificando il valore del flag personalData (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con handlePersonalData <personalData>
     Then si ottiene lo status code <statusCode>
@@ -57,7 +57,7 @@ Feature: finalità agevolata, purpose template GET
 
   #5(KO)
   @purposeTemplate @purposeTemplateCreate
-  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_NO_ADMIN] Creazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "<ruolo>" di "PA1"
     And viene creato un nuovo purpose template
     Then si ottiene lo status code 403
@@ -69,28 +69,28 @@ Feature: finalità agevolata, purpose template GET
 
   #6
   @purposeTemplate @purposeTemplateCreate
-  Scenario: [PURPOSE_TEMPLATE_CREATE_ANSWER_OVER_250]
+  Scenario: [PURPOSE_TEMPLATE_CREATE_ANSWER_OVER_250] Creazione di una finalità agevolata specificando una risposta dell'analisi del rischio oltre i 250 caratteri (error 400)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con errore di tipo ANSWER OVER 250
     Then si ottiene lo status code 400
 
   #7
   @purposeTemplate @purposeTemplateCreate
-  Scenario: [PURPOSE_TEMPLATE_CREATE_ERROR_NO_PERSONAL_DATA_ANSWER]
+  Scenario: [PURPOSE_TEMPLATE_CREATE_ERROR_NO_PERSONAL_DATA_ANSWER] Creazione di una finalità agevolata senza specificare nell'analisi del rischio una risposta per usesPersonalData (error 400)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con errore di tipo NO PERSONAL DATA ANSWER
     Then si ottiene lo status code 400
 
   #7bis
   @purposeTemplate @purposeTemplateCreate
-  Scenario: [PURPOSE_TEMPLATE_CREATE_ERROR_NO_PURPOSE_ANSWER]
+  Scenario: [PURPOSE_TEMPLATE_CREATE_ERROR_NO_PURPOSE_ANSWER] Creazione di una finalità agevolata senza specificare nell'analisi del rischio una risposta per purpose (error 400)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con errore di tipo NO PURPOSE ANSWER
     Then si ottiene lo status code 400
 
   #8(OK)
   @purposeTemplate @purposeTemplateGet
-  Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_ID]
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_ID] Recupero di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
@@ -106,7 +106,7 @@ Feature: finalità agevolata, purpose template GET
 
   #9(KO)
   @purposeTemplate @purposeTemplateGet
-  Scenario Outline: [PURPOSE_TEMPLATE_GET_404]
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_404] Recupero di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"

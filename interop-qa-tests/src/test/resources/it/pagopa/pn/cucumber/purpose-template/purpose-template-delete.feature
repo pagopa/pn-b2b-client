@@ -2,14 +2,14 @@ Feature: finalità agevolata, purpose template DELETE
 
   #17(OK)
   @purposeTemplate @purposeTemplateDelete
-  Scenario: [DELETE_PURPOSE_TEMPLATE_OK]
+  Scenario: [DELETE_PURPOSE_TEMPLATE_OK] Eliminazione di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato DRAFT
     Then si cancella il purpose template creato
 
   #18(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NOT_IN_DRAFT]
+  Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NOT_IN_DRAFT] Eliminazione di una finalità agevolata in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <stato>
     Then si cancella il purpose template creato
@@ -22,7 +22,7 @@ Feature: finalità agevolata, purpose template DELETE
 
   #19(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario: [DELETE_PURPOSE_TEMPLATE_ALREADY_DELETED]
+  Scenario: [DELETE_PURPOSE_TEMPLATE_ALREADY_DELETED] Eliminazione di una finalità agevolata già eliminata in precedenza (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato DRAFT
     And si cancella il purpose template creato
@@ -31,7 +31,7 @@ Feature: finalità agevolata, purpose template DELETE
 
   #20(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NO_ADMIN]
+  Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NO_ADMIN] Eliminazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "<ruolo>" di "PA1"
@@ -45,7 +45,7 @@ Feature: finalità agevolata, purpose template DELETE
 
   #21(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario: [DELETE_PURPOSE_TEMPLATE_NO_CREATOR]
+  Scenario: [DELETE_PURPOSE_TEMPLATE_NO_CREATOR] Eliminazione di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
@@ -54,7 +54,7 @@ Feature: finalità agevolata, purpose template DELETE
 
   #22(KO)
   @purposeTemplate @purposeTemplateDelete
-  Scenario: [DELETE_PURPOSE_TEMPLATE_404]
+  Scenario: [DELETE_PURPOSE_TEMPLATE_404] Eliminazione di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato DRAFT
     When si cancella il purpose template inesistente

@@ -2,7 +2,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #23(OK)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_OK]
+  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_OK] Recupero degli eService associati a una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
@@ -14,7 +14,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #24(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_404]
+  Scenario: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_404] Recupero degli eService associati a una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -25,7 +25,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #25(OK)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_WITH_FLAG_OK]
+  Scenario Outline: [PURPOSE_TEMPLATE_GET_ASSOCIATED_ES_WITH_FLAG_OK] Recupero degli eService associati a una finalità agevolata con flag PersonalData avente valore uguale a quello dell'eService (OK)
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData <personalData>
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
@@ -42,7 +42,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #26(OK)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_OK]
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_OK] Associazione di un eService a una finalità agevolata in stato DRAFT o PUBLISHED (OK)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -55,7 +55,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #27(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_WRONG_STATE] Associazione di un eService a una finalità agevolata in stato diverso da DRAFT o PUBLISHED (error 409)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -69,7 +69,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #28(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_ADMIN] Associazione di un eService a una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
@@ -85,7 +85,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #29(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_CREATOR]
+  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_CREATOR] Associazione di un eService a una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
@@ -96,7 +96,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #30(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_404]
+  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_404] Associazione di un eService a una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -106,7 +106,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #31(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_ALREADY_ASSOCIATED]
+  Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_ALREADY_ASSOCIATED] Associazione di un eService a una finalità agevolata che risulta già associata a tale eService (error 409)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -121,7 +121,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #32(OK)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_OK]
+  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_OK] Disassociazione di un eService da una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -135,7 +135,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #33(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_WRONG_STATE] Disassociazione di un eService da una finalità agevolata in stato diverso da DRAFT o PUBLISHED (error 409)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -151,7 +151,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #34(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_ALREADY_UNLINKED]
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_ALREADY_UNLINKED] Disassociazione di un eService da una finalità agevolata che risulta già disassociata da tale eService (error 409)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -163,7 +163,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #35(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_ADMIN] Disassociazione di un eService da una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -180,7 +180,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #36(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_CREATOR]
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_CREATOR] Disassociazione di un eService da una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -192,7 +192,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #37(KO)
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_404]
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_404] Disassociazione di un eService da una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"

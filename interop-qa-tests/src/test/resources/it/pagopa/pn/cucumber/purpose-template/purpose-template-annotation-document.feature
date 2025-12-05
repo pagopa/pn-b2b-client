@@ -2,7 +2,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
     #81-82-83-84-85
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -20,7 +20,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #87
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_WRONG_STATE] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata che si trova in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -37,7 +37,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #88 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_ADMIN] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -54,7 +54,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #89 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_CREATOR]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_CREATOR] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -66,7 +66,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #90 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_404]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_404] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -77,7 +77,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #91 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_OK]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_OK] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -89,7 +89,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #92 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_WRONG_STATE] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata che si trova in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -107,7 +107,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #93 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_ADMIN] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -125,7 +125,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #94 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_CREATOR]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_CREATOR] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -138,7 +138,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #95 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_ALREADY_DELETED]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_ALREADY_DELETED] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata già eliminata in precedenza (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -151,7 +151,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #96 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_404]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_404] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -163,7 +163,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #97 (OK)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_OK]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_OK] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -175,7 +175,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #98 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_WRONG_STATE]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_WRONG_STATE] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata che si trova in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -193,7 +193,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #99 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_ADMIN]
+  Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_ADMIN] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -211,7 +211,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #100 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_CREATOR]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_CREATOR] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -224,7 +224,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #101 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_ALREADY_DELETED]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_ALREADY_DELETED] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata, con documento già eliminato in precedenza (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -237,7 +237,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #102 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_404]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_404] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -249,7 +249,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #103 (OK)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_OK]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_OK] Recupero di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
@@ -261,7 +261,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #104 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_404]
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_404] Recupero di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
