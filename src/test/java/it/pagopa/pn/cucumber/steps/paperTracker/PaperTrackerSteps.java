@@ -259,7 +259,7 @@ public class PaperTrackerSteps {
                 .map(err -> err.getFlowThrow().getValue())
                 .toList();
 
-        Assertions.assertTrue(categories.contains(category.getValue()), String.format("Categoria non trovata:\n%s\nCategorie presenti:\n%s", category.getValue(), categories));
+        Assertions.assertTrue(categories.contains(category.name()), String.format("Categoria non trovata:\n%s\nCategorie presenti:\n%s", category.getValue(), categories));
         Assertions.assertTrue(flowThrows.contains(flowThrow), String.format("FlowThrow non trovato:\n%s\nFlowThrow presenti:\n%s", flowThrow, flowThrows));
     }
 
