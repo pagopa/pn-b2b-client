@@ -181,6 +181,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         SettableAuthTokenRaddCognito.class,
         EventTimelineParser.class,
         PnMandateAppIoClientImpl.class,
+        ReworkTimelineClientImpl.class,
 
         LambdaInvoker.class,
 })

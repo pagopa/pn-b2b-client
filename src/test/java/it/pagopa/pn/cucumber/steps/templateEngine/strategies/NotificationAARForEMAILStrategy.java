@@ -1,8 +1,9 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailNotification;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailSender;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForEmail;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailNotificationAnalog;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailRecipientAnalog;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailSenderAnalog;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForEmailAnalog;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -21,16 +22,16 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
 
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        NotificationAarForEmail legalFact = createRequest(body, context);
-        String result = templateEngineClient.notificationAARForEMAIL(selectLanguage(language), legalFact);
+        NotificationAarForEmailAnalog legalFact = createRequestAnalog(body, context);
+        String result = templateEngineClient.notificationAARForEMAILAnalog(selectLanguage(language), legalFact);
         return new TemplateEngineResult(result);
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "Se accedi alla comunicazione entro 5 giorni dall’invio di questa email, eviterai una raccomandata cartacea e gli eventuali costi.";
+                yield "Se accedi alla comunicazione entro 5 giorni dall&#39;invio di questa email, eviterai una raccomandata cartacea e gli eventuali costi.";
             }
             case "TEDESCA" -> {
                 yield "Solltest du keine PEC-Adresse haben und die Dokumente innerhalb von 5 Tagen (120 Stunden) nach Versand der Nachricht einsehen, erh&#228;ltst du keine Zustellung mittels Einschreibebrief.";
@@ -39,36 +40,42 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
                 yield "e nimate certificiranega elektronskega naslova PEC in si dokumente ogledate v roku 5 dni (120 ur) od po&#353;iljanja sporo&#269;ila, ne boste prejeli obvestila po priporo";
             }
             case "FRANCESE" -> {
-                yield "avez pas d&apos;adresse de courrier &eacute;lectronique certifi&eacute; (PEC) et que vous consultez les documents dans les 5 jours (120 heures) suivant l&apos;envoi du message, vous ne recevrez pas la notification par courrier recommand&eacute";
+                yield "avez pas d&#39;adresse de courrier &eacute;lectronique certifi&eacute; (PEC) et que vous consultez les documents dans les 5 jours (120 heures) suivant l&#39;envoi du message, vous ne recevrez pas la notification par courrier recommand&eacute";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }
 
-    private NotificationAarForEmail createRequest(boolean body, TemplateRequestContext context) {
+
+
+    private NotificationAarForEmailAnalog createRequestAnalog(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new NotificationAarForEmail()
-                .notification(createAarForEmailNotification(context))
+        return new NotificationAarForEmailAnalog()
+                .notification(createAarForEmailNotificationAnalog(context))
                 .pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
                 .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL());
+                .perfezionamentoURL(context.getPerfezionamentoURL())
+                .recipient(new AarForEmailRecipientAnalog().recipientType(context.getRecipientType()));
     }
 
-    private AarForEmailNotification createAarForEmailNotification(TemplateRequestContext context) {
+
+    private AarForEmailNotificationAnalog createAarForEmailNotificationAnalog(TemplateRequestContext context) {
         return Optional.ofNullable(context.getNotification())
-                .map(data -> new AarForEmailNotification()
+                .map(data -> new AarForEmailNotificationAnalog()
                         .iun(data.getIun())
-                        .sender(createSender(data)))
+                        .sender(createSenderAnalog(data)))
                 .orElse(null);
     }
 
-    private AarForEmailSender createSender(TemplateNotification notification) {
+
+    private AarForEmailSenderAnalog createSenderAnalog(TemplateNotification notification) {
         return Optional.ofNullable(notification.getSender())
-                .map(data -> new AarForEmailSender()
+                .map(data -> new AarForEmailSenderAnalog()
                         .paDenomination(data.getPaDenomination()))
                 .orElse(null);
     }
 }
+

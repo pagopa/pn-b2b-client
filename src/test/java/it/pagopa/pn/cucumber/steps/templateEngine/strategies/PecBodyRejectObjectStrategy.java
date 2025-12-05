@@ -20,7 +20,7 @@ public class PecBodyRejectObjectStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return "SEND - La PEC che hai inserito non è valida";
     }
 }
