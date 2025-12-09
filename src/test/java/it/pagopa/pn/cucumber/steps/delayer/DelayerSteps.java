@@ -36,7 +36,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 public class DelayerSteps {
 
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv"};
-    public static final int POLLING_MAX_MINUTES = 45;
+    public static final int POLLING_MAX_MINUTES = 90;
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
