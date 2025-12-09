@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum FileType {
     // Documenti
-    AGREEMENT_ACTIVATED("pdf", "name" ),
+    AGREEMENT_ACTIVATED("pdf", "agreement_contract" ),
+    AGREEMENT_ACTIVATED_SIGNED("pdf", "%^(?:([0-9]{14})_)?INTEROP_([^.]*)\\.([^.]+)$%"),
     AGREEMENT_UPGRADED("pdf", "name"),
     PURPOSE_ACTIVATED("pdf", "name"),
     NEW_PURPOSE_VERSION_ACTIVATED("pdf", "name"),

@@ -59,17 +59,21 @@ public class ArchivingClient {
 
         AtomicReference<ArchivedFile> file = new AtomicReference<>();
         FileType fileType = seed.getType();
+//        Instant start = null;
+//        Instant end = null;
 
         // Inizializzo la finestra di ricerca
-        Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
-        Instant start = center.minusSeconds(seed.getDeltaSeconds());
-        Instant end = center.plusSeconds(seed.getDeltaSeconds());
+//        if (seed.centerTimestamp != null) {
+//            Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
+//            start = center.minusSeconds(seed.getDeltaSeconds());
+//            end = center.plusSeconds(seed.getDeltaSeconds());
+//        }
 
         // Inizializzo il polling
         S3BucketInfo bucketInfo = seed.getBucketInfo();
         Set<String> checkedKeys = new HashSet<>();
 
-        S3Polling polling = new S3Polling(Region.EU_CENTRAL_1, s3 -> {
+        S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
 
             ListObjectsV2Response res = s3.listObjectsV2(
                     ListObjectsV2Request.builder()
@@ -77,6 +81,19 @@ public class ArchivingClient {
                             .prefix(bucketInfo.prefix())
                             .build()
             );
+
+//            String fileKey = res.contents().stream()
+//                    .map(S3Object::key)
+//                    .filter(key -> key.endsWith(seed.type.getExpectedBaseName() + seed.type.getExtension()))
+//                    .findFirst()
+//                    .orElse(null);
+//            if (fileKey != null) {
+//                S3BucketInfo s3BucketInfo = new S3BucketInfo(bucketInfo.bucket(), bucketInfo.prefix(), fileKey);
+//                file.set(buildArchivedDocument(s3, s3BucketInfo));
+//                return true;
+//            }
+
+
 
             List<String> matchingFiles = res.contents().stream()
                     .map(S3Object::key)
@@ -92,22 +109,28 @@ public class ArchivingClient {
                         return ArchivingUtils.matchesBaseName(filename, fileType);
                     })
                     // Filtro per timestamp
-                    .filter(key -> ArchivingUtils.extractTimestampFromS3Key(key)
-                            .map(fileTs -> !fileTs.isBefore(start) && !fileTs.isAfter(end))
-                            .orElse(false)
-                    )
+                    .filter(key -> {
+                        if (seed.centerTimestamp == null) return true;
+                        Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
+                        Instant start = center.minusSeconds(seed.getDeltaSeconds());
+                        Instant end = center.plusSeconds(seed.getDeltaSeconds());
+                        return ArchivingUtils.extractTimestampFromS3Key(key)
+                                .map(fileTs -> !fileTs.isBefore(start) && !fileTs.isAfter(end))
+                                .orElse(false);
+                    })
                     .toList();
 
             if (!matchingFiles.isEmpty()) {
                 for (String key : matchingFiles) {
                     try {
+                        S3BucketInfo s3BucketInfo = new S3BucketInfo(bucketInfo.bucket(), bucketInfo.prefix(), key);
                         FileMatchingStrategy.MatchingStrategySeed strategySeed =
-                                new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, bucketInfo, sharedStepsContext);
+                                new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, s3BucketInfo, sharedStepsContext);
 
                         boolean match = fileMatcher.match(strategySeed);
 
                         if (match) {
-                            file.set(buildArchivedDocument(s3, bucketInfo));
+                            file.set(buildArchivedDocument(s3, s3BucketInfo));
                             return true;
                         }
 

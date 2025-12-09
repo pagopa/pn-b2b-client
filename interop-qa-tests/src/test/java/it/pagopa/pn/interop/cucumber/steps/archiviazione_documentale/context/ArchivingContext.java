@@ -24,8 +24,8 @@ public class ArchivingContext {
     //TODO: inizializzare i path per ogni file
     public ArchivingContext(String unsignedDocumentBasePath, String signedDocumentBasePath, SharedStepsContext sharedStepsContext) {
         tokenResolver = new TokenResolver(sharedStepsContext);
-        wormBuckets = Map.of(AGREEMENT_ACTIVATED, "/path/relativo/completo");
-        buckets = Map.of(AGREEMENT_ACTIVATED, "/path/relativo/completo");
+        wormBuckets = Map.of(AGREEMENT_ACTIVATED_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
+        buckets = Map.of(AGREEMENT_ACTIVATED, String.format("interop-application-documents-qa-es1/qa/generated-documents-unsigned/agreement/%s/",sharedStepsContext.getAgreementId()));
     }
 
     public S3BucketInfo getBucket(boolean isWorm, FileType fileType) {

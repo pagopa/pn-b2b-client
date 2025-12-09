@@ -3,9 +3,9 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums;
 import io.cucumber.java.ParameterType;
 
 public class ArchivingParameterTypes {
-    @ParameterType("AgreementActivated|AgreementUpgraded|PurposeActivated|NewPurposeVersionActivated|PurposeVersionActivated|ProducerDelegationApproved|ConsumerDelegationApproved|ConsumerDelegationRevoked|ProducerDelegationRevoked|PurposeTemplatePublished|KeysAddedEvent|KeyDeletedEvent|ClientDeletedEvent|AgreementUpgradedEvent|DescriptorEserviceUpgradedEvent|ProducerDelegationApprovedEvent|ConsumerDelegationApprovedEvent|ProducerDelegationRevokedEvent|ConsumerDelegationRevokedEvent|VoucherEvent|PurposeUpgradedEvent")
+    @ParameterType("AgreementActivated|AgreementActivatedSigned|AgreementUpgraded|PurposeActivated|NewPurposeVersionActivated|PurposeVersionActivated|ProducerDelegationApproved|ConsumerDelegationApproved|ConsumerDelegationRevoked|ProducerDelegationRevoked|PurposeTemplatePublished|KeysAddedEvent|KeyDeletedEvent|ClientDeletedEvent|AgreementUpgradedEvent|DescriptorEserviceUpgradedEvent|ProducerDelegationApprovedEvent|ConsumerDelegationApprovedEvent|ProducerDelegationRevokedEvent|ConsumerDelegationRevokedEvent|VoucherEvent|PurposeUpgradedEvent")
     public FileType documentType(String type) {
-        return FileType.valueOf(type);
+        return FileType.valueOf(type.replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase());
     }
 
     @ParameterType("signed|SIGNED|unsigned|UNSIGNED")

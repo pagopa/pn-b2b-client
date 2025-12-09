@@ -24,6 +24,7 @@ public class FileMatcher {
 
     public FileMatcher() {
         strategies.put(AGREEMENT_ACTIVATED, new AgreementActivatedStrategy());
+        strategies.put(AGREEMENT_ACTIVATED_SIGNED, new AgreementActivatedStrategy());
         strategies.put(AGREEMENT_UPGRADED, new AgreementUpgradedStrategy());
         strategies.put(AGREEMENT_UPGRADED_EVENT, new AgreementUpgradedEventStrategy());
         strategies.put(CLIENT_DELETED_EVENT, new ClientDeletedEventStrategy());

@@ -12,7 +12,7 @@ public class AgreementActivatedStrategy implements FileMatchingStrategy {
     @Override
     public boolean match(MatchingStrategySeed seed) throws IOException {
         TokenResolver tokenResolver = new TokenResolver(seed.getSharedStepsContext());
-        List<String> ids = tokenResolver.resolve(List.of(""));
+        List<String> ids = tokenResolver.resolve(List.of("la richiesta di fruizione contraddistinta", ":agreementId"));
 
         return FileUtils.pdfContainsAllWords(S3Utils.getFileStream(seed.getS3(), seed.getBucketName()), ids);
     }

@@ -35,7 +35,7 @@ public class ArchivingUtils {
         // Es: 20250312123045_documento.pdf
         // Es: 20250312123045-documento.pdf
         // Es: 20250312123045documento.pdf
-        Pattern p = Pattern.compile("^(\\d{14})");
+        Pattern p = Pattern.compile("(\\d{14})_([^\\.]+)\\.(.+)");
         Matcher m = p.matcher(filename);
 
         if (m.find()) {
@@ -55,13 +55,17 @@ public class ArchivingUtils {
         return key.substring(key.lastIndexOf('/') + 1);
     }
 
-    public static Optional<FileNameParts> parseFileName(String filename) {
+    public static Optional<FileNameParts> parseFileName(String filename, FileType type) {
         if (filename == null) return Optional.empty();
+        String regex = "(\\d{14})_([^\\.]+)\\.(.+)";
+        if (type.getExpectedBaseName().startsWith("%")) {
+            regex = type.getExpectedBaseName().replaceAll("%", "");
+        }
 
-        Pattern p = Pattern.compile("^(\\d{14})_(.+)\\.(\\w+)$");
+        Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(filename);
 
-        if (!m.matches()) return Optional.empty();
+        if (!m.find()) return Optional.empty();
 
         return Optional.of(
                 new FileNameParts(
@@ -73,10 +77,17 @@ public class ArchivingUtils {
     }
 
     public static boolean matchesBaseName(String filename, FileType type) {
-        return parseFileName(filename)
-                .map(parts ->
-                        parts.extension().equalsIgnoreCase(type.getExtension()) &&
-                                parts.baseName().equalsIgnoreCase(type.getExpectedBaseName())
+        return parseFileName(filename, type)
+                .map(parts -> {
+                    if (!parts.extension().equalsIgnoreCase(type.getExtension())) {
+                        return false;
+                    }
+                    if (type.getExpectedBaseName().startsWith("%")) {
+                        return true;
+                    } else {
+                        return parts.baseName.equalsIgnoreCase(type.getExpectedBaseName());
+                    }
+                }
                 )
                 .orElse(false);
     }

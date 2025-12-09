@@ -5,8 +5,8 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -32,10 +32,12 @@ public class ArchivingSteps {
         S3BucketInfo bucketInfo = context.getBucket(isSigned, fileType);
         ArchivingClient.SearchFileSeed seed =
                 ArchivingClient.SearchFileSeed.builder()
+                        .centerTimestamp(isSigned ? null : ArchivingUtils.now())
                         .bucketInfo(bucketInfo).type(fileType).isSigned(isSigned).build();
 
-        ArchivedFile file = client.findS3FileInInterval(seed);
-        Assertions.assertThat(file)
+        context.setCurrentFile(client.findS3FileInInterval(seed));
+
+        Assertions.assertThat(context.getCurrentFile())
                 .as("Atteso file %s nel bucket %s ma non è stato trovato", bucketInfo.key(), bucketInfo.bucket())
                 .isNotNull();
     }

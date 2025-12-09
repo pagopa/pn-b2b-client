@@ -33,7 +33,7 @@ public class TokenResolver {
             ":clientId", "clientCommonContext.getLastClient()",
             ":userId", "identityService.getUserId(tenantType, role)",
             ":kid", "clientCommonContext.keyId",
-            ":agreementId","agreementCommonContext.getLastAgreementId()"
+            ":agreementId","agreementId"
     );
 
     private final SharedStepsContext sharedContext;
