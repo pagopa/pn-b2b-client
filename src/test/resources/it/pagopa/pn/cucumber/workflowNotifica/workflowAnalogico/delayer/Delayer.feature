@@ -385,6 +385,8 @@
         | "tcSenderUnknow.csv" | 15  |
 
     @delayer3
+    #La capacità di recapito viene suddivisa prendendo la capacità di recapito della provincia e suddividendola per i CAP. La suddivisone non è paritaria ma dipende
+    #dal numero di abitanti del comune, nel caso di test la densità è la medesima
     Scenario Outline: [DELAYER-TC3] Verifica la corretta gestione della capacità di recapito aggregata
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
