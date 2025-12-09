@@ -2,8 +2,7 @@ package it.pagopa.pn.cucumber.steps.delayer.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
+import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +40,62 @@ public class DelayerLambdaClient {
         }
     }
 
+    public FirstStepFunctionResponseWrapper.Payload runBatchWorkflowStateMachine(int printCapacity) throws Exception {
+        String rawResponse = invoke("RUN_ALGORITHM", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverCapacities", "pn-PaperDeliveryDriverUsedCapacities",
+                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(printCapacity));
+
+        try {
+            // ===== LEVEL 1 =====
+            FirstStepFunctionResponseWrapper outer =
+                    objectMapper.readValue(rawResponse, FirstStepFunctionResponseWrapper.class);
+
+            // ===== LEVEL 2 =====
+            FirstStepFunctionResponseWrapper.Inner inner =
+                    objectMapper.readValue(outer.getBody(), FirstStepFunctionResponseWrapper.Inner.class);
+
+            // ===== LEVEL 3 ===== (payload finale)
+            return objectMapper.readValue(inner.getBody(), FirstStepFunctionResponseWrapper.Payload.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante RUN_ALGORITHM", e);
+        }
+    }
+
+    public SecondStepFunctionResponseWrapper.Payload runDelayerToPaperChannel() throws Exception {
+        String rawResponse = invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
+
+        try {
+            SecondStepFunctionResponseWrapper wrapper =
+                    objectMapper.readValue(rawResponse, SecondStepFunctionResponseWrapper.class);
+
+            SecondStepFunctionResponseWrapper.Payload payload =
+                    objectMapper.readValue(wrapper.getBody(), SecondStepFunctionResponseWrapper.Payload.class);
+
+            return payload;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante RUN_ALGORITHM", e);
+        }
+    }
+
+
+    public ExecutionStatusResponse getExecutionStatus(String executionArn) {
+        try {
+            String response = invoke("GET_STATUS_EXECUTION", executionArn);
+
+            JsonNode body = extractBody(response);
+
+            if (body == null || body.isMissingNode() || body.isNull()) {
+                throw new RuntimeException("Body mancante nella risposta GET_STATUS_EXECUTION");
+            }
+
+            return objectMapper.treeToValue(body, ExecutionStatusResponse.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante GET_STATUS_EXECUTION per executionArn %s".formatted(executionArn), e);
+        }
+    }
+
     public DelayerPrintCapacityCounter getPrintCapacityCounter(String deliveryDate) {
         try {
             String response = invoke("GET_PRINT_CAPACITY_COUNTER", "pn-PaperDeliveryCounters", deliveryDate);
@@ -61,7 +116,6 @@ public class DelayerLambdaClient {
             );
         }
     }
-
 
     public List<DelayerPaperDelivery> pollByRequestId(String requestId, int maxAttempts, int sleepMillis) throws Exception {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {

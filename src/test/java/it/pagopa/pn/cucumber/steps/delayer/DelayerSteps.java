@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -10,6 +12,7 @@ import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
+import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static java.lang.Thread.sleep;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -37,6 +41,7 @@ public class DelayerSteps {
 
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv"};
     public static final int POLLING_MAX_MINUTES = 90;
+    public static final String BATCH_WORKFLOW_STATE_MACHINE = "BatchWorkflowStateMachine";
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
@@ -243,13 +248,14 @@ public class DelayerSteps {
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        lambdaClient.invoke("RUN_ALGORITHM", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverCapacities", "pn-PaperDeliveryDriverUsedCapacities",
-                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(context.printCapacity));
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity).getExecutionArn();
+        waitUntilStepFunctionEnd();
     }
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
+        context.currentExecutionArn = lambdaClient.runDelayerToPaperChannel().getExecutionArn();
+        waitUntilStepFunctionEnd();
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
@@ -281,9 +287,6 @@ public class DelayerSteps {
 
             // Verifico che siano elaborate le notifiche secondo i limiti e secondo il ranking
             checkRanking(SENT_TO_PREPARE_PHASE_2.name(), null);
-
-            // TODO: sostituire la sleep con l'operazione di verifica stato della lambda
-            TimeUnit.MINUTES.sleep(5);
         }
     }
 
@@ -339,5 +342,75 @@ public class DelayerSteps {
     @Then("verifica la corretta pianificazione di ogni test case")
     public void assertAll() {
         validator.assertPianifications();
+    }
+
+    private void waitUntilStepFunctionEnd() throws InterruptedException {
+        if (context.currentExecutionArn == null) return;
+
+        final String arn = context.currentExecutionArn;
+
+        final long startTime = System.currentTimeMillis();
+        final long maxWaitMillis = TimeUnit.MINUTES.toMillis(POLLING_MAX_MINUTES);
+        final long pollingIntervalMillis = TimeUnit.MINUTES.toMillis(5);
+
+        log.info("Inizio polling Step Function: {}", arn);
+
+        while (true) {
+
+            ExecutionStatusResponse status;
+
+            try {
+                status = lambdaClient.getExecutionStatus(arn);
+            } catch (Exception e) {
+                if (System.currentTimeMillis() - startTime > TimeUnit.MINUTES.toMillis(5))
+                    throw new RuntimeException("Timeout durante il recupero dello stato della Step Function: " + arn, e);
+
+                sleep(pollingIntervalMillis);
+                continue;
+            }
+
+            String state = status.getStatus();
+            log.info("Stato StepFunction {} → {}", arn, state);
+
+            // Stato non ricevuto
+            if (state == null) {
+                log.warn("Stato null dalla Step Function {}, riprovo...", arn);
+                sleep(pollingIntervalMillis);
+                continue;
+            }
+
+            switch (state) {
+                case "RUNNING":
+                    // continua polling
+                    break;
+
+                case "SUCCEEDED":
+                    log.info("Step Function {} completata con successo.", arn);
+                    return;
+
+                case "FAILED":
+                case "TIMED_OUT":
+                case "ABORTED":
+                    log.error("Step Function {} terminata con errore: {} - cause: {}",
+                            arn, status.getError(), status.getCause());
+                    throw new RuntimeException(
+                            "Step Function TERMINATED WITH ERROR: state=" + state +
+                                    ", error=" + status.getError() +
+                                    ", cause=" + status.getCause()
+                    );
+
+                default:
+                    log.warn("Stato Step Function {} sconosciuto: {}", arn, state);
+                    break;
+            }
+
+            // Controllo timeout
+            if (System.currentTimeMillis() - startTime > maxWaitMillis) {
+                throw new RuntimeException("Timeout: Step Function non è terminata entro 10 minuti: " + arn);
+            }
+
+            // Prossimo polling
+            sleep(pollingIntervalMillis);
+        }
     }
 }
