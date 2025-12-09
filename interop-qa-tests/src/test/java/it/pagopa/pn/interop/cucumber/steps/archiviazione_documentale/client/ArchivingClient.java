@@ -59,15 +59,6 @@ public class ArchivingClient {
 
         AtomicReference<ArchivedFile> file = new AtomicReference<>();
         FileType fileType = seed.getType();
-//        Instant start = null;
-//        Instant end = null;
-
-        // Inizializzo la finestra di ricerca
-//        if (seed.centerTimestamp != null) {
-//            Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
-//            start = center.minusSeconds(seed.getDeltaSeconds());
-//            end = center.plusSeconds(seed.getDeltaSeconds());
-//        }
 
         // Inizializzo il polling
         S3BucketInfo bucketInfo = seed.getBucketInfo();
@@ -81,19 +72,6 @@ public class ArchivingClient {
                             .prefix(bucketInfo.prefix())
                             .build()
             );
-
-//            String fileKey = res.contents().stream()
-//                    .map(S3Object::key)
-//                    .filter(key -> key.endsWith(seed.type.getExpectedBaseName() + seed.type.getExtension()))
-//                    .findFirst()
-//                    .orElse(null);
-//            if (fileKey != null) {
-//                S3BucketInfo s3BucketInfo = new S3BucketInfo(bucketInfo.bucket(), bucketInfo.prefix(), fileKey);
-//                file.set(buildArchivedDocument(s3, s3BucketInfo));
-//                return true;
-//            }
-
-
 
             List<String> matchingFiles = res.contents().stream()
                     .map(S3Object::key)

@@ -5,6 +5,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import org.assertj.core.api.Assertions;
@@ -33,13 +34,15 @@ public class ArchivingSteps {
         ArchivingClient.SearchFileSeed seed =
                 ArchivingClient.SearchFileSeed.builder()
                         .centerTimestamp(isSigned ? null : ArchivingUtils.now())
+                        .timeoutMs(isSigned ? 300_000 : 10_000)
                         .bucketInfo(bucketInfo).type(fileType).isSigned(isSigned).build();
 
-        context.setCurrentFile(client.findS3FileInInterval(seed));
-
-        Assertions.assertThat(context.getCurrentFile())
+        ArchivedFile file = client.findS3FileInInterval(seed);
+        Assertions.assertThat(file)
                 .as("Atteso file %s nel bucket %s ma non è stato trovato", bucketInfo.key(), bucketInfo.bucket())
                 .isNotNull();
+
+        context.setCurrentFile(file);
     }
 
     @Then("verifica che il file nel bucket SIGNED abbia la proprietà \"Retain until date\" pari a 10 anni dalla data di creazione")
