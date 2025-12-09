@@ -291,7 +291,7 @@
         | driverRanking890~CAP1_P6        | almeno      | 10    |
         | driverRankingRS_2nd_890~P7      | almeno      | 10    |
         | driverRankingRS_2nd_890~CAP1_P7 | almeno      | 10    |
-      And viene impostato il limite massimo di 5 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+      And viene impostato il limite massimo di 40 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -321,7 +321,7 @@
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
