@@ -207,7 +207,7 @@ Feature: Test API M2M of e-service template
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | mode        |
+      | stato        | mode        |
       | PUBLISHED   | ricezione   |
       | DEPRECATED  | ricezione   |
       | SUSPENDED   | ricezione   |
@@ -420,7 +420,7 @@ Feature: Test API M2M of e-service template
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | mode        |
+      | stato        | mode        |
       | DRAFT       | ricezione   |
       | DEPRECATED  | ricezione   |
 
