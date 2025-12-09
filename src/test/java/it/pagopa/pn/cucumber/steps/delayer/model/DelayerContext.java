@@ -78,7 +78,7 @@ public class DelayerContext {
 
         return toPhase2Weekly.stream()
                 .skip(toSkip)
-                .limit(batchSize)
+                //.limit(batchSize)
                 .toList();
     }
 
