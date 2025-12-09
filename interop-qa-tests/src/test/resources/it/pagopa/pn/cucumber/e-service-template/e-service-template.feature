@@ -2,7 +2,6 @@
 Feature: Test API of e-service template
 
   @sad-path
-  @e-service-template-receive
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
@@ -12,11 +11,14 @@ Feature: Test API of e-service template
       | ruolo    | modo       |
       | security | erogazione |
       | support  | erogazione |
-#      | security | ricezione  |
-#      | support  | ricezione  |
+
+    @e-service-template-receive-bff
+    Examples:
+      | ruolo    | modo       |
+      | security | ricezione  |
+      | support  | ricezione  |
 
   @happy-path
-  @e-service-template-receive
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-002] La creazione di un e-service template può essere fatta da un ente in veste di ADMIN o API portando ad un template in stato DRAFT
     Given l'utente è un "<ruolo>" di "PA1"
@@ -27,11 +29,15 @@ Feature: Test API of e-service template
       | ruolo | modo       |
       | admin | erogazione |
       | api   | erogazione |
-#      | admin | ricezione  |
-#      | api   | ricezione  |
+
+    @e-service-template-receive-bff
+    Examples:
+      | ruolo | modo       |
+      | admin | ricezione  |
+      | api   | ricezione  |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-deliver
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
@@ -268,7 +274,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -286,7 +292,7 @@ Feature: Test API of e-service template
       | support  | SUSPENDED |
 
   @happy-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -302,7 +308,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -315,7 +321,7 @@ Feature: Test API of e-service template
       | SUSPENDED |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -330,7 +336,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario: [INTEROP-EST-025] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
@@ -340,7 +346,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario: [INTEROP-EST-026] L'aggiunta di una risk analysis a un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -348,7 +354,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario: [INTEROP-EST-027] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di una risk analysis precedentemente creata
     Given l'utente è un "admin" di "PA1"
@@ -358,9 +364,8 @@ Feature: Test API of e-service template
     Then si ottiene response status code 409
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6482
   Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template in stato DRAFT NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -374,7 +379,7 @@ Feature: Test API of e-service template
       | support  | DRAFT |
 
   @happy-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
   Scenario Outline: [INTEROP-EST-029] La cancellazione di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -390,7 +395,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
   Scenario: [INTEROP-EST-030] La cancellazione di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
@@ -400,7 +405,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7109
   Scenario: [INTEROP-EST-031] La cancellazione di una risk analysis inesistente non può essere effettuata
@@ -410,7 +415,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7109 (caso equivalente, essendo una RA già cancellata non più esistente)
   Scenario: [INTEROP-EST-032] La cancellazione di una risk analysis già eliminata non può essere effettuata
@@ -421,7 +426,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -439,7 +444,7 @@ Feature: Test API of e-service template
       | support  | SUSPENDED |
 
   @happy-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-034] La modifica di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -455,7 +460,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario: [INTEROP-EST-035] La modifica di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
@@ -465,7 +470,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario: [INTEROP-EST-036] La modifica di una risk analysis inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -474,7 +479,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario: [INTEROP-EST-037] La modifica di una risk analysis inserendo il nome di un'altra risk analysis esistente nell'e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1054,7 +1059,7 @@ Feature: Test API of e-service template
       | api,security |
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-068] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -1069,7 +1074,7 @@ Feature: Test API of e-service template
       | support  |
 
   @happy-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-069] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -1086,7 +1091,7 @@ Feature: Test API of e-service template
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7122
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-version-publish
   Scenario: [INTEROP-EST-070] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia ma SENZA una risk analysis non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1097,13 +1102,17 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-version-publish
-  Scenario: [INTEROP-EST-071] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e SENZA un documento di interfaccia non può essere effettuata
+  Scenario Outline: [INTEROP-EST-071] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e SENZA un documento di interfaccia non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
     When l'utente tenta la pubblicazione della versione dell'e-service template
     Then si ottiene response status code 404
+    Examples:
+      | modo        |
+      | erogazione  |
+      | ricezione   |
 
   @sad-path
   @e-service-template-version-publish
@@ -2348,7 +2357,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario: [INTEROP-EST-168] La creazione di una risk analysis da associare a un e-service template indicando una specifica vuota della stessa non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -2357,7 +2366,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
   Scenario: [INTEROP-EST-169] La cancellazione di una risk analysis associata a un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -2367,7 +2376,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @sad-path
-  @e-service-template-receive
+  @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario: [INTEROP-EST-170] La modifica di una risk analysis associata a un e-service template indicando una specifica vuota della stessa non può essere effettuata
     Given l'utente è un "admin" di "PA1"
