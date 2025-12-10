@@ -362,6 +362,7 @@ public class DelayerSteps {
             try {
                 status = lambdaClient.getExecutionStatus(arn);
             } catch (Exception e) {
+                log.error(e.getCause().toString());
                 if (System.currentTimeMillis() - startTime > TimeUnit.MINUTES.toMillis(5))
                     throw new RuntimeException("Timeout durante il recupero dello stato della Step Function: " + arn, e);
 
