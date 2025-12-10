@@ -495,6 +495,7 @@
         | csv                       | TOT |
         | "tcProvCapNonCensite.csv" | 15  |
 
+      @delayer7
     Scenario Outline: [DELAYER-TC6] Verifica che la seconda step function, una volta raggiunta la capacità di stampa settimanale, non processi ulteriori spedizioni
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
