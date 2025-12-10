@@ -296,7 +296,7 @@ public class DelayerSteps {
         List<DelayerPaperDelivery> expected = context.getExpectedByWorkflowStep(step);
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, POLLING_MAX_MINUTES);
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         actual.forEach(dpd -> {
             String seed = extractSeed(dpd);
@@ -351,7 +351,7 @@ public class DelayerSteps {
 
         final long startTime = System.currentTimeMillis();
         final long maxWaitMillis = TimeUnit.MINUTES.toMillis(POLLING_MAX_MINUTES);
-        final long pollingIntervalMillis = TimeUnit.MINUTES.toMillis(5);
+        final long pollingIntervalMillis = TimeUnit.MINUTES.toMillis(1);
 
         log.info("Inizio polling Step Function: {}", arn);
 
