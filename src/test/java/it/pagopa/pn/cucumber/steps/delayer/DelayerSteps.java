@@ -254,19 +254,21 @@ public class DelayerSteps {
         context.currentExecutionArn = lambdaClient.runDelayerToPaperChannel().getExecutionArn();
         waitUntilStepFunctionEnd();
         ++context.currentStepFunction2ExecutionIndex;
+        checkPrintCapacityCounter();
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
     public void checkPrintCapacityCounter(){
         DelayerPrintCapacityCounter tupla = lambdaClient.getPrintCapacityCounter(context.expectedDeliveryDate);
         Assertions.assertThat(tupla).isNotNull();
+        boolean hasDeliveryInEvaluatePrint = !context.getExpectedByWorkflowStep(EVALUATE_PRINT_CAPACITY).isEmpty();
 
         Assertions.assertThat(tupla.getDailyExecutionNumber())
-                .as("DailyExecutionCounter deve essere uguale allo STANDARD_DAILY_EXECUTIONS")
-                .isEqualTo(DelayerContext.STANDARD_DAILY_EXECUTIONS);
+                .as(hasDeliveryInEvaluatePrint ? "DailyExecutionNumber deve essere uguale allo STANDARD_DAILY_EXECUTIONS" : "DailyExecutionNumber deve essere uguale a 0")
+                .isEqualTo(hasDeliveryInEvaluatePrint ? DelayerContext.STANDARD_DAILY_EXECUTIONS : 0);
 
         Assertions.assertThat(tupla.getDailyExecutionCounter())
-                .as("DailyExecutionNumber deve essere uguale a quello calcolato internamente")
+                .as("DailyExecutionCounter deve essere uguale a quello calcolato internamente")
                 .isEqualTo(context.currentStepFunction2ExecutionIndex);
     }
 
@@ -278,7 +280,6 @@ public class DelayerSteps {
         while (context.currentStepFunction2ExecutionIndex < context.expectedExecutions) {
             // Avvio la seconda step function
             runSecondStepFunction();
-            checkPrintCapacityCounter();
 
             // Prelevo tutte le notifiche in SENT_TO_PREPARE_PHASE_2
             fetchNotification(SENT_TO_PREPARE_PHASE_2.name());
@@ -296,19 +297,6 @@ public class DelayerSteps {
         List<DelayerPaperDelivery> expected = context.getExpectedByWorkflowStep(step);
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        if(requestIds.isEmpty()) {
-            Set<String> allSeed = context.groupedBySeed.keySet();
-            allSeed.forEach(seed -> {
-                try {
-                    fetchNonExistentNotification(ws, seed);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            return;
-        }
-
         List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         actual.forEach(dpd -> {

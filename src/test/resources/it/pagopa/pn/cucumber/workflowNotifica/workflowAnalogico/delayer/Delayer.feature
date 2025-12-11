@@ -4,8 +4,49 @@
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
-      When viene avviata la step function DelayerToPaperChannelStateMachine
-
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed          | quantita |
+        | tcZeroDriver_ | 15       |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId       | comparative | limit |
+        | unknow~RS~P10  | esattamente | 0     |
+        | unknow~AR~P10  | esattamente | 0     |
+        | unknow~890~P10 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 0     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 0     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
+      And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcZeroDriver_"
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And viene avviata la step function DelayerToPaperChannelStateMachine
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcZeroDriver_"
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                | TOT |
@@ -417,15 +458,11 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+      And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcZeroDriver_"
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And viene avviata la step function DelayerToPaperChannelStateMachine
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcZeroDriver_"
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
@@ -484,15 +521,10 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcProvCapNonCensite_"
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And viene avviata la step function DelayerToPaperChannelStateMachine
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcProvCapNonCensite_"
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
@@ -501,7 +533,7 @@
         | "tcProvCapNonCensite.csv" | 15  |
 
       @delayer7
-    Scenario Outline: [DELAYER-TC6] Verifica che la seconda step function, una volta raggiunta la capacità di stampa settimanale, non processi ulteriori spedizioni
+    Scenario Outline: [DELAYER-TC7] Verifica che la seconda step function, una volta raggiunta la capacità di stampa settimanale, non processi ulteriori spedizioni
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed                   | quantita |
