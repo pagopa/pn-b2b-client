@@ -1,7 +1,5 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -39,9 +37,8 @@ import static java.lang.Thread.sleep;
 @RequiredArgsConstructor
 public class DelayerSteps {
 
-    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv"};
+    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv"};
     public static final int POLLING_MAX_MINUTES = 90;
-    public static final String BATCH_WORKFLOW_STATE_MACHINE = "BatchWorkflowStateMachine";
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
