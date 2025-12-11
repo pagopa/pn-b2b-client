@@ -296,6 +296,19 @@ public class DelayerSteps {
         List<DelayerPaperDelivery> expected = context.getExpectedByWorkflowStep(step);
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
+        if(requestIds.isEmpty()) {
+            Set<String> allSeed = context.groupedBySeed.keySet();
+            allSeed.forEach(seed -> {
+                try {
+                    fetchNonExistentNotification(ws, seed);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            return;
+        }
+
         List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         actual.forEach(dpd -> {
