@@ -247,6 +247,7 @@
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -303,6 +304,7 @@
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -366,6 +368,7 @@
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -423,6 +426,7 @@
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -489,6 +493,7 @@
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
