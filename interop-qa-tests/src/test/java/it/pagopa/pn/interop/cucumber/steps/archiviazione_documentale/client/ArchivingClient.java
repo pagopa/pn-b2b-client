@@ -6,6 +6,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.Archi
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.FileMatchingStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.FileNameParts;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
@@ -21,6 +22,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils.applyFileFormatRegex;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -81,24 +84,27 @@ public class ArchivingClient {
                         return true;
                     })
 
-                    // Filtro per baseName ed estensione
+                    // Filtro per formato e timestamp
                     .filter(key -> {
                         String filename = ArchivingUtils.extractFilenameFromS3Key(key);
-                        return ArchivingUtils.matchesBaseName(filename, fileType);
+                        FileNameParts fileNameParts = applyFileFormatRegex(filename, fileType);
+
+                        if (fileNameParts == null) return false;
+
+                        boolean inInterval = true;
+                        if(seed.centerTimestamp != null) {
+                            Instant fileTs = Instant.parse(fileNameParts.timestamp());
+
+                            Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
+                            Instant start = center.minusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
+                            Instant end = center.plusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
+
+                            inInterval = !fileTs.isBefore(start) && !fileTs.isAfter(end);
+                        }
+
+                        return inInterval && fileNameParts.extension().equals(fileType.getFormatRegex());
                     })
 
-                    // Filtro per timestamp
-                    .filter(key -> {
-                        if (seed.centerTimestamp == null) return true;
-
-                        Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
-                        Instant start = center.minusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
-                        Instant end = center.plusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
-
-                        return ArchivingUtils.extractTimestampFromS3Key(key)
-                                .map(fileTs -> !fileTs.isBefore(start) && !fileTs.isAfter(end))
-                                .orElse(false);
-                    })
                     .toList();
 
             if (!matchingFiles.isEmpty()) {

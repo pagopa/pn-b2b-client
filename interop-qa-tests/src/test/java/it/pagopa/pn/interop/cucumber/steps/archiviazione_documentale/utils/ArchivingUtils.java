@@ -1,19 +1,22 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils;
 
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.FileNameParts;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ArchivingUtils {
+    public static final String PDF_SIGNED_NAME_REGEX = "^(?:([0-9]{14})_)?INTEROP_([^.]*)\\.([^.]+)$";
+    public static final String EVENT_SIGNED_NAME_REGEX = "^INTEROP_((?:[^.-]+)-[0-9a-fA-F]{32}-signed)\\.([^.]+(?:\\.[^.]+)*)$";
+    public static final String PDF_NAME_REGEX = "(\\d{14})_([^.]+)\\.(.+)";
+    public static final String EVENT_NAME_REGEX = "^events_(\\d{8})_(\\d{6})_([0-9a-fA-F]{8}-...)(\\.[^.]+)+$";
     public static final DateTimeFormatter TS_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(ZoneOffset.UTC);
-    public record FileNameParts(String timestamp, String baseName, String extension) {}
 
     public static String now(){
         return TS_FORMAT.format(ZonedDateTime.now(ZoneOffset.UTC));
@@ -23,73 +26,55 @@ public class ArchivingUtils {
        return LocalDateTime.parse(formattedTimestamp, TS_FORMAT).toInstant(ZoneOffset.UTC);
     }
 
-    public static Optional<Instant> extractTimestampFromS3Key(String key) {
-        if (key == null || key.isEmpty()) {
-            return Optional.empty();
-        }
-
-        // Estraggo SOLO il nome del file
-        String filename = key.substring(key.lastIndexOf('/') + 1);
-
-        // Cerco timestamp numerico all'inizio del filename
-        // Es: 20250312123045_documento.pdf
-        // Es: 20250312123045-documento.pdf
-        // Es: 20250312123045documento.pdf
-        Pattern p = Pattern.compile("(\\d{14})_([^\\.]+)\\.(.+)");
-        Matcher m = p.matcher(filename);
-
-        if (m.find()) {
-            String tsString = m.group(1);
-            try {
-                LocalDateTime ldt = LocalDateTime.parse(tsString, TS_FORMAT);
-                return Optional.of(ldt.toInstant(ZoneOffset.UTC));
-            } catch (Exception ignored) {
-            }
-        }
-
-        return Optional.empty();
-    }
-
     public static String extractFilenameFromS3Key(String key) {
         if (key == null || key.isEmpty()) return null;
         return key.substring(key.lastIndexOf('/') + 1);
     }
 
-    public static Optional<FileNameParts> parseFileName(String filename, FileType type) {
-        if (filename == null) return Optional.empty();
-        String regex = "(\\d{14})_([^\\.]+)\\.(.+)";
-        if (type.getExpectedBaseName().startsWith("%")) {
-            regex = type.getExpectedBaseName().replaceAll("%", "");
-        }
-
+    public static FileNameParts applyFileFormatRegex(String filename, FileType type) {
+        if (filename == null)
+            throw new IllegalArgumentException("filename is null");
+        
+        String regex = type.getFormatRegex();
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(filename);
 
-        if (!m.find()) return Optional.empty();
+        if (!m.matches()) return null;
 
-        return Optional.of(
-                new FileNameParts(
-                        m.group(1), // timestamp
-                        m.group(2), // baseName
-                        m.group(3)  // extension
-                )
-        );
-    }
+        String timestamp = null;
+        String baseName;
+        String extension;
 
-    public static boolean matchesBaseName(String filename, FileType type) {
-        return parseFileName(filename, type)
-                .map(parts -> {
-                    if (!parts.extension().equalsIgnoreCase(type.getExtension())) {
-                        return false;
-                    }
-                    if (type.getExpectedBaseName().startsWith("%")) {
-                        return true;
-                    } else {
-                        return parts.baseName.equalsIgnoreCase(type.getExpectedBaseName());
-                    }
-                }
-                )
-                .orElse(false);
+        switch (regex) {
+            
+            case PDF_SIGNED_NAME_REGEX, PDF_NAME_REGEX:
+                timestamp = m.group(1); 
+                baseName  = m.group(2);
+                extension = m.group(3);
+                break;
+
+            case EVENT_SIGNED_NAME_REGEX:
+                baseName  = m.group(1);
+                extension = m.group(2);
+                break;
+                
+            case EVENT_NAME_REGEX:
+                String date = m.group(1);
+                String time = m.group(2);
+                String uuid = m.group(3);
+
+                baseName = date + "_" + time + "_" + uuid;
+
+                // extension non è in un singolo gruppo → la ricostruisco
+                int start = filename.indexOf(uuid) + uuid.length();
+                extension = filename.substring(start);
+                break;
+                
+            default:
+                throw new IllegalStateException("Regex non gestita: " + regex);
+        }
+
+        return new FileNameParts(timestamp, baseName, extension);
     }
 
 }

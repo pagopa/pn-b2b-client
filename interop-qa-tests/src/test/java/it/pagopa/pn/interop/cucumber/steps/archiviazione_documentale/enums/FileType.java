@@ -2,40 +2,44 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums;
 
 import lombok.Getter;
 
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils.*;
+
 @Getter
 public enum FileType {
+
     // Documenti
-    AGREEMENT_ACTIVATED("pdf", "agreement_contract" ),
-    AGREEMENT_ACTIVATED_SIGNED("pdf", "%^(?:([0-9]{14})_)?INTEROP_([^.]*)\\.([^.]+)$%"),
-    AGREEMENT_UPGRADED("pdf", "name"),
-    PURPOSE_ACTIVATED("pdf", "name"),
-    NEW_PURPOSE_VERSION_ACTIVATED("pdf", "name"),
-    PURPOSE_VERSION_ACTIVATED("pdf", "name"),
-    PRODUCER_DELEGATION_APPROVED("pdf", "name"),
-    CONSUMER_DELEGATION_APPROVED("pdf", "delegation_activation_contract"),
-    CONSUMER_DELEGATION_APPROVED_SIGNED("pdf", "%^(?:([0-9]{14})_)?INTEROP_([^.]*)\\.([^.]+)$%"),
-    CONSUMER_DELEGATION_REVOKED("pdf", "name"),
-    PRODUCER_DELEGATION_REVOKED("pdf", "name"),
-    PURPOSE_TEMPLATE_PUBLISHED("pdf", "name"),
+    AGREEMENT_ACTIVATED("pdf", PDF_NAME_REGEX ),
+    AGREEMENT_ACTIVATED_SIGNED("pdf", PDF_SIGNED_NAME_REGEX),
+    AGREEMENT_UPGRADED("pdf", PDF_NAME_REGEX),
+    PURPOSE_ACTIVATED("pdf", PDF_NAME_REGEX),
+    NEW_PURPOSE_VERSION_ACTIVATED("pdf", PDF_NAME_REGEX),
+    PURPOSE_VERSION_ACTIVATED("pdf", PDF_NAME_REGEX),
+    PRODUCER_DELEGATION_APPROVED("pdf", PDF_NAME_REGEX),
+    CONSUMER_DELEGATION_APPROVED("pdf", PDF_NAME_REGEX),
+    CONSUMER_DELEGATION_APPROVED_SIGNED("pdf",  PDF_SIGNED_NAME_REGEX),
+    CONSUMER_DELEGATION_REVOKED("pdf", PDF_NAME_REGEX),
+    PRODUCER_DELEGATION_REVOKED("pdf", PDF_NAME_REGEX),
+    PURPOSE_TEMPLATE_PUBLISHED("pdf", PDF_NAME_REGEX),
 
     // Eventi (potrebbero mancare RISK_ANALYSIS_DOCUMENT_ADDED, AGREEMENT_CONTRACT_ADDED)
-    VOUCHER_EVENT("zip", "name"),
-    KEYS_ADDED_EVENT("zip", "name"),
-    KEY_DELETED_EVENT("zip", "name"),
-    CLIENT_DELETED_EVENT("zip", "name"),
-    AGREEMENT_UPGRADED_EVENT("zip", "name"),
-    PURPOSE_UPGRADED_EVENT("zip", "name"),
-    DESCRIPTOR_ESERVICE_UPGRADED_EVENT("zip", "name"),
-    PRODUCER_DELEGATION_APPROVED_EVENT("zip", "name"),
-    CONSUMER_DELEGATION_APPROVED_EVENT("zip", "name"),
-    CONSUMER_DELEGATION_REVOKED_EVENT("zip", "name"),
-    PRODUCER_DELEGATION_REVOKED_EVENT("zip", "name");
+    VOUCHER_EVENT("gz", EVENT_NAME_REGEX),
+    KEYS_ADDED_EVENT("gz", EVENT_NAME_REGEX),
+    KEY_DELETED_EVENT("gz", EVENT_NAME_REGEX),
+    CLIENT_DELETED_EVENT("gz", EVENT_NAME_REGEX),
+    AGREEMENT_UPGRADED_EVENT("gz", EVENT_NAME_REGEX),
+    PURPOSE_UPGRADED_EVENT("gz", EVENT_NAME_REGEX),
+    DESCRIPTOR_ESERVICE_UPGRADED_EVENT("gz", EVENT_NAME_REGEX),
+    PRODUCER_DELEGATION_APPROVED_EVENT("gz", EVENT_NAME_REGEX),
+    CONSUMER_DELEGATION_APPROVED_EVENT("gz", EVENT_NAME_REGEX),
+    CONSUMER_DELEGATION_APPROVED_EVENT_SIGNED("p7m", EVENT_SIGNED_NAME_REGEX),
+    CONSUMER_DELEGATION_REVOKED_EVENT("gz", EVENT_NAME_REGEX),
+    PRODUCER_DELEGATION_REVOKED_EVENT("gz", EVENT_NAME_REGEX);
 
     private final String extension;
-    private final String expectedBaseName; //nome del file (ignorando il timestamp)
+    private final String formatRegex;
 
-    FileType(String extension, String expectedBaseName) {
+    FileType(String extension, String formatRegex) {
         this.extension = extension;
-        this.expectedBaseName = expectedBaseName;
+        this.formatRegex = formatRegex;
     }
 }
