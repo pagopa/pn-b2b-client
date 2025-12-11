@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class ArchivingSteps {
     public void checkRetainUntilDate() {
 
         Instant creationDate = context.getCurrentFile().getCreationDate();
-        Instant expectedRetainUntil = creationDate.plus(10, ChronoUnit.YEARS);
+        Instant expectedRetainUntil = creationDate.atZone(ZoneOffset.UTC).plusYears(10).toInstant();
         Instant actualRetainUntilDate = context.getCurrentFile().getRetainUntilDate();
 
         // Tolleranza di 1 giorno
