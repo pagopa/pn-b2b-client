@@ -23,6 +23,7 @@ public class DelayerContext {
     public List<DelayerPaperDelivery> actualCsv = new ArrayList<>();
 
     public String currentExecutionArn;
+    public boolean assertPhase2ByExecutionCounter = false;
 
     public Map<String, Integer> senderLimitMap = new HashMap<>();
     public Map<String, Map<String,Integer>> driverCapacityMap = new HashMap<>();
@@ -40,9 +41,10 @@ public class DelayerContext {
     );
 
     public List<DelayerPaperDelivery> getExpectedByWorkflowStep(WorkflowSteps  step) {
-        return step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) ?
-                getExpectedInPhase2() :
-                expectedPianification.values().stream()
+        if(step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) && assertPhase2ByExecutionCounter)
+            return getExpectedInPhase2();
+        else
+            return expectedPianification.values().stream()
                     .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream())
                     .toList();
     }

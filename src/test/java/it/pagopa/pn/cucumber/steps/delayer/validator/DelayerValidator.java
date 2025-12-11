@@ -70,8 +70,8 @@ public class DelayerValidator {
     }
 
     public List<String> checkSilently(WorkflowSteps step, String seed) {
-        var actual = step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) ? context.getActualInPhase2() : context.actualPianification.getOrDefault(seed, Map.of()).get(step.name());
-        var expected = step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) ? context.getExpectedInPhase2() : context.expectedPianification.getOrDefault(seed, Map.of()).get(step.name());
+        var actual = step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) && context.assertPhase2ByExecutionCounter ? context.getActualInPhase2() : context.actualPianification.getOrDefault(seed, Map.of()).get(step.name());
+        var expected = step.equals(WorkflowSteps.SENT_TO_PREPARE_PHASE_2) && context.assertPhase2ByExecutionCounter ? context.getExpectedInPhase2() : context.expectedPianification.getOrDefault(seed, Map.of()).get(step.name());
 
         // Normalizza i null a liste vuote
         List<DelayerPaperDelivery> exp = expected == null ? List.of() : expected;

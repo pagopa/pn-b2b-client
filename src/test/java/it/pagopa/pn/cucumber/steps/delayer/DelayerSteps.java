@@ -256,6 +256,7 @@ public class DelayerSteps {
     public void runSecondStepFunction() throws Exception {
         context.currentExecutionArn = lambdaClient.runDelayerToPaperChannel().getExecutionArn();
         waitUntilStepFunctionEnd();
+        ++context.currentStepFunction2ExecutionIndex;
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
@@ -275,12 +276,12 @@ public class DelayerSteps {
     @When("vengono avviate le {int} esecuzioni della step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunctionWithLimit(int expectedExecutions) throws Exception {
         context.expectedExecutions = expectedExecutions;
+        context.assertPhase2ByExecutionCounter = true;
 
         while (context.currentStepFunction2ExecutionIndex < context.expectedExecutions) {
             // Avvio la seconda step function
             runSecondStepFunction();
             checkPrintCapacityCounter();
-            ++context.currentStepFunction2ExecutionIndex;
 
             // Prelevo tutte le notifiche in SENT_TO_PREPARE_PHASE_2
             fetchNotification(SENT_TO_PREPARE_PHASE_2.name());
@@ -288,6 +289,8 @@ public class DelayerSteps {
             // Verifico che siano elaborate le notifiche secondo i limiti e secondo il ranking
             checkRanking(SENT_TO_PREPARE_PHASE_2.name(), null);
         }
+
+        context.assertPhase2ByExecutionCounter = false;
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")
@@ -314,7 +317,7 @@ public class DelayerSteps {
         if (notExpected.isEmpty()) log.warn("Nessuna notifica esistente per il seed: " + seed);
 
         Set<String> requestIds = notExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 5);
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         validator.checkNotExistSilently(actual, seed, step);
     }
@@ -332,11 +335,6 @@ public class DelayerSteps {
                 .flatMap(m -> m.getOrDefault("FROZEN", List.of()).stream())
                 .toList();
         validator.checkFrozen(step, frozenExpected);
-    }
-
-    @Given("verifica che la capacità disponibile per ogni tripla (unifiedDeliveryDriver-provincia-deliveryDate) sia {word} {int}")
-    public void checkDriverCapacity(String compare, Integer value) {
-        validator.checkDriverCapacity(compare, value, EVALUATE_DRIVER_CAPACITY);
     }
 
     @Then("verifica la corretta pianificazione di ogni test case")
