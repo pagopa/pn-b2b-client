@@ -1,17 +1,16 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing;
 
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.FileMatchingStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.agreement.AgreementActivatedStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.agreement.AgreementUpgradedEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.agreement.AgreementUpgradedStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.auth.ClientDeletedEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.auth.KeyDeletedEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.auth.KeysAddedEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.auth.VoucherEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.delegation.*;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.eservice.DescriptorEserviceUpgradedEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.purpose.*;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.AgreementActivatedStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.AgreementUpgradedEventStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.AgreementUpgradedStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.ClientDeletedEventStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.KeyDeletedEventStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.KeysAddedEventStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.VoucherEventStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.delegation.*;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.eservice.DescriptorEserviceUpgradedEventStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.purpose.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,8 +18,8 @@ import java.util.Map;
 
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType.*;
 
-public class FileMatcher {
-    private final Map<FileType, FileMatchingStrategy> strategies = new HashMap<>();
+public class FileMatcher implements IFileMatcher {
+    private final Map<FileType, IFileMatcher> strategies = new HashMap<>();
 
     public FileMatcher() {
         strategies.put(AGREEMENT_ACTIVATED, new AgreementActivatedStrategy());
@@ -48,8 +47,8 @@ public class FileMatcher {
         strategies.put(PURPOSE_VERSION_ACTIVATED, new PurposeVersionActivatedStrategy());
     }
 
-    public boolean match(FileMatchingStrategy.MatchingStrategySeed seed) throws IOException {
-        FileMatchingStrategy strategy = strategies.get(seed.getFileType());
+    public boolean match(IFileMatcher.MatchingStrategySeed seed) throws IOException {
+        IFileMatcher strategy = strategies.get(seed.getFileType());
         if(strategy == null) throw new RuntimeException("Unknown file type " + seed.getFileType());
 
         return strategy.match(seed);
