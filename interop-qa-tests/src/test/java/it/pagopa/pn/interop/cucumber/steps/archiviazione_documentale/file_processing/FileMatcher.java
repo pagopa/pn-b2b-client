@@ -33,6 +33,7 @@ public class FileMatcher {
         strategies.put(VOUCHER_EVENT, new VoucherEventStrategy());
         strategies.put(CONSUMER_DELEGATION_APPROVED_EVENT, new ConsumerDelegationApprovedEventStrategy());
         strategies.put(CONSUMER_DELEGATION_APPROVED, new ConsumerDelegationApprovedStrategy());
+        strategies.put(CONSUMER_DELEGATION_APPROVED_SIGNED, new ConsumerDelegationApprovedStrategy());
         strategies.put(CONSUMER_DELEGATION_REVOKED_EVENT, new ConsumerDelegationRevokedEventStrategy());
         strategies.put(CONSUMER_DELEGATION_REVOKED, new ConsumerDelegationRevokedStrategy());
         strategies.put(PRODUCER_DELEGATION_APPROVED_EVENT, new ProducerDelegationApprovedEventStrategy());

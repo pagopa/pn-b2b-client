@@ -13,6 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.Token
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,15 @@ public class ArchivingContext {
     //TODO: inizializzare i path per ogni file
     public ArchivingContext(String unsignedDocumentBasePath, String signedDocumentBasePath, SharedStepsContext sharedStepsContext) {
         tokenResolver = new TokenResolver(sharedStepsContext);
-        wormBuckets = Map.of(AGREEMENT_ACTIVATED_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
-        buckets = Map.of(AGREEMENT_ACTIVATED, String.format("interop-application-documents-qa-es1/qa/generated-documents-unsigned/agreement/%s/",sharedStepsContext.getAgreementId()));
+
+        wormBuckets = new HashMap<>();
+        wormBuckets.put(AGREEMENT_ACTIVATED_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
+        wormBuckets.put(CONSUMER_DELEGATION_APPROVED_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
+
+        buckets = new HashMap<>();
+        buckets.put(AGREEMENT_ACTIVATED, String.format("interop-application-documents-qa-es1/qa/generated-documents-unsigned/agreement/%s/",sharedStepsContext.getAgreementId()));
+        buckets.put(CONSUMER_DELEGATION_APPROVED,  "interop-application-documents-qa-es1/qa/generated-documents-unsigned/delegation/:consumerDelegationId");
+
     }
 
     public S3BucketInfo getBucket(boolean isWorm, FileType fileType) {
