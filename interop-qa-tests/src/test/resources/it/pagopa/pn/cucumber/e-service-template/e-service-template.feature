@@ -3032,3 +3032,22 @@ Feature: Test API of e-service template
       | PUBLISHED  | ricezione  |
       | SUSPENDED  | ricezione  |
       | DEPRECATED | ricezione  |
+
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-8743
+  @e-service-template-instance-upgrade
+  Scenario Outline: [INTEROP-EST-208] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And [si prende nota dell'attuale interfaccia dell'istanza dell'e-service]
+    When l'utente tenta di associare un'interfaccia all'istanza dell'e-service template
+    Then si ottiene response status code 400
+    And l'interfaccia dell'istanza dell'e-service template non ha subito mutamenti
+    Examples:
+      | modo        |
+      | erogazione  |
+
+    @e-service-template-receive-bff
+    Examples:
+      | modo        |
+      | ricezione   |
