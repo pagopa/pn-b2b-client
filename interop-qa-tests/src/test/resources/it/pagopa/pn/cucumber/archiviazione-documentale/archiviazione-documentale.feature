@@ -1,6 +1,21 @@
 #TODO: da chiarire se mancano i doc: RiskAnalysisDocumentAdded, AgreementContractDocumentAdded
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
+  Scenario: [TRIGGER]
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    Then si ottiene status code 200
+
+    Scenario: [GET_ALL]
+      Given recupera gli ultimi 10 file nel bucket "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/2025/12/11/"
+
   Scenario: [AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -53,7 +68,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And l'ente delegante "PA1"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    When l'utente è un "<ruolo>" dell'ente delegato
+    When l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 200
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApproved

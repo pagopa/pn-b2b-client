@@ -7,12 +7,14 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.Arc
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfoBuilder;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.within;
 
@@ -57,6 +59,23 @@ public class ArchivingSteps {
         Assertions.assertThat(actualRetainUntilDate)
                 .as("La Retain until date non è 10 anni dopo la creation date. Creation=%s, Retain=%s", creationDate, actualRetainUntilDate)
                 .isCloseTo(expectedRetainUntil, within(1, ChronoUnit.DAYS));
+    }
+
+    @Then("recupera gli ultimi {int} file nel bucket {string}")
+    public void getAllFile(int limit, String bucket) {
+        S3BucketInfo bucketInfo = S3BucketInfoBuilder.builder().fullPath(bucket).build();
+        ArchivingClient.SearchFileSeed seed = ArchivingClient.SearchFileSeed.builder().bucketInfo(bucketInfo).build();
+        List<ArchivedFile> files = client.getAllFilesInS3(seed, limit);
+
+        System.out.println("=== FILE TROVATI (" + files.size() + ") ===");
+
+        files.forEach(f -> {
+            System.out.println("\n------------------------------------------");
+            System.out.println(f.toString());   // 👈 stampa tutta la struttura
+            System.out.println("------------------------------------------");
+        });
+
+        System.out.println("\n=== FINE LISTA ===");
     }
 
     //TODO: stampa del context di sharedStep quando ci sono assertions che falliscono (cosi posso passarlo di pacco ai dev)

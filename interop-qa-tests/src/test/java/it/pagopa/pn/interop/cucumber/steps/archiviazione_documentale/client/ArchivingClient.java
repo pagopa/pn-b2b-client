@@ -30,7 +30,7 @@ public class ArchivingClient {
     @Builder
     public static class SearchFileSeed {
 
-        @NonNull
+        //@NonNull
         private FileType type;
 
         @NonNull
@@ -128,9 +128,72 @@ public class ArchivingClient {
         return file.get();
     }
 
+    public List<ArchivedFile> getAllFilesInS3(SearchFileSeed seed, int limit) {
+
+        S3BucketInfo bucketInfo = seed.getBucketInfo();
+        S3Client s3 = S3Client.builder()
+                .region(Region.EU_SOUTH_1)
+                .build();
+
+        List<S3Object> allObjects = new java.util.ArrayList<>();
+
+        String continuationToken = null;
+
+        // --- PAGINA FINCHÉ CI SONO ALTRI OGGETTI ---
+        do {
+            ListObjectsV2Request.Builder reqBuilder = ListObjectsV2Request.builder()
+                    .bucket(bucketInfo.bucket())
+                    .prefix(bucketInfo.prefix());
+
+            if (continuationToken != null) {
+                reqBuilder.continuationToken(continuationToken);
+            }
+
+            ListObjectsV2Response resp = s3.listObjectsV2(reqBuilder.build());
+
+            if (resp.contents() != null) {
+                allObjects.addAll(resp.contents());
+            }
+
+            continuationToken = resp.nextContinuationToken();
+
+        } while (continuationToken != null);
+
+
+        // --- ORDINA PER DATA (dal più recente al meno recente) ---
+        allObjects.sort((o1, o2) -> o2.lastModified().compareTo(o1.lastModified()));
+
+        // Limita ai primi N
+        List<S3Object> topN = allObjects.stream()
+                .limit(limit)
+                .toList();
+
+        // --- COSTRUISCI I RISULTATI COME ArchivedFile ---
+        List<ArchivedFile> result = new java.util.ArrayList<>();
+
+        for (S3Object obj : topN) {
+
+            S3BucketInfo info = new S3BucketInfo(
+                    bucketInfo.bucket(),
+                    bucketInfo.prefix(),
+                    obj.key()
+            );
+
+            ArchivedFile archived = buildArchivedDocument(s3, info);
+            result.add(archived);
+        }
+
+        return result;
+    }
 
     private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo) {
         ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
+
+        String key = bucketInfo.key(); // se hai un getter, altrimenti bucketInfo.key()
+
+        // 👇 Estrai il nome file
+        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
+        builder.filename(filename);
 
         // Recupero i metadati classici via HeadObject
         HeadObjectResponse headResp = S3Utils.getHeader(s3, bucketInfo);
