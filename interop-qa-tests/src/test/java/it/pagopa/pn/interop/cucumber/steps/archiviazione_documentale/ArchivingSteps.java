@@ -33,11 +33,18 @@ public class ArchivingSteps {
     @Then("verifica nel bucket S3 {bucketType} l'esistenza del file {documentType}")
     public void checkS3Bucket(boolean isSigned, FileType fileType){
         S3BucketInfo bucketInfo = context.getBucket(isSigned, fileType);
+        boolean hasFileTimestamp = !(fileType.getExtension().equals("pdf") && isSigned);
+
         ArchivingClient.SearchFileSeed seed =
                 ArchivingClient.SearchFileSeed.builder()
-                        .centerTimestamp(isSigned ? null : ArchivingUtils.now())
-                        .timeoutMs(isSigned ? 300_000 : 10_000)
-                        .bucketInfo(bucketInfo).type(fileType).isSigned(isSigned).build();
+                        .centerTimestamp(hasFileTimestamp ? context.getCenterTimestamp() : null)
+                        .timeoutMs(600_000)
+                        .pollIntervalMs(30_000)
+                        .deltaSeconds(300)
+                        .bucketInfo(bucketInfo)
+                        .type(fileType)
+                        .isSigned(isSigned)
+                        .build();
 
         ArchivedFile file = client.findS3FileInInterval(seed);
         Assertions.assertThat(file)

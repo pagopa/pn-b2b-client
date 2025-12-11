@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class ArchivingClient {
@@ -30,7 +29,7 @@ public class ArchivingClient {
     @Builder
     public static class SearchFileSeed {
 
-        //@NonNull
+        @NonNull
         private FileType type;
 
         @NonNull
@@ -74,18 +73,25 @@ public class ArchivingClient {
             );
 
             List<String> matchingFiles = res.contents().stream()
+                    // ORDINA DAL PIÙ RECENTE AL MENO RECENTE
+                    .sorted((o1, o2) -> o2.lastModified().compareTo(o1.lastModified()))
+
+                    // Converte in key
                     .map(S3Object::key)
+
                     // Skip oggetti gia controllati
                     .filter(key -> {
                         if (checkedKeys.contains(key)) return false;
                         checkedKeys.add(key);
                         return true;
                     })
+
                     // Filtro per baseName ed estensione
                     .filter(key -> {
                         String filename = ArchivingUtils.extractFilenameFromS3Key(key);
                         return ArchivingUtils.matchesBaseName(filename, fileType);
                     })
+
                     // Filtro per timestamp
                     .filter(key -> {
                         if (seed.centerTimestamp == null) return true;
@@ -122,7 +128,7 @@ public class ArchivingClient {
         });
 
         // Polling
-        long maxAttempts = seed.getTimeoutMs() / seed.getPollIntervalMs();
+        long maxAttempts = (seed.getTimeoutMs() / seed.getPollIntervalMs()) + 1;
         polling.executePolling((int) maxAttempts, seed.getPollIntervalMs());
 
         return file.get();
