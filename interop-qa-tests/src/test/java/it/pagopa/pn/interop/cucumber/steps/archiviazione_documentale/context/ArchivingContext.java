@@ -8,6 +8,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileT
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfoBuilder;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class ArchivingContext {
     private final TokenResolver tokenResolver;
     private final Map<FileType, String> wormBuckets;
     private final Map<FileType, String> buckets;
+    private String centerTimestamp;
     @Getter @Setter private ArchivedFile currentFile;
 
     //TODO: inizializzare i path per ogni file
@@ -34,5 +36,10 @@ public class ArchivingContext {
         String resolvedFullPath = String.join("/", splitResolvedPath);
 
         return S3BucketInfoBuilder.builder().fullPath(resolvedFullPath).build();
+    }
+
+    public String getCenterTimestamp() {
+        if (centerTimestamp == null) centerTimestamp = ArchivingUtils.now();
+        return centerTimestamp;
     }
 }
