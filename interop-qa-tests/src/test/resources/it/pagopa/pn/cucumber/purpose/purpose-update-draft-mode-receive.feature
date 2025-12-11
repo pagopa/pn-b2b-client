@@ -50,7 +50,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "PA1" ha già creato una finalità in stato "<statoFinalità>" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
     When l'utente aggiorna quella finalità per quell'e-service in erogazione inversa
-    Then si ottiene status code 403
+    Then si ottiene status code 400
 
     Examples: 
       | statoFinalità        |
