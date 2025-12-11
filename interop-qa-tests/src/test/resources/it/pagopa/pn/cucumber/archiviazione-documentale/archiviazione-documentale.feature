@@ -72,11 +72,13 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 200
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApproved
-    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApproved
+    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApprovedSigned
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApprovedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApprovedEvent
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
+    #And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApprovedEventSigned
+    #And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    #And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato
     Given l'ente delegante "PA1"

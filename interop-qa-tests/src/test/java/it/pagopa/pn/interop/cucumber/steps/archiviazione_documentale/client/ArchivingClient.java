@@ -5,10 +5,11 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileT
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.strategy.FileMatchingStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.IFileMatcher;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.FileNameParts;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,7 @@ public class ArchivingClient {
 
     private final FileMatcher fileMatcher = new FileMatcher();
     private final SharedStepsContext sharedStepsContext;
+    private final TokenResolver tokenResolver;
 
     public ArchivedFile findS3FileInInterval(SearchFileSeed seed) {
 
@@ -111,8 +113,7 @@ public class ArchivingClient {
                 for (String key : matchingFiles) {
                     try {
                         S3BucketInfo s3BucketInfo = new S3BucketInfo(bucketInfo.bucket(), bucketInfo.prefix(), key);
-                        FileMatchingStrategy.MatchingStrategySeed strategySeed =
-                                new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, s3BucketInfo, sharedStepsContext);
+                        IFileMatcher.MatchingStrategySeed strategySeed = new IFileMatcher.MatchingStrategySeed(s3, fileType, s3BucketInfo, sharedStepsContext, tokenResolver);
 
                         log.info("Viene controllata la key: {}", key);
                         boolean match = fileMatcher.match(strategySeed);

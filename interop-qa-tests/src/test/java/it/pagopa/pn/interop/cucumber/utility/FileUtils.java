@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ValidationResult;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class FileUtils {
 
@@ -28,8 +30,9 @@ public class FileUtils {
 
     /**
      * Legge un file CSV dal classpath e restituisce una lista di righe, ognuna composta da una lista di valori.
-     * @param pathRelativo path relativo all'interno di src/test/resources
-     * @param separatore il separatore dei campi (es. "," o ";")
+     *
+     * @param pathRelativo      path relativo all'interno di src/test/resources
+     * @param separatore        il separatore dei campi (es. "," o ";")
      * @param saltaIntestazione true se vuoi ignorare la prima riga
      * @return lista di righe del CSV, ciascuna come lista di valori
      */
@@ -66,8 +69,9 @@ public class FileUtils {
 
     /**
      * Legge un file CSV in modo thread-safe dal classpath e restituisce una lista di righe, ognuna composta da una lista di valori.
-     * @param pathRelativo path relativo all'interno di src/test/resources
-     * @param separatore il separatore dei campi (es. "," o ";")
+     *
+     * @param pathRelativo      path relativo all'interno di src/test/resources
+     * @param separatore        il separatore dei campi (es. "," o ";")
      * @param saltaIntestazione true se vuoi ignorare la prima riga
      * @return lista di righe del CSV, ciascuna come lista di valori
      */
@@ -80,8 +84,9 @@ public class FileUtils {
     /**
      * Scrive una lista in un file CSV nella directory src/test/resources.
      * ATTENZIONE: Sovrascrive il file se esiste già.
+     *
      * @param pathRelativo path relativo a src/test/resources
-     * @param righe la righe da scrivere
+     * @param righe        la righe da scrivere
      */
     public static void writeCsv(String pathRelativo, List<List<String>> righe) {
         File file = new File("src/test/resources/" + pathRelativo);
@@ -122,8 +127,9 @@ public class FileUtils {
     /**
      * Scrive in modo thread-safe una lista in un file CSV nella directory src/test/resources.
      * ATTENZIONE: Sovrascrive il file se esiste già.
+     *
      * @param pathRelativo path relativo a src/test/resources
-     * @param righe la righe da scrivere
+     * @param righe        la righe da scrivere
      */
     public static void writeCsvSafe(String pathRelativo, List<List<String>> righe) {
         synchronized (getFileLock(pathRelativo)) {
@@ -136,9 +142,9 @@ public class FileUtils {
      * Questo metodo esegue la lettura, modifica e scrittura del file CSV all'interno di un blocco sincronizzato
      * per garantire che le modifiche siano atomiche e consistenti anche in presenza di accessi concorrenti.
      *
-     * @param pathRelativo       Il percorso relativo del file CSV rispetto a src/test/resources (es. "dati/miofile.csv")
-     * @param separatore         Il separatore dei campi nel CSV (es. "," o ";")
-     * @param modifica           Una funzione che riceve la lista di righe lette dal file e restituisce la lista modificata da salvare
+     * @param pathRelativo Il percorso relativo del file CSV rispetto a src/test/resources (es. "dati/miofile.csv")
+     * @param separatore   Il separatore dei campi nel CSV (es. "," o ";")
+     * @param modifica     Una funzione che riceve la lista di righe lette dal file e restituisce la lista modificata da salvare
      */
     public static void modifyCsvSafe(String pathRelativo, String separatore,
                                      Function<List<List<String>>, List<List<String>>> modifica) {
@@ -151,6 +157,7 @@ public class FileUtils {
 
     /**
      * Legge un file JSON dal classpath (src/test/resources) e lo restituisce come JsonNode.
+     *
      * @param pathRelativo path relativo all'interno di src/test/resources (es. "data/miofile.json")
      * @return JsonNode radice del JSON
      */
@@ -168,6 +175,7 @@ public class FileUtils {
 
     /**
      * Legge un file JSON in modo thread-safe dal classpath (src/test/resources).
+     *
      * @param pathRelativo path relativo all'interno di src/test/resources (es. "data/miofile.json")
      * @return JsonNode radice del JSON
      */
@@ -179,8 +187,9 @@ public class FileUtils {
 
     /**
      * Legge un file JSON dal classpath e lo deserializza in una classe Java.
+     *
      * @param pathRelativo path relativo a src/test/resources
-     * @param valueType classe target
+     * @param valueType    classe target
      * @return istanza della classe deserializzata
      */
     public static <T> T readJsonAs(String pathRelativo, Class<T> valueType) {
@@ -222,7 +231,7 @@ public class FileUtils {
      * verificando che TUTTE le parole specificate siano presenti.
      *
      * @param inputStream InputStream contenente il PDF da analizzare
-     * @param words lista di parole da verificare (tutte devono essere presenti)
+     * @param words       lista di parole da verificare (tutte devono essere presenti)
      * @return true se tutte le parole sono contenute nel PDF, false altrimenti
      * @throws RuntimeException in caso di errore nella lettura del PDF
      */
@@ -248,7 +257,7 @@ public class FileUtils {
      * Legge il PDF da src/test/resources e verifica che tutte le parole siano presenti.
      *
      * @param pathRelativo percorso del PDF relativo a src/test/resources
-     * @param words lista di parole da verificare
+     * @param words        lista di parole da verificare
      * @return true se tutte le parole sono presenti, false altrimenti
      */
     public static boolean pdfContainsAllWordsSafe(String pathRelativo, List<String> words) {
@@ -266,7 +275,7 @@ public class FileUtils {
     /**
      * Recupera un nodo JSON tramite un percorso "path" annidato.
      * Supporta sia oggetti che array tramite notazione es: "a.b[2].c".
-     *
+     * <p>
      * Esempi validi:
      * - "utente.nome"
      * - "ordine.articoli[0].prezzo"
@@ -310,12 +319,12 @@ public class FileUtils {
     /**
      * Verifica che un oggetto JSON contenga TUTTE le coppie chiave-valore specificate.
      * La chiave può essere un path annidato usando "." e "[index]".
-     *
+     * <p>
      * Esempi di path:
      * - "utente.nome"
      * - "ordine.articoli[1].descrizione"
      *
-     * @param json oggetto JSON da verificare
+     * @param json       oggetto JSON da verificare
      * @param conditions mappa di path → valore atteso
      * @return true se tutte le condizioni sono soddisfatte, false altrimenti
      */
@@ -378,7 +387,7 @@ public class FileUtils {
      * contiene tutte le coppie path → valore indicate.</p>
      *
      * @param inputStream InputStream contenente il NDJSON da analizzare
-     * @param conditions mappa path → valore atteso (vedi esempi sopra)
+     * @param conditions  mappa path → valore atteso (vedi esempi sopra)
      * @return true se almeno una riga soddisfa tutte le condizioni, false altrimenti
      * @throws RuntimeException in caso di errore di parsing o I/O
      */
@@ -407,7 +416,7 @@ public class FileUtils {
      * Legge il NDJSON da src/test/resources/pathRelativo.
      *
      * @param pathRelativo percorso del file NDJSON
-     * @param conditions mappa path → valore atteso
+     * @param conditions   mappa path → valore atteso
      * @return true se matcha almeno una riga, false altrimenti
      */
     public static boolean ndjsonContainsAllSafe(String pathRelativo, Map<String, String> conditions) {
@@ -420,6 +429,61 @@ public class FileUtils {
                 throw new RuntimeException("Errore durante la lettura del NDJSON (safe): " + pathRelativo, e);
             }
         }
+    }
+
+    public static void validateNdjson(
+            InputStream is,
+            Predicate<JsonNode> candidateSelector,
+            Function<JsonNode, ValidationResult> validator,
+            String notFoundMessage
+    ) {
+        List<String> aggregatedErrors = new ArrayList<>();
+        boolean foundCandidate = false;
+        boolean foundValid = false;
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+
+            String line;
+            int lineNumber = 0;
+
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+
+                JsonNode json = objectMapper.readTree(line);
+
+                if (!candidateSelector.test(json)) continue;
+                foundCandidate = true;
+
+                ValidationResult result = validator.apply(json);
+
+                if (!result.valid()) {
+                    String errorBlock = String.format(
+                            "Riga %d NON valida:%nJSON: %s%nErrori:%n  - %s%n%n",
+                            lineNumber+1,
+                            result.rawJson(),
+                            String.join("\n  - ", result.errors())
+                    );
+                    aggregatedErrors.add(errorBlock);
+                }
+
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore nella validazione NDJSON", e);
+        }
+
+        // 3Nessuna riga candidata trovata
+        if (!foundCandidate) {
+            throw new RuntimeException(notFoundMessage);
+        }
+
+        // Righe candidate trovate ma tutte invalide
+        if (!foundValid) {
+            String message = "Righe candidate trovate, ma tutte non valide:\n" +
+                    String.join("\n", aggregatedErrors);
+            throw new RuntimeException(message);
+        }
+
     }
 
 }

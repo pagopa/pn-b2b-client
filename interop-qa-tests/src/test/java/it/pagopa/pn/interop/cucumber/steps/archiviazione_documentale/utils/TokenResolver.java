@@ -16,6 +16,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TokenResolver {
 
+
     private static final ExpressionParser PARSER = new SpelExpressionParser();
 
     private static final DateTimeFormatter DAY_FORMAT = DateTimeFormatter.ofPattern("dd");
@@ -34,19 +35,47 @@ public class TokenResolver {
             ":userId", "identityService.getUserId(tenantType, role)",
             ":kid", "clientCommonContext.keyId",
             ":agreementId","agreementId",
-            ":consumerDelegationId", "delegationCommonContext.getDelegationId()"
+            ":consumerDelegationId", "delegationCommonContext.getDelegationId()",
+            ":producerDelegationId", "delegationCommonContext.getDelegationId()"
     );
 
     private final SharedStepsContext sharedContext;
 
-    public String resolve(String token) {
+    public String resolve(String value) {
 
-        if(!isToken(token)) return token;
+        if (value == null) return null;
 
-        if (STATIC_TOKENS.containsKey(token)) return STATIC_TOKENS.get(token);
+        // Caso 1: stringa tipo key=:token
+        if (value.contains("=")) {
+            String[] parts = value.split("=", 2);
+
+            if (parts.length == 2) {
+                String key = parts[0];
+                String right = parts[1];
+
+                // solo la parte destra può essere un token
+                if (isToken(right)) {
+                    return key + "=" + resolveSingleToken(right);
+                }
+            }
+            return value; // non è un token e non contiene token risolvibili
+        }
+
+        // Caso 2: token puro come ":year" o ":userId"
+        if (isToken(value)) {
+            return resolveSingleToken(value);
+        }
+
+        return value;
+    }
+
+    private String resolveSingleToken(String token) {
+
+        if (STATIC_TOKENS.containsKey(token)) {
+            return STATIC_TOKENS.get(token);
+        }
 
         String expression = DYNAMIC_TOKENS.get(token);
-
         if (expression == null) {
             throw new IllegalArgumentException("Token sconosciuto: " + token);
         }
@@ -60,7 +89,7 @@ public class TokenResolver {
     }
 
     private boolean isToken(String value) {
-        return value != null && value.startsWith(":");
+        return value != null && (value.startsWith(":") || value.contains(":"));
     }
 
 }

@@ -5,17 +5,22 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileValidator;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.IFileValidator;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfoBuilder;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
+import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import static org.assertj.core.api.Assertions.within;
 
@@ -23,12 +28,16 @@ public class ArchivingSteps {
 
     private final ArchivingContext context;
     private final ArchivingClient client;
+    private final IFileValidator fileValidator;
+    private final TokenResolver tokenResolver;
 
     public ArchivingSteps( @Value("${s3.unsigned-document-base-path}") String unsignedDocumentBasePath,
                            @Value("${s3.signed-document-base-path}") String signedDocumentBasePath,
                            SharedStepsContext sharedStepsContext ) {
         this.context = new ArchivingContext(unsignedDocumentBasePath, signedDocumentBasePath, sharedStepsContext);
-        this.client = new ArchivingClient(sharedStepsContext);
+        this.tokenResolver = new TokenResolver(sharedStepsContext);
+        this.client = new ArchivingClient(sharedStepsContext, this.tokenResolver);
+        this.fileValidator = new FileValidator();
     }
 
     @Then("verifica nel bucket S3 {bucketType} l'esistenza del file {documentType}")
@@ -69,21 +78,16 @@ public class ArchivingSteps {
                 .isCloseTo(expectedRetainUntil, within(1, ChronoUnit.DAYS));
     }
 
-    @Then("recupera gli ultimi {int} file nel bucket {string}")
-    public void getAllFile(int limit, String bucket) {
-        S3BucketInfo bucketInfo = S3BucketInfoBuilder.builder().fullPath(bucket).build();
-        ArchivingClient.SearchFileSeed seed = ArchivingClient.SearchFileSeed.builder().bucketInfo(bucketInfo).build();
-        List<ArchivedFile> files = client.getAllFilesInS3(seed, limit);
+    @Then("verifica che il file contenga le opportune informazioni")
+    public void validateFile() throws IOException {
+        if(context.getCurrentFile() == null)
+            throw new RuntimeException("Nessun file trovato");
 
-        System.out.println("=== FILE TROVATI (" + files.size() + ") ===");
+        IFileValidator.ValidatorStrategySeed seed = new IFileValidator.ValidatorStrategySeed();
+        seed.setFile(context.getCurrentFile());
+        seed.setTokenResolver(tokenResolver);
 
-        files.forEach(f -> {
-            System.out.println("\n------------------------------------------");
-            System.out.println(f.toString());   // 👈 stampa tutta la struttura
-            System.out.println("------------------------------------------");
-        });
-
-        System.out.println("\n=== FINE LISTA ===");
+        fileValidator.validate(seed);
     }
 
     //TODO: stampa del context di sharedStep quando ci sono assertions che falliscono (cosi posso passarlo di pacco ai dev)

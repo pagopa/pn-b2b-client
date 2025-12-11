@@ -77,4 +77,21 @@ public class ArchivingUtils {
         return new FileNameParts(timestamp, baseName, extension);
     }
 
+    public static boolean isValidIsoTimestamp(String value) {
+        try {
+            parse(value);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isValidUUID(String value) {
+        try {
+            java.util.UUID.fromString(value);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
