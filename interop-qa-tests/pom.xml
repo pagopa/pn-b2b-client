@@ -37,6 +37,17 @@
     </properties>
 
     <dependencies>
+        <!-- BOUNCY CASTLE: gestione di file firmati digitalmente (p7m) -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.70</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.70</version>
+        </dependency>
 
         <!-- AWS SDK: Provides integration with Amazon Web Services, specifically for managing encryption keys using AWS Key Management Service (KMS) -->
         <dependency>

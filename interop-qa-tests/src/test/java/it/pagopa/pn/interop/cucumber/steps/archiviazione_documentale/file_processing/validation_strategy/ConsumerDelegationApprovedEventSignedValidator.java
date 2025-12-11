@@ -5,9 +5,11 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_proces
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSSignedData;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -15,32 +17,51 @@ import java.util.zip.GZIPInputStream;
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils.isValidIsoTimestamp;
 
 @RequiredArgsConstructor
-public class ConsumerDelegationApprovedEventValidator implements IFileValidator {
+public class ConsumerDelegationApprovedEventSignedValidator implements IFileValidator {
 
     @Override
     public void validate(ValidatorStrategySeed seed) throws IOException {
 
         String expectedDelegationId = seed.getTokenResolver().resolve(":consumerDelegationId");
+        byte[] originalBytes = extractSignedContent(seed);
 
-        InputStream s3Stream = seed.getFile().getContent();
-        GZIPInputStream gis = new GZIPInputStream(s3Stream);
+        try (GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(originalBytes))) {
 
-        FileUtils.validateNdjson(
-                gis,
+            // Validazione NDJSON generica
+            FileUtils.validateNdjson(
+                    gis,
 
-                // SELEZIONE DELLE RIGHE CANDIDATE
-                json ->
-                        json.has("event_name") &&
-                                json.get("event_name").asText().equals("ConsumerDelegationApproved") &&
-                                json.has("id") &&
-                                json.get("id").asText().equals(expectedDelegationId),
+                    // Righe candidate
+                    json ->
+                            json.has("event_name") &&
+                                    "ConsumerDelegationApproved".equals(json.get("event_name").asText()) &&
+                                    json.has("id") &&
+                                    expectedDelegationId.equals(json.get("id").asText()),
 
-                // VALIDAZIONE APPROFONDITA PER UNA RIGA
-                this::validateRow,
+                    // Validazione campi della riga
+                    this::validateRow,
 
-                // MESSAGGIO SE NESSUNA RIGA CANDIDATA È STATA TROVATA
-                String.format("File %s associato all'evento ConsumerDelegationApproved non presenta l'id atteso: %s", seed.getFile().getFilename(), expectedDelegationId)
-        );
+                    // Messaggio se nessuna riga candidata trovata
+                    "File %s associato all'evento ConsumerDelegationApproved non presenta l'id atteso: %s"
+                            .formatted(seed.getFile().getFilename(), expectedDelegationId)
+            );
+        }
+    }
+
+    /**
+     * Estrae il contenuto firmato da un file P7M.
+     */
+    private byte[] extractSignedContent(ValidatorStrategySeed seed) {
+        try {
+            CMSSignedData signedData = new CMSSignedData(seed.getFile().getContent());
+            CMSProcessable signedContent = signedData.getSignedContent();
+            return (byte[]) signedContent.getContent();
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Errore durante l'estrazione del contenuto firmato del file " + seed.getFile().getFilename(),
+                    e
+            );
+        }
     }
 
     /**
@@ -73,4 +94,5 @@ public class ConsumerDelegationApprovedEventValidator implements IFileValidator 
         return new ValidationResult(errors.isEmpty(), errors, json.toString());
     }
 }
+
 

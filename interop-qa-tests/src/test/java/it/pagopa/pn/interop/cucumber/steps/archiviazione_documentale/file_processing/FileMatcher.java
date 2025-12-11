@@ -24,26 +24,47 @@ public class FileMatcher implements IFileMatcher {
     public FileMatcher() {
         strategies.put(AGREEMENT_ACTIVATED, new AgreementActivatedStrategy());
         strategies.put(AGREEMENT_ACTIVATED_SIGNED, new AgreementActivatedStrategy());
+
         strategies.put(AGREEMENT_UPGRADED, new AgreementUpgradedStrategy());
+
         strategies.put(AGREEMENT_UPGRADED_EVENT, new AgreementUpgradedEventStrategy());
+
         strategies.put(CLIENT_DELETED_EVENT, new ClientDeletedEventStrategy());
+
         strategies.put(KEY_DELETED_EVENT, new KeyDeletedEventStrategy());
+
         strategies.put(KEYS_ADDED_EVENT, new KeysAddedEventStrategy());
+
         strategies.put(VOUCHER_EVENT, new VoucherEventStrategy());
-        strategies.put(CONSUMER_DELEGATION_APPROVED_EVENT, new ConsumerDelegationApprovedEventStrategy());
+
         strategies.put(CONSUMER_DELEGATION_APPROVED, new ConsumerDelegationApprovedStrategy());
         strategies.put(CONSUMER_DELEGATION_APPROVED_SIGNED, new ConsumerDelegationApprovedStrategy());
+
+        strategies.put(CONSUMER_DELEGATION_APPROVED_EVENT, new ConsumerDelegationApprovedEventStrategy());
+        strategies.put(CONSUMER_DELEGATION_APPROVED_EVENT_SIGNED, new ConsumerDelegationApprovedEventSignedStrategy());
+
         strategies.put(CONSUMER_DELEGATION_REVOKED_EVENT, new ConsumerDelegationRevokedEventStrategy());
+
         strategies.put(CONSUMER_DELEGATION_REVOKED, new ConsumerDelegationRevokedStrategy());
+
         strategies.put(PRODUCER_DELEGATION_APPROVED_EVENT, new ProducerDelegationApprovedEventStrategy());
+
         strategies.put(PRODUCER_DELEGATION_APPROVED, new ProducerDelegationApprovedStrategy());
+
         strategies.put(PRODUCER_DELEGATION_REVOKED_EVENT, new ProducerDelegationRevokedEventStrategy());
+
         strategies.put(PRODUCER_DELEGATION_REVOKED, new ProducerDelegationRevokedStrategy());
+
         strategies.put(DESCRIPTOR_ESERVICE_UPGRADED_EVENT, new DescriptorEserviceUpgradedEventStrategy());
+
         strategies.put(NEW_PURPOSE_VERSION_ACTIVATED, new NewPurposeVersionActivatedStrategy());
+
         strategies.put(PURPOSE_ACTIVATED, new PurposeActivatedStrategy());
+
         strategies.put(PURPOSE_TEMPLATE_PUBLISHED, new PurposeTemplatePublishedStrategy());
+
         strategies.put(PURPOSE_UPGRADED_EVENT, new PurposeUpgradedEventStrategy());
+
         strategies.put(PURPOSE_VERSION_ACTIVATED, new PurposeVersionActivatedStrategy());
     }
 
