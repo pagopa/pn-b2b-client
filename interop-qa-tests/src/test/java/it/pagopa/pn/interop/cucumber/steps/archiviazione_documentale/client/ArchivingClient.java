@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3Buc
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -17,12 +18,12 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @RequiredArgsConstructor
+@Slf4j
 public class ArchivingClient {
 
     @Data
@@ -58,6 +59,8 @@ public class ArchivingClient {
 
         AtomicReference<ArchivedFile> file = new AtomicReference<>();
         FileType fileType = seed.getType();
+        AtomicInteger windowEnlargement = new AtomicInteger();
+        boolean hasTimestamp = seed.centerTimestamp == null;
 
         // Inizializzo il polling
         S3BucketInfo bucketInfo = seed.getBucketInfo();
@@ -65,17 +68,9 @@ public class ArchivingClient {
 
         S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
 
-            ListObjectsV2Response res = s3.listObjectsV2(
-                    ListObjectsV2Request.builder()
-                            .bucket(bucketInfo.bucket())
-                            .prefix(bucketInfo.prefix())
-                            .build()
-            );
+            List<S3Object> latestObjects = getLatestNObjects(s3, bucketInfo, 50);
 
-            List<String> matchingFiles = res.contents().stream()
-                    // ORDINA DAL PIÙ RECENTE AL MENO RECENTE
-                    .sorted((o1, o2) -> o2.lastModified().compareTo(o1.lastModified()))
-
+            List<String> matchingFiles = latestObjects.stream()
                     // Converte in key
                     .map(S3Object::key)
 
@@ -95,9 +90,11 @@ public class ArchivingClient {
                     // Filtro per timestamp
                     .filter(key -> {
                         if (seed.centerTimestamp == null) return true;
+
                         Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
-                        Instant start = center.minusSeconds(seed.getDeltaSeconds());
-                        Instant end = center.plusSeconds(seed.getDeltaSeconds());
+                        Instant start = center.minusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
+                        Instant end = center.plusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
+
                         return ArchivingUtils.extractTimestampFromS3Key(key)
                                 .map(fileTs -> !fileTs.isBefore(start) && !fileTs.isAfter(end))
                                 .orElse(false);
@@ -111,6 +108,7 @@ public class ArchivingClient {
                         FileMatchingStrategy.MatchingStrategySeed strategySeed =
                                 new FileMatchingStrategy.MatchingStrategySeed(s3, fileType, s3BucketInfo, sharedStepsContext);
 
+                        log.info("Viene controllata la key: {}", key);
                         boolean match = fileMatcher.match(strategySeed);
 
                         if (match) {
@@ -123,6 +121,8 @@ public class ArchivingClient {
                     }
                 }
             }
+            else if(hasTimestamp)
+                windowEnlargement.addAndGet(300);
 
             return false;
         });
@@ -132,6 +132,70 @@ public class ArchivingClient {
         polling.executePolling((int) maxAttempts, seed.getPollIntervalMs());
 
         return file.get();
+    }
+
+    private List<S3Object> getLatestNObjects(S3Client s3, S3BucketInfo bucketInfo, int limit) {
+
+        Comparator<S3Object> safeComparator = (o1, o2) -> {
+            Instant t1 = o1.lastModified();
+            Instant t2 = o2.lastModified();
+
+            if (t1 == null && t2 == null) return 0;
+            if (t1 == null) return -1;
+            if (t2 == null) return 1;
+
+            return t1.compareTo(t2); // ASC (min-heap)
+        };
+
+        PriorityQueue<S3Object> minHeap = new PriorityQueue<>(limit, safeComparator);
+
+        String continuationToken = null;
+
+        do {
+            ListObjectsV2Request.Builder req = ListObjectsV2Request.builder()
+                    .bucket(bucketInfo.bucket())
+                    .prefix(bucketInfo.prefix());
+
+            if (continuationToken != null) {
+                req.continuationToken(continuationToken);
+            }
+
+            ListObjectsV2Response page = s3.listObjectsV2(req.build());
+
+            for (S3Object obj : page.contents()) {
+                Instant ts = obj.lastModified();
+                if (ts == null) continue;
+
+                if (minHeap.size() < limit) {
+                    minHeap.offer(obj);
+                } else {
+                    Instant oldest = minHeap.peek().lastModified();
+                    if (oldest == null || ts.isAfter(oldest)) {
+                        minHeap.poll();
+                        minHeap.offer(obj);
+                    }
+                }
+            }
+
+            continuationToken = page.nextContinuationToken();
+
+        } while (continuationToken != null);
+
+        List<S3Object> result = new ArrayList<>(minHeap);
+
+        // Ordina per lastModified DESC
+        result.sort((o1, o2) -> {
+            Instant t1 = o1.lastModified();
+            Instant t2 = o2.lastModified();
+
+            if (t1 == null && t2 == null) return 0;
+            if (t1 == null) return -1;
+            if (t2 == null) return 1;
+
+            return t2.compareTo(t1); // DESC
+        });
+
+        return result;
     }
 
     public List<ArchivedFile> getAllFilesInS3(SearchFileSeed seed, int limit) {
@@ -194,10 +258,9 @@ public class ArchivingClient {
 
     private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo) {
         ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
+        String key = bucketInfo.key();
 
-        String key = bucketInfo.key(); // se hai un getter, altrimenti bucketInfo.key()
-
-        // 👇 Estrai il nome file
+        // Estrai il nome file
         String filename = ArchivingUtils.extractFilenameFromS3Key(key);
         builder.filename(filename);
 
