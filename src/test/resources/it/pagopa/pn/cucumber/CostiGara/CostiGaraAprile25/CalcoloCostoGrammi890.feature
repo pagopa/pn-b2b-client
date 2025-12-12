@@ -45,6 +45,11 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1092   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1092   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
+      | 06029 | 1092   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1092   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 948   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-21GR_2] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -84,8 +89,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1195   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1195   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
+      | 06029 | 1195   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1195   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1036   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -131,6 +138,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1212   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1212   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
+      | 06029 | 1212   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1212   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1053   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -175,7 +186,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1215   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1215   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
+      | 06029 | 1215   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1215   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1056   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -220,7 +234,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1244   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1244   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
+      | 06029 | 1244   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1244   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1085   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -265,9 +282,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1335   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1335   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
-
+      | 06029 | 1335   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1335   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1163   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -310,10 +328,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1429   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1429   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
-
-
+      | 06029 | 1429   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1429   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1257   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -355,8 +373,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1433   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1433   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
+      | 06029 | 1433   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1433   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1261   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -400,6 +420,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1495   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1495   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
+      | 06029 | 1495   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1495   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1323   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -444,9 +468,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 1611   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 1611   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
-
+      | 06029 | 1611   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1611   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1422   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -488,8 +513,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 2033   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 2033   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
+      | 06029 | 2033   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 2033   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1843   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -531,10 +558,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 2036   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 2036   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
-
-
-
+      | 06029 | 2036   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 2036   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1847   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 
@@ -577,7 +604,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 67020 | 2686   | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
       | 86020 | 2686   | CAMPOCHIARO               | CB       | notifica analogica RECAPITISTA |
 
-
+      | 06029 | 2686   | VALFABBRICA               | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 2686   | DERUTA               | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1086   | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 2497   | QUARTU SANT'ELENA               | CA       | notifica analogica RECAPITISTA |
 
 
 

@@ -67,7 +67,7 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
 
     @Override
     public CheckCoverageResponse checkCoverage(SearchMode searchMode, CheckCoverageRequest checkCoverageRequest) throws RestClientException {
-        return apiPrivateCoverage.checkCoverage(searchMode, checkCoverageRequest);
+        return apiPrivateCoverage.checkCoverage(searchMode, checkCoverageRequest,null);
     }
 
     @Override
