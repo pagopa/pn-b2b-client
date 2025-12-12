@@ -22,7 +22,7 @@ public class ConfirmEmailBodyStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return "Ricevi questa comunicazione perch&eacute; hai inserito questo indirizzo";
     }
 

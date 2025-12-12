@@ -1,8 +1,9 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsNotification;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsSender;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForSms;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsNotificationDigital;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsRecipientDigital;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSmsSenderDigital;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForSmsDigital;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -21,8 +22,8 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
 
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        NotificationAarForSms notificationAARForSMS = createRequest(body, context);
-        String file = templateEngineClient.notificationAARForSMSDigital(selectLanguage(language), notificationAARForSMS);
+        NotificationAarForSmsDigital notificationAarForSmsDigital = createRequest(body, context);
+        String file = templateEngineClient.notificationAARForSMSDigital(selectLanguage(language), notificationAarForSmsDigital);
         return new TemplateEngineResult(file);
     }
 
@@ -32,29 +33,37 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
 //    }
 
         @Override
-    public String getTextToCheckLanguage(String language) {
-        return "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
+    public String getTextToCheckLanguage(String language, String recipientType) {
+        return switch (recipientType.toUpperCase()) {
+            case "PG" -> "La tua impresa ha ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata  dopo 7 giorni dalla ricezione.";
+            default -> "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
+        };
     }
 
-    private NotificationAarForSms createRequest(boolean body, TemplateRequestContext context) {
+    private NotificationAarForSmsDigital createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new NotificationAarForSms()
+        return new NotificationAarForSmsDigital()
+                .recipient(createRecipient(context)) // todo t mc
                 .notification(createNotification(context));
     }
+    private AarForSmsRecipientDigital createRecipient(TemplateRequestContext context) {
+        return new AarForSmsRecipientDigital()
+                .recipientType(context.getRecipientType());   // todo t mc
+    }
 
-    private AarForSmsNotification createNotification(TemplateRequestContext context) {
+    private AarForSmsNotificationDigital createNotification(TemplateRequestContext context) {
         return Optional.ofNullable(context.getNotification())
-                .map(data -> new AarForSmsNotification()
+                .map(data -> new AarForSmsNotificationDigital()
                         .iun(data.getIun())
                         .sender(createSender(data)))
                 .orElse(null);
     }
 
-    private AarForSmsSender createSender(TemplateNotification notification) {
+    private AarForSmsSenderDigital createSender(TemplateNotification notification) {
         return Optional.ofNullable(notification.getSender())
-                .map(data -> new AarForSmsSender()
+                .map(data -> new AarForSmsSenderDigital()
                         .paDenomination(data.getPaDenomination()))
                 .orElse(null);
     }

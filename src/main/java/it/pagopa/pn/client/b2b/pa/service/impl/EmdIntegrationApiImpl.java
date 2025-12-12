@@ -42,7 +42,7 @@ public class EmdIntegrationApiImpl {
         return checkTppApi.tokenCheckTPPWithHttpInfo(retrievalId);
     }
 
-    public ResponseEntity<PaymentUrlResponse> getPaymentUrl(String retrievalId, String noticeCode, String paTaxId) {
-        return paymentApi.getPaymentUrlWithHttpInfo(retrievalId, noticeCode, paTaxId, null);
+    public ResponseEntity<PaymentUrlResponse> getPaymentUrl(String retrievalId, String noticeCode, String paTaxId, Integer amount) {
+        return paymentApi.getPaymentUrlWithHttpInfo(retrievalId, noticeCode, paTaxId, amount);
     }
 }
