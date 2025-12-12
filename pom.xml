@@ -413,7 +413,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-private.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/999c5956b6832351040d3d76cbe1ce0ab9887678/docs/openapi/pn-radd-alt-private.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
