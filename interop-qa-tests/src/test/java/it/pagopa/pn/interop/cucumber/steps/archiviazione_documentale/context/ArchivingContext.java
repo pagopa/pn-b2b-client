@@ -31,11 +31,13 @@ public class ArchivingContext {
 
         wormBuckets = new HashMap<>();
         wormBuckets.put(AGREEMENT_ACTIVATED_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
+        wormBuckets.put(AGREEMENT_ACTIVATED_EVENT_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
         wormBuckets.put(CONSUMER_DELEGATION_APPROVED_SIGNED, "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/:year/:onlyMonth/:onlyDay/");
         wormBuckets.put(CONSUMER_DELEGATION_APPROVED_EVENT_SIGNED, "interop-signed-domain-events-qa-es1/interop-qa-events-signer/:year/:onlyMonth/:onlyDay/");
 
         buckets = new HashMap<>();
         buckets.put(AGREEMENT_ACTIVATED, String.format("interop-application-documents-qa-es1/qa/generated-documents-unsigned/agreement/%s/",sharedStepsContext.getAgreementId()));
+        buckets.put(AGREEMENT_ACTIVATED_EVENT, "interop-domain-events-qa-es1/year=:year/month=:onlyMonth/day=:onlyDay/");
         buckets.put(CONSUMER_DELEGATION_APPROVED, "interop-application-documents-qa-es1/qa/generated-documents-unsigned/delegation/:consumerDelegationId");
         buckets.put(CONSUMER_DELEGATION_APPROVED_EVENT, "interop-domain-events-qa-es1/year=:year/month=:onlyMonth/day=:onlyDay/");
 

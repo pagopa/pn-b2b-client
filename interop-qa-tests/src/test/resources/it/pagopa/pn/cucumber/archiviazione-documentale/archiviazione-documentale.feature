@@ -26,6 +26,11 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementActivated
     And verifica nel bucket S3 SIGNED l'esistenza del file AgreementActivatedSigned
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementActivatedEvent
+    And verifica che il file contenga le opportune informazioni
+    And verifica nel bucket S3 SIGNED l'esistenza del file AgreementActivatedEventSigned
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
   Scenario Outline: [AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"

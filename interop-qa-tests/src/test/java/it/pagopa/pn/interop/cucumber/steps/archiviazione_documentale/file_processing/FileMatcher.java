@@ -1,9 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing;
 
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.AgreementActivatedStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.AgreementUpgradedEventStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.AgreementUpgradedStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.agreement.*;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.ClientDeletedEventStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.KeyDeletedEventStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.match_strategy.auth.KeysAddedEventStrategy;
@@ -24,9 +22,10 @@ public class FileMatcher implements IFileMatcher {
     public FileMatcher() {
         strategies.put(AGREEMENT_ACTIVATED, new AgreementActivatedStrategy());
         strategies.put(AGREEMENT_ACTIVATED_SIGNED, new AgreementActivatedStrategy());
+        strategies.put(AGREEMENT_ACTIVATED_EVENT, new AgreementActivatedEventStrategy());
+        strategies.put(AGREEMENT_ACTIVATED_EVENT_SIGNED, new AgreementActivatedEventSignedStrategy());
 
         strategies.put(AGREEMENT_UPGRADED, new AgreementUpgradedStrategy());
-
         strategies.put(AGREEMENT_UPGRADED_EVENT, new AgreementUpgradedEventStrategy());
 
         strategies.put(CLIENT_DELETED_EVENT, new ClientDeletedEventStrategy());
