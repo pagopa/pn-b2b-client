@@ -807,7 +807,7 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-version-document-update
-  Scenario Outline: [INTEROP-EST-052-2] La modifica di un'interfaccia di un e-service template in stato PUBLISHED o SUSPENDED può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-052-2] La modifica di un'interfaccia di un e-service template in stato PUBLISHED o SUSPENDED NON può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
 
     # se il template passa per gli stati SUSPENDED o PUBLISHED allora l'interfaccia è già stata caricata
@@ -815,8 +815,7 @@ Feature: Test API of e-service template
 
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica del documento dell'e-service template
-    Then si ottiene response status code 204
-    And la modifica del documento di tipo INTERFACE dell'e-service template è stata effettuata correttamente
+    Then si ottiene response status code 400
     Examples:
       | ruolo        | stato     |
       | admin        | PUBLISHED |
