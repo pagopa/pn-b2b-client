@@ -1,0 +1,32 @@
+package it.pagopa.interop.purpose.service;
+
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import org.springframework.web.client.RestClientException;
+
+import java.io.File;
+import java.util.List;
+import java.util.UUID;
+
+public interface IPurposeTemplateClient extends SettableBearerToken {
+    RiskAnalysisTemplateAnswerResponse addPurposeTemplateRiskAnalysisAnswer(UUID purposeTemplateId, RiskAnalysisTemplateAnswerRequest riskAnalysisTemplateAnswerRequest) throws RestClientException;
+    RiskAnalysisTemplateAnswerAnnotation addPurposeTemplateRiskAnalysisAnswerAnnotation(UUID purposeTemplateId, UUID answerId, RiskAnalysisTemplateAnswerAnnotationSeed riskAnalysisTemplateAnswerAnnotationSeed) throws RestClientException;
+    RiskAnalysisTemplateAnswerAnnotationDocument addRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, String prettyName, org.springframework.core.io.Resource doc) throws RestClientException;
+    void archivePurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+    CreatedResource createPurposeTemplate(PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
+    void deletePurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+    void deleteRiskAnalysisTemplateAnswerAnnotation(UUID purposeTemplateId, UUID answerId) throws RestClientException;
+    void deleteRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException;
+    CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis, Boolean handlesPersonalData) throws RestClientException;
+    CreatorPurposeTemplates getCreatorPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> eserviceIds, List<PurposeTemplateState> states) throws RestClientException;
+    PurposeTemplateWithCompactCreator getPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+    EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, List<UUID> producerIds, String eserviceName) throws RestClientException;
+    File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException;
+    EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject2 inlineObject2) throws RestClientException;
+    void publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+    void suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+    void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject3 inlineObject3) throws RestClientException;
+    void unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
+    PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
+
+}
