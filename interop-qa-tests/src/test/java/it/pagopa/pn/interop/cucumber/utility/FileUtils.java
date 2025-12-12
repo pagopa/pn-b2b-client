@@ -456,34 +456,34 @@ public class FileUtils {
 
                 ValidationResult result = validator.apply(json);
 
-                if (!result.valid()) {
+                if (result.valid()) {
+                    foundValid = true;
+                    break; // una riga valida è sufficiente
+                } else {
                     String errorBlock = String.format(
                             "Riga %d NON valida:%nJSON: %s%nErrori:%n  - %s%n%n",
-                            lineNumber+1,
+                            lineNumber,
                             result.rawJson(),
                             String.join("\n  - ", result.errors())
                     );
                     aggregatedErrors.add(errorBlock);
                 }
-
             }
 
         } catch (Exception e) {
             throw new RuntimeException("Errore nella validazione NDJSON", e);
         }
 
-        // 3Nessuna riga candidata trovata
         if (!foundCandidate) {
             throw new RuntimeException(notFoundMessage);
         }
 
-        // Righe candidate trovate ma tutte invalide
         if (!foundValid) {
             String message = "Righe candidate trovate, ma tutte non valide:\n" +
                     String.join("\n", aggregatedErrors);
             throw new RuntimeException(message);
         }
-
     }
+
 
 }

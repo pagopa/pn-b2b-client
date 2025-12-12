@@ -93,9 +93,12 @@ public class ArchivingClient {
 
                         if (fileNameParts == null) return false;
 
+                        if(seed.centerTimestamp != null && fileNameParts.timestamp() == null)
+                            log.error("Previsto un polling per timestamp ma il file {} non ha timestamp nel nome", filename);
+
                         boolean inInterval = true;
-                        if(seed.centerTimestamp != null) {
-                            Instant fileTs = Instant.parse(fileNameParts.timestamp());
+                        if(seed.centerTimestamp != null && fileNameParts.timestamp() != null) {
+                            Instant fileTs = ArchivingUtils.parse(fileNameParts.timestamp());
 
                             Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
                             Instant start = center.minusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
@@ -104,7 +107,7 @@ public class ArchivingClient {
                             inInterval = !fileTs.isBefore(start) && !fileTs.isAfter(end);
                         }
 
-                        return inInterval && fileNameParts.extension().equals(fileType.getFormatRegex());
+                        return inInterval && fileNameParts.extension().equals(fileType.getExtension());
                     })
 
                     .toList();
@@ -119,7 +122,7 @@ public class ArchivingClient {
                         boolean match = fileMatcher.match(strategySeed);
 
                         if (match) {
-                            file.set(buildArchivedDocument(s3, s3BucketInfo));
+                            file.set(buildArchivedDocument(s3, s3BucketInfo, seed));
                             return true;
                         }
 
@@ -256,16 +259,19 @@ public class ArchivingClient {
                     obj.key()
             );
 
-            ArchivedFile archived = buildArchivedDocument(s3, info);
+            ArchivedFile archived = buildArchivedDocument(s3, info, seed);
             result.add(archived);
         }
 
         return result;
     }
 
-    private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo) {
+    private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo, SearchFileSeed seed) {
         ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
         String key = bucketInfo.key();
+
+        // Inserisco il type
+        builder.type(seed.getType());
 
         // Estrai il nome file
         String filename = ArchivingUtils.extractFilenameFromS3Key(key);
