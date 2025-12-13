@@ -47,4 +47,11 @@ public enum FileType {
         this.extension = extension;
         this.formatRegex = formatRegex;
     }
+
+    public static FileType fromCamelCase(String value) {
+        return FileType.valueOf(
+                value.replaceAll("([a-z])([A-Z])", "$1_$2")
+                        .toUpperCase()
+        );
+    }
 }
