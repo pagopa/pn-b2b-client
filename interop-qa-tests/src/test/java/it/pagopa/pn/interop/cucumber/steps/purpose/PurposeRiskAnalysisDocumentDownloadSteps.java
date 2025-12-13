@@ -46,21 +46,25 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
     @When("l'utente scarica il documento di analisi del rischio")
     public void userDownloadRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        dataPreparationService.waitRiskAnalysisDocument();
 
         Purpose getPurposeResponse = clientTokenConfigurator.getPurposeApiClient().getPurpose(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
         );
         commonUtils.assertValidResponse();
         purposeVersions = getPurposeResponse.getVersions();
+        UUID riskAnalysisId = Optional.ofNullable(getPurposeResponse.getCurrentVersion())
+                .map(PurposeVersion::getRiskAnalysisDocument)
+                .map(PurposeVersionDocument::getId)
+                .orElse(null);
+
+        sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getRiskAnalysisDocument(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId()),
-                        Optional.ofNullable(getPurposeResponse.getCurrentVersion())
-                                .map(PurposeVersion::getRiskAnalysisDocument)
-                                .map(PurposeVersionDocument::getId)
-                                .orElse(null)
+                        riskAnalysisId
                 )
         );
     }
