@@ -59,6 +59,7 @@ public class FileMatcher implements IFileMatcher {
         strategies.put(NEW_PURPOSE_VERSION_ACTIVATED, new NewPurposeVersionActivatedStrategy());
 
         strategies.put(PURPOSE_ACTIVATED, new PurposeActivatedStrategy());
+        strategies.put(PURPOSE_ACTIVATED_SIGNED, new PurposeActivatedStrategy());
 
         strategies.put(PURPOSE_TEMPLATE_PUBLISHED, new PurposeTemplatePublishedStrategy());
 

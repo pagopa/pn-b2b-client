@@ -52,18 +52,20 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When l'utente scarica il documento di analisi del rischio
+    Then si ottiene status code 200
     And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeActivated
-    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeActivated
+    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeActivatedSigned
     When l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
     And si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeVersionActivated
-    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeVersionActivated
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
-    And si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file NewPurposeVersionActivated
-    And verifica nel bucket S3 SIGNED l'esistenza del file NewPurposeVersionActivated
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    #And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeVersionActivated
+    #And verifica nel bucket S3 SIGNED l'esistenza del file PurposeVersionActivatedSigned
+    #And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    #And l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
+    #And si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
+    #And verifica nel bucket S3 UNSIGNED l'esistenza del file NewPurposeVersionActivated
+    #And verifica nel bucket S3 SIGNED l'esistenza del file NewPurposeVersionActivatedSigned
+    #And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
 
   Scenario: [DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione

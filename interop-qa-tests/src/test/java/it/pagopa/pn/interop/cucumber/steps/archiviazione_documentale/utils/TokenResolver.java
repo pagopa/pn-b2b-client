@@ -36,7 +36,10 @@ public class TokenResolver {
             ":kid", "clientCommonContext.keyId",
             ":agreementId","agreementId",
             ":consumerDelegationId", "delegationCommonContext.getDelegationId()",
-            ":producerDelegationId", "delegationCommonContext.getDelegationId()"
+            ":producerDelegationId", "delegationCommonContext.getDelegationId()",
+            ":purposeId", "purposeCommonContext.getLastPurposeId()",
+            ":purposeVersionId", "purposeCommonContext.getCurrentVersionId()",
+            ":riskAnalysisId", "riskAnalysisCommonContext.getRiskAnalysisId()"
     );
 
     private final SharedStepsContext sharedContext;
