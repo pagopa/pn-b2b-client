@@ -13,11 +13,11 @@ public class ListFileTokenSource implements IFileTokenSource {
     private final List<FileToken> tokens;
 
     public static ListFileTokenSource of(String... tokens) {
-        return new ListFileTokenSource(Arrays.stream(tokens).map(FileToken::new).toList());
+        return new ListFileTokenSource(Arrays.stream(tokens).map(FileToken::ofValue).toList());
     }
 
     public static ListFileTokenSource of(List<String> tokens) {
-        return new ListFileTokenSource(tokens.stream().map(FileToken::new).toList());
+        return new ListFileTokenSource(tokens.stream().map(FileToken::ofValue).toList());
     }
 
     @Override
