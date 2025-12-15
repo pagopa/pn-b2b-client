@@ -1,6 +1,6 @@
-package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model;
+package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +14,7 @@ import java.time.Instant;
 @Builder
 @ToString
 public class ArchivedFile {
-    private S3BucketInfo bucketInfo;
-    private FileType type;
+    private BucketUrl bucketInfo;
     private long contentLength;
     private String contentType;
     private Instant creationDate;
@@ -28,7 +27,6 @@ public class ArchivedFile {
     public static ArchivedFile copyMetadataOf(ArchivedFile other) {
         return ArchivedFile.builder()
                 .bucketInfo(other.bucketInfo)
-                .type(other.type)
                 .contentLength(other.contentLength)
                 .contentType(other.contentType)
                 .creationDate(other.creationDate)

@@ -32,7 +32,7 @@ public class TokenResolver {
 
     private static final Map<String, String> DYNAMIC_TOKENS = Map.of(
             ":clientId", "clientCommonContext.getLastClient()",
-            ":userId", "identityService.getUserId(tenantType, role)",
+            ":userId", "identityService.getUserId(tenantType, bucketRole)",
             ":kid", "clientCommonContext.keyId",
             ":agreementId","agreementId",
             ":consumerDelegationId", "delegationCommonContext.getDelegationId()",
@@ -48,7 +48,7 @@ public class TokenResolver {
 
         if (value == null) return null;
 
-        // Caso 1: stringa tipo key=:token
+        // Caso 1: stringa tipo key=:fileToken
         if (value.contains("=")) {
             String[] parts = value.split("=", 2);
 
@@ -56,15 +56,15 @@ public class TokenResolver {
                 String key = parts[0];
                 String right = parts[1];
 
-                // solo la parte destra può essere un token
+                // solo la parte destra può essere un fileToken
                 if (isToken(right)) {
                     return key + "=" + resolveSingleToken(right);
                 }
             }
-            return value; // non è un token e non contiene token risolvibili
+            return value; // non è un fileToken e non contiene fileToken risolvibili
         }
 
-        // Caso 2: token puro come ":year" o ":userId"
+        // Caso 2: fileToken puro come ":year" o ":userId"
         if (isToken(value)) {
             return resolveSingleToken(value);
         }

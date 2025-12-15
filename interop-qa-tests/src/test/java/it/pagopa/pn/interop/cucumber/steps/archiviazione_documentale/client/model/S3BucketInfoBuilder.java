@@ -1,11 +1,11 @@
-package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model;
+package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Builder intelligente per {@link S3BucketInfo}.
- * Accetta un path completo (es. bucket/prefix/file) e calcola automaticamente bucket, prefix e key.
+ * Builder intelligente per {@link BucketUrl}.
+ * Accetta un path completo (es. base/prefix/file) e calcola automaticamente base, prefix e key.
  */
 public class S3BucketInfoBuilder {
 
@@ -25,7 +25,7 @@ public class S3BucketInfoBuilder {
         return this;
     }
 
-    public S3BucketInfo build() {
+    public BucketUrl build() {
         if (fullPath == null || fullPath.isBlank()) {
             throw new IllegalStateException("Il percorso completo S3 non può essere nullo o vuoto.");
         }
@@ -63,7 +63,7 @@ public class S3BucketInfoBuilder {
             }
         }
 
-        return new S3BucketInfo(bucket, prefix, key);
+        return new BucketUrl(bucket, prefix, key);
     }
 
     private String replaceDateTokens(String input) {

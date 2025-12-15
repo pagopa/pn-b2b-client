@@ -1,15 +1,19 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client;
 
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.FileType;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ArchivedFile;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.BucketRole;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileLocation;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.FileProcessor;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ContentType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.FileCandidate;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.FileMatcher;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.IFileMatcher;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.FileNameParts;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileNameParts;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +21,11 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils.applyFileFormatRegex;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -32,16 +33,13 @@ public class ArchivingClient {
 
     @Data
     @Builder
-    public static class SearchFileSeed {
+    public static class PollingSpecification {
 
         @NonNull
-        private FileType type;
-
-        @NonNull
-        private S3BucketInfo bucketInfo;
+        private FileInfo fileInfo;
 
         @Builder.Default
-        private boolean isSigned = false;
+        private BucketRole bucketRole = BucketRole.STANDARD;
 
         @Builder.Default
         private String centerTimestamp = null;
@@ -54,97 +52,100 @@ public class ArchivingClient {
 
         @Builder.Default
         private long pollIntervalMs = 1_000;
+
+        public boolean hasTimestamp() {
+            return centerTimestamp != null;
+        }
     }
 
-    private final FileMatcher fileMatcher = new FileMatcher();
-    private final SharedStepsContext sharedStepsContext;
-    private final TokenResolver tokenResolver;
+    private final FileProcessor fileProcessor = new FileProcessor();
 
-    public ArchivedFile findS3FileInInterval(SearchFileSeed seed) {
+    public ArchivedFileMatched findS3FileInInterval(PollingSpecification spec) {
 
-        AtomicReference<ArchivedFile> file = new AtomicReference<>();
-        FileType fileType = seed.getType();
-        AtomicInteger windowEnlargement = new AtomicInteger();
-        boolean hasTimestamp = seed.centerTimestamp == null;
+        FileLocation location = resolveLocation(spec);
+        BucketUrl bucket = location.bucketUrl();
+        boolean useTimestamp = useTimestampFilter(location, spec);
 
-        // Inizializzo il polling
-        S3BucketInfo bucketInfo = seed.getBucketInfo();
         Set<String> checkedKeys = new HashSet<>();
+        AtomicInteger windowEnlargement = new AtomicInteger();
+        AtomicReference<ArchivedFileMatched> match = new AtomicReference<>();
 
         S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
 
-            List<S3Object> latestObjects = getLatestNObjects(s3, bucketInfo, 50);
-
-            List<String> matchingFiles = latestObjects.stream()
-                    // Converte in key
+            List<String> candidateKeys = getLatestNObjects(s3, bucket, 50).stream()
                     .map(S3Object::key)
-
-                    // Skip oggetti gia controllati
-                    .filter(key -> {
-                        if (checkedKeys.contains(key)) return false;
-                        checkedKeys.add(key);
-                        return true;
-                    })
-
-                    // Filtro per formato e timestamp
-                    .filter(key -> {
-                        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
-                        FileNameParts fileNameParts = applyFileFormatRegex(filename, fileType);
-
-                        if (fileNameParts == null) return false;
-
-                        if(seed.centerTimestamp != null && fileNameParts.timestamp() == null)
-                            log.error("Previsto un polling per timestamp ma il file {} non ha timestamp nel nome", filename);
-
-                        boolean inInterval = true;
-                        if(seed.centerTimestamp != null && fileNameParts.timestamp() != null) {
-                            Instant fileTs = ArchivingUtils.parse(fileNameParts.timestamp());
-
-                            Instant center = ArchivingUtils.parse(seed.getCenterTimestamp());
-                            Instant start = center.minusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
-                            Instant end = center.plusSeconds(seed.getDeltaSeconds() + windowEnlargement.get());
-
-                            inInterval = !fileTs.isBefore(start) && !fileTs.isAfter(end);
-                        }
-
-                        return inInterval && fileNameParts.extension().equals(fileType.getExtension());
-                    })
-
+                    .filter(key -> isNotAlreadyChecked(key, checkedKeys))
+                    .filter(key -> isCandidateKey(key, spec, useTimestamp, windowEnlargement.get()))
                     .toList();
 
-            if (!matchingFiles.isEmpty()) {
-                for (String key : matchingFiles) {
-                    try {
-                        S3BucketInfo s3BucketInfo = new S3BucketInfo(bucketInfo.bucket(), bucketInfo.prefix(), key);
-                        IFileMatcher.MatchingStrategySeed strategySeed = new IFileMatcher.MatchingStrategySeed(s3, fileType, s3BucketInfo, sharedStepsContext, tokenResolver);
-
-                        log.info("Viene controllata la key: {}", key);
-                        boolean match = fileMatcher.match(strategySeed);
-
-                        if (match) {
-                            file.set(buildArchivedDocument(s3, s3BucketInfo, seed));
-                            return true;
-                        }
-
-                    } catch (IOException e) {
-                        throw new RuntimeException("Errore handler " + key, e);
-                    }
+            for (String key : candidateKeys) {
+                ArchivedFileMatched result = tryMatchFile(s3, bucket, key, spec.fileInfo);
+                if (result != null) {
+                    match.set(result);
+                    return true;
                 }
             }
-            else if(hasTimestamp)
+
+            if (candidateKeys.isEmpty() && useTimestamp) {
                 windowEnlargement.addAndGet(300);
+            }
 
             return false;
         });
 
-        // Polling
-        long maxAttempts = (seed.getTimeoutMs() / seed.getPollIntervalMs()) + 1;
-        polling.executePolling((int) maxAttempts, seed.getPollIntervalMs());
+        polling.executePolling(
+                maxAttempts(spec),
+                spec.getPollIntervalMs()
+        );
 
-        return file.get();
+        return match.get();
     }
 
-    private List<S3Object> getLatestNObjects(S3Client s3, S3BucketInfo bucketInfo, int limit) {
+    private FileLocation resolveLocation(PollingSpecification spec) {
+        return spec.fileInfo
+                .locationFor(spec.getBucketRole())
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Nessuna location trovata per %s e %s"
+                                        .formatted(spec.fileInfo, spec.getBucketRole())
+                        ));
+    }
+
+    private boolean isCandidateKey(String key, PollingSpecification spec, boolean useTimestamp, int windowEnlargement) {
+        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
+        FileNameParts parts = FileNameParts.parse(filename);
+
+        if (parts == null) return false;
+
+        if (!useTimestamp) return true;
+
+        if (parts.timestamp() == null) {
+            log.error("Previsto polling per timestamp ma il file {} non lo contiene", filename);
+            return false;
+        }
+
+        Instant fileTs = ArchivingUtils.parse(parts.timestamp());
+        Instant center = ArchivingUtils.parse(spec.getCenterTimestamp());
+
+        Instant start = center.minusSeconds(spec.getDeltaSeconds() + windowEnlargement);
+        Instant end = center.plusSeconds(spec.getDeltaSeconds() + windowEnlargement);
+
+        return !fileTs.isBefore(start) && !fileTs.isAfter(end);
+    }
+
+    private boolean useTimestampFilter(FileLocation location, PollingSpecification spec) {return location.filenameFormat().hasTimestamp() && spec.hasTimestamp();}
+
+    private boolean isNotAlreadyChecked(String key, Set<String> checkedKeys) {
+        if (checkedKeys.contains(key)) {
+            return false;
+        }
+        checkedKeys.add(key);
+        return true;
+    }
+
+    private int maxAttempts(PollingSpecification spec) {return (int) ((spec.getTimeoutMs() / spec.getPollIntervalMs()) + 1);}
+
+    private List<S3Object> getLatestNObjects(S3Client s3, BucketUrl bucketInfo, int limit) {
 
         Comparator<S3Object> safeComparator = (o1, o2) -> {
             Instant t1 = o1.lastModified();
@@ -163,7 +164,7 @@ public class ArchivingClient {
 
         do {
             ListObjectsV2Request.Builder req = ListObjectsV2Request.builder()
-                    .bucket(bucketInfo.bucket())
+                    .bucket(bucketInfo.base())
                     .prefix(bucketInfo.prefix());
 
             if (continuationToken != null) {
@@ -208,70 +209,38 @@ public class ArchivingClient {
         return result;
     }
 
-    public List<ArchivedFile> getAllFilesInS3(SearchFileSeed seed, int limit) {
+    private ArchivedFileMatched tryMatchFile(S3Client s3, BucketUrl bucket, String key, FileInfo fileInfo) {
+        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
+        FileNameParts parts = FileNameParts.parse(filename);
 
-        S3BucketInfo bucketInfo = seed.getBucketInfo();
-        S3Client s3 = S3Client.builder()
-                .region(Region.EU_SOUTH_1)
-                .build();
-
-        List<S3Object> allObjects = new java.util.ArrayList<>();
-
-        String continuationToken = null;
-
-        // --- PAGINA FINCHÉ CI SONO ALTRI OGGETTI ---
-        do {
-            ListObjectsV2Request.Builder reqBuilder = ListObjectsV2Request.builder()
-                    .bucket(bucketInfo.bucket())
-                    .prefix(bucketInfo.prefix());
-
-            if (continuationToken != null) {
-                reqBuilder.continuationToken(continuationToken);
-            }
-
-            ListObjectsV2Response resp = s3.listObjectsV2(reqBuilder.build());
-
-            if (resp.contents() != null) {
-                allObjects.addAll(resp.contents());
-            }
-
-            continuationToken = resp.nextContinuationToken();
-
-        } while (continuationToken != null);
-
-
-        // --- ORDINA PER DATA (dal più recente al meno recente) ---
-        allObjects.sort((o1, o2) -> o2.lastModified().compareTo(o1.lastModified()));
-
-        // Limita ai primi N
-        List<S3Object> topN = allObjects.stream()
-                .limit(limit)
-                .toList();
-
-        // --- COSTRUISCI I RISULTATI COME ArchivedFile ---
-        List<ArchivedFile> result = new java.util.ArrayList<>();
-
-        for (S3Object obj : topN) {
-
-            S3BucketInfo info = new S3BucketInfo(
-                    bucketInfo.bucket(),
-                    bucketInfo.prefix(),
-                    obj.key()
-            );
-
-            ArchivedFile archived = buildArchivedDocument(s3, info, seed);
-            result.add(archived);
+        if (parts == null || parts.extension() == null) {
+            throw new IllegalStateException("FileNameParts non valido per " + filename);
         }
 
-        return result;
+        ContentType contentType = ContentType.fromExtension(parts.extension());
+
+        FileCandidate candidate = new FileCandidate(
+                S3Utils.getFileStream(s3, bucket),
+                filename,
+                contentType
+        );
+
+        ProcessedFile processed = fileProcessor.normalize(candidate);
+        ValidationResult validation = fileInfo.validation().validate(processed);
+
+        log.info("Controllata la key {}", key);
+
+        if (!validation.hasAllRequired()) {
+            return null;
+        }
+
+        ArchivedFile archivedFile = buildArchivedDocument(s3, bucket);
+        return new ArchivedFileMatched(archivedFile, validation);
     }
 
-    private ArchivedFile buildArchivedDocument(S3Client s3, S3BucketInfo bucketInfo, SearchFileSeed seed) {
+    private ArchivedFile buildArchivedDocument(S3Client s3, BucketUrl bucketInfo) {
         ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
         String key = bucketInfo.key();
-
-        // Inserisco il type
-        builder.type(seed.getType());
 
         // Estrai il nome file
         String filename = ArchivingUtils.extractFilenameFromS3Key(key);

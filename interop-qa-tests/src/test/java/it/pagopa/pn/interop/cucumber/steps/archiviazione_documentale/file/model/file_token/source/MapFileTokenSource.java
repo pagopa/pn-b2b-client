@@ -1,7 +1,7 @@
-package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.model.file_token.source;
+package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.model.file_token.FileToken;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file_processing.model.file_token.entry.KeyedFileTokenEntry;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.FileToken;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.entry.KeyedFileTokenEntry;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

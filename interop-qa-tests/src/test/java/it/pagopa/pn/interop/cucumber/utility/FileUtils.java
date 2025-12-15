@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.ValidationResult;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.JsonValidationResult;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -434,7 +434,7 @@ public class FileUtils {
     public static void validateNdjson(
             InputStream is,
             Predicate<JsonNode> candidateSelector,
-            Function<JsonNode, ValidationResult> validator,
+            Function<JsonNode, JsonValidationResult> validator,
             String notFoundMessage
     ) {
         List<String> aggregatedErrors = new ArrayList<>();
@@ -454,9 +454,9 @@ public class FileUtils {
                 if (!candidateSelector.test(json)) continue;
                 foundCandidate = true;
 
-                ValidationResult result = validator.apply(json);
+                JsonValidationResult result = validator.apply(json);
 
-                if (result.valid()) {
+                if (result.isValid()) {
                     foundValid = true;
                     break; // una riga valida è sufficiente
                 } else {
@@ -482,6 +482,42 @@ public class FileUtils {
             String message = "Righe candidate trovate, ma tutte non valide:\n" +
                     String.join("\n", aggregatedErrors);
             throw new RuntimeException(message);
+        }
+    }
+
+
+    public static boolean validateNdjsonAnyMatch(
+            InputStream is,
+            Predicate<JsonNode> candidateSelector,
+            Function<JsonNode, JsonValidationResult> validator
+    ) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+
+            String line;
+            boolean foundCandidate = false;
+
+            while ((line = reader.readLine()) != null) {
+
+                JsonNode json = objectMapper.readTree(line);
+
+                if (!candidateSelector.test(json)) {
+                    continue;
+                }
+
+                foundCandidate = true;
+
+                JsonValidationResult result = validator.apply(json);
+
+                if (result.isValid()) {
+                    return true; // basta UNA riga valida
+                }
+            }
+
+            // nessuna riga candidata o tutte invalide
+            return false;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante la validazione NDJSON", e);
         }
     }
 

@@ -17,7 +17,12 @@ public class ArchivingParameterTypes {
             case "unsigned", "UNSIGNED" -> {
                 return false;
             }
-            default -> throw new IllegalArgumentException("Tipo di bucket non riconosciuto: " + type);
+            default -> throw new IllegalArgumentException("Tipo di base non riconosciuto: " + type);
         }
+    }
+
+    @ParameterType("STANDARD|WORM")
+    public BucketRole bucketRole(String role) {
+        return BucketRole.valueOf(role);
     }
 }

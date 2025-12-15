@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.utility;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.model.S3BucketInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -9,23 +9,23 @@ import java.util.Objects;
 
 public class S3Utils {
 
-    public static ResponseInputStream<GetObjectResponse> getFileStream(S3Client s3, S3BucketInfo bucketInfo) {
+    public static ResponseInputStream<GetObjectResponse> getFileStream(S3Client s3, BucketUrl bucketInfo) {
         validateInput(s3, bucketInfo);
 
         GetObjectRequest req = GetObjectRequest.builder()
-                .bucket(bucketInfo.bucket())
+                .bucket(bucketInfo.base())
                 .key(bucketInfo.key())
                 .build();
 
         return s3.getObject(req);
     }
 
-    public static GetObjectRetentionResponse getRetentionInfo(S3Client s3, S3BucketInfo bucketInfo) {
+    public static GetObjectRetentionResponse getRetentionInfo(S3Client s3, BucketUrl bucketInfo) {
         validateInput(s3, bucketInfo);
 
         try {
             GetObjectRetentionRequest retentionReq = GetObjectRetentionRequest.builder()
-                    .bucket(bucketInfo.bucket())
+                    .bucket(bucketInfo.base())
                     .key(bucketInfo.key())
                     .build();
 
@@ -33,18 +33,18 @@ public class S3Utils {
 
         } catch (S3Exception e) {
             System.out.println("Retention info non disponibile per " +
-                    bucketInfo.bucket() + "/" + bucketInfo.key() +
+                    bucketInfo.base() + "/" + bucketInfo.key() +
                     ": " + e.awsErrorDetails().errorMessage());
             return null;
         }
     }
 
-    public static GetObjectLegalHoldResponse getLegalHoldInfo(S3Client s3, S3BucketInfo bucketInfo) {
+    public static GetObjectLegalHoldResponse getLegalHoldInfo(S3Client s3, BucketUrl bucketInfo) {
         validateInput(s3, bucketInfo);
 
         try {
             GetObjectLegalHoldRequest holdReq = GetObjectLegalHoldRequest.builder()
-                    .bucket(bucketInfo.bucket())
+                    .bucket(bucketInfo.base())
                     .key(bucketInfo.key())
                     .build();
 
@@ -52,28 +52,28 @@ public class S3Utils {
 
         } catch (S3Exception e) {
             System.out.println("Legal hold non disponibile per " +
-                    bucketInfo.bucket() + "/" + bucketInfo.key() +
+                    bucketInfo.base() + "/" + bucketInfo.key() +
                     ": " + e.awsErrorDetails().errorMessage());
             return null;
         }
     }
 
-    public static HeadObjectResponse getHeader(S3Client s3, S3BucketInfo bucketInfo) {
+    public static HeadObjectResponse getHeader(S3Client s3, BucketUrl bucketInfo) {
         validateInput(s3, bucketInfo);
 
         HeadObjectRequest headReq = HeadObjectRequest.builder()
-                .bucket(bucketInfo.bucket())
+                .bucket(bucketInfo.base())
                 .key(bucketInfo.key())
                 .build();
 
         return s3.headObject(headReq);
     }
 
-    private static void validateInput(S3Client s3, S3BucketInfo bucketInfo) {
+    private static void validateInput(S3Client s3, BucketUrl bucketInfo) {
         Objects.requireNonNull(s3, "S3 client must not be null");
         Objects.requireNonNull(bucketInfo, "BucketInfo must not be null");
 
-        if (bucketInfo.bucket() == null || bucketInfo.bucket().isBlank()) {
+        if (bucketInfo.base() == null || bucketInfo.base().isBlank()) {
             throw new IllegalArgumentException("Bucket name must not be null or empty");
         }
 
