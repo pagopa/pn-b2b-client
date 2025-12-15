@@ -25,10 +25,10 @@ public class ArchivingParameterTypes {
 
     @ParameterType("[A-Za-z]+")
     public InteropEvent interopEvent(String event) {
-        return InteropEvent.valueOf(event);
+        return InteropEvent.fromValue(event);
     }
 
-    @ParameterType("[A-Za-z]+")
+    @ParameterType("[A-Za-z_]+")
     public InteropFile interopFile(String file) {
         return InteropFile.valueOf(file);
     }
