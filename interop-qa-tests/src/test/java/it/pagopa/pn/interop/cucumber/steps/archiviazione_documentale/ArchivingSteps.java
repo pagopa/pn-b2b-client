@@ -62,8 +62,7 @@ public class ArchivingSteps {
         context.setMatch(archivedFile);
     }
 
-    @Then("verifica che il file nel base SIGNED abbia la proprietà \"Retain until date\" pari a 10 anni dalla data di creazione")
-    @Then("verifica che il file nel base WORM abbia la proprietà \"Retain until date\" pari a 10 anni dalla data di creazione")
+    @Then("verifica che il file nel bucket WORM abbia la proprietà \"Retain until date\" pari a 10 anni dalla data di creazione")
     public void checkRetainUntilDate() {
 
         ArchivedFile archivedFile = context.getMatch().file();
