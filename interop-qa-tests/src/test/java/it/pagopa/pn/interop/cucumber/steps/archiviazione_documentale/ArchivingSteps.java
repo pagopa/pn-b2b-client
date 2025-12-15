@@ -5,7 +5,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.BucketRole;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ArchivedFile;

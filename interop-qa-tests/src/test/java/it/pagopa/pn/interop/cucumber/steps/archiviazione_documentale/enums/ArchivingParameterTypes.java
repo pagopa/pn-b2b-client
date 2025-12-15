@@ -1,12 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
 
 public class ArchivingParameterTypes {
-    @ParameterType("[A-Za-z]+")
-    public FileType documentType(String type) {
-        return FileType.fromCamelCase(type);
-    }
 
     @ParameterType("signed|SIGNED|unsigned|UNSIGNED")
     public boolean bucketType(String type) {
@@ -24,5 +21,15 @@ public class ArchivingParameterTypes {
     @ParameterType("STANDARD|WORM")
     public BucketRole bucketRole(String role) {
         return BucketRole.valueOf(role);
+    }
+
+    @ParameterType("[A-Za-z]+")
+    public InteropEvent interopEvent(String event) {
+        return InteropEvent.valueOf(event);
+    }
+
+    @ParameterType("[A-Za-z]+")
+    public InteropFile interopFile(String file) {
+        return InteropFile.valueOf(file);
     }
 }

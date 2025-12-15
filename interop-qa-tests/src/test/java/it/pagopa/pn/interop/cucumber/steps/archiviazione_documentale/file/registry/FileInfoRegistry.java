@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 import java.util.Set;
 
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.BucketRole.*;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.*;
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile.*;
 
 @RequiredArgsConstructor

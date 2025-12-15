@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client;
 
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.BucketRole;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileLocation;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
