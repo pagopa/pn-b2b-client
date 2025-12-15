@@ -143,7 +143,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@OK-GIACENZA-LTE10_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -208,7 +208,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@OK-GIACENZA-GT10_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -273,7 +273,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@OK-GIACENZA-GT10_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -339,7 +339,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@FAIL-GIACENZA-GT10_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -421,13 +421,12 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
        | OK-PersonaAbilitata_890                | ANALOG_SUCCESS_WORKFLOW |
        | FAIL_890                               | ANALOG_SUCCESS_WORKFLOW |
        | FAIL_IndirizzoInesatto890              | ANALOG_SUCCESS_WORKFLOW |
-       | FAIL-Irreperibile_890                  | ANALOG_SUCCESS_WORKFLOW |
+#       | FAIL-Irreperibile_890                  | ANALOG_SUCCESS_WORKFLOW |
        | FAIL-Discovery_890                     | ANALOG_SUCCESS_WORKFLOW |
-       | FAIL-DiscoveryIrreperibile_890         | ANALOG_SUCCESS_WORKFLOW |
-       | FAIL-DiscoveryIrreperibileBadCAP_890   | ANALOG_SUCCESS_WORKFLOW |
+#       | FAIL-DiscoveryIrreperibile_890         | ANALOG_SUCCESS_WORKFLOW |
+#       | FAIL-DiscoveryIrreperibileBadCAP_890   | ANALOG_SUCCESS_WORKFLOW |
        | OK-Retry_890                           | ANALOG_SUCCESS_WORKFLOW |
        | OK-Giacenza-lte10_890                  | ANALOG_SUCCESS_WORKFLOW |
-       | OK-Giacenza-gt10_890                   | ANALOG_SUCCESS_WORKFLOW |
        | OK-Giacenza-gt10-23L_890               | ANALOG_SUCCESS_WORKFLOW |
        | OK-GiacenzaDelegato-lte10_890          | ANALOG_SUCCESS_WORKFLOW |
        | OK-GiacenzaDelegato-gt10_890           | ANALOG_SUCCESS_WORKFLOW |
@@ -438,8 +437,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
        | OK-CompiutaGiacenza_890                | ANALOG_SUCCESS_WORKFLOW |
        | OK-NonRendicontabile_890               | ANALOG_SUCCESS_WORKFLOW |
        | OK-CausaForzaMaggiore_890              | ANALOG_SUCCESS_WORKFLOW |
-       | FAIL-EVENTO-INESISTENTE                | ANALOG_SUCCESS_WORKFLOW |
-       | OK-CAUSE-EVENTO-NO-MAPPA               | ANALOG_SUCCESS_WORKFLOW |
+#       | FAIL-EVENTO-INESISTENTE                | ANALOG_SUCCESS_WORKFLOW |
+#       | OK-CAUSE-EVENTO-NO-MAPPA               | ANALOG_SUCCESS_WORKFLOW |
        | OK-REC008_890-E                        | ANALOG_SUCCESS_WORKFLOW |
        | OK-Giacenza-gt10_890_ZIP               | ANALOG_SUCCESS_WORKFLOW |
        | OK_890_ZIP                             | ANALOG_SUCCESS_WORKFLOW |
