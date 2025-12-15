@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
@@ -66,8 +68,8 @@ public class PnRaddCapCoverageClientImpl implements IPnRaddCapCoverageClient {
     }
 
     @Override
-    public CheckCoverageResponse checkCoverage(SearchMode searchMode, CheckCoverageRequest checkCoverageRequest) throws RestClientException {
-        return apiPrivateCoverage.checkCoverage(searchMode, checkCoverageRequest);
+    public CheckCoverageResponse checkCoverage(SearchMode searchMode, CheckCoverageRequest checkCoverageRequest, LocalDate searchDate) throws RestClientException {
+        return apiPrivateCoverage.checkCoverage(searchMode, checkCoverageRequest,searchDate);
     }
 
     @Override

@@ -1,6 +1,6 @@
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
-  @paperTracker
+  @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -35,7 +35,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_ALL_CON |
 
 
-  @paperTracker @paperTrackerRunMode
+  @paperTrackerAR @paperTrackerARRunMode
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_890_ERROR] Si verifica che gli statusCode mancanti nel tracker vengano salvati ma non gestiti
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -51,7 +51,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che la risposta trackings sia uguale a quella attesa "OK-GIACENZA-LTE10_890"
 
 
-  @paperTracker
+  @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -75,7 +75,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_TIMESTAMP_ERR |
       | OK_RIR_NOT_ORDERED |
 
-  @paperTracker
+  @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -92,7 +92,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che la risposta trackings sia uguale a quella attesa "OK_RIR_NO_DEMAT"
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT"
 
-  @paperTracker
+  @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_B] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -107,7 +107,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-DiscoveryIrreperibile_AR"
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
 
-  @paperTracker
+  @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_C] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -134,7 +134,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che la risposta trackings sia uguale a quella attesa "FAIL_IndirizzoInesistenteAR"
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR"
 
-  @paperTracker
+  @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
             si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
@@ -156,7 +156,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL_CON996_PCRETRY_FURTO_AR |
       | OK_PCRETRY_CON996_AR |
 
-  @paperTracker
+  @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2_RIR] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
   si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
@@ -180,7 +180,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_PCRETRY_CON996_RIR |
 
 
-  @paperTracker
+  @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3] Si verifica che i dati ritornati da /errors siano quelli attesi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -198,7 +198,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | Via@OK_AR_TIMESTAMP_ERR           | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@OK_AR_NO_EVENT_B              | STATUS_CODE_ERROR                    |  SEQUENCE_VALIDATION          |
 
-  @paperTracker
+  @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_RIR] Si verifica che i dati ritornati da /errors siano quelli attesi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -218,7 +218,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | Via@OK_RIR_INVALID_DATETIME       | DATE_ERROR                           |  SEQUENCE_VALIDATION          |
       | Via@FAIL_CON996_PCRETRY_RIR       | ATTACHMENTS_ERROR                    |  SEQUENCE_VALIDATION          |
 
-  @paperTracker
+  @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_A] Si verifica che i dati ritornati da /errors siano quelli attesi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -233,7 +233,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si verifica che su PaperTrackingsError ci sia un errore con category: NOT_RETRYABLE_EVENT_ERROR, flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" per la sequence: "Via@FAIL_CON996_PCRETRY_AR" e pcRetry: "1"
 
   #questo scenario andrà incluso nell'NRT totale
-  @paperTrackerRunMode
+  @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -288,9 +288,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
       | FAIL_CON996_PCRETRY_FURTO_AR      |Via@FAIL_CON996_PCRETRY_FURTO_AR   | ANALOG_SUCCESS_WORKFLOW |
       | OK_PCRETRY_CON996_AR              |Via@OK_PCRETRY_CON996_AR           | ANALOG_SUCCESS_WORKFLOW |
+      | OK_AR_ALL_CON                     |Via@OK_AR_ALL_CON                  | ANALOG_SUCCESS_WORKFLOW |
 
   #questo scenario andrà incluso nell'NRT totale
-  @paperTrackerRunMode
+  @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4_RIR]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -317,7 +318,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   #questo scenario andrà incluso nell'NRT totale
-  @paperTrackerRunMode
+  @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -341,7 +342,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   #questo scenario andrà incluso nell'NRT totale
-  @paperTrackerRunMode
+  @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5_RIR]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -362,7 +363,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_NO_DEMAT                   |Via@OK_RIR_NO_DEMAT                  | RECRI003A          |
 
 
-  @paperTrackerRunMode
+  @paperTrackerARRunMode
   Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_5_FAIL-WO_AR] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
