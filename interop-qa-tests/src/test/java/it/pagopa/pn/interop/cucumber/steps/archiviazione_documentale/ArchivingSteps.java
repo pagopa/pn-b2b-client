@@ -92,11 +92,11 @@ public class ArchivingSteps {
                 .isNotNull();
 
         Assertions.assertThat(validation.missingRequired())
-                .as("Il file deve contenere tutte le informazioni richieste")
+                .as("Le informazioni obbligatorie mancanti non sono zero")
                 .isEmpty();
 
         Assertions.assertThat(validation.missingOptional())
-                .as("Il file deve contenere tutte le informazioni richieste")
+                .as("Le informazioni opzionali mancanti non sono zero")
                 .isEmpty();
     }
 }
