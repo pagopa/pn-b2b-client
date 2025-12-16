@@ -24,9 +24,12 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     When l'utente inoltra quella richiesta di fruizione
     Then la richiesta di fruizione assume lo stato "ACTIVE"
     And verifica che a fronte dell'evento AgreementActivated venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_CONTRACT_DOC
+    And verifica che il file contenga le opportune informazioni
     And verifica che a fronte dell'evento AgreementActivated venga generato nell'opportuno bucket S3 WORM un AGREEMENT_CONTRACT_DOC
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
     And verifica che a fronte dell'evento AgreementActivated venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_ACTIVATE_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
     And verifica che a fronte dell'evento AgreementActivated venga generato nell'opportuno bucket S3 WORM un AGREEMENT_ACTIVATE_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
