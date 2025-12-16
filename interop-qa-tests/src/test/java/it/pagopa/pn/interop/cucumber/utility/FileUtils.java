@@ -10,12 +10,11 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class FileUtils {
 
@@ -518,5 +517,21 @@ public class FileUtils {
         }
     }
 
+    public static Set<String> pdfExtractWords(InputStream is) {
+        try {
+            // esempio con PDFBox (adatta al tuo codice reale)
+            PDDocument doc = PDDocument.load(is);
+            PDFTextStripper stripper = new PDFTextStripper();
+            String text = stripper.getText(doc);
+            doc.close();
+
+            return Arrays.stream(text.split("\\W+"))
+                    .filter(s -> !s.isBlank())
+                    .collect(Collectors.toSet());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore lettura PDF", e);
+        }
+    }
 
 }
