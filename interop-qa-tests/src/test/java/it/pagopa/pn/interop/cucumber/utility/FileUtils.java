@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.JsonValidationResult;
+import it.pagopa.pn.interop.cucumber.utility.model.PdfWordMatchResult;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -14,7 +15,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class FileUtils {
 
@@ -270,6 +270,40 @@ public class FileUtils {
         }
     }
 
+    public static PdfWordMatchResult pdfMatchWords(
+            InputStream inputStream,
+            List<String> words
+    ) {
+        try (PDDocument document = PDDocument.load(inputStream)) {
+
+            PDFTextStripper stripper = new PDFTextStripper();
+            stripper.setSortByPosition(true);
+            String text = stripper.getText(document).toLowerCase(Locale.ROOT);
+
+            Set<String> found = new HashSet<>();
+            Set<String> missing = new HashSet<>();
+
+            for (String word : words) {
+                if (word == null || word.isBlank()) {
+                    continue;
+                }
+
+                String normalized = word.toLowerCase(Locale.ROOT);
+
+                if (text.contains(normalized)) {
+                    found.add(word);
+                } else {
+                    missing.add(word);
+                }
+            }
+
+            return new PdfWordMatchResult(found, missing);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Errore durante la lettura del PDF", e);
+        }
+    }
+
 
     /**
      * Recupera un nodo JSON tramite un percorso "path" annidato.
@@ -516,22 +550,4 @@ public class FileUtils {
             throw new RuntimeException("Errore durante la validazione NDJSON", e);
         }
     }
-
-    public static Set<String> pdfExtractWords(InputStream is) {
-        try {
-            // esempio con PDFBox (adatta al tuo codice reale)
-            PDDocument doc = PDDocument.load(is);
-            PDFTextStripper stripper = new PDFTextStripper();
-            String text = stripper.getText(doc);
-            doc.close();
-
-            return Arrays.stream(text.split("\\W+"))
-                    .filter(s -> !s.isBlank())
-                    .collect(Collectors.toSet());
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore lettura PDF", e);
-        }
-    }
-
 }

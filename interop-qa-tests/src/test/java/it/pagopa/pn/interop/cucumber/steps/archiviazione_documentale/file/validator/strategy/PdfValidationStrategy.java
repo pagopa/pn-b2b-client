@@ -7,8 +7,8 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.proces
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.IValidationStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
+import it.pagopa.pn.interop.cucumber.utility.model.PdfWordMatchResult;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,13 +20,8 @@ public class PdfValidationStrategy implements IValidationStrategy {
     }
 
     @Override
-    public ValidationResult validate(
-            ProcessedFile file,
-            IFileTokenSource required,
-            IFileTokenSource optional
-    ) {
+    public ValidationResult validate(ProcessedFile file, IFileTokenSource required, IFileTokenSource optional) {
 
-        // per i PDF consideriamo solo i value token
         List<String> requiredWords = required.tokens()
                 .filter(FileToken::isValueToken)
                 .map(FileToken::expectedValue)
@@ -37,32 +32,26 @@ public class PdfValidationStrategy implements IValidationStrategy {
                 .map(FileToken::expectedValue)
                 .toList();
 
-        Set<String> missingRequired = new HashSet<>();
-        Set<String> missingOptional = new HashSet<>();
+        Set<String> allWords = new java.util.HashSet<>();
+        allWords.addAll(requiredWords);
+        allWords.addAll(optionalWords);
 
-        // nessuna parola richiesta → valido
-        if (requiredWords.isEmpty() && optionalWords.isEmpty()) {
+        if (allWords.isEmpty()) {
             return new ValidationResult(Set.of(), Set.of());
         }
 
-        // UNA SOLA LETTURA DEL PDF
-        // (FileUtils deve leggere lo stream una sola volta)
-        Set<String> foundWords = FileUtils.pdfExtractWords(file.content());
+        PdfWordMatchResult match =
+                FileUtils.pdfMatchWords(file.content(), allWords.stream().toList());
 
-        // REQUIRED
-        for (String word : requiredWords) {
-            if (!foundWords.contains(word)) {
-                missingRequired.add(word);
-            }
-        }
+        Set<String> missingRequired = requiredWords.stream()
+                .filter(w -> match.getMissing().contains(w))
+                .collect(java.util.stream.Collectors.toSet());
 
-        // OPTIONAL
-        for (String word : optionalWords) {
-            if (!foundWords.contains(word)) {
-                missingOptional.add(word);
-            }
-        }
+        Set<String> missingOptional = optionalWords.stream()
+                .filter(w -> match.getMissing().contains(w))
+                .collect(java.util.stream.Collectors.toSet());
 
         return new ValidationResult(missingRequired, missingOptional);
     }
+
 }
