@@ -27,6 +27,18 @@ public enum FilenameFormat {
         }
     },
 
+    AGREEMENT_CONTRACT_PDF(Pattern.compile("^([0-9a-fA-F-]{36})_([0-9a-fA-F-]{36})_(\\d{14})_([a-zA-Z0-9_]+)(?:\\.[^.]+)+$"), true
+    ) {
+        @Override
+        FileNameParts extract(Matcher m, String filename) {
+            return new FileNameParts(
+                    m.group(3),                 // timestamp
+                    m.group(4),                 // logical name
+                    extractExtension(filename)  // pdf
+            );
+        }
+    },
+
     EVENT_SIGNED_LOG(Pattern.compile("^INTEROP_([^.-]+-[0-9a-fA-F]{32}-signed)(?:\\.[^.]+)+$"), false) {
         @Override
         FileNameParts extract(Matcher m, String filename) {

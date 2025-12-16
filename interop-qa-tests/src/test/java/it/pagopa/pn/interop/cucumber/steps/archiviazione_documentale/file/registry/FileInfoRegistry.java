@@ -19,8 +19,10 @@ import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enum
 public class FileInfoRegistry {
 
     private final Map<InteropFile, FileInfo> registry;
+    private final TokenResolver tokenResolver;
 
     public FileInfoRegistry(TokenResolver tokenResolver, String documentBucketBase, String documentWormBucketBase, String eventBucketBase, String eventWormBucketBase) {
+        this.tokenResolver = tokenResolver;
 
         this.registry = Map.of(
                 RISK_ANALYSIS_DOC, new FileInfo(
@@ -33,7 +35,7 @@ public class FileInfoRegistry {
                 AGREEMENT_CONTRACT_DOC, new FileInfo(
                         AGREEMENT_CONTRACT_DOC,
                         new FileValidator(tokenResolver, ListFileTokenSource.of("richiesta di fruizione", ":agreementId"), null),
-                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"agreement/:agreementId").build(), FilenameFormat.PDF_DOC),
+                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"agreement/:agreementId").build(), FilenameFormat.AGREEMENT_CONTRACT_PDF),
                                 new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(documentWormBucketBase).build(), FilenameFormat.PDF_SIGNED_DOC))
                 ),
 
@@ -42,16 +44,29 @@ public class FileInfoRegistry {
                         new FileValidator(tokenResolver, ListFileTokenSource.of("richiesta di delega alla fruizione", ":agreementId"), null),
                         Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"delegation/:consumerDelegationId").build(), FilenameFormat.PDF_DOC),
                                 new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(documentWormBucketBase).build(), FilenameFormat.PDF_SIGNED_DOC))
-                ),
+                )
 
 
-                CONSUMER_DELEGATION_REVOKED_DOC, null
+                //CONSUMER_DELEGATION_REVOKED_DOC, null
         );
     }
 
     public FileInfo getFileInfo(InteropFile file) {
-        FileInfo info = registry.get(file);
-        if (info == null) throw new RuntimeException("File info non trovata");
-        return info;
+        FileInfo template = registry.get(file);
+        if (template == null) {
+            throw new IllegalArgumentException("File info non trovata per: " + file);
+        }
+
+        Set<FileLocation> resolvedLocations = template.locations().stream()
+                .map(location -> location.resolve(tokenResolver))
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+
+        return new FileInfo(
+                template.type(),
+                template.validation(),
+                resolvedLocations
+        );
     }
+
+
 }
