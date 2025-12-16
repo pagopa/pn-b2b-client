@@ -8,13 +8,13 @@ import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageRequestBody;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageResponse;
 import it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain.EmdCheckTppEndpoint;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class MessaggiCortesiaBancheSteps {
     private final EmdIntegrationApiImpl emdIntegrationApi;
@@ -47,8 +47,10 @@ public class MessaggiCortesiaBancheSteps {
 
     @When("viene invocato l'endpoint paymentUrl con i seguenti parametri")
     public void callEmdPaymentUrl(Map<String, String> row) {
+        String amountString = row.get("amount");
+        Integer amount = amountString == null || amountString.isEmpty() ? null : Integer.valueOf(amountString);
         try {
-            emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"));
+            emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"), amount);
         } catch (HttpStatusCodeException e) {
             emdResponseEntity = new ResponseEntity<>(e.getStatusCode());
         }
@@ -71,7 +73,8 @@ public class MessaggiCortesiaBancheSteps {
                 .recipientId(row.get("recipientId"))
                 .senderDescription(row.get("senderDescription"))
                 .originId(row.get("originId"))
-                .associatedPayment(Optional.ofNullable(row.get("associatedPayment")).map(Boolean::parseBoolean).orElse(null));
+                .associatedPayment(row.get("associatedPayment") != null ? Boolean.valueOf(row.get("associatedPayment")) : null)
+                .deliveryMode(row.get("deliveryMode") != null ? SendMessageRequestBody.DeliveryModeEnum.valueOf(row.get("deliveryMode")) : null)
+                .schedulingAnalogDate(row.get("schedulingAnalogDate") != null ? DateTime.now().toString() : null);
     }
-
 }
