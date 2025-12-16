@@ -33,7 +33,7 @@ public class S3Utils {
 
         } catch (S3Exception e) {
             System.out.println("Retention info non disponibile per " +
-                    bucketInfo.base() + "/" + bucketInfo.key() +
+                    bucketInfo.fullPath() +
                     ": " + e.awsErrorDetails().errorMessage());
             return null;
         }

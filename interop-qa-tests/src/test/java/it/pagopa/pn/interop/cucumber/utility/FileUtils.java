@@ -494,7 +494,6 @@ public class FileUtils {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
             String line;
-            boolean foundCandidate = false;
 
             while ((line = reader.readLine()) != null) {
 
@@ -503,8 +502,6 @@ public class FileUtils {
                 if (!candidateSelector.test(json)) {
                     continue;
                 }
-
-                foundCandidate = true;
 
                 JsonValidationResult result = validator.apply(json);
 
