@@ -66,33 +66,32 @@ public class ArchivingClient {
 
         FileLocation location = resolveLocation(spec);
         BucketUrl bucket = location.bucketUrl();
-        boolean useTimestamp = useTimestampFilter(location, spec);
+
+        AtomicInteger windowEnlargement = new AtomicInteger();
+        Instant center = ArchivingUtils.parse(spec.getCenterTimestamp());
+        Instant start = center.minusSeconds(spec.getDeltaSeconds() + windowEnlargement.get());
+        Instant end   = center.plusSeconds(spec.getDeltaSeconds() + windowEnlargement.get());
 
         Set<String> checkedKeys = new HashSet<>();
-        AtomicInteger windowEnlargement = new AtomicInteger();
         AtomicReference<ArchivedFileMatched> match = new AtomicReference<>();
 
         S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
 
             log.info("Ricerco il file all'interno del bucket: {}", bucket.fullPath());
-            List<String> candidateKeys = getLatestNObjects(s3, bucket, 50).stream()
-                    .map(S3Object::key)
-                    .filter(key -> isNotAlreadyChecked(key, checkedKeys))
-                    .filter(key -> isCandidateKey(key, spec, useTimestamp, windowEnlargement.get()))
+            List<S3Object> candidates = getLatestNObjects(s3, bucket, 50, start, end).stream()
+                    .filter(obj -> isNotAlreadyChecked(obj.key(), checkedKeys))
                     .toList();
 
-            for (String key : candidateKeys) {
-                ArchivedFileMatched result = tryMatchFile(s3, bucket, key, spec.fileInfo, checkedKeys);
+            for (S3Object obj : candidates) {
+                ArchivedFileMatched result = tryMatchFile(s3, bucket, obj.key(), spec.fileInfo, checkedKeys);
                 if (result != null) {
                     match.set(result);
                     return true;
                 }
             }
 
-            if (candidateKeys.isEmpty() && useTimestamp) {
-                int newWindow = windowEnlargement.addAndGet(300);
-                logTimeWindow(spec, newWindow);
-            }
+            int newWindow = windowEnlargement.addAndGet(300);
+            logTimeWindow(spec, newWindow);
 
             return false;
         });
@@ -115,32 +114,6 @@ public class ArchivingClient {
                         ));
     }
 
-    private boolean isCandidateKey(String key, PollingSpecification spec, boolean useTimestamp, int windowEnlargement) {
-        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
-        FileNameParts parts = FileNameParts.parse(filename);
-
-        if (parts == null) return false;
-
-        if (!useTimestamp) return true;
-
-        if (parts.timestamp() == null) {
-            log.error("Previsto polling per timestamp ma il file {} non lo contiene", filename);
-            return false;
-        }
-
-        Instant fileTs = ArchivingUtils.parse(parts.timestamp());
-        Instant center = ArchivingUtils.parse(spec.getCenterTimestamp());
-
-        Instant start = center.minusSeconds(spec.getDeltaSeconds() + windowEnlargement);
-        Instant end = center.plusSeconds(spec.getDeltaSeconds() + windowEnlargement);
-
-        return !fileTs.isBefore(start) && !fileTs.isAfter(end);
-    }
-
-    private boolean useTimestampFilter(FileLocation location, PollingSpecification spec) {
-        return location.filenameFormat().hasTimestamp() && spec.hasTimestamp();
-    }
-
     private boolean isNotAlreadyChecked(String key, Set<String> checkedKeys) {
        return !checkedKeys.contains(key);
     }
@@ -151,21 +124,10 @@ public class ArchivingClient {
 
     private int maxAttempts(PollingSpecification spec) {return (int) ((spec.getTimeoutMs() / spec.getPollIntervalMs()) + 1);}
 
-    private List<S3Object> getLatestNObjects(S3Client s3, BucketUrl bucketInfo, int limit) {
+    private List<S3Object> getLatestNObjects(S3Client s3, BucketUrl bucketInfo, int limit, Instant start, Instant end) {
 
-        Comparator<S3Object> safeComparator = (o1, o2) -> {
-            Instant t1 = o1.lastModified();
-            Instant t2 = o2.lastModified();
-
-            if (t1 == null && t2 == null) return 0;
-            if (t1 == null) return -1;
-            if (t2 == null) return 1;
-
-            return t1.compareTo(t2); // ASC (min-heap)
-        };
-
-        PriorityQueue<S3Object> minHeap = new PriorityQueue<>(limit, safeComparator);
-
+        Comparator<S3Object> minHeapComparator = Comparator.comparing(S3Object::lastModified);
+        PriorityQueue<S3Object> minHeap = new PriorityQueue<>(limit, minHeapComparator);
         String continuationToken = null;
 
         do {
@@ -183,14 +145,15 @@ public class ArchivingClient {
                 Instant ts = obj.lastModified();
                 if (ts == null) continue;
 
+                if (ts.isBefore(start) || ts.isAfter(end)) {
+                    continue;
+                }
+
                 if (minHeap.size() < limit) {
                     minHeap.offer(obj);
-                } else {
-                    Instant oldest = minHeap.peek().lastModified();
-                    if (oldest == null || ts.isAfter(oldest)) {
-                        minHeap.poll();
-                        minHeap.offer(obj);
-                    }
+                } else if (ts.isAfter(minHeap.peek().lastModified())) {
+                    minHeap.poll();
+                    minHeap.offer(obj);
                 }
             }
 
@@ -200,17 +163,8 @@ public class ArchivingClient {
 
         List<S3Object> result = new ArrayList<>(minHeap);
 
-        // Ordina per lastModified DESC
-        result.sort((o1, o2) -> {
-            Instant t1 = o1.lastModified();
-            Instant t2 = o2.lastModified();
-
-            if (t1 == null && t2 == null) return 0;
-            if (t1 == null) return -1;
-            if (t2 == null) return 1;
-
-            return t2.compareTo(t1); // DESC
-        });
+        // Ordina per lastModified DESC (più recenti prima)
+        result.sort(Comparator.comparing(S3Object::lastModified).reversed());
 
         return result;
     }
