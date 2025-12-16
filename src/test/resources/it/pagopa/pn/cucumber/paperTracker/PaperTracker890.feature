@@ -420,7 +420,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@FAIL-Giacenza-lte10_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -463,7 +463,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -531,7 +531,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@FAIL-Irreperibile_890    |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -577,7 +577,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
        | FAIL_890                               |
        | FAIL_IndirizzoInesatto890              |
        | FAIL-Discovery_890                     |
-       | FAIL-DiscoveryIrreperibileBadCAP_890   |
        | OK-Retry_890                           |
        | OK-Giacenza-gt10-23L_890               |
        | OK-GiacenzaDelegato-lte10_890          |
@@ -586,10 +585,75 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
        | OK-CompiutaGiacenza_890                |
        | OK-NonRendicontabile_890               |
        | OK-CausaForzaMaggiore_890              |
-       | FAIL-EVENTO-INESISTENTE                |
-       | OK-CAUSE-EVENTO-NO-MAPPA               |
        | OK-REC008_890-E                        |
        | OK-Giacenza-gt10_890_ZIP               |
        | OK_890_ZIP                             |
        | OK-GiacenzaCAD-lte10_890               |
+
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_RUN_MODE_890_9] Viene verificato che tutti gli elementi desiderati per la sequence FAIL-EVENTO-INESISTENTE siano generati
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-EVENTO-INESISTENTE    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG001A                      |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG001B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "23L"}]      |
+
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_RUN_MODE_890_10] Viene verificato che tutti gli elementi desiderati per la sequence OK-CAUSE-EVENTO-NO-MAPPA siano generati
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890     |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-CAUSE-EVENTO-NO-MAPPA    |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | CON020                         |
+      | details_sentAttemptMade    | 0                              |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG001A                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_failureCause       | F01                            |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                       |
+      | details_recIndex           | 0                              |
+      | details_deliveryDetailCode | RECAG001B                      |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "23L"}]      |
 
