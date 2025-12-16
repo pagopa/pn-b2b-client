@@ -5,12 +5,12 @@ import java.util.regex.Pattern;
 
 public enum FilenameFormat {
 
-    PDF_SIGNED_DOC(Pattern.compile("^(?:([0-9]{14})_)?INTEROP_([^.]+)(?:\\.[^.]+)+$"), true) {
+    PDF_SIGNED_DOC(Pattern.compile("^INTEROP_([A-Z_]+)-([a-f0-9]{32})-signed\\.pdf$"), false) {
         @Override
         FileNameParts extract(Matcher m, String filename) {
             return new FileNameParts(
+                    null,
                     m.group(1),
-                    m.group(2),
                     extractExtension(filename)
             );
         }
