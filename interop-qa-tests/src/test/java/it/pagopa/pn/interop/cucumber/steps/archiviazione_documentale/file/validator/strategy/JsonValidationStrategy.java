@@ -9,7 +9,11 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.IKeyedFileTokenSource;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.IValidationStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class JsonValidationStrategy implements IValidationStrategy {
 
@@ -21,28 +25,46 @@ public class JsonValidationStrategy implements IValidationStrategy {
     }
 
     @Override
-    public boolean validate(ProcessedFile file, IFileTokenSource resolvedTokens) {
+    public ValidationResult validate(ProcessedFile file, IFileTokenSource required, IFileTokenSource optional) {
 
-        if (!(resolvedTokens instanceof IKeyedFileTokenSource keyedSource)) {
-            return true; // nessuna regola → valido
+        // JSON → devono essere keyed
+        if (!(required instanceof IKeyedFileTokenSource req)) {
+            throw new IllegalArgumentException("Required tokens must be keyed for JSON validation");
+        }
+        if (!(optional instanceof IKeyedFileTokenSource opt)) {
+            throw new IllegalArgumentException("Optional tokens must be keyed for JSON validation");
         }
 
+        Set<String> missingRequired = new HashSet<>();
+        Set<String> missingOptional = new HashSet<>();
+
         try {
+            // UNA SOLA LETTURA DELLO STREAM
             JsonNode root = MAPPER.readTree(file.content());
 
-            for (KeyedFileTokenEntry entry : keyedSource.entries().toList()) {
-
+            // REQUIRED
+            for (KeyedFileTokenEntry entry : req.entries().toList()) {
                 String path = entry.key();
                 FileToken token = entry.fileToken();
 
                 JsonNode node = FileUtils.getNodeByPath(root, path);
-
                 if (!token.validate(node)) {
-                    return false;
+                    missingRequired.add(path);
                 }
             }
 
-            return true;
+            // OPTIONAL
+            for (KeyedFileTokenEntry entry : opt.entries().toList()) {
+                String path = entry.key();
+                FileToken token = entry.fileToken();
+
+                JsonNode node = FileUtils.getNodeByPath(root, path);
+                if (!token.validate(node)) {
+                    missingOptional.add(path);
+                }
+            }
+
+            return new ValidationResult(missingRequired, missingOptional);
 
         } catch (Exception e) {
             throw new RuntimeException("Errore nella validazione JSON", e);

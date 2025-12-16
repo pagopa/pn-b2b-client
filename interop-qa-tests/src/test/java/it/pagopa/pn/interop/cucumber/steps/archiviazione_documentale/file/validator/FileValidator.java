@@ -13,9 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.Token
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class FileValidator {
@@ -31,16 +29,9 @@ public class FileValidator {
     );
 
     public ValidationResult validate(ProcessedFile file) {
-        return new ValidationResult(validateTokens(file, requiredTokens), validateTokens(file, optionalTokens));
-    }
 
-    private Set<String> validateTokens(ProcessedFile file, IFileTokenSource tokens) {
-
-        if (tokens == null) {
-            return Set.of();
-        }
-
-        IFileTokenSource resolved = resolveTokens(tokens);
+        IFileTokenSource resolvedRequired = resolveTokens(requiredTokens);
+        IFileTokenSource resolvedOptional = resolveTokens(optionalTokens);
 
         IValidationStrategy strategy = strategies.stream()
                 .filter(s -> s.supports(file.contentType()))
@@ -50,29 +41,16 @@ public class FileValidator {
                                 "No validation strategy for content type " + file.contentType()
                         ));
 
-        boolean valid = strategy.validate(file, resolved);
-
-        return valid ? Set.of() : extractKeys(resolved);
-    }
-
-    private Set<String> extractKeys(IFileTokenSource source) {
-
-        if (source instanceof IKeyedFileTokenSource keyed) {
-            return keyed.entries()
-                    .map(KeyedFileTokenEntry::key)
-                    .collect(Collectors.toSet());
-        }
-
-        return source.tokens()
-                .filter(FileToken::isValueToken)
-                .map(FileToken::expectedValue)
-                .collect(Collectors.toSet());
+        return strategy.validate(file, resolvedRequired, resolvedOptional);
     }
 
     private IFileTokenSource resolveTokens(IFileTokenSource source) {
 
-        if (source instanceof IKeyedFileTokenSource keyedSource) {
+        if (source == null) {
+            return Stream::empty;
+        }
 
+        if (source instanceof IKeyedFileTokenSource keyedSource) {
             return (IKeyedFileTokenSource) () ->
                     keyedSource.entries()
                             .map(e -> KeyedFileTokenEntry.of(
@@ -92,7 +70,8 @@ public class FileValidator {
             );
         }
 
-        // validator token: NON va risolto
-        return token;
+        if(token.isValidatorToken()) return token;
+
+        throw new RuntimeException("Invalid token type");
     }
 }
