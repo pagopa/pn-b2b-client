@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model;
 
-public record FileNameParts(String timestamp, String baseName, String extension) {
+public record FileNameParts(String extension) {
     public static FileNameParts parse(String filename) {
         if (filename == null)
             throw new IllegalArgumentException("filenameFormat is null");
