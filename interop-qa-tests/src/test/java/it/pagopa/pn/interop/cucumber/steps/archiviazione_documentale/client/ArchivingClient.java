@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.S3BucketInfoBuilder;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.*;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.FileProcessor;
@@ -136,10 +137,12 @@ public class ArchivingClient {
         return !fileTs.isBefore(start) && !fileTs.isAfter(end);
     }
 
-    private boolean useTimestampFilter(FileLocation location, PollingSpecification spec) {return location.filenameFormat().hasTimestamp() && spec.hasTimestamp();}
+    private boolean useTimestampFilter(FileLocation location, PollingSpecification spec) {
+        return location.filenameFormat().hasTimestamp() && spec.hasTimestamp();
+    }
 
     private boolean isNotAlreadyChecked(String key, Set<String> checkedKeys) {
-       return checkedKeys.contains(key);
+       return !checkedKeys.contains(key);
     }
 
     private void addKeyToChecked(String key, Set<String> checkedKeys){
@@ -213,9 +216,11 @@ public class ArchivingClient {
     }
 
     private ArchivedFileMatched tryMatchFile(S3Client s3, BucketUrl bucket, String key, FileInfo fileInfo, Set<String> checkedKeys) {
-        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
         this.addKeyToChecked(key, checkedKeys);
+
+        String filename = ArchivingUtils.extractFilenameFromS3Key(key);
         FileNameParts parts = FileNameParts.parse(filename);
+        BucketUrl fileUrl = S3BucketInfoBuilder.builder().fullPath(String.join("/", bucket.base(),key)).build();
 
         if (parts == null || parts.extension() == null) {
             throw new IllegalStateException("FileNameParts non valido per " + filename);
@@ -224,7 +229,7 @@ public class ArchivingClient {
         ContentType contentType = ContentType.fromExtension(parts.extension());
 
         FileCandidate candidate = new FileCandidate(
-                S3Utils.getFileStream(s3, bucket),
+                S3Utils.getFileStream(s3, fileUrl),
                 filename,
                 contentType
         );
@@ -238,13 +243,16 @@ public class ArchivingClient {
             return null;
         }
 
-        ArchivedFile archivedFile = buildArchivedDocument(s3, bucket);
+        ArchivedFile archivedFile = buildArchivedDocument(s3, fileUrl);
         return new ArchivedFileMatched(archivedFile, validation);
     }
 
     private ArchivedFile buildArchivedDocument(S3Client s3, BucketUrl bucketInfo) {
         ArchivedFile.ArchivedFileBuilder builder = ArchivedFile.builder();
         String key = bucketInfo.key();
+
+        // Bucket info
+        builder.bucketInfo(bucketInfo);
 
         // Estrai il nome file
         String filename = ArchivingUtils.extractFilenameFromS3Key(key);
@@ -302,6 +310,5 @@ public class ArchivingClient {
                 totalDelta
         );
     }
-
 
 }
