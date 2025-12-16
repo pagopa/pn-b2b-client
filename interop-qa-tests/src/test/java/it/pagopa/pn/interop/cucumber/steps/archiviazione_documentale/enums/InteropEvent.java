@@ -1,11 +1,14 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum InteropEvent {
     AGREEMENT_ACTIVATED("AgreementActivated"),
     AGREEMENT_UPGRADED("AgreementUpgraded"),
+    AGREEMENT_SUSPENDED_BY_CONSUMER("AgreementSuspendedByConsumer"),
     PURPOSE_ACTIVATED("PurposeActivated "),
     NEW_PURPOSE_VERSION_ACTIVATED("NewPurposeVersionActivated "),
     PURPOSE_VERSION_ACTIVATED("PurposeVersionActivated "),
