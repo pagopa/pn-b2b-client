@@ -1,18 +1,22 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry;
 
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.S3BucketInfoBuilder;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileLocation;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FilenameFormat;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.FileToken;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.ListFileTokenSource;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.MapFileTokenSource;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.FileValidator;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.S3BucketInfoBuilder;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 
 import java.util.Map;
 import java.util.Set;
 
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.*;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.STANDARD;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.WORM;
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile.*;
 
 
@@ -44,8 +48,33 @@ public class FileInfoRegistry {
                         new FileValidator(tokenResolver, ListFileTokenSource.of("richiesta di delega alla fruizione", ":agreementId"), null),
                         Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"delegation/:consumerDelegationId").build(), FilenameFormat.PDF_DOC),
                                 new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(documentWormBucketBase).build(), FilenameFormat.PDF_SIGNED_DOC))
-                )
+                ),
 
+                AGREEMENT_ACTIVATE_EVENTS_LOG, new FileInfo(
+                        AGREEMENT_ACTIVATE_EVENTS_LOG,
+                        new FileValidator(tokenResolver,
+                                MapFileTokenSource.of(
+                                        "event_name", InteropEvent.AGREEMENT_ACTIVATED.getValue(),
+                                        "id", ":agreementId"
+                                ),
+                                MapFileTokenSource.of("timestamp", FileToken.hasValidTimestamp())
+                        ),
+                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(eventBucketBase).build(), FilenameFormat.EVENT_LOG),
+                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(eventWormBucketBase).build(), FilenameFormat.EVENT_SIGNED_LOG))
+                ),
+
+                AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG, new FileInfo(
+                        AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG,
+                        new FileValidator(tokenResolver,
+                                MapFileTokenSource.of(
+                                        "event_name", InteropEvent.AGREEMENT_SUSPENDED_BY_CONSUMER.getValue(),
+                                        "id", ":agreementId"
+                                ),
+                                MapFileTokenSource.of("timestamp", FileToken.hasValidTimestamp())
+                        ),
+                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(eventBucketBase).build(), FilenameFormat.EVENT_LOG),
+                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(eventWormBucketBase).build(), FilenameFormat.EVENT_SIGNED_LOG))
+                )
 
                 //CONSUMER_DELEGATION_REVOKED_DOC, null
         );
