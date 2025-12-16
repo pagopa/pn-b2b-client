@@ -36,18 +36,17 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
 
   Scenario Outline: [AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
+    Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementUpgraded
-    And verifica nel bucket S3 SIGNED l'esistenza del file AgreementUpgraded
+    And verifica che a fronte dell'evento <event> venga generato nell'opportuno bucket S3 STANDARD un <file>
+    And verifica che a fronte dell'evento <event> venga generato nell'opportuno bucket S3 WORM un <file>
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
     Examples:
-      | statoAgreement | tipoApprovazione |
-      | PENDING        | MANUAL           |
-      | ACTIVE         | AUTOMATIC        |
-      | SUSPENDED      | AUTOMATIC        |
-      | ARCHIVED       | AUTOMATIC        |
+      | statoAgreement | event                        | file                                       |
+      | SUSPENDED      | AgreementSuspendedByConsumer | AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG |
+      | ARCHIVED       | AgreementArchivedByConsumer  |                                            |
 
   Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"

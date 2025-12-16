@@ -1,23 +1,18 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry;
 
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.S3BucketInfoBuilder;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileLocation;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FilenameFormat;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.FileToken;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.ListFileTokenSource;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.MapFileTokenSource;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.model.FileInfoDefinition;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.FileValidator;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.STANDARD;
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.WORM;
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile.*;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.model.Definitions.definitions;
 
 
 public class FileInfoRegistry {
@@ -28,56 +23,11 @@ public class FileInfoRegistry {
     public FileInfoRegistry(TokenResolver tokenResolver, String documentBucketBase, String documentWormBucketBase, String eventBucketBase, String eventWormBucketBase) {
         this.tokenResolver = tokenResolver;
 
-        this.registry = Map.of(
-                RISK_ANALYSIS_DOC, new FileInfo(
-                        RISK_ANALYSIS_DOC,
-                        new FileValidator(tokenResolver, ListFileTokenSource.of("Analisi del rischio"), null),
-                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"risk-analysis/:riskAnalysisId").build(), FilenameFormat.PDF_DOC),
-                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(documentWormBucketBase).build(), FilenameFormat.PDF_SIGNED_DOC))
-                ),
-
-                AGREEMENT_CONTRACT_DOC, new FileInfo(
-                        AGREEMENT_CONTRACT_DOC,
-                        new FileValidator(tokenResolver, ListFileTokenSource.of("richiesta di fruizione", ":agreementId"), null),
-                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"agreement/:agreementId").build(), FilenameFormat.AGREEMENT_CONTRACT_PDF),
-                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(documentWormBucketBase).build(), FilenameFormat.PDF_SIGNED_DOC))
-                ),
-
-                CONSUMER_DELEGATION_REQUEST_DOC, new FileInfo(
-                        CONSUMER_DELEGATION_REQUEST_DOC,
-                        new FileValidator(tokenResolver, ListFileTokenSource.of("richiesta di delega alla fruizione", ":agreementId"), null),
-                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(documentBucketBase+"delegation/:consumerDelegationId").build(), FilenameFormat.PDF_DOC),
-                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(documentWormBucketBase).build(), FilenameFormat.PDF_SIGNED_DOC))
-                ),
-
-                AGREEMENT_ACTIVATE_EVENTS_LOG, new FileInfo(
-                        AGREEMENT_ACTIVATE_EVENTS_LOG,
-                        new FileValidator(tokenResolver,
-                                MapFileTokenSource.of(
-                                        "event_name", InteropEvent.AGREEMENT_ACTIVATED.getValue(),
-                                        "id", ":agreementId"
-                                ),
-                                MapFileTokenSource.of("timestamp", FileToken.hasValidTimestamp())
-                        ),
-                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(eventBucketBase).build(), FilenameFormat.EVENT_LOG),
-                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(eventWormBucketBase).build(), FilenameFormat.EVENT_SIGNED_LOG))
-                ),
-
-                AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG, new FileInfo(
-                        AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG,
-                        new FileValidator(tokenResolver,
-                                MapFileTokenSource.of(
-                                        "event_name", InteropEvent.AGREEMENT_SUSPENDED_BY_CONSUMER.getValue(),
-                                        "id", ":agreementId"
-                                ),
-                                MapFileTokenSource.of("timestamp", FileToken.hasValidTimestamp())
-                        ),
-                        Set.of(new FileLocation(STANDARD, S3BucketInfoBuilder.builder().fullPath(eventBucketBase).build(), FilenameFormat.EVENT_LOG),
-                                new FileLocation(WORM, S3BucketInfoBuilder.builder().fullPath(eventWormBucketBase).build(), FilenameFormat.EVENT_SIGNED_LOG))
-                )
-
-                //CONSUMER_DELEGATION_REVOKED_DOC, null
-        );
+        this.registry = definitions(documentBucketBase, documentWormBucketBase, eventBucketBase, eventWormBucketBase).stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        FileInfoDefinition::type,
+                        this::buildFileInfo
+                ));
     }
 
     public FileInfo getFileInfo(InteropFile file) {
@@ -97,5 +47,24 @@ public class FileInfoRegistry {
         );
     }
 
+    private FileInfo buildFileInfo(FileInfoDefinition def) {
 
+        FileValidator validator = new FileValidator(
+                tokenResolver,
+                def.required(),
+                def.optional()
+        );
+
+        Set<FileLocation> locations = def.locations().stream()
+                .map(ld -> new FileLocation(
+                        ld.role(),
+                        S3BucketInfoBuilder.builder()
+                                .fullPath(ld.bucketBase())
+                                .build(),
+                        ld.format()
+                ))
+                .collect(Collectors.toUnmodifiableSet());
+
+        return new FileInfo(def.type(), validator, locations);
+    }
 }
