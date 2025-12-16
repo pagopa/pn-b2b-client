@@ -2,20 +2,19 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client;
 
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileLocation;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.*;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.FileProcessor;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ContentType;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.FileCandidate;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ArchivedFile;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileNameParts;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils;
 import it.pagopa.pn.interop.cucumber.utility.S3Utils;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -23,6 +22,8 @@ import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.InputStream;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -72,6 +73,7 @@ public class ArchivingClient {
 
         S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
 
+            log.info("Ricerco il file all'interno del bucket: {}", bucket.fullPath());
             List<String> candidateKeys = getLatestNObjects(s3, bucket, 50).stream()
                     .map(S3Object::key)
                     .filter(key -> isNotAlreadyChecked(key, checkedKeys))
@@ -79,7 +81,7 @@ public class ArchivingClient {
                     .toList();
 
             for (String key : candidateKeys) {
-                ArchivedFileMatched result = tryMatchFile(s3, bucket, key, spec.fileInfo);
+                ArchivedFileMatched result = tryMatchFile(s3, bucket, key, spec.fileInfo, checkedKeys);
                 if (result != null) {
                     match.set(result);
                     return true;
@@ -87,7 +89,8 @@ public class ArchivingClient {
             }
 
             if (candidateKeys.isEmpty() && useTimestamp) {
-                windowEnlargement.addAndGet(300);
+                int newWindow = windowEnlargement.addAndGet(300);
+                logTimeWindow(spec, newWindow);
             }
 
             return false;
@@ -136,11 +139,11 @@ public class ArchivingClient {
     private boolean useTimestampFilter(FileLocation location, PollingSpecification spec) {return location.filenameFormat().hasTimestamp() && spec.hasTimestamp();}
 
     private boolean isNotAlreadyChecked(String key, Set<String> checkedKeys) {
-        if (checkedKeys.contains(key)) {
-            return false;
-        }
+       return checkedKeys.contains(key);
+    }
+
+    private void addKeyToChecked(String key, Set<String> checkedKeys){
         checkedKeys.add(key);
-        return true;
     }
 
     private int maxAttempts(PollingSpecification spec) {return (int) ((spec.getTimeoutMs() / spec.getPollIntervalMs()) + 1);}
@@ -209,8 +212,9 @@ public class ArchivingClient {
         return result;
     }
 
-    private ArchivedFileMatched tryMatchFile(S3Client s3, BucketUrl bucket, String key, FileInfo fileInfo) {
+    private ArchivedFileMatched tryMatchFile(S3Client s3, BucketUrl bucket, String key, FileInfo fileInfo, Set<String> checkedKeys) {
         String filename = ArchivingUtils.extractFilenameFromS3Key(key);
+        this.addKeyToChecked(key, checkedKeys);
         FileNameParts parts = FileNameParts.parse(filename);
 
         if (parts == null || parts.extension() == null) {
@@ -274,4 +278,30 @@ public class ArchivingClient {
 
         return builder.build();
     }
+
+    private void logTimeWindow(PollingSpecification spec, long windowEnlargementSeconds) {
+        var LOG_TS_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
+        Instant center = ArchivingUtils.parse(spec.getCenterTimestamp());
+
+        long totalDelta = spec.getDeltaSeconds() + windowEnlargementSeconds;
+
+        Instant start = center.minusSeconds(totalDelta);
+        Instant end = center.plusSeconds(totalDelta);
+
+        log.info(
+                """
+                S3 polling window enlarged (UTC)
+                  interval : {} → {}
+                  center   : {}
+                  window   : ±{} min ({} s)
+                """,
+                LOG_TS_FORMAT.format(start),
+                LOG_TS_FORMAT.format(end),
+                LOG_TS_FORMAT.format(center),
+                totalDelta / 60,
+                totalDelta
+        );
+    }
+
+
 }

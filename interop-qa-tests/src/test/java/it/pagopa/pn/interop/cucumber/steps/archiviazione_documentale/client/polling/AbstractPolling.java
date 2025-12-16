@@ -15,10 +15,8 @@ public class AbstractPolling<T> {
     // Template Method: scheletro del polling
     public final void executePolling(int maxAttempts, long intervalMillis) {
         for (int i = 0; i < maxAttempts; i++) {
-            System.out.println("Tentativo " + (i + 1));
 
             if (condition.test(context)) {
-                System.out.println("Condizione soddisfatta, stop polling.");
                 return;
             }
 
@@ -29,7 +27,6 @@ public class AbstractPolling<T> {
                 throw new RuntimeException(e);
             }
         }
-        System.out.println("Condizione NON soddisfatta dopo " + maxAttempts + " tentativi.");
     }
 }
 
