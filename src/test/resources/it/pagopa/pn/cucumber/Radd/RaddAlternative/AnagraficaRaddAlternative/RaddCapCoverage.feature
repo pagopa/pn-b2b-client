@@ -16,12 +16,23 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
  # HOTFIX -> username: "admin@hotfix.pagopa.it" , password: "Admin-hotfixcognito1" , clientId/poolId: ""
  #     -> xPagopaPnCxId/parentId: ""
 
-#todo t cap
 
-
+  #Tebelle di riferimento: pn-AttachmentsConfig e pn-RaddCoverage
 
   Scenario: [RADD_ANAGRAFICA] Testing Autenticazione con parametri
     Given l' utente con username "test@test.com" password "Test_Cognito_1.!" e clientId "77j22r1r812dt3vo8d4s985ap4" richiede e riceve un token valido tramite cognito
+
+
+ #                *** Validazione Api Verifica da file ***
+
+
+    ##  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST-cap-localita.csv
+    ##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cap-localita.csv
+    ##  Viene generato un file di report in: src/main/resources/output/risultati_copertura.csv
+  Scenario: [RADD_API_COPERTURA_CAP_VALIDATION] Creazione report di coperture cap radd da file csv
+    Given setto la data per la quale voglio verificare la copertura al "OGGI"
+    Then leggo il file csv con cap e localita ed effettuo chiamate light e complete con report
+
 
 
   #                 *** CREAZIONE ***
@@ -404,6 +415,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | nameRow2 | addressRow | addressRow2 | cap   | city    | city2 | pr   | country |
       | null     | null       | null        | 00100 | BF-APJJ | null  | null | null    |
 
+    Then setto la data per la quale voglio verificare la copertura al "2025-01-12"
+
     And invoco l'API di verifica copertura cap Radd Light mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
 
@@ -411,3 +424,246 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
 
 
+
+
+# valutare:
+
+#  cap coperto e cap non coperto -> validità con complete e light -> complete : atteso coperto - cambio date - complete
+#  cap coperto e cap non coperto -> validità con complete e light -> date limite
+#  cap coperto e cap non coperto -> validità con complete e light -> un cap senza end-validity, senza start validity
+#
+
+#cap senza end validity- poi con end validiy - nel range, fuori range
+
+
+
+
+   #rif srs 1  #non è possibile implementare in quanto il parametro passato è LocalDate e quindi non è posssibile compilarlo in maniera non corretta
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_14] Verifica copertura con data non corretta con Light e Complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 80100 | H501          | RM       |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 80100 | /        | H501          | RM       | 2025-01-01    | 2035-01-01  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | 00100 | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Complete mode con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+    And invoco l'API di verifica copertura cap Radd Light mode con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+    Examples:
+      | search-date |
+      | 2035-1-01   |
+      | 20 35-01-01 |
+      | 2035-01-#1  |
+      | 01-01-2023  |
+      | 2035-90-01  |
+      | 203501-01   |
+      | 2PP5-01-01  |
+      | 2035-01 01  |
+      | 2035-01-011 |
+      | 2035-01-1   |
+
+
+  @capCoverageRadd @cognito1 #rif srs 2
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_15L] Verifica copertura con Search-data interna al range con light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | 80100 | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 80100 | /        | H501          | MI       | 2020-01-01    | 2022-01-01  | 2021-01-01  |
+      | 80100 | /        | H501          | MI       | 2025-01-01    | 2027-01-01  | OGGI        |
+      | 80100 | /        | H501          | MI       | 2030-01-01    | 2030-01-12  | 2030-01-09  |
+
+
+  @capCoverageRadd @cognito2 #rif srs 3
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_16L] Verifica copertura con search-date esterna al range con Light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 80100 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2019-01-01  |
+      | 80100 | /        | H501          | MI       | 2030-01-01    | 2031-01-01  | OGGI        |
+      | 80100 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | OGGI        |
+
+
+  @capCoverageRadd @cognito1 #rif srs 4
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_17L] Verifica copertura con search-date uguale a start-validity e end-validity light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | <cap> | <cadastralCode>          | <province>       |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 80100 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2020-01-01  |
+      | 80100 | /        | H501          | RM       | 2030-01-01    | 2031-01-01  | 2031-01-01  |
+      | 80100 | /        | H501          | RM       | 2025-01-01    | 2027-01-01  | 2025-01-01  |
+
+
+  @capCoverageRadd @cognito2 #rif srs 5
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_18L] Verifica copertura con search-date nel range ma senza end-validity light mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | <cap> | <cadastralCode>          | <province>       |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Light mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 80100 | /        | H501          | RM       | 2020-01-01    | null        | 2020-01-05  |
+      | 80100 | /        | H501          | MI       | 2030-01-01    | null        | 2031-01-01  |
+      | 80100 | /        | H501          | RM       | 2025-01-01    | null        | 2025-01-01  |
+
+
+  @capCoverageRadd @cognito1 #rif srs 2
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_15C] Verifica copertura con Search-data interna al range complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 12121 | H501          | NA       |
+    And creo una nuova copertura Radd con Errore
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | /        | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode   | province   | startValidity | endValidity |
+      | <cap> | /        | <cadastralCode> | <province> | 1990-01-01    | 1990-01-01  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Examples:
+      | cap   | cadastralCode | province | startValidity | endValidity | search-date |
+      | 12121 | H501          | NA       | 2020-01-11    | 2022-01-01  | 2021-01-01  |
+      | 12121 | H501          | NA       | 2025-01-01    | 2027-01-01  | OGGI        |
+      | 12121 | H501          | NA       | 2030-01-01    | 2030-01-12  | 2030-01-09  |
+
+  @capCoverageRadd @cognito1 #rif srs 3
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_16C] Verifica copertura con search-date esterna al range  Complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode   | province   | startValidity | endValidity |
+      | <cap> | /        | <cadastralCode> | <province> | 1990-01-01    | 1990-01-01  |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 12120 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2019-01-01  |
+      | 12120 | /        | H501          | RM       | 2030-01-01    | 2031-01-01  | OGGI        |
+      | 12120 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | OGGI        |
+
+
+  @capCoverageRadd @cognito1 #rif srs 4
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_17C ] Verifica copertura con search-date uguale a start-validity e end-validity light e complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 12123 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2020-01-01  |
+      | 12123 | /        | H501          | RM       | 2030-01-01    | 2031-01-01  | 2031-01-01  |
+      | 12123 | /        | H501          | RM       | 2025-01-01    | 2027-01-01  | 2025-01-01  |
+
+  @capCoverageRadd @cognito1 #rif srs 5
+  Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_18C] Verifica copertura con search-date nel range ma senza end-validity  complete mode
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
+      | <cap> | <locality> | <cadastralCode> | <province> | <startValidity> | <endValidity> |
+    And invoco l'API di aggiornamento copertura cap Radd
+    Then setto la data per la quale voglio verificare la copertura al "<search-date>"
+    Then setto i dati per verificare la copertura Radd:
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
+      | null     | null       | null        | <cap> | /    | null  | null | null    |
+    And invoco l'API di verifica copertura cap Radd Complete mode
+    And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    Examples:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
+      | 12125 | /        | H501          | RM       | 2020-01-01    | null        | 2020-01-05  |
+      | 12125 | /        | H501          | RM       | 2030-01-01    | null        | 2031-01-01  |
+      | 12125 | /        | H501          | RM       | 2025-01-01    | null        | 2025-01-01  |
