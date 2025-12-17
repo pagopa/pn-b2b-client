@@ -39,6 +39,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     And verifica che a fronte dell'evento <event> venga generato nell'opportuno bucket S3 STANDARD un <file>
+    And verifica che il file contenga le opportune informazioni
     And verifica che a fronte dell'evento <event> venga generato nell'opportuno bucket S3 WORM un <file>
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
@@ -46,7 +47,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Examples:
       | statoAgreement | event                        | file                                       |
       | SUSPENDED      | AgreementSuspendedByConsumer | AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG |
-      | ARCHIVED       | AgreementArchivedByConsumer  |                                            |
+      | ARCHIVED       | AgreementArchivedByConsumer  | AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG  |
 
   Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"

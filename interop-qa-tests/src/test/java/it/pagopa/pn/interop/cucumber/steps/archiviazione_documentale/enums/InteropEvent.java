@@ -9,6 +9,7 @@ public enum InteropEvent {
     AGREEMENT_ACTIVATED("AgreementActivated"),
     AGREEMENT_UPGRADED("AgreementUpgraded"),
     AGREEMENT_SUSPENDED_BY_CONSUMER("AgreementSuspendedByConsumer"),
+    AGREEMENT_ARCHIVED_BY_CONSUMER("AgreementArchivedByConsumer"),
     PURPOSE_ACTIVATED("PurposeActivated "),
     NEW_PURPOSE_VERSION_ACTIVATED("NewPurposeVersionActivated "),
     PURPOSE_VERSION_ACTIVATED("PurposeVersionActivated "),

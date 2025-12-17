@@ -66,6 +66,15 @@ public class Definitions {
                         AgreementState.SUSPENDED.getValue(),
                         eventBucketBase,
                         eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG,
+                        InteropEvent.AGREEMENT_ARCHIVED_BY_CONSUMER,
+                        ":agreementId",
+                        AgreementState.ARCHIVED.getValue(),
+                        eventBucketBase,
+                        eventWormBucketBase
                 )
         );
     }
