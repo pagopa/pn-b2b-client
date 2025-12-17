@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.valid
 
 import com.fasterxml.jackson.databind.JsonNode;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ContentType;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.FileToken;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.entry.KeyedFileTokenEntry;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.IFileTokenSource;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.IKeyedFileTokenSource;
@@ -23,7 +22,11 @@ public class NdjsonValidationStrategy implements IValidationStrategy {
     }
 
     @Override
-    public ValidationResult validate(ProcessedFile file, IFileTokenSource required, IFileTokenSource optional) {
+    public ValidationResult validate(
+            ProcessedFile file,
+            IFileTokenSource required,
+            IFileTokenSource optional
+    ) {
 
         if (!(required instanceof IKeyedFileTokenSource req)) {
             throw new IllegalArgumentException("Required tokens must be keyed for NDJSON");
@@ -33,18 +36,23 @@ public class NdjsonValidationStrategy implements IValidationStrategy {
             throw new IllegalArgumentException("Optional tokens must be keyed for NDJSON");
         }
 
-        Set<String> missingRequired = new HashSet<>();
         Set<String> missingOptional = new HashSet<>();
+        Set<String> missingRequired = new HashSet<>();
 
         boolean anyValidLine = FileUtils.validateNdjsonAnyMatch(
                 file.content(),
-                json -> true, // tutte le righe candidate
-                json -> validateLine(json, req, opt, missingRequired, missingOptional)
+                json -> true,
+                json -> {
+
+                    // se la riga è valida → interrompe la scansione
+                    return validateLine(json, req, opt, missingOptional);
+                }
         );
 
-        // se non c'è nemmeno una riga valida, i required sono tutti mancanti
         if (!anyValidLine) {
-            missingRequired.addAll(req.entries().map(KeyedFileTokenEntry::key).toList());
+            missingRequired.addAll(
+                    req.entries().map(KeyedFileTokenEntry::key).toList()
+            );
         }
 
         return new ValidationResult(missingRequired, missingOptional);
@@ -54,37 +62,29 @@ public class NdjsonValidationStrategy implements IValidationStrategy {
             JsonNode json,
             IKeyedFileTokenSource required,
             IKeyedFileTokenSource optional,
-            Set<String> missingRequired,
             Set<String> missingOptional
     ) {
-
         // REQUIRED
         for (KeyedFileTokenEntry entry : required.entries().toList()) {
-            String path = entry.key();
-            FileToken token = entry.fileToken();
-
-            JsonNode node = FileUtils.getNodeByPath(json, path);
-            if (!token.validate(node)) {
-                missingRequired.add(path);
+            JsonNode node = FileUtils.getNodeByPath(json, entry.key());
+            if (!entry.fileToken().validate(node)) {
                 return JsonValidationResult.invalid(
                         json.toString(),
-                        "Missing or invalid required token at path: " + path
+                        "Missing or invalid required token at path: " + entry.key()
                 );
             }
         }
 
-        // OPTIONAL
+        // OPTIONAL (solo sulla riga valida)
         for (KeyedFileTokenEntry entry : optional.entries().toList()) {
-            String path = entry.key();
-            FileToken token = entry.fileToken();
-
-            JsonNode node = FileUtils.getNodeByPath(json, path);
-            if (!token.validate(node)) {
-                missingOptional.add(path);
+            JsonNode node = FileUtils.getNodeByPath(json, entry.key());
+            if (!entry.fileToken().validate(node)) {
+                missingOptional.add(entry.key());
             }
         }
 
         return JsonValidationResult.valid(json.toString());
     }
+
 
 }
