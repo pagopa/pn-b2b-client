@@ -75,6 +75,24 @@ public class Definitions {
                         AgreementState.ARCHIVED.getValue(),
                         eventBucketBase,
                         eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        PURPOSE_ACTIVATE_EVENTS_LOG,
+                        InteropEvent.PURPOSE_ACTIVATED,
+                        ":purposeId",
+                        PurposeVersionState.ACTIVE.getValue(),
+                        eventBucketBase,
+                        eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        NEW_PURPOSE_VERSION_ACTIVATE_EVENTS_LOG,
+                        InteropEvent.NEW_PURPOSE_VERSION_ACTIVATED,
+                        ":purposeId",
+                        PurposeVersionState.ACTIVE.getValue(),
+                        eventBucketBase,
+                        eventWormBucketBase
                 )
         );
     }

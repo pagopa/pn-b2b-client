@@ -10,12 +10,12 @@ public enum InteropEvent {
     AGREEMENT_UPGRADED("AgreementUpgraded"),
     AGREEMENT_SUSPENDED_BY_CONSUMER("AgreementSuspendedByConsumer"),
     AGREEMENT_ARCHIVED_BY_CONSUMER("AgreementArchivedByConsumer"),
-    PURPOSE_ACTIVATED("PurposeActivated "),
-    NEW_PURPOSE_VERSION_ACTIVATED("NewPurposeVersionActivated "),
-    PURPOSE_VERSION_ACTIVATED("PurposeVersionActivated "),
-    PRODUCER_DELEGATION_APPROVED("ProducerDelegationApproved "),
-    CONSUMER_DELEGATION_APPROVED("ConsumerDelegationApproved "),
-    PRODUCER_DELEGATION_REVOKED("ProducerDelegationRevoked  "),
+    PURPOSE_ACTIVATED("PurposeActivated"),
+    NEW_PURPOSE_VERSION_ACTIVATED("NewPurposeVersionActivated"),
+    PURPOSE_VERSION_ACTIVATED("PurposeVersionActivated"),
+    PRODUCER_DELEGATION_APPROVED("ProducerDelegationApproved"),
+    CONSUMER_DELEGATION_APPROVED("ConsumerDelegationApproved"),
+    PRODUCER_DELEGATION_REVOKED("ProducerDelegationRevoked"),
     CONSUMER_DELEGATION_REVOKED("ConsumerDelegationRevoked");
 
     private final String value;
