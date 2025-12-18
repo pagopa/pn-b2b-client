@@ -1,12 +1,10 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator;
 
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.FileToken;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.entry.KeyedFileTokenEntry;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.IFileTokenSource;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.IKeyedFileTokenSource;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.*;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.strategy.JsonValidationStrategy;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.strategy.NdjsonValidationStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.strategy.PdfValidationStrategy;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
@@ -23,7 +21,6 @@ public class FileValidator {
     private final IFileTokenSource optionalTokens;
 
     private final List<IValidationStrategy> strategies = List.of(
-            new JsonValidationStrategy(),
             new NdjsonValidationStrategy(),
             new PdfValidationStrategy()
     );

@@ -7,84 +7,100 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.source.IKeyedFileTokenSource;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.IValidationStrategy;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.JsonValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NdjsonValidationStrategy implements IValidationStrategy {
 
+    private record NdjsonMatchResult(
+            Set<String> found,
+            Set<String> missing,
+            JsonNode raw
+    ) {}
+
     @Override
     public boolean supports(ContentType contentType) {
-        return contentType == ContentType.NDJSON;
+        return contentType == ContentType.NDJSON || contentType == ContentType.JSON;
     }
 
     @Override
-    public ValidationResult validate(
-            ProcessedFile file,
-            IFileTokenSource required,
-            IFileTokenSource optional
-    ) {
+    public ValidationResult validate(ProcessedFile file, IFileTokenSource required, IFileTokenSource optional) {
 
-        if (!(required instanceof IKeyedFileTokenSource req)) {
-            throw new IllegalArgumentException("Required tokens must be keyed for NDJSON");
-        }
+        List<JsonNode> lines = readAllNdjsonLines(file);
 
-        if (!(optional instanceof IKeyedFileTokenSource opt)) {
-            throw new IllegalArgumentException("Optional tokens must be keyed for NDJSON");
-        }
+        NdjsonMatchResult requiredResult =
+                validateSource(lines, required);
 
-        Set<String> missingOptional = new HashSet<>();
-        Set<String> missingRequired = new HashSet<>();
+        JsonNode targetRow = requiredResult.raw();
 
-        boolean anyValidLine = FileUtils.validateNdjsonAnyMatch(
-                file.content(),
-                json -> true,
-                json -> {
+        NdjsonMatchResult optionalResult =
+                validateSource(targetRow != null ? List.of(targetRow) : List.of(), optional);
 
-                    // se la riga è valida → interrompe la scansione
-                    return validateLine(json, req, opt, missingOptional);
-                }
-        );
-
-        if (!anyValidLine) {
-            missingRequired.addAll(
-                    req.entries().map(KeyedFileTokenEntry::key).toList()
-            );
-        }
+        Set<String> missingRequired = new HashSet<>(requiredResult.missing());
+        Set<String> missingOptional = new HashSet<>(optionalResult.missing());
 
         return new ValidationResult(missingRequired, missingOptional);
     }
 
-    private JsonValidationResult validateLine(
-            JsonNode json,
-            IKeyedFileTokenSource required,
-            IKeyedFileTokenSource optional,
-            Set<String> missingOptional
-    ) {
-        // REQUIRED
-        for (KeyedFileTokenEntry entry : required.entries().toList()) {
-            JsonNode node = FileUtils.getNodeByPath(json, entry.key());
-            if (!entry.fileToken().validate(node)) {
-                return JsonValidationResult.invalid(
-                        json.toString(),
-                        "Missing or invalid required token at path: " + entry.key()
-                );
-            }
+    private NdjsonMatchResult validateSource(List<JsonNode> lines, IFileTokenSource source) {
+        if (source instanceof IKeyedFileTokenSource keyed) {
+            return validateKeyedSource(lines, keyed);
         }
 
-        // OPTIONAL (solo sulla riga valida)
-        for (KeyedFileTokenEntry entry : optional.entries().toList()) {
-            JsonNode node = FileUtils.getNodeByPath(json, entry.key());
-            if (!entry.fileToken().validate(node)) {
-                missingOptional.add(entry.key());
-            }
-        }
-
-        return JsonValidationResult.valid(json.toString());
+        throw new IllegalArgumentException("Unsupported source type for NDJSON");
     }
 
+    private NdjsonMatchResult validateKeyedSource(List<JsonNode> lines, IKeyedFileTokenSource source) {
+        NdjsonMatchResult bestResult = null;
+
+        for (JsonNode json : lines) {
+
+            Set<String> found = new HashSet<>();
+            Set<String> missing = new HashSet<>();
+
+            for (KeyedFileTokenEntry entry : source.entries().toList()) {
+                JsonNode node = FileUtils.getNodeByPath(json, entry.key());
+
+                if (entry.fileToken().validate(node != null ? node.asText() : null)) {
+                    found.add(entry.key());
+                } else {
+                    missing.add(entry.key());
+                }
+            }
+
+            NdjsonMatchResult current =
+                    new NdjsonMatchResult(found, missing, json);
+
+            // scegli la riga "migliore"
+            if (bestResult == null || current.found().size() > bestResult.found().size()) {
+                bestResult = current;
+            }
+
+            // shortcut: riga perfetta
+            if (missing.isEmpty()) {
+                return current;
+            }
+        }
+
+        // nessuna riga → tutto missing
+        if (bestResult == null) {
+            Set<String> allMissing = new HashSet<>();
+            source.entries()
+                    .map(KeyedFileTokenEntry::key)
+                    .forEach(allMissing::add);
+
+            return new NdjsonMatchResult(Set.of(), allMissing, null);
+        }
+
+        return bestResult;
+    }
+
+    private List<JsonNode> readAllNdjsonLines(ProcessedFile file) {
+        return FileUtils.readNdjsonLines(file.content());
+    }
 
 }
