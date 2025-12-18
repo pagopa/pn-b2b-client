@@ -5,6 +5,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public interface IFileTokenSource {
+public interface IListedFileTokenSource extends IFileTokenSource {
     Stream<FileToken> tokens();
+    IListedFileTokenSource map(Function<FileToken, FileToken> mapper);
 }
