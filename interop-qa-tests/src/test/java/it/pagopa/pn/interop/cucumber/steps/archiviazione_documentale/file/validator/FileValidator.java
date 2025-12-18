@@ -47,20 +47,38 @@ public class FileValidator {
     private IFileTokenSource resolveTokens(IFileTokenSource source) {
 
         if (source == null) {
-            return Stream::empty;
+            return new ListFileTokenSource(List.of());
         }
 
         if (source instanceof IKeyedFileTokenSource keyedSource) {
-            return (IKeyedFileTokenSource) () ->
+            return MapFileTokenSource.of(
                     keyedSource.entries()
                             .map(e -> KeyedFileTokenEntry.of(
                                     e.key(),
                                     resolveToken(e.fileToken())
-                            ));
+                            ))
+                            .flatMap(e -> Stream.of(e.key(), e.fileToken()))
+                            .toArray()
+            );
+
         }
 
-        return () -> source.tokens().map(this::resolveToken);
+        if (source instanceof IListedFileTokenSource listedSource) {
+            return new ListFileTokenSource(
+                    listedSource.tokens()
+                            .map(this::resolveToken)
+                            .toList()
+            );
+        }
+
+        // fallback sicuro
+        return new ListFileTokenSource(
+                source.tokens()
+                        .map(this::resolveToken)
+                        .toList()
+        );
     }
+
 
     private FileToken resolveToken(FileToken token) {
 
