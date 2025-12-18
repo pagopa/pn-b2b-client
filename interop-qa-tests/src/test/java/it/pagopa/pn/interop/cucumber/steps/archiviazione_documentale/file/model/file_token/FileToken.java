@@ -11,13 +11,13 @@ import java.util.function.Predicate;
 public class FileToken {
 
     private final String expectedValue;
-    private final Predicate<JsonNode> validator;
+    private final Predicate<Object> validator;
 
     public static FileToken ofValue(String expectedValue) {
         return new FileToken(Objects.requireNonNull(expectedValue, "expectedValue must not be null"), null);
     }
 
-    public static FileToken ofValidator(Predicate<JsonNode> validator) {
+    public static FileToken ofValidator(Predicate<Object> validator) {
         return new FileToken(null, Objects.requireNonNull(validator, "validator must not be null"));
     }
 
@@ -27,32 +27,35 @@ public class FileToken {
 
     public String expectedValue() { return expectedValue; }
 
-    public boolean validate(JsonNode node) {
-        if (node == null) return false;
+    public boolean validate(Object obj) {
+        if (obj == null) return false;
 
         if (isValueToken()) {
-            return expectedValue.equals(node.asText());
+            String actualValue = (String)obj;
+            return expectedValue.equals(actualValue);
         }
 
         // a questo punto deve essere per forza un validator token
-        return validator.test(node);
-    }
-
-    public String describe() {
-        if (isValueToken()) return expectedValue;
-        return "<custom-validator>";
+        return validator.test(obj);
     }
 
     public static FileToken hasValidTimestamp() {
-        return ofStringValidator(Validations::isValidTimestamp);
-    }
-
-    private static FileToken ofStringValidator(Predicate<String> stringValidator) {
-        Objects.requireNonNull(stringValidator, "stringValidator must not be null");
-        return ofValidator(node ->
-                node != null
-                        && node.isTextual()
-                        && stringValidator.test(node.asText())
+        return ofTypedValidator(
+                String.class,
+                Validations::isValidTimestamp
         );
     }
+
+    private static <T> FileToken ofTypedValidator(
+            Class<T> type,
+            Predicate<T> typedValidator
+    ) {
+        Objects.requireNonNull(type, "type must not be null");
+        Objects.requireNonNull(typedValidator, "typedValidator must not be null");
+
+        return ofValidator(obj ->
+                type.isInstance(obj) && typedValidator.test(type.cast(obj))
+        );
+    }
+
 }
