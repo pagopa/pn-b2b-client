@@ -148,6 +148,8 @@ public class AgreementCommonSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         // Create e-services and publish descriptors
         List<EServiceDescriptor> eServiceDescriptorList = new ArrayList<>();
+        List<String> eServiceNames = new ArrayList<>();
+
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
@@ -163,10 +165,12 @@ public class AgreementCommonSteps {
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Add the e-service to the list of published ones
             eServiceDescriptorList.add(eServiceDescriptor);
+            eServiceNames.add(eserviceName);
         }
         // Set the first e-service and descriptor
         if (!eServiceDescriptorList.isEmpty()) {
             EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+            eServicesCommonContext.setName(eServiceNames.get(0));
             eServicesCommonContext.setPublishedEservicesIds(eServiceDescriptorList);
             EServiceDescriptor firstDescriptor = eServiceDescriptorList.get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
