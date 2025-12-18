@@ -638,13 +638,16 @@ public class PurposeTemplateSteps {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotation(ptId, answerId));
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, uploadedDocument.getId())),
-                    res -> res == HttpStatus.NOT_FOUND,
-                    "Failed to retrieve the client!"
-            );
-        }
+    }
+
+    @And("l'eliminazione dell'annotation ha avuto successo")
+    public void checkAnnotationSuccessfulltDeleted() {
+        assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La chiamata di delete non ha avuto successo").isTrue();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(createdPurposeTemplate.getId(), riskAnalysis.getId(), uploadedDocument.getId())),
+                res -> res == HttpStatus.NOT_FOUND,
+                "Failed to retrieve the client!"
+        );
     }
 
     @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata")
