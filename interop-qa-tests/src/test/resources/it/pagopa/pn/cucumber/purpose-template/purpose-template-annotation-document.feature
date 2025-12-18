@@ -85,7 +85,6 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminata l'annotazione esistente per il purpose template
-    Then si ottiene lo status code 204
 
   #92 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument

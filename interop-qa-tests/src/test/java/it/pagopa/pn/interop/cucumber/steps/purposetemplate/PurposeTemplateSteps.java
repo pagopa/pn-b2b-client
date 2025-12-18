@@ -637,15 +637,14 @@ public class PurposeTemplateSteps {
     public void deleteAnnotation(boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
-
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotation(ptId, answerId));
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            PurposeTemplateWithCompactCreator ptWithDeletedAnnotation = getPurposeTemplateById(ptId, true);
-            RiskAnalysisFormTemplate raTemplate = ptWithDeletedAnnotation.getPurposeRiskAnalysisForm();
-            assertThat(raTemplate).as("Il template di analisi del rischio della finalità agevolata non dev'essere null").isNotNull();
-            RiskAnalysisTemplateAnswer raAnswer = raTemplate.getAnswers().values().stream().filter(a -> a.getId().equals(answerId)).findFirst().orElse(null);
-            assertThat(raAnswer).as("La risposta di analisi del rischio del purpose template non dev'essere null").isNotNull();
-            assertThat(raAnswer.getAnnotation()).as("L'annotazione della risposta di analisi del rischio dev'essere null").isNull();
+        if (exists) {
+            assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("L'operazione di delete non ha avuto successo").isTrue();
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, uploadedDocument.getId())),
+                    res -> res == HttpStatus.NOT_FOUND,
+                    "Failed to retrieve the client!"
+            );
         }
     }
 
