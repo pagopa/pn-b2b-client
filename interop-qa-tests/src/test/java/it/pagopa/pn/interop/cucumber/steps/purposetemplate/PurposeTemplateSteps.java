@@ -511,29 +511,6 @@ public class PurposeTemplateSteps {
                 request.setAnswerKey(key);
                 request.setAnswerData(answer);
             }
-//            case "ENTRO I LIMITI CONSENTITI MULTI" -> {
-//                String key = "usesThirdPartyPersonalData";
-//                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
-//                answer.setValues(
-//                        Stream.concat(answer.getValues().stream(), Stream.of("A".repeat(250))).toList());
-//                request.setAnswerKey(key);
-//                request.setAnswerData(answer);
-//            }
-//            case "OLTRE I LIMITI CONSENTITI MULTI" -> {
-//                String key = "institutionalPurpose";
-//                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
-//                answer.setSuggestedValues(Arrays.asList("Answer1", "A".repeat(251)));
-//                request.setAnswerKey(key);
-//                request.setAnswerData(answer);
-//            }
-            case "CONTENENTE HYPER LINK" -> {
-                String key = "institutionalPurpose";
-                RiskAnalysisTemplateAnswerSeed answer = answersMap.get(key);
-                answer.setSuggestedValues(
-                        Stream.concat(answer.getSuggestedValues().stream(), Stream.of("https://www.google.com")).toList());
-                request.setAnswerKey(key);
-                request.setAnswerData(answer);
-            }
         }
         httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswer(ptId, request));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
@@ -546,22 +523,16 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @And("viene {string} un'annotazione con testo {isInRange} i {int} caratteri per il purpose template {exists}")
-    public void createRiskAnalysisAnswerAnnotation(String action, boolean inRange, int maxLimit, boolean ptExists) {
-        boolean answerExists = false;
-        UUID ptId = ptExists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-        UUID answerId;
-        if (action.equalsIgnoreCase("MODIFICATA") || action.equalsIgnoreCase("CREATA")) {
-            assertThat(riskAnalysis).as("La risposta di analisi del rischio non dev'essere null").isNotNull();
-            answerId = riskAnalysis.getId();
-            answerExists = true;
-        } else {
-            answerId = UUID.randomUUID();
-        }
+    @And("viene aggiunta un'annotazione con testo {isInRange} i {int} caratteri ad una risposta {exists} del purpose template")
+    public void createRiskAnalysisAnswerAnnotation(boolean inRange, int maxLimit, boolean answerExists) {
+        assertThat(createdPurposeTemplate).as("Il purpose template creato non dev'essere null").isNotNull();
+        assertThat(riskAnalysis).as("La risposta di analisi del rischio non dev'essere null").isNotNull();
+        UUID ptId = createdPurposeTemplate.getId();
+        UUID answerId = answerExists ? riskAnalysis.getId() : UUID.randomUUID();
         RiskAnalysisTemplateAnswerAnnotationSeed annotationText = new RiskAnalysisTemplateAnswerAnnotationSeed();
         String text = inRange ? "Y".repeat(maxLimit) : "N".repeat(maxLimit + 1);
         annotationText.setText(text);
-        if (answerExists && ptExists) {
+        if (answerExists) {
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText)),
                     res -> res != HttpStatus.NOT_FOUND,
@@ -572,6 +543,24 @@ public class PurposeTemplateSteps {
             }
         } else {
             httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText));
+        }
+    }
+
+    @And("viene aggiunta un'annotazione con testo contenente hyper-link ad una risposta di analisi del rischio del purpose template")
+    public void createRiskAnalysisAnswerAnnotationWithHyperLink() {
+        assertThat(createdPurposeTemplate).as("Il purpose template creato non dev'essere null").isNotNull();
+        assertThat(riskAnalysis).as("La risposta di analisi del rischio non dev'essere null").isNotNull();
+        UUID ptId = createdPurposeTemplate.getId();
+        UUID answerId = riskAnalysis.getId();
+        RiskAnalysisTemplateAnswerAnnotationSeed annotationText = new RiskAnalysisTemplateAnswerAnnotationSeed();
+        annotationText.setText("https://www.google.com");
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText)),
+                res -> res != HttpStatus.NOT_FOUND,
+                "Failed to retrieve the client!"
+        );
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            annotation = (RiskAnalysisTemplateAnswerAnnotation) httpCallExecutor.getResponse();
         }
     }
 
