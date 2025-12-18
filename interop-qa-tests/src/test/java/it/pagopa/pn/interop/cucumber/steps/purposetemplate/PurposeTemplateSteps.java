@@ -1,28 +1,59 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactPurposeTemplateEService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswer;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-
-import java.io.File;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class PurposeTemplateSteps {
@@ -148,7 +179,7 @@ public class PurposeTemplateSteps {
         purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
         purposeTemplateCreationRequest.setTargetDescription("targetDescription_CREATE");
-        purposeTemplateCreationRequest.setTargetTenantKind(TenantKind.PA);
+        purposeTemplateCreationRequest.setTargetTenantKind(TargetTenantKind.PA);
         purposeTemplateCreationRequest.setPurposeIsFreeOfCharge(true);
         purposeTemplateCreationRequest.setPurposeDailyCalls(10);
 
@@ -267,7 +298,7 @@ public class PurposeTemplateSteps {
         purposeTemplateCreationRequest.setPurposeDescription("updated_purposeDescription_" + DateTime.now());
         purposeTemplateCreationRequest.setTargetDescription("updated_targetDescription_" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("updated_purposeFreeOfChargeReason_" + DateTime.now());
-        purposeTemplateCreationRequest.setTargetTenantKind(TenantKind.GSP);
+        purposeTemplateCreationRequest.setTargetTenantKind(TargetTenantKind.PA);
         invokeUpdatePurposeTemplate(exists);
     }
 
