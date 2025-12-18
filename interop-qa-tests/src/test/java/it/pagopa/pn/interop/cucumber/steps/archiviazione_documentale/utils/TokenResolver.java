@@ -30,7 +30,7 @@ public class TokenResolver {
                     Map.entry(":kid", ctx -> ctx.getClientCommonContext().getKeyId()),
                     Map.entry(":agreementId", ctx -> ctx.getAgreementId().toString()),
                     Map.entry(":consumerDelegationId", ctx -> ctx.getDelegationCommonContext().getDelegationId().toString()),
-                    Map.entry(":producerDelegationId", ctx -> null),
+                    Map.entry(":producerDelegationId", ctx -> ctx.getDelegationCommonContext().getDelegationId().toString()),
                     Map.entry(":purposeId", ctx -> ctx.getPurposeCommonContext().getLastPurposeId().toString()),
                     Map.entry(":purposeVersionId", ctx -> ctx.getPurposeCommonContext().getCurrentVersionId()),
                     Map.entry(":riskAnalysisId", ctx -> ctx.getRiskAnalysisCommonContext().getRiskAnalysisId().toString()),

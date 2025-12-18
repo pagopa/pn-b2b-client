@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.model;
 
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FilenameFormat;
@@ -10,7 +11,8 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.
 
 import java.util.List;
 
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.*;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.STANDARD;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.WORM;
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile.*;
 
 public class Definitions {
@@ -25,8 +27,8 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         RISK_ANALYSIS_DOC,
+                        MapFileTokenSource.of("E-Service", ":eServiceName", "Numero chiamate API/giorno", ":riskAnalysisDailyCalls"),
                         ListFileTokenSource.of("Analisi del rischio"),
-                        null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "risk-analysis/:riskAnalysisId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
                         )
@@ -49,6 +51,34 @@ public class Definitions {
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
                         )
                 ),
+
+                new FileInfoDefinition(
+                        CONSUMER_DELEGATION_REVOKED_DOC,
+                        ListFileTokenSource.of("Richiesta di revoca della delega", ":agreementId"),
+                        null,
+                        List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
+                                new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
+                        )
+                ),
+
+                new FileInfoDefinition(
+                        PRODUCER_DELEGATION_REVOKED_DOC,
+                        ListFileTokenSource.of("Richiesta di revoca della delega all’erogazione", ":agreementId"),
+                        null,
+                        List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
+                                new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
+                        )
+                ),
+
+                new FileInfoDefinition(
+                        PRODUCER_DELEGATION_REQUEST_DOC,
+                        ListFileTokenSource.of("richiesta di delega all'erogazione", ":agreementId"),
+                        null,
+                        List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
+                                new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
+                        )
+                ),
+
 
                 buildStandardEventLogFileDefinition(
                         AGREEMENT_ACTIVATE_EVENTS_LOG,

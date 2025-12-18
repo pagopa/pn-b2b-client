@@ -4,17 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.JsonValidationResult;
-import it.pagopa.pn.interop.cucumber.utility.model.PdfWordMatchResult;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class FileUtils {
 
@@ -145,8 +144,7 @@ public class FileUtils {
      * @param separatore   Il separatore dei campi nel CSV (es. "," o ";")
      * @param modifica     Una funzione che riceve la lista di righe lette dal file e restituisce la lista modificata da salvare
      */
-    public static void modifyCsvSafe(String pathRelativo, String separatore,
-                                     Function<List<List<String>>, List<List<String>>> modifica) {
+    public static void modifyCsvSafe(String pathRelativo, String separatore, Function<List<List<String>>, List<List<String>>> modifica) {
         synchronized (getFileLock(pathRelativo)) {
             List<List<String>> righe = readCsv(pathRelativo, separatore, false);
             List<List<String>> righeModificate = modifica.apply(righe);
@@ -269,41 +267,6 @@ public class FileUtils {
             }
         }
     }
-
-    public static PdfWordMatchResult pdfMatchWords(
-            InputStream inputStream,
-            List<String> words
-    ) {
-        try (PDDocument document = PDDocument.load(inputStream)) {
-
-            PDFTextStripper stripper = new PDFTextStripper();
-            stripper.setSortByPosition(true);
-            String text = stripper.getText(document).toLowerCase(Locale.ROOT);
-
-            Set<String> found = new HashSet<>();
-            Set<String> missing = new HashSet<>();
-
-            for (String word : words) {
-                if (word == null || word.isBlank()) {
-                    continue;
-                }
-
-                String normalized = word.toLowerCase(Locale.ROOT);
-
-                if (text.contains(normalized)) {
-                    found.add(word);
-                } else {
-                    missing.add(word);
-                }
-            }
-
-            return new PdfWordMatchResult(found, missing);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Errore durante la lettura del PDF", e);
-        }
-    }
-
 
     /**
      * Recupera un nodo JSON tramite un percorso "path" annidato.
@@ -464,90 +427,48 @@ public class FileUtils {
         }
     }
 
-    public static void validateNdjson(
-            InputStream is,
-            Predicate<JsonNode> candidateSelector,
-            Function<JsonNode, JsonValidationResult> validator,
-            String notFoundMessage
-    ) {
-        List<String> aggregatedErrors = new ArrayList<>();
-        boolean foundCandidate = false;
-        boolean foundValid = false;
+    public static String extractPdfText(InputStream pdfContent) {
+        if (pdfContent == null) throw new NullPointerException("pdfContent == null");
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+        try (PDDocument document = PDDocument.load(pdfContent)) {
 
-            String line;
-            int lineNumber = 0;
+            PDFTextStripper stripper = new PDFTextStripper();
+            stripper.setSortByPosition(true);
 
-            while ((line = reader.readLine()) != null) {
-                lineNumber++;
+            String text = stripper.getText(document);
+            return text != null ? text : "";
 
-                JsonNode json = objectMapper.readTree(line);
-
-                if (!candidateSelector.test(json)) continue;
-                foundCandidate = true;
-
-                JsonValidationResult result = validator.apply(json);
-
-                if (result.isValid()) {
-                    foundValid = true;
-                    break; // una riga valida è sufficiente
-                } else {
-                    String errorBlock = String.format(
-                            "Riga %d NON valida:%nJSON: %s%nErrori:%n  - %s%n%n",
-                            lineNumber,
-                            result.rawJson(),
-                            String.join("\n  - ", result.errors())
-                    );
-                    aggregatedErrors.add(errorBlock);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore nella validazione NDJSON", e);
-        }
-
-        if (!foundCandidate) {
-            throw new RuntimeException(notFoundMessage);
-        }
-
-        if (!foundValid) {
-            String message = "Righe candidate trovate, ma tutte non valide:\n" +
-                    String.join("\n", aggregatedErrors);
-            throw new RuntimeException(message);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to extract text from PDF", e);
         }
     }
 
+    public static List<JsonNode> readNdjsonLines(InputStream content) {
 
-    public static boolean validateNdjsonAnyMatch(
-            InputStream is,
-            Predicate<JsonNode> candidateSelector,
-            Function<JsonNode, JsonValidationResult> validator
-    ) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+        if (content == null) {
+            return List.of();
+        }
+
+        List<JsonNode> result = new ArrayList<>();
+
+        try (BufferedReader reader =
+                     new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8))) {
 
             String line;
-
             while ((line = reader.readLine()) != null) {
 
-                JsonNode json = objectMapper.readTree(line);
-
-                if (!candidateSelector.test(json)) {
+                if (line.isBlank()) {
                     continue;
                 }
 
-                JsonValidationResult result = validator.apply(json);
-
-                if (result.isValid()) {
-                    return true; // basta UNA riga valida
-                }
+                JsonNode json = objectMapper.readTree(line);
+                result.add(json);
             }
 
-            // nessuna riga candidata o tutte invalide
-            return false;
-
         } catch (Exception e) {
-            throw new RuntimeException("Errore durante la validazione NDJSON", e);
+            throw new IllegalArgumentException("Error reading NDJSON content", e);
         }
+
+        return result;
     }
 }

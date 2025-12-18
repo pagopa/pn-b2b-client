@@ -1,4 +1,3 @@
-#TODO: da chiarire se mancano i doc: RiskAnalysisDocumentAdded, AgreementContractDocumentAdded
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
   Scenario: [TRIGGER]
@@ -12,9 +11,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     When l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 200
-
-    Scenario: [GET_ALL]
-      Given recupera gli ultimi 10 file nel bucket "interop-signed-application-documents-qa-es1/interop-qa-documents-signer/2025/12/11/"
 
   Scenario: [AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
@@ -98,12 +94,13 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     When l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 200
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApproved
-    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApprovedSigned
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationApprovedEvent
+    And verifica che a fronte dell'evento ConsumerDelegationApproved venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REQUEST_DOC
     And verifica che il file contenga le opportune informazioni
-    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationApprovedEventSigned
+    And verifica che a fronte dell'evento ConsumerDelegationApproved venga generato nell'opportuno bucket S3 WORM un CONSUMER_DELEGATION_REQUEST_DOC
+    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che a fronte dell'evento ConsumerDelegationApproved venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REQUEST_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ConsumerDelegationApproved venga generato nell'opportuno bucket S3 WORM un CONSUMER_DELEGATION_REQUEST_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
@@ -115,12 +112,15 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
     And l'ente "PA2" accetta la delega
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationApproved
-    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationApproved
+    And verifica che a fronte dell'evento ProducerDelegationApproved venga generato nell'opportuno bucket S3 STANDARD un PRODUCER_DELEGATION_REQUEST_DOC
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ProducerDelegationApproved venga generato nell'opportuno bucket S3 WORM un PRODUCER_DELEGATION_REQUEST_DOC
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationApprovedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationApprovedEvent
+    And verifica che a fronte dell'evento ProducerDelegationApproved venga generato nell'opportuno bucket S3 STANDARD un PRODUCER_DELEGATION_REQUEST_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ProducerDelegationApproved venga generato nell'opportuno bucket S3 WORM un PRODUCER_DELEGATION_REQUEST_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -132,12 +132,15 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato rifiuta la delega in fruizione
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationRevoked
-    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationRevoked
+    And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REVOKED_DOC
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 WORM un CONSUMER_DELEGATION_REVOKED_DOC
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ConsumerDelegationRevokedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file ConsumerDelegationRevokedEvent
+    And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REVOKED_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 WORM un CONSUMER_DELEGATION_REVOKED_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA2"
@@ -148,12 +151,15 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Then si ottiene lo status code 200
     When l'ente "PA1" con ruolo "admin" revoca la delega
     Then si ottiene lo status code 200
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationRevoked
-    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationRevoked
+    And verifica che a fronte dell'evento ProducerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un PRODUCER_DELEGATION_REVOKED_DOC
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ProducerDelegationRevoked venga generato nell'opportuno bucket S3 WORM un PRODUCER_DELEGATION_REVOKED_DOC
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ProducerDelegationRevokedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file ProducerDelegationRevokedEvent
+    And verifica che a fronte dell'evento ProducerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un PRODUCER_DELEGATION_REVOKED_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ProducerDelegationRevoked venga generato nell'opportuno bucket S3 WORM un PRODUCER_DELEGATION_REVOKED_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
   Scenario: [KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
@@ -161,9 +167,11 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     When l'utente richiede il caricamento di una chiave pubblica di tipo "RSA"
     Then si ottiene status code 204
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file KeysAddedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file KeysAddedEvent
+    And verifica che a fronte dell'evento ClientKeyAdded venga generato nell'opportuno bucket S3 STANDARD un KEY_ADDED_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ClientKeyAdded venga generato nell'opportuno bucket S3 WORM un KEY_ADDED_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
   Scenario: [KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
@@ -172,16 +180,20 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede una operazione di cancellazione della chiave di quel client
     Then si ottiene status code 204
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file KeyDeletedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file KeyDeletedEvent
+    And verifica che a fronte dell'evento ClientKeyDeleted venga generato nell'opportuno bucket S3 STANDARD un KEY_DELETED_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ClientKeyDeleted venga generato nell'opportuno bucket S3 WORM un KEY_DELETED_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
   Scenario Outline:[ESERVICE_EVENT_ARCHIVE_1] Upgrade descrittore eservice - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file DescriptorEserviceUpgradedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file DescriptorEserviceUpgradedEvent
+    And verifica che a fronte dell'evento DescriptorEServiceUpgraded venga generato nell'opportuno bucket S3 STANDARD un ESERVICE_DESCRIPTOR_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento DescriptorEServiceUpgraded venga generato nell'opportuno bucket S3 WORM un ESERVICE_DESCRIPTOR_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni
 
     Examples:
       | statoVersione |
@@ -191,64 +203,13 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | ARCHIVED      |
       | DRAFT         |
 
-  Scenario: [VOUCHER_EVENT_ARCHIVE_1] Generazione voucher - archiviazione ZIP firmato
-    Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato e pubblicato 1 e-service
-    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    Given "PA1" ha già creato 1 client "CONSUMER"
-    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-    Given "PA1" ha già associato la finalità a quel client
-    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
-    When l'utente richiede la generazione del voucher
-    Then si ottiene la corretta generazione del voucher
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file VoucherEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file VoucherEvent
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-
-  Scenario Outline: [PURPOSE_EVENT_ARCHIVE_1] Purpose upgrade - archiviazione ZIP firmato
-    Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato e pubblicato 1 e-service
-    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA1" ha già creato 1 finalità in stato "<state>" per quell'eservice
-    Then si ottiene status code 200
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file PurposeUpgradedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file PurposeUpgradedEvent
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-
-    Examples:
-      | state                |
-      | ACTIVE               |
-      | SUSPENDED            |
-      | REJECTED             |
-      | WAITING_FOR_APPROVAL |
-      | ARCHIVED             |
-      | DRAFT                |
-
-  Scenario Outline: [AGREEMENT_EVENT_ARCHIVE_1] Agreement upgrade - archiviazione ZIP firmato
-    Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato e pubblicato 1 e-service
-    Given "PA1" ha una richiesta di fruizione in stato "<state>" per quell'e-service
-    Then si ottiene status code 200
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file AgreementUpgradedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file AgreementUpgradedEvent
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-
-    Examples:
-      | state                        |
-      | ACTIVE                       |
-      | SUSPENDED                    |
-      | REJECTED                     |
-      | MISSING_CERTIFIED_ATTRIBUTES |
-      | ARCHIVED                     |
-      | DRAFT                        |
-      | PENDING                      |
-
   Scenario: [CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di cancellazione di quel client
     Then si ottiene status code 204
-    And verifica nel bucket S3 UNSIGNED l'esistenza del file ClientDeletedEvent
-    And verifica nel bucket S3 SIGNED l'esistenza del file ClientDeletedEvent
+    And verifica che a fronte dell'evento ClientDeleted venga generato nell'opportuno bucket S3 STANDARD un CLIENT_DELETED_EVENTS_LOG
+    And verifica che il file contenga le opportune informazioni
+    And verifica che a fronte dell'evento ClientDeleted venga generato nell'opportuno bucket S3 WORM un CLIENT_DELETED_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
+    And verifica che il file contenga le opportune informazioni

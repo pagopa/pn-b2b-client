@@ -16,7 +16,11 @@ public enum InteropEvent {
     PRODUCER_DELEGATION_APPROVED("ProducerDelegationApproved"),
     CONSUMER_DELEGATION_APPROVED("ConsumerDelegationApproved"),
     PRODUCER_DELEGATION_REVOKED("ProducerDelegationRevoked"),
-    CONSUMER_DELEGATION_REVOKED("ConsumerDelegationRevoked");
+    CONSUMER_DELEGATION_REVOKED("ConsumerDelegationRevoked"),
+    CLIENT_KEY_DELETED("ClientKeyDeleted"),
+    DESCRIPTOR_ESERVICE_UPGRADED("DescriptorEServiceUpgraded"),
+    CLIENT_DELETE("ClientDelete"),
+    CLIENT_KEY_ADDED("ClientKeyAdded");
 
     private final String value;
 
