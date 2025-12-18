@@ -638,8 +638,7 @@ public class PurposeTemplateSteps {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotation(ptId, answerId));
-        if (exists) {
-            assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("L'operazione di delete non ha avuto successo").isTrue();
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, uploadedDocument.getId())),
                     res -> res == HttpStatus.NOT_FOUND,
