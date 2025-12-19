@@ -511,6 +511,7 @@ public class PurposeTemplateSteps {
                 request.setAnswerKey(key);
                 request.setAnswerData(answer);
             }
+            default -> throw new IllegalArgumentException("Answer type '%s' not supported".formatted(answerType));
         }
         httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswer(ptId, request));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
