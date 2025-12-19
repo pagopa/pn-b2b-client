@@ -58,10 +58,11 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #72 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_HYPER_LINK] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata inserendo un link nell'answer (error 400)
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_HYPER_LINK] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata inserendo un link nell'annotation (error 400)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    And viene creata una risposta di analisi del rischio "CONTENENTE HYPER LINK" per il purpose template creato
+    And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
+    When viene aggiunta un'annotazione con testo contenente hyper-link ad una risposta di analisi del rischio del purpose template
     Then si ottiene lo status code 400
 
   #73 (OK-KO)
@@ -70,7 +71,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    When viene "creata" un'annotazione con testo <range> i 2000 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo <range> i 2000 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code <statusCode>
     Examples:
       | range | statusCode |
@@ -83,7 +84,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    When viene "modificata" un'annotazione con testo <range> i 2000 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo <range> i 2000 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code <statusCode>
     Examples:
       | range | statusCode |
@@ -97,7 +98,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     When il purpose template viene gradualmente spostato in stato <ptState>
-    When viene "modificata" un'annotazione con testo entro i 2000 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code 409
     Examples:
       | ptState   |
@@ -112,7 +113,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     When l'utente è un "<ruolo>" di "PA1"
-    When viene "modificata" un'annotazione con testo entro i 2000 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code 403
     Examples:
       | ruolo    |
@@ -127,7 +128,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     When l'utente è un "admin" di "GSP"
-    When viene "modificata" un'annotazione con testo entro i 2000 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code 403
 
   #79 (KO)
@@ -136,7 +137,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    When viene "modificata 404" un'annotazione con testo entro i 2000 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta inesistente del purpose template
     Then si ottiene lo status code 404
 
   #80 (KO)
@@ -145,5 +146,5 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    When viene "modificata" un'annotazione con testo entro i 0 caratteri per il purpose template esistente
+    When viene aggiunta un'annotazione con testo entro i 0 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code 400

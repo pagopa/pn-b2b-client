@@ -15,7 +15,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | 2         | "DIVERSI CON NOME DIVERSO" | 200        |
       | 2         | "UGUALI CON NOME DIVERSO"  | 409        |
       | 2         | "DIVERSI CON NOME UGUALE"  | 409        |
-      | 1         | "DI TIPO NON PDF"          | 409        |
+      | 1         | "DI TIPO NON PDF"          | 400        |
       | 3         | "DIVERSI CON NOME DIVERSO" | 409        |
 
   #87
@@ -85,7 +85,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminata l'annotazione esistente per il purpose template
-    Then si ottiene lo status code 204
+    And l'eliminazione dell'annotation ha avuto successo
 
   #92 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
@@ -146,6 +146,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminata l'annotazione esistente per il purpose template
+    And l'eliminazione dell'annotation ha avuto successo
     And viene eliminata l'annotazione esistente per il purpose template
     Then si ottiene lo status code 404
 
