@@ -33,6 +33,7 @@ import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImp
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
+import it.pagopa.interop.notification.cache.NotificationCacheImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -171,7 +172,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceTemplateVersionQuotasPatchOperationsAssistant.class,
         EServiceDescriptorQuotasPatchOperationsAssistant.class,
         ISelfcareClient.class,
-        SelfcareClientImpl.class
+        SelfcareClientImpl.class,
+        NotificationCacheImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
