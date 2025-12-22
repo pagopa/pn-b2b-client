@@ -585,10 +585,10 @@ Feature: Invio messaggi cortesia e2e
 
   @courtesyMessage @addressBook3 @bankCourtesyMessage #rif srs 43
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_28] Verifica successione elementi - Invio ANALOGICO, cortesia TPP solo PF
-    Given si predispone addressbook per l'utente "Dino Sauro"
-    Then l'utente "Dino Sauro" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    Given si predispone addressbook per l'utente "Mario Gherkin"
+    Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Dino Sauro"
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
