@@ -28,7 +28,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "PA1" ha già creato 1 finalità in stato "<statoFinalità>" per quell'eservice
     When l'utente aggiorna quella finalità per quell'e-service in erogazione diretta
-    Then si ottiene status code 403
+    Then si ottiene status code 400
 
     Examples: 
       | statoFinalità        |
