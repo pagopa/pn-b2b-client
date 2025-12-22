@@ -15,7 +15,8 @@ public enum PaperTrackerErrorCategory {
     ATTACHMENTS_ERROR("Errore nella validazione degli allegati della sequenza"),
     MAX_RETRY_REACHED_ERROR("Numero massimo di retry raggiunto"),
     OCR_VALIDATION("Errore nella validazione OCR"),
-    DUPLICATED_EVENT("Errore nella validazione della presenza di eventi duplicati");
+    DUPLICATED_EVENT("Errore nella validazione della presenza di eventi duplicati"),
+    INCONSISTENT_STATE("invalid AWAITING_REFINEMENT state for stock 890");
 
     private final String value;
 

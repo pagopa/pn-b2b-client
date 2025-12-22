@@ -27,7 +27,7 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
                 yield "Deposito avviso di avvenuta ricezione Con riferimento alla notifica avente IUN string, ai sensi dell’art. 26, comma 7, del D.L. 76/2020, essendo risultato il destinatario string CF";
