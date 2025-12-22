@@ -1,13 +1,11 @@
 package it.pagopa.interop.authorization.service;
 
-import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
-import static it.pagopa.interop.authorization.service.M2MTokenService.TokenKey.of;
-import static java.util.Objects.nonNull;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.KeyType;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
+import it.pagopa.interop.authorization.enums.M2MRole;
+import it.pagopa.interop.authorization.enums.TokenKey;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.authorization.service.identity.IllegalM2MRole;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
@@ -16,14 +14,18 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
+import static it.pagopa.interop.authorization.enums.TokenKey.of;
 
 /* Usato per la formulazione di token di tipo m2m. Introdotto durante lo sviluppo dei test di
  * SRS API v2 https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1607860403/DRAFT+SRS+API+V2 .
@@ -35,65 +37,35 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @EqualsAndHashCode
 public class M2MTokenService {
-    public enum M2MRole {
-        M2M_ADMIN, M2M;
-
-        public static M2MRole fromValue(String m2mRole) throws IllegalM2MRole {
-            if (nonNull(m2mRole)) {
-                String value = m2mRole.toUpperCase();
-                for (M2MRole role : M2MRole.values()) {
-                    if (role.name().equals(value)) {
-                        return role;
-                    }
-                }
-                if("M2M-ADMIN".equals(value)) return M2M_ADMIN;
-            }
-            throw new IllegalM2MRole("Unsupported value '" + m2mRole + "'");
-        }
-
-        public static boolean isM2MRole(String role) {
-            try {
-                M2MRole.fromValue(role);
-                return true;
-            } catch (IllegalM2MRole ex) {
-                return false;
-            }
-        }
-    }
-
-    record TokenKey(String tenantType, M2MRole role) {
-        public static TokenKey of(String tenantType, M2MRole role) {
-            return new TokenKey(tenantType, role);
-        }
-    }
 
     private final IdentityService identityService;
     private final DataPreparationService dataPreparationService;
     private final VoucherService voucherService;
+    private final Map<TokenKey, String> tokenCache = new ConcurrentHashMap<>();
+    private final Map<UUID, DPoPTokenService.PreparedClient> preparedClientCache = new ConcurrentHashMap<>();
 
     public M2MTokenService(
-        IdentityService identityService,
-        DataPreparationService dataPreparationService,
-        VoucherService voucherService
+            IdentityService identityService,
+            DataPreparationService dataPreparationService,
+            VoucherService voucherService
     ) {
         this.identityService = identityService;
         this.dataPreparationService = dataPreparationService;
         this.voucherService = voucherService;
     }
 
-    private final Map<TokenKey, String> tokenCache = new ConcurrentHashMap<>();
 
     public String getToken(@NonNull String tenantType, @NonNull M2MRole role) {
         return this.getToken(tenantType, role, 0);
     }
 
     /* DEV. NOTE 28/05/2025: è di fatto una compattazione delle procedure utilizzate nei test
-    * - @voucher_generation_m2m1
-    * - @voucher_generation_m2m1_admin
-    * al netto dei controlli di verifica. */
+     * - @voucher_generation_m2m1
+     * - @voucher_generation_m2m1_admin
+     * al netto dei controlli di verifica. */
     public String getToken(@NonNull String tenantType, @NonNull M2MRole role, int roleIndex) {
         TokenKey tokenKey = of(tenantType, role);
-        if(!tokenCache.containsKey(tokenKey)) {
+        if (!tokenCache.containsKey(tokenKey)) {
             log.info("Generating M2M token for tenantType: {}, role: {}", tenantType, role);
 
             String token = identityService.getToken(tenantType, "admin", roleIndex);
@@ -106,36 +78,41 @@ public class M2MTokenService {
             UUID userId = identityService.getUserId(tenantType, "admin");
             dataPreparationService.addMemberToClient(clientId, userId);
 
-            if(role == M2MRole.M2M_ADMIN) {
+            if (role == M2MRole.M2M_ADMIN) {
                 dataPreparationService.editClientAdmin(clientId, new ClientAdminConfig(userId));
             }
 
             String keyType = "RSA";
             KeyPairDecorator keyPair = of(keyType, 2048);
             String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
-            KeySeed keySeed = KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0);
+            KeySeed keySeed = KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0);
             dataPreparationService.addPublicKeyToClient(clientId, keySeed);
 
             ClientAssertionOptions assertionOptions = ClientAssertionOptions.builder()
-                .clientType(ClientType.API)
-                .clientId(clientId.toString())
-                .publicKey(keyPair.getPublic())
-                .privateKey(keyPair.getPrivate())
-                .build();
+                    .clientType(ClientType.API)
+                    .clientId(clientId.toString())
+                    .publicKey(keyPair.getPublic())
+                    .privateKey(keyPair.getPrivate())
+                    .build();
             String clientAssertion = this.voucherService.createClientAssertion(assertionOptions);
 
             VoucherRequest voucherRequest = VoucherRequest.builder()
-                .clientId(clientId.toString())
-                .clientAssertion(clientAssertion)
-                .build();
+                    .clientId(clientId.toString())
+                    .clientAssertion(clientAssertion)
+                    .build();
             Map<String, Object> voucher = voucherService.requestVoucher(voucherRequest);
 
             VoucherResponse voucherResponse = new ObjectMapper()
-                .convertValue(voucher, VoucherResponse.class);
+                    .convertValue(voucher, VoucherResponse.class);
 
+            this.preparedClientCache.put(clientId, new DPoPTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType)));
             this.tokenCache.put(tokenKey, voucherResponse.getAccessToken());
         }
 
         return this.tokenCache.get(tokenKey);
+    }
+
+    public DPoPTokenService.PreparedClient getPreparedClient(@NonNull UUID clientId) {
+        return preparedClientCache.get(clientId);
     }
 }

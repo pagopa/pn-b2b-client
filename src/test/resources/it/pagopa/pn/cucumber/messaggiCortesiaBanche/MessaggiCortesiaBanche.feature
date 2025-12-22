@@ -3,17 +3,19 @@ Feature: Messaggi di cortesia Banche
   @bankCourtesyMessageEnabled
   Scenario Outline: [BANK_COURTESY_MESSAGE-1] Viene invocato l'endpoint EMD di sendMessage
     When viene invocato l'endpoint sendMessage con i seguenti parametri
-      | internalRecipientId   | recipientId   | senderDescription   | originId   | associatedPayment   |
-      | <internalRecipientId> | <recipientId> | <senderDescription> | <originId> | <associatedPayment> |
+      | internalRecipientId   | recipientId   | senderDescription   | originId   | associatedPayment   | deliveryMode   | schedulingAnalogDate   |
+      | <internalRecipientId> | <recipientId> | <senderDescription> | <originId> | <associatedPayment> | <deliveryMode> | <schedulingAnalogDate> |
     Then si ottiene status code <statusCode>
     Examples:
-      | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment | statusCode |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | 200        |
-      |                                      | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr |                  | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S |                   | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  |                           | true              | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 |                   | 400        |
+      | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment | deliveryMode | schedulingAnalogDate | statusCode |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 200        |
+      |                                      | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr |                  | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S |                   | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  |                           | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 |                   | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              |              | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       |                      | 400        |
 
   @bankCourtesyMessageEnabled
   Scenario Outline: [BANK_COURTESY_MESSAGE-2] Viene invocato l'endpoint EMD di /token/check-tpp
@@ -39,13 +41,15 @@ Feature: Messaggi di cortesia Banche
       | retrievalId | <retrievalId> |
       | noticeCode  | <noticeCode>  |
       | paTaxId     | <paTaxId>     |
+      | amount      | <amount>      |
     Then si ottiene status code <statusCode>
     Examples:
-      | retrievalId                                        | noticeCode         | paTaxId     | statusCode |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 200        |
-      |                                                    | 302000100000019421 | 77777777777 | 400        |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |                    | 77777777777 | 400        |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 |             | 400        |
+      | retrievalId                                        | noticeCode         | paTaxId     | amount | statusCode |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 10     | 200        |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 |        | 200        |
+      |                                                    | 302000100000019421 | 77777777777 | 10     | 400        |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |                    | 77777777777 | 10     | 400        |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 |             | 10     | 400        |
 
   #  Scenario to validate calls to the following endpoints:
   #     GET /bff/v1/notifications/received/{iun}
@@ -56,9 +60,7 @@ Feature: Messaggi di cortesia Banche
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario
-      | denomination            | OK-CompiutaGiacenza_890     |
-      | taxId                   | CLMCST42R12D969Z            |
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
       | payment_pagoPaForm      | SI                          |
@@ -78,8 +80,8 @@ Feature: Messaggi di cortesia Banche
   @bankCourtesyMessageDisabled
   Scenario: [BANK_COURTESY_MESSAGE-6] Viene invocato l'endpoint EMD di sendMessage quando la funzionalità è disattiva
     When viene invocato l'endpoint sendMessage con i seguenti parametri
-      | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              |
+      | internalRecipientId                  | recipientId      | senderDescription | originId                  | associatedPayment | deliveryMode |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | DIGITAL      |
     Then si ottiene status code 200
     And la risposta contiene outcome uguale a "NO_CHANNELS_ENABLED"
 

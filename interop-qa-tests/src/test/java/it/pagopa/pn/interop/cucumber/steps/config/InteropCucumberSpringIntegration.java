@@ -29,14 +29,19 @@ import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateMainMapperImpl;
 import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
+import it.pagopa.interop.e_service_template.impl.M2MEserviceTemplateAttributeClientImpl;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
+import it.pagopa.interop.eservice.service.impl.M2MEserviceAttributeClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
+import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
+import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.selfcare.service.impl.SelfcareClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
@@ -141,6 +146,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MVerifiedAttributeClientImpl.class,
         M2MClientsClientImpl.class,
         M2MTenantClientImpl.class,
+        M2MEserviceAttributeClientImpl.class,
+        M2MEserviceTemplateAttributeClientImpl.class,
         DelayServiceImpl.class,
         EServiceMapperImpl.class,
         EServiceNameMapperImpl.class,
@@ -155,6 +162,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceTemplateVersionMapperImpl.class,
         EServiceTemplateMainMapperImpl.class,
         EServiceDescriptorQuotasMapperImpl.class,
+        EServiceAttributeMapperImpl.class,
         EServicePatchContext.class,
         EServiceDescriptorPatchContext.class,
         PurposePatchContext.class,
@@ -173,6 +181,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorQuotasPatchOperationsAssistant.class,
         ISelfcareClient.class,
         SelfcareClientImpl.class,
+        IPurposeTemplateClient.class,
+        PurposeTemplateClientImpl.class,
         NotificationCacheImpl.class,
 })
 @EnableScheduling

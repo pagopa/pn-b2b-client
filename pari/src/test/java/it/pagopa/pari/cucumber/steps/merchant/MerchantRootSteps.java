@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,6 +80,17 @@ public class MerchantRootSteps {
         Assertions.assertEquals(expectedStatusCode, httpStatusCodeException.getStatusCode().value());
     }
 
+    @Given("vengono modificati i seguenti parametri al punto vendita recuperato:")
+    public void modifyPoS(DataTable dataTable) {
+        Map<String, String> dataTableMap = dataTable.asMap();
+        String merchantId = getData(dataTableMap, "merchantId", sharedCommonContext.getUserData().getMerchantId());
+        try {
+            apiClientContext.getMerchantOperationClient().putPointOfSales(merchantId, List.of(modifyPointOfSaleDTO(pointOfSaleDTO.getId(), dataTableMap)));
+        } catch (HttpStatusCodeException ex) {
+            httpStatusCodeException = ex;
+        }
+    }
+
     @Given("viene censito un nuovo punto vendita con i seguenti parametri:")
     public void addPos(DataTable dataTable) {
         Map<String, String> dataTableMap = dataTable.asMap();
@@ -90,21 +102,34 @@ public class MerchantRootSteps {
         }
     }
 
+    private PointOfSaleDTO modifyPointOfSaleDTO(String id, Map<String, String> dataTableMap) {
+        return buildPointOfSaleDTO(dataTableMap, id);
+    }
+
     private PointOfSaleDTO createNewPointOfSaleDTO(Map<String, String> dataTableMap) {
+        return buildPointOfSaleDTO(dataTableMap, null);
+    }
+
+    private PointOfSaleDTO buildPointOfSaleDTO(Map<String, String> dataTableMap, String id) {
         String contactEmail = String.format("test.p%d@prova.com", new Random().nextInt(100000));
-        return new PointOfSaleDTO().type(PointOfSaleDTO.TypeEnum.ONLINE)
-                .id(getData(dataTableMap, "id", "688cb2c22fb2709e4ba6d18d"))
+        return new PointOfSaleDTO()
+                .type(PointOfSaleDTO.TypeEnum.ONLINE)
+                .id(id != null ? id : getData(dataTableMap, "id", "68e380144c70dd06f09d5f72"))
                 .franchiseName(getData(dataTableMap, "franchiseName", "Test8"))
-                .region(getData(dataTableMap, "region", "Lombardia")).province(getData(dataTableMap, "province", "MI"))
-                .city(getData(dataTableMap, "city", "Milano")).zipCode(getData(dataTableMap, "zipCode", "20100"))
-                .address(getData(dataTableMap, "address", "Via Trieste, 65015 Montesilvano PE, Italia"))
+                .region(getData(dataTableMap, "region", "Puglia"))
+                .province(getData(dataTableMap, "province", "BA"))
+                .city(getData(dataTableMap, "city", "Altamura"))
+                .zipCode(getData(dataTableMap, "zipCode", "70022"))
+                .address(getData(dataTableMap, "address", "Via Santeramo in Colle, 70022 Altamura BA, Italia"))
                 .streetNumber(getData(dataTableMap, "streetNumber", "12"))
-                .webSite(getData(dataTableMap, "webSite", "https://www.mediaworld.it/")).contactEmail(contactEmail)
+                .website(getData(dataTableMap, "website", "https://www.mediaworld.it/"))
+                .contactEmail(contactEmail)
                 .contactName(getData(dataTableMap, "contactName", "Mario"))
-                .contactSurname(getData(dataTableMap, "contactSurname", "Rossi")).channelEmail(getData(dataTableMap, "channelEmail", "support@superstore.it"))
+                .contactSurname(getData(dataTableMap, "contactSurname", "Rossi"))
+                .channelEmail(getData(dataTableMap, "channelEmail", "support@superstore.it"))
                 .channelPhone(getData(dataTableMap, "channelPhone", "+39021234567"))
                 .channelGeolink(getData(dataTableMap, "channelGeoLink", "https://maps.app.goo.gl/abc123"))
-                .channelWebsite(getData(dataTableMap, "channelWebiste", "https://channel.superstore.it"));
+                .channelWebsite(getData(dataTableMap, "channelWebsite", "https://channel.superstore.it"));
     }
 
     private String getData(Map<String, String> dataTableMap, String property, String defaultValue) {

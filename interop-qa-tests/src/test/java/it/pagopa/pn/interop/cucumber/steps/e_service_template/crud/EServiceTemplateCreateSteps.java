@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
@@ -45,6 +46,7 @@ public class EServiceTemplateCreateSteps {
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
     private final DelayService delayService;
+    private final IdentityService identityService;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -64,6 +66,7 @@ public class EServiceTemplateCreateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
         this.delayService = delayService;
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
@@ -105,9 +108,16 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
+    @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")
+    public void mutateEServiceTemplateState(String tenantType, EServiceTemplateVersionState desiredState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        testAssistant.mutateLastVersionState(desiredState);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
     public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
-        String lastTemplateNameUsed = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name();
+        String lastTemplateNameUsed = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getName();
         EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
                 .name(lastTemplateNameUsed);
         createEServiceTemplate(sameNameTemplateSeed);
@@ -127,8 +137,8 @@ public class EServiceTemplateCreateSteps {
                 "E-Service template document",
                 "EST doc",
                 (prettyName, resource) -> testAssistant.addDocumentToEserviceTemplateVersion(
-                        lastTemplateManaged.id(),
-                        lastTemplateManaged.lastVersionId(),
+                        lastTemplateManaged.getId(),
+                        lastTemplateManaged.getLastVersionId(),
                         EServiceTemplateDocumentKind.DOCUMENT,
                         prettyName,
                         sharedStepsContext.getUserToken(),
@@ -153,7 +163,7 @@ public class EServiceTemplateCreateSteps {
 
         httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(templateSeed));
         if (httpCallExecutor.getResponseStatus().isError()) {
-            throw new IllegalArgumentException(httpCallExecutor.getErrorMessage()); // a questo punto si prevede che i passi successivi riconoscano l'errore
+            return; // a questo punto si prevede che i passi successivi riconoscano l'errore, dunque non si lanciano errori
         }
 
         CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();
@@ -184,7 +194,7 @@ public class EServiceTemplateCreateSteps {
      * @return a new {@link EServiceTemplateSeed} instance
      */
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode) {
-        String templateName = testAssistant.nextEServiceTemplateName();
+        String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
@@ -198,7 +208,7 @@ public class EServiceTemplateCreateSteps {
     }
 
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
-        String templateName = testAssistant.nextEServiceTemplateName();
+        String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()

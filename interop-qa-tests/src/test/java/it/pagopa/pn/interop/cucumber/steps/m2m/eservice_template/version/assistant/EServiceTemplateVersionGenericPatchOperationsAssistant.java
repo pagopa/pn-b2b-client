@@ -47,8 +47,8 @@ public abstract class EServiceTemplateVersionGenericPatchOperationsAssistant<PAT
 
     @Override
     protected EServiceTemplateVersionId getResourceId() {
-        UUID templateId = this.context.getLastTemplateManaged().id();
-        UUID versionId = this.context.getLastTemplateManaged().lastVersionId();
+        UUID templateId = this.context.getLastTemplateManaged().getId();
+        UUID versionId = this.context.getLastTemplateManaged().getLastVersionId();
         return EServiceTemplateVersionId.of(templateId, versionId);
     }
 

@@ -11,7 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -28,15 +28,13 @@ public class EServiceTemplateVersionCreateSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateInfoMapper templateInfoMapper;
 
     /* TODO 13/03/2025: molte di queste assegnazioni sono condivise da tutte la classi di step.
     *   Provare a racchiudere il codice comune in un costruttore in una classe astratta da far
     *   ereditare a questa e a tutte le altre. */
     public EServiceTemplateVersionCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateInfoMapper templateInfoMapper
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -44,7 +42,6 @@ public class EServiceTemplateVersionCreateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateInfoMapper = templateInfoMapper;
     }
 
     @Given("l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo")
@@ -60,12 +57,12 @@ public class EServiceTemplateVersionCreateSteps {
 
     @When("l'utente tenta la creazione di una ulteriore versione nell'e-service template")
     public void createAnotherEServiceTemplateVersion() {
-        createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
+        createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId());
     }
 
     @When("l'utente aggiunge all'e-service template una versione in stato {eServiceTemplateVersionState} con successo")
     public void addEServiceTemplateVersion(EServiceTemplateVersionState state) {
-        createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
+        createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId());
         checkEServiceTemplateVersionCreated();
         testAssistant.mutateLastVersionState(state);
         checkEServiceTemplateVersionCreated(state);
@@ -89,12 +86,16 @@ public class EServiceTemplateVersionCreateSteps {
                 eServiceTemplateId),
             ResponseEntity::getStatusCode);
 
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             UUID idOfNewVersion = ((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody()
                 .getId();
-            sharedStepsContext.getEServiceTemplateStepContext().addTemplateManaged(this.templateInfoMapper.withVersionId(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged(), idOfNewVersion));
+            sharedStepsContext.getEServiceTemplateStepContext().addTemplateManaged(
+                lastTemplateManaged.withLastVersionId(idOfNewVersion));
         } else {
-            sharedStepsContext.getEServiceTemplateStepContext().addTemplateManaged(this.templateInfoMapper.withVersionId(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged(), null));
+            sharedStepsContext.getEServiceTemplateStepContext().addTemplateManaged(
+                lastTemplateManaged.withLastVersionId(null));
         }
     }
 }

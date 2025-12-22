@@ -223,7 +223,6 @@ Feature: Creazione di una delega in erogazione
     Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
 
   # NOTA 30/07/2025: aggiunto a posteriori, momentaneamente assente in SRS
-  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7927
   @deleghe2
   Scenario: [TC_CAPOFILA_PUB_1] La pubblicazione di un e-service da parte di un ente delegato all'erogazione conduce l'e-service allo stato WAITING_FOR_APPROVAL
     Given l'ente delegante "PA1"
@@ -231,7 +230,7 @@ Feature: Creazione di una delega in erogazione
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
-    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega
     And l'utente è un "admin" di "PA2"
     When l'utente pubblica l'e-service

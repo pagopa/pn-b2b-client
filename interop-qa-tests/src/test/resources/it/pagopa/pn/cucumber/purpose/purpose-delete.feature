@@ -1,9 +1,10 @@
 @purpose
 Feature: Cancellazione finalità
   Tutti gli admin possono cancellare una propria finalità in stato DRAFT o WAITING_FOR_APPROVAL.
-  
+
+  @nrt-minimal
   @purpose_delete1
-  Scenario Outline: Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), va a buon fine
+  Scenario Outline: [PURPOSE_DELETE_1] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -12,7 +13,7 @@ Feature: Cancellazione finalità
     Then si ottiene status code <risultato>
 
     @happy-path
-    Examples: 
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       204 |
       | GSP     | admin        |       204 |
@@ -34,8 +35,9 @@ Feature: Cancellazione finalità
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+  @nrt-minimal
   @purpose_delete2
-  Scenario Outline: Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), ottiene un errore
+  Scenario Outline: [PURPOSE_DELETE_2] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -56,8 +58,9 @@ Feature: Cancellazione finalità
       | ARCHIVED             |       409 |
 
   @sad-path
+  @nrt-minimal
   @purpose_delete3
-  Scenario: Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), che non è il fruitore, ottiene un errore
+  Scenario: [PURPOSE_DELETE_3] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), che non è il fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

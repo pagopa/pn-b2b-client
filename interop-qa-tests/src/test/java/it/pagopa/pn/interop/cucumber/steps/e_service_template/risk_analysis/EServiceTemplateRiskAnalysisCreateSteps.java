@@ -51,7 +51,7 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
 
     @When("l'utente tenta la creazione di una risk analysis indicando una specifica vuota")
     public void addRiskAnalysisWithEmptySpecToEServiceTemplate() {
-        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), new EServiceTemplateRiskAnalysisSeed());
+        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), new EServiceTemplateRiskAnalysisSeed());
     }
 
     @When("l'utente tenta l'aggiunta di una risk analysis a un e-service template inesistente")
@@ -72,7 +72,7 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
             .nextObject(EServiceTemplateRiskAnalysisSeed.class)
             .name(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis().getName())
             .tenantKind(TenantKind.fromValue(kind));
-        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sameNameRiskAnalysisSeed);
+        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), sameNameRiskAnalysisSeed);
     }
 
     @Then("l'aggiunta della risk analysis all'e-service è stata effettuata correttamente")

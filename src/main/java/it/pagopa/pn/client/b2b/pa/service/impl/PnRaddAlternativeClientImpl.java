@@ -23,6 +23,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
@@ -200,7 +203,11 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
 
     @Override
     public RegistriesResponse retrieveRegistries(String uid, Integer limit, String lastKey, String cap, String city, String pr, String externalCode) throws RestClientException {
-        return this.apiAnagraficaCRUD.retrieveRegistries(uid, limit, lastKey, cap, city, pr, externalCode);
+        return this.apiAnagraficaCRUD.retrieveRegistries(uid, limit, lastKey, cap, encodeUTF(city), pr, encodeUTF(externalCode));
+    }
+
+    private String encodeUTF(String param) {
+        return param != null ? URLEncoder.encode(param, StandardCharsets.UTF_8) : null;
     }
 
     @Override

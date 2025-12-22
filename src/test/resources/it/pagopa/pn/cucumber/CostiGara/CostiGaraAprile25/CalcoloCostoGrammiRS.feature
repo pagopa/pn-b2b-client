@@ -41,7 +41,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | 88020 | 342   | CORTALE               | CZ       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAprile25
-  Scenario: [CALCOLO-COSTO_RS-20GR_2] (Aprile) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario Outline: [CALCOLO-COSTO_RS-20GR_2] (Aprile) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -49,13 +49,17 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | document           | DOC_4_PG;                       |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
-      | physicalAddress_State   | ALBANIA      |
+      | physicalAddress_State   | <state>      |
       | physicalAddress_zip     | ZONE_1       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "729" della notifica
+    Examples:
+    | state              |
+    | ALBANIA            |
+    | MACEDONIA DEL NORD |
 
   @costoAnalogicoAprile25
   Scenario: [CALCOLO-COSTO_RS-20GR_3] (Aprile) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -75,7 +79,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
     And viene verificato il costo = "842" della notifica
 
   @costoAnalogicoAprile25
-  Scenario: [CALCOLO-COSTO_RS-20GR_4] (Aprile) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario Outline: [CALCOLO-COSTO_RS-20GR_4] (Aprile) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -83,10 +87,16 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | document           | DOC_4_PG;                       |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
-      | physicalAddress_State   | AUSTRALIA    |
+      | physicalAddress_State   | <state>      |
       | physicalAddress_zip     | ZONE_3       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "898" della notifica
+    Examples:
+      | state       |
+      | AUSTRALIA   |
+      | MIDWAY      |
+      | PHOENIX     |
+      | SANTA CROCE |

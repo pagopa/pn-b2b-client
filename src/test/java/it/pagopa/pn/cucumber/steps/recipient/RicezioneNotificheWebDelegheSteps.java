@@ -5,7 +5,6 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
@@ -17,10 +16,13 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -43,9 +45,12 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 public class RicezioneNotificheWebDelegheSteps {
     private final ApplicationContext context;
+    @Getter
     private IPnWebMandateClient webMandateClient;
     private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
+    @Getter
+    @Setter
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
@@ -63,6 +68,8 @@ public class RicezioneNotificheWebDelegheSteps {
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
+    private boolean isUseB2BFlag;
+
     @Before("@useB2B")
     public void beforeMethod() {
         this.webMandateClient = context.getBean(B2bMandateServiceClientImpl.class);
@@ -70,6 +77,7 @@ public class RicezioneNotificheWebDelegheSteps {
             this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
             sharedSteps.setWebRecipientClient(webRecipientClient);
         }
+        isUseB2BFlag = true;
     }
 
     @Autowired
@@ -103,41 +111,46 @@ public class RicezioneNotificheWebDelegheSteps {
         };
     }
 
-    private boolean setBearerToken(String user) {
+    public boolean setBearerToken(String user) {
         return switch (user.trim()) {
-            case MARIO_CUCUMBER -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case MARIO_GHERKIN -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case GHERKIN_SRL -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case CUCUMBER_SPA -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case MARIO_CUCUMBER -> {
+                setRequiredAPI(false);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            }
+            case MARIO_GHERKIN -> {
+                setRequiredAPI(false);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            }
+            case GHERKIN_SRL -> {
+                setRequiredAPI(isUseB2BFlag);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            }
+            case CUCUMBER_SPA -> {
+                setRequiredAPI(isUseB2BFlag);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
             default -> throw new IllegalArgumentException();
         };
+    }
+
+    private void setRequiredAPI(boolean isB2BRequired) {
+        IPnWebMandateClient mandateClient;
+        IPnWebRecipientClient recipientClient;
+        if (isB2BRequired) {
+            mandateClient = context.getBean(B2bMandateServiceClientImpl.class);
+            recipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        } else {
+            mandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
+            recipientClient = context.getBean(PnWebRecipientExternalClientImpl.class);
+        }
+        this.webMandateClient = mandateClient;
+        this.webRecipientClient = recipientClient;
+        sharedSteps.setWebRecipientClient(webRecipientClient);
     }
 
     @Then("si verifica che lo status code sia: {int}")
     public void checkStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
-    }
-
-    @And("{string} viene delegato da user")
-    public void delegateUserCustom(String delegator) {
-        setBearerToken(delegator);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByUser(delegator)))
-                .delegate(userDtoCustom)
-                .verificationCode(verificationCode)
-                .datefrom(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .dateto(sdf.format(DateUtils.addDays(new Date(), 1))
-                );
-
-        System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
     }
 
     @And("{string} viene delegato da {string}")
@@ -153,27 +166,6 @@ public class RicezioneNotificheWebDelegheSteps {
                 .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1)));
 
-        System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
-    }
-
-    @And("{string} viene delegato da {string} con data di fine delega antecedente a quella di inizio")
-    public void delegateUserWithInvalidDateRange(String delegate, String delegator) {
-        setBearerToken(delegator);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByUser(delegator)))
-                .delegate(getUserDtoByUser(delegate))
-                .verificationCode(verificationCode)
-                .dateto(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .datefrom(sdf.format(DateUtils.addDays(new Date(), 1))
-                );
         System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
@@ -226,13 +218,6 @@ public class RicezioneNotificheWebDelegheSteps {
             this.sharedSteps.setNotificationError(e);
         }
     }
-
-    @Given("{string} rifiuta se presente la delega ricevuta {string} da portale")
-    public void userRejectMandateFromUI(String delegate, String delegator) {
-        this.webMandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
-        userRejectIfPresentMandateOfAnotherUser(delegate, delegator);
-    }
-
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
     public void userRejectIfPresentMandateOfAnotherUser(String delegate, String delegator) {
@@ -299,12 +284,21 @@ public class RicezioneNotificheWebDelegheSteps {
 
     }
 
-    @And("la notifica può essere correttamente letta da {string} con delega")
-    public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
+    @And("la notifica {canBe} essere correttamente letta da {string} con delega")
+    public void notificationCanBeCorrectlyReadFromWithMandate(boolean canBeRetrieved, String recipient) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
-        });
+        BundleFullReceivedNotificationV26 receivedNotification = null;
+        try {
+            receivedNotification = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
+        } catch (HttpClientErrorException e) {
+            notificationError = e;
+        }
+        if (canBeRetrieved) {
+            assertThat(receivedNotification).as("La notifica recuperata non dev'essere null").isNotNull();
+        } else {
+            assertThat(receivedNotification).as("La notifica recuperata dev'essere null").isNull();
+            assertThat(notificationError).as("L'errore prodotto non dev'essere null").isNotNull();
+        }
     }
 
     @Then("come delegante {string} l'associazione a gruppi sulla delega di {string}")
@@ -382,7 +376,6 @@ public class RicezioneNotificheWebDelegheSteps {
     @Then("il documento notificato non può essere correttamente recuperato da {string} con delega restituendo un errore {string}")
     public void theDocumentCanNotBeProperlyRetrievedByWithMandate(String recipient, String statusCode) {
         sharedSteps.selectUser(recipient);
-
         try {
             Assertions.assertDoesNotThrow(this::getReceivedNotificationDocument);
         } catch (AssertionFailedError assertionFailedError) {
@@ -402,31 +395,42 @@ public class RicezioneNotificheWebDelegheSteps {
         );
     }
 
-    @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
-    public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
+    @Then("l'allegato {string} {canBe} essere correttamente recuperato da {string} con delega")
+    public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, boolean canBeRetrieved, String recipient) {
         //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                sharedSteps.getNotificationIun(),
-                attachmentName,
-                UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = null;
+        try {
+            downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+                    sharedSteps.getNotificationIun(),
+                    attachmentName,
+                    UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
 
-        if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
-            try {
-                await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
-                downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                        sharedSteps.getNotificationIun(),
-                        attachmentName,
-                        UUID.fromString(mandateToSearch.getMandateId()), 0);
-                verifyRetrievedDocument(downloadResponse);
-            } catch (RuntimeException exc) {
-                log.error("Await error exception: {}", exc.getMessage());
-                throw exc;
+            if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
+                try {
+                    await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
+                    downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+                            sharedSteps.getNotificationIun(),
+                            attachmentName,
+                            UUID.fromString(mandateToSearch.getMandateId()), 0);
+                    verifyRetrievedDocument(downloadResponse);
+                } catch (RuntimeException exc) {
+                    log.error("Await error exception: {}", exc.getMessage());
+                    throw exc;
+                }
             }
-        }
 //        if (!"F24".equalsIgnoreCase(attachmentName)) {
 //            verifySha256(downloadResponse);
 //        }
+        } catch (HttpClientErrorException e) {
+            notificationError = e;
+        }
+        if (canBeRetrieved) {
+            assertThat(downloadResponse).as("L'allegato recuperato non dev'essere null").isNotNull();
+        } else {
+            assertThat(downloadResponse).as("L'allegato recuperato dev'essere null").isNull();
+            assertThat(notificationError).as("L'errore prodotto non dev'essere null").isNotNull();
+        }
     }
 
     private void verifyRetrievedDocument(NotificationAttachmentDownloadMetadataResponse downloadResponse) {

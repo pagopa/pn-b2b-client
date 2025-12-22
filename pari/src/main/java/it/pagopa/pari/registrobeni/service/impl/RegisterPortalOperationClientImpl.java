@@ -83,8 +83,8 @@ public class RegisterPortalOperationClientImpl {
         return productsUploadApi.verifyProductList(csv, category);
     }
 
-    public ProductListDTO getProducts(Integer page, Integer size, String sort, String category, String eprelCode, String gtinCode, String productFileId, String productName, ProductStatus status, String organizationId) {
-        return productsApi.getProducts(page, size, sort, category, eprelCode, gtinCode, productFileId, productName, status, organizationId);
+    public ProductListDTO getProducts(Integer page, Integer size, String sort, String category, String brand, String model, String eprelCode, String gtinCode, String productFileId, String productName, String fullProductName, ProductStatus status, String organizationId) {
+        return productsApi.getProducts(page, size, sort, category, brand, model, eprelCode, gtinCode, productFileId, productName, fullProductName, status, organizationId);
     }
 
     public InstitutionsResponse getInstitutionsList() {
