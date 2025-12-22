@@ -91,7 +91,7 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
 
     @Override
     public CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis, Boolean handlesPersonalData) throws RestClientException {
-        return purposesTemplateApi.getCatalogPurposeTemplates(offset, limit, q, creatorIds, eserviceIds, targetTenantKind, excludeExpiredRiskAnalysis, handlesPersonalData);
+        return purposesTemplateApi.getCatalogPurposeTemplates(offset, limit, q, creatorIds, eserviceIds, targetTenantKind.equals(TenantKind.PRIVATE) ? TargetTenantKind.PRIVATE : TargetTenantKind.PA, excludeExpiredRiskAnalysis, handlesPersonalData);
     }
 
     @Override
