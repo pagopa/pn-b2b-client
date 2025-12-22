@@ -58,7 +58,7 @@ Feature: finalità agevolata, purpose from purpose template
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
     When l'utente è un "<ruolo>" di "PA1"
-    And si crea una finalità a partire dal purpose template inesistente
+    And si crea una finalità a partire dal purpose template esistente
     Then si ottiene response status code 403
     Examples:
       | ruolo    |
