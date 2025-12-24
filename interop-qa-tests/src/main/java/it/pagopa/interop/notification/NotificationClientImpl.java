@@ -13,8 +13,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@ToString
+@EqualsAndHashCode(callSuper = true)
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NotificationClientImpl extends AbstractClient implements INotificationClient {
     private static final int RESULTS_LIMIT = 30;
 

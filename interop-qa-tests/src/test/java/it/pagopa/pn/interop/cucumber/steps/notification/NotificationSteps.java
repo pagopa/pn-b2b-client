@@ -4,6 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 
@@ -12,8 +13,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
-    public NotificationSteps(){
-        super("", null, null);
+    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator){
+        super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
     }
 
     @When("l'utente tenta di {word} le notifiche recuperate")

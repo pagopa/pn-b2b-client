@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 public class CucumberScopedBeans {
 
     @Bean
-    public NotificationCacheImpl notificationCacheImpl() {
+    public NotificationCacheImpl notificationCache() {
         return new NotificationCacheImpl();
     }
 }

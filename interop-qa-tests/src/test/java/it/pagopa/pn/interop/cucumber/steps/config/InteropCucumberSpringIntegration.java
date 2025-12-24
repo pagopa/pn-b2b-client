@@ -35,8 +35,8 @@ import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceAttributeClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
-import it.pagopa.interop.notification.cache.NotificationCacheImpl;
 import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
+import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
@@ -54,7 +54,6 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
@@ -128,7 +127,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceTemplateApiClientImpl.class,
         QAAbstractInteropTracingClient.class,
         DescriptorAttributesMapperImpl.class,
-        EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,
         EServiceTemplateTestAssistant.class,
         EServiceTemplateStepContext.class,
         RiskAnalysisMapperImpl.class,
@@ -183,7 +181,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         SelfcareClientImpl.class,
         IPurposeTemplateClient.class,
         PurposeTemplateClientImpl.class,
-        NotificationCacheImpl.class,
+        NotificationClientImpl.class,
+        //NotificationCacheImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
