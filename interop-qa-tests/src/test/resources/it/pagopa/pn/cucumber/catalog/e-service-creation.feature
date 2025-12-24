@@ -18,16 +18,16 @@ Feature: Creazione e-service
       | PA1     | admin        |       200 |
       | PA1     | api          |       200 |
       | PA1     | api,security |       200 |
+      | Privato | admin        |       200 |
+      | Privato | api          |       200 |
+      | Privato | api,security |       200 |
 
     @sad-path
     Examples:
       | ente    | ruolo        | risultato |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
-      | Privato | admin        |       403 |
-      | Privato | api          |       403 |
       | Privato | security     |       403 |
-      | Privato | api,security |       403 |
       | Privato | support      |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
