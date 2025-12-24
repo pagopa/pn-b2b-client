@@ -50,12 +50,14 @@ public class DelegationDenyStep {
     }
 
     @And("l'ente {string} rifiuta la delega")
+    @And("l'ente {string} rifiuta la delega in erogazione")
     public void delegationIsRejectedByTenant(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         rejectProducerDelegation();
     }
 
     @And("l'ente {string} rifiuta la delega con successo")
+    @And("l'ente {string} rifiuta la delega in erogazione con successo")
     public void delegationIsRejectedByTenantSuccessfully(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         rejectProducerDelegation();
@@ -103,7 +105,13 @@ public class DelegationDenyStep {
         revokeDelegation(tenantType, role);
     }
 
+    @And("l'ente {string} revoca la delega in erogazione con successo")
+    public void delegationIsRevokedSuccessfullyByTenantWithRole(String tenantType) {
+        delegationIsRevokedSuccessfullyByTenantWithRole(tenantType, null);
+    }
+
     @And("l'ente {string} con ruolo {string} revoca la delega con successo")
+    @And("l'ente {string} con ruolo {string} revoca la delega in erogazione con successo")
     public void delegationIsRevokedSuccessfullyByTenantWithRole(String tenantType, String role) {
         revokeDelegation(tenantType, role);
         UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();

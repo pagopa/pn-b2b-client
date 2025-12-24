@@ -51,6 +51,7 @@ public class DelegationAcceptStep {
 
     @And("l'ente {string} accetta la delega")
     @And("l'ente {string} accetta la delega con successo")
+    @And("l'ente {string} accetta la delega in erogazione con successo")
     public void producerDelegationIsAcceptedByTenant(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         approveProducerDelegation(

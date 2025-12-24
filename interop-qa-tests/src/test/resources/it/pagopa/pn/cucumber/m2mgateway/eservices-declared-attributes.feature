@@ -183,6 +183,7 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
       | DEPRECATED  |
       | ARCHIVED    |
 
+  @deleghe2
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_DECLARED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service in stato WAITING_FOR_APPROVAL solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
