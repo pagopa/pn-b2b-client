@@ -261,6 +261,28 @@ public class SafeStorageSteps {
         loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
     }
 
+    @Given("viene caricato su SafeStorage il documento {string} con contentType {string} di tipo {string} e status {string}")
+    public void uploadNewDocument(String resourcePath, String contentType, String documentType, String status) {
+        String sha256 = computeAndSetSha(resourcePath);
+
+        FileCreationRequest request = new FileCreationRequest();
+        request.setContentType(contentType);
+        request.setStatus(status != null ? status : "SAVED");
+        request.setDocumentType(documentType);
+
+        try {
+            // Chiamata al servizio Safe Storage per registrare il file
+            FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
+
+            // Upload vero e proprio sulla presigned URL
+            loadToPresignedUrl(fileCreationResponse, sha256, resourcePath, B2bUtils.APPLICATION_JSON);
+
+        } catch (HttpClientErrorException httpExc) {
+           throw new RuntimeException(httpExc);
+        }
+    }
+
+
     @Given("viene caricato un nuovo pdf di 0 byte")
     public void uploadNewEmptyDocument() {
         final String type = "PN_NOTIFICATION_ATTACHMENTS";
@@ -340,6 +362,18 @@ public class SafeStorageSteps {
         String url = fileCreationResponse.getUploadUrl();
 
         B2bUtils.loadToPresigned(context, url, secret, sha256, resourcePath, B2bUtils.APPLICATION_PDF);
+        log.info("FILEKEY: " + fileKey);
+
+        indicizzazioneStepsPojo.getCreatedFiles().add(fileCreationResponse);
+        log.info("File successfully created");
+    }
+
+    private void loadToPresignedUrl(FileCreationResponse fileCreationResponse, String sha256, String resourcePath, String contentType) {
+        String fileKey = fileCreationResponse.getKey();
+        String secret = fileCreationResponse.getSecret();
+        String url = fileCreationResponse.getUploadUrl();
+
+        B2bUtils.loadToPresigned(context, url, secret, sha256, resourcePath, contentType);
         log.info("FILEKEY: " + fileKey);
 
         indicizzazioneStepsPojo.getCreatedFiles().add(fileCreationResponse);

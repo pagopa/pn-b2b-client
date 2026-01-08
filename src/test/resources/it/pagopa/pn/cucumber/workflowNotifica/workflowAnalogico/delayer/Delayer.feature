@@ -14,13 +14,103 @@
         | unknow~890~P10 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 0     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
-      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 0     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
-      And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+        | Fulmine~NA              | esattamente | 0     |
+        | Poste~NA                | esattamente | 0     |
+        | Fulmine~80010           | esattamente | 0     |
+        | Poste~80010             | esattamente | 0     |
+        | Poste~80011             | esattamente | 0     |
+        | Poste~80012             | esattamente | 0     |
+        | Poste~80013             | esattamente | 0     |
+        | Fulmine~80016           | esattamente | 0     |
+        | Fulmine~80017           | esattamente | 0     |
+        | Poste~80017             | esattamente | 0     |
+        | Fulmine~80018           | esattamente | 0     |
+        | Poste~80019             | esattamente | 0     |
+        | Poste~80020             | esattamente | 0     |
+        | Fulmine~80021           | esattamente | 0     |
+        | Poste~80021             | esattamente | 0     |
+        | Fulmine~80022           | esattamente | 0     |
+        | Poste~80022             | esattamente | 0     |
+        | Fulmine~80023           | esattamente | 0     |
+        | Fulmine~80024           | esattamente | 0     |
+        | Poste~80024             | esattamente | 0     |
+        | Fulmine~80026           | esattamente | 0     |
+        | Poste~80026             | esattamente | 0     |
+        | Poste~80028             | esattamente | 0     |
+        | Fulmine~80029           | esattamente | 0     |
+        | Poste~80029             | esattamente | 0     |
+        | Fulmine~80030           | esattamente | 0     |
+        | Poste~80030             | esattamente | 0     |
+        | Fulmine~80035           | esattamente | 0     |
+        | Poste~80035             | esattamente | 0     |
+        | Fulmine~80036           | esattamente | 0     |
+        | Fulmine~80038           | esattamente | 0     |
+        | Fulmine~80039           | esattamente | 0     |
+        | Poste~80039             | esattamente | 0     |
+        | Poste~80040             | esattamente | 0     |
+        | Fulmine~80041           | esattamente | 0     |
+        | Poste~80041             | esattamente | 0     |
+        | Fulmine~80044           | esattamente | 0     |
+        | Poste~80045             | esattamente | 0     |
+        | Fulmine~80046           | esattamente | 0     |
+        | Poste~80046             | esattamente | 0     |
+        | Poste~80047             | esattamente | 0     |
+        | Fulmine~80049           | esattamente | 0     |
+        | Poste~80049             | esattamente | 0     |
+        | Fulmine~80050           | esattamente | 0     |
+        | Poste~80053             | esattamente | 0     |
+        | Poste~80054             | esattamente | 0     |
+        | Fulmine~80055           | esattamente | 0     |
+        | Poste~80055             | esattamente | 0     |
+        | Poste~80056             | esattamente | 0     |
+        | Fulmine~80057           | esattamente | 0     |
+        | Fulmine~80058           | esattamente | 0     |
+        | Fulmine~80059           | esattamente | 0     |
+        | Poste~80062             | esattamente | 0     |
+        | Poste~80063             | esattamente | 0     |
+        | Poste~80065             | esattamente | 0     |
+        | Poste~80067             | esattamente | 0     |
+        | Fulmine~80069           | esattamente | 0     |
+        | Poste~80069             | esattamente | 0     |
+        | Fulmine~80070           | esattamente | 0     |
+        | Poste~80072             | esattamente | 0     |
+        | Poste~80073             | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
+        | Fulmine~80078           | esattamente | 0     |
+        | Poste~80078             | esattamente | 0     |
+        | Poste~80081             | esattamente | 0     |
+        | Poste~80122             | esattamente | 0     |
+        | Fulmine~80123           | esattamente | 0     |
+        | Poste~80124             | esattamente | 0     |
+        | Fulmine~80125           | esattamente | 0     |
+        | Fulmine~80126           | esattamente | 0     |
+        | Poste~80126             | esattamente | 0     |
+        | Fulmine~80128           | esattamente | 0     |
+        | Poste~80128             | esattamente | 0     |
+        | Fulmine~80129           | esattamente | 0     |
+        | Fulmine~80131           | esattamente | 0     |
+        | Fulmine~80132           | esattamente | 0     |
+        | Poste~80132             | esattamente | 0     |
+        | Fulmine~80134           | esattamente | 0     |
+        | Poste~80134             | esattamente | 0     |
+        | Poste~80135             | esattamente | 0     |
+        | Poste~80136             | esattamente | 0     |
+        | Fulmine~80137           | esattamente | 0     |
+        | Poste~80137             | esattamente | 0     |
+        | Fulmine~80139           | esattamente | 0     |
+        | Poste~80139             | esattamente | 0     |
+        | Fulmine~80141           | esattamente | 0     |
+        | Poste~80141             | esattamente | 0     |
+        | Poste~80143             | esattamente | 0     |
+        | Fulmine~80144           | esattamente | 0     |
+        | Poste~80144             | esattamente | 0     |
+        | Fulmine~80145           | esattamente | 0     |
+        | Poste~80146             | esattamente | 0     |
+        | Fulmine~80147           | esattamente | 0     |
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
@@ -121,7 +211,6 @@
         | Poste~80056             | esattamente | 0     |
         | Fulmine~80057           | esattamente | 0     |
         | Fulmine~80058           | esattamente | 0     |
-        | Poste~80058             | esattamente | 0     |
         | Fulmine~80059           | esattamente | 0     |
         | Poste~80062             | esattamente | 0     |
         | Poste~80063             | esattamente | 0     |
@@ -132,9 +221,9 @@
         | Fulmine~80070           | esattamente | 0     |
         | Poste~80072             | esattamente | 0     |
         | Poste~80073             | esattamente | 0     |
-        | Fulmine~80075           | esattamente | 0     |
         | Poste~80075             | esattamente | 0     |
-        | Fulmine~80077           | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
         | Poste~80077             | esattamente | 0     |
         | Fulmine~80078           | esattamente | 0     |
         | Poste~80078             | esattamente | 0     |
