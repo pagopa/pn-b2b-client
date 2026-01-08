@@ -389,7 +389,7 @@
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
-        | tcSenderUnknow_ | 15       |
+        | tcSenderUnknow_ | 5010       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId      | comparative | limit |
         | unknow~RS~P8  | esattamente | 0     |
@@ -438,8 +438,8 @@
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                  | TOT |
-        | "tcSenderUnknow.csv" | 15  |
+        | csv                       | TOT   |
+        | "tcSenderUnknow_5010.csv" | 5010  |
 
     @delayer3
     #La capacità di recapito viene suddivisa prendendo la capacità di recapito della provincia e suddividendola per i CAP. La suddivisone non è paritaria ma dipende
