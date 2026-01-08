@@ -397,12 +397,12 @@
         | unknow~890~P8 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | almeno      | 15    |
-        | infinityDriverP8~CAP1_P8 | almeno      | 15    |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
       And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | almeno      | 15    |
-        | infinityDriverP8~CAP1_P8 | almeno      | 15    |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
       And viene impostato il limite massimo di 0 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
