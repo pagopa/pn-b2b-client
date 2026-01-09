@@ -3,32 +3,40 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
-import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
-import it.pagopa.interop.notification.INotificationClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.notification.NotificationClientImpl;
+import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import org.assertj.core.api.Assertions;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
+public class NotificationSteps {
 
-    private enum NotificationOp { DELETE, READ, UNREAD, UNKNOWN }
-    private enum Target { MULTIPLE, SINGLE }
+    private enum NotificationOp { DELETE, READ, UNREAD, UNKNOWN, UPDATE }
+    private enum Target { MULTIPLE, SINGLE, USER, TENANT }
 
     private final SharedStepsContext sharedStepsContext;
-    private final INotificationClient notificationClient;
+    private final NotificationClientImpl apiClient;
+    private final NotificationConfigClient configClient;
+
     private List<Notification> allocated = new LinkedList<>();
-    private NotificationsCountBySection notificationsCountBySection;
     private int toAllocate = 0;
+    private NotificationsCountBySection notificationsCountBySection;
+
+    private TenantNotificationConfig actualTenantNotificationConfig;
+    private UserNotificationConfig actualUserNotificationConfig;
+    private TenantNotificationConfig expectedTenantNotificationConfig;
+    private UserNotificationConfig expectedUserNotificationConfig;
 
     public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
-        super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
-        notificationClient = clientTokenConfigurator.getNotificationClient();
-        notificationClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        apiClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
+        apiClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        configClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
+        configClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+
         this.sharedStepsContext = sharedStepsContext;
     }
 
@@ -62,6 +70,39 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         handleOperation(op, entityIdType, Target.SINGLE);
     }
 
+    @When("si tenta di {word} la configurazione delle notifiche per {word}")
+    public void crudConfiguration(String rawOp, String t){
+        Target target = Target.valueOf(t.toUpperCase());
+        handleConfigOperation(rawOp, null, target);
+    }
+
+    @When("si tenta di {word} la configurazione delle notifiche per {word} specificando un valore {entityIdType}")
+    public void crudConfiguration(String rawOp, String t, EntityIdType entityIdType) {
+        Target target = Target.valueOf(t.toUpperCase());
+        handleConfigOperation(rawOp, entityIdType, target);
+    }
+
+    @When("la configurazione delle notifiche per {word} {word} restituita")
+    public void checkReadConfiguration(String target, String assertion){
+        Target configTarget = Target.valueOf(target.toUpperCase());
+
+        boolean exist = parseExistenceToken(assertion);
+        var config = configTarget == Target.USER ? actualUserNotificationConfig : actualTenantNotificationConfig;
+
+        if(exist) Assertions.assertThat(config).as("La configurazione deve essere presente").isNotNull();
+        else Assertions.assertThat(actualTenantNotificationConfig).as("La configurazione deve essere presente").isNotNull();
+    }
+
+    @When("modifica {word} applicata")
+    public void checkUpdateConfiguration(String assertion){
+        boolean equals = parseExistenceToken(assertion);
+        var actual = actualTenantNotificationConfig != null ? actualTenantNotificationConfig : actualUserNotificationConfig;
+        var expected = expectedTenantNotificationConfig != null ? expectedTenantNotificationConfig : actualUserNotificationConfig;
+
+        if(equals) Assertions.assertThat(actual).as("Actual ed expected devono coincidere").isEqualTo(expected);
+        else Assertions.assertThat(actual).as("Actual ed expected non devono coincidere").isNotEqualTo(expected);
+    }
+
     @When("l'utente tenta di recuperare la lista di notifiche create")
     public void pollUntilAllocate() {
         Set<UUID> touchedIds = sharedStepsContext
@@ -69,7 +110,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 .getTouchedIds();
 
         PollingService.makePolling(
-                client::getAll,
+                apiClient::getAll,
                 all -> {
                     // 1) filtro + ordinamento
                     List<Notification> candidates = all.stream()
@@ -115,7 +156,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         List<Notification> refreshed = new LinkedList<>();
 
         allocated.forEach(n -> {
-            Notification notification = notificationClient.getByBody(n.getBody())
+            Notification notification = apiClient.getByBody(n.getBody())
                     .orElseThrow(() -> new IllegalStateException(
                             "Notifica non trovata per body: " + n.getBody()
                     ));
@@ -149,7 +190,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
     @When("l'utente tenta di recuperare il count delle notifiche")
     public void getNotificationCount() {
-        notificationsCountBySection = notificationClient.countBySection();
+        notificationsCountBySection = apiClient.countBySection();
     }
 
     @When("count delle notifiche {word} restituito")
@@ -175,7 +216,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         }
 
         PollingService.makePolling(
-                () -> notificationClient.existsAll(allocated),   // true => tutte presenti
+                () -> apiClient.existsAll(allocated),   // true => tutte presenti
                 allPresent -> expectation.equals("PRESENT") == allPresent,
                 expectation.equals("PRESENT")
                         ? String.format("Le notifiche con %s risultano eliminate ma dovevano essere presenti", allocated)
@@ -192,8 +233,8 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 .map(Notification::getId)
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        if (entityIdType != null) {
-            UUID generatedId = client.generateId(entityIdType);
+        if (entityIdType != null && target != Target.USER && target != Target.TENANT) {
+            UUID generatedId = apiClient.generateId(entityIdType);
 
             if (target == Target.SINGLE) {
                 ids.clear();
@@ -211,35 +252,100 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         }
     }
 
+    private void handleConfigOperation(String rawOp, EntityIdType entityIdType, Target target){
+        NotificationOp op = parseOp(rawOp);
+        boolean isUser = target == Target.USER;
+
+        UserNotificationConfigUpdateSeed userSeed = new UserNotificationConfigUpdateSeed();
+        TenantNotificationConfigUpdateSeed tenantSeed = new  TenantNotificationConfigUpdateSeed();
+
+        if (entityIdType != null) {
+            if(entityIdType.equals(EntityIdType.NON_EXISTENT_ID)) {
+                userSeed.setEmailConfig(null);
+                tenantSeed.setEnabled(null);
+            }
+            else if(entityIdType.equals(EntityIdType.INVALID_ID)) {
+                userSeed = null;
+                tenantSeed = null;
+            }
+            else
+                throw new IllegalArgumentException("EntityIdType non gestito: " + entityIdType);
+        }
+        else {
+            if(actualUserNotificationConfig != null) userSeed.setEmailNotificationPreference(!actualUserNotificationConfig.getEmailNotificationPreference());
+            if(actualTenantNotificationConfig != null) tenantSeed.setEnabled(!actualTenantNotificationConfig.getEnabled());
+        }
+
+        switch (op) {
+            case READ -> onConfigRead(target);
+            case UPDATE -> onConfigUpdate(isUser ? userSeed : tenantSeed, target);
+            default -> onUnknown(rawOp);
+        }
+    }
+
     private NotificationOp parseOp(String op) {
         if (op == null) return NotificationOp.UNKNOWN;
 
         return switch (op.toLowerCase()) {
             case "eliminare", "delete" -> NotificationOp.DELETE;
-            case "leggere", "read" -> NotificationOp.READ;
+            case "leggere", "read", "recuperare" -> NotificationOp.READ;
             case "unread" -> NotificationOp.UNREAD;
+            case "modificare" -> NotificationOp.UPDATE;
             default -> NotificationOp.UNKNOWN;
         };
     }
 
     private void onDelete(List<UUID> ids, Target target) {
         switch (target) {
-            case MULTIPLE -> notificationClient.deleteAll(ids);
-            case SINGLE -> notificationClient.delete(ids.get(0));
+            case MULTIPLE -> apiClient.deleteAll(ids);
+            case SINGLE -> apiClient.delete(ids.get(0));
+            default -> throw new IllegalArgumentException("Unrecognized target: " + target);
         }
     }
 
     private void onRead(List<UUID> ids, Target target) {
         switch (target) {
-            case MULTIPLE -> notificationClient.readAll(ids);
-            case SINGLE -> notificationClient.read(ids.get(0));
+            case MULTIPLE -> apiClient.readAll(ids);
+            case SINGLE -> apiClient.read(ids.get(0));
+            case USER -> actualUserNotificationConfig = configClient.getUserConfig();
+            case TENANT ->  actualTenantNotificationConfig = configClient.getTenantConfig();
+            default -> throw new IllegalArgumentException("Unrecognized target: " + target);
+        }
+    }
+
+    private void onConfigRead(Target target){
+        switch (target) {
+            case USER -> actualUserNotificationConfig = configClient.getUserConfig();
+            case TENANT -> actualTenantNotificationConfig = configClient.getTenantConfig();
+            default -> throw new IllegalArgumentException("Unrecognized target: " + target);
+        }
+    }
+
+    private void onConfigUpdate(Object seed, Target target) {
+        switch (target) {
+            case USER -> {
+                UserNotificationConfigUpdateSeed userSeed = (UserNotificationConfigUpdateSeed) seed;
+                expectedUserNotificationConfig = configClient.getUserConfig();
+
+                configClient.updateUserNotificationConfig(userSeed);
+                expectedUserNotificationConfig.setEmailNotificationPreference(userSeed.getEmailNotificationPreference());
+            }
+            case TENANT -> {
+                TenantNotificationConfigUpdateSeed tenantSeed = (TenantNotificationConfigUpdateSeed) seed;
+                expectedTenantNotificationConfig = configClient.getTenantConfig();
+
+                configClient.updateTenantNotificationConfig(tenantSeed);
+                expectedTenantNotificationConfig.setEnabled(tenantSeed.getEnabled());
+            }
+            default -> throw new IllegalArgumentException("Unrecognized target: " + target);
         }
     }
 
     private void onUnread(List<UUID> ids, Target target) {
         switch (target) {
-            case MULTIPLE -> notificationClient.unreadAll(ids);
-            case SINGLE -> notificationClient.unread(ids.get(0));
+            case MULTIPLE -> apiClient.unreadAll(ids);
+            case SINGLE -> apiClient.unread(ids.get(0));
+            default -> throw new IllegalArgumentException("Unrecognized target: " + target);
         }
     }
 
@@ -252,25 +358,5 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             throw new IllegalArgumentException("Token non riconosciuto: " + assertion);
         }
         return "viene".equals(assertion);
-    }
-
-    @Override
-    public void bindActual(SharedStepsContext context, List<Notification> actualEntities) {
-        allocated = actualEntities;
-    }
-
-    @Override
-    public List<Notification> bindExpected(SharedStepsContext context) {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
-    protected boolean isEqual(Notification a, Notification b) {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
-    public List<Notification> bindUnexpected(SharedStepsContext context) {
-        throw new RuntimeException("Not implemented yet");
     }
 }

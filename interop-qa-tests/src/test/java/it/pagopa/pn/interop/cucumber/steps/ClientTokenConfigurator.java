@@ -23,6 +23,7 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.notification.INotificationClient;
+import it.pagopa.interop.notification.INotificationConfigClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
@@ -66,6 +67,7 @@ public class ClientTokenConfigurator {
     private final ISelfcareClient iSelfcareClient;
     private final IPurposeTemplateClient purposeTemplateClient;
     private final INotificationClient notificationClient;
+    private final INotificationConfigClient notificationConfigClient;
 
     public void setBearerToken(String token) {
         this.lastToken = token;
@@ -97,6 +99,7 @@ public class ClientTokenConfigurator {
         iSelfcareClient.setBearerToken(token);
         purposeTemplateClient.setBearerToken(token);
         notificationClient.setBearerToken(token);
+        notificationConfigClient.setBearerToken(token);
     }
 
 }

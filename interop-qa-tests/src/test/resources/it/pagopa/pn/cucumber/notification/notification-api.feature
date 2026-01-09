@@ -100,7 +100,7 @@ Feature: API CRUD Notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
     And l'utente tenta di leggere le notifiche recuperate
-    And si ottiene lo status code 401
+    And si ottiene lo status code 403
     And l'utente è un "admin" di "PA1"
     And l'utente tenta di recuperare lo stato aggiornato delle notifiche
     Then le notifiche recuperate sono nello stato "unread"
@@ -164,7 +164,7 @@ Feature: API CRUD Notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
     And l'utente tenta di leggere la notifica recuperata
-    And si ottiene lo status code 401
+    And si ottiene lo status code 403
     And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
     Then la notifica recuperate è nello stato "unread"
@@ -223,7 +223,7 @@ Feature: API CRUD Notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
     And l'utente tenta di eliminare la notifica recuperata
-    And si ottiene lo status code 401
+    And si ottiene lo status code 403
     And l'utente è un "admin" di "PA1"
     Then nessuna notifica è stata eliminata
 
@@ -297,7 +297,7 @@ Feature: API CRUD Notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
     And l'utente tenta di marcare come unread le notifiche recuperate
-    And si ottiene lo status code 401
+    And si ottiene lo status code 403
     And l'utente è un "admin" di "PA1"
     And l'utente tenta di recuperare lo stato aggiornato delle notifiche
     Then le notifiche recuperate sono nello stato "unread"
@@ -396,3 +396,153 @@ Feature: API CRUD Notifiche
     When l'utente tenta di recuperare il count delle notifiche
     And si ottiene lo status code 401
     Then count delle notifiche non restituito
+
+  Scenario: [TENANT_CONFIG_READ_1] Viene correttamente recuperata la configurazione delle notifiche per il tenant
+    Given l'utente è un "admin" di "PA1"
+    When si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    Then la configurazione delle notifiche per tenant viene restituita
+
+  Scenario: [TENANT_CONFIG_READ_2] Configurazione delle notifiche per il tenant recuperabile solo con token valido
+    Given viene impostato per l'utente un token non valido
+    When si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 401
+    Then la configurazione delle notifiche per tenant non restituita
+
+  Scenario: [TENANT_CONFIG_UPDATE_1] Viene correttamente fatto l'update della configurazione delle notifiche per il tenant
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per tenant viene restituita
+    When si tenta di modificare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 204
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    Then modifica viene applicata
+
+  Scenario: [TENANT_CONFIG_UPDATE_2] Configurazione delle notifiche per il tenant inibita per token invalido
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per tenant viene restituita
+    And viene impostato per l'utente un token non valido
+    When si tenta di modificare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 401
+    And l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+  Scenario: [TENANT_CONFIG_UPDATE_3] Configurazione delle notifiche per il tenant inibita per body invalido
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per tenant viene restituita
+    When si tenta di modificare la configurazione delle notifiche per tenant specificando un valore invalido
+    And si ottiene lo status code 400
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+  Scenario Outline: [TENANT_CONFIG_UPDATE_4] Configurazione delle notifiche per ruolo non autorizzato
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per tenant viene restituita
+    And l'utente è un "<role>" di "PA1"
+    When si tenta di modificare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 403
+    And l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+    Examples:
+      | role    |
+      | support |
+
+  Scenario: [TENANT_CONFIG_UPDATE_5] Configurazione delle notifiche per il tenant inibita per valore del body inesistente
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per tenant viene restituita
+    When si tenta di modificare la configurazione delle notifiche per tenant specificando un valore inesistente
+    And si ottiene lo status code 404
+    And si tenta di recuperare la configurazione delle notifiche per tenant
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+  Scenario: [USER_CONFIG_READ_1] Viene correttamente recuperata la configurazione delle notifiche per user
+    Given l'utente è un "admin" di "PA1"
+    When si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    Then la configurazione delle notifiche per user viene restituita
+
+  Scenario: [USER_CONFIG_READ_2] Configurazione delle notifiche per user recuperabile solo con token valido
+    Given viene impostato per l'utente un token non valido
+    When si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 401
+    Then la configurazione delle notifiche per user viene restituita
+
+  Scenario: [USER_CONFIG_UPDATE_1] Viene correttamente fatto l'update della configurazione delle notifiche per user
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per user viene restituita
+    When  si tenta di modificare la configurazione delle notifiche per user
+    And si ottiene lo status code 204
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    Then modifica viene applicata
+
+  Scenario: [USER_CONFIG_UPDATE_2] Configurazione delle notifiche per user inibita per token invalido
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per user viene restituita
+    And viene impostato per l'utente un token non valido
+    When  si tenta di modificare la configurazione delle notifiche per user
+    And si ottiene lo status code 401
+    And l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+  Scenario: [USER_CONFIG_UPDATE_3] Configurazione delle notifiche per user inibita per body invalido
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per user viene restituita
+    When  si tenta di modificare la configurazione delle notifiche per user specificando un valore invalido
+    And si ottiene lo status code 400
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+  Scenario Outline: [USER_CONFIG_UPDATE_4] Configurazione delle notifiche per user inibita per ruolo non autorizzato
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per user viene restituita
+    And l'utente è un "<role>" di "PA1"
+    When si tenta di modificare la configurazione delle notifiche per user
+    And si ottiene lo status code 403
+    And l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    Then modifica non applicata
+
+    Examples:
+      | role    |
+      | support |
+
+  Scenario: [USER_CONFIG_UPDATE_5] Configurazione delle notifiche per user inibita per valore del body inesistente
+    Given l'utente è un "admin" di "PA1"
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    And la configurazione delle notifiche per user viene restituita
+    When si tenta di modificare la configurazione delle notifiche per user specificando un valore inesistente
+    And si ottiene lo status code 404
+    And si tenta di recuperare la configurazione delle notifiche per user
+    And si ottiene lo status code 200
+    Then modifica non applicata
