@@ -4,22 +4,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
+import it.pagopa.interop.notification.INotificationClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     private final PropertyResolver propertyResolver;
+    private final INotificationClient notificationClient;
+
+    // FIXME 09/01/2026 ad uso interno temporaneo, rimuovere
+    private String regex;
 
     public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, PropertyResolver propertyResolver) {
         super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
+        this.notificationClient = clientTokenConfigurator.getNotificationClient();
         this.propertyResolver = propertyResolver;
     }
 
@@ -113,8 +122,22 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }
 
     @Then("è presente una notifica in-app contenente il seguente messaggio: {string}")
-    public void checkInAppNotificationBody(String body){
+    public void checkInAppNotificationBody_old(String body){
         // TODO
+    }
+
+    // FIXME 09/01/2026 alternativa alla strategia checkInAppNotificationBody_old, sceglierne una
+    @Then("è presente una notifica in-app il cui messaggio aderisce al seguente pattern: {string}")
+    public void checkInAppNotificationBody(String body){
+        PollingService pollingService = getContext().getPollingService();
+        Predicate<Notification> bodyMatcher = notification -> notification.getBody().matches(body);
+
+        /* TODO al momento sconosciute le tempistiche per la generazione delle notifiche, potrebbe
+         *  non bastare */
+        pollingService.makePolling(
+            () -> this.notificationClient.get(bodyMatcher),
+            Optional::isPresent,
+            "Non presente alcuna notifica che corrisponda alla regex fornita");
     }
 
     // FIXME 09/01/2026 ad uso interno temporaneo, rimuovere
@@ -123,5 +146,17 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         String propertyPath = placeHolder.substring(2, placeHolder.length() - 1);
         String contextProperty = propertyResolver.getContextProperty(propertyPath);
         assertThat(contextProperty).isEqualTo(this.getContext().getEServicesCommonContext().getEserviceId().toString());
+    }
+
+    // FIXME 09/01/2026 ad uso interno temporaneo, rimuovere
+    @When("pongo il seguente template di body in forma di regex {string}")
+    public void testRegex1(String regex) {
+        this.regex = regex;
+    }
+
+    // FIXME 09/01/2026 ad uso interno temporaneo, rimuovere
+    @When("riesco a fare il match con la seguente stringa {string}")
+    public void testRegex2(String toMatch) {
+        assertThat(toMatch).matches(regex);
     }
 }

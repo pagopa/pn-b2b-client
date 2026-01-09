@@ -89,7 +89,7 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
         Notifications notifications = new Notifications();
         int i = 0;
 
-        // condizione d'uscita: aver trovato la notifica con id in input OPPURE non aver altre notifiche da leggere
+        // condizione d'uscita: aver trovato la notifica OPPURE non aver altre notifiche da leggere
         for(; notifications.getResults().stream().noneMatch(notificationCatcher) && !(notifications.getResults().isEmpty() && i != 0); i++) {
             notifications = this.notificationsApi.getNotifications(
                 i * RESULTS_LIMIT,
