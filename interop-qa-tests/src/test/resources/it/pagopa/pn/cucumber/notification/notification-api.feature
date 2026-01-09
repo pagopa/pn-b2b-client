@@ -113,32 +113,32 @@ Feature: API CRUD Notifiche
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 204
-    Then le notifiche recuperate sono nello stato "read"
+    Then la notifica recuperate è nello stato "read"
 
   Scenario: [NOTIFICATION_SINGLE_READ_2] Doppia lettura di una specifica notifica (Scenario 14)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 204
     And l'utente tenta di recuperare lo stato aggiornato delle notifiche
     And le notifiche recuperate sono nello stato "read"
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 204
     And l'utente tenta di recuperare lo stato aggiornato delle notifiche
-    Then le notifiche recuperate sono nello stato "read"
+    Then la notifica recuperate è nello stato "read"
 
   Scenario: [NOTIFICATION_SINGLE_READ_3] Lettura di una specifica notifica con token invalido (Scenario 15)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And viene impostato per l'utente un token non valido
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 401
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
-    Then le notifiche recuperate sono nello stato "unread"
+    Then la notifica recuperate è nello stato "unread"
 
   Scenario: [NOTIFICATION_SINGLE_READ_4] Lettura di una specifica notifica con id inesistente (Scenario 16)
     Given l'utente è un "admin" di "PA1"
@@ -147,7 +147,7 @@ Feature: API CRUD Notifiche
     And l'utente tenta di leggere la notifica recuperata specificando un id inesistente
     And si ottiene lo status code 404
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
-    Then le notifiche recuperate sono nello stato "unread"
+    Then la notifica recuperate è nello stato "unread"
 
   Scenario: [NOTIFICATION_SINGLE_READ_5] Lettura di una specifica notifica con id invalido (Scenario 17)
     Given l'utente è un "admin" di "PA1"
@@ -156,18 +156,18 @@ Feature: API CRUD Notifiche
     And l'utente tenta di leggere la notifica recuperata specificando un id invalido
     And si ottiene lo status code 400
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
-    Then le notifiche recuperate sono nello stato "unread"
+    Then la notifica recuperate è nello stato "unread"
 
   Scenario Outline: [NOTIFICATION_SINGLE_READ_6] Lettura di una specifica notifica con ruolo non autorizzato (Scenario 18)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 401
     And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
-    Then le notifiche recuperate sono nello stato "unread"
+    Then la notifica recuperate è nello stato "unread"
 
     Examples:
       | role    |
@@ -178,17 +178,17 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "admin" di "PA2"
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 404
     And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
-    Then le notifiche recuperate sono nello stato "unread"
+    Then la notifica recuperate è nello stato "unread"
 
   Scenario: [NOTIFICATION_SINGLE_DELETE_1] Eliminazione di una specifica notifica (Scenario 20)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di eliminare la notifica recuperata specificando un id valido
+    And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 204
     Then le notifiche create sono state eliminate
 
@@ -197,7 +197,7 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And viene impostato per l'utente un token non valido
-    And l'utente tenta di eliminare la notifica recuperata specificando un id valido
+    And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 401
     Then nessuna notifica è stata eliminata
 
@@ -222,7 +222,7 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
-    And l'utente tenta di eliminare la notifica recuperata specificando un id invalido
+    And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 401
     And l'utente è un "admin" di "PA1"
     Then nessuna notifica è stata eliminata
@@ -235,10 +235,10 @@ Feature: API CRUD Notifiche
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di eliminare la notifica recuperata specificando un id valido
+    And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 204
     Then le notifiche create sono state eliminate
-    And l'utente tenta di eliminare la notifica recuperata specificando un id valido
+    And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 404
 
   Scenario: [NOTIFICATION_SINGLE_DELETE_7] Eliminazione di una specifica notifica con un utente diverso dal destinatario (Scenario 26)
@@ -246,7 +246,7 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "admin" di "PA2"
-    And l'utente tenta di eliminare la notifica recuperata specificando un id valido
+    And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 404
     And l'utente è un "admin" di "PA1"
     Then nessuna notifica è stata eliminata
@@ -310,10 +310,10 @@ Feature: API CRUD Notifiche
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     And l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 204
     And le notifiche recuperate sono nello stato "read"
-    When l'utente tenta di marcare come unread la notifica recuperata specificando un id valido
+    When l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 204
     Then le notifiche recuperate sono nello stato "unread"
 
@@ -321,13 +321,13 @@ Feature: API CRUD Notifiche
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 1 notifiche
     And l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di leggere la notifica recuperata specificando un id valido
+    And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 204
     And le notifiche recuperate sono nello stato "read"
-    When l'utente tenta di marcare come unread la notifica recuperata specificando un id valido
+    When l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 204
     And le notifiche recuperate sono nello stato "unread"
-    When l'utente tenta di marcare come unread la notifica recuperata specificando un id valido
+    When l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 204
     Then le notifiche recuperate sono nello stato "unread"
 
@@ -336,7 +336,7 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And viene impostato per l'utente un token non valido
-    And l'utente tenta di marcare come unread la notifica recuperata specificando un id valido
+    And l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 401
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
     Then le notifiche recuperate sono nello stato "unread"
@@ -364,7 +364,7 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "<role>" di "PA1"
-    And l'utente tenta di marcare come unread la notifica recuperata specificando un id valido
+    And l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 401
     And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
@@ -379,7 +379,7 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente è un "admin" di "PA2"
-    And l'utente tenta di marcare come unread la notifica recuperata specificando un id valido
+    And l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 404
     And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
@@ -396,7 +396,3 @@ Feature: API CRUD Notifiche
     When l'utente tenta di recuperare il count delle notifiche
     And si ottiene lo status code 401
     Then count delle notifiche non restituito
-
-
-
-

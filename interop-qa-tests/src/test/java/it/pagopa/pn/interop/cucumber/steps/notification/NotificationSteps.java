@@ -4,6 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
+import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
 import it.pagopa.interop.notification.INotificationClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -11,6 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import org.assertj.core.api.Assertions;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
@@ -20,12 +22,14 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     private final SharedStepsContext sharedStepsContext;
     private final INotificationClient notificationClient;
     private List<Notification> allocated = new LinkedList<>();
+    private NotificationsCountBySection notificationsCountBySection;
     private int toAllocate = 0;
 
-    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext1) {
+    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
         notificationClient = clientTokenConfigurator.getNotificationClient();
-        this.sharedStepsContext = sharedStepsContext1;
+        notificationClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     @When("{string} ha già generato {int} notifiche")
@@ -36,19 +40,25 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
     @When("l'utente tenta di {word} le notifiche recuperate")
     @When("l'utente tenta di marcare come {word} le notifiche recuperate")
-    public void operateWithNotifications(String op) {
+    public void crudNotifications(String op) {
         handleOperation(op, null, Target.MULTIPLE);
     }
 
     @When("l'utente tenta di {word} le notifiche recuperate specificando almeno un id {entityIdType}")
     @When("l'utente tenta di marcare come {word} le notifiche recuperate specificando almeno un id {entityIdType}")
-    public void operateWithNotifications(String op, EntityIdType entityIdType) {
+    public void crudNotifications(String op, EntityIdType entityIdType) {
         handleOperation(op, entityIdType, Target.MULTIPLE);
+    }
+
+    @When("l'utente tenta di {word} la notifica recuperata")
+    @When("l'utente tenta di marcare come {word} la notifica recuperata")
+    public void crudNotification(String op) {
+        handleOperation(op, null, Target.SINGLE);
     }
 
     @When("l'utente tenta di {word} la notifica recuperata specificando un id {entityIdType}")
     @When("l'utente tenta di marcare come {word} la notifica recuperata specificando un id {entityIdType}")
-    public void operateWithNotification(String op, EntityIdType entityIdType) {
+    public void crudNotification(String op, EntityIdType entityIdType) {
         handleOperation(op, entityIdType, Target.SINGLE);
     }
 
@@ -101,10 +111,17 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }
 
     @When("l'utente tenta di recuperare lo stato aggiornato delle notifiche")
-    public void refreshAllocated(){
+    public void refreshAllocated() {
         List<Notification> refreshed = new LinkedList<>();
 
-        allocated.forEach(n -> refreshed.add(notificationClient.getByIdNoCache(n.getId())));
+        allocated.forEach(n -> {
+            Notification notification = notificationClient.getByBody(n.getBody())
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Notifica non trovata per body: " + n.getBody()
+                    ));
+            refreshed.add(notification);
+        });
+
         this.allocated = refreshed;
     }
 
@@ -119,6 +136,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }
 
     @When("le notifiche recuperate sono nello stato {word}")
+    @When("la notifica recuperate è nello stato {word}")
     public void checkRead(String readState) {
         boolean read = "read".equalsIgnoreCase(readState);
 
@@ -131,13 +149,22 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
     @When("l'utente tenta di recuperare il count delle notifiche")
     public void getNotificationCount() {
-        // TODO
+        notificationsCountBySection = notificationClient.countBySection();
     }
 
     @When("count delle notifiche {word} restituito")
     public void checkNotificationCount(String assertion) {
-        boolean exist = parseExistenceToken(assertion);
-        // TODO: usare 'exist'
+        boolean exists = parseExistenceToken(assertion);
+
+        if (exists) {
+            Assertions.assertThat(notificationsCountBySection)
+                    .as("Il count delle notifiche deve essere presente")
+                    .isNotNull();
+        } else {
+            Assertions.assertThat(notificationsCountBySection)
+                    .as("Il count delle notifiche non deve essere presente")
+                    .isNull();
+        }
     }
 
     private void checkDelete(String expectation) {
@@ -145,16 +172,14 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         switch (expectation) {
             case "DELETED","PRESENT" -> {}
             default -> throw new IllegalArgumentException("Token non riconosciuto: " + expectation);
-        };
-
-        var ids = allocated.stream().map(Notification::getId).toList();
+        }
 
         PollingService.makePolling(
                 () -> notificationClient.existsAll(allocated),   // true => tutte presenti
                 allPresent -> expectation.equals("PRESENT") == allPresent,
                 expectation.equals("PRESENT")
-                        ? String.format("Le notifiche con id %s risultano eliminate ma dovevano essere presenti", ids)
-                        : String.format("Le notifiche con id %s non sono state eliminate", ids),
+                        ? String.format("Le notifiche con %s risultano eliminate ma dovevano essere presenti", allocated)
+                        : String.format("Le notifiche con %s non sono state eliminate", allocated),
                 30,
                 1000
         );
@@ -162,16 +187,27 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
     private void handleOperation(String rawOp, EntityIdType entityIdType, Target target) {
         NotificationOp op = parseOp(rawOp);
-        List<UUID> ids = new ArrayList<>(allocated.stream().map(Notification::getId).toList());
 
-        if(entityIdType != null)
-            ids.add(client.generateId(entityIdType));
+        List<UUID> ids = allocated.stream()
+                .map(Notification::getId)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (entityIdType != null) {
+            UUID generatedId = client.generateId(entityIdType);
+
+            if (target == Target.SINGLE) {
+                ids.clear();
+                ids.add(generatedId);
+            } else if (target == Target.MULTIPLE) {
+                ids.add(generatedId);
+            }
+        }
 
         switch (op) {
-            case DELETE -> onDelete(target);
-            case READ -> onRead(target);
-            case UNREAD -> onUnread(ids);
-            case UNKNOWN -> onUnknown(rawOp);
+            case DELETE -> onDelete(ids, target);
+            case READ -> onRead(ids, target);
+            case UNREAD -> onUnread(ids, target);
+            default -> onUnknown(rawOp);
         }
     }
 
@@ -186,25 +222,28 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         };
     }
 
-    private void onDelete(Target target) {
+    private void onDelete(List<UUID> ids, Target target) {
         switch (target) {
-            case MULTIPLE -> notificationClient.deleteAll(actualEntities.stream().map(Notification::getId).toList());
+            case MULTIPLE -> notificationClient.deleteAll(ids);
+            case SINGLE -> notificationClient.delete(ids.get(0));
         }
     }
 
-    private void onRead(Target target) {
+    private void onRead(List<UUID> ids, Target target) {
         switch (target) {
-            case MULTIPLE -> notificationClient.readAll(actualEntities.stream().map(Notification::getId).toList());
+            case MULTIPLE -> notificationClient.readAll(ids);
+            case SINGLE -> notificationClient.read(ids.get(0));
         }
     }
 
-    private void onUnread(List<UUID> ids) {
-        // TODO: chiamata client (dipende da API)
+    private void onUnread(List<UUID> ids, Target target) {
+        switch (target) {
+            case MULTIPLE -> notificationClient.unreadAll(ids);
+            case SINGLE -> notificationClient.unread(ids.get(0));
+        }
     }
 
     private void onUnknown(String rawOp) {
-        // puoi decidere se fallire subito o ignorare
-        // qui scelgo di essere esplicito (meglio nei test)
         throw new IllegalArgumentException("Operazione non riconosciuta: " + rawOp);
     }
 
