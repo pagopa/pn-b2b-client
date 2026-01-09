@@ -87,6 +87,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -182,7 +183,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPurposeTemplateClient.class,
         PurposeTemplateClientImpl.class,
         NotificationClientImpl.class,
-        //NotificationCacheImpl.class,
+        PropertyResolver.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

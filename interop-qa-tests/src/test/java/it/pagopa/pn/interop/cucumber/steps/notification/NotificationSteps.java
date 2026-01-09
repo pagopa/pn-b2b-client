@@ -1,5 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -7,14 +10,17 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
-
+import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
-    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator){
+    private final PropertyResolver propertyResolver;
+
+    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, PropertyResolver propertyResolver) {
         super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
+        this.propertyResolver = propertyResolver;
     }
 
     @When("l'utente tenta di {word} le notifiche recuperate")
@@ -104,5 +110,18 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     @Override
     public List<Notification> bindUnexpected(SharedStepsContext context) {
         throw new RuntimeException("Not implemented yet");
+    }
+
+    @Then("è presente una notifica in-app contenente il seguente messaggio: {string}")
+    public void checkInAppNotificationBody(String body){
+        // TODO
+    }
+
+    // FIXME 09/01/2026 ad uso interno temporaneo, rimuovere
+    @Then("la property {string} estratta è coerente con l'id dell'e-service creato")
+    public void testResolver(String placeHolder){
+        String propertyPath = placeHolder.substring(2, placeHolder.length() - 1);
+        String contextProperty = propertyResolver.getContextProperty(propertyPath);
+        assertThat(contextProperty).isEqualTo(this.getContext().getEServicesCommonContext().getEserviceId().toString());
     }
 }
