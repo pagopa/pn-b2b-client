@@ -62,7 +62,7 @@ public class DelayerSteps {
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
     public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
         csvLoader.readCsv(csv, expectedNotificationCount);
-        csvLoader.initializeExpectedDeliveryDate();
+        csvLoader.initializeExpectedDeliveryDate(dataTable);
         csvLoader.initializeLimits();
         csvLoader.initializeSeeds(dataTable);
     }
@@ -245,7 +245,13 @@ public class DelayerSteps {
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity).getExecutionArn();
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getCurrentMonday()).getExecutionArn();
+        waitUntilStepFunctionEnd();
+    }
+
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
+    public void runFirstStepFunction(String deliveryDate) throws Exception {
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, deliveryDate).getExecutionArn();
         waitUntilStepFunctionEnd();
     }
 

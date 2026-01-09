@@ -399,6 +399,11 @@ public class DelayerPaperDeliveryUtils {
         return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
+    public static String getCurrentMonday() {
+        LocalDate nextMonday = LocalDate.now().with(DayOfWeek.MONDAY);
+        return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
     public String calculatePk(WorkflowSteps workflowStep, String expectedDeliveryDate) {
         if (workflowStep == null || expectedDeliveryDate == null || expectedDeliveryDate.isEmpty())
             throw new RuntimeException("Errore nel calcolo della pk della notifica");

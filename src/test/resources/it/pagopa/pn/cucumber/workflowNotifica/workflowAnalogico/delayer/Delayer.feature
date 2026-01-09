@@ -389,7 +389,7 @@
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
-        | tcSenderUnknow_ | 5010       |
+        | tcSenderUnknow_ | 15       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId      | comparative | limit |
         | unknow~RS~P8  | esattamente | 0     |
@@ -404,6 +404,63 @@
         | infinityDriverP8~P8      | esattamente | 35000     |
         | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
       And viene impostato il limite massimo di 0 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
+
+      Examples:
+        | csv                       | TOT   |
+        | "tcSenderUnknow.csv"      | 15    |
+
+    @delayer9
+    Scenario Outline: [DELAYER-TC2.B] Verifica la gestione di un mittente non censito
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed            | quantita |
+        | tcSenderUnknow_ | 5010       |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId      | comparative | limit |
+        | unknow~RS~P8  | esattamente | 0     |
+        | unknow~AR~P8  | esattamente | 0     |
+        | unknow~890~P8 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And viene impostato il limite massimo di 10588 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -504,6 +561,55 @@
       Examples:
         | csv                 | TOT |
         | "tcSplitSender.csv" | 14  |
+
+
+    @delayer10
+      #BUG: https://pagopa.atlassian.net/browse/PN-15504
+    Scenario Outline: [DELAYER-TC4.A] Verifica la gestione di una capacity driver nulla
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed          | quantita | deliveryWeek |
+        | tcZeroDriver_ | 15       | 2025-12-29   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId       | comparative | limit |
+        | unknow~RS~P10  | esattamente | 0     |
+        | unknow~AR~P10  | esattamente | 0     |
+        | unknow~890~P10 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 10     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 10     |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 10     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 10     |
+      Examples:
+        | csv                | TOT |
+        | "tcZeroDriver.csv" | 15  |
+
+    @delayer11
+      #BUG: https://pagopa.atlassian.net/browse/PN-15504
+    Scenario Outline: [DELAYER-TC4.B] Verifica la gestione di una capacity driver nulla
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed          | quantita |
+        | tcZeroDriver_ | 15       |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId       | comparative | limit |
+        | unknow~RS~P10  | esattamente | 0     |
+        | unknow~AR~P10  | esattamente | 0     |
+        | unknow~890~P10 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 0     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 0     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
+      Examples:
+        | csv                | TOT |
+        | "tcZeroDriver.csv" | 15  |
 
     @delayer4
       #BUG: https://pagopa.atlassian.net/browse/PN-15504

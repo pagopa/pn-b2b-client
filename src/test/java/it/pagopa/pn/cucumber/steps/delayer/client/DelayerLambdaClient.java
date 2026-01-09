@@ -49,9 +49,9 @@ public class DelayerLambdaClient {
         }
     }
 
-    public FirstStepFunctionResponseWrapper.Payload runBatchWorkflowStateMachine(int printCapacity) throws Exception {
+    public FirstStepFunctionResponseWrapper.Payload runBatchWorkflowStateMachine(int printCapacity, String deliveryWeek) throws Exception {
         String rawResponse = invoke("RUN_ALGORITHM", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverCapacities", "pn-PaperDeliveryDriverUsedCapacities",
-                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(printCapacity));
+                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(printCapacity), deliveryWeek);
 
         try {
             // ===== LEVEL 1 =====
