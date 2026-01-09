@@ -1,6 +1,7 @@
 package it.pagopa.interop.notification;
 
-import it.pagopa.interop.common.client.IClient;
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
 
@@ -8,9 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Predicate;
 
-public interface INotificationClient extends IClient<Notification, UUID> {
+public interface INotificationClient extends SettableBearerToken {
 
     void deleteAll(List<UUID> ids);
     void delete(UUID id);
@@ -23,4 +23,6 @@ public interface INotificationClient extends IClient<Notification, UUID> {
     NotificationsCountBySection countBySection();
     List<Notification> getByBodyLike(String like);
     Optional<Notification> getByBody(String body);
+    UUID generateId(EntityIdType entityIdType);
+    List<Notification> getAll();
 }

@@ -6,21 +6,17 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.InAppNotificationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-
-import java.util.*;
-
 import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NotificationClientImpl extends AbstractClient implements INotificationClient {
     private static final int RESULTS_LIMIT = 30;
 
@@ -42,6 +38,7 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
         return apiClient;
     }
 
+    @Override
     public List<Notification> getByBodyLike(String like) {
         Notifications notifications = performOperation(
                 () -> notificationsApi.getNotificationsWithHttpInfo(0, RESULTS_LIMIT, like, null, null)
@@ -52,16 +49,12 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
         return notifications.getResults();
     }
 
+    @Override
     public Optional<Notification> getByBody(String body) {
         List<Notification> results = getByBodyLike(body);
 
         if(results.size() > 1) throw new IllegalStateException("Trovate diverse notifiche con lo stesso body: " + body);
         return Optional.ofNullable(results.get(0));
-    }
-
-    @Override
-    public Notification get(UUID id) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -133,11 +126,6 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
         ).orElseThrow(() -> new IllegalStateException(
                 "Errore nel recupero count notifiche (response non 2xx o body nullo)"
         ));
-    }
-
-    @Override
-    public UUID getId(Notification entity) {
-        return entity.getId();
     }
 
     @Override
