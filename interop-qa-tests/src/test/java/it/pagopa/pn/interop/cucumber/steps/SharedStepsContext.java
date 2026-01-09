@@ -15,6 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.notification.model.NotificationCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,6 +51,7 @@ public class SharedStepsContext {
     private AgreementCommonContext agreementCommonContext;
     private RiskAnalysisCommonContext riskAnalysisCommonContext;
     private EServiceTemplateStepContext eServiceTemplateStepContext;
+    private NotificationCommonContext notificationCommonContext;
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
