@@ -18,6 +18,7 @@ public class PnPollingWebhook {
     private TimelineElementCategoryV26 timelineElementCategoryV26;
     private TimelineElementCategoryV26 timelineElementCategoryV27;
     private TimelineElementCategoryV27 timelineElementCategoryV28;
+    private TimelineElementCategoryV27 timelineElementCategoryV29;
 
     private NotificationStatus notificationStatusV20;
     private NotificationStatus notificationStatusV23;
@@ -26,6 +27,7 @@ public class PnPollingWebhook {
     private NotificationStatusV26 notificationStatusV26;
     private NotificationStatusV26 notificationStatusV27;
     private NotificationStatusV26 notificationStatusV28;
+    private NotificationStatusV26 notificationStatusV29;
 
     private List<ProgressResponseElement> progressResponseElementListV20;
     private List<ProgressResponseElementV23> progressResponseElementListV23;
@@ -34,4 +36,5 @@ public class PnPollingWebhook {
     private List<ProgressResponseElementV26> progressResponseElementListV26;
     private List<ProgressResponseElementV27> progressResponseElementListV27;
     private List<ProgressResponseElementV28> progressResponseElementListV28;
+    private List<ProgressResponseElementV29> progressResponseElementListV29;
 }

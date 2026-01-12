@@ -339,7 +339,7 @@ public enum TimelineEventId {
                     .append(eventId.getIun());
             return sb.toString();
         }
-    };
+    };//TODO t v29 nuovo elemento
 
     public String buildEventId(EventId eventId) {
         throw new UnsupportedOperationException("Must be implemented for each action type event ID");

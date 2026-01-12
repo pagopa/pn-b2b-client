@@ -510,7 +510,7 @@ public abstract class B2bUtils {
     }
 
     public static String getTimelineEventId(EventId event, String timelineEventCategory) {
-        return switch (timelineEventCategory) {
+        return switch (timelineEventCategory) {// todo t v29 nuovo elemento
             case SEND_COURTESY_MESSAGE -> TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
             case REQUEST_REFUSED -> TimelineEventId.REQUEST_REFUSED.buildEventId(event);
             case AAR_GENERATION -> TimelineEventId.AAR_GENERATION.buildEventId(event);

@@ -87,6 +87,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     FullSentNotificationV27 getSentNotificationV27(String iun);
 
+    FullSentNotificationV28 getSentNotificationV28(String iun);
+
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIndex);
 
