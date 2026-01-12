@@ -1,6 +1,6 @@
 @crudNotification
 Feature: API CRUD Notifiche
-  
+
   Scenario: [NOTIFICATION_GET_ALL_1] Viene recuperata la lista delle notifiche (Scenario 1)
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare la lista di notifiche

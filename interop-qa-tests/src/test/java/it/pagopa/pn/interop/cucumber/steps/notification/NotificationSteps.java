@@ -82,6 +82,7 @@ public class NotificationSteps {
         // 1) filtro + ordinamento (più recenti prima)
         List<Notification> candidates = all.stream()
                 .filter(Objects::nonNull)
+                .filter(n ->  n.getReadAt() == null || n.getReadAt().isEmpty())
                 .sorted(Comparator.comparing(
                         Notification::getCreatedAt,
                         Comparator.nullsLast(String::compareTo)
