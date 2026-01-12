@@ -220,8 +220,8 @@ public class NotificationSteps {
     @When("nessuna notifica è stata eliminata")
     public void checkFailDelete() { checkDelete("PRESENT"); }
 
-    @When("le notifiche recuperate sono nello stato {word}")
-    @When("la notifica recuperate è nello stato {word}")
+    @When("le notifiche recuperate sono nello stato {string}")
+    @When("la notifica recuperate è nello stato {string}")
     public void checkRead(String readState) {
         boolean read = "read".equalsIgnoreCase(readState);
 

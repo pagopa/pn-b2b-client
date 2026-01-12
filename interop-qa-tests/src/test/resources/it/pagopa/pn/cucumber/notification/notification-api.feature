@@ -63,6 +63,7 @@ Feature: API CRUD Notifiche
     Given l'utente è un "<role>" di "PA1"
     When l'utente tenta di eliminare le notifiche recuperate
     Then si ottiene lo status code 403
+    And l'utente è un "admin" di "PA1"
     And nessuna notifica è stata eliminata
 
     Examples:
