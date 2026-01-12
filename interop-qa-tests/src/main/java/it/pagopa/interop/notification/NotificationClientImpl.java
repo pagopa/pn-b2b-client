@@ -153,7 +153,7 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
     @Override
     public UUID generateId(EntityIdType entityIdType) {
         return switch (entityIdType){
-            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
+            case INVALID_ID -> UUID.fromString("12345-not-a-valid-uuid"); // La classe UUID non permette di formare un UUID malformato
             case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
             case VALID_ID -> UUID.randomUUID();
             case NULL_ID -> null;

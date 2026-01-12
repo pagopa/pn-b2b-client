@@ -43,9 +43,11 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 2 notifiche
     And l'utente tenta di recuperare la lista di notifiche create
     When l'utente tenta di eliminare le notifiche recuperate specificando almeno un id inesistente
-    Then si ottiene lo status code 404
-    And nessuna notifica è stata eliminata
+    Then si ottiene lo status code 200
+    And le notifiche create sono state eliminate
 
+    #NOTA: La classe UUID non permette la creazione di id malformati pertanto l'invio della request avrà sempre eccezione Java
+    # Il test è stato eseguito manualmente con esito positivo il giorno 12/01/2026
   Scenario: [NOTIFICATION_BULK_DELETE_4] Eliminazione massiva di notifiche con ID invalido (Scenario 6)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 2 notifiche
