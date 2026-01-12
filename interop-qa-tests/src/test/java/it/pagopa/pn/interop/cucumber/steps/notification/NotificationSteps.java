@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountB
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.agreement.AgreementCommonSteps;
 import org.assertj.core.api.Assertions;
 
 import java.util.*;
@@ -18,6 +19,8 @@ public class NotificationSteps {
     private enum NotificationOp { DELETE, READ, UNREAD, UPDATE, UNKNOWN }
     private enum NotificationsTarget { MULTIPLE, SINGLE }
 
+    private final AgreementCommonSteps agreementCommonSteps;
+
     private final SharedStepsContext sharedStepsContext;
     private final NotificationClientImpl apiClient;
 
@@ -25,16 +28,19 @@ public class NotificationSteps {
     private int toAllocate = 0;
     private NotificationsCountBySection notificationsCountBySection;
 
-    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
+    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, AgreementCommonSteps agreementCommonSteps) {
         this.sharedStepsContext = sharedStepsContext;
         this.apiClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
         this.apiClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        this.agreementCommonSteps = agreementCommonSteps;
     }
 
     @When("{string} ha già generato {int} notifiche")
     public void createNotifications(String tenant, int n) {
-        // TODO: creare le notifiche (se serve realmente generarle qui)
         this.toAllocate = n;
+        String consumer = tenant.equals("PA1") ? "PA2" : "PA1";
+        agreementCommonSteps.tenantHasAlreadyCreatedEServiceWithStatusAndApproval(tenant, "PUBLISHED", "MANUAL");
+        agreementCommonSteps.tenantAlreadyHasFruitionRequestWithState(consumer, "PENDING");
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche")
