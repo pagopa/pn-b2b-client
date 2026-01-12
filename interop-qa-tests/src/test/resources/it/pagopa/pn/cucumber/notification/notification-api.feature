@@ -1,3 +1,4 @@
+@crudNotification
 Feature: API CRUD Notifiche
 
   Scenario: [TEST_TRIGGER]
@@ -5,7 +6,6 @@ Feature: API CRUD Notifiche
     And "PA1" ha già generato 1 notifiche
     When l'utente tenta di recuperare la lista di notifiche create
     And l'utente tenta di eliminare le notifiche recuperate
-
 
   Scenario: [NOTIFICATION_GET_ALL_1] Viene recuperata la lista delle notifiche (Scenario 1)
     Given l'utente è un "admin" di "PA1"
@@ -48,6 +48,7 @@ Feature: API CRUD Notifiche
 
     #NOTA: La classe UUID non permette la creazione di id malformati pertanto l'invio della request avrà sempre eccezione Java
     # Il test è stato eseguito manualmente con esito positivo il giorno 12/01/2026
+  @ignore
   Scenario: [NOTIFICATION_BULK_DELETE_4] Eliminazione massiva di notifiche con ID invalido (Scenario 6)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 2 notifiche
