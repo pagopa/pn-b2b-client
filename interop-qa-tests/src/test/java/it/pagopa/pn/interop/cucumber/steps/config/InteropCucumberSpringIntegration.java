@@ -37,6 +37,7 @@ import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
+import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
@@ -182,6 +183,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPurposeTemplateClient.class,
         PurposeTemplateClientImpl.class,
         NotificationClientImpl.class,
+        NotificationConfigClient.class
         //NotificationCacheImpl.class,
 })
 @EnableScheduling
