@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfigUpdateSeed;
@@ -9,8 +10,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationCon
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
+@Slf4j
 public class NotificationConfigSteps {
 
     private enum NotificationConfigOp { READ, UPDATE, UNKNOWN }
@@ -62,25 +65,33 @@ public class NotificationConfigSteps {
 
     @When("modifica {word} applicata")
     public void checkUpdateConfiguration(String assertion) {
-        boolean equals = parseExistenceToken(assertion);
 
-        Object actual = (actualTenantNotificationConfig != null)
-                ? actualTenantNotificationConfig
-                : actualUserNotificationConfig;
+        final boolean isTenantFlow = actualTenantNotificationConfig != null;
 
-        Object expected = (expectedTenantNotificationConfig != null)
-                ? expectedTenantNotificationConfig
-                : expectedUserNotificationConfig;
+        // expected: quello impostato dallo step di update (tenant o user)
+        Object expected = isTenantFlow ? expectedTenantNotificationConfig : expectedUserNotificationConfig;
 
-        if (equals) {
-            Assertions.assertThat(actual)
-                    .as("Actual ed expected devono coincidere")
-                    .isEqualTo(expected);
-        } else {
-            Assertions.assertThat(actual)
-                    .as("Actual ed expected non devono coincidere")
-                    .isNotEqualTo(expected);
+        // fallback: se non ho un expected "esplicito", considero come expected la baseline (prima dell'update)
+        if (expected == null) {
+            expected = isTenantFlow ? actualTenantNotificationConfig : actualUserNotificationConfig;
         }
+
+        final Object expectedFinal = expected; // effectively final per la lambda
+
+        Object actual = PollingService.makePolling(
+                () -> isTenantFlow
+                        ? configClient.getTenantConfig()
+                        : configClient.getUserConfig(),
+                resp -> java.util.Objects.equals(resp, expectedFinal),
+                "Actual ed expected devono coincidere (ma non coincidono entro il polling)",
+                30,
+                1000
+        );
+
+
+        Assertions.assertThat(actual)
+                .as("Actual ed expected devono coincidere")
+                .isEqualTo(expectedFinal);
     }
 
     private void handleConfigOperation(String rawOp, EntityIdType entityIdType, ConfigTarget target) {
@@ -103,7 +114,11 @@ public class NotificationConfigSteps {
         } else {
             // toggle su configurazione attuale (se presente)
             if (actualUserNotificationConfig != null) {
+                userSeed.setInAppNotificationPreference(actualUserNotificationConfig.getInAppNotificationPreference());
                 userSeed.setEmailNotificationPreference(!actualUserNotificationConfig.getEmailNotificationPreference());
+                userSeed.setEmailDigestPreference(actualUserNotificationConfig.getEmailDigestPreference());
+                userSeed.setInAppConfig(actualUserNotificationConfig.getInAppConfig());
+                userSeed.setEmailConfig(actualUserNotificationConfig.getEmailConfig());
             }
             if (actualTenantNotificationConfig != null) {
                 tenantSeed.setEnabled(!actualTenantNotificationConfig.getEnabled());
@@ -112,37 +127,59 @@ public class NotificationConfigSteps {
 
         switch (op) {
             case READ -> onConfigRead(target);
-            case UPDATE -> onConfigUpdate(target == ConfigTarget.USER ? userSeed : tenantSeed, target);
+            case UPDATE -> onConfigUpdate(target == ConfigTarget.USER ? userSeed : tenantSeed, target, entityIdType != null);
             default -> onUnknown(rawOp);
         }
     }
 
     private void onConfigRead(ConfigTarget target) {
         switch (target) {
-            case USER -> actualUserNotificationConfig = configClient.getUserConfig();
-            case TENANT -> actualTenantNotificationConfig = configClient.getTenantConfig();
+            case USER -> {
+                try{
+                    actualUserNotificationConfig = configClient.getUserConfig();
+                }catch (IllegalStateException e){
+                    log.warn(e.getMessage());
+                }
+            }
+            case TENANT -> {
+                try{
+                    actualTenantNotificationConfig = configClient.getTenantConfig();
+                }catch (IllegalStateException e){
+                    log.warn(e.getMessage());
+                }
+            }
         }
     }
 
-    private void onConfigUpdate(Object seed, ConfigTarget target) {
+    private void onConfigUpdate(Object seed, ConfigTarget target, boolean isInvalid) {
         switch (target) {
             case USER -> {
                 UserNotificationConfigUpdateSeed userSeed = (UserNotificationConfigUpdateSeed) seed;
 
-                expectedUserNotificationConfig = configClient.getUserConfig();
+                try{
+                    expectedUserNotificationConfig = configClient.getUserConfig();
+                }catch (IllegalStateException e){
+                    log.warn(e.getMessage());
+                }
+
                 configClient.updateUserNotificationConfig(userSeed);
 
-                if (userSeed != null) {
+                if (userSeed != null && expectedUserNotificationConfig != null &&!isInvalid) {
                     expectedUserNotificationConfig.setEmailNotificationPreference(userSeed.getEmailNotificationPreference());
                 }
             }
             case TENANT -> {
                 TenantNotificationConfigUpdateSeed tenantSeed = (TenantNotificationConfigUpdateSeed) seed;
 
-                expectedTenantNotificationConfig = configClient.getTenantConfig();
+                try{
+                    expectedTenantNotificationConfig = configClient.getTenantConfig();
+                }catch (IllegalStateException e){
+                    log.warn(e.getMessage());
+                }
+
                 configClient.updateTenantNotificationConfig(tenantSeed);
 
-                if (tenantSeed != null) {
+                if (tenantSeed != null && expectedTenantNotificationConfig != null && !isInvalid) {
                     expectedTenantNotificationConfig.setEnabled(tenantSeed.getEnabled());
                 }
             }

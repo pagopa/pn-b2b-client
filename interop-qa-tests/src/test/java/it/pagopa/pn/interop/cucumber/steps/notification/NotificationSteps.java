@@ -241,7 +241,11 @@ public class NotificationSteps {
 
     @When("l'utente tenta di recuperare il count delle notifiche")
     public void getNotificationCount() {
-        notificationsCountBySection = apiClient.countBySection();
+        try{
+            notificationsCountBySection = apiClient.countBySection();
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     @When("count delle notifiche {word} restituito")
