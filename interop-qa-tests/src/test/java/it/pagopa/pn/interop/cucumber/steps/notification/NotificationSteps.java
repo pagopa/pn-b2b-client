@@ -223,6 +223,7 @@ public class NotificationSteps {
     @When("le notifiche recuperate sono nello stato {string}")
     @When("la notifica recuperate è nello stato {string}")
     public void checkRead(String readState) {
+        this.refreshAllocated();
         boolean read = "read".equalsIgnoreCase(readState);
 
         if (read) {
