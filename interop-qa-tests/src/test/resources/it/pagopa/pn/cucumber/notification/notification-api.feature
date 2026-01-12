@@ -433,7 +433,7 @@ Feature: API CRUD Notifiche
     Then count delle notifiche non restituito
 
   Scenario: [TENANT_CONFIG_READ_1] Viene correttamente recuperata la configurazione delle notifiche per il tenant
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     When si tenta di recuperare la configurazione delle notifiche per tenant
     And si ottiene lo status code 200
     Then la configurazione delle notifiche per tenant viene restituita
@@ -445,7 +445,7 @@ Feature: API CRUD Notifiche
     Then la configurazione delle notifiche per tenant non restituita
 
   Scenario: [TENANT_CONFIG_UPDATE_1] Viene correttamente fatto l'update della configurazione delle notifiche per il tenant
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per tenant
     And si ottiene lo status code 200
     And la configurazione delle notifiche per tenant viene restituita
@@ -454,18 +454,18 @@ Feature: API CRUD Notifiche
     Then modifica viene applicata
 
   Scenario: [TENANT_CONFIG_UPDATE_2] Configurazione delle notifiche per il tenant inibita per token invalido
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per tenant
     And si ottiene lo status code 200
     And la configurazione delle notifiche per tenant viene restituita
     And viene impostato per l'utente un token non valido
     When si tenta di modificare la configurazione delle notifiche per tenant
     And si ottiene lo status code 401
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA2"
     Then modifica non applicata
 
   Scenario: [TENANT_CONFIG_UPDATE_3] Configurazione delle notifiche per il tenant inibita per body invalido
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per tenant
     And si ottiene lo status code 200
     And la configurazione delle notifiche per tenant viene restituita
@@ -474,14 +474,14 @@ Feature: API CRUD Notifiche
     Then modifica non applicata
 
   Scenario Outline: [TENANT_CONFIG_UPDATE_4] Configurazione delle notifiche per ruolo non autorizzato
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per tenant
     And si ottiene lo status code 200
     And la configurazione delle notifiche per tenant viene restituita
-    And l'utente è un "<role>" di "PA1"
+    And l'utente è un "<role>" di "PA2"
     When si tenta di modificare la configurazione delle notifiche per tenant
     And si ottiene lo status code 403
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA2"
     Then modifica non applicata
 
     Examples:
@@ -492,7 +492,7 @@ Feature: API CRUD Notifiche
      #NOTA: La classe Boolean non permette la creazione di valori malformati, se non null, pertanto l'invio della request porta sempre ad un 400
   @ignore
   Scenario: [TENANT_CONFIG_UPDATE_5] Configurazione delle notifiche per il tenant inibita per valore del body inesistente
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per tenant
     And si ottiene lo status code 200
     And la configurazione delle notifiche per tenant viene restituita
@@ -501,7 +501,7 @@ Feature: API CRUD Notifiche
     Then modifica non applicata
 
   Scenario: [USER_CONFIG_READ_1] Viene correttamente recuperata la configurazione delle notifiche per user
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     When si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 200
     Then la configurazione delle notifiche per user viene restituita
@@ -513,7 +513,7 @@ Feature: API CRUD Notifiche
     Then la configurazione delle notifiche per user non restituita
 
   Scenario: [USER_CONFIG_UPDATE_1] Viene correttamente fatto l'update della configurazione delle notifiche per user
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 200
     And la configurazione delle notifiche per user viene restituita
@@ -522,18 +522,18 @@ Feature: API CRUD Notifiche
     Then modifica viene applicata
 
   Scenario: [USER_CONFIG_UPDATE_2] Configurazione delle notifiche per user inibita per token invalido
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 200
     And la configurazione delle notifiche per user viene restituita
     And viene impostato per l'utente un token non valido
     When  si tenta di modificare la configurazione delle notifiche per user
     And si ottiene lo status code 401
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA2"
     Then modifica non applicata
 
   Scenario: [USER_CONFIG_UPDATE_3] Configurazione delle notifiche per user inibita per body invalido
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 200
     And la configurazione delle notifiche per user viene restituita
@@ -542,14 +542,14 @@ Feature: API CRUD Notifiche
     Then modifica non applicata
 
   Scenario Outline: [USER_CONFIG_UPDATE_4] Configurazione delle notifiche per user inibita per ruolo non autorizzato
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 200
     And la configurazione delle notifiche per user viene restituita
-    And l'utente è un "<role>" di "PA1"
+    And l'utente è un "<role>" di "PA2"
     When si tenta di modificare la configurazione delle notifiche per user
     And si ottiene lo status code 403
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA2"
     Then modifica non applicata
 
     Examples:
@@ -559,7 +559,7 @@ Feature: API CRUD Notifiche
      #NOTA: La classe Boolean non permette la creazione di valori malformati, se non null, pertanto l'invio della request porta sempre ad un 400
   @ignore
   Scenario: [USER_CONFIG_UPDATE_5] Configurazione delle notifiche per user inibita per valore del body inesistente
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 200
     And la configurazione delle notifiche per user viene restituita

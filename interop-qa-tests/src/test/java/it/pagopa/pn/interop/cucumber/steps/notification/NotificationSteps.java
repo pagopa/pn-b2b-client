@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
