@@ -50,10 +50,11 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
     }
 
     @Override
+
     public Optional<Notification> getByBody(String body) {
         List<Notification> results = getByBodyLike(body);
-
-        if(results.size() > 1) throw new IllegalStateException("Trovate diverse notifiche con lo stesso body: " + body);
+        if (results == null || results.isEmpty()) return Optional.empty();
+        if (results.size() > 1) throw new IllegalStateException("Trovate diverse notifiche con lo stesso body: " + body);
         return Optional.ofNullable(results.get(0));
     }
 

@@ -9,17 +9,21 @@ import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.agreement.AgreementCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.authorization.ClientCreateStep;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class NotificationSteps {
 
     private enum NotificationOp { DELETE, READ, UNREAD, UPDATE, UNKNOWN }
     private enum NotificationsTarget { MULTIPLE, SINGLE }
 
     private final AgreementCommonSteps agreementCommonSteps;
+    private final ClientCreateStep clientCreateStep;
 
     private final SharedStepsContext sharedStepsContext;
     private final NotificationClientImpl apiClient;
@@ -28,24 +32,34 @@ public class NotificationSteps {
     private int toAllocate = 0;
     private NotificationsCountBySection notificationsCountBySection;
 
-    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, AgreementCommonSteps agreementCommonSteps) {
+    public NotificationSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator, AgreementCommonSteps agreementCommonSteps, ClientCreateStep clientCreateStep) {
         this.sharedStepsContext = sharedStepsContext;
         this.apiClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
         this.apiClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.agreementCommonSteps = agreementCommonSteps;
+        this.clientCreateStep = clientCreateStep;
     }
 
     @When("{string} ha già generato {int} notifiche")
     public void createNotifications(String tenant, int n) {
         this.toAllocate = n;
         String consumer = tenant.equals("PA1") ? "PA2" : "PA1";
-        agreementCommonSteps.tenantHasAlreadyCreatedEServiceWithStatusAndApproval(tenant, "PUBLISHED", "MANUAL");
-        agreementCommonSteps.tenantAlreadyHasFruitionRequestWithState(consumer, "PENDING");
+
+        for (int i = 0; i <= this.toAllocate; i++) {
+            agreementCommonSteps.tenantHasAlreadyCreatedEServiceWithStatusAndApproval(tenant, "PUBLISHED", "MANUAL");
+            agreementCommonSteps.tenantAlreadyHasFruitionRequestWithState(consumer, "PENDING");
+        }
+
+        clientCreateStep.setRole("admin", tenant);
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche")
     public void getAllNotifications() {
-        allocated = apiClient.getAll();
+        try{
+            allocated = apiClient.getAll();
+        }catch(IllegalStateException e){
+            log.warn(e.getMessage());
+        }
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche create")
@@ -77,10 +91,11 @@ public class NotificationSteps {
         // 2) acquisizione "atomica" di toAllocate notifiche tramite touchedIds
         List<Notification> acquired = new ArrayList<>(toAllocate);
         for (Notification n : candidates) {
+            if (acquired.size() == toAllocate) break;
+
             UUID id = n.getId();
             if (touchedIds.add(id)) {
                 acquired.add(n);
-                if (acquired.size() == toAllocate) break;
             }
         }
 

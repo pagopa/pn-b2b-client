@@ -51,7 +51,7 @@ public class SharedStepsContext {
     private AgreementCommonContext agreementCommonContext;
     private RiskAnalysisCommonContext riskAnalysisCommonContext;
     private EServiceTemplateStepContext eServiceTemplateStepContext;
-    private NotificationCommonContext notificationCommonContext;
+    private NotificationCommonContext notificationCommonContext = new NotificationCommonContext();
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,

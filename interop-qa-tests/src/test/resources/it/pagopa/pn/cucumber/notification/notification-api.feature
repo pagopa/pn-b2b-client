@@ -1,5 +1,12 @@
 Feature: API CRUD Notifiche
 
+  Scenario: [TEST_TRIGGER]
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già generato 1 notifiche
+    When l'utente tenta di recuperare la lista di notifiche create
+    And l'utente tenta di eliminare le notifiche recuperate
+
+
   Scenario: [NOTIFICATION_GET_ALL_1] Viene recuperata la lista delle notifiche (Scenario 1)
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare la lista di notifiche
@@ -27,11 +34,14 @@ Feature: API CRUD Notifiche
     Given viene impostato per l'utente un token non valido
     And l'utente tenta di eliminare le notifiche recuperate
     Then si ottiene lo status code 401
+    And l'utente è un "admin" di "PA1"
     And nessuna notifica è stata eliminata
 
+    #BUG: https://pagopa.atlassian.net/browse/PIN-8920
   Scenario: [NOTIFICATION_BULK_DELETE_3] Eliminazione massiva di notifiche con ID inesistente (Scenario 5)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 2 notifiche
+    And l'utente tenta di recuperare la lista di notifiche create
     When l'utente tenta di eliminare le notifiche recuperate specificando almeno un id inesistente
     Then si ottiene lo status code 404
     And nessuna notifica è stata eliminata
@@ -39,6 +49,7 @@ Feature: API CRUD Notifiche
   Scenario: [NOTIFICATION_BULK_DELETE_4] Eliminazione massiva di notifiche con ID invalido (Scenario 6)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già generato 2 notifiche
+    And l'utente tenta di recuperare la lista di notifiche create
     When l'utente tenta di eliminare le notifiche recuperate specificando almeno un id invalido
     Then si ottiene lo status code 400
     And nessuna notifica è stata eliminata
@@ -137,6 +148,7 @@ Feature: API CRUD Notifiche
     And viene impostato per l'utente un token non valido
     And l'utente tenta di leggere la notifica recuperata
     And si ottiene lo status code 401
+    And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
     Then la notifica recuperate è nello stato "unread"
 
@@ -199,6 +211,7 @@ Feature: API CRUD Notifiche
     And viene impostato per l'utente un token non valido
     And l'utente tenta di eliminare la notifica recuperata
     And si ottiene lo status code 401
+    And l'utente è un "admin" di "PA1"
     Then nessuna notifica è stata eliminata
 
   Scenario: [NOTIFICATION_SINGLE_DELETE_3] Eliminazione di una specifica notifica con id inesistente (Scenario 22)
@@ -338,6 +351,7 @@ Feature: API CRUD Notifiche
     And viene impostato per l'utente un token non valido
     And l'utente tenta di marcare come unread la notifica recuperata
     And si ottiene lo status code 401
+    And l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare lo stato aggiornato delle notifiche
     Then le notifiche recuperate sono nello stato "unread"
 
@@ -482,7 +496,7 @@ Feature: API CRUD Notifiche
     Given viene impostato per l'utente un token non valido
     When si tenta di recuperare la configurazione delle notifiche per user
     And si ottiene lo status code 401
-    Then la configurazione delle notifiche per user viene restituita
+    Then la configurazione delle notifiche per user non restituita
 
   Scenario: [USER_CONFIG_UPDATE_1] Viene correttamente fatto l'update della configurazione delle notifiche per user
     Given l'utente è un "admin" di "PA1"
