@@ -249,12 +249,6 @@ public class DelayerSteps {
         waitUntilStepFunctionEnd();
     }
 
-    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
-    public void runFirstStepFunction(String deliveryDate) throws Exception {
-        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, deliveryDate).getExecutionArn();
-        waitUntilStepFunctionEnd();
-    }
-
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
         context.currentExecutionArn = lambdaClient.runDelayerToPaperChannel().getExecutionArn();
