@@ -1,12 +1,6 @@
 @crudNotification
 Feature: API CRUD Notifiche
-
-  Scenario: [TEST_TRIGGER]
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già generato 1 notifiche
-    When l'utente tenta di recuperare la lista di notifiche create
-    And l'utente tenta di eliminare le notifiche recuperate
-
+  
   Scenario: [NOTIFICATION_GET_ALL_1] Viene recuperata la lista delle notifiche (Scenario 1)
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta di recuperare la lista di notifiche
