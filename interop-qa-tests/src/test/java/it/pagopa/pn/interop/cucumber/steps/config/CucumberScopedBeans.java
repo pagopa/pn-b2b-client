@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
+import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
@@ -10,5 +11,10 @@ public class CucumberScopedBeans {
     @Bean
     public NotificationCacheImpl notificationCache() {
         return new NotificationCacheImpl();
+    }
+
+    @Bean
+    public FeatureLifecycleManager notificationFeatureLifecycleManager() {
+        return new FeatureLifecycleManager();
     }
 }

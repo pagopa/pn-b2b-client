@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import static java.time.OffsetDateTime.now;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,19 +12,26 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-
-import static java.time.OffsetDateTime.now;
 
 @Data
 public class AgreementCommonSteps {
@@ -283,17 +292,11 @@ public class AgreementCommonSteps {
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(newVersion);
     }
 
+    @And("l'utente pubblica la versione dell'e-service")
     @And("l'utente delegato pubblica la versione dell'e-service")
     public void publishNewVersionOfEService() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         dataPreparationService.bringDescriptorToGivenState(eServiceId, descriptorId, EServiceDescriptorState.WAITING_FOR_APPROVAL, false);
-    }
-
-    @And("l'utente delegante approva la versione dell'e-service")
-    public void approveNewVersionOfEService() {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        dataPreparationService.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
     }
 }

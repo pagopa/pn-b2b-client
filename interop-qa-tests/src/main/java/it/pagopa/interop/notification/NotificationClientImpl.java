@@ -5,9 +5,11 @@ import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.InAppNotificationsApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject10;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notifications;
 import it.pagopa.interop.notification.cache.NotificationCache;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +34,12 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
     private final String basePath;
     private final NotificationCache cache;
 
-    public NotificationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, NotificationCache cache) {
+    public NotificationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, NotificationCache cache, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.notificationsApi = new InAppNotificationsApi(createApiClient("dummyBearer"));
         this.cache = cache;
+        super.httpCallExecutor = httpCallExecutor;
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -55,12 +58,17 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
 
     @Override
     public List<Notification> getAll() {
-        return this.notificationsApi.getNotifications(
-            0,
-            RESULTS_LIMIT,
-            null,
-            null,
-            null).getResults();
+        Notifications notifications = performOperation(() ->
+            this.notificationsApi.getNotificationsWithHttpInfo(
+                0,
+                RESULTS_LIMIT,
+                null,
+                null,
+                null)
+        ).orElseThrow(() -> new IllegalStateException(
+            "Errore nel recupero configurazione notifiche per tenant (response non 2xx o body nullo)"
+        ));
+        return notifications.getResults();
     }
 
     @Override
@@ -102,6 +110,11 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
         this.cache.putAll(actualNotificationsRead);
 
         return notifications.getResults().stream().filter(notificationCatcher).findFirst();
+    }
+
+    @Override
+    public void deleteAll(List<UUID> uuids) {
+        this.notificationsApi.deleteNotificationsWithHttpInfo(new InlineObject10().ids(uuids));
     }
 
     @Override

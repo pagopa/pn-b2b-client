@@ -75,7 +75,7 @@ public class SharedStepsContext {
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
     }
 
-    @Before
+    @Before(order = Integer.MIN_VALUE)
     public void configLog(Scenario scenario) {
         MDC.clear();
         MDC.put("scenarioId", extractScenarioId(scenario.getName()));

@@ -2,36 +2,42 @@ package it.pagopa.interop.common.client;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-
-import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Getter
 @Slf4j
-public abstract class AbstractClient  {
+public abstract class AbstractClient {
 
     @Setter
     protected IHttpExecutor httpCallExecutor;
 
     public <E, R> Optional<R> performOperation(IOperation<E, R> operation) {
-        // Esegue la chiamata HTTP
         httpCallExecutor.performCall(operation.getApiCaller());
+        return mapIf2xx(operation.getResultExtractor());
+    }
 
-        // Recupera la risposta e l'esito della chiamata (cast se necessario)
-        @SuppressWarnings("unchecked")
-        E rawResponse = (E) httpCallExecutor.getResponse();
-        var response = httpCallExecutor.getResponseStatus();
+    public <R> Optional<R> performOperation(Supplier<ResponseEntity<R>> promise) {
+        httpCallExecutor.performCall(promise, ResponseEntity::getStatusCode);
+        return mapIf2xx((ResponseEntity<R> re) -> re != null ? re.getBody() : null);
+    }
 
-        // Se la risposta è positiva, estrae e restituisce il risultato
-        if (response.is2xxSuccessful()) {
-            return Optional.ofNullable(operation.getResultExtractor().apply(rawResponse));
+    private <E, R> Optional<R> mapIf2xx(Function<E, R> extractor) {
+        HttpStatus status = httpCallExecutor.getResponseStatus();
+        if (status == null || !status.is2xxSuccessful()) {
+            log.warn("HTTP call failed with status: {}", status != null ? status.value() : "null");
+            return Optional.empty();
         }
 
-        // In caso di errore, loggare o gestire in altro modo se necessario
-        log.warn("HTTP call failed with status: {}", response.value());
-        return Optional.empty();
+        @SuppressWarnings("unchecked")
+        E rawResponse = (E) httpCallExecutor.getResponse();
+
+        return Optional.ofNullable(extractor.apply(rawResponse));
     }
 }
