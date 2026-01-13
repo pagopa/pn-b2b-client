@@ -24,6 +24,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeaders;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,11 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeaders.*;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -322,5 +326,72 @@ public class DelegheTemporaneeSteps {
         System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
         log.info("Parametri settati");
         System.getenv().entrySet().forEach(x -> log.info("PARAM : " + x));
+    }
+
+    //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
+    @When("{destinatario} viene temporaneamente delegato da {string} passando headers lollipop {lollipopHeadersError}")
+    public void creaDelegaTemporaneaWithHeaders(Destinatario delegate, String delegator, LollipopHeaders lollipopHeaderWithError) {
+        qrCode = getQRPathEnvironmentBased() + "?aar=" +
+                (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0));
+
+        MandateCreationRequest mandateCreationRequest = new MandateCreationRequest();
+        mandateCreationRequest.setAarQrCodeValue(qrCode);
+
+        String taxId = delegate.getTaxId();
+        String lollipopUserId = delegate.getTaxId();
+
+        Map<LollipopHeaders, String> lollipopHeaders = getLollipopHeaders(lollipopHeaderWithError);
+        String xPagopaLollipopOriginalUrl = lollipopHeaders.get(LOLLIPOP_ORIGINAL_URL);
+        String xPagopaLollipopOriginalMethod = lollipopHeaders.get(LOLLIPOP_ORIGINAL_METHOD);
+        String xPagopaLollipopPublicKey = lollipopHeaders.get(LOLLIPOP_PUBLIC_KEY);
+        String xPagopaLollipopAssertionRef = lollipopHeaders.get(LOLLIPOP_ASSERTION_REF);
+        String xPagopaLollipopAssertionType = lollipopHeaders.get(LOLLIPOP_ASSERTION_TYPE);
+        String xPagopaLollipopAuthJwt = lollipopHeaders.get(LOLLIPOP_AUTH_JWT);
+        String signatureInput = lollipopHeaders.get(LOLLIPOP_SIGNATURE_INPUT);
+        String signature = lollipopHeaders.get(LOLLIPOP_SIGNATURE);
+
+        mandateCreationResponse = null;
+        try {
+            mandateCreationResponse = mandateAppIoClient.createIOMandate(
+                    taxId,
+                    xPagopaLollipopOriginalUrl,
+                    xPagopaLollipopOriginalMethod,
+                    xPagopaLollipopPublicKey,
+                    xPagopaLollipopAssertionRef,
+                    xPagopaLollipopAssertionType,
+                    xPagopaLollipopAuthJwt,
+                    lollipopUserId,
+                    signatureInput,
+                    signature,
+                    mandateCreationRequest);
+            checkMandateCreation();
+        } catch (HttpStatusCodeException e) {
+            this.error = e;
+        }
+    }
+
+    private Map<LollipopHeaders, String> getLollipopHeaders(LollipopHeaders lollipopHeaderWithError) {
+        Map<LollipopHeaders, String> headersLollipop = new HashMap<>();
+        headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "TODO");
+        headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, "POST");
+        headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "TODO");
+        headersLollipop.put(LOLLIPOP_ASSERTION_REF, "TODO");
+        headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "TODO");
+        headersLollipop.put(LOLLIPOP_AUTH_JWT, "TODO");
+        headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "TODO");
+        headersLollipop.put(LOLLIPOP_SIGNATURE, "TODO");
+        if (lollipopHeaderWithError != null) {
+            switch (lollipopHeaderWithError) {
+                case LOLLIPOP_ORIGINAL_URL -> headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "TODO_ERROR");
+                case LOLLIPOP_ORIGINAL_METHOD -> headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, "DELETE");
+                case LOLLIPOP_PUBLIC_KEY -> headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "TODO_ERROR");
+                case LOLLIPOP_ASSERTION_REF -> headersLollipop.put(LOLLIPOP_ASSERTION_REF, "TODO_ERROR");
+                case LOLLIPOP_ASSERTION_TYPE -> headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "TODO_ERROR");
+                case LOLLIPOP_AUTH_JWT -> headersLollipop.put(LOLLIPOP_AUTH_JWT, "TODO_ERROR");
+                case LOLLIPOP_SIGNATURE_INPUT -> headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "TODO_ERROR");
+                case LOLLIPOP_SIGNATURE -> headersLollipop.put(LOLLIPOP_SIGNATURE, "TODO_ERROR");
+            }
+        }
+        return headersLollipop;
     }
 }

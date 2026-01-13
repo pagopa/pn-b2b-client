@@ -102,5 +102,28 @@ public class ParameterTypes {
         return value.equals("può");
     }
 
-
+    @ParameterType("tutti validi" +
+            "|xPagopaLollipopOriginalUrl_errato" +
+            "|xPagopaLollipopOriginalMethod_errato" +
+            "|xPagopaLollipopPublicKey_errato" +
+            "|xPagopaLollipopAssertionRef_errato" +
+            "|xPagopaLollipopAssertionType_errato" +
+            "|xPagopaLollipopAuthJwt_errato" +
+            "|signatureInput_errato" +
+            "|signature_errato")
+    public static LollipopHeaders lollipopHeadersError(String value) {
+        return switch (value) {
+            case "tutti validi" -> null;
+            case "xPagopaLollipopOriginalUrl_errato" -> LollipopHeaders.LOLLIPOP_ORIGINAL_URL;
+            case "xPagopaLollipopOriginalMethod_errato" -> LollipopHeaders.LOLLIPOP_ORIGINAL_METHOD;
+            case "xPagopaLollipopPublicKey_errato" -> LollipopHeaders.LOLLIPOP_PUBLIC_KEY;
+            case "xPagopaLollipopAssertionRef_errato" -> LollipopHeaders.LOLLIPOP_ASSERTION_REF;
+            case "xPagopaLollipopAssertionType_errato" -> LollipopHeaders.LOLLIPOP_ASSERTION_TYPE;
+            case "xPagopaLollipopAuthJwt_errato" -> LollipopHeaders.LOLLIPOP_AUTH_JWT;
+            case "signatureInput_errato" -> LollipopHeaders.LOLLIPOP_SIGNATURE_INPUT;
+            case "signature_errato" -> LollipopHeaders.LOLLIPOP_SIGNATURE;
+            default ->
+                    throw new IllegalArgumentException("Tipologia di errore header lollipop non riconosciuta. Valutare se inserirla nei ParameterTypes");
+        };
+    }
 }
