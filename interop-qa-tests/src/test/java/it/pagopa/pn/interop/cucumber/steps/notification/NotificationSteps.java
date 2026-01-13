@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -17,9 +17,8 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
@@ -141,25 +140,18 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
         PollingService pollingService = getContext().getPollingService();
 
-        /* IMPL. BASATA SU CACHE MOMENTANEAMENTE ACCANTONATA nell'ipotesi che funzioni il filtering
-         * lato server attraverso il parametro 'q' */
-        Predicate<Notification> bodyMatcher = notification -> notification.getBody()
-            .matches(bodyRegex);
+        List<Notification> notifications = pollingService.makePolling(
+            this.notificationClient::getAll,
+            list -> !IterableUtils.isEmpty(list),
+            "Non è stata restituita alcuna notifica");
 
-        Optional<Notification> notification = pollingService.makePolling(
-            () -> this.notificationClient.get(bodyMatcher),
-            Optional::isPresent,
-            "Non presente alcuna notifica che corrisponda alla regex fornita");
-        Notification notif = notification.get();
+        assertThat(notifications)
+            .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
+            .anySatisfy(notif -> {
+                assertThat(notif.getBody()).matches(bodyRegex);
+                assertThat(notif.getDeepLink()).matches(deepLinkRegex);
+            });
 
-        assertSoftly(softly -> {
-            softly.assertThat(notif.getBody())
-                .as("Verifica corpo della notifica")
-                .matches(bodyRegex);
-            softly.assertThat(notif.getDeepLink())
-                .as("Verifica deepLink della notifica")
-                .matches(deepLinkRegex);
-        });
         clientTokenConfigurator.setBearerToken(this.getContext().getUserToken());
     }
 

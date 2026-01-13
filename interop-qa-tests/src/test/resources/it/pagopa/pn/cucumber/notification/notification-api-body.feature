@@ -46,24 +46,20 @@ Feature: API Notifiche - verifica bodies
   # Ticket https://pagopa.atlassian.net/browse/PIN-8946
   Scenario: [NOTIFICATION_AGREEMENTS_9] La disassociazione di un client da una finalità produce una notifica (Scenario 86)
     Given "PA1" ha già creato e pubblicato 1 e-service
-    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    Given "PA2" ha già creato 1 client "CONSUMER"
-    Given "PA2" ha già associato la finalità a quel client
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già associato la finalità a quel client
     When l'utente "admin" di "PA2" richiede la disassociazione della finalità dal client con successo
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
-
     # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
     # And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
 
-
-  # WIP
   Scenario: [NOTIFICATION_AGREEMENTS_11] La riattivazione - da parte del fruitore - di una finalità per un proprio e-service con approvazione automatica produce una notifica (Scenario 92)
     Given "PA1" ha già creato e pubblicato 1 e-service
-    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    Given "PA2" ha già creato 1 client "CONSUMER"
-    Given "PA2" ha già associato la finalità a quel client
-    When l'utente "admin" di "PA2" richiede la disassociazione della finalità dal client con successo
-    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
-    And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    When l'utente "admin" di "PA2" riattiva la finalità in stato "SUSPENDED" per quell'e-service
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha sospeso la finalità \".+\", associata al tuo e-service .+\." e "/erogazione/finalita/.+"
+    # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
+    #And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha sospeso la finalità ".+", associata al tuo e-service .+\." e "/erogazione/finalita/.+"
