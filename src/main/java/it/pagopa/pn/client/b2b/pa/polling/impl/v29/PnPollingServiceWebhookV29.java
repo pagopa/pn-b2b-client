@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.WEBHOOK_V28)
+@Service(PnPollingStrategy.WEBHOOK_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingServiceWebhookV29 extends PnPollingTemplate<PnPollingResponseV29> {

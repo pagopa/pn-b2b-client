@@ -904,7 +904,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
     private PnPollingPredicate getPnPollingPredicateForTimeline(String timelineEventCategory, WaitForEventPredicateFilters filters) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
         if (filters.getStatusHistory() != null) {
-            pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(statusHistory -> statusHistory.getStatus().getValue().equals(filters.getStatusHistory()));
+            pnPollingPredicate.setNotificationStatusHistoryElementPredicateV28(statusHistory -> statusHistory.getStatus().getValue().equals(filters.getStatusHistory()));
         }
         pnPollingPredicate.setTimelineElementPredicateV28(timelineElement ->
                 timelineElement.getCategory() != null
