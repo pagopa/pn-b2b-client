@@ -27,3 +27,13 @@ Feature: API Notifiche - verifica bodies
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When "PA2" richiede un'operazione di upgrade di quella richiesta di fruizione con successo
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha aggiornato la propria richiesta di fruizione per l'e-service .+ alla versione più recente\." e "/erogazione/richieste/.+"
+
+  Scenario: [NOTIFICATION_AGREEMENTS_4] La sospensione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 62)
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha sospeso la propria richiesta di fruizione per il suo e-service .+\." e "/erogazione/richieste/.+"
+
+
+
+  Scenario: [NOTIFICATION_AGREEMENTS_6] La sospensione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 62)

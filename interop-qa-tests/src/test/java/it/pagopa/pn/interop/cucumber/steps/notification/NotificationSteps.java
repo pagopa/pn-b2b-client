@@ -135,7 +135,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }
 
     @Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
-    public void checkInAppNotificationBody(/*List<String> roles, */ String role, String tenant, String bodyRegex, String deepLinkRegex){
+    public void checkInAppNotificationBody(String role, String tenant, String bodyRegex, String deepLinkRegex){
         clientTokenConfigurator.setBearerToken(
             getContext().getIdentityService().getToken(tenant, role));
 
