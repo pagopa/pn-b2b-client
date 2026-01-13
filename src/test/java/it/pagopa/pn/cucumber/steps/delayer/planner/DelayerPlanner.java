@@ -47,10 +47,6 @@ public class DelayerPlanner {
         List<DelayerPaperDelivery> toPreparePhase2 = applyPrintCapacity(toEvaluatePrintCapacity, groupedByStep, frozenByStep);
         if (endAt == WorkflowSteps.EVALUATE_PRINT_CAPACITY) return finalizeResult(groupedByStep, frozenByStep);
 
-        // Step 4: Sent to Prepare Phase 2
-//        groupedByStep.get(WorkflowSteps.SENT_TO_PREPARE_PHASE_2.name())
-//                .addAll(utils.deepCopyAndUpdateKeys(sortByPriority(toPreparePhase2).stream().limit(this.context.printCapacity).toList(), WorkflowSteps.SENT_TO_PREPARE_PHASE_2, context.expectedDeliveryDate));
-
         return finalizeResult(groupedByStep, frozenByStep);
     }
 
@@ -69,7 +65,7 @@ public class DelayerPlanner {
         List<DelayerPaperDelivery> sorted = sortByPriority(allForStep);
 
         // 3) prendi le prime N (capacity)
-        int n = Math.max(0, Math.min(context.printCapacity, sorted.size()));
+        int n = Math.max(0, Math.min(context.weeklyPrintCapacity, sorted.size()));
         List<DelayerPaperDelivery> inPreparePhase2 = new ArrayList<>(sorted.subList(0, n));
 
         // 4) sposta le prime N nello step SENT_TO_PREPARE_PHASE_2 dentro expectedPianification
