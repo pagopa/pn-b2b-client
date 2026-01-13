@@ -1,4 +1,5 @@
 @bff-notification
+@disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
 Feature: API Notifiche - verifica bodies
   Background:
     # eliminazione di ogni notifica presente per ogni ente ed utente (applicato con Cucumber Hook @Before)

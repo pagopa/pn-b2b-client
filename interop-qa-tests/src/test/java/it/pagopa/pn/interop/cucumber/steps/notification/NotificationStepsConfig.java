@@ -513,7 +513,7 @@ public class NotificationStepsConfig {
         this.configFileReader = configFileReader;
     }
 
-    @Before("@bff-notification")
+    @Before("@bff-notification and not @disable-notifications-hooks")
     public void switchOnInAppNotification() throws Exception {
         // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
         //  fino a che ogni ruolo permesso avrà la sua corretta configurazione e non ci sarà più bisogno di escluderne qualcuno
@@ -523,7 +523,7 @@ public class NotificationStepsConfig {
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::before, ConfigStrategy.PER_ROLE);
     }
 
-    @After("@bff-notification")
+    @After("@bff-notification and not @disable-notifications-hooks")
     public void switchOffInAppNotification() throws Exception {
         // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
         //  fino a che ogni ruolo permesso avrà la sua configurazione e non ci sarà più bisogno di escluderne qualcuno
@@ -533,7 +533,9 @@ public class NotificationStepsConfig {
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::after, ConfigStrategy.NO_CONFIG);
     }
 
-    @Before("@bff-notification")
+    /* TODO 13 01 2026 considerare di mutare in @After, così da rimuovere le notifiche anche dell'ultimo test */
+    // NOTE 13 01 2026 Potrebbero presentarsi problemi di race conditions (non andrebbero cancellate le notifiche se un altro test è in corso)
+    @Before("@bff-notification and not @disable-notifications-hooks")
     public void deleteAllNotifications() throws Exception {
         PollingService pollingService = this.sharedStepsContext.getPollingService();
         IHttpExecutor notificationExecutor = this.notificationClient.getHttpCallExecutor();
