@@ -124,6 +124,28 @@ public class AgreementActivateSteps {
                         .activateAgreement(sharedStepsContext.getAgreementId()));
     }
 
+    @When("l'utente {string} di {string} richiede una operazione di attivazione di quella richiesta di fruizione")
+    public void userRequiresAgreementActivation(String role, String tenant) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> clientTokenConfigurator.getAgreementClient()
+                .activateAgreement(sharedStepsContext.getAgreementId()));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
+    @When("l'utente {string} di {string} richiede una operazione di attivazione di quella richiesta di fruizione con successo")
+    public void successfullyUserRequiresAgreementActivation(String role, String tenant) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> clientTokenConfigurator.getAgreementClient()
+                .activateAgreement(sharedStepsContext.getAgreementId()));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
+            throw new IllegalStateException("La riattivazione della richiesta di fruizione non ha avuto successo");
+        }
+    }
+
     @When("l'ente {delegationRole} richiede una operazione di attivazione di quella richiesta di fruizione")
     public void userRequiresAgreementActivationWithDelegate(DelegationRole delegationRole) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);

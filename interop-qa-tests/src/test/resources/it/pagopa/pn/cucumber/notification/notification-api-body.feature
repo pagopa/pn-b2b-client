@@ -1,5 +1,5 @@
 @bff-notification
-@disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
+#@disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
 Feature: API Notifiche - verifica bodies
   Background:
     # eliminazione di ogni notifica presente per ogni ente ed utente (applicato con Cucumber Hook @Before)
@@ -29,12 +29,41 @@ Feature: API Notifiche - verifica bodies
     When "PA2" richiede un'operazione di upgrade di quella richiesta di fruizione con successo
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha aggiornato la propria richiesta di fruizione per l'e-service .+ alla versione più recente\." e "/erogazione/richieste/.+"
 
-  Scenario: [NOTIFICATION_AGREEMENTS_4] La sospensione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 62)
+  Scenario: [NOTIFICATION_AGREEMENTS_4] La sospensione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 68)
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha sospeso la propria richiesta di fruizione per il suo e-service .+\." e "/erogazione/richieste/.+"
 
+  Scenario: [NOTIFICATION_AGREEMENTS_6] La riattivazione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 74)
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
+    When l'utente "admin" di "PA2" richiede una operazione di attivazione di quella richiesta di fruizione con successo
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha riattivato la propria richiesta di fruizione per il tuo e-service .+, precedentemente sospesa\." e "/erogazione/richieste/.+"
+
+  # Nota 13 01 2026: ad un utente "api" non è permesso disassociare un client, motivo per cui tutte le precondizioni sono eseguite da un admin
+  # Ticket https://pagopa.atlassian.net/browse/PIN-8946
+  Scenario: [NOTIFICATION_AGREEMENTS_9] La disassociazione di un client da una finalità produce una notifica (Scenario 86)
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    Given "PA2" ha già creato 1 client "CONSUMER"
+    Given "PA2" ha già associato la finalità a quel client
+    When l'utente "admin" di "PA2" richiede la disassociazione della finalità dal client con successo
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
+
+    # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
+    # And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
 
 
-  Scenario: [NOTIFICATION_AGREEMENTS_6] La sospensione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 62)
+  # WIP
+  Scenario: [NOTIFICATION_AGREEMENTS_11] La riattivazione - da parte del fruitore - di una finalità per un proprio e-service con approvazione automatica produce una notifica (Scenario 92)
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    Given "PA2" ha già creato 1 client "CONSUMER"
+    Given "PA2" ha già associato la finalità a quel client
+    When l'utente "admin" di "PA2" richiede la disassociazione della finalità dal client con successo
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"
+    And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha disassociato un proprio client dalla finalità .+ per il tuo e-service .+\." e "/erogazione/finalita/.+"

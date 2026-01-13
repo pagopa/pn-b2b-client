@@ -272,11 +272,10 @@ public class NotificationStepsConfig {
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig apiConfig = GlobalNotificationConfig.builder()
-            .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
             .userConfig(new UserNotificationConfigUpdateSeed()
                 .emailNotificationPreference(false)
                 .inAppNotificationPreference(true)
-                .emailDigestPreference(true)
+                .emailDigestPreference(false)
                 .emailConfig(new NotificationConfig()
                     // Producer
                     .agreementManagementToProducer(false)
@@ -311,45 +310,44 @@ public class NotificationStepsConfig {
                 )
                 .inAppConfig(new NotificationConfig()
                     // Producer
-                    .agreementManagementToProducer(true)
-                    .agreementSuspendedUnsuspendedToProducer(true)
+                    .agreementManagementToProducer(false)
+                    .agreementSuspendedUnsuspendedToProducer(false)
                     .clientAddedRemovedToProducer(true)
-                    .purposeStatusChangedToProducer(true)
-                    .templateStatusChangedToProducer(true)
-                    .purposeQuotaAdjustmentRequestToProducer(true)
+                    .purposeStatusChangedToProducer(false)
+                    .templateStatusChangedToProducer(false)
+                    .purposeQuotaAdjustmentRequestToProducer(false)
 
                     // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(true)
-                    .eserviceStateChangedToConsumer(true)
-                    .agreementActivatedRejectedToConsumer(true)
-                    .purposeActivatedRejectedToConsumer(true)
-                    .purposeSuspendedUnsuspendedToConsumer(true)
-                    .purposeOverQuotaStateToConsumer(true)
+                    .agreementSuspendedUnsuspendedToConsumer(false)
+                    .eserviceStateChangedToConsumer(false)
+                    .agreementActivatedRejectedToConsumer(false)
+                    .purposeActivatedRejectedToConsumer(false)
+                    .purposeSuspendedUnsuspendedToConsumer(false)
+                    .purposeOverQuotaStateToConsumer(false)
 
                     // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(true)
-                    .eserviceTemplateNameChangedToInstantiator(true)
-                    .eserviceTemplateStatusChangedToInstantiator(true)
+                    .newEserviceTemplateVersionToInstantiator(false)
+                    .eserviceTemplateNameChangedToInstantiator(false)
+                    .eserviceTemplateStatusChangedToInstantiator(false)
 
                     // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(true)
-                    .eserviceNewVersionSubmittedToDelegator(true)
-                    .eserviceNewVersionApprovedRejectedToDelegate(true)
-                    .delegationSubmittedRevokedToDelegate(true)
+                    .delegationApprovedRejectedToDelegator(false)
+                    .eserviceNewVersionSubmittedToDelegator(false)
+                    .eserviceNewVersionApprovedRejectedToDelegate(false)
+                    .delegationSubmittedRevokedToDelegate(false)
 
                     // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
+                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
                 ))
             .build();
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig apiSecurityConfig = GlobalNotificationConfig.builder()
-            .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
             .userConfig(new UserNotificationConfigUpdateSeed()
                 .emailNotificationPreference(false)
                 .inAppNotificationPreference(true)
-                .emailDigestPreference(true)
+                .emailDigestPreference(false)
                 .emailConfig(new NotificationConfig()
                     // Producer
                     .agreementManagementToProducer(false)
@@ -518,7 +516,7 @@ public class NotificationStepsConfig {
         // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
         //  fino a che ogni ruolo permesso avrà la sua corretta configurazione e non ci sarà più bisogno di escluderne qualcuno
         List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
-            .filter(role -> !role.equals("admin"))
+            .filter(role -> !List.of("admin").contains(role))
             .toList();
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::before, ConfigStrategy.PER_ROLE);
     }
@@ -528,7 +526,7 @@ public class NotificationStepsConfig {
         // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
         //  fino a che ogni ruolo permesso avrà la sua configurazione e non ci sarà più bisogno di escluderne qualcuno
         List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
-            .filter(role -> !role.equals("admin"))
+            .filter(role -> !List.of("admin").contains(role))
             .toList();
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::after, ConfigStrategy.NO_CONFIG);
     }
@@ -570,20 +568,26 @@ public class NotificationStepsConfig {
         IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
         hook.accept(() -> applyTaskForEveryUser(excludedRoles, role -> {
             GlobalNotificationConfig config = configStrategy == ConfigStrategy.NO_CONFIG ? noNotificationConfig : rolesNotificationConfig.get(role);
-            pollingService.makePolling(
-                () -> {
-                    this.notificationConfigClient.updateUserNotificationConfig(config.getUserConfig());
-                    return null;
-                },
-                res -> configExecutor.getResponseStatus().is2xxSuccessful(),
-                "Configurazione notifiche user fallita");
-            pollingService.makePolling(
-                () -> {
-                    this.notificationConfigClient.updateTenantNotificationConfig(config.getTenantConfig());
-                    return null;
-                },
-                res -> configExecutor.getResponseStatus().is2xxSuccessful(),
-                "Configurazione notifiche tenant fallita");
+            if (config.getUserConfig() != null) {
+                pollingService.makePolling(
+                    () -> {
+                        this.notificationConfigClient.updateUserNotificationConfig(
+                            config.getUserConfig());
+                        return null;
+                    },
+                    res -> configExecutor.getResponseStatus().is2xxSuccessful(),
+                    "Configurazione notifiche user fallita");
+            }
+
+            if (config.getTenantConfig() != null) {
+                pollingService.makePolling(
+                    () -> {
+                        this.notificationConfigClient.updateTenantNotificationConfig(config.getTenantConfig());
+                        return null;
+                    },
+                    res -> configExecutor.getResponseStatus().is2xxSuccessful(),
+                    "Configurazione notifiche tenant fallita");
+            }
         }));
     }
 
