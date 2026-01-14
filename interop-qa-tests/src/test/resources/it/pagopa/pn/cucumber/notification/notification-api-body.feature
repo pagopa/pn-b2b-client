@@ -1,5 +1,5 @@
 @bff-notification
-#@disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
+@disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
 Feature: API Notifiche - verifica bodies
   Background:
     # eliminazione di ogni notifica presente per ogni ente ed utente (applicato con Cucumber Hook @Before)
@@ -63,3 +63,34 @@ Feature: API Notifiche - verifica bodies
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha sospeso la finalità \".+\", associata al tuo e-service .+\." e "/erogazione/finalita/.+"
     # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
     #And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha sospeso la finalità ".+", associata al tuo e-service .+\." e "/erogazione/finalita/.+"
+
+  # Ticket https://pagopa.atlassian.net/browse/PIN-8950
+  Scenario: [NOTIFICATION_AGREEMENTS_13] La sospensione di un e-service template produce una notifica (Scenario 98)
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "È stato sospeso il tuo template \".+\"\." e "/erogazione/template-eservice/.+/.+"
+    # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
+    #And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "È stato sospeso il tuo template \".+\"\." e "/erogazione/template-eservice/.+/.+"
+
+
+  # TODO da qui in poi esecuzioni bloccate a causa di err. 503. Testare appena possibile
+
+  Scenario: [NOTIFICATION_AGREEMENTS_15] La riattivazione di un e-service produce una notifica (Scenario 104)
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente "admin" di "PA1" sospende quel descrittore con successo
+    When l'utente "admin" di "PA1" attiva il descrittore di quell'e-service con successo
+
+    # NOTA: regex originale stabilita dai test era "L'ente erogatore .+ ha riattivato la versione [0-9]+ dell'e-service \".+\", precedentemente sospesa\." Si è scelto di adeguarla al risultato non ritenendo rilevanti le variazioni (virgolette attorno a nome e-service).
+    Then per l'utente "admin" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente erogatore .+ ha riattivato la versione [0-9]+ dell'e-service .+, precedentemente sospesa\." e "/catalogo-e-service/.+/.+"
+    # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
+    #And per l'utente "security" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente erogatore .+ ha riattivato la versione [0-9]+ dell'e-service .+, precedentemente sospesa\." e "/catalogo-e-service/.+/.+"
+
+  # WIP
+  Scenario: [NOTIFICATION_AGREEMENTS_17] La modifica di un e-service produce una notifica (Scenario 110)
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente "admin" di "PA1" aggiorna la descrizione di quell'e-service con successo
+    Then per l'utente "admin" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "È disponibile una nuova versione (.+) per l'e-service \".+\", pubblicato da .+\." e "/catalogo-e-service/.+/.+"
+    # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
+    #And per l'utente "security" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente erogatore .+ ha riattivato la versione [0-9]+ dell'e-service .+, precedentemente sospesa\." e "/catalogo-e-service/.+/.+"

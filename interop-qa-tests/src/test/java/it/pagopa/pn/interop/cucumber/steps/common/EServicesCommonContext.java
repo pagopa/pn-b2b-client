@@ -41,6 +41,7 @@ public class EServicesCommonContext {
     private String interfaceName;
     private UUID oldDescriptorId;
     private String name;
+    private String description;
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

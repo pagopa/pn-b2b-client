@@ -199,7 +199,6 @@ public class NotificationStepsConfig {
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig securityConfig = GlobalNotificationConfig.builder()
-            .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
             .userConfig(new UserNotificationConfigUpdateSeed()
                 .emailNotificationPreference(false)
                 .inAppNotificationPreference(true)
@@ -238,35 +237,35 @@ public class NotificationStepsConfig {
                 )
                 .inAppConfig(new NotificationConfig()
                     // Producer
-                    .agreementManagementToProducer(true)
-                    .agreementSuspendedUnsuspendedToProducer(true)
-                    .clientAddedRemovedToProducer(true)
-                    .purposeStatusChangedToProducer(true)
-                    .templateStatusChangedToProducer(true)
-                    .purposeQuotaAdjustmentRequestToProducer(true)
+                    .agreementManagementToProducer(false)
+                    .agreementSuspendedUnsuspendedToProducer(false)
+                    .clientAddedRemovedToProducer(false)
+                    .purposeStatusChangedToProducer(false)
+                    .templateStatusChangedToProducer(false)
+                    .purposeQuotaAdjustmentRequestToProducer(false)
 
                     // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(true)
+                    .agreementSuspendedUnsuspendedToConsumer(false)
                     .eserviceStateChangedToConsumer(true)
-                    .agreementActivatedRejectedToConsumer(true)
-                    .purposeActivatedRejectedToConsumer(true)
-                    .purposeSuspendedUnsuspendedToConsumer(true)
-                    .purposeOverQuotaStateToConsumer(true)
+                    .agreementActivatedRejectedToConsumer(false)
+                    .purposeActivatedRejectedToConsumer(false)
+                    .purposeSuspendedUnsuspendedToConsumer(false)
+                    .purposeOverQuotaStateToConsumer(false)
 
                     // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(true)
-                    .eserviceTemplateNameChangedToInstantiator(true)
-                    .eserviceTemplateStatusChangedToInstantiator(true)
+                    .newEserviceTemplateVersionToInstantiator(false)
+                    .eserviceTemplateNameChangedToInstantiator(false)
+                    .eserviceTemplateStatusChangedToInstantiator(false)
 
                     // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(true)
-                    .eserviceNewVersionSubmittedToDelegator(true)
-                    .eserviceNewVersionApprovedRejectedToDelegate(true)
-                    .delegationSubmittedRevokedToDelegate(true)
+                    .delegationApprovedRejectedToDelegator(false)
+                    .eserviceNewVersionSubmittedToDelegator(false)
+                    .eserviceNewVersionApprovedRejectedToDelegate(false)
+                    .delegationSubmittedRevokedToDelegate(false)
 
                     // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
+                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
                 ))
             .build();
 
