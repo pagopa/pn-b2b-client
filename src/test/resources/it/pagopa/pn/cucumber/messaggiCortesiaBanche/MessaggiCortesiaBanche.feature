@@ -7,16 +7,16 @@ Feature: Messaggi di cortesia Banche
       | <internalRecipientId> | <recipientId> | <senderDescription> | <originId> | <associatedPayment> | <deliveryMode> | <schedulingAnalogDate> |
     Then si ottiene status code <statusCode>
     Examples:
-      | internalRecipientId                  | recipientId      | senderDescription                                                    | originId                  | associatedPayment | deliveryMode | schedulingAnalogDate | statusCode |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                     | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Bolzano - 1.4 Servizi Demografici - Demographische Dienste | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
-      |                                      | RSSMRA85T10A562S | Comune di Milano                                                     | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr |                  | Comune di Milano                                                     | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S |                                                                      | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                     |                           | true              | ANALOG       | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                     | VEAJ-PTPD-NZDQ-202501-Y-1 |                   | ANALOG       | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                     | VEAJ-PTPD-NZDQ-202501-Y-1 | true              |              | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                     | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       |                      | 400        |
+      | internalRecipientId                  | recipientId      | senderDescription                                                                         | originId                  | associatedPayment | deliveryMode | schedulingAnalogDate | statusCode |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Bolzano - denominazione entro il limite consentito di 88 caratteri - AAAAAAAAA  | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 200        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Bolzano - denominazione oltre il limite consentito di 88 caratteri - AAAAAAAAAA | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      |                                      | RSSMRA85T10A562S | Comune di Milano                                                                          | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr |                  | Comune di Milano                                                                          | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S |                                                                                           | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                                          |                           | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                                          | VEAJ-PTPD-NZDQ-202501-Y-1 |                   | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                                          | VEAJ-PTPD-NZDQ-202501-Y-1 | true              |              | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr | RSSMRA85T10A562S | Comune di Milano                                                                          | VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       |                      | 400        |
 
   @bankCourtesyMessageEnabled
   Scenario Outline: [BANK_COURTESY_MESSAGE-2] Viene invocato l'endpoint EMD di /token/check-tpp
