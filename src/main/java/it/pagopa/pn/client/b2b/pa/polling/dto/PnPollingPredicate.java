@@ -25,5 +25,4 @@ public class PnPollingPredicate {
     private Predicate<NotificationStatusHistoryElement> notificationStatusHistoryElementPredicateV21;
     private Predicate<NotificationStatusHistoryElement> notificationStatusHistoryElementPredicateV23;
     private Predicate<NotificationStatusHistoryElementV26> notificationStatusHistoryElementPredicateV26;
-    private Predicate<NotificationStatusHistoryElementV26> notificationStatusHistoryElementPredicateV28;// todo t v29
-}
+    }

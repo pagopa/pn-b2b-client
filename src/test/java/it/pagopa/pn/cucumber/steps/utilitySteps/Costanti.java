@@ -134,7 +134,8 @@ public class Costanti {
     // TimelineElementCategoryV27
     public static final String PUBLIC_REGISTRY_VALIDATION_CALL = "PUBLIC_REGISTRY_VALIDATION_CALL";
     public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE = "PUBLIC_REGISTRY_VALIDATION_RESPONSE";
-    // TimelineElementCategoryV28 // todo t v29 nuovo elemento
+    // TimelineElementCategoryV28
+    public static final String NOTIFICATION_TIMELINE_REWORKED = "NOTIFICATION_TIMELINE_REWORKED";
 
     //TimelineEquality errors
     public static final String EQUALITY_DIGITAL_ADDRESS = "digitalAddress";

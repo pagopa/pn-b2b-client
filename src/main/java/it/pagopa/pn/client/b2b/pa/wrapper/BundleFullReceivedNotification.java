@@ -57,7 +57,6 @@ public class BundleFullReceivedNotification {
         CANCELLED("CANCELLED"),
         CANCELLATION_IN_PROGRESS("CANCELLATION_IN_PROGRESS"),
         RETURNED_TO_SENDER("RETURNED_TO_SENDER");
-        //todo t v29
 
         private final String value;
 

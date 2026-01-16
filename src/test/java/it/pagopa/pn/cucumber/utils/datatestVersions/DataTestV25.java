@@ -287,7 +287,6 @@ public class DataTestV25 extends AbstractDataTest {
                     assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
                     B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                     assertThat(actual.getRegistry()).as(error + EQUALITY_REGISTRY).isEqualTo(expected.getRegistry());
-//                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
                 }
             }
             case PREPARE_ANALOG_DOMICILE_FAILURE -> {
@@ -301,7 +300,12 @@ public class DataTestV25 extends AbstractDataTest {
                                 .contains(elementFromNotification.getDetails().getDeliveryFailureCause());
                     }
 
-                }// todo t v29
+                }
+            }
+            case NOTIFICATION_TIMELINE_REWORKED -> {
+                if (expected != null) {
+                    // todo t v29
+                }
             }
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }

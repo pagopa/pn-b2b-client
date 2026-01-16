@@ -510,7 +510,7 @@ public abstract class B2bUtils {
     }
 
     public static String getTimelineEventId(EventId event, String timelineEventCategory) {
-        return switch (timelineEventCategory) {// todo t v29 nuovo elemento
+        return switch (timelineEventCategory) {
             case SEND_COURTESY_MESSAGE -> TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
             case REQUEST_REFUSED -> TimelineEventId.REQUEST_REFUSED.buildEventId(event);
             case AAR_GENERATION -> TimelineEventId.AAR_GENERATION.buildEventId(event);
@@ -544,6 +544,8 @@ public abstract class B2bUtils {
             case PUBLIC_REGISTRY_VALIDATION_CALL -> TimelineEventId.PUBLIC_REGISTRY_VALIDATION_CALL.buildEventId(event);
             case PUBLIC_REGISTRY_VALIDATION_RESPONSE ->
                     TimelineEventId.PUBLIC_REGISTRY_VALIDATION_RESPONSE.buildEventId(event);
+            case NOTIFICATION_TIMELINE_REWORKED ->
+                    TimelineEventId.NOTIFICATION_TIMELINE_REWORKED.buildEventId(event);
             default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
     }

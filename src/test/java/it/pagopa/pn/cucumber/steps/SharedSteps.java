@@ -519,6 +519,89 @@ public class SharedSteps {
         }
     }
 
+    @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
+    public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
+
+        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+
+        List<TimelineElementV28> matchingElements = timeline.stream()
+                .filter(e -> e.getElementId() != null && e.getElementId().contains(searchString))
+                .toList();
+
+        if (!matchingElements.isEmpty()) {
+            log.warn("Elementi di timeline contenenti '{}':", searchString);
+            matchingElements.forEach(e ->
+                    log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp())
+            );
+        } else {
+            log.info("Nessun elemento di timeline contiene la stringa '{}'", searchString);
+        }
+
+        boolean isPresenceExpected = presence.equalsIgnoreCase("presenza");
+
+        if (isPresenceExpected) {
+            Assertions.assertFalse(
+                    matchingElements.isEmpty(),
+                    "Attesa la presenza di elementi contenenti '" + searchString + "' ma non ne sono stati trovati"
+            );
+        } else {
+            Assertions.assertTrue(
+                    matchingElements.isEmpty(),
+                    "Non attesa la presenza di elementi contenenti '" + searchString +
+                            "' ma ne sono stati trovati: " + matchingElements.size()
+            );
+        }
+    }
+
+
+    @Then("vengono effettuati i controlli sugli elementi invalidati")
+    public void verifyInvalidatedTimelineElementsFailFast(List<String> elementsToCheck) {
+        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+
+        TimelineElementV28 reworkedElement = timeline.stream()
+                .filter(e -> e.getCategory() != null)
+                .filter(e -> "NOTIFICATION_TIMELINE_REWORKED"
+                        .equals(e.getCategory().getValue()))
+                .findFirst()
+                .orElseThrow(() ->
+                        new AssertionError("Elemento NOTIFICATION_TIMELINE_REWORKED non trovato"));
+
+        List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory =
+                reworkedElement.getDetails().getInvalidatedTimelineAndStatusHistory();
+
+        if (invalidatedHistory == null || invalidatedHistory.isEmpty()) {
+            throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
+        }
+
+        // Stream flat + raccolta elementId NON validi
+        List<String> invalidElementIds = invalidatedHistory.stream()
+                .flatMap(h -> h.getRelatedTimelineElements().stream())
+                .map(TimelineElementV28::getElementId)
+                .filter(Objects::nonNull)
+                .filter(elementId ->
+                        elementsToCheck.stream()
+                                .noneMatch(elementId::contains)
+                )
+                .toList();
+
+        // Log di TUTTI i non validi
+        if (!invalidElementIds.isEmpty()) {
+            log.error("Trovati elementId non validi in relatedTimelineElements:");
+            invalidElementIds.forEach(id ->
+                    log.error(" - {}", id)
+            );
+        }
+
+        // Fail-fast finale
+        Assertions.assertTrue(
+                invalidElementIds.isEmpty(),
+                "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
+        );
+    }
+
+
     //TODO MATTEO: ho riscritto il metodo in modo che funzioni con ogni versione, ma:
     // 1) si potrebbe cancellare (il test che lo invoca non fa parte di nessuna suite)
     // 2) era scritto male: lo step precedente non valorizza in alcun modo request o response, quindi il requestId del log sarà sempre null

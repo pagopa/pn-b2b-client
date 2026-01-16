@@ -145,9 +145,10 @@ public class TimingForPolling {
 
         //V27
         PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
-        PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1);
+        PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1),
 
         //v29 todo t v29
+        NOTIFICATION_TIMELINE_REWORKED(2, 1);
 
         private final int numCheck;
         private final int waitingMultiplier;
