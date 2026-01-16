@@ -4,6 +4,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.A
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarRecipient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarSender;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAar;
+import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -18,7 +19,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
 
     private final ITemplateEngineClient templateEngineClient;
 
-    public NotificationAARStrategy(ITemplateEngineClient templateEngineClient) {
+    public NotificationAARStrategy(ITemplateEngineClient templateEngineClient, TemplateEngineMessageConfigs templateEngineConfigBean) {
         this.templateEngineClient = templateEngineClient;
     }
 

@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.templateEngine;
 
+import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
@@ -17,6 +18,9 @@ public class TemplateConfiguration {
     @Autowired
     private ITemplateEngineClient templateEngineClient;
 
+    @Autowired
+    private TemplateEngineMessageConfigs templateEngineConfigBean;
+
     @Bean
     public Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy() {
         Map<TemplateType, ITemplateEngineStrategy> map = new HashMap<>();
@@ -26,7 +30,7 @@ public class TemplateConfiguration {
         map.put(TemplateType.AAR_FUNZIONAMENTO_RIPRISTINO, new LegalFactMalfunctionStrategy(templateEngineClient));
         map.put(TemplateType.AAR_ANNULLAMENTO_NOTIFICA, new NotificationCancelledLegalFactStrategy(templateEngineClient));
         map.put(TemplateType.DEPOSITO_AVVENUTA_RICEZIONE, new AnalogDeliveryWorkflowFailureLegalFactStrategy(templateEngineClient));
-        map.put(TemplateType.AVVISO_AVVENUTA_RICEZIONE, new NotificationAARStrategy(templateEngineClient));
+        map.put(TemplateType.AVVISO_AVVENUTA_RICEZIONE, new NotificationAARStrategy(templateEngineClient, templateEngineConfigBean));
         map.put(TemplateType.AVVISO_AVVENUTA_RICEZIONE_RADD, new NotificationAARRADDaltStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_CORTESIA_EMAIL, new NotificationAARForEMAILStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_CORTESIA_PEC, new NotificationAARForPECStrategy(templateEngineClient));
