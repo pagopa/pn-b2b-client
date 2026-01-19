@@ -15,6 +15,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 //TODO: suite creata per run ad hoc di specifici tag. Sostituire liberamente i tag all'occorrenza
-@IncludeTags({"@hotfix26_2"})
-public class TemporaryQuickSuite {
+@IncludeTags({"hotfix26_2"})
+public class TemporaryQuickSuiteTest {
 }
