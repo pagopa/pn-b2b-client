@@ -12,6 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.ProducerKeychainCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
@@ -50,6 +51,7 @@ public class SharedStepsContext {
     private AgreementCommonContext agreementCommonContext;
     private RiskAnalysisCommonContext riskAnalysisCommonContext;
     private EServiceTemplateStepContext eServiceTemplateStepContext;
+    private ProducerKeychainCommonContext producerKeychainCommonContext;
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
@@ -73,6 +75,7 @@ public class SharedStepsContext {
         agreementCommonContext = new AgreementCommonContext();
         riskAnalysisCommonContext = new RiskAnalysisCommonContext();
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
+        producerKeychainCommonContext = new ProducerKeychainCommonContext();
     }
 
     @Before(order = Integer.MIN_VALUE)

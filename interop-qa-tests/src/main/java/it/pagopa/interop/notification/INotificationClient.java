@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public interface INotificationClient extends IClient<Notification, UUID> {
+    List<Notification> getAll(int offset, int limit);
+
     Optional<Notification> get(Predicate<Notification> notificationCatcher);
 
     void deleteAll(List<UUID> uuids);

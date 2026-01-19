@@ -43,7 +43,6 @@ Feature: API Notifiche - verifica bodies
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha riattivato la propria richiesta di fruizione per il tuo e-service .+, precedentemente sospesa\." e "/erogazione/richieste/.+"
 
   # Nota 13 01 2026: ad un utente "api" non è permesso disassociare un client, motivo per cui tutte le precondizioni sono eseguite da un admin
-  # Ticket https://pagopa.atlassian.net/browse/PIN-8946
   Scenario: [NOTIFICATION_AGREEMENTS_9] La disassociazione di un client da una finalità produce una notifica (Scenario 86)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

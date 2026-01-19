@@ -2,10 +2,10 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
@@ -15,33 +15,27 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
+import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
+import it.pagopa.pn.interop.cucumber.utility.NotificationStore.NotificationUser;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
-    private final NotificationClientImpl notificationClient;
-    private final NotificationConfigClient notificationConfigClient;
-    private final ClientTokenConfigurator clientTokenConfigurator;
-    private final FeatureLifecycleManager notificationTestsManager;
-    private final ConfigFileReader configFileReader;
+    private final NotificationStore notificationStore;
 
     public NotificationSteps(
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator clientTokenConfigurator,
         ConfigFileReader configFileReader,
-        @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager
+        @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager,
+        NotificationStore notificationStore
     ) {
         super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
-        this.clientTokenConfigurator = clientTokenConfigurator;
-        this.configFileReader = configFileReader;
-
-        // necessario ricorrere all'impl. concreta per usare il suo HttpCallExecutor
-        this.notificationClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
-        this.notificationConfigClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
-        this.notificationTestsManager = notificationTestsManager;
+        this.notificationStore = notificationStore;
+        this.notificationStore.concurrentSafeInitializeOnce();
     }
 
     @When("l'utente tenta di {word} le notifiche recuperate")
@@ -133,7 +127,8 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         throw new RuntimeException("Not implemented yet");
     }
 
-    @Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
+    /* 14 01 2026: versione iniziale di quando si stava tentando di effettuare dei check puntuali caso-per-caso*/
+    /*@Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
     public void checkInAppNotificationBody(String role, String tenant, String bodyRegex, String deepLinkRegex){
         clientTokenConfigurator.setBearerToken(
             getContext().getIdentityService().getToken(tenant, role));
@@ -153,6 +148,24 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             });
 
         clientTokenConfigurator.setBearerToken(this.getContext().getUserToken());
+    }*/
+
+    /* 14 01 2026: seconda versione in cui si tenta di innescare tutti le notifiche con una Nrt e visionare quindi le notifiche a posteriori */
+    @Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
+    public void checkInAppNotificationBody(String role, String tenant, String bodyRegex, String deepLinkRegex){
+        Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
+
+        /* FIXME per prove locali, rimuovere */
+        List<Notification> notificationStream = notifications.stream()
+            .filter(a -> a.getBody().contains("stata rimossa dal client")).toList();
+        notificationStream.forEach(notification -> System.out.println(notification.getBody()));
+
+        assertThat(notifications)
+            .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
+            .anySatisfy(notif -> {
+                assertThat(notif.getBody()).matches(bodyRegex);
+                assertThat(notif.getDeepLink()).matches(deepLinkRegex);
+            });
     }
 
 }

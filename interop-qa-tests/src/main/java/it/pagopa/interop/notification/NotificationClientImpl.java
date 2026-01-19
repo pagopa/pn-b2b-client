@@ -58,10 +58,15 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
 
     @Override
     public List<Notification> getAll() {
+        return this.getAll(0, RESULTS_LIMIT);
+    }
+
+    @Override
+    public List<Notification> getAll(int offset, int limit) {
         Notifications notifications = performOperation(() ->
             this.notificationsApi.getNotificationsWithHttpInfo(
-                0,
-                RESULTS_LIMIT,
+                offset,
+                limit,
                 null,
                 null,
                 null)

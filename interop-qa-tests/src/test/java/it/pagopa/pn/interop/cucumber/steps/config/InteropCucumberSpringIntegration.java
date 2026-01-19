@@ -38,6 +38,7 @@ import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
+import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
@@ -86,6 +87,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
@@ -185,7 +187,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PurposeTemplateClientImpl.class,
         NotificationClientImpl.class,
         NotificationConfigClient.class,
-        PropertyResolver.class
+        PropertyResolver.class,
+        NotificationStore.class,
+        ProducerKeychainClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
