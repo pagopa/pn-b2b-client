@@ -221,6 +221,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
