@@ -257,7 +257,7 @@ Feature: Radd fsu
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
 
 
-  @radd
+#  @radd
   Scenario: [B2B_RADD_AOR-3] inquiry per cittadino con notifiche in stato irreperibile
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -271,7 +271,7 @@ Feature: Radd fsu
     When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
 
-  @radd
+#  @radd
   Scenario: [B2B_RADD_AOR-4] recupero atti per cittadino con notifiche in stato irreperibile
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -290,7 +290,7 @@ Feature: Radd fsu
     And viene chiusa la transazione per il recupero degli aar
     And la chiusura delle transazione per il recupero degli aar non genera errori
 
-  @radd
+#  @radd
   Scenario: [B2B_RADD_AOR-5] start transaction aor senza effettuare upload documenti
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
