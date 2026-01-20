@@ -38,6 +38,7 @@ import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
+import it.pagopa.interop.probing.service.IProbingClient;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
@@ -183,7 +184,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ISelfcareClient.class,
         SelfcareClientImpl.class,
         IPurposeTemplateClient.class,
-        PurposeTemplateClientImpl.class
+        PurposeTemplateClientImpl.class,
+        IProbingClient.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
