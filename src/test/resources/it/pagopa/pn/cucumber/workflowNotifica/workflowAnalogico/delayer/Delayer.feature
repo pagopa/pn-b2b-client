@@ -5,13 +5,13 @@
 
     Scenario Outline: [TEST] Verifica dell'algoritmo in locale
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed       | quantita |
-        | tcMassivo_ | 3000     |
+        | seed          | quantita |
+        | tcZeroDriver_ | 15       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId      | comparative | limit |
-        | unknow~RS~NA  | almeno      | 0     |
-        | unknow~AR~NA  | almeno      | 0     |
-        | unknow~890~NA | almeno      | 0     |
+        | senderId       | comparative | limit |
+        | unknow~RS~P10  | esattamente | 0     |
+        | unknow~AR~P10  | esattamente | 0     |
+        | unknow~890~P10 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId | comparative | limit |
         | Fulmine~NA              | esattamente | 0     |
@@ -65,7 +65,6 @@
         | Poste~80056             | esattamente | 0     |
         | Fulmine~80057           | esattamente | 0     |
         | Fulmine~80058           | esattamente | 0     |
-        | Poste~80058             | esattamente | 0     |
         | Fulmine~80059           | esattamente | 0     |
         | Poste~80062             | esattamente | 0     |
         | Poste~80063             | esattamente | 0     |
@@ -76,9 +75,9 @@
         | Fulmine~80070           | esattamente | 0     |
         | Poste~80072             | esattamente | 0     |
         | Poste~80073             | esattamente | 0     |
-        | Fulmine~80075           | esattamente | 0     |
         | Poste~80075             | esattamente | 0     |
-        | Fulmine~80077           | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
         | Poste~80077             | esattamente | 0     |
         | Fulmine~80078           | esattamente | 0     |
         | Poste~80078             | esattamente | 0     |
@@ -125,11 +124,24 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcZeroDriver_"
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And viene avviata la step function DelayerToPaperChannelStateMachine
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcZeroDriver_"
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                   | TOT  |
-        | "spedizioni_3000.csv" | 3000 |
+        | csv                | TOT |
+        | "tcZeroDriver.csv" | 15  |
+
 
 
     @delayer6
@@ -199,7 +211,6 @@
         | Poste~80056             | esattamente | 0     |
         | Fulmine~80057           | esattamente | 0     |
         | Fulmine~80058           | esattamente | 0     |
-        | Poste~80058             | esattamente | 0     |
         | Fulmine~80059           | esattamente | 0     |
         | Poste~80062             | esattamente | 0     |
         | Poste~80063             | esattamente | 0     |
@@ -210,9 +221,9 @@
         | Fulmine~80070           | esattamente | 0     |
         | Poste~80072             | esattamente | 0     |
         | Poste~80073             | esattamente | 0     |
-        | Fulmine~80075           | esattamente | 0     |
         | Poste~80075             | esattamente | 0     |
-        | Fulmine~80077           | esattamente | 0     |
+        | Poste~80075             | esattamente | 0     |
+        | Poste~80077             | esattamente | 0     |
         | Poste~80077             | esattamente | 0     |
         | Fulmine~80078           | esattamente | 0     |
         | Poste~80078             | esattamente | 0     |
@@ -245,7 +256,7 @@
         | Fulmine~80145           | esattamente | 0     |
         | Poste~80146             | esattamente | 0     |
         | Fulmine~80147           | esattamente | 0     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -335,7 +346,7 @@
         | driverRanking890~CAP1_P6        | almeno      | 10    |
         | driverRankingRS_2nd_890~P7      | almeno      | 10    |
         | driverRankingRS_2nd_890~CAP1_P7 | almeno      | 10    |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 5
+      And viene impostato il limite massimo di 40 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -365,20 +376,8 @@
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And viene avviata la step function DelayerToPaperChannelStateMachine
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
-      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
-      # Per verificarne il comportamento occorrerebbe quindi:
-      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
-      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
-      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -398,13 +397,13 @@
         | unknow~890~P8 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | almeno      | 15    |
-        | infinityDriverP8~CAP1_P8 | almeno      | 15    |
-      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | inferiore   | 1000  |
-        | infinityDriverP8~CAP1_P8 | inferiore   | 1000  |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 0
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And viene impostato il limite massimo di 0 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -434,28 +433,74 @@
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And viene avviata la step function DelayerToPaperChannelStateMachine
-      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
+      And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
+
+      Examples:
+        | csv                       | TOT   |
+        | "tcSenderUnknow.csv"      | 15    |
+
+    @delayer9
+    Scenario Outline: [DELAYER-TC9] Verifica che la StepFunction sia in grado di gestire correttamente più di 5000 spedizioni.
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed            | quantita |
+        | tcSenderUnknow_ | 5010       |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId      | comparative | limit |
+        | unknow~RS~P8  | esattamente | 0     |
+        | unknow~AR~P8  | esattamente | 0     |
+        | unknow~890~P8 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And viene impostato il limite massimo di 10588 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
-      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
-      # Per verificarne il comportamento occorrerebbe quindi:
-      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
-      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
-      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                  | TOT |
-        | "tcSenderUnknow.csv" | 15  |
+        | csv                       | TOT   |
+        | "tcSenderUnknow_5010.csv" | 5010  |
 
     @delayer3
+    #La capacità di recapito viene suddivisa prendendo la capacità di recapito della provincia e suddividendola per i CAP. La suddivisone non è paritaria ma dipende
+    #dal numero di abitanti del comune, nel caso di test la densità è la medesima
     Scenario Outline: [DELAYER-TC3] Verifica la corretta gestione della capacità di recapito aggregata
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
@@ -479,7 +524,7 @@
         | splitDriver1CAP1_P9~P9      | almeno      | 11    |
         | splitDriver1CAP1_P9~CAP1_P9 | almeno      | 7     |
         | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -509,25 +554,14 @@
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And viene avviata la step function DelayerToPaperChannelStateMachine
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
-      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
-      # Per verificarne il comportamento occorrerebbe quindi:
-      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
-      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
-      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
         | csv                 | TOT |
         | "tcSplitSender.csv" | 14  |
+
 
     @delayer4
       #BUG: https://pagopa.atlassian.net/browse/PN-15504
@@ -549,7 +583,7 @@
         | unifiedDeliveryDriverId | comparative | limit |
         | zeroDriverP10~P10       | esattamente | 0     |
         | zeroDriverP10~CAP1_P10  | esattamente | 0     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -571,29 +605,12 @@
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+      And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcZeroDriver_"
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And viene avviata la step function DelayerToPaperChannelStateMachine
-      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcSenderUnknow_"
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
-      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
-      # Per verificarne il comportamento occorrerebbe quindi:
-      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
-      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
-      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcZeroDriver_"
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -626,11 +643,7 @@
         | unknow~CAP1_P11         | esattamente | 0     |
         | unknow~CAP2_P11         | esattamente | 0     |
         | unknow~CAP11_P11        | esattamente | 0     |
-      #And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
-      #  | unifiedDeliveryDriverId  | comparative | limit |
-      #  | infinityDriverP8~P8      | inferiore   | 1000  |
-      #  | infinityDriverP8~CAP1_P8 | inferiore   | 1000  |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 180000
+      And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
@@ -655,6 +668,57 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       And verifica che non esistano notifiche al workflow step "EVALUATE_PRINT_CAPACITY" per il seed "tcProvCapNonCensite_"
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And viene avviata la step function DelayerToPaperChannelStateMachine
+      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcProvCapNonCensite_"
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
+
+      Examples:
+        | csv                       | TOT |
+        | "tcProvCapNonCensite.csv" | 15  |
+
+      @delayer7
+    Scenario Outline: [DELAYER-TC7] Verifica che la seconda step function, una volta raggiunta la capacità di stampa settimanale, non processi ulteriori spedizioni
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed                   | quantita |
+        | tcWeeklyPrintCapacity_ | 9        |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId     | comparative | limit |
+        | unknow~RS~P8 | esattamente | 0     |
+        | unknow~AR~P8 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | almeno      | 9     |
+        | infinityDriverP8~CAP1_P8 | almeno      | 9     |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | almeno      | 9     |
+        | infinityDriverP8~CAP1_P8 | almeno      | 9     |
+      And viene impostata la capacità di stampa settimanale in modo che sia esattamente 7
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
       And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
@@ -663,24 +727,119 @@
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And viene avviata la step function DelayerToPaperChannelStateMachine
-      And verifica che non esistano notifiche al workflow step "SENT_TO_PREPARE_PHASE_2" per il seed "tcProvCapNonCensite_"
-      And vengono recuperate le notifiche al workflow step "SENT_TO_PREPARE_PHASE_2"
-      And verifica che il processo fino al workflow step "SENT_TO_PREPARE_PHASE_2" abbia rispettato i criteri di ranking per almeno un test case:
+      And vengono avviate le 9 esecuzioni della step function DelayerToPaperChannelStateMachine
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
+
+      Examples:
+        | csv                         | TOT |
+        | "tcWeeklyPrintCapacity.csv" | 9   |
+
+
+    @delayer9
+    Scenario Outline: [DELAYER-TC9] Verifica che la StepFunction sia in grado di gestire correttamente più di 5000 spedizioni.
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed            | quantita |
+        | tcSenderUnknow_ | 5010       |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId      | comparative | limit |
+        | unknow~RS~P8  | esattamente | 0     |
+        | unknow~AR~P8  | esattamente | 0     |
+        | unknow~890~P8 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId  | comparative | limit |
+        | infinityDriverP8~P8      | esattamente | 35000     |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+      And viene impostato il limite massimo di 10588 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria         | ordinamentoCampo   |
         | RS                | prepareRequestDate |
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
-      # Non è possibile controllare che DelayerToPaperChannelStateMachine ricarichi correttamente gli opportuni elementi.
-      # La Step Function viene eseguita una sola volta al giorno e processa un numero di elementi pari alla capacità di stampa.
-      # Per verificarne il comportamento occorrerebbe quindi:
-      # simulare più esecuzioni (es. notifiche_congelate_dalla_seconda_function/capacita_stampa volte) per coprire l’intero ciclo, ma questo attualmente
-      # porterebbe facilmente a risultati falsati poichè le function, se eseguite in parallelo, potrebbero portare a risultati errati
-      # ed inoltre non c'è modo di verificare se l'i-esima esecuzione sia andata a buon fine
-      #Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria         | ordinamentoCampo   |
+        | RS                | prepareRequestDate |
+        | SECONDO_TENTATIVO | prepareRequestDate |
+        | ALTRO             | notificationSentAt |
+      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
-
       Examples:
-        | csv                       | TOT |
-        | "tcProvCapNonCensite.csv" | 15  |
+        | csv                       | TOT   |
+        | "tcSenderUnknow_5010.csv" | 5010  |
+
+
+    # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
+    # si verifica che la capacity ritornata per quella settiamana sia esattamente quella attesa: 10
+    @delayer10
+    Scenario Outline: [DELAYER-TC10] A seguito di un aggiornamento della capacity per il driver: zeroDriver verifica che la capacità ritornata sia esattamente quella attesa: 10.
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed          | quantita | deliveryWeek |
+        | tcZeroDriver_ | 15       | 2025-12-29   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId       | comparative | limit |
+        | unknow~RS~P10  | esattamente | 0     |
+        | unknow~AR~P10  | esattamente | 0     |
+        | unknow~890~P10 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 10     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 10     |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 10     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 10     |
+      Examples:
+        | csv                | TOT |
+        | "tcZeroDriver.csv" | 15  |
+
+    # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
+    # si verifica che la capacity ritornata per una settimana diversa da quella modificata precedentemente sia quella di default: 0.
+    @delayer11
+    Scenario Outline: [DELAYER-TC4.B] Verifica la gestione di una capacity driver nulla
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed          | quantita |
+        | tcZeroDriver_ | 15       |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId       | comparative | limit |
+        | unknow~RS~P10  | esattamente | 0     |
+        | unknow~AR~P10  | esattamente | 0     |
+        | unknow~890~P10 | esattamente | 0     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 0     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
+      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | zeroDriverP10~P10       | esattamente | 0     |
+        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
+      Examples:
+        | csv                | TOT |
+        | "tcZeroDriver.csv" | 15  |
 

@@ -787,7 +787,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7527
   Scenario Outline: [M2M_PURPOSES_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità in stato diverso da DRAFT (Parte2#Scenario intorno a 132)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
