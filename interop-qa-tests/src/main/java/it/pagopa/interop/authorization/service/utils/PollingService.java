@@ -33,4 +33,31 @@ public class PollingService {
 
         throw new PollingPredicateException("Eventual consistency error: " + errorMessage);
     }
+
+    public static <T> T makePolling(
+            Supplier<T> promise,
+            Predicate<T> shouldStop,
+            String errorMessage,
+            int maxPollingTry,
+            long pollingSleepMillis
+    ) {
+        try {
+            for (int i = 0; i < maxPollingTry; i++) {
+                Thread.sleep(pollingSleepMillis);
+
+                T response = promise.get();
+
+                if (shouldStop.test(response)) {
+                    return response;
+                }
+            }
+        } catch (InterruptedException e) {
+            log.error("Unexpected thread interruption during polling: {}", e.getMessage());
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error during polling: " + e.getMessage());
+        }
+
+        throw new PollingPredicateException("Eventual consistency error: " + errorMessage);
+    }
 }
