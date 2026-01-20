@@ -168,6 +168,12 @@ public class DelegationCommonStep {
         else Assertions.assertEquals(statusCode, actualStatusCode);
     }
 
+    @Then("la response riporta lo status code {int}")
+    public void statusCodeIs(int statusCode) {
+        int actualStatusCode = httpCallExecutor.getResponseStatus().value();
+        Assertions.assertEquals(statusCode, actualStatusCode);
+    }
+
     boolean isSuccessful(int statusCode) {
         return statusCode >= 200 && statusCode < 300;
     }
