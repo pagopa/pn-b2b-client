@@ -9,19 +9,17 @@ import java.util.UUID;
 
 public interface IProbingClient extends SettableBearerToken {
 
-    // -------------------------
-    // StatusApi (probing core)
-    // -------------------------
-
     void getProbingApiHealthStatus();
-
-    // -------------------------
-    // EServicesApi
-    // -------------------------
 
     MainDataEserviceResponse getEserviceMainData(Long eserviceRecordId);
 
     ProbingDataEserviceResponse getEserviceProbingData(Long eserviceRecordId);
+
+    List<SearchEserviceContent> getAllEservice();
+
+    List<SearchEserviceContent> findEserviceByName(String name);
+
+    List<SearchEserviceContent> findEserviceByProducer(String producer);
 
     SearchEserviceResponse searchEservices(
             Integer limit,
@@ -50,36 +48,19 @@ public interface IProbingClient extends SettableBearerToken {
             ChangeEserviceStateRequest request
     );
 
-    // -------------------------
-    // ProducersApi
-    // -------------------------
-
     List<SearchProducerNameResponse> getEservicesProducers(
             Integer limit,
             Integer offset,
             String producerName
     );
 
-    // ============================================================
-    // probing-statistics
-    // ============================================================
-
-    /**
-     * StatusApi probing-statistics (health check).
-     */
     void getStatisticsHealthStatus();
 
-    /**
-     * TelemetryApi: statistiche e-service.
-     */
     TelemetryDataEserviceResponse statisticsEservices(
             Long eserviceRecordId,
             Integer pollingFrequency
     );
 
-    /**
-     * TelemetryApi: statistiche e-service filtrate per periodo.
-     */
     TelemetryDataEserviceResponse filteredStatisticsEservices(
             Long eserviceRecordId,
             Integer pollingFrequency,
