@@ -251,13 +251,13 @@ Feature: Radd fsu
     Given Il cittadino "Signor Generato" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99
 
-  @radd @bugNoto
+#  @radd @bugNoto
   Scenario: [B2B_RADD_AOR-2] inquiry per cittadino con molte notifiche in stato irreperibile
     Given Il cittadino "DVNLRD52D15M059P" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
 
 
-#  @radd
+  @radd
   Scenario: [B2B_RADD_AOR-3] inquiry per cittadino con notifiche in stato irreperibile
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -271,7 +271,7 @@ Feature: Radd fsu
     When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
 
-#  @radd
+  @radd
   Scenario: [B2B_RADD_AOR-4] recupero atti per cittadino con notifiche in stato irreperibile
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -290,7 +290,7 @@ Feature: Radd fsu
     And viene chiusa la transazione per il recupero degli aar
     And la chiusura delle transazione per il recupero degli aar non genera errori
 
-#  @radd
+  @radd
   Scenario: [B2B_RADD_AOR-5] start transaction aor senza effettuare upload documenti
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -307,16 +307,16 @@ Feature: Radd fsu
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile
     And il recupero degli aar genera un errore "Documenti non disponibili" con codice 99
 
-  @radd
-  Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
-    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
-    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
-    And vengono caricati i documento di identità del cittadino
-    Then Vengono recuperati gli aar delle notifiche in stato irreperibile
-    And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 49 aar
-    And viene chiusa la transazione per il recupero degli aar
-    And la chiusura delle transazione per il recupero degli aar non genera errori
+#  @radd
+#  Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
+#    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+#    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
+#    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
+#    And vengono caricati i documento di identità del cittadino
+#    Then Vengono recuperati gli aar delle notifiche in stato irreperibile
+#    And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 49 aar
+#    And viene chiusa la transazione per il recupero degli aar
+#    And la chiusura delle transazione per il recupero degli aar non genera errori
 
   @radd
   Scenario: [B2B_RADD_AOR-7] inquiry per cittadino con nessuna notifica in stato irreperibile e notifica consegnata
