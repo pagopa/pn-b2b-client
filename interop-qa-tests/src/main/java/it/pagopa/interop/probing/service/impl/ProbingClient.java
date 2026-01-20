@@ -37,11 +37,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
     private final HttpCallExecutor httpCallExecutor;
 
-    public ProbingClient(
-            RestTemplate restTemplate,
-            InteropClientConfigs interopClientConfigs,
-            HttpCallExecutor httpCallExecutor
-    ) {
+    public ProbingClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getProbingBaseUrl();
 
@@ -90,18 +86,10 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
         return apiClient;
     }
 
-    // -------------------------
-    // StatusApi (probing core) mappings
-    // -------------------------
-
     @Override
     public void getProbingApiHealthStatus() {
-        performOperation(() -> statusApi.getHealthStatusWithHttpInfo()).orElse(null);
+        performOperation(statusApi::getHealthStatusWithHttpInfo);
     }
-
-    // -------------------------
-    // EServicesApi mappings
-    // -------------------------
 
     @Override
     public MainDataEserviceResponse getEserviceMainData(Long eserviceRecordId) {
@@ -137,26 +125,94 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     }
 
     @Override
+    public List<SearchEserviceContent> getAllEservice() {
+        return searchAll(null, null, null, null);
+    }
+
+    @Override
+    public List<SearchEserviceContent> findEserviceByName(String name) {
+        return searchAll(name, null, null, null);
+    }
+
+    @Override
+    public List<SearchEserviceContent> findEserviceByProducer(String producer) {
+        return searchAll(null, producer, null, null);
+    }
+
+    private List<SearchEserviceContent> searchAll(
+            String eserviceName,
+            String producerName,
+            Integer versionNumber,
+            List<EserviceStateFE> state
+    ) {
+        final int limit = 30;
+        int offset = 0;
+
+        List<SearchEserviceContent> all = new java.util.ArrayList<>();
+        Long totalElements = null;
+
+        while (true) {
+            SearchEserviceResponse page = searchEservices(
+                    limit,
+                    offset,
+                    eserviceName,
+                    producerName,
+                    versionNumber,
+                    state
+            );
+
+            if (page == null) {
+                break;
+            }
+
+            if (totalElements == null) {
+                totalElements = page.getTotalElements();
+            }
+
+            List<SearchEserviceContent> content = page.getContent();
+            if (content == null || content.isEmpty()) {
+                break;
+            }
+
+            all.addAll(content);
+
+            int previousOffset = offset;
+            offset += content.size();
+
+            // Protezione anti-loop: se non avanza interrompi
+            if (offset == previousOffset) {
+                break;
+            }
+
+            // Stop “preciso” se totalElements è presente
+            if (totalElements != null && offset >= totalElements) {
+                break;
+            }
+
+            // Fallback: se pagina più corta del limit, siamo all'ultima
+            if (content.size() < limit) {
+                break;
+            }
+        }
+
+        return all;
+    }
+
+
+    @Override
     public void updateEserviceFrequency(UUID eserviceId, UUID versionId, ChangeProbingFrequencyRequest request) {
-        performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, request))
-                .orElse(null);
+        performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, request));
     }
 
     @Override
     public void updateEserviceProbingState(UUID eserviceId, UUID versionId, ChangeProbingStateRequest request) {
-        performOperation(() -> eServicesApi.updateEserviceProbingStateWithHttpInfo(eserviceId, versionId, request))
-                .orElse(null);
+        performOperation(() -> eServicesApi.updateEserviceProbingStateWithHttpInfo(eserviceId, versionId, request));
     }
 
     @Override
     public void updateEserviceState(UUID eserviceId, UUID versionId, ChangeEserviceStateRequest request) {
-        performOperation(() -> eServicesApi.updateEserviceStateWithHttpInfo(eserviceId, versionId, request))
-                .orElse(null);
+        performOperation(() -> eServicesApi.updateEserviceStateWithHttpInfo(eserviceId, versionId, request));
     }
-
-    // -------------------------
-    // ProducersApi mappings
-    // -------------------------
 
     @Override
     public List<SearchProducerNameResponse> getEservicesProducers(Integer limit, Integer offset, String producerName) {
@@ -166,41 +222,21 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
                 ));
     }
 
-    // ============================================================
-    // NEW: probingStatistics wrappers (StatusApi + TelemetryApi)
-    // ============================================================
-
-    /**
-     * StatusApi del probingStatistics (GET /status -> 204 se ok).
-     */
     @Override
     public void getStatisticsHealthStatus() {
-        performOperation(() -> statisticsStatusApi.getHealthStatusWithHttpInfo()).orElse(null);
+        performOperation(statisticsStatusApi::getHealthStatusWithHttpInfo);
     }
 
-    /**
-     * TelemetryApi: GET /telemetryData/eservices/{eserviceRecordId}
-     */
     @Override
-    public it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse
-    statisticsEservices(Long eserviceRecordId, Integer pollingFrequency) {
-
+    public it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse statisticsEservices(Long eserviceRecordId, Integer pollingFrequency) {
         return performOperation(() -> telemetryApi.statisticsEservicesWithHttpInfo(eserviceRecordId, pollingFrequency))
                 .orElseThrow(() -> new IllegalStateException(
                         "Errore nel recupero statistiche e-service (response non 2xx o body nullo)"
                 ));
     }
 
-    /**
-     * TelemetryApi: GET /telemetryData/eservices/filtered/{eserviceRecordId}
-     */
     @Override
-    public it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse
-    filteredStatisticsEservices(Long eserviceRecordId,
-                                Integer pollingFrequency,
-                                String startDate,
-                                String endDate) {
-
+    public it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse filteredStatisticsEservices(Long eserviceRecordId, Integer pollingFrequency, String startDate, String endDate) {
         return performOperation(() -> telemetryApi.filteredStatisticsEservicesWithHttpInfo(
                 eserviceRecordId, pollingFrequency, startDate, endDate
         ))
