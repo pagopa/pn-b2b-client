@@ -6,7 +6,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.probing.model.ChangeProbingStateRequest;
+import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateFE;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
+import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceResponse;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchProducerNameResponse;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -179,5 +181,27 @@ public class ProbingSteps {
         return sharedStepsContext.getEServicesCommonContext().getDescriptorId();
     }
 
+    @When("vengono recuperati dal catalogo gli e-service con valori di paginazione limit {string} e offset {string} e filtro di tipo {string} con valore {string}")
+    public void getEServiceCatalogWithPaginationAndFilters(String limit, String offset, String filter, String filterValue) {
+        Integer limitValue = parseNullableInteger(limit);
+        Integer offsetValue = parseNullableInteger(offset);
+        SearchEserviceResponse eservice = switch (filter) {
+            case "null" -> probingClient.searchEservices(limitValue, offsetValue, null, null, null, null);
+            case "eServiceName" -> probingClient.searchEservices(limitValue, offsetValue, filterValue, null, null, null);
+            case "producerName" -> probingClient.searchEservices(limitValue, offsetValue, null, filterValue, null, null);
+            case "versionNumber" -> probingClient.searchEservices(limitValue, offsetValue, null, null, parseNullableInteger(filterValue), null);
+            case "state" -> probingClient.searchEservices(limitValue, offsetValue, null, null, null, parseNullableEserviceState(filterValue));
+            default -> throw new IllegalArgumentException("Filtro non supportato: " + filter);
+        };
+
+        Assertions.assertThat(eservice).as("La lista degli e-service non deve essere null").isNotNull();
+    }
+
+    private List<EserviceStateFE> parseNullableEserviceState(String value) {
+        if (value == null || value.equalsIgnoreCase("null")) {
+            return null;
+        }
+        return List.of(EserviceStateFE.fromValue(value.trim()));
+        }
 }
 

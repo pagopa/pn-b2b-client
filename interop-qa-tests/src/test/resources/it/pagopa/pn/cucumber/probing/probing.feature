@@ -71,6 +71,7 @@ Feature: Probing
     When viene modificato lo stato di probing dell'e-service con id "random" in "true"
     Then la response riporta lo status code 404
 
+
   Scenario Outline: [GET_ESERVICES_CATALOG] - Consultazione e-service presenti nel catalogo probing
     When vengono recuperati dal catalogo gli e-service con valori di paginazione limit "<limit>" e offset "<offset>" e filtro di tipo "<filter>" con valore "<filteerValue>"
     Then la response riporta lo status code <statusCode>
