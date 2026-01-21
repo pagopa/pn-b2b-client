@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.probing.model.ChangeProbingStateRequest;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchProducerNameResponse;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
@@ -14,6 +15,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ProbingSteps {
     private final IHttpExecutor httpCallExecutor;
@@ -97,6 +99,7 @@ public class ProbingSteps {
     private String getEserviceProducer() {
         return sharedStepsContext.getTenantType();
     }
+
     @When("recupero la lista dei producers con limit {int} e offset {int} e producerName {string}")
     public void getProducersWithProducerName(Integer limit, Integer offset, String producerName) {
         List<SearchProducerNameResponse> producer = probingClient.getEservicesProducers(limit, offset, producerName);
@@ -104,7 +107,7 @@ public class ProbingSteps {
     }
 
     @When("recupero la lista dei producers con limit {string} e offset {string}")
-    public void getProducersWith(String limit, String offset) {
+    public void getProducersWithPagination(String limit, String offset) {
         Integer limitValue = parseNullableInteger(limit);
         Integer offsetValue = parseNullableInteger(offset);
         List<SearchProducerNameResponse> producer = probingClient.getEservicesProducers(limitValue, offsetValue, null);
@@ -116,6 +119,64 @@ public class ProbingSteps {
             return null;
         }
         return Integer.valueOf(value);
+    }
+
+    @When("viene modificato lo stato di probing dell'e-service creato in {string}")
+    public void updateProbingState(String probingEnabled) {
+        UUID eserviceId = getEserviceId();
+        UUID versionId = getEserviceVersion();
+
+        ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
+            .probingEnabled(parseNullableBoolean(probingEnabled));
+
+        probingClient.updateEserviceProbingState(eserviceId, versionId, probingState);
+    }
+
+    @When("viene modificato lo stato di probing dell'e-service con id versione {string} in {string}")
+    public void updateProbingStateWithEServiceVersionAbsent(String versionId, String probingEnabled) {
+        UUID eserviceUuid = getEserviceId();
+        UUID versionUuid = parseUuidOrRandom(versionId);
+
+        ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
+            .probingEnabled(parseNullableBoolean(probingEnabled));
+
+        probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
+    }
+
+    @When("viene modificato lo stato di probing dell'e-service con id {string} in {string}")
+    public void updateProbingStateWithEServiceAbsent(String eserviceId, String probingEnabled) {
+        UUID eserviceUuid = parseUuidOrRandom(eserviceId);
+        UUID versionUuid = getEserviceVersion();
+
+        ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
+                .probingEnabled(parseNullableBoolean(probingEnabled));
+
+        probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
+    }
+
+    private Boolean parseNullableBoolean(String value) {
+        if (value == null || value.equalsIgnoreCase("null")) {
+            return null;
+        }
+        return Boolean.parseBoolean(value);
+    }
+
+    private UUID parseUuidOrRandom(String value) {
+        if (value == null || value.equalsIgnoreCase("null")) {
+            return null;
+        }
+        if (value.equalsIgnoreCase("random")) {
+            return UUID.randomUUID();
+        }
+        return UUID.fromString(value);
+    }
+
+    private UUID getEserviceId() {
+        return sharedStepsContext.getEServicesCommonContext().getEserviceId();
+    }
+
+    private UUID getEserviceVersion() {
+        return sharedStepsContext.getEServicesCommonContext().getDescriptorId();
     }
 
 }
