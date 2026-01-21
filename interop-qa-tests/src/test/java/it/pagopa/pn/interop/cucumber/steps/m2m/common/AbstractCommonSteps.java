@@ -28,7 +28,7 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
     protected final List<T> unexpectedEntities = new ArrayList<>();
 
     private final String parameterTypeName;
-    private final IClient<T, K> client;
+    protected final IClient<T, K> client;
     private final SharedStepsContext context;
 
     protected AbstractCommonSteps(String parameterTypeName, IClient<T, K> client, SharedStepsContext context) {
@@ -61,29 +61,6 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
     public void getAll() {
         setActualEntities(client.getAll());
-    }
-
-    public void getAllUntil(Supplier<List<T>> promise,  AssertCheckType mode){
-
-        PollingService.makePolling(
-                () -> {
-                    List<T> result = promise.get();
-                    setActualEntities(result);
-                    return result;
-                },
-                result -> {
-                    try {
-                        assertExpectedEntity(mode);
-                        return true;
-                    } catch (AssertionError e) {
-                        log.warn("Asserzione fallita nel polling: {}", e.getMessage());
-                        return false;
-                    }
-                },
-                "",
-                10,
-                10
-        );
     }
 
     public void getByFirstExpectedId() {

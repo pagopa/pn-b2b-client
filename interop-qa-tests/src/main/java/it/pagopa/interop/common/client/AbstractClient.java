@@ -11,9 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 @Getter
 @Slf4j
-public abstract class AbstractClient {
+public abstract class AbstractClient  {
 
     @Setter
     protected IHttpExecutor httpCallExecutor;
