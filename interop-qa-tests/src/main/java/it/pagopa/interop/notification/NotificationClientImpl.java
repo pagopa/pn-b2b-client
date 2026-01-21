@@ -88,6 +88,11 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
     }
 
     @Override
+    public UUID getId(Notification entity) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<Notification> getAll(int offset, int limit) {
         Notifications notifications = performOperation(() ->
             this.notificationsApi.getNotificationsWithHttpInfo(

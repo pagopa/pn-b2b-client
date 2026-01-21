@@ -1,16 +1,12 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
-import io.cucumber.java.BeforeAll;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
-import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
-import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -34,6 +30,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
 public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
+
+    @Override
+    public void bindActual(SharedStepsContext context, List<Notification> actualEntities) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Notification> bindExpected(SharedStepsContext context) {
+        throw new UnsupportedOperationException();
+    }
+
     private enum NotificationOp { DELETE, READ, UNREAD, UPDATE, UNKNOWN }
     private enum NotificationsTarget { MULTIPLE, SINGLE }
 
@@ -52,7 +59,6 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     public NotificationSteps(
         SharedStepsContext sharedStepsContext,
         ClientTokenConfigurator clientTokenConfigurator,
-        ConfigFileReader configFileReader,
         @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager,
         NotificationStore notificationStore,
         AgreementCommonSteps agreementCommonSteps,
@@ -65,6 +71,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         this.clientCreateStep = clientCreateStep;
         this.notificationStore = notificationStore;
         this.notificationStore.concurrentSafeInitializeOnce();
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche create")
