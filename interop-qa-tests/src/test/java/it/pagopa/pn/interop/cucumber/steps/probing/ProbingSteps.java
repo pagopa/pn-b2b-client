@@ -1,12 +1,18 @@
 package it.pagopa.pn.interop.cucumber.steps.probing;
 
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.generated.openapi.clients.probing.model.SearchProducerNameResponse;
 import it.pagopa.interop.probing.service.IProbingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class ProbingSteps {
@@ -46,6 +52,27 @@ public class ProbingSteps {
 
             default -> throw new IllegalArgumentException("Il microservizio " + ms + " non esiste");
         }
+    }
+
+    @When("recupero la lista dei producers con limit {int} e offset {int} e producerName {string}")
+    public void getProducersWithProducerName(Integer limit, Integer offset, String producerName) {
+        List<SearchProducerNameResponse> producer = probingClient.getEservicesProducers(limit, offset, producerName);
+        Assertions.assertThat(producer).as("La lista dei producer non deve essere null").isNotNull();
+    }
+
+    @When("recupero la lista dei producers con limit {string} e offset {string}")
+    public void getProducersWith(String limit, String offset) {
+        Integer limitValue = parseNullableInteger(limit);
+        Integer offsetValue = parseNullableInteger(offset);
+        List<SearchProducerNameResponse> producer = probingClient.getEservicesProducers(limitValue, offsetValue, null);
+        Assertions.assertThat(producer).as("La lista dei producer non deve essere null").isNotNull();
+    }
+
+    private Integer parseNullableInteger(String value) {
+        if (value == null || value.equalsIgnoreCase("null")) {
+            return null;
+        }
+        return Integer.valueOf(value);
     }
 
 }
