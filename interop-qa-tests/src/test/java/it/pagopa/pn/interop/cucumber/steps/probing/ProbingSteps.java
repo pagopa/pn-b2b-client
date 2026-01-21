@@ -4,21 +4,28 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
-import it.pagopa.interop.probing.service.IProbingClient;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
-import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
-@RequiredArgsConstructor
+
 public class ProbingSteps {
-    private final HttpCallExecutor httpCallExecutor;
-    private final IProbingClient probingClient;
+    private final IHttpExecutor httpCallExecutor;
+    private final ProbingClient probingClient;
     private final ProbingContext probingContext;
     private final SharedStepsContext sharedStepsContext;
+
+    public ProbingSteps(ProbingClient probingClient, SharedStepsContext sharedStepsContext) {
+        this.sharedStepsContext = sharedStepsContext;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.probingClient = probingClient;
+        probingClient.setHttpCallExecutor(httpCallExecutor);
+        this.probingContext = new ProbingContext();
+    }
 
     @And("il microservizio {string} risulta attivo")
     public void getStatus(String ms) {
