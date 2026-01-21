@@ -24,5 +24,5 @@ import org.junit.platform.suite.api.Suite;
 })
 @ExcludeTags({"ignore"})
 @IncludeTags({"bff-notification-parallel"})
-public class ParallelBodyNotificationCheckTest {
+public class NotificationBodyTest {
 }

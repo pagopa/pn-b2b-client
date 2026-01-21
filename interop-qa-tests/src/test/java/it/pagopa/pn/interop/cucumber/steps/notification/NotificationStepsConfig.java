@@ -530,9 +530,8 @@ public class NotificationStepsConfig {
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::after, ConfigStrategy.NO_CONFIG);
     }
 
-    /* TODO 13 01 2026 considerare di mutare in @After, così da rimuovere le notifiche anche dell'ultimo test */
     // NOTE 13 01 2026 Potrebbero presentarsi problemi di race conditions (non andrebbero cancellate le notifiche se un altro test è in corso)
-    @Before("@bff-notification and not @disable-notifications-hooks")
+    @After("@bff-notification and not @disable-notifications-hooks")
     public void deleteAllNotifications() throws Exception {
         PollingService pollingService = this.sharedStepsContext.getPollingService();
         IHttpExecutor notificationExecutor = this.notificationClient.getHttpCallExecutor();

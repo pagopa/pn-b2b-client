@@ -63,7 +63,6 @@ Feature: API Notifiche - verifica bodies
     # TODO 13 01 2026 test per ruolo diverso da ADMIN rimandati a causa di un problema di configurazione delle notifiche per gli altri ruoli https://pagopa.atlassian.net/browse/PIN-8948?atlOrigin=eyJpIjoiYWU0NzdiNzk2ZTgxNGQ1MjkyOWIxZDI5NWVhYjZiYTIiLCJwIjoiamlyYS1zbGFjay1pbnQifQ
     #And per l'utente "api" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha sospeso la finalità ".+", associata al tuo e-service .+\." e "/erogazione/finalita/.+"
 
-  # Ticket https://pagopa.atlassian.net/browse/PIN-8950
   Scenario: [NOTIFICATION_AGREEMENTS_13] La sospensione di un e-service template produce una notifica (Scenario 98)
     Given l'utente è un "admin" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED

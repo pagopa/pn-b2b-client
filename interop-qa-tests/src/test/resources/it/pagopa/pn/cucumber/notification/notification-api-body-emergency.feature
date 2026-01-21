@@ -53,7 +53,6 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   Scenario: [Finalità archiviata dal fruitore] - Ti informiamo che il fruitore ha archiviato la finalità "", associata al tuo e-…
     Then per l'utente "admin" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha archiviato la finalità .+, associata al tuo e-service .+\." e "/erogazione/finalita/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
 
-  #Tickets: https://pagopa.atlassian.net/browse/PIN-8964, https://pagopa.atlassian.net/browse/PIN-8968
   Scenario: [Hai sospeso un tuo template e-service] - È stato sospeso il tuo template "".
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "È stato sospeso il tuo template .+\." e "/erogazione/template-eservice/.+"
 
@@ -148,15 +147,12 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   Scenario: [La tua richiesta di delega è stata rifiutata] - Ti informiamo che l'ente ha rifiutato la delega che il tuo ente gli ha conferit…
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha rifiutato la delega .+ che il tuo ente gli ha conferito per l'e-service .+" e "/aderente/deleghe/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
 
-  # Ticket https://pagopa.atlassian.net/browse/PIN-8982
   Scenario: [Richiesta di approvazione per una nuova versione] - L'ente delegato richiede la tua approvazione per pubblicare una nuova versione…
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente delegato .+ richiede la tua approvazione per pubblicare una nuova versione dell'e-service .+" e "/aderente/deleghe/.+"
 
-  # Ticket https://pagopa.atlassian.net/browse/PIN-8982
   Scenario: [Approvata la pubblicazione della nuova versione] - L'ente delegante ha approvato la pubblicazione della nuova versione dell'e-serv…
     Then per l'utente "admin" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente delegante .+ ha approvato la pubblicazione della nuova versione dell'e-service .+ che gestisci tramite delega\." e "/aderente/deleghe/.+"
 
-  # Ticket https://pagopa.atlassian.net/browse/PIN-8982
   Scenario: [Rifiutata la pubblicazione della nuova versione] - L'ente delegante ha rifiutato la pubblicazione della nuova versione dell'e-serv…
     Then per l'utente "admin" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente delegante .+ ha rifiutato la pubblicazione della nuova versione dell'e-service .+ che gestisci tramite delega\." e "/aderente/deleghe/.+"
 
@@ -169,21 +165,17 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   Scenario: [Una delega che gestivi è stata revocata] - Ti informiamo che l'ente ha revocato la delega per l'e-service "" che ti aveva…
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente .+ ha revocato la delega .+ per l'e-service .+ che ti aveva conferito\." e "/aderente/deleghe/.+"
 
-  # Ticket: https://pagopa.atlassian.net/browse/PIN-8983 (deepLink comunque adattato nel test)
   Scenario: [Hai ricevuto un nuovo attributo certificato] - L'ente certificatore ha conferito al tuo ente l'attributo certificato "". Puoi…
-    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente certificatore .+ ha conferito al tuo ente l'attributo certificato .+\. Puoi ora utilizzarlo nelle richieste di fruizione\." e "/aderente/anagrafica/.+"
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente certificatore .+ ha conferito al tuo ente l'attributo certificato .+\. Puoi ora utilizzarlo nelle richieste di fruizione\." e "/aderente/anagrafica"
 
-  # Ticket: https://pagopa.atlassian.net/browse/PIN-8983 (deepLink comunque adattato nel test)
   Scenario: [Un tuo attributo certificato è stato revocato] - Ti informiamo che l'ente certificatore ha revocato l'attributo certificato "".…
-    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente certificatore .+ ha revocato l'attributo certificato .+\. Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione\. Non potrai più utilizzare questo attributo per le future richieste di fruizione\." e "/aderente/anagrafica.+"
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente certificatore .+ ha revocato l'attributo certificato .+\. Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione\. Non potrai più utilizzare questo attributo per le future richieste di fruizione\." e "/aderente/anagrafica"
 
-  # Ticket: https://pagopa.atlassian.net/browse/PIN-8983 (deepLink comunque adattato nel test)
   Scenario: [Hai ricevuto un nuovo attributo verificato] - L'ente certificatore ha conferito al tuo ente l'attributo verificato "". Puoi o…
-    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente certificatore .+ ha conferito al tuo ente l'attributo verificato .+\. Puoi ora utilizzarlo nelle richieste di fruizione\." e "/aderente/anagrafica/.+"
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente certificatore .+ ha conferito al tuo ente l'attributo verificato .+\. Puoi ora utilizzarlo nelle richieste di fruizione\." e "/aderente/anagrafica"
 
-  # Ticket: https://pagopa.atlassian.net/browse/PIN-8983 (deepLink comunque adattato nel test)
   Scenario: [Un tuo attributo verificato è stato revocato] - Ti informiamo che l'ente certificatore ha revocato l'attributo verificato "". T…
-    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente certificatore .+ ha revocato l'attributo verificato .+\. Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione\. Non potrai più utilizzare questo attributo per le future richieste di fruizione\." e "/aderente/anagrafica/.+"
+    Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che l'ente certificatore .+ ha revocato l'attributo verificato .+\. Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione\. Non potrai più utilizzare questo attributo per le future richieste di fruizione\." e "/aderente/anagrafica"
 
   # trigger: it/pagopa/pn/cucumber/authorization/client-key-delete.feature:7
   Scenario: [Una chiave di e-service è stata rimossa] - L'utente ha rimosso una chiave di e-service dal client "". Assicurati che l'ope…
@@ -220,9 +212,3 @@ Feature: API Notifiche - verifica bodies (generato da excel)
 
   Scenario: [Nuova chiave aggiunta al portachiavi erogatore "<Nome Portachiavi>"] - Ti informiamo che è stata aggiunta una nuova chiave al portachiavi erogatore .
     Then per l'utente "admin" di "PA2" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "Ti informiamo che è stata aggiunta una nuova chiave al portachiavi erogatore .+\." e "/erogazione/portachiavi/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
-
-  # TODO comodità per test manuali, rimuovere
-  Scenario: genera tokens
-    Given l'utente è un "admin" di "PA1"
-    Given l'utente è un "admin" di "PA2"
-    Given l'utente è un "admin" di "GSP"
