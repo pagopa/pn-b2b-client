@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 
 public enum NotificationValue {
@@ -120,23 +120,18 @@ public enum NotificationValue {
     }
 
     public static String generateRandomNumber() {
-        String threadId = String.valueOf(Thread.currentThread().getId());
-        String threadPart = threadId.length() >= 2
-                ? threadId.substring(threadId.length() - 2)
-                : String.format("%02d", Long.parseLong(threadId));
-        String timePart = String.valueOf(System.nanoTime());
-        int classePagamento = ThreadLocalRandom.current().nextInt(0, 14);
-        String classePagamentoPart = String.format("%02d", classePagamento);
-        String finalNumber = "302" + classePagamentoPart + threadPart + timePart;
+        String threadNumber = (String.valueOf(Thread.currentThread().getId()));
+        String numberOfThread = threadNumber.length() < 2 ? "0" + threadNumber : threadNumber.substring(0, 2);
+        String timeNano = String.valueOf(System.nanoTime());
+        String randomClassePagamento = String.valueOf(new Random().nextInt(14));
+        randomClassePagamento = randomClassePagamento.length() < 2 ? "0" + randomClassePagamento : randomClassePagamento;
+        String finalNumber = "302" + randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length() - 4);
         if (finalNumber.length() > NOTICE_CODE_LENGTH) {
             finalNumber = finalNumber.substring(0, NOTICE_CODE_LENGTH);
         } else {
             int remainingLength = NOTICE_CODE_LENGTH - finalNumber.length();
-            String padding = ThreadLocalRandom.current()
-                    .ints(remainingLength, 0, 10)
-                    .mapToObj(String::valueOf)
-                    .reduce("", String::concat);
-            finalNumber = finalNumber + padding;
+            String paddingString = String.valueOf(new Random().nextInt(9)).repeat(remainingLength);
+            finalNumber = finalNumber + paddingString;
         }
         return finalNumber;
     }

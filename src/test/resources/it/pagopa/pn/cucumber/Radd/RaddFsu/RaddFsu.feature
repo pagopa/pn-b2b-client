@@ -308,15 +308,15 @@ Feature: Radd fsu
     And il recupero degli aar genera un errore "Documenti non disponibili" con codice 99
 
 #  @radd
-#  Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-#    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
-#    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
-#    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
-#    And vengono caricati i documento di identità del cittadino
-#    Then Vengono recuperati gli aar delle notifiche in stato irreperibile
-#    And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 49 aar
-#    And viene chiusa la transazione per il recupero degli aar
-#    And la chiusura delle transazione per il recupero degli aar non genera errori
+  Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
+    Given vengono inviate 3 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
+    And vengono caricati i documento di identità del cittadino
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile
+    And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 49 aar
+    And viene chiusa la transazione per il recupero degli aar
+    And la chiusura delle transazione per il recupero degli aar non genera errori
 
   @radd
   Scenario: [B2B_RADD_AOR-7] inquiry per cittadino con nessuna notifica in stato irreperibile e notifica consegnata
