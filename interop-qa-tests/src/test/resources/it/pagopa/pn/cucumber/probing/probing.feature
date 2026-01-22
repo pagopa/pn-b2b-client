@@ -9,11 +9,11 @@ Feature: Probing
       | "probing-api"            |
       | "probing-statistics-api" |
 
-  Scenario: [GET_PRODUCERS] - Recupero lista producers con paginazione e producerName
+  Scenario: [GET_PRODUCERS_1] - Recupero lista producers con paginazione e producerName
     When recupero la lista dei producers con limit 10 e offset 0 e producerName "PA1"
     Then la response riporta lo status code 200
 
-  Scenario Outline: [GET_PRODUCERS] - Recupero lista producers con paginazione
+  Scenario Outline: [GET_PRODUCERS_2] - Recupero lista producers con paginazione
     When recupero la lista dei producers con limit "<limit>" e offset "<offset>"
     Then la response riporta lo status code <statusCode>
 
@@ -23,7 +23,7 @@ Feature: Probing
       | 10    | null   | 400        |
       | 10    | 0      | 200        |
 
-  Scenario: [GET_ESERVICES] - Inserimento nuovo e-service (EServiceAdded) e visibilità in catalogo
+  Scenario: [GET_ESERVICES_1] - Inserimento nuovo e-service (EServiceAdded) e visibilità in catalogo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
@@ -31,7 +31,7 @@ Feature: Probing
     Then l'eservice creato è presente nei risultati
     And si ottiene status code 200
 
-  Scenario Outline: [GET_ESERVICES] - Inserimento nuovo e-service (EServiceAdded) e visibilità in catalogo mediante filtri personalizzati
+  Scenario Outline: [GET_ESERVICES_2] - Inserimento nuovo e-service (EServiceAdded) e visibilità in catalogo mediante filtri personalizzati
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
@@ -76,7 +76,7 @@ Feature: Probing
       | corretto   | random    | 10        | keep      | keep    | 404        |
     #ToDo Aggiunta Authentication Token
 
-  Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service
+  Scenario Outline: [UPDATE_PROBING_STATE_1] - Modifica stato di probing di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
@@ -90,7 +90,7 @@ Feature: Probing
       | null           | 400        |
     #ToDo Aggiunta Authentication Token
 
-  Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing con combinazioni id/versione
+  Scenario Outline: [UPDATE_PROBING_STATE_2] - Modifica stato di probing con combinazioni id/versione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
@@ -144,11 +144,11 @@ Feature: Probing
       | null       | random    | 404        |
       | random     | null      | 404        |
 
-  Scenario: [GET_PRODUCERS] - Recupero lista producers con paginazione e producerName
+  Scenario: [GET_PRODUCERS_1] - Recupero lista producers con paginazione e producerName
     When recupero la lista dei producers con limit 10 e offset 0 e producerName "PA1"
     Then la response riporta lo status code 200
 
-  Scenario Outline: [GET_PRODUCERS] - Recupero lista producers con paginazione
+  Scenario Outline: [GET_PRODUCERS_2] - Recupero lista producers con paginazione
     When recupero la lista dei producers con limit "<limit>" e offset "<offset>"
     Then la response riporta lo status code <statusCode>
     Examples:
