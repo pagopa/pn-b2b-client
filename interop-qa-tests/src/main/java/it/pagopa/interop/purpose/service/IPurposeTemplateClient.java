@@ -22,10 +22,10 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
     PurposeTemplateWithCompactCreator getPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, List<UUID> producerIds, String eserviceName) throws RestClientException;
     File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException;
-    EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject2 inlineObject2) throws RestClientException;
+    EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException;
     void publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     void suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
-    void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject3 inlineObject3) throws RestClientException;
+    void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException;
     void unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
 

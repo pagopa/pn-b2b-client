@@ -15,8 +15,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTempl
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.LinkEServiceToPurposeTemplateRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
@@ -26,9 +25,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateStat
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswer;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
@@ -360,10 +357,10 @@ public class PurposeTemplateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        InlineObject2 inlineObject = new InlineObject2();
-        inlineObject.setEserviceId(eServiceId);
+        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest()
+            .eserviceId(eServiceId);
 
-        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, request));
     }
 
     @Then("si effettua la get degli e-service associati al purpose template {exists}")
@@ -412,10 +409,10 @@ public class PurposeTemplateSteps {
 
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        InlineObject3 o3 = new InlineObject3();
-        o3.setEserviceId(eServiceId);
+        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest()
+            .eserviceId(eServiceId);
 
-        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, o3));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, request));
         if (exists) {
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 pollingService.makePolling(

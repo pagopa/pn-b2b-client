@@ -6,6 +6,8 @@ import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
@@ -56,7 +58,11 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
 
     @Override
     public File getDelegationContract(UUID delegationId, UUID contractId) {
-        return delegationsApi.getDelegationContract(delegationId, contractId);
+        try {
+            return delegationsApi.getDelegationContract(delegationId, contractId).getFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

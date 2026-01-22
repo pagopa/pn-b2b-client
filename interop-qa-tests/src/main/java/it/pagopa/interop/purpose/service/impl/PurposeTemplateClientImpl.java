@@ -5,6 +5,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposeTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -111,12 +113,17 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
 
     @Override
     public File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException {
-        return purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId);
+        try {
+            return purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId)
+                .getFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
-    public EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject2 inlineObject2) throws RestClientException {
-        return purposesTemplateApi.linkEServiceToPurposeTemplate(purposeTemplateId, inlineObject2);
+    public EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException {
+        return purposesTemplateApi.linkEServiceToPurposeTemplate(purposeTemplateId, linkRequest);
     }
 
     @Override
@@ -130,8 +137,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject3 inlineObject3) throws RestClientException {
-        purposesTemplateApi.unlinkEServiceToPurposeTemplate(purposeTemplateId, inlineObject3);
+    public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException {
+        purposesTemplateApi.unlinkEServiceToPurposeTemplate(purposeTemplateId, linkRequest);
     }
 
     @Override

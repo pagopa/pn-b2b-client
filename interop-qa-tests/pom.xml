@@ -16,11 +16,11 @@
         <aws.sdk.version>2.20.1</aws.sdk.version>
         <gson.version>2.11.0</gson.version>
         <spring.boot.version>2.5.12</spring.boot.version>
-        <swagger.version>1.6.5</swagger.version>
+        <swagger.version>2.2.42</swagger.version>
         <findbugs.version>3.0.2</findbugs.version>
         <junit.platform.version>1.9.1</junit.platform.version>
         <lombok.version>1.18.30</lombok.version>
-        <cucumber.reporting.version>5.7.2</cucumber.reporting.version>
+        <cucumber.reporting.version>5.10.2</cucumber.reporting.version>
 
         <!-- 14/04/2025: recentemente aggiornate le versioni dei framework di test. Si riportano di
          seguito quelle utilizzate in precedenza per facilitare eventuali rollback. -->
@@ -79,7 +79,7 @@
 
         <!-- Swagger -->
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger.version}</version>
         </dependency>
@@ -247,7 +247,7 @@
              <plugin>
                  <groupId>org.openapitools</groupId>
                  <artifactId>openapi-generator-maven-plugin</artifactId>
-                 <version>5.4.0</version>
+                 <version>7.19.0</version>
                  <executions>
                      <execution>
                          <id>generate-bff-client</id>

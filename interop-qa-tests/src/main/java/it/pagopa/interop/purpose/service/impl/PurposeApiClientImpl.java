@@ -5,6 +5,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
@@ -127,7 +129,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
 
     @Override
     public File getRiskAnalysisDocument(UUID purposeId, UUID versionId, UUID documentId) {
-        return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId);
+        try {
+            return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId).getFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

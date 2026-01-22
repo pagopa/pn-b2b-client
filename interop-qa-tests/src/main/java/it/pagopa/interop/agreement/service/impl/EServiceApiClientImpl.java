@@ -28,6 +28,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDes
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
@@ -36,6 +37,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -47,17 +50,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -166,7 +158,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     public File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
-        return eservicesApi.getEServiceDocumentById(eServiceId, descriptorId, documentId);
+        try {
+            return eservicesApi.getEServiceDocumentById(eServiceId, descriptorId, documentId).getFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed) {
@@ -186,7 +182,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     public File getEServiceConsumers(UUID eServiceId) {
-        return eservicesApi.getEServiceConsumers(eServiceId);
+        try {
+            return eservicesApi.getEServiceConsumers(eServiceId).getFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public EServiceRiskAnalysis getEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId) {
