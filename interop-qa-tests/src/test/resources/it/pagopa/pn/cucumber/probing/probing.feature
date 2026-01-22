@@ -44,7 +44,6 @@ Feature: Probing
       | producer |
       | name     |
 
-    #ToDo Aggiunta Authentication Token
   Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
@@ -57,23 +56,23 @@ Feature: Probing
       | true           |        204 |
       | false          |        204 |
       | null           |        400 |
-
     #ToDo Aggiunta Authentication Token
+
   Scenario: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service esistente con versione inesistente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
     When viene modificato lo stato di probing dell'e-service con id versione "random" in "true"
     Then la response riporta lo status code 404
-
     #ToDo Aggiunta Authentication Token
+
   Scenario: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service inesistente con versione esistente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
     When viene modificato lo stato di probing dell'e-service con id "random" e versione valida in "true"
     Then la response riporta lo status code 404
-
+    #ToDo Aggiunta Authentication Token
 
   Scenario Outline: [GET_ESERVICES_CATALOG] - Consultazione e-service presenti nel catalogo probing
     When vengono recuperati dal catalogo gli e-service con valori di paginazione limit "<limit>" e offset "<offset>" e filtro di tipo "<filter>" con valore "<filterValue>"
@@ -81,10 +80,40 @@ Feature: Probing
 
     Examples:
       | limit | offset | filter        | filterValue | statusCode |
-      |    10 |      0 | null          | null         |        200 |
-      |    10 |      0 | eserviceName  | EService1    |        200 |
-      | null  |      0 | producerName  | PA1          |        200 |
-      |    10 | null   | versionNumber |            1 |        200 |
-      |    10 | null   | state         | ONLINE       |        200 |
-      |    10 | null   | null          | null         |        400 |
-      | null  |      0 | null          | null         |        400 |
+      |    10 |      0 | null          | null        |        200 |
+      |    10 |      0 | eserviceName  | EService1   |        200 |
+      | null  |      0 | producerName  | PA1         |        200 |
+      |    10 | null   | versionNumber |           1 |        200 |
+      |    10 | null   | state         | ONLINE      |        200 |
+      |    10 | null   | null          | null        |        400 |
+      | null  |      0 | null          | null        |        400 |
+
+  Scenario Outline: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo di un e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And si ottiene status code 200
+    When viene modificato lo stato operativo dell'e-service creato in "<eserviceState>"
+    Then la response riporta lo status code <statusCode>
+
+    Examples:
+      | eserviceState | statusCode |
+      | ACTIVE        |        204 |
+      | INACTIVE      |        204 |
+      | null          |        400 |
+    #ToDo Aggiunta Authentication Token
+
+  Scenario: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo di un e-service esistente con versione inesistente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And si ottiene status code 200
+    When viene modificato lo stato operativo dell'e-service con id versione "random" in "ACTIVE"
+    Then la response riporta lo status code 404
+    #ToDo Aggiunta Authentication Token
+
+  Scenario: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo di un e-service inesistente con versione esistente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And si ottiene status code 200
+    When viene modificato lo stato operativo dell'e-service con id "random" e versione valida in "ACTIVE"
+    Then la response riporta lo status code 404
+    #ToDo Aggiunta Authentication Token

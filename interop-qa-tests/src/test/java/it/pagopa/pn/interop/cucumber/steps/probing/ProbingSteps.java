@@ -5,7 +5,9 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.probing.model.ChangeEserviceStateRequest;
 import it.pagopa.interop.generated.openapi.clients.probing.model.ChangeProbingStateRequest;
+import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateBE;
 import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateFE;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceResponse;
@@ -203,5 +205,54 @@ public class ProbingSteps {
         }
         return List.of(EserviceStateFE.fromValue(value.trim()));
         }
+
+    @When("viene modificato lo stato operativo dell'e-service creato in {string}")
+    public void updateOperationalState(String eserviceState) {
+        UUID eserviceUuid = getEserviceId();
+        UUID versionUuid = getEserviceVersion();
+
+                ChangeEserviceStateRequest operationalState =
+                new ChangeEserviceStateRequest()
+                .eServiceState(parseNullableEserviceStateBE(eserviceState));
+
+        probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
+    }
+
+    @When("viene modificato lo stato operativo dell'e-service con id versione {string} in {string}")
+    public void updateOperationalStateWithEserviceVersionAbsent(String versionId, String eserviceState) {
+
+        UUID eserviceUuid = getEserviceId();
+        UUID versionUuid = parseUuidOrRandom(versionId);
+
+        ChangeEserviceStateRequest operationalState =
+                new ChangeEserviceStateRequest()
+                .eServiceState(parseNullableEserviceStateBE(eserviceState));
+
+        probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
+    }
+
+    @When("viene modificato lo stato operativo dell'e-service con id {string} e versione valida in {string}")
+    public void updateOperationalStateWithEserviceAbsent(String eserviceId, String eserviceState) {
+
+        UUID eserviceUuid = parseUuidOrRandom(eserviceId);
+        UUID versionUuid = getEserviceVersion();
+
+        ChangeEserviceStateRequest operationalState =
+                new ChangeEserviceStateRequest()
+                .eServiceState(parseNullableEserviceStateBE(eserviceState));
+
+        probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
+    }
+
+    private EserviceStateBE parseNullableEserviceStateBE(String value) {
+        if (value == null || value.equalsIgnoreCase("null")) {
+            return null;
+        }
+        try {
+            return EserviceStateBE.fromValue(value.trim());
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
 }
 
