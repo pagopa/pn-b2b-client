@@ -58,21 +58,18 @@ Feature: Probing
       | null           |        400 |
     #ToDo Aggiunta Authentication Token
 
-  Scenario: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service esistente con versione inesistente
+  Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing con combinazioni id/versione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
-    When viene modificato lo stato di probing dell'e-service con id versione "random" in "true"
-    Then la response riporta lo status code 404
+    When viene modificato lo stato di probing dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "true"
+    Then la response riporta lo status code <statusCode>
     #ToDo Aggiunta Authentication Token
 
-  Scenario: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service inesistente con versione esistente
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
-    And si ottiene status code 200
-    When viene modificato lo stato di probing dell'e-service con id "random" e versione valida in "true"
-    Then la response riporta lo status code 404
-    #ToDo Aggiunta Authentication Token
+    Examples:
+      | eserviceId | versionId | statusCode |
+      | corretto  | random    | 404        |
+      | random    | corretto  | 404        |
 
   Scenario Outline: [GET_ESERVICES_CATALOG] - Consultazione e-service presenti nel catalogo probing
     When vengono recuperati dal catalogo gli e-service con valori di paginazione limit "<limit>" e offset "<offset>" e filtro di tipo "<filter>" con valore "<filterValue>"
@@ -102,22 +99,18 @@ Feature: Probing
       | null          |        400 |
     #ToDo Aggiunta Authentication Token
 
-  Scenario: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo di un e-service esistente con versione inesistente
+  Scenario Outline: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo con combinazioni id/versione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
-    When viene modificato lo stato operativo dell'e-service con id versione "random" in "ACTIVE"
-    Then la response riporta lo status code 404
+    When viene modificato lo stato operativo dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "ACTIVE"
+    Then la response riporta lo status code <statusCode>
     #ToDo Aggiunta Authentication Token
 
-  Scenario: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo di un e-service inesistente con versione esistente
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
-    And si ottiene status code 200
-    When viene modificato lo stato operativo dell'e-service con id "random" e versione valida in "ACTIVE"
-    Then la response riporta lo status code 404
-    #ToDo Aggiunta Authentication Token
-
+    Examples:
+      | eserviceId | versionId | statusCode |
+      | null      | random    | 404        |
+      | random    | null      | 404        |
 
   Scenario: [GET_PRODUCERS] - Recupero lista producers con paginazione e producerName
     When recupero la lista dei producers con limit 10 e offset 0 e producerName "PA1"

@@ -131,28 +131,6 @@ public class ProbingSteps {
         probingClient.updateEserviceProbingState(eserviceId, versionId, probingState);
     }
 
-    @When("viene modificato lo stato di probing dell'e-service con id versione {string} in {string}")
-    public void updateProbingStateWithEServiceVersionId(String versionId, String probingEnabled) {
-        UUID eserviceUuid = getEserviceId();
-        UUID versionUuid = uuidOrRandomOrNull(versionId);
-
-        ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
-                .probingEnabled(nullableBoolean(probingEnabled));
-
-        probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
-    }
-
-    @When("viene modificato lo stato di probing dell'e-service con id {string} e versione valida in {string}")
-    public void updateProbingStateWithEServiceId(String eserviceId, String probingEnabled) {
-        UUID eserviceUuid = uuidOrRandomOrNull(eserviceId);
-        UUID versionUuid = getEserviceVersion();
-
-        ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
-                .probingEnabled(nullableBoolean(probingEnabled));
-
-        probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
-    }
-
     @When("vengono recuperati dal catalogo gli e-service con valori di paginazione limit {string} e offset {string} e filtro di tipo {string} con valore {string}")
     public void getEServiceCatalogWithPaginationAndFilters(String limit, String offset, String filter, String filterValue) {
         Integer limitValue = nullableInteger(limit);
@@ -182,10 +160,21 @@ public class ProbingSteps {
         probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
     }
 
-    @When("viene modificato lo stato operativo dell'e-service con id versione {string} in {string}")
-    public void updateOperationalStateWithEserviceVersionId(String versionId, String eserviceState) {
-        UUID eserviceUuid = getEserviceId();
-        UUID versionUuid = uuidOrRandomOrNull(versionId);
+    @When("viene modificato lo stato di probing dell'e-service con id {string} e id versione {string} in {string}")
+    public void updateProbingState(String eserviceId, String versionId, String probingEnabled) {
+        UUID eserviceUuid = resolveEserviceId(eserviceId);
+        UUID versionUuid  = resolveVersionId(versionId);
+
+        ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
+                .probingEnabled(nullableBoolean(probingEnabled));
+
+        probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
+    }
+
+    @When("viene modificato lo stato operativo dell'e-service con id {string} e id versione {string} in {string}")
+    public void updateOperationalState(String eserviceId, String versionId, String eserviceState) {
+        UUID eserviceUuid = resolveEserviceId(eserviceId);
+        UUID versionUuid  = resolveVersionId(versionId);
 
         ChangeEserviceStateRequest operationalState = new ChangeEserviceStateRequest()
                 .eServiceState(parseNullableSafe(eserviceState, EserviceStateBE::fromValue));
@@ -218,5 +207,23 @@ public class ProbingSteps {
 
     private UUID getEserviceVersion() {
         return sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+    }
+
+    private UUID resolveEserviceId(String eserviceId) {
+        if(eserviceId == null || eserviceId.equalsIgnoreCase("null"))
+            return null;
+
+        return (eserviceId.equalsIgnoreCase("corretto"))
+                ? getEserviceId()
+                : uuidOrRandomOrNull(eserviceId);
+    }
+
+    private UUID resolveVersionId(String versionId) {
+        if(versionId == null || versionId.equalsIgnoreCase("null"))
+            return null;
+
+        return (versionId.equalsIgnoreCase("corretto"))
+                ? getEserviceVersion()
+                : uuidOrRandomOrNull(versionId);
     }
 }
