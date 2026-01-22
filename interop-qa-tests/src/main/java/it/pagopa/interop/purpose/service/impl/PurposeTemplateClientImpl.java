@@ -1,5 +1,7 @@
 package it.pagopa.interop.purpose.service.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposeTemplatesApi;
@@ -114,8 +116,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     @Override
     public File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException {
         try {
-            return purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId)
-                .getFile();
+            Resource resourceResponse = purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId);
+            return createTempFile("riskAnalysis-template-annotation-document-",resourceResponse.getInputStream());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

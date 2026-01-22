@@ -1,5 +1,6 @@
 package it.pagopa.interop.e_service_template.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 import static java.util.Objects.nonNull;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
@@ -282,8 +283,11 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
             ResponseEntity<Resource> resourceResponseEntity = this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(
                 eServiceTemplateId, eServiceTemplateVersionId, documentId);
             Resource body = resourceResponseEntity.getBody();
+
             return new ResponseEntity<>(
-                nonNull(body) ? body.getFile() : null,
+                nonNull(body)
+                    ? createTempFile("e-service-template-document-",body.getInputStream())
+                    : null,
                 resourceResponseEntity.getHeaders(),
                 resourceResponseEntity.getStatusCode()
             );

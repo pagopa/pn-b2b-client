@@ -1,5 +1,6 @@
 package it.pagopa.interop.agreement.service.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 import static java.util.Objects.isNull;
 
 import it.pagopa.interop.agreement.service.IEServiceClient;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -62,7 +64,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public EServiceApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public EServiceApiClientImpl(
+        RestTemplate restTemplate,
+        InteropClientConfigs interopClientConfigs
+    ) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.eservicesApi = new EservicesApi(createApiClient("dummyBearer"));
@@ -159,7 +164,9 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     public File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
         try {
-            return eservicesApi.getEServiceDocumentById(eServiceId, descriptorId, documentId).getFile();
+            Resource resourceResponse = eservicesApi.getEServiceDocumentById(eServiceId,
+                descriptorId, documentId);
+            return createTempFile("e-service-document-",resourceResponse.getInputStream());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -183,7 +190,8 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     public File getEServiceConsumers(UUID eServiceId) {
         try {
-            return eservicesApi.getEServiceConsumers(eServiceId).getFile();
+            Resource resourceResponse = eservicesApi.getEServiceConsumers(eServiceId);
+            return createTempFile("e-service-document-",resourceResponse.getInputStream());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

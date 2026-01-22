@@ -1,24 +1,29 @@
 package it.pagopa.interop.delegate.service.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegations;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -59,7 +64,8 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     @Override
     public File getDelegationContract(UUID delegationId, UUID contractId) {
         try {
-            return delegationsApi.getDelegationContract(delegationId, contractId).getFile();
+            Resource resourceResponse = delegationsApi.getDelegationContract(delegationId, contractId);
+            return createTempFile("delegation-contract-",resourceResponse.getInputStream());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
