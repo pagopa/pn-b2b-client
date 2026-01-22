@@ -804,7 +804,8 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-ss/develop/docs/openapi/pn-safestorage-v1.1-api.yaml
+                                <!--https://raw.githubusercontent.com/pagopa/pn-ss/develop/docs/openapi/pn-safestorage-v1.1-api.yaml-->
+                                https://raw.githubusercontent.com/pagopa/pn-ss/refs/heads/feature/PN-17453/docs/openapi/pn-safestorage-v1.1-api.yaml
                             </inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
