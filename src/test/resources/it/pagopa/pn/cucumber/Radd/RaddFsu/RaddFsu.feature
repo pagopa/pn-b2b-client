@@ -309,7 +309,7 @@ Feature: Radd fsu
 
 #  @radd
   Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-    Given vengono inviate 3 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
     When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino
