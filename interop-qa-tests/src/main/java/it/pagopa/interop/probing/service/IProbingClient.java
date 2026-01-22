@@ -4,6 +4,7 @@ import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.probing.model.*;
 import it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,9 @@ public interface IProbingClient extends SettableBearerToken {
     void updateEserviceFrequency(
             UUID eserviceId,
             UUID versionId,
-            ChangeProbingFrequencyRequest request
+            Integer frequency,
+            OffsetDateTime startTime,
+            OffsetDateTime endTime
     );
 
     void updateEserviceProbingState(

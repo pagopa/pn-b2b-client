@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -200,8 +201,13 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
 
     @Override
-    public void updateEserviceFrequency(UUID eserviceId, UUID versionId, ChangeProbingFrequencyRequest request) {
-        performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, request));
+    public void updateEserviceFrequency(UUID eserviceId, UUID versionId, Integer frequency, OffsetDateTime startTime, OffsetDateTime endTime) {
+        ChangeProbingFrequencyRequest req = new ChangeProbingFrequencyRequest();
+        req.setFrequency(frequency);
+        req.setStartTime(startTime.toString());
+        req.setEndTime(endTime.toString());
+
+        performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, req));
     }
 
     @Override
