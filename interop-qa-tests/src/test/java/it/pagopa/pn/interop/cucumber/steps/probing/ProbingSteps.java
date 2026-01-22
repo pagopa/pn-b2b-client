@@ -145,7 +145,7 @@ public class ProbingSteps {
         probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
     }
 
-    @When("viene modificato lo stato di probing dell'e-service con id {string} in {string}")
+    @When("viene modificato lo stato di probing dell'e-service con id {string} e versione valida in {string}")
     public void updateProbingStateWithEServiceAbsent(String eserviceId, String probingEnabled) {
         UUID eserviceUuid = parseUuidOrRandom(eserviceId);
         UUID versionUuid = getEserviceVersion();
