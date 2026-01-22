@@ -1,0 +1,15 @@
+requestId;notificationSentAt;prepareRequestDate;productType;senderPaId;province;cap;attempt;iun;unifiedDeliveryDriver
+tcCancelNotificationFrozen_1;2025-07-01T00:00:00Z;2025-07-01T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250126-T-1;Fulmine
+tcCancelNotificationFrozen_2;2025-07-02T00:00:00Z;2025-07-02T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250127-T-1;Fulmine
+tcCancelNotificationFrozen_3;2025-07-03T00:00:00Z;2025-07-03T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250128-T-1;Fulmine
+tcCancelNotificationFrozen_4;2025-07-04T00:00:00Z;2025-07-04T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250129-T-1;Fulmine
+tcCancelNotificationFrozen_5;2025-07-05T00:00:00Z;2025-07-05T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250130-T-1;Fulmine
+tcCancelNotificationFrozen_6;2025-07-06T00:00:00Z;2025-07-06T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250131-T-1;Fulmine
+tcCancelNotificationFrozen_7;2025-07-07T00:00:00Z;2025-07-07T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250132-T-1;Fulmine
+tcCancelNotificationFrozen_8;2025-07-08T00:00:00Z;2025-07-08T00:00:00Z;AR;unknow;NA;80124;0;AUTJ-PUKM-KDAJ-250133-T-1;Fulmine
+tcCancelNotificationFrozen_9;2025-07-09T00:00:00Z;2025-07-09T00:00:00ZAR;unknow;NA;80124;0;;AUTJ-PUKM-KDAJ-250134-T-1Fulmine
+tcCancelNotificationFrozen_10;;2025-07-10T00:00:00Z;2025-07-10T00:00:00AR;unknow;NA;80124;0;0;AUTJ-PUKM-KDAJ-250135-T-Fulmine
+tcCancelNotificationFrozen_11;;2025-07-11T00:00:00Z;2025-07-11T00:00:00AR;unknow;NA;80124;0;0;AUTJ-PUKM-KDAJ-250136-T-Fulmine
+tcCancelNotificationFrozen_12;;2025-07-12T00:00:00Z;2025-07-12T00:00:00AR;unknow;NA;80124;0;0;AUTJ-PUKM-KDAJ-250137-T-Fulmine
+tcCancelNotificationFrozen_13;;2025-07-13T00:00:00Z;2025-07-13T00:00:00AR;unknow;NA;80124;0;0;{placeholder};Fulmine
+tcCancelNotificationFrozen_14;;2025-07-14T00:00:00Z;2025-07-14T00:00:00AR;unknow;NA;80124;0;0;AUTJ-PUKM-KDAJ-250139-T-1;Fulmine

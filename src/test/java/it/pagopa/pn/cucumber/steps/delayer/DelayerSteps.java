@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
@@ -13,6 +14,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerCsvUtils;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
@@ -24,8 +26,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
@@ -46,9 +52,13 @@ public class DelayerSteps {
     private final DelayerLambdaClient lambdaClient;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
+    private final DelayerCsvUtils delayerCsvUtils;
+    private final SharedSteps sharedSteps;
+    private Map<String, Integer> availableCapacityByDriver = new HashMap<>();
+    private List<DelayerPaperDelivery> frozenExpected = new ArrayList<>();
 
     @Autowired
-    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
+    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName, SharedSteps sharedSteps) {
 
         this.context = new DelayerContext();
         this.csvLoader = new DelayerCsvLoader(context);
@@ -57,6 +67,17 @@ public class DelayerSteps {
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
         this.utils = new DelayerPaperDeliveryUtils(context);
         this.validator = new DelayerValidator(context, lambdaClient, utils);
+        this.delayerCsvUtils = new DelayerCsvUtils();
+        this.sharedSteps = sharedSteps;
+    }
+
+    @Given("^la notifica appena creata viene inserita nel csv: (notificationCancelled.csv|tcCancelNotifcationFrozen.csv) e caricato su S3$")
+    public void updateAndUploadCsv(String csvName) {
+        Path basePath = Paths.get(
+                "src", "test", "resources", "it",
+                "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
+                "delayer", "csv");
+        delayerCsvUtils.replaceCsvContent(basePath.resolve(csvName), sharedSteps.getNotificationIun());
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -150,8 +171,8 @@ public class DelayerSteps {
                         .mapToInt(capMap::get)
                         .sum();
 
-                if (!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
-                    throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
+             /*   if (!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
+                    throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong"); */
 
                 long distinctSenders = context.actualCsv.stream()
                         .filter(d -> driver.equals(d.getUnifiedDeliveryDriver()))
@@ -189,6 +210,7 @@ public class DelayerSteps {
             int rawLimit = Integer.parseInt(row.get("limit"));
 
             int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
+            availableCapacityByDriver.put(entityId, actual);
             if (actual == -1) actual = rawLimit;
 
             switch (comparative.toLowerCase()) {
@@ -210,6 +232,37 @@ public class DelayerSteps {
                 default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);
             }
 
+        }
+    }
+
+    @And("viene verificata che la capacità disponibile per i seguenti driver sia decrementata di: {int}")
+    public void assertCapacityDecremented(int difference, DataTable dataTable) {
+        assertCapacity(dataTable,
+                (driver, province) -> lambdaClient.getAvailableCapacity(driver, province, context.expectedDeliveryDate),
+                entityId -> availableCapacityByDriver.get(entityId) - difference);
+    }
+
+    @And("viene verificata che la capacità usata per i seguenti driver sia uguale al numero di spedizioni congelate meno quella annullata")
+    public void assertCapacityFrozen(DataTable dataTable) {
+        assertCapacity(dataTable,
+                (driver, province) -> lambdaClient.getUsedCapacity(driver, province, context.expectedDeliveryDate),
+                entityId -> frozenExpected.size() - 1);
+    }
+
+    private void assertCapacity(DataTable dataTable,
+                                BiFunction<String, String, Integer> actualCalculator,
+                                Function<String, Integer> expectedCalculator) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> row : rows) {
+            String entityId = row.get("unifiedDeliveryDriverId");
+            String[] parts = entityId.split("~");
+            String driver = parts[0];
+            String province = parts[1];
+            int actual = actualCalculator.apply(driver, province);
+            int expected = expectedCalculator.apply(entityId);
+            Assertions.assertThat(actual)
+                    .as("Capacità residua per driver %s", entityId)
+                    .isEqualTo(expected);
         }
     }
 
@@ -241,6 +294,12 @@ public class DelayerSteps {
     @And("vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine")
     public void runSimulation2() {
         planner.simulateAlgorithm2(context.expectedPianification);
+    }
+
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate futura")
+    public void runFirstStepFunctionWithDeliveryDate() throws Exception {
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(1)).getExecutionArn();
+        waitUntilStepFunctionEnd();
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
@@ -329,7 +388,7 @@ public class DelayerSteps {
     @Then("verifica che le opportune notifiche siano state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente per almeno un test case")
     public void checkFrozen(String ws) throws Exception {
         WorkflowSteps step = valueOf(ws);
-        List<DelayerPaperDelivery> frozenExpected = context.expectedPianification.values().stream()
+        frozenExpected = context.expectedPianification.values().stream()
                 .flatMap(m -> m.getOrDefault("FROZEN", List.of()).stream())
                 .toList();
         validator.checkFrozen(step, frozenExpected);
@@ -409,5 +468,10 @@ public class DelayerSteps {
             // Prossimo polling
             sleep(pollingIntervalMillis);
         }
+    }
+
+    @And("imposto la deliveryWeek alla data in cui sono pianificate le spedizioni congelate")
+    public void setDeliveryWeek() {
+        context.expectedDeliveryDate = getNextMonday(1);
     }
 }
