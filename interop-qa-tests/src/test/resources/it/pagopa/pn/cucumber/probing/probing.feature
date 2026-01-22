@@ -44,6 +44,7 @@ Feature: Probing
       | producer |
       | name     |
 
+    #ToDo Aggiunta Authentication Token
   Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
@@ -57,6 +58,7 @@ Feature: Probing
       | false          |        204 |
       | null           |        400 |
 
+    #ToDo Aggiunta Authentication Token
   Scenario: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service esistente con versione inesistente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
@@ -64,20 +66,21 @@ Feature: Probing
     When viene modificato lo stato di probing dell'e-service con id versione "random" in "true"
     Then la response riporta lo status code 404
 
+    #ToDo Aggiunta Authentication Token
   Scenario: [UPDATE_PROBING_STATE] - Modifica stato di probing di un e-service inesistente con versione esistente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200
-    When viene modificato lo stato di probing dell'e-service con id "random" in "true"
+    When viene modificato lo stato di probing dell'e-service con id "random" e versione valida in "true"
     Then la response riporta lo status code 404
 
 
   Scenario Outline: [GET_ESERVICES_CATALOG] - Consultazione e-service presenti nel catalogo probing
-    When vengono recuperati dal catalogo gli e-service con valori di paginazione limit "<limit>" e offset "<offset>" e filtro di tipo "<filter>" con valore "<filteerValue>"
+    When vengono recuperati dal catalogo gli e-service con valori di paginazione limit "<limit>" e offset "<offset>" e filtro di tipo "<filter>" con valore "<filterValue>"
     Then la response riporta lo status code <statusCode>
 
     Examples:
-      | limit | offset | filter        | filteerValue | statusCode |
+      | limit | offset | filter        | filterValue | statusCode |
       |    10 |      0 | null          | null         |        200 |
       |    10 |      0 | eserviceName  | EService1    |        200 |
       | null  |      0 | producerName  | PA1          |        200 |
