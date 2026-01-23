@@ -73,6 +73,10 @@ public final class StepParser {
         return parseCore(value, true, () -> ThreadLocalRandom.current().nextInt(), Integer::parseInt);
     }
 
+    public static Long longOrRandomOrNull(String value) {
+        return parseCore(value, true, () -> ThreadLocalRandom.current().nextLong(), Long::parseLong);
+    }
+
     public static <E> List<E> singletonListNullable(String value, Function<String, E> mapper) {
         return parseCore(value, true, null, v -> List.of(mapper.apply(v)));
     }

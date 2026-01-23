@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.intOrRandomOrNull;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.longOrRandomOrNull;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.uuidOrRandomOrNull;
 
 @RequiredArgsConstructor
@@ -73,6 +74,12 @@ public class ProbingResolver {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return uuidOrRandomOrNull(raw);
         return resolve(raw, "versionId", this::getDescriptorId, () -> uuidOrRandomOrNull("RANDOM"), null, getDescriptorId());
+    }
+
+    public Long resolveEserviceRecordId(String raw) {
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return longOrRandomOrNull(raw);
+        return resolve(raw, "eserviceRecordId", this::getEserviceRecordId, () -> longOrRandomOrNull("RANDOM"), null, getEserviceRecordId());
     }
 
     public Integer resolveFrequency(String raw) {

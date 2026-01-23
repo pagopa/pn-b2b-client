@@ -254,4 +254,14 @@ public class ProbingSteps {
                     .isTrue();
         }
     }
+
+    @When("vengono recuperati i metadati anagrafici dell'e-service con eserviceRecordId {string}")
+    public void getEserviceProfileData(String eserviceRecordId) {
+        Long recordId = resolver.resolveEserviceRecordId(eserviceRecordId);
+
+        MainDataEserviceResponse response = probingClient.getEserviceMainData(recordId);
+
+        Assertions.assertThat(response).as("La response contenente i metadati anagrafici dell'e-service non deve essere null").isNotNull();
+
+    }
 }
