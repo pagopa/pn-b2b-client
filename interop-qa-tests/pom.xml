@@ -139,6 +139,16 @@
             <artifactId>cucumber-reporting</artifactId>
             <version>${cucumber.reporting.version}</version>
             <scope>test</scope>
+
+            <!-- Verrebbe qui usata una versione successiva di slf4j rispetto a quella usate da tutte
+             le altre dep. del progetto, creando conflitti. Un'alternativa migliore sarebbe
+             modernizzare tutto il progetto. -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Apache Commons Lang -->
