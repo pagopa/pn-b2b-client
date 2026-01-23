@@ -202,3 +202,34 @@ Feature: Probing
     # eserviceRecordId invalid values
       | %null            | %actual   | 400        |
       | %random          | %actual   | 400        |
+
+  Scenario Outline: [GET_ESERVICE_TELEMETRY] - Recupera la telemetria di un e-service tramite il suo eserviceRecordId e filtro temporale
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And si ottiene status code 200
+    And vengono settati i parametri di probing di default per l'e-service
+    When viene recuperata la telemetria dell'e-service con eserviceRecordId "<eserviceRecordId>" e impostando pollingFrequency "<frequency>" , startDate "<startDate>" , endDate "<endDate>"
+    Then la response riporta lo status code <statusCode>
+
+    Examples:
+    # Happy paths
+      | eserviceRecordId | frequency | startDate | endDate | statusCode |
+      | %actual          | %actual   | now+1h    | now+2h  | 200        |
+
+    # eserviceRecordId invalid values
+      | %null            | %actual   | now+1h    | now+2h  | 400        |
+      | %random          | %actual   | now+1h    | now+2h  | 400        |
+      | -1               | %actual   | now+1h    | now+2h  | 400        |
+
+    # frequency invalid values
+      | %actual          | %null     | now+1h    | now+2h  | 400        |
+      | %actual          | -1        | now+1h    | now+2h  | 400        |
+
+    # startDate invalid values
+      | %actual          | %actual   | %null     | now+2h  | 400        |
+      | %actual          | %actual   | abc       | now+2h  | 400        |
+
+    # endDate invalid values
+      | %actual          | %actual   | now+1h    | %null   | 400        |
+      | %actual          | %actual   | now+1h    | abc     | 400        |
+      #ToDo Aggiunta Authentication Token

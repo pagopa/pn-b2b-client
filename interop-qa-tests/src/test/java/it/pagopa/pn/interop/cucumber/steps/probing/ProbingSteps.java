@@ -282,4 +282,15 @@ public class ProbingSteps {
         TelemetryDataEserviceResponse response = probingClient.statisticsEservices(recordIdValue, poolingFrequencyValue);
         Assertions.assertThat(response).as("La response contenente la telemetria pubblica dell'e-service non deve essere null").isNotNull();
     }
+
+    @When("viene recuperata la telemetria dell'e-service con eserviceRecordId {string} e impostando pollingFrequency {string} , startDate {string} , endDate {string}")
+    public void getEserviceTelemetry(String eserviceRecordId, String pollingFrequency, String startDate, String endDate) {
+        Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
+        Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
+        String startDateValue = resolver.resolveDateTokenAsString(startDate, null);
+        String endDateValue = resolver.resolveDateTokenAsString(endDate, null);
+
+        TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
+        Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();
+    }
 }

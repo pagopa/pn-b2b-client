@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static it.pagopa.pn.interop.cucumber.utility.StepParser.intOrRandomOrNull;
-import static it.pagopa.pn.interop.cucumber.utility.StepParser.longOrRandomOrNull;
-import static it.pagopa.pn.interop.cucumber.utility.StepParser.uuidOrRandomOrNull;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
 @RequiredArgsConstructor
 public class ProbingResolver {
@@ -114,5 +112,10 @@ public class ProbingResolver {
         }
 
         return OffsetDateTime.parse(token);
+    }
+
+    public String resolveDateTokenAsString(String raw, OffsetDateTime current) {
+        OffsetDateTime value = resolveDateToken(raw, current);
+        return value == null ? null : value.toString();
     }
 }
