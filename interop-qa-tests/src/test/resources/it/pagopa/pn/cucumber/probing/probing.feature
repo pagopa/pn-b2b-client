@@ -166,3 +166,18 @@ Feature: Probing
       | %null            |        400 |
       |               -1 |        400 |
       | %random          |        404 |
+
+
+  Scenario Outline: [GET_ESERVICE_PROBING_DATA] - Recupera i dati di probing di un e-service tramite il suo eserviceRecordId
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And si ottiene status code 200
+    When vengono recuperati i dati di probing dell'e-service con eserviceRecordId "<eserviceRecordId>"
+    Then la response riporta lo status code <statusCode>
+
+    Examples:
+      | eserviceRecordId | statusCode |
+      | %actual          |        200 |
+      | %null            |        400 |
+      |               -1 |        400 |
+      | %random          |        404 |
