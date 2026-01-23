@@ -967,4 +967,18 @@ public class SafeStorageSteps {
                     .isEqualTo(statusCode);
         }
     }
+
+    @Given("Viene caricato un nuovo documento {string} di tipo {string}")
+    public void uploadNewDocument(String documentName, String type) {
+        String resourcePath = "classpath:/" + documentName;
+        String sha256 = computeAndSetSha(resourcePath);
+
+        FileCreationRequest request = new FileCreationRequest();
+        request.setContentType("application/pdf");
+        request.setStatus("SAVED");
+        request.setDocumentType(type);
+
+        FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
+        loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
+    }
 }
