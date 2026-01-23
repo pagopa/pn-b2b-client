@@ -153,7 +153,7 @@ Feature: Probing
     # producerName edge cases (should not 400)
       | 30    | 0      | NOT_EXISTING_PRODUCER | 200        |
 
-  Scenario Outline: [GET_ESERVICE_PROFILE_DATA] - Recupera i metadati anagrafici di un e-service tramite il suo eserviceRecordId
+  Scenario Outline: [GET_ESERVICE_MAIN_DATA] - Recupera i metadati anagrafici di un e-service tramite il suo eserviceRecordId
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
     And si ottiene status code 200

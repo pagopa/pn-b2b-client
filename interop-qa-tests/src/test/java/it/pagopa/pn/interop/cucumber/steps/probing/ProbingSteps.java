@@ -257,13 +257,11 @@ public class ProbingSteps {
     }
 
     @When("vengono recuperati i metadati anagrafici dell'e-service con eserviceRecordId {string}")
-    public void getEserviceProfileData(String eserviceRecordId) {
+    public void getEserviceMainData(String eserviceRecordId) {
         Long recordId = resolver.resolveEserviceRecordId(eserviceRecordId);
 
         MainDataEserviceResponse response = probingClient.getEserviceMainData(recordId);
-
         Assertions.assertThat(response).as("La response contenente i metadati anagrafici dell'e-service non deve essere null").isNotNull();
-
     }
 
     @When("vengono recuperati i dati di probing dell'e-service con eserviceRecordId {string}")
