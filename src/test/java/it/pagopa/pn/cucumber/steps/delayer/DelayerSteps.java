@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -77,7 +78,17 @@ public class DelayerSteps {
                 "src", "test", "resources", "it",
                 "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
                 "delayer", "csv");
-        delayerCsvUtils.replaceCsvContent(basePath.resolve(csvName), sharedSteps.getNotificationIun());
+        delayerCsvUtils.replaceCsvContent(basePath.resolve(csvName), "{placeholder}", sharedSteps.getNotificationIun());
+    }
+
+    @After("@restoreCsv")
+    public void restoreCsv() {
+        Path basePath = Paths.get(
+                "src", "test", "resources", "it",
+                "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
+                "delayer", "csv");
+        delayerCsvUtils.replaceCsvContent(basePath.resolve("notificationCancelled.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
+        delayerCsvUtils.replaceCsvContent(basePath.resolve("tcCancelNotifcationFrozen.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")

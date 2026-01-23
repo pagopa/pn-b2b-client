@@ -16,10 +16,10 @@ import java.nio.file.StandardOpenOption;
 
 public class DelayerCsvUtils {
 
-    public void replaceCsvContent(Path path, String iun) {
+    public void replaceCsvContent(Path path, String placeholder, String replaceWith) {
         try {
             String content = Files.readString(path, StandardCharsets.UTF_8);
-            content = content.replace("{placeholder}", iun);
+            content = content.replace(placeholder, replaceWith);
             Files.writeString(path, content, StandardCharsets.UTF_8);
             uploadCsvToS3(content, "", "");
         } catch (IOException e) {

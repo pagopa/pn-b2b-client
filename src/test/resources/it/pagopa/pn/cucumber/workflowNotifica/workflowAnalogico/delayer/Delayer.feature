@@ -143,7 +143,6 @@
         | "tcZeroDriver.csv" | 15  |
 
 
-
     @delayer6
       #Lo scenario testa il corretto funzionamento della prima parte della lambda, pertanto si utilizzano mittenti non censiti e, non conoscendo a priori il driver,
       #il confronto tra actual ed expected per lo stato EVALUATE_RESIDUAL_CAPACITY non considererà il campo unifiedDriverDelivery
@@ -397,12 +396,12 @@
         | unknow~890~P8 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | esattamente | 35000     |
-        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+        | infinityDriverP8~P8      | esattamente | 35000 |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | esattamente | 35000     |
-        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+        | infinityDriverP8~P8      | esattamente | 35000 |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And viene impostato il limite massimo di 0 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
@@ -438,15 +437,15 @@
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                       | TOT   |
-        | "tcSenderUnknow.csv"      | 15    |
+        | csv                  | TOT |
+        | "tcSenderUnknow.csv" | 15  |
 
     @delayer9
     Scenario Outline: [DELAYER-TC9] Verifica che la StepFunction sia in grado di gestire correttamente più di 5000 spedizioni.
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
-        | tcSenderUnknow_ | 5010       |
+        | tcSenderUnknow_ | 5010     |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId      | comparative | limit |
         | unknow~RS~P8  | esattamente | 0     |
@@ -454,12 +453,12 @@
         | unknow~890~P8 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | esattamente | 35000     |
-        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+        | infinityDriverP8~P8      | esattamente | 35000 |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | esattamente | 35000     |
-        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+        | infinityDriverP8~P8      | esattamente | 35000 |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And viene impostato il limite massimo di 10588 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
@@ -495,8 +494,8 @@
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
-        | csv                       | TOT   |
-        | "tcSenderUnknow_5010.csv" | 5010  |
+        | csv                       | TOT  |
+        | "tcSenderUnknow_5010.csv" | 5010 |
 
     @delayer3
     #La capacità di recapito viene suddivisa prendendo la capacità di recapito della provincia e suddividendola per i CAP. La suddivisone non è paritaria ma dipende
@@ -679,7 +678,7 @@
         | csv                       | TOT |
         | "tcProvCapNonCensite.csv" | 15  |
 
-      @delayer7
+    @delayer7
     Scenario Outline: [DELAYER-TC7] Verifica che la seconda step function, una volta raggiunta la capacità di stampa settimanale, non processi ulteriori spedizioni
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
@@ -741,7 +740,7 @@
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
-        | tcSenderUnknow_ | 5010       |
+        | tcSenderUnknow_ | 5010     |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId      | comparative | limit |
         | unknow~RS~P8  | esattamente | 0     |
@@ -749,12 +748,12 @@
         | unknow~890~P8 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | esattamente | 35000     |
-        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+        | infinityDriverP8~P8      | esattamente | 35000 |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId  | comparative | limit |
-        | infinityDriverP8~P8      | esattamente | 35000     |
-        | infinityDriverP8~CAP1_P8 | esattamente | 35000     |
+        | infinityDriverP8~P8      | esattamente | 35000 |
+        | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And viene impostato il limite massimo di 10588 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
@@ -789,8 +788,8 @@
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
       Examples:
-        | csv                       | TOT   |
-        | "tcSenderUnknow_5010.csv" | 5010  |
+        | csv                       | TOT  |
+        | "tcSenderUnknow_5010.csv" | 5010 |
 
 
     # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
@@ -808,12 +807,12 @@
         | unknow~890~P10 | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 10     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 10     |
+        | zeroDriverP10~P10       | esattamente | 10    |
+        | zeroDriverP10~CAP1_P10  | esattamente | 10    |
       And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 10     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 10     |
+        | zeroDriverP10~P10       | esattamente | 10    |
+        | zeroDriverP10~CAP1_P10  | esattamente | 10    |
       Examples:
         | csv                | TOT |
         | "tcZeroDriver.csv" | 15  |
@@ -843,7 +842,7 @@
         | csv                | TOT |
         | "tcZeroDriver.csv" | 15  |
 
-    @delayer12
+    @delayer12 @restoreCsv
     #La capacità di recapito di un driver non cambia se la spedizione viene annullata prima che essa venga pianificata
     #Esempio:
     #- martedì 2 dicembre viene inviata al delayer la spedizione (la PREPARE)
@@ -856,12 +855,12 @@
         | subject            | invio notifica con cucumber |
         | senderDenomination | Comune di milano            |
       And destinatario
-        | denomination    | Test digitale ok |
-        | taxId           | JHKRFU96H15F068N |
-        | digitalDomicile | NULL             |
-        | physicalAddress_municipality | Napoli |
-        | physicalAddress_province     | NA     |
-        | physicalAddress_zip          | 80124          |
+        | denomination                 | Test digitale ok |
+        | taxId                        | JHKRFU96H15F068N |
+        | digitalDomicile              | NULL             |
+        | physicalAddress_municipality | Napoli           |
+        | physicalAddress_province     | NA               |
+        | physicalAddress_zip          | 80124            |
       When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
       And la notifica appena creata viene inserita nel csv: notificationCancelled.csv e caricato su S3
       Given il CSV "notificationCancelled.csv" contiene 1 notifiche distribuite tra i seguenti test case:
@@ -871,27 +870,27 @@
       And la notifica può essere annullata dal sistema tramite codice IUN
       And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | Fulmine~NA                  | almeno      | 1     |
-        | Fulmine~80124               | almeno      | 1     |
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Fulmine~NA              | almeno      | 1     |
+        | Fulmine~80124           | almeno      | 1     |
       And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | Fulmine~NA                  | almeno      | 1     |
-        | Fulmine~80124               | almeno      | 1     |
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Fulmine~NA              | almeno      | 1     |
+        | Fulmine~80124           | almeno      | 1     |
       And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
       And viene verificata che la capacità disponibile per i seguenti driver sia decrementata di: 0
-        | unifiedDeliveryDriverId       |
-        | Fulmine~NA                    |
-        | Fulmine~80124                 |
+        | unifiedDeliveryDriverId |
+        | Fulmine~NA              |
+        | Fulmine~80124           |
       Examples:
         | csv                         |
         | "notificationCancelled.csv" |
 
 
-    @delayer13
+    @delayer13 @restoreCsv
     #La capacità di recapito di un driver non cambia se la spedizione viene congelata e poi successivamente annullata ma comunque prima che essa venga pianificata
     #Esempio:
     #- martedì 2 dicembre viene inviata al delayer la spedizione (la PREPARE)
@@ -905,12 +904,12 @@
         | subject            | invio notifica con cucumber |
         | senderDenomination | Comune di milano            |
       And destinatario
-        | denomination    | Test digitale ok |
-        | taxId           | JHKRFU96H15F068N |
-        | digitalDomicile | NULL             |
-        | physicalAddress_municipality | Napoli |
-        | physicalAddress_province     | NA     |
-        | physicalAddress_zip          | 80124          |
+        | denomination                 | Test digitale ok |
+        | taxId                        | JHKRFU96H15F068N |
+        | digitalDomicile              | NULL             |
+        | physicalAddress_municipality | Napoli           |
+        | physicalAddress_province     | NA               |
+        | physicalAddress_zip          | 80124            |
       When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
       And la notifica appena creata viene inserita nel csv: tcCancelNotifcationFrozen.csv e caricato su S3
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
@@ -944,9 +943,9 @@
       When viene avviata la step function BatchWorkflowStateMachine con deliveryDate futura
       And imposto la deliveryWeek alla data in cui sono pianificate le spedizioni congelate
       And viene verificata che la capacità usata per i seguenti driver sia uguale al numero di spedizioni congelate meno quella annullata
-        | unifiedDeliveryDriverId                |
-        | splitDriver1CAP1_P9~P9                 |
-        | splitDriver1CAP1_P9~CAP1_P9            |
+        | unifiedDeliveryDriverId     |
+        | splitDriver1CAP1_P9~P9      |
+        | splitDriver1CAP1_P9~CAP1_P9 |
 
       Examples:
         | csv                 | TOT |
