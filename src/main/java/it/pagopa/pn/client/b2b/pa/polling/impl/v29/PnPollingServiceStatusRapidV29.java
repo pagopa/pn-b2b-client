@@ -103,7 +103,7 @@ public class PnPollingServiceStatusRapidV29 extends PnPollingTemplate<PnPollingR
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null ?
                         statusHistory -> statusHistory.getStatus().getValue().equals(pnPollingParameter.getValue())
-                        : pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV28())
+                        : pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV26())
                 .findAny()
                 .orElse(null);
         if (notificationStatusHistoryElement != null) {

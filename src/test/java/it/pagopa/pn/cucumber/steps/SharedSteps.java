@@ -518,6 +518,12 @@ public class SharedSteps {
             }
         }
     }
+    @Then("fullsentnotification")
+    public void getElementsDetailsFromFullSentNotification() {
+
+        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+    }
 
     @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
     public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
@@ -552,53 +558,6 @@ public class SharedSteps {
                             "' ma ne sono stati trovati: " + matchingElements.size()
             );
         }
-    }
-
-
-    @Then("vengono effettuati i controlli sugli elementi invalidati")
-    public void verifyInvalidatedTimelineElementsFailFast(List<String> elementsToCheck) {
-        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-
-        TimelineElementV28 reworkedElement = timeline.stream()
-                .filter(e -> e.getCategory() != null)
-                .filter(e -> "NOTIFICATION_TIMELINE_REWORKED"
-                        .equals(e.getCategory().getValue()))
-                .findFirst()
-                .orElseThrow(() ->
-                        new AssertionError("Elemento NOTIFICATION_TIMELINE_REWORKED non trovato"));
-
-        List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory =
-                reworkedElement.getDetails().getInvalidatedTimelineAndStatusHistory();
-
-        if (invalidatedHistory == null || invalidatedHistory.isEmpty()) {
-            throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
-        }
-
-        // Stream flat + raccolta elementId NON validi
-        List<String> invalidElementIds = invalidatedHistory.stream()
-                .flatMap(h -> h.getRelatedTimelineElements().stream())
-                .map(TimelineElementV28::getElementId)
-                .filter(Objects::nonNull)
-                .filter(elementId ->
-                        elementsToCheck.stream()
-                                .noneMatch(elementId::contains)
-                )
-                .toList();
-
-        // Log di TUTTI i non validi
-        if (!invalidElementIds.isEmpty()) {
-            log.error("Trovati elementId non validi in relatedTimelineElements:");
-            invalidElementIds.forEach(id ->
-                    log.error(" - {}", id)
-            );
-        }
-
-        // Fail-fast finale
-        Assertions.assertTrue(
-                invalidElementIds.isEmpty(),
-                "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
-        );
     }
 
 
@@ -884,6 +843,7 @@ public class SharedSteps {
         };
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
+
 
     /* Sono stati unificati 8 vecchi metodi in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
       È stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione

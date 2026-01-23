@@ -115,8 +115,8 @@ public class B2bStepsV25 implements B2bStepsInterface {
                 .anyMatch(element -> element.contains(relatedTimelineElement));
 
         assertThat(found)
-                    .as("Il controllo sulla fullSentNotification V28 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement +", IUN: "+sharedSteps.getNotificationIun())
-                    .isFalse();
+                .as("Il controllo sulla fullSentNotification V28 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement + ", IUN: " + sharedSteps.getNotificationIun())
+                .isFalse();
 
     }
 
@@ -1125,6 +1125,15 @@ public class B2bStepsV25 implements B2bStepsInterface {
                         .isBefore(expectedDate);
             }
         }
+    }
+
+    @Override
+    public void checkReworkTimelineWithVersion() {
+        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+
+        TimelineElementV28 reworkedElement = timeline.stream().filter(te -> te.getElementId().contains("REWORK_")).findFirst().orElse(null);
+        assertThat(reworkedElement).as("La timeline dovrebbe contenere almeno un elemento con Rework nel timelineElementId").isNotNull();
     }
 
     private String getProperty(String fieldPath, TimelineElementV28 lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

@@ -7,6 +7,7 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 
 import java.time.Duration;
+import java.util.List;
 
 @Getter
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -240,6 +241,37 @@ public class Costanti {
     public static final String DEFAULT_DIGITAL_ADDRESS = "testpagopa3@pec.pagopa.it";
     // Versioni
     public static final String MOST_RECENT = "più recente";
+
+    public static final List<String> REWORK_ELEMENTS_BASE_LIST =
+            List.of(
+                    "SEND_ANALOG_PROGRESS",
+                    "SEND_ANALOG_FEEDBACK",
+                    "ANALOG_SUCCESS_WORKFLOW",
+                    "ANALOG_FAILURE_WORKFLOW",
+                    "SCHEDULE_REFINEMENT",
+                    "REFINEMENT",
+                    "COMPLETELY_UNREACHABLE_CREATION_REQUEST",
+                    "COMPLETELY_UNREACHABLE",
+                    "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+            );
+
+    public static final List<String> REWORK_ELEMENTS_EXTENDED_LIST =
+            List.of(
+                    "PREPARE_ANALOG_DOMICILE",
+                    "PREPARE_ANALOG_DOMICILE_FAILURE",
+                    "SEND_ANALOG_DOMICILE",
+                    "SEND_ANALOG_PROGRESS",
+                    "SEND_ANALOG_FEEDBACK",
+                    "ANALOG_SUCCESS_WORKFLOW",
+                    "ANALOG_FAILURE_WORKFLOW",
+                    "SCHEDULE_REFINEMENT",
+                    "REFINEMENT",
+                    "COMPLETELY_UNREACHABLE_CREATION_REQUEST",
+                    "COMPLETELY_UNREACHABLE",
+                    "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+            );
+
+
 
     public static String getDigitalAddressValue() {
         if (DIGITAL_ADDRESS == null || DIGITAL_ADDRESS.equalsIgnoreCase("${pn.external.digitalDomicile.address}"))

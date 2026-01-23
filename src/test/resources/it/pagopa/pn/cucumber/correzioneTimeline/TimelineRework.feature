@@ -1,5 +1,281 @@
 Feature: Test relativi al SRS di correzione timeline
 
+
+  @timelineReworkF2
+  Scenario: [TIMELINE_REWORK_1_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
+    Given imposto lo iun di SharedSteps a "***" e la pa a "Comune_Multi"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON111 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2
+  Scenario: [TIMELINE_REWORK_2_1] Verificare che, per una notifica mono destinatario con ATTEMPT_0 in OK, la richiesta di rework vada in ERROR se viene passato un pcRetry = PCRETRY_1
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_1 | RECINDEX_0> | RECRN002F          | M01                          | REASON221 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2 #TODO
+  Scenario: [TIMELINE_REWORK_3_1] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_1 da OK in KO, mentre la seconda richiesta di rework modifichi l’ATTEMPT_1 in KO con diversa motivazione, senza che parta un ulteriore tentativo di invio
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON331 |
+
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2 #TODO
+  Scenario: [TIMELINE_REWORK_3_2] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_0 da KO in OK, mentre la seconda richiesta di rework modifichi l’ATTEMPT_0 in KO
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON332 |
+
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2 #TODO
+  Scenario: [TIMELINE_REWORK_3_3] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_1 da OK in KO, mentre la seconda richiesta di rework modifichi l’ATTEMPT_1 in KO con diversa motivazione, senza che parta un ulteriore tentativo di invio
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN002F          |                              | REASON333 |
+
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2 #TODO
+  Scenario: [TIMELINE_REWORK_3_4] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_0 da KO in OK e la seconda richiesta di rework modifichi l’ATTEMPT_0 in OK con destinatario deceduto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON334 |
+#consolidatore
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2 #TODO solo Manuale
+  Scenario: [TIMELINE_REWORK_4_1] in caso di invalidazione della timeline su notifica multi destinatario, il reworkId sia valorizzato correttamente
+
+  @timelineReworkF2 #TODO solo Manuale
+  Scenario: [TIMELINE_REWORK_4_2] in caso di invalidazione della timeline su notifica multi destinatario, per ogni RECINDEX, il valore TRY e REWORK siano correttamente incrementati
+
+
+  @timelineReworkF2
+  Scenario: [TIMELINE_REWORK_5_1] verificare che non sia possibile effettuare la correzione di una timeline su una notifica visualizzata dal destinatario, in cui è presente un ATTEMPT_1 in OK da invalidare completamente
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          |                              | REASON551 |
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2
+  Scenario: [TIMELINE_REWORK_5_2] verificare che non sia possibile effettuare la correzione di una timeline su una notifica visualizzata dal destinatario, in cui è presente un ATTEMPT_1 in KO da invalidare completamente
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
+      | digitalDomicile         | NULL                              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON552 |
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 3 secondi controllando ogni 5 secondi
+
+
+  @timelineReworkF2 #todo
+  Scenario: [TIMELINE_REWORK_5_3] verificare che non sia possibile effettuare la correzione di una timeline su una notifica visualizzata dal destinatario, in cui è presente un ATTEMPT_1 in KO da invalidare completamente
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON553 |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    #lista elementi invalidati
+  #consolidatore
+
+  @timelineReworkF2 #todo
+  Scenario: [TIMELINE_REWORK_5_4] ATTEMPT_1 in KO da invalidare completamente, nel caso in cui il destinatario non abbia ancora effettuato la visualizzazione
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
+      | digitalDomicile         | NULL                              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON554 |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    #lista elementi invalidati
+  #consolidatore
+
+  @timelineReworkF2 #todo
+  Scenario: [TIMELINE_REWORK_6_2] verificare che il nuovo elemento di timeline generato in seguito ad una richiesta di correzione (con suffisso _reworked) non sia visibile, per la lettura notifiche lato mittente, utilizzando una versione delle api precedente alla 2.8
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          |                              | REASON553 |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    #consolidatore
+    Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
+    Then recuperando la fullSentNotification con la versione b2b "V23" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
+    Then recuperando la fullSentNotification con la versione b2b "V2" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
+
+    Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V24"
+    Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V23"
+    Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V2"
+
+
+  @timelineReworkF2 #todo altre versioni
+  Scenario: [TIMELINE_REWORK_7_2] Lettura nuovo evento di timeline dallo stream
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And si crea il nuovo stream per il "Comune_2" con versione "V23" e filtro status "DEFAULT"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          |                              | REASON772 |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    #consolidatore
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
+    Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
+    #Then verifico la presenza di elementi di timeline con stringa "REWORK_"   ****versioni precedenti?
+
+
+  @timelineReworkF2 #todo
+  Scenario: [TIMELINE_REWORK_7_1] Lettura nuovo evento di timeline dallo stream
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          |                              | REASON771 |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    #consolidatore
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED" con la versione "più recente"
+
+  @timelineReworkF2 #todo solo manuali?
+  Scenario: [TIMELINE_REWORK_8_x] Costi
+
+
   @timelineRework
   Scenario: [TIMELINE_REWORK_1] Viene creata correttamente una richiesta di rework.
     Given viene generata una nuova notifica
@@ -166,7 +442,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "UNREACHABLE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON13 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
 
@@ -184,7 +460,7 @@ Feature: Test relativi al SRS di correzione timeline
     #When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON14 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
 
@@ -201,7 +477,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRI002           | M01                          | REASON15 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -221,7 +497,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | ***                | M01                          | REASON16 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -231,7 +507,7 @@ Feature: Test relativi al SRS di correzione timeline
   Scenario: [TIMELINE_REWORK_16b] Rework multidestinatario passi allo stato ERROR qualora, giunta allo stato CREATED, la verifica asincrona rilevi uno IUN con allegati non disponibili***
     Given imposto lo iun di SharedSteps a "VPLQ-VYRG-XDWM-202503-X-1" e la pa a "Comune_Multi"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003A          |                              | REASON46b |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -241,7 +517,7 @@ Feature: Test relativi al SRS di correzione timeline
   Scenario: [TIMELINE_REWORK_17] Rework notifica multidestinatario passi allo stato ERROR qualora, giunta allo stato CREATED, la verifica asincrona rilevi uno IUN con paperAddress non disponibile.***paepraddress non dispo?
     Given imposto lo iun di SharedSteps a "VPLQ-VYRG-XDWM-202503-X-1" e la pa a "Comune_Multi"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003A          |                              | REASON17 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -262,7 +538,7 @@ Feature: Test relativi al SRS di correzione timeline
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" senza aspettare che diventi accepted
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003A          |                              | REASON18 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -283,7 +559,7 @@ Feature: Test relativi al SRS di correzione timeline
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON19 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -309,7 +585,7 @@ Feature: Test relativi al SRS di correzione timeline
       #When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON21 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -331,7 +607,7 @@ Feature: Test relativi al SRS di correzione timeline
       #When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON22 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -352,7 +628,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECAG001B          |                              | REASON23 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -375,7 +651,7 @@ Feature: Test relativi al SRS di correzione timeline
     #When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON24 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
 
@@ -395,7 +671,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #***attendere l'attempt_0?
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRI003A          |                              | REASON25 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -416,7 +692,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "EFFETIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | ***                | M03                          | REASON26 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
@@ -438,7 +714,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "EFFETIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003A          |                              | REASON27 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And si verifica che la richiesta di rework effettuata sia in stato "READY"
@@ -462,7 +738,7 @@ Feature: Test relativi al SRS di correzione timeline
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI002           |                              | REASON28 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And si verifica che la richiesta di rework effettuata sia in stato "READY"
@@ -486,8 +762,8 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003A      |                              | REASON29 |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003A          |                              | REASON29 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And si verifica che la richiesta di rework effettuata sia in stato "READY"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -508,7 +784,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRI003C          |                              | REASON30 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -528,7 +804,7 @@ Feature: Test relativi al SRS di correzione timeline
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON31 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And si verifica che la richiesta di rework effettuata sia in stato "READY"
@@ -547,8 +823,8 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> |         RECRN001C           |                              | REASON32 |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON32 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     #And si verifica che la richiesta di rework effettuata sia in stato "READY"
@@ -566,10 +842,10 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON33 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-        And si verifica che la richiesta di rework effettuata sia in stato "READY"
+    And si verifica che la richiesta di rework effettuata sia in stato "READY"
     #*** wait for?
     And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -588,10 +864,10 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON34 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-       And si verifica che la richiesta di rework effettuata sia in stato "READY"
+    And si verifica che la richiesta di rework effettuata sia in stato "READY"
         #*** wait for?
     And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -610,7 +886,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON35 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -633,7 +909,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON36 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -666,21 +942,19 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON38 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
+            #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
 
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
 
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
 
@@ -703,7 +977,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M03                          | REASON39 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -723,7 +997,7 @@ Feature: Test relativi al SRS di correzione timeline
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON40 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -742,27 +1016,23 @@ Feature: Test relativi al SRS di correzione timeline
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON41 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
+            #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
 
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-    #And assenza elementi attemp_1
+    Then verifico la non presenza di elementi di timeline con stringa "ATTEMPT_1"
 
 
 
@@ -779,21 +1049,16 @@ Feature: Test relativi al SRS di correzione timeline
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON42 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
+        #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
 
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
 
@@ -813,7 +1078,7 @@ Feature: Test relativi al SRS di correzione timeline
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M03                          | REASON43 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -832,25 +1097,21 @@ Feature: Test relativi al SRS di correzione timeline
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON44 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
-
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
+        #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
     #Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1" negativo
 
@@ -868,7 +1129,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M03                          | REASON45 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -889,7 +1150,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON46 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -913,29 +1174,27 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M03                          | REASON47 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
+        #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
+        #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
 
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
-
-    #In timeline è presente l’elemento SEND_ANALOG_FEEDBACK con deliveryFailureCause: M01 relativo all’ATTEMPT_1
+        #In timeline è presente l’elemento SEND_ANALOG_FEEDBACK con deliveryFailureCause: M01 relativo all’ATTEMPT_1
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_0"
 
     #stato unreachable
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
 
   @timelineRework
@@ -951,25 +1210,21 @@ Feature: Test relativi al SRS di correzione timeline
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_0"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON48 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
-
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
+      #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
     #Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_1" negativo
 
@@ -988,7 +1243,7 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN001C          | M01                          | REASON49 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
@@ -1003,31 +1258,26 @@ Feature: Test relativi al SRS di correzione timeline
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@Via@OK_AR |
-      | digitalDomicile         | NULL          |
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M04                          | REASON50 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
-
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
-
-    #In timeline è presente l’elemento SEND_ANALOG_FEEDBACK con deliveryFailureCause: M01 relativo all’ATTEMPT_1
+        #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
 
   @timelineRework
@@ -1037,8 +1287,8 @@ Feature: Test relativi al SRS di correzione timeline
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@Via@OK_AR |
-      | digitalDomicile         | NULL          |
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
@@ -1046,26 +1296,20 @@ Feature: Test relativi al SRS di correzione timeline
     #Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
     And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M04                          | REASON51 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
-
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
-
-    #In timeline è presente l’elemento SEND_ANALOG_FEEDBACK con deliveryFailureCause: M01 relativo all’ATTEMPT_1
+        #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
 
   @timelineRework
@@ -1075,34 +1319,27 @@ Feature: Test relativi al SRS di correzione timeline
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@Via@OK_AR |
-      | digitalDomicile         | NULL          |
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_0"
     And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M03                          | REASON52 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
-    #***Then vengono effettuati i controlli sugli elementi invalidati
-
-    #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
-      # e che non siano invalidati eventuali eventi di timeline scaturiti da un’azione esplicita dell’utente, ovvero quelli dovuti a visualizzazioni o pagamenti
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "READY"
-
-    #Then vengono effettuati i controlli sugli eventi scritti con suffisso "_REWORK_{n}" //positivo
-
-    #And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS"
-
-    #In timeline è presente l’elemento SEND_ANALOG_FEEDBACK con deliveryFailureCause: M01 relativo all’ATTEMPT_1
-
+        #Sono invalidati tutti gli eventi finali e tutti gli eventi relativi all’ATTEMPT_1
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
 
   @timelineRework
@@ -1117,8 +1354,8 @@ Feature: Test relativi al SRS di correzione timeline
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" al tentativo "ATTEMPT_1"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                           | REASON53 |
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason   |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN001C          |                              | REASON53 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR"
     #nessuna altro elemento creato a fronte del refinement
 
@@ -1134,8 +1371,8 @@ Feature: Test relativi al SRS di correzione timeline
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@Via@OK_AR |
-      | digitalDomicile         | NULL          |
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
@@ -1171,6 +1408,82 @@ Feature: Test relativi al SRS di correzione timeline
 
 
   #------------
+  Scenario Outline: [TIMELINE_REWORK_x0] Rework notifica monodestinatario.
+    Given viene generata una nuova notifica
+      | subject               | <SUBJECT>            |
+      | senderDenomination    | Comune di Palermo    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Examples: | SUBJECT                     |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+
+  Scenario Outline: [TIMELINE_REWORK_x1] Rework notifica monodestinatario.
+    Given viene generata una nuova notifica
+      | subject               | <SUBJECT>            |
+      | senderDenomination    | Comune di Palermo    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Examples: | SUBJECT                     |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+
+  Scenario Outline: [TIMELINE_REWORK_x2] Rework notifica monodestinatario.
+    Given viene generata una nuova notifica
+      | subject               | <SUBJECT>            |
+      | senderDenomination    | Comune di Palermo    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Examples: | SUBJECT                     |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+    | invio notifica con cucumber |
+
+
+  Scenario: [TIMELINE_REWORK_x0] Rework notifica monodestinatario deceduto.
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex    | expectedStatusCode | expectedDeliveryFailureCause | reason |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
+    #Then recuperando la fullSentNotification con la versione b2b {string} {is} presente l'elemento di timeline {string}
+
+    #Then fullsentnotification
+
+
+
+
+
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+
 
   @timelineRework
   Scenario: [TIMELINE_REWORK_x] Rework notifica monodestinatario deceduto.
@@ -1199,11 +1512,18 @@ Feature: Test relativi al SRS di correzione timeline
     Then verifico la presenza di elementi di timeline con stringa "REWORK_"
     Then verifico la non presenza di elementi di timeline con stringa "REWORK_"
 
+    Then verifico la presenza di elementi di timeline con stringa "ATTEMPT_1"
+    Then verifico la non presenza di elementi di timeline con stringa "ATTEMPT_1"
 
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
-
-
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 3 secondi controllando ogni 5 secondi
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     #And si verifica che la richiesta di rework effettuata sia in stato "READY"
     #**Then vengono effettuati i controlli sugli elementi invalidati
+
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex    | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
+      | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0> | RECRN002F  | M01                  | plico        | indagine     |
