@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.probing.model.*;
+import it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
@@ -271,5 +272,14 @@ public class ProbingSteps {
 
         ProbingDataEserviceResponse response = probingClient.getEserviceProbingData(recordId);
         Assertions.assertThat(response).as("La response contenente i dati di probing dell'e-service non deve essere null").isNotNull();
+    }
+
+    @When("viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId {string} e pollingFrequency {string}")
+    public void getEservicePublicTelemetry(String eserviceRecordId, String pollingFrequency) {
+        Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
+        Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
+        
+        TelemetryDataEserviceResponse response = probingClient.statisticsEservices(recordIdValue, poolingFrequencyValue);
+        Assertions.assertThat(response).as("La response contenente la telemetria pubblica dell'e-service non deve essere null").isNotNull();
     }
 }

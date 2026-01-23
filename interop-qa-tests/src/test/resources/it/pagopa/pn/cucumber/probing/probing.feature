@@ -162,10 +162,10 @@ Feature: Probing
 
     Examples:
       | eserviceRecordId | statusCode |
-      | %actual          |        200 |
-      | %null            |        400 |
-      |               -1 |        400 |
-      | %random          |        404 |
+      | %actual          | 200        |
+      | %null            | 400        |
+      | -1               | 400        |
+      | %random          | 404        |
 
 
   Scenario Outline: [GET_ESERVICE_PROBING_DATA] - Recupera i dati di probing di un e-service tramite il suo eserviceRecordId
@@ -177,7 +177,28 @@ Feature: Probing
 
     Examples:
       | eserviceRecordId | statusCode |
-      | %actual          |        200 |
-      | %null            |        400 |
-      |               -1 |        400 |
-      | %random          |        404 |
+      | %actual          | 200        |
+      | %null            | 400        |
+      | -1               | 400        |
+      | %random          | 404        |
+
+  Scenario Outline: [GET_ESERVICE_PUBLIC_TELEMETRY] - Recupera la telemetria pubblica di un e-service tramite il suo eserviceRecordId
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And si ottiene status code 200
+    And vengono settati i parametri di probing di default per l'e-service
+    When viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "<eserviceRecordId>" e pollingFrequency "<frequency>"
+    Then la response riporta lo status code <statusCode>
+
+    Examples:
+    # Happy paths
+      | eserviceRecordId | frequency | statusCode |
+      | %actual          | %actual   | 200        |
+
+    # Frequency invalid values
+      | %actual          | %null     | 400        |
+      | %actual          | -1        | 400        |
+
+    # eserviceRecordId invalid values
+      | %null            | %actual   | 400        |
+      | %random          | %actual   | 400        |
