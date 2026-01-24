@@ -14,6 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
@@ -24,6 +25,7 @@ import java.util.UUID;
 import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.*;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
+@Slf4j
 public class ProbingSteps {
     private final IHttpExecutor httpCallExecutor;
     private final ProbingClient probingClient;
@@ -127,7 +129,8 @@ public class ProbingSteps {
     }
 
     @When("viene modificato lo stato di probing dell'e-service con id {string} e id versione {string} in {string}")
-    public void updateProbingState(String eserviceId, String versionId, String probingEnabled) {
+    @When("viene modificato lo stato di probing dell'e-service con id {string} e id versione {string} in {string} e si verifica che coincida con quanto atteso")
+    public void setProbingState(String eserviceId, String versionId, String probingEnabled) {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
         Long eserviceRecordId = resolver.getEserviceRecordId();
@@ -149,7 +152,8 @@ public class ProbingSteps {
     }
 
     @When("viene modificato lo stato operativo dell'e-service con id {string} e id versione {string} in {string}")
-    public void updateOperationalState(String eserviceId, String versionId, String eserviceState) {
+    @When("viene modificato lo stato operativo dell'e-service con id {string} e id versione {string} in {string} e si verifica che coincida con quanto atteso")
+    public void setOperationalState(String eserviceId, String versionId, String eserviceState) {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
         Long eserviceRecordId = resolver.getEserviceRecordId();
@@ -172,7 +176,8 @@ public class ProbingSteps {
     }
 
     @When("aggiorno i parametri di probing dell'e-service con eserviceId {string} e versionId {string} impostando frequency {string}, startDate {string}, endDate {string}")
-    public void updateEserviceFrequency(String eserviceId, String versionId, String frequency, String startDate, String endDate) {
+    @When("aggiorno i parametri di probing dell'e-service con eserviceId {string} e versionId {string} impostando frequency {string}, startDate {string}, endDate {string} e si verifica che coincidano con quanto atteso")
+    public void setEserviceFrequency(String eserviceId, String versionId, String frequency, String startDate, String endDate) {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
         Integer frequencyValue = resolver.resolveFrequency(frequency);
@@ -180,23 +185,58 @@ public class ProbingSteps {
         OffsetDateTime endValue = resolver.resolveDateToken(endDate);
 
         probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue.toLocalTime(), endValue.toLocalTime());
-        assertProbingParams(204);
+
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            Long eserviceRecordId = resolver.getEserviceRecordId();
+            EserviceRow expected = probingContext.getExpectedEserviceRow();
+            EserviceRow actual = probingContext.getActualEserviceRow();
+
+            expected.setPollingFrequency(frequencyValue);
+
+            PollingService.makePolling(
+                    () -> probingClient.getEserviceMainData(eserviceRecordId),
+                    resp -> {
+                        actual.setPollingFrequency(resp.getPollingFrequency());
+                        return actual.getPollingFrequency() == expected.getPollingFrequency();
+                    },
+                    "Errore durante il setting di probingEnabled per l'eservice con eserviceRecordId '" + eserviceRecordId + "'",
+                    30,
+                    1_000L
+            );
+        }
     }
 
-    @When("vengono recuperati i metadati anagrafici dell'e-service con eserviceRecordId {string}")
+    @When("vengono recuperati i main data dell'e-service con eserviceRecordId {string}")
     public void getEserviceMainData(String eserviceRecordId) {
         Long recordId = resolver.resolveEserviceRecordId(eserviceRecordId);
 
-        MainDataEserviceResponse response = probingClient.getEserviceMainData(recordId);
-        Assertions.assertThat(response).as("La response contenente i metadati anagrafici dell'e-service non deve essere null").isNotNull();
+        try {
+            MainDataEserviceResponse response = probingClient.getEserviceMainData(recordId);
+            Assertions.assertThat(response).as("La response contenente i metadati anagrafici dell'e-service non deve essere null").isNotNull();
+
+            EserviceRow actual = probingContext.getActualEserviceRow();
+            actual.setPollingFrequency(response.getPollingFrequency());
+
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     @When("vengono recuperati i dati di probing dell'e-service con eserviceRecordId {string}")
     public void getEserviceProbingData(String eserviceRecordId) {
         Long recordId = resolver.resolveEserviceRecordId(eserviceRecordId);
 
-        ProbingDataEserviceResponse response = probingClient.getEserviceProbingData(recordId);
-        Assertions.assertThat(response).as("La response contenente i dati di probing dell'e-service non deve essere null").isNotNull();
+        try {
+            ProbingDataEserviceResponse response = probingClient.getEserviceProbingData(recordId);
+            Assertions.assertThat(response).as("La response contenente i dati di probing dell'e-service non deve essere null").isNotNull();
+
+            EserviceRow actual = probingContext.getActualEserviceRow();
+            actual.setProbingEnabled(response.getProbingEnabled());
+            actual.setState(response.getState().getValue());
+
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     @When("viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId {string} e pollingFrequency {string}")
@@ -226,7 +266,7 @@ public class ProbingSteps {
         probingContext.setExpectedEserviceRow(eserviceRow);
     }
 
-    private void assertProbingParams(int expectedStatusCode) {
+    private void assertFrequencyAndWindow(int expectedStatusCode) {
         int actualStatusCode = httpCallExecutor.getResponseStatus().value();
         if (actualStatusCode != expectedStatusCode) return;
 

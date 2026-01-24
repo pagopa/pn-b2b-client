@@ -150,7 +150,7 @@ Feature: Probing
 
   Scenario Outline: [GET_ESERVICE_MAIN_DATA] - Recupera i metadati anagrafici di un e-service tramite il suo eserviceRecordId
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    When vengono recuperati i metadati anagrafici dell'e-service con eserviceRecordId "<eserviceRecordId>"
+    When vengono recuperati i main data dell'e-service con eserviceRecordId "<eserviceRecordId>"
     Then la response riporta lo status code <statusCode>
 
     Examples:
@@ -217,3 +217,22 @@ Feature: Probing
       | %actual          | %actual   | now+1h    | %null   | 400        |
       | %actual          | %actual   | now+1h    | abc     | 400        |
       #ToDo Aggiunta Authentication Token
+
+  Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
+    Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
+    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
+    When aggiorno i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
+
+    Examples:
+    # Before window
+      | frequency | startDate | endDate |
+      | %actual-1 | %now-2h   | %now-1h |
+
+    # In window
+      | %actual   | %now      | %now+1h |
+
+    # After window
+      | %actual+1 | %now+2h   | %now+3h |
+
+    #ToDo Aggiunta Authentication Token
