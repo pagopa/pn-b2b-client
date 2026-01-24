@@ -141,6 +141,8 @@ public class ProbingSteps {
         probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            httpCallExecutor.snapshot();
+
             PollingService.makePolling(
                     () -> probingClient.getEserviceProbingData(eserviceRecordId),
                     resp -> resp.getProbingEnabled().equals(Boolean.valueOf(probingEnabled)),
@@ -148,6 +150,8 @@ public class ProbingSteps {
                     30,
                     1_000L
             );
+
+            httpCallExecutor.resetFormSnapshot();
         }
     }
 
@@ -165,6 +169,8 @@ public class ProbingSteps {
         probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            httpCallExecutor.snapshot();
+
             PollingService.makePolling(
                     () -> probingClient.getEserviceProbingData(eserviceRecordId),
                     resp -> resp.getEserviceActive().equals(stateBE.equals(EserviceStateBE.ACTIVE)),
@@ -172,6 +178,8 @@ public class ProbingSteps {
                     30,
                     1_000L
             );
+
+            httpCallExecutor.resetFormSnapshot();
         }
     }
 
@@ -192,6 +200,7 @@ public class ProbingSteps {
             EserviceRow actual = probingContext.getActualEserviceRow();
 
             expected.setPollingFrequency(frequencyValue);
+            httpCallExecutor.snapshot();
 
             PollingService.makePolling(
                     () -> probingClient.getEserviceMainData(eserviceRecordId),
@@ -203,6 +212,8 @@ public class ProbingSteps {
                     30,
                     1_000L
             );
+
+            httpCallExecutor.resetFormSnapshot();
         }
     }
 
