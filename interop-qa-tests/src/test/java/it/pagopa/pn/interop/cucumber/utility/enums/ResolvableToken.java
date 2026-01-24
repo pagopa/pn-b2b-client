@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.utility.enums;
 public enum ResolvableToken {
     ACTUAL("%actual"),
     NULL("%null"),
-    KEEP("%keep"),
+    EXPECTED("%expected"),
     RANDOM("%random"),
     BLANK("%blank");
 

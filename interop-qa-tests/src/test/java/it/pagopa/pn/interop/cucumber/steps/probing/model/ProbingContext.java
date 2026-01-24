@@ -4,15 +4,27 @@ import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceC
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
 public class ProbingContext{
+    static int ESERVICE_SIZE = 20;
+    final Integer threadNumber;
+    private static final AtomicInteger COUNTER = new AtomicInteger(0);
+
     private List<SearchEserviceContent> actualResults;
-    private Integer actualFrequency;
-    private Integer expectedFrequency;
-    private OffsetDateTime expectedStartDate;
-    private OffsetDateTime expectedEndDate;
+    private EserviceRow actualEserviceRow;
+    private EserviceRow expectedEserviceRow;
+
+    public ProbingContext() {
+        this.threadNumber = nextEserviceIndex();
+    }
+
+    private static int nextEserviceIndex() {
+        return COUNTER.updateAndGet(current ->
+                current >= ESERVICE_SIZE ? 1 : current + 1
+        );
+    }
 }

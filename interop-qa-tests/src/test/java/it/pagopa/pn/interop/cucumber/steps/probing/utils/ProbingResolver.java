@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +17,41 @@ import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 @RequiredArgsConstructor
 public class ProbingResolver {
 
-    private final SharedStepsContext sharedStepsContext;
     private final ProbingClient probingClient;
     private final ProbingContext probingContext;
 
-    public String getEserviceName() {
-        return sharedStepsContext.getEServicesCommonContext().getName();
+    public UUID resolveEserviceId(String raw) {
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return uuidOrRandomOrNull(raw);
+        return resolve(raw, "eserviceId", () -> probingContext.getActualEserviceRow().getEserviceId(), () -> uuidOrRandomOrNull(ResolvableToken.RANDOM.value()), null, () -> probingContext.getExpectedEserviceRow().getEserviceId());
     }
 
-    public UUID getEserviceId() {
-        return sharedStepsContext.getEServicesCommonContext().getEserviceId();
+    public UUID resolveVersionId(String raw) {
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return uuidOrRandomOrNull(raw);
+        return resolve(raw, "versionId", () -> probingContext.getActualEserviceRow().getVersionId(), () -> uuidOrRandomOrNull(ResolvableToken.RANDOM.value()), null, () -> probingContext.getExpectedEserviceRow().getVersionId());
     }
 
-    public UUID getDescriptorId() {
-        return sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+    public Long resolveEserviceRecordId(String raw) {
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return longOrRandomOrNull(raw);
+        return resolve(raw, "eserviceRecordId", this::getEserviceRecordId, () -> longOrRandomOrNull(ResolvableToken.RANDOM.value()), null, this::getEserviceRecordId);
+    }
+
+    public String resolveEserviceName(String raw) {
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return raw;
+        return resolve(raw, "eserviceName", () -> probingContext.getActualEserviceRow().getEserviceName(), null, () -> "", () -> probingContext.getExpectedEserviceRow().getEserviceName());
+    }
+
+    public String resolveProducer(String raw) {
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return raw;
+        return resolve(raw, "producer", () -> probingContext.getActualEserviceRow().getProducerName(), null, () -> "", () -> probingContext.getExpectedEserviceRow().getProducerName());
     }
 
     public Long getEserviceRecordId() {
-        String name = getEserviceName();
+        String name = probingContext.getActualEserviceRow().getEserviceName();
         List<SearchEserviceContent> results = probingClient.findEserviceByName(name);
 
         if (results.size() != 1) {
@@ -46,7 +62,44 @@ public class ProbingResolver {
         return results.get(0).getEserviceRecordId();
     }
 
-    private <T> T resolve(String raw, String fieldName, Supplier<T> actualSupplier, Supplier<T> randomSupplier, Supplier<T> blankSupplier, T currentValueForKeep) {
+    public Integer resolveFrequency(String raw) {
+        if (raw == null) return null;
+
+        // 1) calcola il delta (+N / -N)
+        int delta = resolveIntegerDelta(raw);
+
+        // 2) estrai la parte base (prima di + / -)
+        String basePart = raw;
+        int plusIdx = raw.indexOf('+');
+        int minusIdx = raw.indexOf('-', 1);
+        int opIdx = plusIdx >= 0 ? plusIdx : minusIdx;
+        if (opIdx >= 0) {
+            basePart = raw.substring(0, opIdx).trim();
+        }
+
+        // 3) risolvi il valore base (token o valore semplice)
+        ResolvableToken token = ResolvableToken.from(basePart);
+
+        Integer baseValue;
+        if (token == null) {
+            baseValue = intOrRandomOrNull(basePart);
+        } else {
+            baseValue = resolve(
+                    basePart,
+                    "frequency",
+                    () -> probingContext.getActualEserviceRow().getPollingFrequency(),
+                    ProbingResolver::randomPositiveInt,
+                    null,
+                    () -> probingContext.getExpectedEserviceRow().getPollingFrequency()
+            );
+        }
+
+        // 4) applica il delta
+        if (baseValue == null) return null;
+        return baseValue + delta;
+    }
+
+    private <T> T resolve(String raw, String fieldName, Supplier<T> actualSupplier, Supplier<T> randomSupplier, Supplier<T> blankSupplier, Supplier<T> expectedSupplier) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) {
             // non è un token -> lascia che lo interpretino i parser specifici (uuidOrRandomOrNull / intOrRandomOrNull / parse date ecc.)
@@ -57,47 +110,20 @@ public class ProbingResolver {
             case ACTUAL -> actualSupplier.get();
             case NULL -> null;
             case RANDOM -> randomSupplier.get();
-            case KEEP -> currentValueForKeep;
+            case EXPECTED -> expectedSupplier.get();
             case BLANK -> blankSupplier.get();
         };
-    }
-
-    public UUID resolveEserviceId(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return uuidOrRandomOrNull(raw);
-        return resolve(raw, "eserviceId", this::getEserviceId, () -> uuidOrRandomOrNull("RANDOM"), null, getEserviceId());
-    }
-
-    public UUID resolveVersionId(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return uuidOrRandomOrNull(raw);
-        return resolve(raw, "versionId", this::getDescriptorId, () -> uuidOrRandomOrNull("RANDOM"), null, getDescriptorId());
-    }
-
-    public Long resolveEserviceRecordId(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return longOrRandomOrNull(raw);
-        return resolve(raw, "eserviceRecordId", this::getEserviceRecordId, () -> longOrRandomOrNull("RANDOM"), null, getEserviceRecordId());
-    }
-
-    public Integer resolveFrequency(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return intOrRandomOrNull(raw);
-        return resolve(raw, "frequency", probingContext::getActualFrequency, ProbingResolver::randomPositiveInt, null, probingContext.getActualFrequency());
     }
 
     private static int randomPositiveInt() {
         return 1 + (int) (Math.random() * Integer.MAX_VALUE);
     }
 
-    public OffsetDateTime resolveDateToken(String raw, OffsetDateTime current) {
+    public OffsetDateTime resolveDateToken(String raw) {
         if (raw == null) return null;
 
         String token = raw.trim();
         String lower = token.toLowerCase();
-
-        if (lower.equals("keep")) return current;
-        if (lower.equals("null")) return null;
 
         OffsetDateTime now = OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         if (lower.equals("now")) return now;
@@ -114,8 +140,22 @@ public class ProbingResolver {
         return OffsetDateTime.parse(token);
     }
 
-    public String resolveDateTokenAsString(String raw, OffsetDateTime current) {
-        OffsetDateTime value = resolveDateToken(raw, current);
-        return value == null ? null : value.toString();
+    private Integer resolveIntegerDelta(String raw) {
+        if (raw == null) return 0;
+
+        String token = raw.trim();
+
+        int plusIdx = token.indexOf('+');
+        int minusIdx = token.indexOf('-', 1);
+
+        if (plusIdx > -1) {
+            return Integer.parseInt(token.substring(plusIdx + 1).trim());
+        }
+
+        if (minusIdx > -1) {
+            return -Integer.parseInt(token.substring(minusIdx + 1).trim());
+        }
+
+        return 0;
     }
 }

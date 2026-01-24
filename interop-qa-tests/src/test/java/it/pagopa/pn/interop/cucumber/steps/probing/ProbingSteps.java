@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.probing;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -8,16 +9,15 @@ import it.pagopa.interop.generated.openapi.clients.probing.model.*;
 import it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.probing.model.EserviceRow;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
-import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +35,7 @@ public class ProbingSteps {
         this.probingClient = probingClient;
         probingClient.setHttpCallExecutor(httpCallExecutor);
         this.probingContext = new ProbingContext();
-        this.resolver = new ProbingResolver(sharedStepsContext, probingClient, probingContext);
+        this.resolver = new ProbingResolver(probingClient, probingContext);
     }
 
     @And("il microservizio {string} risulta attivo")
@@ -104,8 +104,8 @@ public class ProbingSteps {
         Integer limitValue = nullableInteger(limit);
         Integer offsetValue = nullableInteger(offset);
 
-        String nameFilter = StepParser.nullOrValue(eserviceName);
-        String producerFilter = StepParser.nullOrValue(producerName);
+        String nameFilter = resolver.resolveEserviceName(eserviceName);
+        String producerFilter = resolver.resolveProducer(producerName);
         Integer versionFilter = StepParser.nullableInteger(versionNumber);
         List<EserviceStateFE> stateFilter = StepParser.singletonListNullable(StepParser.nullOrValue(state), EserviceStateFE::fromValue);
 
@@ -171,89 +171,16 @@ public class ProbingSteps {
         }
     }
 
-    @And("vengono settati i parametri di probing di default per l'e-service")
-    public void setDefaultProbingParamsForEservice() {
-        UUID eserviceUuid = resolver.resolveEserviceId(ResolvableToken.ACTUAL.value());
-        UUID versionUuid = resolver.resolveVersionId(ResolvableToken.ACTUAL.value());
-        OffsetDateTime now = OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-
-        // Valori di default riconoscibili per i test
-        Integer defaultFrequency = 1;
-        OffsetDateTime defaultStartDate = now.plusHours(1);
-        OffsetDateTime defaultEndDate = now.plusHours(2);
-
-        probingContext.setExpectedStartDate(defaultStartDate);
-        probingContext.setExpectedEndDate(defaultEndDate);
-        probingContext.setExpectedFrequency(defaultFrequency);
-
-        probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, defaultFrequency, defaultStartDate, defaultEndDate);
-        assertProbingParams(204);
-    }
-
     @When("aggiorno i parametri di probing dell'e-service con eserviceId {string} e versionId {string} impostando frequency {string}, startDate {string}, endDate {string}")
     public void updateEserviceFrequency(String eserviceId, String versionId, String frequency, String startDate, String endDate) {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
-
         Integer frequencyValue = resolver.resolveFrequency(frequency);
-        OffsetDateTime startValue = resolver.resolveDateToken(startDate, probingContext.getExpectedStartDate());
-        OffsetDateTime endValue = resolver.resolveDateToken(endDate, probingContext.getExpectedEndDate());
+        OffsetDateTime startValue = resolver.resolveDateToken(startDate);
+        OffsetDateTime endValue = resolver.resolveDateToken(endDate);
 
         probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue, endValue);
         assertProbingParams(204);
-    }
-
-    private void assertProbingParams(int expectedStatusCode) {
-        int actualStatusCode = httpCallExecutor.getResponseStatus().value();
-        if (actualStatusCode != expectedStatusCode) return;
-
-        Long eserviceRecordId = resolver.getEserviceRecordId();
-
-        // 1) se la finestra attesa parte nel futuro, aspetta fino allo start (con cap)
-        waitUntilExpectedWindowStarts(probingContext.getExpectedStartDate());
-
-        // 2) calcola policy di polling in base a finestra/frequenza
-        ProbingUtils.PollingPolicy policy = computePollingPolicy(
-                probingContext.getExpectedStartDate(),
-                probingContext.getExpectedEndDate(),
-                probingContext.getExpectedFrequency()
-        );
-
-        PollingService.makePolling(
-                () -> probingClient.getEserviceMainData(eserviceRecordId),
-                resp -> {
-                    if (!isProbingStateUpdated(resp)) return false;
-                    probingContext.setActualFrequency(resp.getPollingFrequency());
-                    return true;
-                },
-                "Errore durante il setting di parametri di probing l'e-service con eserviceRecordId '" + eserviceRecordId + "'",
-                policy.maxTry(),
-                policy.sleepMs()
-        );
-    }
-
-    private boolean isProbingStateUpdated(MainDataEserviceResponse resp) {
-        return resp != null
-                && resp.getPollingFrequency() != null
-                && isWithinExpectedWindow(OffsetDateTime.now(), probingContext.getExpectedStartDate(), probingContext.getExpectedEndDate())
-                && resp.getPollingFrequency().equals(probingContext.getExpectedFrequency());
-    }
-
-    private void assertResultsMatchFilters(SearchEserviceResponse response, ProbingUtils.EserviceFilters filters) {
-        List<SearchEserviceContent> items = response.getContent();
-        if (items == null || items.isEmpty()) return; // niente da validare
-
-        // Se tutti i filtri sono null, non serve validare
-        if (filters.eserviceName() == null && filters.producerName() == null
-                && filters.versionNumber() == null && filters.states() == null) {
-            return;
-        }
-
-        for (SearchEserviceContent item : items) {
-            Assertions.assertThat(matchesAllFilters(item, filters))
-                    .as("Risultato non coerente con filtri: item=%s, filters=%s", item, filters)
-                    .isTrue();
-        }
     }
 
     @When("vengono recuperati i metadati anagrafici dell'e-service con eserviceRecordId {string}")
@@ -285,10 +212,70 @@ public class ProbingSteps {
     public void getEserviceTelemetry(String eserviceRecordId, String pollingFrequency, String startDate, String endDate) {
         Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
         Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
-        String startDateValue = resolver.resolveDateTokenAsString(startDate, null);
-        String endDateValue = resolver.resolveDateTokenAsString(endDate, null);
+        String startDateValue = resolver.resolveDateToken(startDate).toString();
+        String endDateValue = resolver.resolveDateToken(endDate).toString();
 
         TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
         Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();
+    }
+
+    @Given("vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo")
+    public void getEserviceRow() {
+        EserviceRow eserviceRow = EserviceRow.atIndex(probingContext.getThreadNumber());
+        probingContext.setActualEserviceRow(eserviceRow);
+        probingContext.setExpectedEserviceRow(eserviceRow);
+    }
+
+    private void assertProbingParams(int expectedStatusCode) {
+        int actualStatusCode = httpCallExecutor.getResponseStatus().value();
+        if (actualStatusCode != expectedStatusCode) return;
+
+        Long eserviceRecordId = resolver.getEserviceRecordId();
+
+        // 1) se la finestra attesa parte nel futuro, aspetta fino allo start (con cap)
+        waitUntilExpectedWindowStarts(OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingStartTime()));
+
+        // 2) calcola policy di polling in base a finestra/frequenza
+        ProbingUtils.PollingPolicy policy = computePollingPolicy(
+                OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingStartTime()),
+                OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingEndTime()),
+                probingContext.getExpectedEserviceRow().getPollingFrequency()
+        );
+
+        PollingService.makePolling(
+                () -> probingClient.getEserviceMainData(eserviceRecordId),
+                resp -> {
+                    if (!isProbingStateUpdated(resp)) return false;
+                    probingContext.getActualEserviceRow().setPollingFrequency(resp.getPollingFrequency());
+                    return true;
+                },
+                "Errore durante il setting di parametri di probing l'e-service con eserviceRecordId '" + eserviceRecordId + "'",
+                policy.maxTry(),
+                policy.sleepMs()
+        );
+    }
+
+    private boolean isProbingStateUpdated(MainDataEserviceResponse resp) {
+        return resp != null
+                && resp.getPollingFrequency() != null
+                && isWithinExpectedWindow(OffsetDateTime.now(), OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingStartTime()), OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingEndTime()))
+                && resp.getPollingFrequency().equals(probingContext.getExpectedEserviceRow().getPollingFrequency());
+    }
+
+    private void assertResultsMatchFilters(SearchEserviceResponse response, ProbingUtils.EserviceFilters filters) {
+        List<SearchEserviceContent> items = response.getContent();
+        if (items == null || items.isEmpty()) return; // niente da validare
+
+        // Se tutti i filtri sono null, non serve validare
+        if (filters.eserviceName() == null && filters.producerName() == null
+                && filters.versionNumber() == null && filters.states() == null) {
+            return;
+        }
+
+        for (SearchEserviceContent item : items) {
+            Assertions.assertThat(matchesAllFilters(item, filters))
+                    .as("Risultato non coerente con filtri: item=%s, filters=%s", item, filters)
+                    .isTrue();
+        }
     }
 }
