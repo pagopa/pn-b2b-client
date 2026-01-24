@@ -1,10 +1,10 @@
 package it.pagopa.interop.common;
 
-import java.util.function.Function;
 import org.springframework.http.HttpStatus;
-
-import java.util.function.Supplier;
 import org.springframework.http.ResponseEntity;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface IHttpExecutor {
     <T> HttpStatus performCall(Supplier<T> promise);
@@ -23,4 +23,8 @@ public interface IHttpExecutor {
     Object getResponse();
     String getErrorMessage();
     void setRawResponse(int statusCode, Object rawBody);
+
+    void snapshot();
+
+    void resetFormSnapshot();
 }
