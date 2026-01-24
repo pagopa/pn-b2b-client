@@ -160,7 +160,6 @@ Feature: Probing
       | -1               | 400        |
       | %random          | 404        |
 
-
   Scenario Outline: [GET_ESERVICE_PROBING_DATA] - Recupera i dati di probing di un e-service tramite il suo eserviceRecordId
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono recuperati i dati di probing dell'e-service con eserviceRecordId "<eserviceRecordId>"

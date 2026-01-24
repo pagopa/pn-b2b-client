@@ -179,7 +179,7 @@ public class ProbingSteps {
         OffsetDateTime startValue = resolver.resolveDateToken(startDate);
         OffsetDateTime endValue = resolver.resolveDateToken(endDate);
 
-        probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue, endValue);
+        probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue.toLocalTime(), endValue.toLocalTime());
         assertProbingParams(204);
     }
 
