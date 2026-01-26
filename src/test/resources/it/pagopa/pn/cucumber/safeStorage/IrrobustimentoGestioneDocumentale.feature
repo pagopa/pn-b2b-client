@@ -77,11 +77,12 @@ Feature: PN-17452 Irrobustimento Gestione Documentale
   Scenario Outline: [TEST_MANUALI_CATENA_TRASFORMAZIONI] Step da lanciare per caricare i documenti su cui poi effettuare i check lato manuale per Catena di Trasformazioni (https://pagopa.atlassian.net/wiki/spaces/PN/pages/2555641910/PST+PN-1749+Irrobustimento+Gestione+Documentale+-+Catena+di+trasformazioni)
     Given Viene caricato un nuovo documento "<documentName>" di tipo "<documentType>"
     Examples:
-      | documentName                 | documentType            |
+      | documentName                 | documentType              |
       #CASI POSITIVI (devono essere presenti sul bucket pn-safestorage e non comparire sul bucket pn-safestorage-staging)
-      | multa.pdf                    | PN_CHAIN_TRANSFORMATION |
-      | multa.pdf                    | PN_AAR                  |
-      | multa.pdf                    | PN_LEGAL_FACTS          |
+      | multa.pdf                    | PN_CHAIN_TRANSFORMATION   |
+      | multa.pdf                    | PN_CHAIN_TRANSFORMATION_2 |
+      | multa.pdf                    | PN_AAR                    |
+      | multa.pdf                    | PN_LEGAL_FACTS            |
       #CASI NEGATIVI (devono essere presenti sul bucket pn-safestorage-staging e non comparire sul bucket pn-safestorage)
-      | documento_errato.cleaned.pdf | PN_CHAIN_TRANSFORMATION |
-      | corrupted-document.pdf       | PN_CHAIN_TRANSFORMATION |
+      | documento_errato.cleaned.pdf | PN_CHAIN_TRANSFORMATION   |
+      | corrupted-document.pdf       | PN_CHAIN_TRANSFORMATION_2 |
