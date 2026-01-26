@@ -1,14 +1,11 @@
 package it.pagopa.interop.purpose.service.impl;
 
-import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
-
+import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposeTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -20,8 +17,12 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.UUID;
+
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -29,7 +30,7 @@ import java.util.UUID;
         retryFor = {HttpServerErrorException.class},
         backoff = @Backoff(delay = 2000)
 )
-public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
+public class PurposeTemplateClientImpl extends AbstractClient implements IPurposeTemplateClient {
 
     private final PurposeTemplatesApi purposesTemplateApi;
     private final RestTemplate restTemplate;
