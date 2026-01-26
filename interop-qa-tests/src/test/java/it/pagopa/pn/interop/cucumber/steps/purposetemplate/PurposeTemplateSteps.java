@@ -1,21 +1,58 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactPurposeTemplateEService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.LinkEServiceToPurposeTemplateRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.PurposeTemplateResolver;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +60,6 @@ import org.assertj.core.api.Assertions;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-
-import java.io.File;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class PurposeTemplateSteps {
@@ -46,6 +77,8 @@ public class PurposeTemplateSteps {
     private final IHttpExecutor httpCallExecutor;
 
     private final PollingService pollingService;
+
+    private final PurposeTemplatePatchOperationsAssistant patchAssistant;
 
     private PurposeTemplateSeed purposeTemplateCreationRequest;
 
@@ -84,7 +117,8 @@ public class PurposeTemplateSteps {
     public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
                                 BlobFileCreator blobFileCreator,
-                                IdentityService identityService) {
+                                IdentityService identityService,
+                                PurposeTemplatePatchOperationsAssistant patchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.blobFileCreator = blobFileCreator;
@@ -95,6 +129,7 @@ public class PurposeTemplateSteps {
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.purposeTemplateContext = new PurposeTemplateContext();
         this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, identityService);
+        this.patchAssistant = patchAssistant;
     }
 
     @AllArgsConstructor
@@ -197,10 +232,11 @@ public class PurposeTemplateSteps {
         httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(purposeTemplateCreationRequest));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             createdPurposeTemplate = (CreatedResource) httpCallExecutor.getResponse();
+            sharedStepsContext.getPurposeTemplateContext().setPurposeTemplateId(createdPurposeTemplate.getId());
             pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(createdPurposeTemplate.getId())),
-                    res -> res.is2xxSuccessful(),
-                    "Failed to retrieve the purpose template from client!"
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(createdPurposeTemplate.getId())),
+                HttpStatus::is2xxSuccessful,
+                "Failed to retrieve the purpose template from client!"
             );
         }
     }
@@ -1113,4 +1149,57 @@ public class PurposeTemplateSteps {
 
 
 
+
+    @When("l'utente tenta di effettuare la modifica parziale del purpose template")
+    public void patchPurposeTemplate() {
+        PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
+        patchAssistant.patchResource(request);
+    }
+
+    @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")
+    public void patchEService(String tenant, M2MRole m2mRole) {
+        PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
+        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        patchAssistant.patchResource(request, token);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del purpose template specificando un sottoinsieme di informazioni")
+    public void patchPurposeTemplateSubset() {
+        UUID uuid = UUID.randomUUID();
+        PurposeTemplateDraftUpdateSeed request = new PurposeTemplateDraftUpdateSeed()
+            .targetDescription("minimal patched targetDescription - " + uuid);
+        patchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del purpose template specificando un insieme vuoto di informazioni")
+    public void patchPurposeTemplateEmpty() {
+        PurposeTemplateDraftUpdateSeed request = new PurposeTemplateDraftUpdateSeed();
+        patchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale di un purpose template inesistente")
+    public void patchNonExistentPurposeTemplate() {
+        patchAssistant.patchNonExistentResource();
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale del purpose template con token non valido")
+    public void patchPurposeTemplateWithNotValidToken() {
+        PurposeTemplateDraftUpdateSeed request = patchAssistant.buildDefaultPatchRequest();
+        patchAssistant.patchResourceWithInvalidToken(request);
+    }
+
+    @Then("il purpose template restituito è coerente con le modifiche effettuate")
+    public void checkPurposeTemplatePatchResult() {
+        patchAssistant.checkPatchOperationResult();
+    }
+
+    @Then("il purpose template è stato parzialmente modificato correttamente")
+    public void checkPurposeTemplateAfterPatch() {
+        patchAssistant.checkPatchedResource();
+    }
+
+    @Then("il purpose template non ha subito modifiche")
+    public void checkPurposeTemplateAfterNonPatch() {
+        patchAssistant.checkUnpatchedResource();
+    }
 }

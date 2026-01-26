@@ -52,6 +52,7 @@ import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
@@ -84,6 +85,10 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOpe
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplateGenericPatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
@@ -183,7 +188,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ISelfcareClient.class,
         SelfcareClientImpl.class,
         IPurposeTemplateClient.class,
-        PurposeTemplateClientImpl.class
+        PurposeTemplateClientImpl.class,
+        PurposeTemplateCommonContext.class,
+        PurposeTemplatePatchContext.class,
+        PurposeTemplateGenericPatchOperationsAssistant.class,
+        PurposeTemplatePatchOperationsAssistant.class,
+        PurposeTemplateMapperImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
