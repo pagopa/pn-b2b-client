@@ -23,32 +23,32 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
-      | 05010 | 1092  | COLLELUNGO            | TR       | notifica analogica FSU         |
-      | 06031 | 1092  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 945   | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 967   | CASAPE                | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 918   | ADELFIA               | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 987   | ANDRATE               | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1044  | MONTERADO             | AN       | notifica analogica RECAPITISTA |
-      | 35049 | 987   | SANTA CATERINA D'ESTE | PD       | notifica analogica RECAPITISTA |
-      | 90052 | 918   | CERDA                 | PA       | notifica analogica RECAPITISTA |
-      | 06012 | 948   | CERBARA               | PG       | notifica analogica RECAPITISTA |
-      | 17011 | 1092  | ALBISOLA CAPO         | SV       | notifica analogica RECAPITISTA |
-      | 87020 | 1092  | ACQUAPPESA            | CS       | notifica analogica RECAPITISTA |
+      | 05010 | 1084  | COLLELUNGO            | TR       | notifica analogica FSU         |
+      | 06031 | 1084  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 960   | CASAPE                | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 911   | ADELFIA               | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 980   | ANDRATE               | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1037  | MONTERADO             | AN       | notifica analogica RECAPITISTA |
+      | 35049 | 980   | SANTA CATERINA D'ESTE | PD       | notifica analogica RECAPITISTA |
+      | 90052 | 911   | CERDA                 | PA       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA               | PG       | notifica analogica RECAPITISTA |
+      | 17011 | 1084  | ALBISOLA CAPO         | SV       | notifica analogica RECAPITISTA |
+      | 87020 | 1084  | ACQUAPPESA            | CS       | notifica analogica RECAPITISTA |
 
-      | 21009 | 967   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
-      | 14027 | 987   | TONENGO               | AT       | notifica analogica RECAPITISTA |
-      | 07011 | 1092  | BONO                  | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 948   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 948   | FOSSATO DI VICO       | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 948   | PULA                  | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1092  | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1092  | CAMPOCHIARO           | CB       | notifica analogica RECAPITISTA |
+      | 21009 | 960   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
+      | 14027 | 980   | TONENGO               | AT       | notifica analogica RECAPITISTA |
+      | 07011 | 1084  | BONO                  | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 941   | SAPPADA               | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO       | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 941   | PULA                  | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1084  | ACCIANO               | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1084  | CAMPOCHIARO           | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1092  | VALFABBRICA           | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1092  | DERUTA                | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA               | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 948   | QUARTU SANT'ELENA     | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1084  | VALFABBRICA           | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1084  | DERUTA                | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA               | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 941   | QUARTU SANT'ELENA     | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -71,28 +71,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1195  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1195  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1090  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1068  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1013  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1090  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1155  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 06012 | 1036  | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1186  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1186  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1060  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1006  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1082  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1146  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1086  | AOSTA             | AO       | notifica analogica RECAPITISTA |
-      | 87020 | 1195  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1195  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1036  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1036  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1036  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1195  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1195  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 11100 | 1077  | AOSTA             | AO       | notifica analogica RECAPITISTA |
+      | 87020 | 1186  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1186  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1029  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1029  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1186  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1186  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1195  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1195  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1036  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1186  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1186  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1029  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -115,30 +115,30 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1212  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1212  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1106  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1084  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1030  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1106  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1171  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 90054 | 1030  | GERACI SICULO     | PA       | notifica analogica RECAPITISTA |
-      | 88071 | 1212  | STALETTI          | CZ       | notifica analogica RECAPITISTA |
-      | 06012 | 1053  | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1203  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1203  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1076  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1023  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1098  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1163  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 90054 | 1023  | GERACI SICULO     | PA       | notifica analogica RECAPITISTA |
+      | 88071 | 1203  | STALETTI          | CZ       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
 
-      | 38097 | 1212  | TERRE D'ADIGE     | TN       | notifica analogica RECAPITISTA |
-      | 87020 | 1212  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1212  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1053  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1053  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1053  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1212  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1212  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 38097 | 1203  | TERRE D'ADIGE     | TN       | notifica analogica RECAPITISTA |
+      | 87020 | 1203  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1203  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1045  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1045  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1203  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1203  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1212  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1212  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1053  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1203  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1203  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1045  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -161,27 +161,27 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1215  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1215  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1109  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1087  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1033  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1110  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1174  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 05010 | 1206  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1206  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1079  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1026  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1102  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1166  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1056  | CERBARA           | PG       | notifica analogica RECAPITISTA |
-      | 87020 | 1215  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1215  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1056  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1056  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1056  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1215  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1215  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1206  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1206  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1048  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1048  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1206  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1206  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1215  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1215  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1056  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1206  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1206  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1048  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -204,28 +204,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1244  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1244  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1139  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1117  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1062  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1139  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1204  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 90072 | 1062  | ALTOFONTE         | PA       | notifica analogica RECAPITISTA |
+      | 05010 | 1235  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1235  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1109  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1055  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1131  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1195  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 90072 | 1055  | ALTOFONTE         | PA       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1085  | CERBARA           | PG       | notifica analogica RECAPITISTA |
-      | 87020 | 1244  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1244  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1085  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1085  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1085  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1244  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1244  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1235  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1235  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1078  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1078  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1235  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1235  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1244  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1244  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1085  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1235  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1235  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1078  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -248,28 +248,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1335  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1335  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1221  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1195  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1137  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1220  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1290  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 06012 | 1163  | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1325  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1325  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1187  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1129  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1211  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1281  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
 
-      | 86081 | 1221  | AGNONE            | IS       | notifica analogica RECAPITISTA |
-      | 87020 | 1335  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1335  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1163  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1163  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1163  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1335  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1335  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 86081 | 1212  | AGNONE            | IS       | notifica analogica RECAPITISTA |
+      | 87020 | 1325  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1325  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1154  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1154  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1325  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1325  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1335  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1335  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1163  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1325  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1325  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1154  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -292,28 +292,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY        | PROVINCE | SUBJECT                        |
-      | 05010 | 1429  | COLLELUNGO          | TR       | notifica analogica FSU         |
-      | 06031 | 1429  | BEVAGNA             | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1315  | ALBA ADRIATICA      | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1290  | CASAPE              | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1232  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1314  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1384  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
-      | 90082 | 1232  | SANTA CRISTINA GELA | PA       | notifica analogica RECAPITISTA |
+      | 05010 | 1420  | COLLELUNGO          | TR       | notifica analogica FSU         |
+      | 06031 | 1420  | BEVAGNA             | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA      | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1282  | CASAPE              | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1224  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1306  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1375  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
+      | 90082 | 1224  | SANTA CRISTINA GELA | PA       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1257  | CERBARA             | PG       | notifica analogica RECAPITISTA |
-      | 87020 | 1429  | ACQUAPPESA          | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1429  | BONO                | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1257  | SAPPADA             | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1257  | FOSSATO DI VICO     | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1257  | PULA                | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1429  | ACCIANO             | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1429  | CAMPOCHIARO         | CB       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA             | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1420  | ACQUAPPESA          | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1420  | BONO                | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1249  | SAPPADA             | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO     | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1249  | PULA                | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1420  | ACCIANO             | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1420  | CAMPOCHIARO         | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1429  | VALFABBRICA         | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1429  | DERUTA              | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA             | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1257  | QUARTU SANT'ELENA   | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1420  | VALFABBRICA         | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1420  | DERUTA              | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA             | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1249  | QUARTU SANT'ELENA   | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -336,28 +336,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1433  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1433  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1319  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1293  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1235  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1318  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1388  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 06012 | 1261  | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1423  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1423  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1285  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1227  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1309  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1379  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
 
-      | 34129 | 1261  | TRIESTE           | TS       | notifica analogica RECAPITISTA |
-      | 87020 | 1433  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1433  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1261  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1261  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1261  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1433  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1433  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 34129 | 934   | TRIESTE           | TS       | notifica analogica RECAPITISTA |
+      | 87020 | 1423  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1423  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1252  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1252  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1423  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1423  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1433  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1433  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1261  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1423  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1423  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1252  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -380,28 +380,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1495  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1495  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1381  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1355  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1297  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1380  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1450  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 94028 | 1297  | VILLAROSA         | EN       | notifica analogica RECAPITISTA |
+      | 05010 | 1485  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1485  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1347  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1289  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1371  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1441  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 94028 | 1289  | VILLAROSA         | EN       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1323  | CERBARA           | PG       | notifica analogica RECAPITISTA |
-      | 87020 | 1495  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1495  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1323  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1323  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1323  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1495  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1495  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 1485  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1485  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1314  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1314  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1485  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1485  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1495  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1495  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1323  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1485  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1485  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1314  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -424,27 +424,27 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 1611  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 1611  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1486  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1458  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1393  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1484  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1561  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 06012 | 1422  | CERBARA           | PG       | notifica analogica RECAPITISTA |
-      | 19126 | 1611  | LA SPEZIA         | SP       | notifica analogica RECAPITISTA |
-      | 87020 | 1611  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 1611  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1422  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1422  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1422  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 1611  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 1611  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 05010 | 1601  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 1601  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1449  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1384  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1474  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1551  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 19126 | 1077  | LA SPEZIA         | SP       | notifica analogica RECAPITISTA |
+      | 87020 | 1601  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 1601  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1413  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1413  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 1601  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 1601  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 1611  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 1611  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1422  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 1601  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 1601  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1413  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -467,27 +467,27 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY        | PROVINCE | SUBJECT                        |
-      | 05010 | 2033  | COLLELUNGO          | TR       | notifica analogica FSU         |
-      | 06031 | 2033  | BEVAGNA             | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1908  | ALBA ADRIATICA      | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1880  | CASAPE              | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1814  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1905  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1983  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
-      | 95055 | 1814  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
-      | 06012 | 1843  | CERBARA             | PG       | notifica analogica RECAPITISTA |
-      | 87020 | 2033  | ACQUAPPESA          | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 2033  | BONO                | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1843  | SAPPADA             | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1843  | FOSSATO DI VICO     | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1843  | PULA                | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 2033  | ACCIANO             | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 2033  | CAMPOCHIARO         | CB       | notifica analogica RECAPITISTA |
+      | 05010 | 2022  | COLLELUNGO          | TR       | notifica analogica FSU         |
+      | 06031 | 2022  | BEVAGNA             | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA      | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1871  | CASAPE              | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1805  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1896  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1973  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
+      | 95055 | 1805  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA             | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 2022  | ACQUAPPESA          | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 2022  | BONO                | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1834  | SAPPADA             | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO     | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1834  | PULA                | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 2022  | ACCIANO             | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 2022  | CAMPOCHIARO         | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 2033  | VALFABBRICA         | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 2033  | DERUTA              | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA             | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1843  | QUARTU SANT'ELENA   | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 2022  | VALFABBRICA         | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 2022  | DERUTA              | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA             | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1834  | QUARTU SANT'ELENA   | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -510,27 +510,27 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 2036  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 2036  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1911  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1883  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1817  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1909  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1986  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 05010 | 2026  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 2026  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1874  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1809  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1899  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1976  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1847  | CERBARA           | PG       | notifica analogica RECAPITISTA |
-      | 87020 | 2036  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 2036  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 1847  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 1847  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 1847  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 2036  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 2036  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 87020 | 2026  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 2026  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 1838  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 1838  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 2026  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 2026  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 2036  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 2036  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 1847  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 2026  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 2026  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 1838  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -553,28 +553,28 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY      | PROVINCE | SUBJECT                        |
-      | 05010 | 2686  | COLLELUNGO        | TR       | notifica analogica FSU         |
-      | 06031 | 2686  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 2561  | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 2533  | CASAPE            | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 2467  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 2559  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 2636  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
-      | 06012 | 2497  | CERBARA           | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 2676  | COLLELUNGO        | TR       | notifica analogica FSU         |
+      | 06031 | 2676  | BEVAGNA           | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 931   | ALBA ADRIATICA    | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 2524  | CASAPE            | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 2459  | ADELFIA           | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 2549  | ANDRATE           | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 2626  | MONTERADO         | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 934   | CERBARA           | PG       | notifica analogica RECAPITISTA |
 
-      | 09121 | 2497  | CAGLIARI          | CA       | notifica analogica RECAPITISTA |
-      | 87020 | 2686  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
-      | 07011 | 2686  | BONO              | SS       | notifica analogica RECAPITISTA |
-      | 33012 | 2497  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
-      | 06022 | 2497  | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
-      | 09050 | 2497  | PULA              | CA       | notifica analogica RECAPITISTA |
-      | 67020 | 2686  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
-      | 86020 | 2686  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
+      | 09121 | 934   | CAGLIARI          | CA       | notifica analogica RECAPITISTA |
+      | 87020 | 2676  | ACQUAPPESA        | CS       | notifica analogica RECAPITISTA |
+      | 07011 | 2676  | BONO              | SS       | notifica analogica RECAPITISTA |
+      | 33012 | 2488  | SAPPADA           | UD       | notifica analogica RECAPITISTA |
+      | 06022 | 934   | FOSSATO DI VICO   | PG       | notifica analogica RECAPITISTA |
+      | 09050 | 2488  | PULA              | CA       | notifica analogica RECAPITISTA |
+      | 67020 | 2676  | ACCIANO           | AQ       | notifica analogica RECAPITISTA |
+      | 86020 | 2676  | CAMPOCHIARO       | CB       | notifica analogica RECAPITISTA |
 
-      | 06029 | 2686  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
-      | 06053 | 2686  | DERUTA            | PG       | notifica analogica RECAPITISTA |
-      | 06134 | 1086  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
-      | 09045 | 2497  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
+      | 06029 | 2676  | VALFABBRICA       | PG       | notifica analogica RECAPITISTA |
+      | 06053 | 2676  | DERUTA            | PG       | notifica analogica RECAPITISTA |
+      | 06134 | 1077  | PERUGIA           | PG       | notifica analogica RECAPITISTA |
+      | 09045 | 2488  | QUARTU SANT'ELENA | CA       | notifica analogica RECAPITISTA |
 
 
 

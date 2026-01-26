@@ -23,26 +23,26 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 543   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 604   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 535   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 465   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 396   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 416   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 566   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 473   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 502   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 90088 | 465   | SAN CIPIRELLO          | PA       | notifica analogica RECAPITISTA |
-      | 88071 | 465   | STALETTI               | CZ       | notifica analogica RECAPITISTA |
-      | 85036 | 604   | ROCCANOVA              | PZ       | notifica analogica RECAPITISTA |
-      | 21009 | 566   | BARDELLO               | VA       | notifica analogica RECAPITISTA |
-      | 64011 | 604   | ALBA ADRIATICA         | TE       | notifica analogica RECAPITISTA |
-      | 86170 | 535   | ISERNIA                | IS       | notifica analogica RECAPITISTA |
-      | 95056 | 465   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 543   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 465   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 543   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 80060 | 540   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 600   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 462   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 394   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 90088 | 462   | SAN CIPIRELLO          | PA       | notifica analogica RECAPITISTA |
+      | 88071 | 462   | STALETTI               | CZ       | notifica analogica RECAPITISTA |
+      | 85036 | 593   | ROCCANOVA              | PZ       | notifica analogica RECAPITISTA |
+      | 21009 | 563   | BARDELLO               | VA       | notifica analogica RECAPITISTA |
+      | 64011 | 593   | ALBA ADRIATICA         | TE       | notifica analogica RECAPITISTA |
+      | 86170 | 525   | ISERNIA                | IS       | notifica analogica RECAPITISTA |
+      | 95056 | 462   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 540   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 462   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 540   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 540   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -69,22 +69,22 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 615   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 666   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 577   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 524   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 437   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 458   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 629   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 515   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 544   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 80060 | 611   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 662   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 521   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 434   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
 
-      | 74021 | 506   | CAROSINO               | TA       | notifica analogica RECAPITISTA |
-      | 95056 | 524   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 615   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 524   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 615   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 74021 | 502   | CAROSINO               | TA       | notifica analogica RECAPITISTA |
+      | 95056 | 521   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 611   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 521   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 611   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 611   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -111,25 +111,25 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 632   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 683   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 594   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 540   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 453   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 474   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 645   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 532   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 560   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 91030 | 632   | SAN VITO LO CAPO       | TP       | notifica analogica RECAPITISTA |
-      | 36049 | 645   | SOVIZZO                | VI       | notifica analogica RECAPITISTA |
-      | 63094 | 683   | BISIGNANO              | AP       | notifica analogica RECAPITISTA |
-      | 64011 | 683   | ALBA ADRIATICA         | TE       | notifica analogica RECAPITISTA |
-      | 86170 | 594   | ISERNIA                | IS       | notifica analogica RECAPITISTA |
-      | 95056 | 540   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 632   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 540   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 632   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 80060 | 628   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 678   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 537   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 451   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 91030 | 628   | SAN VITO LO CAPO       | TP       | notifica analogica RECAPITISTA |
+      | 36049 | 641   | SOVIZZO                | VI       | notifica analogica RECAPITISTA |
+      | 63094 | 678   | BISIGNANO              | AP       | notifica analogica RECAPITISTA |
+      | 64011 | 593   | ALBA ADRIATICA         | TE       | notifica analogica RECAPITISTA |
+      | 86170 | 525   | ISERNIA                | IS       | notifica analogica RECAPITISTA |
+      | 95056 | 537   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 628   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 537   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 628   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 628   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -156,22 +156,22 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 672   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 724   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 636   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 573   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 486   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 506   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 686   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 573   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 601   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 80060 | 668   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 719   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 569   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 483   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
 
-      | 28028 | 686   | PETTENASCO             | NO       | notifica analogica RECAPITISTA |
-      | 95056 | 573   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 672   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 573   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 672   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 28028 | 681   | PETTENASCO             | NO       | notifica analogica RECAPITISTA |
+      | 95056 | 569   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 668   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 569   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 668   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 668   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -198,23 +198,23 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 701   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 754   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 666   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 602   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 515   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 536   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 715   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 603   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 630   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 91032 | 602   | PETROSINO              | TP       | notifica analogica RECAPITISTA |
+      | 80060 | 697   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 749   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 598   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 512   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 91032 | 598   | PETROSINO              | TP       | notifica analogica RECAPITISTA |
 
-      | 80146 | 515   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 95056 | 602   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 701   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 602   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 701   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 80146 | 387   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 95056 | 598   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 697   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 598   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 697   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 697   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -241,23 +241,23 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 745   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 800   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 712   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 638   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 551   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 572   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 761   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 647   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 676   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 90020 | 638   | CASTELLANA SICULA      | PA       | notifica analogica RECAPITISTA |
+      | 80060 | 740   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 795   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 634   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 548   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 90020 | 634   | CASTELLANA SICULA      | PA       | notifica analogica RECAPITISTA |
       | 64100 | 525   | TERAMO                 | TE       | notifica analogica RECAPITISTA |
-      | 86081 | 800   | AGNONE                 | IS       | notifica analogica RECAPITISTA |
-      | 95056 | 638   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 745   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 638   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 745   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 86081 | 795   | AGNONE                 | IS       | notifica analogica RECAPITISTA |
+      | 95056 | 634   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 740   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 634   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 740   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 740   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -284,23 +284,23 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 840   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 895   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 807   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 733   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 646   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 667   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 856   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 742   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 771   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 92035 | 733   | JOPPOLO GIANCAXIO      | AG       | notifica analogica RECAPITISTA |
+      | 80060 | 835   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 890   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 729   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 643   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 92035 | 729   | JOPPOLO GIANCAXIO      | AG       | notifica analogica RECAPITISTA |
 
-      | 87030 | 733   | SAN VINCENZO LA COSTA  | CS       | notifica analogica RECAPITISTA |
-      | 95056 | 733   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 840   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 733   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 840   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 87030 | 729   | SAN VINCENZO LA COSTA  | CS       | notifica analogica RECAPITISTA |
+      | 95056 | 729   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 835   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 729   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 835   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 835   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -327,23 +327,23 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 876   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 932   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 850   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 762   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 675   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 699   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 892   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 778   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 811   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 51018 | 892   | PIEVE A NIEVOLE        | PT       | notifica analogica RECAPITISTA |
+      | 80060 | 871   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 927   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 758   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 672   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 51018 | 556   | PIEVE A NIEVOLE        | PT       | notifica analogica RECAPITISTA |
       | 64100 | 525   | TERAMO                 | TE       | notifica analogica RECAPITISTA |
-      | 86081 | 932   | AGNONE                 | IS       | notifica analogica RECAPITISTA |
-      | 95056 | 762   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 876   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 762   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 876   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 86081 | 927   | AGNONE                 | IS       | notifica analogica RECAPITISTA |
+      | 95056 | 758   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 871   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 758   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 871   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 871   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -370,23 +370,23 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 938   | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 995   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 912   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 824   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 737   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 761   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 954   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 840   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 873   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 80060 | 933   | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 989   | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 820   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 734   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
 
-      | 95058 | 824   | CAMPOROTONDO ETNEO     | CT       | notifica analogica RECAPITISTA |
-      | 44026 | 954   | MESOLA                 | FE       | notifica analogica RECAPITISTA |
-      | 95056 | 824   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 938   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 824   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 938   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 95058 | 820   | CAMPOROTONDO ETNEO     | CT       | notifica analogica RECAPITISTA |
+      | 44026 | 556   | MESOLA                 | FE       | notifica analogica RECAPITISTA |
+      | 95056 | 820   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 933   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 820   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 933   | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 933   | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -413,20 +413,20 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 1013  | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 1075  | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 988   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 886   | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 799   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 819   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 1032  | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 919   | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 948   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 95056 | 886   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 1013  | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 886   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 1013  | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 80060 | 1008  | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 1069  | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 881   | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 795   | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 95056 | 881   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 1008  | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 881   | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 1008  | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 1008  | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -453,22 +453,22 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY              | PROVINCE | SUBJECT                        |
-      | 80060 | 1435  | MASSAQUANO                | NA       | notifica analogica FSU         |
-      | 60012 | 1497  | MONTERADO                 | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 1410  | ANCONA                    | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                      | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 1307  | CASAREA                   | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 1220  | NAPOLI                    | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 1241  | AVELLINO                  | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 1453  | ALBUCCIONE                | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 1340  | ROMA                      | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 1369  | FOGLIANO                  | LT       | notifica analogica RECAPITISTA |
+      | 80060 | 1429  | MASSAQUANO                | NA       | notifica analogica FSU         |
+      | 60012 | 1490  | MONTERADO                 | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                    | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                      | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 1302  | CASAREA                   | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 1216  | NAPOLI                    | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO                  | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE                | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                      | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO                  | LT       | notifica analogica RECAPITISTA |
 
-      | 96026 | 1307  | PORTOPALO DI CAPO PASSERO | SR       | notifica analogica RECAPITISTA |
-      | 95056 | 1307  | SANT'AGATA LI BATTIATI    | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 1435  | ALTAVILLA MILICIA         | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 1307  | CORTALE                   | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 1435  | CAGNANO VARANO            | FG       | notifica analogica RECAPITISTA |
+      | 96026 | 1302  | PORTOPALO DI CAPO PASSERO | SR       | notifica analogica RECAPITISTA |
+      | 95056 | 1302  | SANT'AGATA LI BATTIATI    | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 1429  | ALTAVILLA MILICIA         | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 1302  | CORTALE                   | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 1429  | CAGNANO VARANO            | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA                  | SA       | notifica analogica RECAPITISTA |
       | 90052 | 1429  | CERDA                     | PA       | notifica analogica RECAPITISTA |
@@ -495,20 +495,20 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 1524  | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 1592  | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 1505  | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 1379  | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 1293  | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 1313  | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 1545  | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 1433  | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 1463  | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 95056 | 1379  | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 1524  | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 1379  | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 1524  | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 80060 | 1518  | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 1585  | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 1374  | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 1288  | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 95056 | 1374  | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 1518  | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 1374  | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 1518  | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 1518  | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -535,20 +535,20 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY           | PROVINCE | SUBJECT                        |
-      | 80060 | 2174  | MASSAQUANO             | NA       | notifica analogica FSU         |
-      | 60012 | 2242  | MONTERADO              | AN       | notifica analogica RECAPITISTA |
-      | 60123 | 2155  | ANCONA                 | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 369   | BARI                   | BA       | notifica analogica RECAPITISTA |
-      | 80013 | 2029  | CASAREA                | NA       | notifica analogica RECAPITISTA |
-      | 80123 | 1943  | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
-      | 83100 | 1963  | AVELLINO               | AV       | notifica analogica RECAPITISTA |
-      | 00012 | 2196  | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 2083  | ROMA                   | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 2113  | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
-      | 95056 | 2029  | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
-      | 90010 | 2174  | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
-      | 88020 | 2029  | CORTALE                | CZ       | notifica analogica RECAPITISTA |
-      | 71010 | 2174  | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
+      | 80060 | 2168  | MASSAQUANO             | NA       | notifica analogica FSU         |
+      | 60012 | 2235  | MONTERADO              | AN       | notifica analogica RECAPITISTA |
+      | 60123 | 525   | ANCONA                 | AN       | notifica analogica RECAPITISTA |
+      | 70123 | 367   | BARI                   | BA       | notifica analogica RECAPITISTA |
+      | 80013 | 2024  | CASAREA                | NA       | notifica analogica RECAPITISTA |
+      | 80123 | 1938  | NAPOLI                 | NA       | notifica analogica RECAPITISTA |
+      | 83100 | 407   | AVELLINO               | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 556   | ALBUCCIONE             | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA                   | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 492   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
+      | 95056 | 2024  | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
+      | 90010 | 2168  | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
+      | 88020 | 2024  | CORTALE                | CZ       | notifica analogica RECAPITISTA |
+      | 71010 | 2168  | CAGNANO VARANO         | FG       | notifica analogica RECAPITISTA |
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 2168  | CERDA                  | PA       | notifica analogica RECAPITISTA |
@@ -574,8 +574,8 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | COSTO | STATE      |
-      | 1032  | MESSICO    |
-      | 1032  | SUD AFRICA |
+      | 1025  | MESSICO    |
+      | 1025  | SUD AFRICA |
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-21GR_15] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -593,7 +593,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1249" della notifica
+    And viene verificato il costo = "1240" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-50GR_16] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 50gr
@@ -611,7 +611,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1265" della notifica
+    And viene verificato il costo = "1256" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-51GR_17] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -629,7 +629,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1368" della notifica
+    And viene verificato il costo = "1358" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-100GR_18] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 100gr
@@ -647,7 +647,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1398" della notifica
+    And viene verificato il costo = "1388" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-101GR_19] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -665,7 +665,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1792" della notifica
+    And viene verificato il costo = "1778" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-250GR_20] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 250gr
@@ -683,7 +683,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1886" della notifica
+    And viene verificato il costo = "1873" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-251GR_21] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -701,7 +701,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2078" della notifica
+    And viene verificato il costo = "2063" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-350GR_22] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 350gr
@@ -719,7 +719,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2140" della notifica
+    And viene verificato il costo = "2125" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-351GR_23] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -737,7 +737,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2860" della notifica
+    And viene verificato il costo = "2839" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-1000GR_24] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1000gr
@@ -755,7 +755,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "3281" della notifica
+    And viene verificato il costo = "3260" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-1001GR_25] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -773,7 +773,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "4450" della notifica
+    And viene verificato il costo = "4419" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-2000GR_26] (Gennaio) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 2000gr
@@ -791,7 +791,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "5100" della notifica
+    And viene verificato il costo = "5070" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-20GR_27] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -809,7 +809,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "919" della notifica
+    And viene verificato il costo = "912" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-21GR_28] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -827,7 +827,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1130" della notifica
+    And viene verificato il costo = "1122" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-50GR_29] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr
@@ -845,7 +845,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1146" della notifica
+    And viene verificato il costo = "1138" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-51GR_30] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -863,7 +863,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1241" della notifica
+    And viene verificato il costo = "1232" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-100GR_31] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 100gr
@@ -881,7 +881,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1270" della notifica
+    And viene verificato il costo = "1261" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-101GR_32] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -899,7 +899,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1461" della notifica
+    And viene verificato il costo = "1450" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-250GR_33] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 250gr
@@ -917,7 +917,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1555" della notifica
+    And viene verificato il costo = "1545" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-251GR_34] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -935,7 +935,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1693" della notifica
+    And viene verificato il costo = "1682" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-350GR_35] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 350gr
@@ -953,7 +953,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1755" della notifica
+    And viene verificato il costo = "1744" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-351GR_36] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -971,7 +971,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2202" della notifica
+    And viene verificato il costo = "2187" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-1000GR_37] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1000gr
@@ -989,7 +989,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2624" della notifica
+    And viene verificato il costo = "2609" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-1001GR_38] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -1007,7 +1007,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "3417" della notifica
+    And viene verificato il costo = "3395" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-2000GR_39] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 2000gr
@@ -1025,7 +1025,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "4067" della notifica
+    And viene verificato il costo = "4045" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-20GR_40] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -1043,7 +1043,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1089" della notifica
+    And viene verificato il costo = "1081" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-21GR_41] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -1061,7 +1061,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1339" della notifica
+    And viene verificato il costo = "1329" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-50GR_42] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 50gr
@@ -1079,7 +1079,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1356" della notifica
+    And viene verificato il costo = "1346" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-51GR_43] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -1097,7 +1097,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1502" della notifica
+    And viene verificato il costo = "1491" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-100GR_44] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 100gr
@@ -1115,7 +1115,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1532" della notifica
+    And viene verificato il costo = "1520" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-101GR_45] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -1133,7 +1133,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1918" della notifica
+    And viene verificato il costo = "1904" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-250GR_46] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 250gr
@@ -1151,7 +1151,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2013" della notifica
+    And viene verificato il costo = "1998" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-251GR_47] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -1169,7 +1169,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2533" della notifica
+    And viene verificato il costo = "2514" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-350GR_48] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 350gr
@@ -1187,7 +1187,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2595" della notifica
+    And viene verificato il costo = "2577" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-351GR_49] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -1205,7 +1205,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "3642" della notifica
+    And viene verificato il costo = "3615" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-1000GR_50] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 1000gr
@@ -1223,7 +1223,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "4063" della notifica
+    And viene verificato il costo = "4036" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-1001GR_51] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -1241,7 +1241,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "5370" della notifica
+    And viene verificato il costo = "5332" della notifica
 
   @costoAnalogicoGennaio26
   Scenario: [CALCOLO-COSTO_AR-2000GR_52] (Gennaio) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 2000gr
@@ -1259,7 +1259,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "6020" della notifica
+    And viene verificato il costo = "5982" della notifica
 
 
   @costoAnalogicoGennaio26
@@ -1278,7 +1278,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1270" della notifica
+    And viene verificato il costo = "1261" della notifica
     Examples:
       | state              |
       | ALBANIA            |
@@ -1300,7 +1300,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "1792" della notifica
+    And viene verificato il costo = "1778" della notifica
 
 
   @costoAnalogicoGennaio26
@@ -1319,7 +1319,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo = "2013" della notifica
+    And viene verificato il costo = "1998" della notifica
     Examples:
       | state       |
       | AUSTRALIA   |
