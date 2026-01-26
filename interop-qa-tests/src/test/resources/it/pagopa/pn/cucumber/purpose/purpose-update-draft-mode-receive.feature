@@ -58,3 +58,36 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
       | SUSPENDED            |
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
+
+  Scenario: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_3] Tentare di modificare una finalità generata a partire da un purpose template conduce ad un errore
+    # L'utente dispone di un purpose template
+    # L'utente crea una finalità in stato draft a partire dal template
+
+    # L'utente tenta di aggiornare quella finalità usando l'api per l'erogazione inversa
+
+    # si ottiene errore 409
+
+  @sad-path
+  @nrt-minimal
+  Scenario: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_4] Tentare di modificare una finalità generata a partire da un purpose template conduce ad un errore
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    And il purpose template creato viene spostato in stato PUBLISHED
+    And si crea una finalità a partire dal purpose template creato
+    When l'utente aggiorna quella finalità per quell'e-service in erogazione inversa
+    Then si ottiene status code 409
+
+  @sad-path
+  @nrt-minimal
+    # FIXME alternativa al soprastante, sceglierne uno
+  Scenario: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_4_B] Tentare di modificare una finalità generata a partire da un purpose template conduce ad un errore
+    Given "PA2" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    And il purpose template creato viene spostato in stato PUBLISHED
+    And si crea una finalità a partire dal purpose template creato
+    When l'utente aggiorna quella finalità per quell'e-service in erogazione inversa
+    Then si ottiene status code 409
