@@ -740,6 +740,7 @@ public class PurposeTemplateSteps {
         );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             createdPurposeFromPurposeTemplate = (CreatedResource) httpCallExecutor.getResponse();
+            sharedStepsContext.getPurposeCommonContext().setPurposeId(createdPurposeFromPurposeTemplate.getId().toString());
             movePurposeToState(PurposeVersionState.DRAFT);
         }
     }
