@@ -129,10 +129,10 @@ public class PurposeTemplateResolver {
 
         return resolveToken(
                 raw,
-                () -> purposeTemplateContext.getActualTargetTenantKind(),
+                () -> TargetTenantKind.valueOf(sharedStepsContext.getTenantType()),
                 PurposeTemplateResolver::randomTargetTenantKind,
                 null,
-                purposeTemplateContext.getActualTargetTenantKind()
+                TargetTenantKind.valueOf(sharedStepsContext.getTenantType())
         );
     }
 
