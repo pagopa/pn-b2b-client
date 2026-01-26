@@ -1,56 +1,34 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactPurposeTemplateEService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.LinkEServiceToPurposeTemplateRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
+import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
+import it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.PurposeTemplateResolver;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class PurposeTemplateSteps {
@@ -93,23 +71,30 @@ public class PurposeTemplateSteps {
 
     private List<CompactPurposeTemplateEService> linkedEServices;
 
+    private PurposeTemplateContext purposeTemplateContext;
+
+    private PurposeTemplateResolver resolver;
+
     /**
      * Quando voglio simulare una casistica di titolo duplicato, la prima volta ne creo uno (con timestamp) e lo setto qua.
      * La seconda volta, quando questa variabile non è più null, ri-applico lo stesso titolo.
      */
     private String duplicatedTitleForPurpose;
 
-    public PurposeTemplateSteps(ClientTokenConfigurator clientTokenConfigurator1,
-                                SharedStepsContext sharedStepsContext,
+    public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
-                                BlobFileCreator blobFileCreator) {
-        this.clientTokenConfigurator = clientTokenConfigurator1;
+                                BlobFileCreator blobFileCreator,
+                                IdentityService identityService) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.blobFileCreator = blobFileCreator;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.purposeTemplateClient = clientTokenConfigurator.getPurposeTemplateClient();
+        ((PurposeTemplateClientImpl) this.purposeTemplateClient).setHttpCallExecutor(this.httpCallExecutor);
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        this.purposeTemplateContext = new PurposeTemplateContext();
+        this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, identityService);
     }
 
     @AllArgsConstructor
@@ -171,7 +156,7 @@ public class PurposeTemplateSteps {
         }
     }
 
-    private void prepareCreationRequest(Boolean handlePersonalDataValue) {
+    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue) {
         purposeTemplateCreationRequest = new PurposeTemplateSeed();
         purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
@@ -189,7 +174,24 @@ public class PurposeTemplateSteps {
                     .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
             purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
         }
+        return purposeTemplateCreationRequest;
     }
+
+    private PurposeTemplateSeed buildMandatoryPurposeTemplateSeed() {
+        PurposeTemplateSeed seed = new PurposeTemplateSeed();
+
+        seed.setTargetDescription("target-description-" + UUID.randomUUID());
+        seed.setTargetTenantKind(it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind.PA);
+
+        seed.setPurposeTitle("purpose-title-" + UUID.randomUUID());
+        seed.setPurposeDescription("purpose-description-" + UUID.randomUUID());
+
+        seed.setPurposeIsFreeOfCharge(Boolean.TRUE);
+        seed.setHandlesPersonalData(Boolean.FALSE);
+
+        return seed;
+    }
+
 
     private void invokeCreatePurposeTemplate() {
         httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(purposeTemplateCreationRequest));
@@ -860,4 +862,234 @@ public class PurposeTemplateSteps {
         }
         assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La chiamata per spostare la finalità in stato " + state + " non è andata a buon fine").isTrue();
     }
+
+    @And("viene preparato un purpose template con purposeTitle {string}, eserviceIds {string}, states {string}, targetTenantKind {string}, handlesPersonalData {string}")
+    public void preparePurposeTemplate(
+            String purposeTitle,
+            String eserviceIds,
+            String states,
+            String targetTenantKind,
+            String handlesPersonalData
+    ) {
+        // 1) Resolve tokens (possono risultare anche null se %null / invalid)
+        String purposeTitleValue = resolver.resolvePurposeTitle(purposeTitle);
+        List<UUID> eserviceIdsValue = resolver.resolveEserviceIds(eserviceIds);
+
+        List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> desiredStates =
+                resolver.resolveStates(states);
+
+        it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKindValue =
+                resolver.resolveTargetTenantKind(targetTenantKind);
+
+        Boolean handlesPersonalDataValue = resolver.resolveHandlesPersonalData(handlesPersonalData);
+
+        // 2) Seed con soli campi obbligatori popolati (valori validi di default)
+        PurposeTemplateSeed seed = buildMandatoryPurposeTemplateSeed();
+
+        // 3) Override SEMPRE dei campi parametrizzati (anche a null)
+        seed.setPurposeTitle(purposeTitleValue);
+        seed.setHandlesPersonalData(handlesPersonalDataValue);
+
+        it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind bffKind = null;
+        if (targetTenantKindValue != null) {
+            bffKind = it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind
+                    .valueOf(targetTenantKindValue.name());
+        }
+        seed.setTargetTenantKind(bffKind);
+
+        // 4) Create
+        CreatedResource created = purposeTemplateClient.createPurposeTemplate(seed);
+
+        Assertions.assertThat(created).as("CreatedResource non deve essere null").isNotNull();
+        Assertions.assertThat(created.getId()).as("Id creato non deve essere null").isNotNull();
+
+        UUID purposeTemplateId = created.getId();
+
+        // 5) Recupero template completo (così ho creatorId/state reali)
+        PurposeTemplateWithCompactCreator pt = purposeTemplateClient.getPurposeTemplate(purposeTemplateId);
+        Assertions.assertThat(pt).as("PurposeTemplate recuperato non deve essere null").isNotNull();
+
+        // 6) Link EService (opzionale)
+        if (eserviceIdsValue != null && !eserviceIdsValue.isEmpty()) {
+            for (UUID eserviceId : eserviceIdsValue) {
+                LinkEServiceToPurposeTemplateRequest linkReq = new LinkEServiceToPurposeTemplateRequest()
+                        .eserviceId(eserviceId);
+                purposeTemplateClient.linkEServiceToPurposeTemplate(purposeTemplateId, linkReq);
+            }
+        }
+
+        // 7) Porta allo stato desiderato (opzionale)
+        if (desiredStates != null && !desiredStates.isEmpty()) {
+            it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState desired = desiredStates.get(0);
+            changePurposeTemplateStateGradually(purposeTemplateId, desired);
+            pt = purposeTemplateClient.getPurposeTemplate(purposeTemplateId); // refresh
+        }
+
+        // 8) Popola gli "actual" nel context (per riuso nei filtri %actual)
+        purposeTemplateContext.setActualPurposeTitle(pt.getPurposeTitle());
+
+        if (pt.getState() != null) {
+            purposeTemplateContext.setActualState(
+                    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState
+                            .valueOf(pt.getState().name())
+            );
+        }
+    }
+
+    private void changePurposeTemplateStateGradually(
+            UUID purposeTemplateId,
+            it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState desired
+    ) {
+        switch (desired) {
+            case DRAFT -> {
+                // Non vedo metodi "backToDraft" nel client: quindi non posso forzare DRAFT.
+                // Se ti serve davvero, serve un endpoint o ricreare un template nuovo.
+            }
+            case PUBLISHED -> purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+
+            case SUSPENDED -> {
+                // tipicamente devi pubblicare prima di sospendere
+                purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+                purposeTemplateClient.suspendPurposeTemplate(purposeTemplateId);
+            }
+
+            case ARCHIVED -> {
+                // spesso si può archiviare da PUBLISHED (o anche da altri stati).
+                // Per sicurezza pubblica prima, poi archivia.
+                purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+                purposeTemplateClient.archivePurposeTemplate(purposeTemplateId);
+            }
+
+            default -> throw new IllegalArgumentException("Stato non gestito: " + desired);
+        }
+    }
+
+    @And("esistono purpose templates di test creati tramite data preparation")
+    public void createPurposeTemplatesDatasetUsingPreparePurposeTemplate() {
+
+        // NOISE #1
+        preparePurposeTemplate(
+                "%random",
+                "%actual",
+                "PUBLISHED",
+                "PA",
+                "true"
+        );
+
+        // NOISE #2
+        preparePurposeTemplate(
+                "%random",
+                "%actual",
+                "PUBLISHED",
+                "PA",
+                "false"
+        );
+
+        // MATCH: quello che vuoi ottenere col GET quando passi %actual
+        // Creato per ultimo così overwrita gli "actual" nel context
+        preparePurposeTemplate(
+                "%random",
+                "%actual",
+                "PUBLISHED",
+                "PA",
+                "true"
+        );
+    }
+
+
+    @When("vengono recuperati i purpose templates con offset {string}, limit {string}, purposeTitle {string}, creatorIds {string}, eserviceIds {string}, states {string}, targetTenantKind {string}, handlesPersonalData {string}")
+    public void getPurposeTemplates(
+            String offset,
+            String limit,
+            String purposeTitle,
+            String creatorIds,
+            String eserviceIds,
+            String states,
+            String targetTenantKind,
+            String handlesPersonalData
+    ) {
+        Integer offsetValue = resolver.resolveOffset(offset);
+        Integer limitValue = resolver.resolveLimit(limit);
+
+        String purposeTitleValue = resolver.resolvePurposeTitle(purposeTitle);
+
+        List<UUID> creatorIdsValue = resolver.resolveCreatorIds(creatorIds);
+        List<UUID> eserviceIdsValue = resolver.resolveEserviceIds(eserviceIds);
+
+        List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> statesValue =
+                resolver.resolveStates(states);
+
+        it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKindValue =
+                resolver.resolveTargetTenantKind(targetTenantKind);
+
+        Boolean handlesPersonalDataValue = resolver.resolveHandlesPersonalData(handlesPersonalData);
+
+        PurposeTemplates response = purposeTemplateClient.getPurposeTemplates(
+                offsetValue,
+                limitValue,
+                purposeTitleValue,
+                creatorIdsValue,
+                eserviceIdsValue,
+                statesValue,
+                targetTenantKindValue,
+                handlesPersonalDataValue
+        );
+
+        Assertions.assertThat(response)
+                .as("La response contenente i purpose templates non deve essere null")
+                .isNotNull();
+
+        // === SOSTITUISCI getResults() col getter reale della lista ===
+        List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate> results =
+                response.getResults();
+
+        Assertions.assertThat(results)
+                .as("La lista dei purpose templates non deve essere null")
+                .isNotNull();
+
+        for (var pt : results) {
+            // purposeTitle (match esatto)
+            if (purposeTitleValue != null) {
+                Assertions.assertThat(pt.getPurposeTitle())
+                        .as("purposeTitle deve rispettare il filtro")
+                        .isEqualTo(purposeTitleValue);
+            }
+
+            // creatorIds (IN)
+            if (creatorIdsValue != null && !creatorIdsValue.isEmpty()) {
+                Assertions.assertThat(pt.getCreatorId())
+                        .as("creatorId deve essere contenuto in creatorIds filter")
+                        .isIn(creatorIdsValue);
+            }
+
+            // states (IN)
+            if (statesValue != null && !statesValue.isEmpty()) {
+                Assertions.assertThat(pt.getState())
+                        .as("state deve essere contenuto in states filter")
+                        .isIn(statesValue);
+            }
+
+            // targetTenantKind (match esatto)
+            if (targetTenantKindValue != null) {
+                Assertions.assertThat(pt.getTargetTenantKind())
+                        .as("targetTenantKind deve rispettare il filtro")
+                        .isEqualTo(targetTenantKindValue);
+            }
+
+            // handlesPersonalData (match esatto)
+            if (handlesPersonalDataValue != null) {
+                Assertions.assertThat(pt.getHandlesPersonalData())
+                        .as("handlesPersonalData deve rispettare il filtro")
+                        .isEqualTo(handlesPersonalDataValue);
+            }
+
+            // eserviceIds: al momento nella response non trovo informazioni esplicite sugli ids
+            if (eserviceIdsValue != null && !eserviceIdsValue.isEmpty()) {
+
+            }
+        }
+    }
+
+
+
 }

@@ -5,6 +5,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposeTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -33,6 +34,7 @@ import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 public class PurposeTemplateClientImpl extends AbstractClient implements IPurposeTemplateClient {
 
     private final PurposeTemplatesApi purposesTemplateApi;
+    private final it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposeTemplatesApi m2mPurposeTemplatesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
@@ -40,10 +42,18 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.purposesTemplateApi = new PurposeTemplatesApi(createApiClient("dummyBearer"));
+        this.m2mPurposeTemplatesApi = new it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposeTemplatesApi(createM2MApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {
         ApiClient apiClient = new ApiClient(restTemplate);
+        apiClient.setBasePath(basePath);
+        apiClient.setBearerToken(bearerToken);
+        return apiClient;
+    }
+
+    private it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient createM2MApiClient(String bearerToken) {
+        it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient apiClient = new it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
         apiClient.setBearerToken(bearerToken);
         return apiClient;
@@ -152,5 +162,14 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     @Override
     public PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException {
         return purposesTemplateApi.updatePurposeTemplate(purposeTemplateId, purposeTemplateSeed);
+    }
+
+    @Override
+    public PurposeTemplates getPurposeTemplates(Integer offset, Integer limit, String purposeTitle, List<UUID> creatorIds, List<UUID> eserviceIds, List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> states, it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKind, Boolean handlesPersonalData) {
+        return performOperation(
+                () -> m2mPurposeTemplatesApi.getPurposeTemplatesWithHttpInfo(offset, limit, purposeTitle, creatorIds, eserviceIds, states, targetTenantKind, handlesPersonalData))
+                .orElseThrow(() -> new RuntimeException(
+                        "Errore nel recupero purpose templates (response non 2xx o body nullo)"
+                ));
     }
 }

@@ -2,6 +2,7 @@ package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
@@ -29,4 +30,5 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
     void unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
 
+    PurposeTemplates getPurposeTemplates(Integer offset, Integer limit, String purposeTitle, List<UUID> creatorIds, List<UUID> eserviceIds, List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> states, it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKind, Boolean handlesPersonalData);
 }
