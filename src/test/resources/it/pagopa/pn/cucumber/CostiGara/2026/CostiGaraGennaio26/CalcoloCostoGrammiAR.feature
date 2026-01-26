@@ -252,7 +252,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 647   | ROMA                   | RM       | notifica analogica RECAPITISTA |
       | 04100 | 676   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
       | 90020 | 638   | CASTELLANA SICULA      | PA       | notifica analogica RECAPITISTA |
-      | 64100 | 528   | TERAMO                 | TE       | notifica analogica RECAPITISTA |
+      | 64100 | 525   | TERAMO                 | TE       | notifica analogica RECAPITISTA |
       | 86081 | 800   | AGNONE                 | IS       | notifica analogica RECAPITISTA |
       | 95056 | 638   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
       | 90010 | 745   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
@@ -338,7 +338,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 778   | ROMA                   | RM       | notifica analogica RECAPITISTA |
       | 04100 | 811   | FOGLIANO               | LT       | notifica analogica RECAPITISTA |
       | 51018 | 892   | PIEVE A NIEVOLE        | PT       | notifica analogica RECAPITISTA |
-      | 64100 | 528   | TERAMO                 | TE       | notifica analogica RECAPITISTA |
+      | 64100 | 525   | TERAMO                 | TE       | notifica analogica RECAPITISTA |
       | 86081 | 932   | AGNONE                 | IS       | notifica analogica RECAPITISTA |
       | 95056 | 762   | SANT'AGATA LI BATTIATI | CT       | notifica analogica RECAPITISTA |
       | 90010 | 876   | ALTAVILLA MILICIA      | PA       | notifica analogica RECAPITISTA |
