@@ -1,11 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,15 +8,7 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
@@ -35,11 +21,17 @@ import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
+import org.assertj.core.api.Assertions;
+import org.springframework.http.HttpStatus;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-import org.assertj.core.api.Assertions;
-import org.springframework.http.HttpStatus;
+
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class PurposesSteps {
     @ParameterType("ACTIVE|DRAFT|SUSPENDED|WAITING_FOR_APPROVAL|ARCHIVED|REJECTED")
@@ -408,6 +400,53 @@ public class PurposesSteps {
     @When("l'utente tenta di effettuare la modifica parziale della finalità con token non valido")
     public void patchPurposeWithNotValidToken() {
         purposePatchAssistant.patchResourceWithInvalidToken(purposePatchAssistant.buildDefaultPatchRequest());
+    }
+
+    @When("viene aggiornato il draft purpose con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, riskAnalysisForm {string}, dailyCalls {string}")
+    public void patchDraftPurpose(
+            String purposeId,
+            String title,
+            String description,
+            String isFreeOfCharge,
+            String freeOfChargeReason,
+            String riskAnalysisForm,
+            String dailyCalls
+    ) {
+        UUID purposeIdValue = uuidOrRandomOrNull(purposeId);
+
+        // default valido (include un RiskAnalysisFormSeed valido)
+        PurposePatchRequest req = purposePatchAssistant.buildDefaultPatchRequest();
+
+        // override SEMPRE (anche a null)
+        req.setTitle(nullOrBlankOrValue(title));
+        req.setDescription(nullOrBlankOrValue(description));
+
+        // boolean: StepParser.nullableBoolean non va bene per invalid -> false,
+        // quindi parse manuale minimale:
+        req.setIsFreeOfCharge(parseNullableBooleanOrNull(isFreeOfCharge));
+
+        req.setFreeOfChargeReason(nullOrBlankOrValue(freeOfChargeReason));
+        req.setDailyCalls(nullableInteger(dailyCalls));
+
+        // riskAnalysisForm: token-based minimale
+        // - %null -> null
+        // - %actual -> lascia quello del default
+        // - %invalid -> riskAnalysis errata
+        String raf = nullOrBlankOrValue(riskAnalysisForm);
+        if (raf == null || raf.isBlank()) {
+            req.setRiskAnalysisForm(null);
+        } else if ("%actual".equalsIgnoreCase(raf) || "actual".equalsIgnoreCase(raf)) {
+            // non fare nulla: resta quello del default builder
+        } else if ("%invalid".equalsIgnoreCase(raf) || "invalid".equalsIgnoreCase(raf)) {
+            // se vuoi random vero, puoi richiamare buildDefaultPatchRequest() e prendere solo il RAF
+            req.setRiskAnalysisForm(purposePatchAssistant.buildDefaultPatchRequest(false).getRiskAnalysisForm());
+        } else {
+            req.setRiskAnalysisForm(null);
+        }
+
+        this.httpCallExecutor.performCall(
+                () -> purposeClient.patchPurpose(purposeIdValue, req)
+        );
     }
 
     @Then("la finalità è stata parzialmente modificata correttamente")

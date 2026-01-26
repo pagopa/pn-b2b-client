@@ -280,8 +280,8 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
     @happy-path
     Examples:
-      | state                | code |
-      | SUSPENDED            | 200  |
+      | state     | code |
+      | SUSPENDED | 200  |
 
     @sad-path
     Examples:
@@ -690,9 +690,9 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene status code 200
     And la richiesta di fruizione è stata correttamente visualizzata in stato "ACTIVE"
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_AGREEMENT_2] La richiesta di fruizione correlata a una finalità non può essere visualizzata specificando un token non valido (Parte2#Scenario 22)
@@ -718,9 +718,9 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene status code 200
     And il file restituito non è vuoto
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_DOCUMENT_2] Il documento dell'analisi del rischio correlato a una finalità non può essere visualizzato specificando un token non valido (Parte2#Scenario 26)
@@ -750,6 +750,50 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 200
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
+
+  @purpose-m2m-patch
+  Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.1] - Casi negativi
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When viene aggiornato il draft purpose con purposeId "<purposeId>" e title "<title>", description "<description>", isFreeOfCharge "<isFreeOfCharge>", freeOfChargeReason "<freeOfChargeReason>", riskAnalysisForm "<riskAnalysisForm>", dailyCalls "<dailyCalls>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | purposeId | title                                                         | description                                                                                                                                                                                                                                                | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+    # title troppo corto (< 5)
+      | %random   | abcd                                                          | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 10         | 400        |
+
+    # title troppo lungo (> 60)
+      | %random   | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 10         | 400        |
+
+    # description troppo corta (< 10)
+      | %random   | titolo valido                                                 | short                                                                                                                                                                                                                                                      | true           | reason             | actual           | 10         | 400        |
+
+    # description troppo lunga (> 250)
+      | %random   | titolo valido                                                 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | true           | reason             | actual           | 10         | 400        |
+
+    # dailyCalls < minimum (1)
+      | %random   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 0          | 400        |
+
+    # dailyCalls > maximum (1_000_000_000)
+      | %random   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 1000000001 | 400        |
+
+    # dailyCalls non numerico
+      | %random   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | abc        | 400        |
+
+    # riskAnalysisForm semanticamente invalido
+      | %random   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | %invalid         | 10         | 400        |
+
+    Examples:
+      | purposeId                            | title         | description        | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+    # UUID valido ma non presente a sistema
+      | %random                              | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
+
+    # UUID valido ma sicuramente inesistente
+      | 00000000-0000-0000-0000-000000000000 | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
+
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
@@ -796,12 +840,12 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 400
     And la finalità non ha subito modifiche
     Examples:
-      | stato                 |
-      | ACTIVE                |
-      | SUSPENDED             |
-      | REJECTED              |
-      | ARCHIVED              |
-      | WAITING_FOR_APPROVAL  |
+      | stato                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | REJECTED             |
+      | ARCHIVED             |
+      | WAITING_FOR_APPROVAL |
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
@@ -873,12 +917,12 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 400
     And la finalità non ha subito modifiche
     Examples:
-      | stato                 |
-      | ACTIVE                |
-      | SUSPENDED             |
-      | REJECTED              |
-      | ARCHIVED              |
-      | WAITING_FOR_APPROVAL  |
+      | stato                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | REJECTED             |
+      | ARCHIVED             |
+      | WAITING_FOR_APPROVAL |
 
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa che non gli appartiene
