@@ -971,7 +971,7 @@ public class PurposeTemplateSteps {
         preparePurposeTemplate(
                 "%random",
                 "%actual",
-                "PUBLISHED",
+                "DRAFT",
                 "PA",
                 "true"
         );
@@ -985,6 +985,24 @@ public class PurposeTemplateSteps {
                 "false"
         );
 
+        // NOISE #3
+        preparePurposeTemplate(
+                "%random",
+                "%actual",
+                "SUSPENDED",
+                "PA",
+                "false"
+        );
+
+        // NOISE #4
+        preparePurposeTemplate(
+                "%random",
+                "%actual",
+                "ARCHIVED",
+                "PA",
+                "false"
+        );
+
         // MATCH: quello che vuoi ottenere col GET quando passi %actual
         // Creato per ultimo così overwrita gli "actual" nel context
         preparePurposeTemplate(
@@ -994,6 +1012,8 @@ public class PurposeTemplateSteps {
                 "PA",
                 "true"
         );
+
+        purposeTemplateContext.setActualHandlesPersonalData(true);
     }
 
 

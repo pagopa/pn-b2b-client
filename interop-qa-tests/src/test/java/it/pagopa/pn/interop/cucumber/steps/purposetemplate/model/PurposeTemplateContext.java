@@ -7,6 +7,7 @@ import lombok.Data;
 public class PurposeTemplateContext {
     private String actualPurposeTitle;
     private PurposeTemplateState actualState;
+    private Boolean actualHandlesPersonalData;
     private Integer actualOffset;
     private Integer actualLimit;
 }
