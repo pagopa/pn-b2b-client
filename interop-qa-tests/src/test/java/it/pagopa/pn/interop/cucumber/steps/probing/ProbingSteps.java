@@ -11,6 +11,7 @@ import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.EserviceRow;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
+import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingResponse;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
@@ -18,9 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.*;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
@@ -277,30 +280,39 @@ public class ProbingSteps {
         probingContext.setExpectedEserviceRow(eserviceRow);
     }
 
-    private void assertFrequencyAndWindow(int expectedStatusCode) {
+    private void assertScheduling(int expectedStatusCode, boolean waitWindow, Function<ProbingResponse, Boolean> assertions) {
         int actualStatusCode = httpCallExecutor.getResponseStatus().value();
         if (actualStatusCode != expectedStatusCode) return;
 
+        EserviceRow actual = probingContext.getActualEserviceRow();
+        EserviceRow expected = probingContext.getExpectedEserviceRow();
         Long eserviceRecordId = resolver.getEserviceRecordId();
 
         // 1) se la finestra attesa parte nel futuro, aspetta fino allo start (con cap)
-        waitUntilExpectedWindowStarts(OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingStartTime()));
+        if (waitWindow)
+            waitUntilExpectedWindowStarts(OffsetDateTime.from(expected.getPollingStartTime()));
 
         // 2) calcola policy di polling in base a finestra/frequenza
         ProbingUtils.PollingPolicy policy = computePollingPolicy(
-                OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingStartTime()),
-                OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingEndTime()),
-                probingContext.getExpectedEserviceRow().getPollingFrequency()
+                OffsetDateTime.from(expected.getPollingStartTime()),
+                OffsetDateTime.from(expected.getPollingEndTime()),
+                expected.getPollingFrequency()
         );
 
         PollingService.makePolling(
-                () -> probingClient.getEserviceMainData(eserviceRecordId),
-                resp -> {
-                    if (!isProbingStateUpdated(resp)) return false;
-                    probingContext.getActualEserviceRow().setPollingFrequency(resp.getPollingFrequency());
-                    return true;
+                () -> {
+                    var mainData = probingClient.getEserviceMainData(eserviceRecordId);
+                    actual.setPollingFrequency(mainData.getPollingFrequency());
+
+                    var probingData = probingClient.getEserviceProbingData(eserviceRecordId);
+                    probingContext.setLastResponseTime(
+                            probingData.getResponseReceived() != null ? LocalDateTime.parse(probingData.getResponseReceived()) : null
+                    );
+
+                    return new ProbingResponse(mainData.getPollingFrequency(), probingContext.getLastResponseTime());
                 },
-                "Errore durante il setting di parametri di probing l'e-service con eserviceRecordId '" + eserviceRecordId + "'",
+                assertions::apply,
+                "Errore durante lo scheduling per l'e-service con eserviceRecordId '" + eserviceRecordId + "'",
                 policy.maxTry(),
                 policy.sleepMs()
         );

@@ -4,6 +4,7 @@ import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceC
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,6 +18,7 @@ public class ProbingContext{
     private List<SearchEserviceContent> actualResults;
     private EserviceRow actualEserviceRow;
     private EserviceRow expectedEserviceRow;
+    private LocalDateTime lastResponseTime;
 
     public ProbingContext() {
         this.threadNumber = nextEserviceIndex();
