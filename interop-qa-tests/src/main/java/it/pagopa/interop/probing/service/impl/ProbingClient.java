@@ -1,12 +1,12 @@
 package it.pagopa.interop.probing.service.impl;
 
 import it.pagopa.interop.common.client.AbstractClient;
-import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.probing.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.probing.api.EServicesApi;
 import it.pagopa.interop.generated.openapi.clients.probing.api.ProducersApi;
 import it.pagopa.interop.generated.openapi.clients.probing.api.StatusApi;
 import it.pagopa.interop.generated.openapi.clients.probing.model.*;
+import it.pagopa.interop.probing.config.ProbingClientConfigs;
 import it.pagopa.interop.probing.service.IProbingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.ToString;
@@ -36,23 +36,31 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     private final RestTemplate restTemplate;
     private final String basePath;
 
+    private final String probingBearerTokenKms;
+    private final String probingBearerTokenTelemetry;
+
     private final HttpCallExecutor httpCallExecutor;
 
-    public ProbingClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
+    public ProbingClient(RestTemplate restTemplate,
+                         ProbingClientConfigs probingClientConfigs,
+                         HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
-        this.basePath = interopClientConfigs.getProbingBaseUrl();
+        this.basePath = probingClientConfigs.getBaseUrl();
+
+        this.probingBearerTokenKms = probingClientConfigs.getBearerTokenKms();
+        this.probingBearerTokenTelemetry = probingClientConfigs.getBearerTokenTelemetry();
 
         this.httpCallExecutor = httpCallExecutor;
 
         // --- probing core ---
-        ApiClient probingApiClient = createProbingApiClient("dummyBearer");
+        ApiClient probingApiClient = createProbingApiClient(null);
         this.statusApi = new StatusApi(probingApiClient);
         this.eServicesApi = new EServicesApi(probingApiClient);
         this.producersApi = new ProducersApi(probingApiClient);
 
         // --- probingStatistics ---
         it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient statsApiClient =
-                createStatisticsApiClient("dummyBearer");
+            createStatisticsApiClient(null);
         this.statisticsStatusApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.StatusApi(statsApiClient);
         this.telemetryApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.TelemetryApi(statsApiClient);
     }
