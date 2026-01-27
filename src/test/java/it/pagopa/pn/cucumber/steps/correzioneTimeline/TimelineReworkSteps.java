@@ -15,6 +15,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,12 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class TimelineReworkSteps {
@@ -183,44 +186,91 @@ public class TimelineReworkSteps {
         }
 
         // Fail-fast finale
-        Assertions.assertTrue(
+        assertTrue(
                 invalidElementIds.isEmpty(),
                 "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
         );
     }
 
     @And("si verifica che la richiesta di rework effettuata sia in stato {string} entro {int} secondi controllando ogni {int} secondi")
-    public void verifyReworkStatusById(String status, int timeoutSeconds, int pollIntervalSeconds) {
+    public void verifyReworkStatusById(String expectedStatus, int timeoutSeconds, int pollIntervalSeconds) {
 
-        await()
-                .atMost(timeoutSeconds, SECONDS)
-                .pollInterval(pollIntervalSeconds, SECONDS)
-                .until(() -> {
-                    ReworkItemsResponse reworkItemsResponse = reworkTimelineClient
-                            .retrieveNotificationReworkById(sharedSteps.getNotificationIun(), reworkResponse.getReworkId());
+        String iun = sharedSteps.getNotificationIun();
+        AtomicReference<List<String>> lastFoundStatuses = new AtomicReference<>(List.of());
 
-                    return reworkItemsResponse.getItems().stream()
-                            .anyMatch(reworkItem -> reworkItem.getStatus() == ReworkItem.StatusEnum.fromValue(status));
-                });
+        try {
+            await()
+                    .atMost(timeoutSeconds, SECONDS)
+                    .pollInterval(pollIntervalSeconds, SECONDS)
+                    .until(() -> {
+                        ReworkItemsResponse response =
+                                reworkTimelineClient.retrieveNotificationReworkById(
+                                        iun,
+                                        reworkResponse.getReworkId()
+                                );
+
+                        List<String> statuses = response.getItems().stream()
+                                .map(item -> item.getStatus().getValue())
+                                .toList();
+
+                        lastFoundStatuses.set(statuses);
+
+                        return statuses.contains(expectedStatus);
+                    });
+
+        } catch (ConditionTimeoutException e) {
+            throw new RuntimeException(
+                    String.format(
+                            "Timeout in attesa dello stato rework. IUN=%s | atteso=%s | ultimi stati trovati=%s",
+                            iun,
+                            expectedStatus,
+                            lastFoundStatuses.get()
+                    ),
+                    e
+            );
+        }
     }
+
+//    @Then("viene invocato il consolidatore con i seguenti dati:")
+//    public void vieneInvocatoIlConsolidatoreCustom(DataTable params) {
+//
+//        Map<String, String> inputData = params.asMaps().get(0);
+//        Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
+//        try {
+//            sharedSteps
+//                    .getPnExternalServiceClient()
+//                    .pushConsolidatoreNotificationAttach(mapInfo);
+//        } catch (HttpStatusCodeException e) {
+//            this.sharedSteps.setNotificationError(e);
+//        }
+//    }
 
     @Then("viene invocato il consolidatore con i seguenti dati:")
     public void vieneInvocatoIlConsolidatoreCustom(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
+
+        String body = null;
         try {
-            sharedSteps
-                    .getPnExternalServiceClient()
+            body = sharedSteps.getPnExternalServiceClient()
                     .pushConsolidatoreNotificationAttach(mapInfo);
         } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+
+            body = e.getResponseBodyAsString();
         }
+        assertTrue(
+                body != null && !body.contains("\"resultCode\":\"500") && !body.contains("\"resultCode\":\"403"),
+                String.format("Chiamata al consolidatore fallita | IUN=%s | body=%s",
+                        mapInfo.get("iun"),
+                        body)
+        );
     }
 
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
         String iun = sharedSteps.getNotificationIun();
-        Instant now = Instant.now().plusSeconds(3600);
+        //Instant now = Instant.now().plusSeconds(3600);
+        Instant now = Instant.now().minusSeconds(120);
 
         Map<String, Object> mapInfo = new HashMap<>();
 
@@ -235,7 +285,7 @@ public class TimelineReworkSteps {
             Map<String, Object> attachment = new HashMap<>();
             attachment.put("id", "1");
             attachment.put("documentType", inputData.get("attachment_1"));
-            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf");
+            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf");
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
             attachment.put("date", B2bUtils.getOffsetDateTimeFromDate(now));
 
@@ -252,7 +302,7 @@ public class TimelineReworkSteps {
         mapInfo.put("registeredLetterCode", null);
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
         mapInfo.put("statusDateTime", B2bUtils.getOffsetDateTimeFromDate(now));
-        mapInfo.put("statusDescription", "QA");
+        mapInfo.put("statusDescription", "Quality assurance");
 
         return mapInfo;
     }
@@ -326,17 +376,18 @@ public class TimelineReworkSteps {
                 iun, recindex, attempt, pcRetry
         );
     }
+
     private String buildSingleAttachment(String documentType, Instant date) {
 
         return """
-      {
-        "id": "1",
-        "documentType": "%s",
-        "uri": "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf",
-        "sha256": "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=",
-        "date": "%s"
-      }
-      """.formatted(
+                {
+                  "id": "1",
+                  "documentType": "%s",
+                  "uri": "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf",
+                  "sha256": "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=",
+                  "date": "%s"
+                }
+                """.formatted(
                 documentType,
                 B2bUtils.getOffsetDateTimeFromDate(date)
         );
