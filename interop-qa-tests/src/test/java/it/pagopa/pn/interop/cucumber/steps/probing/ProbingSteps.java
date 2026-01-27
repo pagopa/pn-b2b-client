@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.probing;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -11,7 +12,6 @@ import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.EserviceRow;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
-import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingResponse;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
@@ -19,17 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.*;
+import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.matchesAllFilters;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
 @Slf4j
 public class ProbingSteps {
+    private static final Duration NOT_ADVANCING_TOLERANCE = Duration.ofSeconds(1);
+
     private final IHttpExecutor httpCallExecutor;
     private final ProbingClient probingClient;
     private final ProbingContext probingContext;
@@ -250,6 +251,8 @@ public class ProbingSteps {
             actual.setProbingEnabled(response.getProbingEnabled());
             actual.setState(response.getState().getValue());
 
+            probingContext.setLastResponseTime(response.getResponseReceived() != null ? LocalDateTime.parse(response.getResponseReceived()) : null);
+
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
@@ -291,49 +294,168 @@ public class ProbingSteps {
         probingContext.setExpectedEserviceRow(eserviceRow);
     }
 
-    private void assertScheduling(int expectedStatusCode, boolean waitWindow, Function<ProbingResponse, Boolean> assertions) {
-        int actualStatusCode = httpCallExecutor.getResponseStatus().value();
-        if (actualStatusCode != expectedStatusCode) return;
+    @Then("verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency {string}, startDate {string}, endDate {string}")
+    public void assertScheduler(String pollingFrequency, String startDate, String endDate) throws Exception {
 
-        EserviceRow actual = probingContext.getActualEserviceRow();
-        EserviceRow expected = probingContext.getExpectedEserviceRow();
-        Long eserviceRecordId = resolver.getEserviceRecordId();
+        OffsetDateTime start = resolver.resolveDateToken(startDate);
+        OffsetDateTime end = resolver.resolveDateToken(endDate);
 
-        // 1) se la finestra attesa parte nel futuro, aspetta fino allo start (con cap)
-        if (waitWindow)
-            waitUntilExpectedWindowStarts(OffsetDateTime.from(expected.getPollingStartTime()));
+        Assertions.assertThat(start).as("startDate non deve essere null").isNotNull();
+        Assertions.assertThat(end).as("endDate non deve essere null").isNotNull();
+        Assertions.assertThat(end).as("endDate deve essere dopo startDate").isAfter(start);
 
-        // 2) calcola policy di polling in base a finestra/frequenza
-        ProbingUtils.PollingPolicy policy = computePollingPolicy(
-                OffsetDateTime.from(expected.getPollingStartTime()),
-                OffsetDateTime.from(expected.getPollingEndTime()),
-                expected.getPollingFrequency()
-        );
+        Instant startI = start.toInstant();
+        Instant endI = end.toInstant();
+        Instant now = Instant.now();
 
-        PollingService.makePolling(
-                () -> {
-                    var mainData = probingClient.getEserviceMainData(eserviceRecordId);
-                    actual.setPollingFrequency(mainData.getPollingFrequency());
+        // CONTRATTO: frequency è in minuti (minimum: 1)
+        int freqMinutes = resolver.resolveFrequency(pollingFrequency);
+        Assertions.assertThat(freqMinutes)
+                .as("pollingFrequency (minutes) deve essere >= 1")
+                .isGreaterThanOrEqualTo(1);
 
-                    var probingData = probingClient.getEserviceProbingData(eserviceRecordId);
-                    probingContext.setLastResponseTime(
-                            probingData.getResponseReceived() != null ? LocalDateTime.parse(probingData.getResponseReceived()) : null
-                    );
+        Duration period = Duration.ofMinutes(freqMinutes);
 
-                    return new ProbingResponse(mainData.getPollingFrequency(), probingContext.getLastResponseTime());
-                },
-                assertions::apply,
-                "Errore durante lo scheduling per l'e-service con eserviceRecordId '" + eserviceRecordId + "'",
-                policy.maxTry(),
-                policy.sleepMs()
-        );
+        // Policy su tolleranze
+        Duration notAdvancingTolerance = Duration.ofSeconds(2); // piccoli delta (jitter/rounding/clock skew)
+        Duration observeOutside = Duration.ofSeconds(20); // abbastanza per capire se sta aggiornando "a sorpresa"
+        Duration observeInsideMax = Duration.ofSeconds(90); // se freq=1m possiamo ragionevolmente vedere 1 update
+
+        // Semantica finestra: [start, end)
+        boolean before = now.isBefore(startI);
+        boolean after = !now.isBefore(endI); // now >= end
+
+        if (before) {
+            // 1) Prima della finestra: non deve avanzare
+            assertNotAdvancing(observeOutside, notAdvancingTolerance, "Il probing sta avanzando PRIMA della finestra attesa");
+
+            // 2) Se la finestra inizia a breve e finisce a breve, facciamo anche start&stop in un solo test (utile per casi tipo now+1m / now+2m)
+            Duration untilStart = Duration.between(now, startI);
+            if (!untilStart.isNegative() && untilStart.compareTo(Duration.ofSeconds(30)) <= 0) {
+                waitUntil(startI, Duration.ofSeconds(35)); // cap
+
+                // Dentro finestra: osserviamo, ma senza imporre "deve avanzare" perché non sappiamo se first-run è immediato.
+                observeAndValidateInside(endI, observeInsideMax, notAdvancingTolerance, "Durante la finestra (appena iniziata) il probing si comporta in modo incoerente");
+            }
+
+            return;
+        }
+
+        if (after) {
+            // Dopo la finestra: non deve avanzare
+            assertNotAdvancing(observeOutside, notAdvancingTolerance, "Il probing sta avanzando DOPO la finestra attesa");
+            return;
+        }
+
+        // Siamo dentro finestra
+        // Se la finestra termina a breve (short window), facciamo start&stop nello stesso test:
+        Duration untilEnd = Duration.between(now, endI);
+
+        if (!untilEnd.isNegative() && untilEnd.compareTo(Duration.ofSeconds(45)) <= 0) {
+            // Fase "durante finestra": se avanza, deve essere <= end (+ tolleranza)
+            observeAndValidateInside(endI, untilEnd.plusSeconds(2), notAdvancingTolerance, "Durante la finestra corta il probing si comporta in modo incoerente");
+
+            // Aspetta fino a end, poi verifica che non avanzi più
+            waitUntil(endI, Duration.ofSeconds(60));
+            assertNotAdvancing(observeOutside, notAdvancingTolerance, "Il probing non si è fermato dopo endDate (finestra corta)");
+            return;
+        }
+
+        // Finestra “normale”: qui possiamo essere più ambiziosi SOLO se è ragionevole osservare un update.
+        // Se period è 1 minuto, in 90s in genere lo vediamo. Se period è 10 minuti, no.
+        Duration observeInside = min(observeInsideMax, period.plusSeconds(20)); // per freq=1m => 80s circa
+        boolean canReasonablySeeAtLeastOneTick = period.compareTo(observeInsideMax) <= 0;
+
+        if (canReasonablySeeAtLeastOneTick) {
+            // Qui ci aspettiamo di vedere almeno un avanzamento entro observeInside
+            assertAdvancingWithin(observeInside,
+                    "Il probing non sta avanzando durante la finestra (atteso almeno 1 update dato che period=" + period + ")");
+        } else {
+            // Periodo troppo grande per essere osservabile
+            // non imponiamo l’avanzamento, ma se avanza deve comunque rispettare end.
+            observeAndValidateInside(endI, observeInside, notAdvancingTolerance, "Durante la finestra il probing avanza in modo incoerente rispetto alla endDate");
+        }
     }
 
-    private boolean isProbingStateUpdated(MainDataEserviceResponse resp) {
-        return resp != null
-                && resp.getPollingFrequency() != null
-                && isWithinExpectedWindow(OffsetDateTime.now(), OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingStartTime()), OffsetDateTime.from(probingContext.getExpectedEserviceRow().getPollingEndTime()))
-                && resp.getPollingFrequency().equals(probingContext.getExpectedEserviceRow().getPollingFrequency());
+    @Then("verifica che la responseReceived NON sia aggiornata quando probing è disabilitato")
+    public void assertSchedulerWhenProbingDisabled() throws Exception {
+        Duration observe = Duration.ofSeconds(30);
+        Duration tolerance = Duration.ofSeconds(2);
+
+        assertNotAdvancing(observe, tolerance, "Il probing sta aggiornando anche se probingEnabled=false");
+    }
+
+    private void assertNotAdvancing(Duration observe, Duration tolerance, String message) throws Exception {
+        Instant t1 = readLastResponseTime();
+        TimeUnit.MILLISECONDS.sleep(observe.toMillis());
+        Instant t2 = readLastResponseTime();
+
+        long deltaMillis = Math.abs(t2.toEpochMilli() - t1.toEpochMilli());
+
+        Assertions.assertThat(deltaMillis)
+                .as(message + " (delta=" + deltaMillis + "ms, tolerance=" + tolerance.toMillis() + "ms)")
+                .isLessThanOrEqualTo(tolerance.toMillis());
+    }
+
+    private void assertAdvancingWithin(Duration observe, String message) throws Exception {
+        Instant t1 = readLastResponseTime();
+
+        long deadlineNanos = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(observe.toMillis());
+        long stepMillis = 1000L; // 1s step: frequency è in minuti, non serve più fitto
+
+        while (System.nanoTime() < deadlineNanos) {
+            TimeUnit.MILLISECONDS.sleep(stepMillis);
+            Instant t2 = readLastResponseTime();
+            if (t2.isAfter(t1)) {
+                return;
+            }
+        }
+
+        Instant tFinal = readLastResponseTime();
+        long deltaMillis = tFinal.toEpochMilli() - t1.toEpochMilli();
+        Assertions.fail(message + " (delta=" + deltaMillis + "ms, observe=" + observe.toMillis() + "ms)");
+    }
+
+    private void observeAndValidateInside(Instant endI, Duration observe, Duration tolerance, String message) throws Exception {
+        Instant baseline = readLastResponseTime();
+
+        long deadlineNanos = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(observe.toMillis());
+        long stepMillis = 1000L;
+
+        while (System.nanoTime() < deadlineNanos) {
+            TimeUnit.MILLISECONDS.sleep(stepMillis);
+            Instant current = readLastResponseTime();
+
+            if (current.isAfter(baseline)) {
+                // Se è avanzato, deve comunque non superare end (+ tolleranza)
+                Instant endPlusTol = endI.plusMillis(tolerance.toMillis());
+                Assertions.assertThat(current)
+                        .as(message + " (lastResponseTime avanzato ma oltre endDate)")
+                        .isBeforeOrEqualTo(endPlusTol);
+
+                baseline = current; // aggiorno baseline e continuo a osservare
+            }
+        }
+    }
+
+    private void waitUntil(Instant target, Duration maxWait) throws Exception {
+        Instant now = Instant.now();
+        if (!now.isBefore(target)) return;
+
+        long msToWait = target.toEpochMilli() - now.toEpochMilli();
+        long capped = Math.min(msToWait, maxWait.toMillis());
+        if (capped > 0) TimeUnit.MILLISECONDS.sleep(capped);
+    }
+
+    private Duration min(Duration a, Duration b) {
+        return a.compareTo(b) <= 0 ? a : b;
+    }
+
+    private Instant readLastResponseTime() {
+        Long eserviceRecordId = resolver.getEserviceRecordId();
+        this.getEserviceMainData(String.valueOf(eserviceRecordId));
+        this.getEserviceProbingData(String.valueOf(eserviceRecordId));
+        return probingContext.getLastResponseTime().toInstant(ZoneOffset.UTC);
     }
 
     private void assertResultsMatchFilters(SearchEserviceResponse response, ProbingUtils.EserviceFilters filters) {

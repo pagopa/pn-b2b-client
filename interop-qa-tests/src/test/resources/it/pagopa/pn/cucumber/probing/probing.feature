@@ -101,7 +101,6 @@ Feature: Probing
     When viene modificato lo stato operativo dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<eserviceState>" e si verifica che coincida con quanto atteso
     Then la response riporta lo status code <statusCode>
 
-
     Examples:
     # Happy paths
       | eserviceId | versionId | eserviceState | statusCode |
@@ -222,12 +221,39 @@ Feature: Probing
     Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
 
     Examples:
-    # Before window
+    # BEFORE window (inizia tra poco)
       | frequency | startDate | endDate |
-      | %actual-1 | %now-2h   | %now-1h |
+      | 1         | now+1m    | now+10m |
 
-    # In window
-      | %actual   | %now      | %now+1h |
+    # IN window (già dentro)
+      | 1         | now-5m    | now+10m |
 
-    # After window
-      | %actual+1 | %now+2h   | %now+3h |
+    # AFTER window (finita da poco)
+      | 1         | now-10m   | now-1m  |
+
+    # Boundary start (start = now)
+      | 1         | now       | now+10m |
+
+    # Boundary end (end = now)
+      | 1         | now-10m   | now     |
+
+    # Start & stop nello stesso test
+      | 1         | now       | now+2m  |
+
+    # Window shorter than period
+      | 5         | now       | now+2m  |
+
+  Scenario Outline: [SCHEDULING] - Probing disabled non aggiorna mai
+    Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
+    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
+    When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    Then verifica che la responseReceived NON sia aggiornata quando probing è disabilitato
+
+    Examples:
+      | frequency | startDate | endDate |
+      | 1         | now-5m    | now+10m |
+      | 1         | now+1m    | now+10m |
+      | 1         | now-10m   | now-1m  |
+      | 5         | now       | now+2m  |
+
+
