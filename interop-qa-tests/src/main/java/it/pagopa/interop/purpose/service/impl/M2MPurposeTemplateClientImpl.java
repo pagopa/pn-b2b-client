@@ -31,7 +31,7 @@ public class M2MPurposeTemplateClientImpl extends AbstractClient implements
 
     public M2MPurposeTemplateClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = interopClientConfigs.getBaseUrl();
+        this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.purposesTemplateApi = new PurposeTemplatesApi(createApiClient("dummyBearer"));
     }
 

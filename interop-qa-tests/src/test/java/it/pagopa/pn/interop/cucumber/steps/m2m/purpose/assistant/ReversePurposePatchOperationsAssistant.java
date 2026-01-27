@@ -61,25 +61,6 @@ public class ReversePurposePatchOperationsAssistant extends PurposeGenericPatchO
             .build();
     }
 
-
-    public ReversePurposePatchRequest buildActualPatchRequest() {
-        UUID uuid = UUID.fromString(this.sharedContext.getPurposeCommonContext().getPurposeId());
-
-        String lastToken = clientTokenConfigurator.getLastToken();
-        String tenantType = sharedContext.getTenantType();
-        String token = identityService.getToken(tenantType, null);
-        clientTokenConfigurator.setBearerToken(token);
-        clientTokenConfigurator.setBearerToken(lastToken);
-
-        return ReversePurposePatchRequest.builder()
-                .title("patched title - " + uuid)
-                .description("patched description - " + uuid)
-                .dailyCalls(10)
-                .isFreeOfCharge(true)
-                .freeOfChargeReason("some reason - " + uuid)
-                .build();
-    }
-
     @Override
     protected Purpose patchResource(UUID uuid, ReversePurposePatchRequest patchRequest) {
         return this.client.patchReversePurpose(uuid, patchRequest);

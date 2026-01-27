@@ -25,7 +25,7 @@ Feature: finalità agevolata, purpose from purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
     When si crea una finalità a partire dal purpose template creato
     And si ottiene response status code 200
-    And l'utente tenta di effettuare la modifica parziale della finalità creata per l'e-service ad erogazione inversa
+    And l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
     Then si ottiene response status code 409
 
     Examples:

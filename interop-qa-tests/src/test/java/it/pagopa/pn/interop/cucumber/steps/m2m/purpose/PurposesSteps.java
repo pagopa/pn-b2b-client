@@ -1,5 +1,15 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullOrBlankOrValue;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableInteger;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.parseNullableBooleanOrNull;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.uuidOrRandomOrNull;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,7 +18,15 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
@@ -21,17 +39,11 @@ import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
-import org.assertj.core.api.Assertions;
-import org.springframework.http.HttpStatus;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.assertj.core.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 public class PurposesSteps {
     @ParameterType("ACTIVE|DRAFT|SUSPENDED|WAITING_FOR_APPROVAL|ARCHIVED|REJECTED")
@@ -480,12 +492,6 @@ public class PurposesSteps {
     @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
     public void patchReversePurpose() {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
-        reversePurposePatchAssistant.patchResource(request);
-    }
-
-    @When("l'utente tenta di effettuare la modifica parziale della finalità creata per l'e-service ad erogazione inversa")
-    public void patchActualReversePurpose() {
-        ReversePurposePatchRequest request = reversePurposePatchAssistant.buildActualPatchRequest();
         reversePurposePatchAssistant.patchResource(request);
     }
 
