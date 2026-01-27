@@ -21,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -78,18 +75,26 @@ public class TimelineReworkSteps {
 
     @And("viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:")
     public void callReworkWithParams(DataTable params) {
+
         Map<String, String> inputData = params.asMaps().get(0);
+
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
+
         try {
-            reworkTimelineClient.notificationRework(getParams(inputData, "iun", sharedSteps.getNotificationIun()),
-                    createRequestRework(
-                            attemptId != null ? ReworkRequest.AttemptIdEnum.fromValue(attemptId) : null,
-                            getParams(inputData, "reason", "reason"),
-                            getParams(inputData, "pcRetry", "PCRETRY_0"),
-                            getParams(inputData, "recIndex", "RECINDEX_0"),
-                            getParams(inputData, "expectedStatusCode", "RECRI003C"),
-                            getParams(inputData, "expectedDeliveryFailureCause", null)
-                    ));
+            reworkResponse =
+                    reworkTimelineClient.notificationRework(
+                            getParams(inputData, "iun", sharedSteps.getNotificationIun()),
+                            createRequestRework(
+                                    attemptId != null
+                                            ? ReworkRequest.AttemptIdEnum.fromValue(attemptId)
+                                            : null,
+                                    getParams(inputData, "reason", "reason"),
+                                    getParams(inputData, "pcRetry", "PCRETRY_0"),
+                                    getParams(inputData, "recIndex", "RECINDEX_0"),
+                                    getParams(inputData, "expectedStatusCode", "RECRI003C"),
+                                    getParams(inputData, "expectedDeliveryFailureCause", null)
+                            )
+                    );
         } catch (HttpStatusCodeException exception) {
             httpStatusCode = exception.getStatusCode();
         }
@@ -203,42 +208,41 @@ public class TimelineReworkSteps {
     public void vieneInvocatoIlConsolidatoreCustom(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-        Map<String, String> mapInfo = populateConsolidatoreMapCustom(inputData);
+        Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
         try {
             sharedSteps
                     .getPnExternalServiceClient()
-                    .pushConsolidatoreNotification(mapInfo);
+                    .pushConsolidatoreNotificationAttach(mapInfo);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
     }
 
-    private Map<String, String> populateConsolidatoreMapCustom(
-            Map<String, String> inputData) {
-
+    private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
         String iun = sharedSteps.getNotificationIun();
-
         Instant now = Instant.now().plusSeconds(3600);
 
-        Map<String, String> mapInfo = new HashMap<>();
+        Map<String, Object> mapInfo = new HashMap<>();
 
         mapInfo.put("requestId", buildRequestId(
-                        iun,
-                        inputData.get("recIndex"),
-                        inputData.get("attemptId"),
-                        inputData.get("pcRetry")
-                )
-        );
+                iun,
+                inputData.get("recIndex"),
+                inputData.get("attemptId"),
+                inputData.get("pcRetry")
+        ));
 
-//        if (inputData.get("attachment") != null) {
-//            mapInfo.put("attachments", buildSingleAttachment(inputData.get("attachment"), now));
-//        } else {
-//            mapInfo.put("attachments", null);
-//        }
+        if (inputData.get("attachment_1") != null) {
+            Map<String, Object> attachment = new HashMap<>();
+            attachment.put("id", "1");
+            attachment.put("documentType", inputData.get("attachment_1"));
+            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf");
+            attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
+            attachment.put("date", B2bUtils.getOffsetDateTimeFromDate(now));
 
-        // attachments (multi)
-        String attachmentsJson = buildAttachmentsFromInput(inputData, now);
-        mapInfo.put("attachments", attachmentsJson);
+            mapInfo.put("attachments", Collections.singletonList(attachment));
+        } else {
+            mapInfo.put("attachments", null);
+        }
 
         mapInfo.put("clientRequestTimeStamp", B2bUtils.getOffsetDateTimeFromDate(now));
         mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
@@ -252,6 +256,46 @@ public class TimelineReworkSteps {
 
         return mapInfo;
     }
+
+//    private Map<String, String> populateConsolidatoreMapCustom(
+//            Map<String, String> inputData) {
+//
+//        String iun = sharedSteps.getNotificationIun();
+//
+//        Instant now = Instant.now().plusSeconds(3600);
+//
+//        Map<String, String> mapInfo = new HashMap<>();
+//
+//        mapInfo.put("requestId", buildRequestId(
+//                        iun,
+//                        inputData.get("recIndex"),
+//                        inputData.get("attemptId"),
+//                        inputData.get("pcRetry")
+//                )
+//        );
+//
+////        if (inputData.get("attachment") != null) {
+////            mapInfo.put("attachments", buildSingleAttachment(inputData.get("attachment"), now));
+////        } else {
+////            mapInfo.put("attachments", null);
+////        }
+//
+//        // attachments (multi)
+//        String attachmentsJson = buildAttachmentsFromInput(inputData, now);
+//        mapInfo.put("attachments", attachmentsJson);
+//
+//        mapInfo.put("clientRequestTimeStamp", B2bUtils.getOffsetDateTimeFromDate(now));
+//        mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
+//        mapInfo.put("discoveredAddress", null);
+//        mapInfo.put("iun", iun);
+//        mapInfo.put("productType", inputData.getOrDefault("productType", null));
+//        mapInfo.put("registeredLetterCode", null);
+//        mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
+//        mapInfo.put("statusDateTime", B2bUtils.getOffsetDateTimeFromDate(now));
+//        mapInfo.put("statusDescription", "QA");
+//
+//        return mapInfo;
+//    }
 
 
     private String buildAttachmentsFromInput(
