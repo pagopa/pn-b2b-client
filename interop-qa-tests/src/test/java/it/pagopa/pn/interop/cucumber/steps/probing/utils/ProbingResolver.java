@@ -128,13 +128,20 @@ public class ProbingResolver {
         OffsetDateTime now = OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         if (lower.equals("now")) return now;
 
-        if (lower.startsWith("now+") && lower.endsWith("h")) {
-            long hours = Long.parseLong(lower.substring(4, lower.length() - 1));
-            return now.plusHours(hours);
-        }
-        if (lower.startsWith("now-") && lower.endsWith("h")) {
-            long hours = Long.parseLong(lower.substring(4, lower.length() - 1));
-            return now.minusHours(hours);
+        // now+ / now- con suffisso h/m/s
+        if (lower.startsWith("now+") || lower.startsWith("now-")) {
+            boolean plus = lower.charAt(3) == '+';
+            String amountPart = lower.substring(4); // es: "15s", "2h", "10m"
+
+            char unit = amountPart.charAt(amountPart.length() - 1);
+            long value = Long.parseLong(amountPart.substring(0, amountPart.length() - 1));
+
+            return switch (unit) {
+                case 'h' -> plus ? now.plusHours(value) : now.minusHours(value);
+                case 'm' -> plus ? now.plusMinutes(value) : now.minusMinutes(value);
+                case 's' -> plus ? now.plusSeconds(value) : now.minusSeconds(value);
+                default -> throw new IllegalArgumentException("Unità non supportata nel token: " + token);
+            };
         }
 
         return OffsetDateTime.parse(token);
