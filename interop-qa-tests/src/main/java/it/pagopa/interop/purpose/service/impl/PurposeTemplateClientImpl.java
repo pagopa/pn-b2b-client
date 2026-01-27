@@ -16,6 +16,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,12 +112,16 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
 
     @Override
     public File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException {
-        return purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId);
+        try {
+            return purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, answerId, documentId).getFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject2 inlineObject2) throws RestClientException {
-        return purposesTemplateApi.linkEServiceToPurposeTemplate(purposeTemplateId, inlineObject2);
+    public EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest request) throws RestClientException {
+        return purposesTemplateApi.linkEServiceToPurposeTemplate(purposeTemplateId, request);
     }
 
     @Override
@@ -130,8 +135,8 @@ public class PurposeTemplateClientImpl implements IPurposeTemplateClient {
     }
 
     @Override
-    public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, InlineObject3 inlineObject3) throws RestClientException {
-        purposesTemplateApi.unlinkEServiceToPurposeTemplate(purposeTemplateId, inlineObject3);
+    public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest req) throws RestClientException {
+        purposesTemplateApi.unlinkEServiceToPurposeTemplate(purposeTemplateId, req);
     }
 
     @Override

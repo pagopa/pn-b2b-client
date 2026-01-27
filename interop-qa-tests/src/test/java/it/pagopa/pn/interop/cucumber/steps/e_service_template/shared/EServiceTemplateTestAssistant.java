@@ -1,11 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.assertj.core.api.Assertions.fail;
-
-import com.google.common.io.Files;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -14,31 +8,14 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import lombok.Data;
-import org.apache.commons.lang.math.RandomUtils;
 import org.jeasy.random.EasyRandom;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +23,19 @@ import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.assertj.core.api.Assertions.fail;
 
 /** It contains general utility functions used across all other classes.  */
 @Data
@@ -286,7 +276,7 @@ public class EServiceTemplateTestAssistant {
                         *   sia inviando che ricevendo, anziché restituire void o un
                         *   oggetto File restituiscano un'oggetto hash di qualche tipo; a quel
                         *   punto qui basterà confrontare i valori hash. */
-                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(Files.toByteArray(res.getBody()), lastAddedDocument.body());
+                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(java.nio.file.Files.readAllBytes(res.getBody().getFile().toPath()), lastAddedDocument.body());
                     } catch (IOException e) {
                         throw new RuntimeException("Errore nella lettura del body binario della risposta HTTP: %s".formatted(res), e);
                     }
@@ -301,7 +291,7 @@ public class EServiceTemplateTestAssistant {
 
     public String buildPrettyName(EServiceTemplateDocumentKind kind) {
         return "e-service-template-%s-%d-%d".formatted(kind.toString(), sharedStepsContext.getTestSeed(),
-            RandomUtils.nextInt(1_000_000));
+                ThreadLocalRandom.current().nextInt(1_000_000));
     }
 
     public void addRiskAnalysisToEServiceTemplateSuccessfully() {

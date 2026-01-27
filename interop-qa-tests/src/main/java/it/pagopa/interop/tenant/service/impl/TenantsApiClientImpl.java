@@ -3,24 +3,8 @@ package it.pagopa.interop.tenant.service.impl;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject5;
-import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeatureType;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
@@ -28,6 +12,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -114,7 +101,7 @@ public class TenantsApiClientImpl implements ITenantsApi {
 
     @Override
     public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
-        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new InlineObject5().agreementId(agreementId));
+        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new RevokeVerifiedAttributeRequest().agreementId(agreementId));
     }
 
     @Override

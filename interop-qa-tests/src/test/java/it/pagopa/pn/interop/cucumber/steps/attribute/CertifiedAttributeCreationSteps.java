@@ -8,7 +8,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributeS
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import org.apache.commons.lang.math.RandomUtils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CertifiedAttributeCreationSteps {
     private final SharedStepsContext sharedStepsContext;
@@ -32,7 +33,7 @@ public class CertifiedAttributeCreationSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getAttributeApiClient().createCertifiedAttributeRE(
             new CertifiedAttributeSeed()
-                .name("new certified attribute %d".formatted(RandomUtils.nextInt()))
+                    .name("new certified attribute %d".formatted(ThreadLocalRandom.current().nextInt()))
                 .description("description test")));
     }
 

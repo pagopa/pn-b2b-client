@@ -1,9 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.quota;
 
-import static java.lang.Math.abs;
-import static java.util.Objects.nonNull;
-import static org.assertj.core.api.Assertions.fail;
-
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
@@ -14,10 +10,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import java.util.UUID;
 import lombok.Data;
-import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.http.ResponseEntity;
+
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.lang.Math.abs;
+import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.fail;
 
 /** Cucumber steps involving quotas of E-service templates */
 @Data
@@ -50,7 +51,7 @@ public class EServiceTemplateQuotaUpdateSteps {
     }
 
     private EServiceTemplateVersionQuotasUpdateSeed nextQuotasUpdateSeed() {
-        int dailyCallsPerConsumer = RandomUtils.nextInt(1_000_000_000); // numero massimo supportato
+        int dailyCallsPerConsumer = ThreadLocalRandom.current().nextInt(1_000_000_000); // numero massimo supportato
         return new EServiceTemplateVersionQuotasUpdateSeed()
             .voucherLifespan(86400)
             .dailyCallsTotal(dailyCallsPerConsumer + 1)

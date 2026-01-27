@@ -5,7 +5,10 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegations;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
@@ -15,6 +18,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +60,11 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
 
     @Override
     public File getDelegationContract(UUID delegationId, UUID contractId) {
-        return delegationsApi.getDelegationContract(delegationId, contractId);
+        try {
+            return delegationsApi.getDelegationContract(delegationId, contractId).getFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

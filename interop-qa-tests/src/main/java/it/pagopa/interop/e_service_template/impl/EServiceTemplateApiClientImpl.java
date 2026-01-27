@@ -5,10 +5,6 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -18,6 +14,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 /* TODO considerato che le varianti con HTTP info conservano lo stato di errore potrebbe essere
     preferibile utilizzare solo quelle, rimuovere le altre e adattare gli utilizzi di conseguenza */
@@ -260,11 +261,15 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        try {
+            return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId).getFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public ResponseEntity<File> getDocumentWithHttpInfo(
+    public ResponseEntity<Resource> getDocumentWithHttpInfo(
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId

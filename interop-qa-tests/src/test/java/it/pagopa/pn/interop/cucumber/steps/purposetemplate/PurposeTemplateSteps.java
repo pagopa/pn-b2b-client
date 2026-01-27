@@ -1,59 +1,28 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactPurposeTemplateEService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswer;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class PurposeTemplateSteps {
@@ -360,10 +329,10 @@ public class PurposeTemplateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        InlineObject2 inlineObject = new InlineObject2();
-        inlineObject.setEserviceId(eServiceId);
+        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest();
+        request.setEserviceId(eServiceId);
 
-        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, inlineObject));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, request));
     }
 
     @Then("si effettua la get degli e-service associati al purpose template {exists}")
@@ -412,10 +381,10 @@ public class PurposeTemplateSteps {
 
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        InlineObject3 o3 = new InlineObject3();
-        o3.setEserviceId(eServiceId);
+        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest();
+        request.setEserviceId(eServiceId);
 
-        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, o3));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, request));
         if (exists) {
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 pollingService.makePolling(

@@ -5,20 +5,7 @@ import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Client;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject6;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject7;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import java.util.List;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
@@ -26,6 +13,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -125,12 +115,12 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
 
     @Override
     public CreatedResource addUsersToClient(UUID clientId, Users users) {
-        return clientsApi.addUsersToClient(clientId, new InlineObject7().userIds(users.getUserIds()));
+        return clientsApi.addUsersToClient(clientId, new AddUsersToClientRequest().userIds(users.getUserIds()));
     }
 
     @Override
     public Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
-        InlineObject6 inlineObject3 = new InlineObject6()
+        SetAdminToClientRequest inlineObject3 = new SetAdminToClientRequest()
             .adminId(adminConfig.getAdminId());
         return clientsApi.setAdminToClient(clientId, inlineObject3);
     }

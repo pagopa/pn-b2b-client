@@ -6,12 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponseResults;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponseResults;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.*;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
@@ -39,7 +34,6 @@ public class TracingSteps {
 
     /**
      * Dependency injection
-     * @param pnPollingFactory {@link PnPollingFactory}
      * @param interopTracingClient {@link IInteropTracingClient}
      * @param tracingFileUtils {@link TracingFileUtils}
      * @param pollingService {@link PollingService}
@@ -65,7 +59,7 @@ public class TracingSteps {
         selectOperator("tenant1");
         GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null);
         submissionDate = tracingsResponse.getResults().stream()
-                .map(GetTracingsResponseResults::getDate)
+                .map(GetTracingsResponseResultsInner::getDate)
                 .min(LocalDate::compareTo)
                 .map(date -> date.minusDays(1))
                 .orElseGet(() -> LocalDate.now().minusDays(1));
@@ -146,7 +140,7 @@ public class TracingSteps {
     public void verifyGetTracingErrorResponse() {
         Assertions.assertNotNull(getTracingErrorsResponse, "There was an error while retrieving the tracing error!");
         Assertions.assertNotNull(getTracingErrorsResponse.getResults());
-        List<GetTracingErrorsResponseResults> expectedResult = List.of(
+        List<GetTracingErrorsResponseResultsInner> expectedResult = List.of(
                 createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
                 createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
                 createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
@@ -182,7 +176,7 @@ public class TracingSteps {
     public void checkReturnedTracingId() {
         Assertions.assertTrue(getTracingsResponse.getResults()
                 .stream()
-                .map(GetTracingsResponseResults::getTracingId)
+                .map(GetTracingsResponseResultsInner::getTracingId)
                 .anyMatch(tracingId -> tracingId.equals(submitTracingResponse.getTracingId().toString())));
     }
 
@@ -215,7 +209,7 @@ public class TracingSteps {
     public void recoverMissingCsvForDate(String fileType) {
         Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the tracing with MISSING status!");
         Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), "No tracing with MISSING status found!");
-        GetTracingsResponseResults tracingsResponseResults = getTracingsResponse.getResults().get(0);
+        GetTracingsResponseResultsInner tracingsResponseResults = getTracingsResponse.getResults().get(0);
         tracingFileUtils.updateCsv(tracingsResponseResults.getDate());
         submissionDate = tracingsResponseResults.getDate();
         uploadCsv(fileType);
@@ -227,7 +221,7 @@ public class TracingSteps {
                 () -> interopTracingClient.getTracings(0, 50, List.of(TracingState.fromValue(state))),
                 res -> res.getResults().stream()
                         .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
-                        .map(GetTracingsResponseResults::getState)
+                        .map(GetTracingsResponseResultsInner::getState)
                         .anyMatch(tracingState -> tracingState.equals(state)),
                 String.format("The TracingId: %s did not reach the desired status: %s", submitTracingResponse.getTracingId().toString(), state)
         );
@@ -235,7 +229,7 @@ public class TracingSteps {
 
     @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")
     public void retrieveTracingAndVerifyStatus(String state) {
-        GetTracingsResponseResults result;
+        GetTracingsResponseResultsInner result;
         int attempt = 0;
         int totalPages;
         try  {
@@ -267,8 +261,8 @@ public class TracingSteps {
     }
 
 
-    private GetTracingErrorsResponseResults createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
-        GetTracingErrorsResponseResults tracingErrorsResponse = new GetTracingErrorsResponseResults();
+    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
+        GetTracingErrorsResponseResultsInner tracingErrorsResponse = new GetTracingErrorsResponseResultsInner();
         tracingErrorsResponse.setErrorCode(errorCode);
         tracingErrorsResponse.setMessage(message);
         tracingErrorsResponse.setPurposeId(purposeId);

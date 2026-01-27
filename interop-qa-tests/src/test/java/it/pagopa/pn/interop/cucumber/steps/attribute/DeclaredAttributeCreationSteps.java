@@ -9,11 +9,11 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
-import java.time.OffsetDateTime;
-
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.http.ResponseEntity;
+
+import java.time.OffsetDateTime;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DeclaredAttributeCreationSteps {
     private final SharedStepsContext sharedStepsContext;
@@ -34,7 +34,7 @@ public class DeclaredAttributeCreationSteps {
 
     @When("l'utente crea un attributo dichiarato")
     public void createDeclaredAttribute() {
-        String attributeName = "new declared attribute %d".formatted(RandomUtils.nextInt());
+        String attributeName = "new declared attribute %d".formatted(ThreadLocalRandom.current().nextInt());
         String attributeDescription = "description test";
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getAttributeApiClient().createDeclaredAttributeRE(

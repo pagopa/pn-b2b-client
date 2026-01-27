@@ -2,12 +2,12 @@ package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 
 public interface IEServiceTemplateClient extends SettableBearerToken {
     enum EServiceTemplateDocumentKind {
@@ -98,7 +98,7 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UUID documentId
     );
 
-    ResponseEntity<File> getDocumentWithHttpInfo(
+    ResponseEntity<Resource> getDocumentWithHttpInfo(
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId

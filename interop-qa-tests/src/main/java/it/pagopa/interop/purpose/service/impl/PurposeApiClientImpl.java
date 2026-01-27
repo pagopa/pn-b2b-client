@@ -15,6 +15,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,7 +128,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
 
     @Override
     public File getRiskAnalysisDocument(UUID purposeId, UUID versionId, UUID documentId) {
-        return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId);
+        try {
+            return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId).getFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
