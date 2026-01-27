@@ -6,7 +6,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.enums.M2MRole;
-import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
@@ -117,7 +116,6 @@ public class PurposeTemplateSteps {
     public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
                                 BlobFileCreator blobFileCreator,
-                                IdentityService identityService,
                                 PurposeTemplatePatchOperationsAssistant patchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -128,7 +126,7 @@ public class PurposeTemplateSteps {
         ((PurposeTemplateClientImpl) this.purposeTemplateClient).setHttpCallExecutor(this.httpCallExecutor);
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.purposeTemplateContext = new PurposeTemplateContext();
-        this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, identityService);
+        this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, sharedStepsContext.getIdentityService());
         this.patchAssistant = patchAssistant;
     }
 

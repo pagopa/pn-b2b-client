@@ -54,7 +54,7 @@ Feature: Gestione purpose templates attraverso APIs M2M V2
     And il purpose template creato viene spostato in stato <stato>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del purpose template
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     And il purpose template non ha subito modifiche
     Examples:
       | stato     |
@@ -69,6 +69,6 @@ Feature: Gestione purpose templates attraverso APIs M2M V2
     And viene creato un nuovo purpose template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA2" con ruolo m2m-admin tenta di effettuare la modifica parziale del purpose template
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then il purpose template non ha subito modifiche

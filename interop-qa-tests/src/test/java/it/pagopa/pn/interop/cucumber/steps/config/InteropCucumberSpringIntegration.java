@@ -39,8 +39,8 @@ import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
-import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
+import it.pagopa.interop.purpose.service.impl.M2MPurposeTemplateClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
@@ -85,7 +85,6 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOpe
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplateGenericPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
@@ -187,11 +186,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorQuotasPatchOperationsAssistant.class,
         ISelfcareClient.class,
         SelfcareClientImpl.class,
-        IPurposeTemplateClient.class,
         PurposeTemplateClientImpl.class,
+        M2MPurposeTemplateClientImpl.class,
         PurposeTemplateCommonContext.class,
         PurposeTemplatePatchContext.class,
-        PurposeTemplateGenericPatchOperationsAssistant.class,
         PurposeTemplatePatchOperationsAssistant.class,
         PurposeTemplateMapperImpl.class
 })
