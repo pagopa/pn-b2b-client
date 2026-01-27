@@ -51,7 +51,7 @@ Feature: Probing
 
   Scenario Outline: [UPDATE_FREQUENCY] - Aggiornamento frequency e finestra temporale per e-service
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    When aggiorno i parametri di probing dell'e-service con eserviceId "<eserviceId>" e versionId "<versionId>" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
+    When vengono aggiornati i parametri di probing dell'e-service con eserviceId "<eserviceId>" e versionId "<versionId>" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
     Then la response riporta lo status code <statusCode>
 
     Examples:
@@ -75,13 +75,11 @@ Feature: Probing
       | %actual    | %null     | %actual    | %actual   | %actual | 400        |
       | %random    | %actual   | %actual    | %actual   | %actual | 404        |
       | %actual    | %random   | %actual    | %actual   | %actual | 404        |
-    #ToDo Aggiunta Authentication Token
 
   Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing con combinazioni id/versione
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    When viene modificato lo stato di probing dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<probingEnabled>"
+    When viene modificato lo stato di probing dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<probingEnabled>" e si verifica che coincida con quanto atteso
     Then la response riporta lo status code <statusCode>
-    #ToDo Aggiunta Authentication Token
 
     Examples:
     # Happy paths
@@ -100,9 +98,9 @@ Feature: Probing
 
   Scenario Outline: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo con combinazioni id/versione
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    When viene modificato lo stato operativo dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<eserviceState>"
+    When viene modificato lo stato operativo dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<eserviceState>" e si verifica che coincida con quanto atteso
     Then la response riporta lo status code <statusCode>
-    #ToDo Aggiunta Authentication Token
+
 
     Examples:
     # Happy paths
@@ -216,12 +214,11 @@ Feature: Probing
     # endDate invalid values
       | %actual          | %actual   | now+1h    | %null   | 400        |
       | %actual          | %actual   | now+1h    | abc     | 400        |
-      #ToDo Aggiunta Authentication Token
 
   Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
-    When aggiorno i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
     Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
 
     Examples:
@@ -234,5 +231,3 @@ Feature: Probing
 
     # After window
       | %actual+1 | %now+2h   | %now+3h |
-
-    #ToDo Aggiunta Authentication Token

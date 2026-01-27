@@ -146,6 +146,9 @@ public class ProbingSteps {
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             httpCallExecutor.snapshot();
 
+        EserviceRow expected = probingContext.getExpectedEserviceRow();
+        expected.setProbingEnabled(Boolean.valueOf(probingEnabled));
+
             PollingService.makePolling(
                     () -> probingClient.getEserviceProbingData(eserviceRecordId),
                     resp -> resp.getProbingEnabled().equals(Boolean.valueOf(probingEnabled)),
@@ -172,6 +175,9 @@ public class ProbingSteps {
         probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            EserviceRow expected = probingContext.getExpectedEserviceRow();
+            expected.setState(stateBE.getValue());
+
             httpCallExecutor.snapshot();
 
             PollingService.makePolling(
@@ -187,7 +193,7 @@ public class ProbingSteps {
     }
 
     @When("aggiorno i parametri di probing dell'e-service con eserviceId {string} e versionId {string} impostando frequency {string}, startDate {string}, endDate {string}")
-    @When("aggiorno i parametri di probing dell'e-service con eserviceId {string} e versionId {string} impostando frequency {string}, startDate {string}, endDate {string} e si verifica che coincidano con quanto atteso")
+    @When("vengono aggiornati i parametri di probing dell'e-service con eserviceId {string} e versionId {string} impostando frequency {string}, startDate {string}, endDate {string} e si verifica che coincidano con quanto atteso")
     public void setEserviceFrequency(String eserviceId, String versionId, String frequency, String startDate, String endDate) {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
@@ -200,17 +206,13 @@ public class ProbingSteps {
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             Long eserviceRecordId = resolver.getEserviceRecordId();
             EserviceRow expected = probingContext.getExpectedEserviceRow();
-            EserviceRow actual = probingContext.getActualEserviceRow();
 
             expected.setPollingFrequency(frequencyValue);
             httpCallExecutor.snapshot();
 
             PollingService.makePolling(
                     () -> probingClient.getEserviceMainData(eserviceRecordId),
-                    resp -> {
-                        actual.setPollingFrequency(resp.getPollingFrequency());
-                        return actual.getPollingFrequency() == expected.getPollingFrequency();
-                    },
+                    resp -> resp.getPollingFrequency() == expected.getPollingFrequency(),
                     "Errore durante il setting di probingEnabled per l'eservice con eserviceRecordId '" + eserviceRecordId + "'",
                     30,
                     1_000L
@@ -260,6 +262,11 @@ public class ProbingSteps {
         
         TelemetryDataEserviceResponse response = probingClient.statisticsEservices(recordIdValue, poolingFrequencyValue);
         Assertions.assertThat(response).as("La response contenente la telemetria pubblica dell'e-service non deve essere null").isNotNull();
+
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            probingContext.getActualTelemetry().add(response);
+        }
+
     }
 
     @When("viene recuperata la telemetria dell'e-service con eserviceRecordId {string} e impostando pollingFrequency {string} , startDate {string} , endDate {string}")
@@ -271,6 +278,10 @@ public class ProbingSteps {
 
         TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
         Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();
+
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            probingContext.getActualTelemetry().add(response);
+        }
     }
 
     @Given("vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo")
