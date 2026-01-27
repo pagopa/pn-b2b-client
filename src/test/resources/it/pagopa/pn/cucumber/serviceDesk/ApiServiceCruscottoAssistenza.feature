@@ -416,33 +416,36 @@ Feature: Api Service Cruscotto Assistenza
 
   #CE02.11 Come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
-    Given  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+  Scenario: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
+    Given come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId           | VUOTO      |
+      | searchPageSize | 1          |
+      | startDate      | 2023-01-01 |
+      | endDate        | 2023-12-01 |
     Then il servizio risponde con errore "400"
-    Examples:
-      | paID  | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | VUOTO | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"id","detail":"size must be between 1 and 50"}]}]
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.11_80] Invocazione del servizio con paId inesistente
-    Given  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+  Scenario: [API-SERVICE-CA_CE02.11_80] Invocazione del servizio con paId inesistente
+    Given come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId           | 4db941cf-17e1-4751-9b7b |
+      | searchPageSize | 1                       |
+      | startDate      | 2023-01-01              |
+      | endDate        | 2023-12-01              |
     Then Il servizio risponde correttamente
-    Examples:
-      | paID                    | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | 4db941cf-17e1-4751-9b7b | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #  Response 200 OK
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
+  Scenario: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
     And Il servizio risponde con esito positivo con la lista delle PA
-    When  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    And come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId           | NO_SET     |
+      | searchPageSize | 1          |
+      | startDate      | 2023-01-01 |
+      | endDate        | 2023-12-01 |
     Then Il servizio risponde correttamente
-    Examples:
-      | paID   | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | NO_SET | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #  Response 200 OK a95dace4-4a47-4149-a814-0e669113ce40
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
@@ -602,6 +605,25 @@ Feature: Api Service Cruscotto Assistenza
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene chiamato service desk e si controlla la presenza dell'elemento "REFINEMENT" nella response
+
+  #https://pagopa.atlassian.net/browse/PN-15961
+  @serviceDeskRefinement @cruscottoAssistenza
+  Scenario: [SERVICE_DESK_TIMELINE_MISSING_VALUE_1_B] verifica presenza elemento REFINEMENT nella response di service desk
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And viene chiamato service desk e si controlla la presenza dell'elemento "RETURNED_TO_SENDER" nella response
+    And come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | startDate | TODAY            |
+      | endDate   | LAST_TEN_MINUTES |
+    Then Il servizio risponde correttamente
+
 
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email
