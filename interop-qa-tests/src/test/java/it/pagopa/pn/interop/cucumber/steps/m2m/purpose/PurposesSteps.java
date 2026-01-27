@@ -483,6 +483,32 @@ public class PurposesSteps {
         reversePurposePatchAssistant.patchResource(request);
     }
 
+    @When("viene aggiornata la finalità ad erogazione inversa con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, dailyCalls {string}")
+    public void patchReversePurposeDraft(
+            String purposeId,
+            String title,
+            String description,
+            String isFreeOfCharge,
+            String freeOfChargeReason,
+            String dailyCalls
+    ) {
+        UUID purposeIdValue = uuidOrRandomOrNull(purposeId);
+
+        // default valido
+        ReversePurposePatchRequest req = reversePurposePatchAssistant.buildDefaultPatchRequest();
+
+        // override SEMPRE (anche se null/blank/invalid -> diventa null e l'API può rispondere 400)
+        req.setTitle(nullOrBlankOrValue(title));
+        req.setDescription(nullOrBlankOrValue(description));
+        req.setIsFreeOfCharge(parseNullableBooleanOrNull(isFreeOfCharge));
+        req.setFreeOfChargeReason(nullOrBlankOrValue(freeOfChargeReason));
+        req.setDailyCalls(nullableInteger(dailyCalls));
+
+        // esegui chiamata
+        httpCallExecutor.performCall(() -> purposeClient.patchReversePurpose(purposeIdValue, req));
+    }
+
+
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
     public void patchReversePurposeUsing(String tenant, M2MRole m2mRole) {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();

@@ -876,6 +876,40 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  Scenario Outline: [M2M_PATCH_REVERSE_PURPOSE_1.1] - Casi negativi (vincoli OpenAPI)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And viene aggiornata la finalità ad erogazione inversa con purposeId "<purposeId>" e title "<title>", description "<description>", isFreeOfCharge "<isFreeOfCharge>", freeOfChargeReason "<freeOfChargeReason>", dailyCalls "<dailyCalls>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | purposeId                            | title                                                         | description                                                                                                                                                                                                                                                | isFreeOfCharge | freeOfChargeReason | dailyCalls | statusCode |
+    # title troppo corto (< 5)
+      | %random                              | abcd                                                          | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 400        |
+    # title troppo lungo (> 60)
+      | %random                              | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 400        |
+
+    # description troppo corta (< 10)
+      | %random                              | titolo valido                                                 | short                                                                                                                                                                                                                                                      | true           | reason             | 10         | 400        |
+    # description troppo lunga (> 250)
+      | %random                              | titolo valido                                                 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | true           | reason             | 10         | 400        |
+
+    # dailyCalls sotto minimo (< 1)
+      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 0          | 400        |
+    # dailyCalls sopra massimo (> 1_000_000_000)
+      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 1000000001 | 400        |
+    # dailyCalls non numerico
+      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | abc        | 400        |
+
+    # purposeId inesistente (UUID valido ma non presente)
+      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 404        |
+    # purposeId sicuramente inesistente
+      | 00000000-0000-0000-0000-000000000000 | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 404        |
+
+
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_2] Un utente con ruolo M2M NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa
     Given l'utente è un "admin" di "PA1"
