@@ -9,11 +9,12 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapper;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -58,6 +59,25 @@ public class ReversePurposePatchOperationsAssistant extends PurposeGenericPatchO
             .isFreeOfCharge(true)
             .freeOfChargeReason("some reason - " + uuid)
             .build();
+    }
+
+
+    public ReversePurposePatchRequest buildActualPatchRequest() {
+        UUID uuid = UUID.fromString(this.sharedContext.getPurposeCommonContext().getPurposeId());
+
+        String lastToken = clientTokenConfigurator.getLastToken();
+        String tenantType = sharedContext.getTenantType();
+        String token = identityService.getToken(tenantType, null);
+        clientTokenConfigurator.setBearerToken(token);
+        clientTokenConfigurator.setBearerToken(lastToken);
+
+        return ReversePurposePatchRequest.builder()
+                .title("patched title - " + uuid)
+                .description("patched description - " + uuid)
+                .dailyCalls(10)
+                .isFreeOfCharge(true)
+                .freeOfChargeReason("some reason - " + uuid)
+                .build();
     }
 
     @Override

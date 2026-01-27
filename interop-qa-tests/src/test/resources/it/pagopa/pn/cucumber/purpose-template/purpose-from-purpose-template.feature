@@ -17,6 +17,22 @@ Feature: finalità agevolata, purpose from purpose template
       | true                 | false                | 400        |
       | false                | true                 | 400        |
 
+  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WITH_PERSONAL_DATA_1] Creazione di una finalità a partire da un template di finalità agevolata
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData <personalDataEservice>
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template con handlePersonalData <personalDataTemplate>
+    And il purpose template creato viene spostato in stato PUBLISHED
+    When si crea una finalità a partire dal purpose template creato
+    And si ottiene response status code 200
+    And l'utente tenta di effettuare la modifica parziale della finalità creata per l'e-service ad erogazione inversa
+    Then si ottiene response status code 409
+
+    Examples:
+      | personalDataTemplate | personalDataEservice |
+      | true                 | true                 |
+      | false                | false                |
+
   #109 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WRONG_STATE] Creazione di una finalità a partire da un template di finalità agevolata in stato diverso da PUBLISHED (error)

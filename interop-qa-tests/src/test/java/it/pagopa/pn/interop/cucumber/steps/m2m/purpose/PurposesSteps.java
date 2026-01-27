@@ -483,6 +483,12 @@ public class PurposesSteps {
         reversePurposePatchAssistant.patchResource(request);
     }
 
+    @When("l'utente tenta di effettuare la modifica parziale della finalità creata per l'e-service ad erogazione inversa")
+    public void patchActualReversePurpose() {
+        ReversePurposePatchRequest request = reversePurposePatchAssistant.buildActualPatchRequest();
+        reversePurposePatchAssistant.patchResource(request);
+    }
+
     @When("viene aggiornata la finalità ad erogazione inversa con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, dailyCalls {string}")
     public void patchReversePurposeDraft(
             String purposeId,
