@@ -39,9 +39,9 @@ public class ProbingSteps {
     public ProbingSteps(ProbingClient probingClient, SharedStepsContext sharedStepsContext) {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.probingClient = probingClient;
-        probingClient.setHttpCallExecutor(httpCallExecutor);
+        this.probingClient.setHttpCallExecutor(httpCallExecutor);
         this.probingContext = new ProbingContext();
-        this.resolver = new ProbingResolver(probingClient, probingContext);
+        this.resolver = new ProbingResolver(this.probingClient, probingContext);
     }
 
     @And("il microservizio {string} risulta attivo")
