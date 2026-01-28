@@ -665,7 +665,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | latitude  | longitude |
       | <lat>     | <lon>     |
     Then la response deve restituire status code <expectedStatusCode>
-    Then se lo status della response è 400, il messaggio di errore deve contenere <expectedErrorMessage>
+    Then se lo status della response è 400, il messaggio di errore deve contenere "<expectedErrorMessage>"
 
     Examples:
       | lat    | lon     | expectedStatusCode | expectedErrorMessage        |
