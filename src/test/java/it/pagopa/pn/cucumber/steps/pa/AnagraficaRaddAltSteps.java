@@ -1615,10 +1615,13 @@ public class AnagraficaRaddAltSteps {
         Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
     }
 
-    @When("aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione")
-    public void aggiornoLaSedeRaddTramitePutSelectiveUtilizzandoLaRequestDiCreazione() {
-        SelectiveUpdateRegistryRequestV2 request = buildSelectivePutRequestFromCreationRequest();
-        executePutSelective(request);
+    @Then("se lo status della response è 400, il messaggio di errore deve contenere {string}")
+    public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedMessage) {
+        if (lastHttpStatus != 400) return;
+        HttpStatusCodeException e = sharedSteps.getNotificationError();
+        assertNotNull(e, "Attesa una risposta di errore HTTP ma nessuna eccezione è stata intercettata");
+        String body = e.getResponseBodyAsString();
+        assertTrue(body.contains(expectedMessage),"Messaggio di errore atteso non trovato. Atteso: " + expectedMessage + " - Body: " + body );
     }
 
     private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {
