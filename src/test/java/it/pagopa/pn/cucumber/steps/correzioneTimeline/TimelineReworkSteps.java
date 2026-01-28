@@ -3,10 +3,7 @@ package it.pagopa.pn.cucumber.steps.correzioneTimeline;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItem;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
@@ -45,6 +42,16 @@ public class TimelineReworkSteps {
     public TimelineReworkSteps(ReworkTimelineClientImpl reworkTimelineClient, SharedSteps sharedSteps) {
         this.reworkTimelineClient = reworkTimelineClient;
         this.sharedSteps = sharedSteps;
+    }
+
+    @Then("viene aggiornata la richiesta di rework con i seguenti dati:")
+    public void updateRequestRework(String expectedDeliveryFailureCause, String expectedStatusCode) {
+
+        UpdateReworkRequest updateReworkRequest = new UpdateReworkRequest();
+
+
+        reworkTimelineClient.updateNotificationRework(sharedSteps.getNotificationIun(), reworkResponse.getReworkId(), updateReworkRequest);
+
     }
 
     @And("viene invocata una richiesta di rework per la notifica appena creata")
@@ -201,7 +208,6 @@ public class TimelineReworkSteps {
             throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
         }
 
-        // Stream flat + raccolta elementId NON validi
         List<String> invalidElementIds = invalidatedHistory.stream()
                 .flatMap(h -> h.getRelatedTimelineElements().stream())
                 .map(TimelineElementV28::getElementId)
@@ -212,15 +218,12 @@ public class TimelineReworkSteps {
                 )
                 .toList();
 
-        // Log di TUTTI i non validi
         if (!invalidElementIds.isEmpty()) {
             log.error("Trovati elementId non validi in relatedTimelineElements:");
             invalidElementIds.forEach(id ->
                     log.error(" - {}", id)
             );
         }
-
-        // Fail-fast finale
         assertTrue(
                 invalidElementIds.isEmpty(),
                 "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
@@ -231,6 +234,12 @@ public class TimelineReworkSteps {
     public void verifyReworkStatusById(String expectedStatus, int timeoutSeconds, int pollIntervalSeconds) {
 
         String iun = sharedSteps.getNotificationIun();
+        String reworkId = reworkResponse.getReworkId();
+
+        if (reworkId == null) {
+            throw new AssertionError("ReworkId nullo | IUN=" + iun);
+        }
+
         AtomicReference<List<String>> lastFoundStatuses = new AtomicReference<>(List.of());
 
         try {
@@ -238,10 +247,11 @@ public class TimelineReworkSteps {
                     .atMost(timeoutSeconds, SECONDS)
                     .pollInterval(pollIntervalSeconds, SECONDS)
                     .until(() -> {
+
                         ReworkItemsResponse response =
                                 reworkTimelineClient.retrieveNotificationReworkById(
                                         iun,
-                                        reworkResponse.getReworkId()
+                                        reworkId
                                 );
 
                         List<String> statuses = response.getItems().stream()
@@ -250,14 +260,22 @@ public class TimelineReworkSteps {
 
                         lastFoundStatuses.set(statuses);
 
+                        log.info(
+                                "Polling rework | IUN={} | reworkId={} | stati trovati={}",
+                                iun,
+                                reworkId,
+                                statuses
+                        );
+
                         return statuses.contains(expectedStatus);
                     });
 
         } catch (ConditionTimeoutException e) {
             throw new RuntimeException(
                     String.format(
-                            "Timeout in attesa dello stato rework. IUN=%s | atteso=%s | ultimi stati trovati=%s",
+                            "Timeout in attesa dello stato rework | IUN=%s | reworkId=%s | atteso=%s | ultimi stati trovati=%s",
                             iun,
+                            reworkId,
                             expectedStatus,
                             lastFoundStatuses.get()
                     ),
@@ -428,3 +446,5 @@ public class TimelineReworkSteps {
         );
     }
 }
+
+

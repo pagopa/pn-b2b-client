@@ -1,6 +1,38 @@
 Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
+
+  @timelineReworkF2
+  Scenario: [TIMELINE_REWORK_9_1] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON221 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 5 secondi
+
+
+
+
+
+
+
+
+
+
+
+
+
   @timelineReworkF2
   Scenario: [TIMELINE_REWORK_1_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
     Given imposto lo iun di SharedSteps a "***" e la pa a "Comune_Multi"
