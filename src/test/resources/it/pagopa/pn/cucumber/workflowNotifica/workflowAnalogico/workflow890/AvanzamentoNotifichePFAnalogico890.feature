@@ -52,10 +52,14 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | senderDenomination | Comune di Palermo           |
       | document           | DOC_1_PG; DOC_2_PG          |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                 |
-      | physicalAddress_address | Via@ok_890           |
-      | payment_f24             | PAYMENT_F24_FLAT     |
-      | title_payment           | F24_STANDARD_GHERKIN |
+      | digitalDomicile                     | NULL                 |
+      | physicalAddress_address             | Via@ok_890           |
+      | physicalAddress_zip                 | 00026                |
+      | physicalAddress_municipality        | CIVITELLA            |
+      | physicalAddress_municipalityDetails | CIVITELLA            |
+      | physicalAddress_province            | RM                   |
+      | payment_f24                         | PAYMENT_F24_FLAT     |
+      | title_payment                       | F24_STANDARD_GHERKIN |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 5 allegati
@@ -71,12 +75,16 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                 |
-      | physicalAddress_address | Via@ok_890           |
-      | payment_pagoPaForm      | SI                   |
-      | payment_f24             | PAYMENT_F24_FLAT     |
-      | title_payment           | F24_STANDARD_GHERKIN |
-      | payment_multy_number    | 20                   |
+      | digitalDomicile                     | NULL                 |
+      | physicalAddress_address             | Via@ok_890           |
+      | payment_pagoPaForm                  | SI                   |
+      | physicalAddress_zip                 | 00026                |
+      | physicalAddress_municipality        | CIVITELLA            |
+      | physicalAddress_municipalityDetails | CIVITELLA            |
+      | physicalAddress_province            | RM                   |
+      | payment_f24                         | PAYMENT_F24_FLAT     |
+      | title_payment                       | F24_STANDARD_GHERKIN |
+      | payment_multy_number                | 20                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
@@ -85,12 +93,16 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                 |
-      | physicalAddress_address | Via@ok_AR            |
-      | payment_pagoPaForm      | SI                   |
-      | payment_f24             | PAYMENT_F24_FLAT     |
-      | title_payment           | F24_STANDARD_GHERKIN |
-      | payment_multy_number    | 20                   |
+      | digitalDomicile                     | NULL                 |
+      | physicalAddress_address             | Via@ok_AR            |
+      | payment_pagoPaForm                  | SI                   |
+      | physicalAddress_zip                 | 00026                |
+      | physicalAddress_municipality        | CIVITELLA            |
+      | physicalAddress_municipalityDetails | CIVITELLA            |
+      | physicalAddress_province            | RM                   |
+      | payment_f24                         | PAYMENT_F24_FLAT     |
+      | title_payment                       | F24_STANDARD_GHERKIN |
+      | payment_multy_number                | 20                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
