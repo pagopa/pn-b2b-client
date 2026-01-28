@@ -21,6 +21,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,8 @@ public class AnagraficaRaddAltSteps {
     protected String locationId;
     protected RegistryV2 registryV2Response;
     protected String PARTNER_ID_NOT_VALID = "#@#";
+
+    protected int lastHttpStatus;
 
     @Autowired
     public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnRaddAlternativeV2ClientImpl raddAltClientV2, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt, SettableAuthTokenRaddCognito settableAuthTokenRaddCognito) {
@@ -1582,5 +1585,52 @@ public class AnagraficaRaddAltSteps {
         raddAltClient.setAuthTokenRadd(raddOperator.getIssuerType());
         return raddOperator;
     }
+
+    // --- (START) --- PN-17459 | PN-17678 --- (START) --- //
+    @When("aggiorno la sede RADD tramite PATCH impostando")
+    public void aggiornoLaSedeRaddTramitePatchImpostando(DataTable dataTable) {
+        Map<String, String> values = dataTable.asMap(String.class, String.class);
+        UpdateRegistryRequestV2 request = new UpdateRegistryRequestV2();
+//        Coordinates coordinates = new Coordinates();
+//        coordinates.setLatitude(mapValue(values.get("latitude"));
+//        coordinates.setLongitude(mapValue(values.get("longitude"));
+//        request.setCoordinates(coordinates);
+        this.updateRegistryRequestV2 = request;
+        executePatch(request);
+    }
+
+    @Then("la response deve restituire status code {int}")
+    public void laResponseDeveRestituireStatusCode(int expectedStatusCode) {
+        Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
+    }
+
+    private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {
+        if (createRegistryRequestV2 == null) throw new IllegalStateException("CreateRegistryRequestV2 non presente.");
+        else if( createRegistryRequestV2.getAddress() == null) throw new IllegalStateException("CreateRegistryRequestV2.address non presente");
+        SelectiveUpdateRegistryRequestV2 request = new SelectiveUpdateRegistryRequestV2();
+        request.setAddress(cloneAddressFromCreation());
+        request.setDescription("Descrizione RADD");
+        request.setPhoneNumbers(List.of("33312345678"));
+        request.setExternalCodes(List.of("EXT01QA"));
+        return request;
+    }
+
+    private AddressV2 cloneAddressFromCreation() {
+        if (createRegistryRequestV2 == null || createRegistryRequestV2.getAddress() == null) throw new IllegalStateException("CreateRegistryRequestV2 o address non presenti");
+        AddressV2 src = createRegistryRequestV2.getAddress();
+        return new AddressV2().addressRow(src.getAddressRow()).cap(src.getCap()).city(src.getCity()).province(src.getProvince()).country(src.getCountry());
+    }
+
+    private void executePatch(UpdateRegistryRequestV2 request) {
+        try {
+            RegistryV2 response = raddAltClientV2.updateRegistry( this.xPagopaPnCxId, this.locationId, request );
+            this.registryV2Response = response;
+            this.lastHttpStatus = HttpStatus.OK.value();
+        } catch (HttpStatusCodeException e) {
+            this.lastHttpStatus = e.getStatusCode().value();
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+    // --- (END) --- PN-17459 | PN-17678 --- (END) --- //
 
 }

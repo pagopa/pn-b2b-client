@@ -650,27 +650,37 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "400"
 
-
-  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 66 e 67
-  Scenario: [RADD_ANAGRAFICA_CRUD_V2_18] inserimento sportello RADD con dati corretti
+  @patchGeo @deleteNewSite
+  Scenario Outline: PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
-      | address_radd_row      | via roma            |
-      | address_radd_cap      | 80133               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | NAPOLI              |
-      | radd_description      | Test QA             |
-      | radd_phoneNumbers     | +390212345678       |
-      | radd_externalCodes    | EXT18QA             |
-      | address_radd_country  | ITALY               |
-      | radd_openingTime      | tue=10:00-20:00#    |
-      | radd_start_validity   | 2030-01-01          |
-      | radd_end_validity     | 2030-02-01          |
-      | radd_email            | teat@test.com       |
-      | radd_website          | https://www.ex1.com |
-      | radd_partner_type     | CAF                 |
-    Then viene richiesta la lista degli sportelli Radd V2 con errore
-      | radd_filter_limit   | 100  |
-      | radd_filter_lastKey | NULL |
-    And viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId
-    Then la response registry V2 deve avere i campi correttamente formattati
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT_PATCH_GEO |
+    When aggiorno la sede RADD tramite PATCH impostando
+      | latitude  | longitude |
+      | <lat>     | <lon>     |
+    Then la response deve restituire status code <expectedStatusCode>
+
+    Examples:
+      | lat    | lon     | expectedStatusCode |
+      | BLANK  | BLANK   | 200                |
+      | NULL   | NULL    | 200                |
+      | 45.0   | 9.0     | 200                |
+      | -90.0  | -180.0  | 200                |
+      | 90.0   | 180.0   | 200                |
+      | 91.0   | 10.0    | 400                |
+      | -91.0  | 10.0    | 400                |
+      | 45.0   | 181.0   | 400                |
+      | 45.0   | -181.0  | 400                |
+      | BLANK  | 10.0    | 400                |
+      | 10.0   | BLANK   | 400                |
+      | NULL   | 10.0    | 400                |
+      | 10.0   | NULL    | 400                |
+      | abc    | 10.0    | 400                |
+      | 45.0   | xyz     | 400                |
+      | "45"   | "9"     | 400                |
