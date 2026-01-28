@@ -76,6 +76,33 @@ public class TimelineReworkSteps {
                 .orElseThrow(() -> new RuntimeException("Errore la richiesta creata non è nello stato desiderato!"));
     }
 
+    @And("viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:")
+    public void callReworkWithParamsWithError(DataTable params) {
+
+        Map<String, String> inputData = params.asMaps().get(0);
+
+        String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
+
+        try {
+            reworkResponse =
+                    reworkTimelineClient.notificationRework(
+                            getParams(inputData, "iun", sharedSteps.getNotificationIun()),
+                            createRequestRework(
+                                    attemptId != null
+                                            ? ReworkRequest.AttemptIdEnum.fromValue(attemptId)
+                                            : null,
+                                    getParams(inputData, "reason", "reason"),
+                                    getParams(inputData, "pcRetry", "PCRETRY_0"),
+                                    getParams(inputData, "recIndex", "RECINDEX_0"),
+                                    getParams(inputData, "expectedStatusCode", "RECRI003C"),
+                                    getParams(inputData, "expectedDeliveryFailureCause", null)
+                            )
+                    );
+        } catch (HttpStatusCodeException exception) {
+            httpStatusCode = exception.getStatusCode();
+        }
+    }
+
     @And("viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:")
     public void callReworkWithParams(DataTable params) {
 
@@ -99,7 +126,15 @@ public class TimelineReworkSteps {
                             )
                     );
         } catch (HttpStatusCodeException exception) {
-            httpStatusCode = exception.getStatusCode();
+            throw new AssertionError(
+                    String.format(
+                            "Errore chiamata rework | IUN=%s | HTTP=%s | body=%s",
+                            sharedSteps.getNotificationIun(),
+                            exception.getStatusCode(),
+                            exception.getResponseBodyAsString()
+                    ),
+                    exception
+            );
         }
     }
 

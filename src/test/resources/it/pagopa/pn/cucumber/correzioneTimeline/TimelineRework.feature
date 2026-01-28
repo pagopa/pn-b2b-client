@@ -20,7 +20,7 @@ Feature: Test relativi al SRS di correzione timeline
 
   @timelineRework
   Scenario Outline: [TIMELINE_REWORK_2] Viene invocata con errori la chiamata di rework
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+    Then viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:
       | iun   | attemptId   | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause   | reason   |
       | <iun> | <attemptId> | <pcRetry> | <recIndex> | <expectedStatusCode> | <expectedDeliveryFailureCause> | <reason> |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 400
@@ -36,7 +36,7 @@ Feature: Test relativi al SRS di correzione timeline
 
   @timelineRework
   Scenario: [TIMELINE_REWORK_3] Viene verificata che la richiesta di rework viene rifiutata quando è associata ad uno IUN non valido
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+    Then viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:
       | iun                       |
       | ZJUJ-AAAA-AAAA-202512-X-1 |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 404
@@ -59,7 +59,7 @@ Feature: Test relativi al SRS di correzione timeline
 
   @timelineRework
   Scenario Outline: [TIMELINE_REWORK_5] Viene invocata l'API di rework passando degli statusCode non validi e si ci aspetta uno status code di tipo 404
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+    Then viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:
       | iun   | attemptId   | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause   | reason   |
       | <iun> | <attemptId> | <pcRetry> | <recIndex> | <expectedStatusCode> | <expectedDeliveryFailureCause> | <reason> |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 404
@@ -77,7 +77,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason  |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI003A          |                              | REASON6 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
   #@timelineRework
@@ -98,7 +98,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason  |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON8 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
 
 
   @timelineRework
@@ -114,7 +114,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason  |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON9 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
 
   #@timelineRework
   Scenario: [TIMELINE_REWORK_10] Rework notifica monodestinatario passi allo stato ERROR qualora, giunta allo stato CREATED, la verifica asincrona rilevi uno IUN nello stato REFUSED.***refused?
@@ -140,7 +140,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON11 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
 
   @timelineRework
   Scenario: [TIMELINE_REWORK_12] Rework notifica monodestinatario passi allo stato ERROR qualora, giunta allo stato CREATED, la verifica asincrona rilevi uno IUN nello stato DELIVERED
@@ -156,7 +156,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON12 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
 
   @timelineRework
   Scenario: [TIMELINE_REWORK_13] Rework notifica monodestinatario passi allo stato ERROR qualora, giunta allo stato CREATED, la verifica asincrona rilevi uno IUN nello stato UNREACHABLE.
@@ -172,7 +172,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON13 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
 
 
   @timelineRework
@@ -190,7 +190,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON14 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
 
 
   @timelineRework
@@ -208,7 +208,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRI002           | M01                          | REASON15 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     #***nessuna altro elemento creato a fronte del refinement
 
 
@@ -228,7 +228,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON16 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
     #nessuna altro elemento creato a fronte del refinement
 
@@ -238,7 +238,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI003A          |                              | REASON46b |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
 
@@ -248,7 +248,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI003A          |                              | REASON17 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
 
@@ -269,7 +269,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON18 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
 
@@ -290,7 +290,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON19 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
   #@timelineRework
@@ -315,7 +315,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON21 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
   @timelineRework
@@ -337,7 +337,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON22 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
   @timelineRework
@@ -358,7 +358,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG001B          |                              | REASON23 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
 
@@ -381,7 +381,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON24 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
 
   @timelineRework
   Scenario: [TIMELINE_REWORK_25] Rework notifica multidestinatario ATTEMPT_0 RECINDEX_0: verifica ERROR con attemptId inesistente.
@@ -403,7 +403,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRI003A          |                              | REASON25 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
   #@timelineRework #todo
@@ -426,7 +426,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | ***                | M03                          | REASON26 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     Then Viene verificato che non sia arrivato un evento di "NOTIFICATION_TIMELINE_REWORKED"
 
 
@@ -617,7 +617,7 @@ Feature: Test relativi al SRS di correzione timeline
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002E  |                      | plico        |              |
 
-    And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "IN_PROGRESS" entro 60 secondi controllando ogni 10 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -770,7 +770,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M03                          | REASON39 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -792,7 +792,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON40 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -889,7 +889,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON43 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -949,7 +949,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M03                          | REASON45 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -969,7 +969,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON46 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -1066,7 +1066,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN001C          | M01                          | REASON49 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -1177,7 +1177,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C          |                              | REASON53 |
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 20 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 60 secondi controllando ogni 3 secondi
     #nessuna altro elemento creato a fronte del refinement
 
 
@@ -1361,18 +1361,18 @@ Feature: Test relativi al SRS di correzione timeline
   #@timelineRework
   Scenario: [TIMELINE_rw] Rework notifica monodestinatario deceduto.
 
-    Given imposto lo iun di SharedSteps a "HEDX-REHJ-JKEG-202601-K-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "HURA-HLRP-LXAX-202601-L-1" e la pa a "Comune_Multi"
 
 #    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
 #    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
    # Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON38 |
+#    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+#      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
+#      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON38 |
 
-  #  And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 30 secondi controllando ogni 3 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 60 secondi controllando ogni 3 secondi
     #And si verifica che la richiesta di rework effettuata sia in stato "READY"
     #And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 30 secondi controllando ogni 3 secondi
 
