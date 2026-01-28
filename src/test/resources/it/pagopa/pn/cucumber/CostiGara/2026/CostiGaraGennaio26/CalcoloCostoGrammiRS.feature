@@ -42,7 +42,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
 
       | 84022 | 396   | CAMPAGNA              | SA       | notifica analogica RECAPITISTA |
       | 90052 | 396   | CERDA                 | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 396   | LICODIA EUBEA         | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 396   | LICODIA EUBEA         | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26

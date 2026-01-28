@@ -46,7 +46,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 540   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 540   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 540   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -88,7 +88,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 611   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 611   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 611   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -133,7 +133,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 628   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 628   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 628   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -175,7 +175,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 668   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 668   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 668   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -218,7 +218,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 697   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 697   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 697   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -261,7 +261,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 740   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 740   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 740   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -304,7 +304,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 835   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 835   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 835   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -347,7 +347,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 871   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 871   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 871   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -390,7 +390,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 933   | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 933   | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 933   | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -430,7 +430,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 1008  | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 1008  | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 1008  | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -472,7 +472,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA                  | SA       | notifica analogica RECAPITISTA |
       | 90052 | 1429  | CERDA                     | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 1429  | LICODIA EUBEA             | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 1429  | LICODIA EUBEA             | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -512,7 +512,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 1518  | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 1518  | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 1518  | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
@@ -552,7 +552,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
       | 84022 | 533   | CAMPAGNA               | SA       | notifica analogica RECAPITISTA |
       | 90052 | 2168  | CERDA                  | PA       | notifica analogica RECAPITISTA |
-      | 95059 | 2168  | LICODIA EUBEA          | PA       | notifica analogica RECAPITISTA |
+      | 95059 | 2168  | LICODIA EUBEA          | CT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio26
