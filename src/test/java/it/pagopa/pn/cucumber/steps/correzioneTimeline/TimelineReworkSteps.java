@@ -44,14 +44,35 @@ public class TimelineReworkSteps {
         this.sharedSteps = sharedSteps;
     }
 
-    @Then("viene aggiornata la richiesta di rework con i seguenti dati:")
-    public void updateRequestRework(String expectedDeliveryFailureCause, String expectedStatusCode) {
+    @And("viene aggiornata la richiesta di rework con i seguenti dati:")
+    public void updateRequestReworkWithError(DataTable params) {
 
-        UpdateReworkRequest updateReworkRequest = new UpdateReworkRequest();
+        Map<String, String> inputData = params.asMaps().get(0);
 
+        String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
+        String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
 
-        reworkTimelineClient.updateNotificationRework(sharedSteps.getNotificationIun(), reworkResponse.getReworkId(), updateReworkRequest);
+        UpdateReworkRequest updateReworkRequest =
+                createUpdateReworkRequest(
+                        getParams(inputData, "expectedStatusCode", null),
+                        getParams(inputData, "expectedDeliveryFailureCause", null)
+                );
+        try {
+            reworkTimelineClient.updateNotificationRework(iun, reworkId, updateReworkRequest);
+        } catch (HttpStatusCodeException exception) {
+            httpStatusCode = exception.getStatusCode();
+        }
+    }
+    private UpdateReworkRequest createUpdateReworkRequest(String expectedStatusCode, String expectedDeliveryFailureCause) {
+        UpdateReworkRequest request = new UpdateReworkRequest();
 
+        if (expectedStatusCode != null) {
+            request.setExpectedStatusCode(expectedStatusCode);
+        }
+        if (expectedDeliveryFailureCause != null) {
+            request.setExpectedDeliveryFailureCause(expectedDeliveryFailureCause);
+        }
+        return request;
     }
 
     @And("viene invocata una richiesta di rework per la notifica appena creata")
