@@ -741,7 +741,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then la response deve restituire status code 401
 
   @patchGeo @deleteNewSite
-  Scenario Outline: PATCH – validazione latitudine e longitudine RADD
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_21] PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
