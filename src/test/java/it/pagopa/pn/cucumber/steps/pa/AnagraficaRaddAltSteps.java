@@ -1604,6 +1604,15 @@ public class AnagraficaRaddAltSteps {
         Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
     }
 
+    @Then("se lo status della response è 400, il messaggio di errore deve contenere {string}")
+    public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedMessage) {
+        if (lastHttpStatus != 400) return;
+        HttpStatusCodeException e = sharedSteps.getNotificationError();
+        assertNotNull(e, "Attesa una risposta di errore HTTP ma nessuna eccezione è stata intercettata");
+        String body = e.getResponseBodyAsString();
+        assertTrue(body.contains(expectedMessage),"Messaggio di errore atteso non trovato. Atteso: " + expectedMessage + " - Body: " + body );
+    }
+
     private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {
         if (createRegistryRequestV2 == null) throw new IllegalStateException("CreateRegistryRequestV2 non presente.");
         else if( createRegistryRequestV2.getAddress() == null) throw new IllegalStateException("CreateRegistryRequestV2.address non presente");
