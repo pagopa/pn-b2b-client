@@ -48,6 +48,7 @@ Feature: Gestione purpose templates attraverso APIs M2M V2
   @purpose-template-m2m-patch
   Scenario Outline: [INTEROP-PT-M2M-PATCH_05] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un purpose template in stato diverso da DRAFT (Parte2#Scenario intorno a 150)
     Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato <stato>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale del purpose template

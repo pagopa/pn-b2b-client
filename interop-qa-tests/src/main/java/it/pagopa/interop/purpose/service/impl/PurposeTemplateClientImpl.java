@@ -1,6 +1,7 @@
 package it.pagopa.interop.purpose.service.impl;
 
 import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+import static java.util.Objects.isNull;
 
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
@@ -114,7 +115,13 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
 
     @Override
     public CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis, Boolean handlesPersonalData) throws RestClientException {
-        return purposesTemplateApi.getCatalogPurposeTemplates(offset, limit, q, creatorIds, eserviceIds, targetTenantKind.equals(TenantKind.PRIVATE) ? TargetTenantKind.PRIVATE : TargetTenantKind.PA, excludeExpiredRiskAnalysis, handlesPersonalData);
+        TargetTenantKind tenantKind = isNull(targetTenantKind) ? null : switch(targetTenantKind) {
+            case PRIVATE -> TargetTenantKind.PRIVATE;
+            default -> TargetTenantKind.PA;
+        };
+
+        return purposesTemplateApi.getCatalogPurposeTemplates(offset, limit, q, creatorIds, eserviceIds,
+            tenantKind, excludeExpiredRiskAnalysis, handlesPersonalData);
     }
 
     @Override
