@@ -650,8 +650,44 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "400"
 
+  @patchGeo @deleteNewSite
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_21] PATCH – validazione latitudine e longitudine RADD
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT_PATCH_GEO |
+    When aggiorno la sede RADD tramite PATCH impostando
+      | latitude  | longitude |
+      | <lat>     | <lon>     |
+    Then la response deve restituire status code <expectedStatusCode>
+    Then se lo status della response è 400, il messaggio di errore deve contenere "<expectedErrorMessage>"
+
+    Examples:
+      | lat    | lon     | expectedStatusCode | expectedErrorMessage        |
+      | BLANK  | BLANK   | 200                |                             |
+      | NULL   | NULL    | 200                |                             |
+      | 45.0   | 9.0     | 200                |                             |
+      | -90.0  | -180.0  | 200                |                             |
+      | 90.0   | 180.0   | 200                |                             |
+      | 91.0   | 10.0    | 400                | PN_PARAMETER_TOO_LONG       |
+      | -91.0  | 10.0    | 400                | TO_BE_DEFINED               |
+      | 45.0   | 181.0   | 400                | TO_BE_DEFINED               |
+      | 45.0   | -181.0  | 400                | TO_BE_DEFINED               |
+      | BLANK  | 10.0    | 400                | TO_BE_DEFINED               |
+      | 10.0   | BLANK   | 400                | TO_BE_DEFINED               |
+      | NULL   | 10.0    | 400                | TO_BE_DEFINED               |
+      | 10.0   | NULL    | 400                | TO_BE_DEFINED               |
+      | abc    | 10.0    | 400                | TO_BE_DEFINED               |
+      | 45.0   | xyz     | 400                | TO_BE_DEFINED               |
+      | "45"   | "9"     | 400                | TO_BE_DEFINED               |
+
   @putSelectiveRadd @deleteNewSite
-  Scenario Outline: PUT Selective – validazione campi RADD
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_22] - PUT Selective – validazione campi RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
@@ -727,21 +763,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | externalCodes       | []                                         | 400                |
 
   @putSelectiveRadd @deleteNewSite
-  Scenario : PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
-    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA"
-    When viene generato uno sportello Radd V2 con dati:
-      | address_radd_row      | via roma      |
-      | address_radd_cap      | 80133         |
-      | address_radd_province | NA            |
-      | address_radd_city     | NAPOLI        |
-      | radd_description      | descrizione   |
-      | radd_phoneNumbers     | +390212345678 |
-      | radd_externalCodes    | EXT_PUT_SEL   |
-    When aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione
-    Then la response deve restituire status code 401
-
-  @patchGeo @deleteNewSite
-  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_21] PATCH – validazione latitudine e longitudine RADD
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_23] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
@@ -750,28 +772,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | address_radd_city     | NAPOLI        |
       | radd_description      | descrizione   |
       | radd_phoneNumbers     | +390212345678 |
-      | radd_externalCodes    | EXT_PATCH_GEO |
-    When aggiorno la sede RADD tramite PATCH impostando
-      | latitude  | longitude |
-      | <lat>     | <lon>     |
-    Then la response deve restituire status code <expectedStatusCode>
-    Then se lo status della response è 400, il messaggio di errore deve contenere "<expectedErrorMessage>"
-
-    Examples:
-      | lat    | lon     | expectedStatusCode | expectedErrorMessage        |
-      | BLANK  | BLANK   | 200                |                             |
-      | NULL   | NULL    | 200                |                             |
-      | 45.0   | 9.0     | 200                |                             |
-      | -90.0  | -180.0  | 200                |                             |
-      | 90.0   | 180.0   | 200                |                             |
-      | 91.0   | 10.0    | 400                | PN_PARAMETER_TOO_LONG       |
-      | -91.0  | 10.0    | 400                | TO_BE_DEFINED               |
-      | 45.0   | 181.0   | 400                | TO_BE_DEFINED               |
-      | 45.0   | -181.0  | 400                | TO_BE_DEFINED               |
-      | BLANK  | 10.0    | 400                | TO_BE_DEFINED               |
-      | 10.0   | BLANK   | 400                | TO_BE_DEFINED               |
-      | NULL   | 10.0    | 400                | TO_BE_DEFINED               |
-      | 10.0   | NULL    | 400                | TO_BE_DEFINED               |
-      | abc    | 10.0    | 400                | TO_BE_DEFINED               |
-      | 45.0   | xyz     | 400                | TO_BE_DEFINED               |
-      | "45"   | "9"     | 400                | TO_BE_DEFINED               |
+      | radd_externalCodes    | EXT_PUT_SEL   |
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA"
+    When aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione
+    Then la response deve restituire status code 401
