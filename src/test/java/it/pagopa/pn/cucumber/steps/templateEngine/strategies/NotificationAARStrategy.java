@@ -18,9 +18,11 @@ import java.util.Optional;
 public class NotificationAARStrategy implements ITemplateEngineStrategy {
 
     private final ITemplateEngineClient templateEngineClient;
+    private final TemplateEngineMessageConfigs configs;
 
-    public NotificationAARStrategy(ITemplateEngineClient templateEngineClient, TemplateEngineMessageConfigs templateEngineConfigBean) {
+    public NotificationAARStrategy(ITemplateEngineClient templateEngineClient, TemplateEngineMessageConfigs configs) {
         this.templateEngineClient = templateEngineClient;
+        this.configs = configs;
     }
 
     @Override
@@ -32,21 +34,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return switch (language.toUpperCase()) {
-            case  "ITALIANA" -> {
-                yield "string AVVISO DI AVVENUTA RICEZIONE Identificativo Univoco Notifica: string Codice fiscale - Persona giuridica: string Inviata tramite notifichedigitali.it Hai ricevuto una comunicazione a valore legale da string con oggetto: string Prendi visione della copia dei documenti allegati o accedi ai documenti originali online seguendo le istruzioni. Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione dei documenti. ACCEDI ORA AI DOCUMENTI ONLINE Consultazione online gratuita Inquadra il con la fotocamera del tuo dispositivo oppure vai sul sito web codice QR string Accedi e scarica i documenti: contengono informazioni importanti che ti riguardano Se previsto un pagamento, puoi pagare con tutti i canali abilitati a pagoPA L’importo si aggiornerà con i costi di notifica: 2 € per le notifiche digitali, più elevati per la raccomandata cartacea, inviata solo in assenza di canali digitali o se non apri la comunicazione in tempo Il presente documento è una comunicazione a valore legale che ti invita a prendere visione dei documenti a te notificati e che avranno conseguenze nei tuoi confronti in ogni caso. Se previsto un pagamento, l'importo da pagare dipenderà dalla modalità che scegli per accedere alla notifica, dalla tipologia dell'eventuale raccomandata a te inviata e scelta dall'ente, dal numero di tentativi di recapito. Hai 120 giorni dalla data in cui la notifica assume valore di legge per accedere ai documenti online. Trascorsi i 120 giorni, i documenti non saranno più disponibili e dovrai rivolgerti all'ente che te li ha inviati. Scopri di più su come calcolare i tempi su www.string";
-            }
-            case "TEDESCA" -> {
-                yield "EMPFANGSBESTÄTIGUNG | AVVISO DI AVVENUTA RICEZIONE string Einheitlicher Kodex: Identificativo Univoco Notifica: string Steuernummer | Codice fiscale: string Gesendet von Inviata tramite notifichedigitali.it Du hast eine rechtsgültige Mitteilung von | Hai ricevuto una comunicazione a valore legale da string mit dem Betreff | con oggetto: string erhalten. Nimm Kenntnis von der Kopie der beigefügten Dokumente oder greife online auf die Originaldokumente zu gemäß den Anweisungen. Beachte, dass der Inhalt der Mitteilung Rechtswirkungen für dich entfaltet, auch ohne dass du die Dokumente zur Kenntnis nimmst.";
-            }
-            case "SLOVENA" -> {
-                yield "OBVESTILO O PREJEMU | AVVISO DI AVVENUTA RICEZIONE string Edinstvena identifikacijska oznaka obvestila: Identificativo Univoco Notifica: string Davčno Številko | Codice fiscale: string Poslano od Inviata tramite notifichedigitali.it Prejeli ste uradno sporočilo od | Hai ricevuto una comunicazione a valore legale da string z zadevo | con oggetto: string. Preglejte kopijo priloženih dokumentov ali dostopajte do izvirnih dokumentov na spletu po navodilih. Upoštevajte, da bo vsebina sporočila imela pravne učinke za vas, tudi če si dokumentov ne boste ogledali.";
-            }
-            case "FRANCESE" -> {
-                yield "AVIS DE RÉCEPTION | AVVISO DI AVVENUTA RICEZIONE string Code IUN: Identificativo Univoco Notifica: string Code Fiscal | Codice fiscale: string Envoyé par Inviata tramite notifichedigitali.it Vous avez reçu une communication à valeur légale de | Hai ricevuto una comunicazione a valore legale da string avec pour objet | con oggetto: string. Consultez la copie des documents joints ou accédez aux documents originaux en ligne en suivant les instructions. Veuillez noter que le contenu de la communication produira des effets juridiques à votre égard, même sans que vous ayez consulté les documents.";
-            }
-            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
-        };
+        return getYamlText("aar-no-radd", recipientType, language);
     }
 
     private NotificationAar createRequest(boolean body, TemplateRequestContext context) {
@@ -85,5 +73,21 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
                 .map(data -> new AarSender()
                         .paDenomination(data.getPaDenomination()))
                 .orElse(null);
+    }
+
+    private String getYamlText(String templateKey, String recipientType, String language) {
+        TemplateEngineMessageConfigs.LocalizedText localizedText =
+                Optional.ofNullable(configs.getMessages().get(templateKey))
+                        .map(inner -> inner.get(recipientType.toLowerCase()))
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Template non trovato: " + templateKey + " " + recipientType));
+
+        return switch (language.toUpperCase()) {
+            case "ITALIANA" -> localizedText.getIt();
+            case "TEDESCA" -> localizedText.getDe();
+            case "FRANCESE" -> localizedText.getFr();
+            case "SLOVENA" -> localizedText.getSl();
+            default -> throw new IllegalArgumentException("Lingua non valida: " + language);
+        };
     }
 }
