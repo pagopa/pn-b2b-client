@@ -1599,9 +1599,26 @@ public class AnagraficaRaddAltSteps {
         executePatch(request);
     }
 
+    @When("aggiorno la sede RADD tramite PUT Selective impostando")
+    public void aggiornoLaSedeRaddTramitePutSelectiveImpostando(DataTable table) {
+        Map<String, String> row = table.asMaps().get(0);
+        String field = row.get("field");
+        String value = mapValue(row.get("value"));
+
+        SelectiveUpdateRegistryRequestV2 request = buildSelectivePutRequestFromCreationRequest();
+        applyPutSelectiveField(request, field, value);
+        executePutSelective(request);
+    }
+
     @Then("la response deve restituire status code {int}")
     public void laResponseDeveRestituireStatusCode(int expectedStatusCode) {
         Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
+    }
+
+    @When("aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione")
+    public void aggiornoLaSedeRaddTramitePutSelectiveUtilizzandoLaRequestDiCreazione() {
+        SelectiveUpdateRegistryRequestV2 request = buildSelectivePutRequestFromCreationRequest();
+        executePutSelective(request);
     }
 
     private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {
@@ -1619,6 +1636,92 @@ public class AnagraficaRaddAltSteps {
         if (createRegistryRequestV2 == null || createRegistryRequestV2.getAddress() == null) throw new IllegalStateException("CreateRegistryRequestV2 o address non presenti");
         AddressV2 src = createRegistryRequestV2.getAddress();
         return new AddressV2().addressRow(src.getAddressRow()).cap(src.getCap()).city(src.getCity()).province(src.getProvince()).country(src.getCountry());
+    }
+
+    private String mapValue(String value){
+        if(StringUtils.equalsIgnoreCase(value, "NULL")) return null;
+        else if(StringUtils.equalsIgnoreCase(value, "BLANK")) return "";
+        else if(StringUtils.equalsIgnoreCase(value, "<201_characters>")) return "A".repeat(201);
+        else return value;
+    }
+
+    private void applyPutSelectiveField(SelectiveUpdateRegistryRequestV2 request, String field, String value){
+        if (request == null) throw new IllegalStateException("request non presente");
+        else if (request.getAddress() == null) throw new IllegalStateException("address non presente");
+
+        switch (field) {
+            case "NOT_MANDATORY_NULL":
+                request.setEmail(null);
+                request.setOpeningTime(null);
+                request.setEndValidity(null);
+                request.setWebsite(null);
+                request.setAppointmentRequired(false);
+                break;
+            case "NOT_MANDATORY_BLANK":
+                request.setEmail("");
+                request.setOpeningTime("");
+                request.setEndValidity("");
+                request.setWebsite("");
+                break;
+            case "description":
+                request.setDescription(value);
+                break;
+            case "phoneNumbers":
+                if (value == null) request.setPhoneNumbers(null);
+                else if ("[]".equals(value)) request.setPhoneNumbers(List.of());
+                else request.setPhoneNumbers(Arrays.stream(value.split(",")).map(String::trim).toList());
+                break;
+            case "externalCodes":
+                if (value == null) request.setExternalCodes(null);
+                else if ("[]".equals(value)) request.setExternalCodes(List.of());
+                else request.setExternalCodes(Arrays.stream(value.split(",")).map(String::trim).toList());
+                break;
+            case "addressRow":
+                request.getAddress().setAddressRow(value);
+                break;
+            case "addressCap":
+                request.getAddress().setCap(value);
+                break;
+            case "addressCity":
+                request.getAddress().setCity(value);
+                break;
+            case "addressProvince":
+                request.getAddress().setProvince(value);
+                break;
+            case "addressCountry":
+                request.getAddress().setCountry(value);
+                break;
+            case "email":
+                request.setEmail(value);
+                break;
+            case "openingTime":
+                request.setOpeningTime(value);
+                break;
+            case "startValidity":
+                request.setStartValidity(value);
+                break;
+            case "endValidity":
+                request.setEndValidity(value);
+                break;
+            case "website":
+                request.setWebsite(value);
+                break;
+            case "appointmentRequired":
+                request.setAppointmentRequired(value == null ? null : Boolean.parseBoolean(value));
+                break;
+            default:
+                throw new IllegalArgumentException("Campo non gestito nel PUT Selective: " + field);
+        }
+    }
+
+    private void executePutSelective(SelectiveUpdateRegistryRequestV2 request) {
+        try {
+            registryV2Response = raddAltClientV2.selectiveUpdateRegistry(xPagopaPnCxId, locationId, request);
+            lastHttpStatus = HttpStatus.OK.value();
+        } catch (HttpStatusCodeException e) {
+            lastHttpStatus = e.getStatusCode().value();
+            sharedSteps.setNotificationError(e);
+        }
     }
 
     private void executePatch(UpdateRegistryRequestV2 request) {
