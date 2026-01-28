@@ -90,9 +90,11 @@ Feature: Probing
     # ProbingEnabled invalid
       | %actual    | %actual   | %null          | 400        |
 
+    # eserviceId/versionId invalid
+      | %actual    | %null     | true           | 400        |
+      | %null      | %actual   | true           | 400        |
+
      # Not found (wrong ids)
-      | %actual    | %null     | true           | 404        |
-      | %null      | %actual   | true           | 404        |
       | %actual    | %random   | true           | 404        |
       | %random    | %actual   | true           | 404        |
 
@@ -110,9 +112,11 @@ Feature: Probing
     # EserviceState invalid
       | %actual    | %actual   | %null         | 400        |
 
+    # eserviceId/versionId invalid
+      | %actual    | %null     | ACTIVE        | 400        |
+      | %null      | %actual   | ACTIVE        | 400        |
+
     # Not found (wrong ids)
-      | %actual    | %null     | ACTIVE        | 404        |
-      | %null      | %actual   | ACTIVE        | 404        |
       | %actual    | %random   | ACTIVE        | 404        |
       | %random    | %actual   | ACTIVE        | 404        |
 
