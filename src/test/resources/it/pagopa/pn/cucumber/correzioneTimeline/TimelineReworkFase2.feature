@@ -1,9 +1,8 @@
 Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
-
-  @timelineReworkF2
-  Scenario: [TIMELINE_REWORK_9_1] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso
+  @timelineReworkF2 #rif 5,6,7,8
+  Scenario Outline: [TIMELINE_REWORK_9_1] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso Errore
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -20,6 +19,23 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON221 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 5 secondi
+
+    And viene aggiornata la richiesta di rework con i seguenti dati:
+      | iun   | reworkId   | expectedStatusCode   | expectedDeliveryFailureCause   |
+      | <iun> | <reworkId> | <expectedStatusCode> | <expectedDeliveryFailureCause> |
+    And si verifica che la chiamata sia andata in errore con il seguente status code: <statusCode>
+    Examples:
+      | iun         | reworkId    | expectedStatusCode | expectedDeliveryFailureCause | statusCode |
+      |             |             |                    |                              | 400        |
+      |             |             | RECAG001B          | M123                         | 400        |
+      |             |             | RECAG003C          |                              |            |
+      | inesistente |             | RECRN002F          | M02                          | 404        |
+      |             | inesistente | RECRN002F          | M02                          | 404        |
+#todo receivedStatusCode
+
+
+
+
 
 
 
@@ -450,7 +466,6 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V2"
 
 
-
   @timelineReworkF2 #todo
   Scenario: [TIMELINE_REWORK_7_1] Lettura nuovo evento di timeline dallo stream
     Given viene generata una nuova notifica
@@ -485,7 +500,6 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
     And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED" con la versione "più recente"
-
 
 
   @timelineReworkF2 #todo altre versioni
