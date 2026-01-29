@@ -467,7 +467,7 @@ public class ProbingSteps {
         if (items == null || items.isEmpty()) return; // niente da validare
 
         // Se tutti i filtri sono null, non serve validare
-        if (filters.eserviceName() == null && filters.producerName() == null
+        if (isNullOrBlank(filters.eserviceName()) && isNullOrBlank(filters.producerName())
                 && filters.versionNumber() == null && filters.states() == null) {
             return;
         }
@@ -478,4 +478,10 @@ public class ProbingSteps {
                     .isTrue();
         }
     }
+
+    private boolean isNullOrBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
 }
+
+
