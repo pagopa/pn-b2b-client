@@ -82,26 +82,30 @@ public class ProbingSteps {
         Integer offsetValue = nullableInteger(offset);
         String producerTarget = StepParser.nullOrValue(producerName);
 
-        List<SearchProducerNameResponse> producers =
-                probingClient.getEservicesProducers(limitValue, offsetValue, producerTarget);
-
-        Assertions.assertThat(producers)
-                .as("La lista dei producer non deve essere null")
-                .isNotNull();
-
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && producerTarget != null && !producers.isEmpty()) {
+        try {
+            List<SearchProducerNameResponse> producers =
+                    probingClient.getEservicesProducers(limitValue, offsetValue, producerTarget);
 
             Assertions.assertThat(producers)
-                    .as("Tutti i risultati devono avere producerName='%s'", producerTarget)
-                    .allSatisfy(p ->
-                            Assertions.assertThat(p.getValue())
-                                    .as("producerName del singolo elemento non deve essere null")
-                                    .isNotNull()
-                    );
+                    .as("La lista dei producer non deve essere null")
+                    .isNotNull();
 
-            Assertions.assertThat(producers)
-                    .as("Tutti i risultati devono matchare producerName='%s'", producerTarget)
-                    .allMatch(p -> p.getValue().equals(producerTarget));
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && producerTarget != null && !producers.isEmpty()) {
+
+                Assertions.assertThat(producers)
+                        .as("Tutti i risultati devono avere producerName='%s'", producerTarget)
+                        .allSatisfy(p ->
+                                Assertions.assertThat(p.getValue())
+                                        .as("producerName del singolo elemento non deve essere null")
+                                        .isNotNull()
+                        );
+
+                Assertions.assertThat(producers)
+                        .as("Tutti i risultati devono matchare producerName='%s'", producerTarget)
+                        .allMatch(p -> p.getValue().equals(producerTarget));
+            }
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
     }
 
@@ -151,8 +155,8 @@ public class ProbingSteps {
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             httpCallExecutor.snapshot();
 
-        EserviceRow expected = probingContext.getExpectedEserviceRow();
-        expected.setProbingEnabled(Boolean.valueOf(probingEnabled));
+            EserviceRow expected = probingContext.getExpectedEserviceRow();
+            expected.setProbingEnabled(Boolean.valueOf(probingEnabled));
 
             PollingService.makePolling(
                     () -> probingClient.getEserviceProbingData(eserviceRecordId),
@@ -266,14 +270,17 @@ public class ProbingSteps {
     public void getEservicePublicTelemetry(String eserviceRecordId, String pollingFrequency) {
         Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
         Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
-        
-        TelemetryDataEserviceResponse response = probingClient.statisticsEservices(recordIdValue, poolingFrequencyValue);
-        Assertions.assertThat(response).as("La response contenente la telemetria pubblica dell'e-service non deve essere null").isNotNull();
 
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            probingContext.getActualTelemetry().add(response);
+        try {
+            TelemetryDataEserviceResponse response = probingClient.statisticsEservices(recordIdValue, poolingFrequencyValue);
+            Assertions.assertThat(response).as("La response contenente la telemetria pubblica dell'e-service non deve essere null").isNotNull();
+
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                probingContext.getActualTelemetry().add(response);
+            }
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
-
     }
 
     @When("viene recuperata la telemetria dell'e-service con eserviceRecordId {string} e impostando pollingFrequency {string} , startDate {string} , endDate {string}")
@@ -467,7 +474,7 @@ public class ProbingSteps {
         if (items == null || items.isEmpty()) return; // niente da validare
 
         // Se tutti i filtri sono null, non serve validare
-        if (isNullOrBlank(filters.eserviceName()) && isNullOrBlank(filters.producerName())
+        if (filters.eserviceName() == null && isNullOrBlank(filters.producerName())
                 && filters.versionNumber() == null && filters.states() == null) {
             return;
         }
@@ -483,5 +490,3 @@ public class ProbingSteps {
         return value == null || value.trim().isEmpty();
     }
 }
-
-

@@ -21,11 +21,7 @@ public class ProbingUtils {
             return false;
         }
 
-        if (expectedEndDate != null && now.isAfter(expectedEndDate)) {
-            return false;
-        }
-
-        return true;
+        return expectedEndDate == null || !now.isAfter(expectedEndDate);
     }
 
     public static void waitUntilExpectedWindowStarts(OffsetDateTime expectedStart) {
@@ -90,11 +86,10 @@ public class ProbingUtils {
     public static boolean matchesAllFilters(SearchEserviceContent item, EserviceFilters f) {
         if (item == null) return false;
 
-        // eServiceName: se il backend filtra per contains, cambia equalsIgnoreCase -> containsIgnoreCase
         if (f.eserviceName() != null) {
             String actual = safeTrim(item.getEserviceName());
             String expected = safeTrim(f.eserviceName());
-            if (!equalsIgnoreCase(actual, expected)) return false;
+            if (!containsIgnoreCase(actual, expected)) return false;
         }
 
         if (f.producerName() != null) {
@@ -110,7 +105,7 @@ public class ProbingUtils {
 
         if (f.states() != null && !f.states().isEmpty()) {
             EserviceStateFE actual = item.getState();
-            if (actual == null || !f.states().contains(actual)) return false;
+            return actual != null && f.states().contains(actual);
         }
 
         return true;
@@ -123,5 +118,10 @@ public class ProbingUtils {
     private static boolean equalsIgnoreCase(String a, String b) {
         if (a == null || b == null) return false;
         return a.equalsIgnoreCase(b);
+    }
+
+    private static boolean containsIgnoreCase(String a, String b) {
+        if (a == null || b == null) return false;
+        return a.toLowerCase().contains(b.toLowerCase());
     }
 }
