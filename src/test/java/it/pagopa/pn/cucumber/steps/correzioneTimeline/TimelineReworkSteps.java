@@ -39,6 +39,8 @@ public class TimelineReworkSteps {
     private ReworkResponse reworkResponse;
     private HttpStatus httpStatusCode;
 
+    private Instant now;
+
     public TimelineReworkSteps(ReworkTimelineClientImpl reworkTimelineClient, SharedSteps sharedSteps) {
         this.reworkTimelineClient = reworkTimelineClient;
         this.sharedSteps = sharedSteps;
@@ -316,10 +318,18 @@ public class TimelineReworkSteps {
         );
     }
 
+    private Instant getOrInitNow() {
+        if (now == null) {
+            now = Instant.now().minusSeconds(3600);
+        }
+        return now;
+    }
+
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
         String iun = sharedSteps.getNotificationIun();
-        //Instant now = Instant.now().plusSeconds(3600);
-        Instant now = Instant.now().minusSeconds(120);
+
+        //Instant now = Instant.now().minusSeconds(3600);
+        Instant now = getOrInitNow();
 
         Map<String, Object> mapInfo = new HashMap<>();
 
