@@ -1,54 +1,6 @@
 Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
-  @timelineReworkF2 #rif 5,6,7,8
-  Scenario Outline: [TIMELINE_REWORK_9_1] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso Errore
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON221 |
-    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 5 secondi
-
-    And viene aggiornata la richiesta di rework con i seguenti dati:
-      | iun   | reworkId   | expectedStatusCode   | expectedDeliveryFailureCause   |
-      | <iun> | <reworkId> | <expectedStatusCode> | <expectedDeliveryFailureCause> |
-    And si verifica che la chiamata sia andata in errore con il seguente status code: <statusCode>
-    Examples:
-      | iun         | reworkId    | expectedStatusCode | expectedDeliveryFailureCause | statusCode |
-      |             |             |                    |                              | 400        |
-      |             |             | RECAG001B          | M123                         | 400        |
-      |             |             | RECAG003C          |                              |            |
-      | inesistente |             | RECRN002F          | M02                          | 404        |
-      |             | inesistente | RECRN002F          | M02                          | 404        |
-#todo receivedStatusCode
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   @timelineReworkF2
   Scenario: [TIMELINE_REWORK_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
     Given imposto lo iun di SharedSteps a "***" e la pa a "Comune_Multi"
@@ -57,7 +9,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON111 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
 
   @timelineReworkF2
@@ -77,10 +29,10 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_1 | RECINDEX_0 | RECRN002F          | M01                          | REASON221 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
 
 
-  @timelineReworkF2 #TODO
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_3] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_1 da OK in KO, mentre la seconda richiesta di rework modifichi l’ATTEMPT_1 in KO con diversa motivazione, senza che parta un ulteriore tentativo di invio
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -99,7 +51,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON331 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -124,7 +76,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M04                          | REASON331 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -142,7 +94,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then verifico la non presenza di elementi di timeline con stringa "ATTEMPT_1"
 
 
-  @timelineReworkF2 #TODO
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_3_2] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_0 da KO in OK, mentre la seconda richiesta di rework modifichi l’ATTEMPT_0 in KO
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -161,7 +113,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON332 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -172,14 +124,14 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
 
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON331 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -193,7 +145,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
@@ -201,7 +153,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | details_responseStatus  | KO       |
 
 
-  @timelineReworkF2 #TODO
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_3_3] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_1 da OK in KO, mentre la seconda richiesta di rework modifichi l’ATTEMPT_1 in KO con diversa motivazione, senza che parta un ulteriore tentativo di invio
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -231,7 +183,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
@@ -248,11 +200,11 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
     Then verifico la non presenza di elementi di timeline con stringa "ATTEMPT_1"
 
 
-  @timelineReworkF2 #TODO
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_3_4] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_0 da KO in OK e la seconda richiesta di rework modifichi l’ATTEMPT_0 in OK con destinatario deceduto
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -271,7 +223,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON332 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -282,7 +234,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
@@ -299,7 +251,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG003C  |                      |              |              |
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
 
   @timelineReworkF2 #TODO solo Manuale
@@ -329,7 +281,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON551 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
 
 
   @timelineReworkF2
@@ -351,10 +303,10 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C          |                              | REASON552 |
-    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
 
 
-  @timelineReworkF2 #todo
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_5_3]   effettuare la correzione di una timeline su una notifica in cui è presente un ATTEMPT_1 in OK da invalidare completamente, nel caso in cui il destinatario non abbia ancora effettuato la visualizzazione
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -372,7 +324,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON553 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
 
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
@@ -384,15 +336,11 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
-
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
     #***lista elementi invalidati
 
 
-
-
-
-  @timelineReworkF2 #todo
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_5_4] ATTEMPT_1 in KO da invalidare completamente, nel caso in cui il destinatario non abbia ancora effettuato la visualizzazione
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -419,13 +367,13 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #***lista elementi invalidati
 
 
-  @timelineReworkF2 #todo
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_6_2] verificare che il nuovo elemento di timeline generato in seguito ad una richiesta di correzione (con suffisso _reworked) non sia visibile, per la lettura notifiche lato mittente, utilizzando una versione delle api precedente alla 2.8
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -455,7 +403,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
     Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
     Then recuperando la fullSentNotification con la versione b2b "V23" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
@@ -466,7 +414,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V2"
 
 
-  @timelineReworkF2 #todo
+  @timelineReworkF2
   Scenario: [TIMELINE_REWORK_7_1] Lettura nuovo evento di timeline dallo stream
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -493,7 +441,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
 #      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
 #      | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
 
    # And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -534,26 +482,51 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 3 secondi controllando ogni 10 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 130 secondi controllando ogni 5 secondi
     And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
-
     #***Then verifico la presenza di elementi di timeline con stringa "REWORK_"   ****versioni precedenti?
 
 
+  @timelineReworkF2 #rif 5,6,7,8
+  Scenario Outline: [TIMELINE_REWORK_9_1] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso Errore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON221 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
+
+    And viene aggiornata la richiesta di rework con i seguenti dati:
+      | iun   | reworkId   | expectedStatusCode   | expectedDeliveryFailureCause   |
+      | <iun> | <reworkId> | <expectedStatusCode> | <expectedDeliveryFailureCause> |
+    And si verifica che la chiamata sia andata in errore con il seguente status code: <statusCode>
+    Examples:
+      | iun         | reworkId    | expectedStatusCode | expectedDeliveryFailureCause | statusCode |
+      |             |             |                    |                              | 400        |
+      |             |             | RECAG001B          | M123                         | 400        |
+      |             |             | RECAG003C          |                              |            |
+      | inesistente |             | RECRN002F          | M02                          | 404        |
+      |             | inesistente | RECRN002F          | M02                          | 404        |
 
 
-  @timelineReworkF2 #todo solo manuali?
-  Scenario: [TIMELINE_REWORK_8_x] Costi
 
 
 
-  
 
 
-#
 
-  #------------
+  #------------ TEST
   Scenario Outline: [TIMELINE_REWORK_x0] Rework notifica monodestinatario.
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>            |
@@ -629,13 +602,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0> | RECRN002F          | M01                          | REASON |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
     #Then recuperando la fullSentNotification con la versione b2b {string} {is} presente l'elemento di timeline {string}
-
-    #Then fullsentnotification
-
-
-
-
-
+      #Then fullsentnotification
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
 
 
@@ -660,7 +627,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
   #@timelineRework
-  Scenario: [TIMELINE_K_x] Rework notifica monodestinatario deceduto.
+  Scenario: [TIMELINE_x] Rework notifica monodestinatario deceduto.
     Given imposto lo iun di SharedSteps a "LWZT-NTWX-ZEJN-202601-M-1" e la pa a "Comune_Multi"
 
     Then verifico la presenza di elementi di timeline con stringa "REWORK_"
