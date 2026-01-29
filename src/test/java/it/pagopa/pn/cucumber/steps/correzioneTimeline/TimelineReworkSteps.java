@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.correzioneTimeline;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
@@ -29,6 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class TimelineReworkSteps {
+
+    @Before("@timelineRework")
+    public void beforeMethod() {
+        this.now=null;
+    }
 
     @Value("${pn.external.allowed.future.offset.duration}")
     private String pnEcConsAllowedFutureOffsetDuration;
@@ -64,6 +70,34 @@ public class TimelineReworkSteps {
         } catch (HttpStatusCodeException exception) {
             httpStatusCode = exception.getStatusCode();
         }
+    }
+    @And("viene correttamente aggiornata la richiesta di rework con i seguenti dati:")
+    public void updateRequestRework(DataTable params) {
+
+        Map<String, String> inputData = params.asMaps().get(0);
+
+        String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
+        String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
+
+        if (reworkId == null) {
+            throw new AssertionError("reworkId nullo | IUN=" + iun);
+        }
+
+        UpdateReworkRequest updateReworkRequest =
+                createUpdateReworkRequest(
+                        getParams(inputData, "expectedStatusCode", null),
+                        getParams(inputData, "expectedDeliveryFailureCause", null)
+                );
+
+        Assertions.assertDoesNotThrow(
+                () -> reworkTimelineClient.updateNotificationRework(iun, reworkId, updateReworkRequest),
+                () -> String.format(
+                        "Errore aggiornamento rework | IUN=%s | reworkId=%s | request=%s",
+                        iun,
+                        reworkId,
+                        updateReworkRequest
+                )
+        );
     }
     private UpdateReworkRequest createUpdateReworkRequest(String expectedStatusCode, String expectedDeliveryFailureCause) {
         UpdateReworkRequest request = new UpdateReworkRequest();
@@ -320,7 +354,7 @@ public class TimelineReworkSteps {
 
     private Instant getOrInitNow() {
         if (now == null) {
-            now = Instant.now().minusSeconds(3600);
+            now = Instant.now().minusSeconds(120);
         }
         return now;
     }
