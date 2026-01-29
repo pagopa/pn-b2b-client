@@ -50,7 +50,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
   @timelineReworkF2
-  Scenario: [TIMELINE_REWORK_1_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
+  Scenario: [TIMELINE_REWORK_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
     Given imposto lo iun di SharedSteps a "***" e la pa a "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
@@ -61,7 +61,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
   @timelineReworkF2
-  Scenario: [TIMELINE_REWORK_2_1] Verificare che, per una notifica mono destinatario con ATTEMPT_0 in OK, la richiesta di rework vada in ERROR se viene passato un pcRetry = PCRETRY_1
+  Scenario: [TIMELINE_REWORK_2] Verificare che, per una notifica mono destinatario con ATTEMPT_0 in OK, la richiesta di rework vada in ERROR se viene passato un pcRetry = PCRETRY_1
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -81,7 +81,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
 
 
   @timelineReworkF2 #TODO
-  Scenario: [TIMELINE_REWORK_3_1] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_1 da OK in KO, mentre la seconda richiesta di rework modifichi l’ATTEMPT_1 in KO con diversa motivazione, senza che parta un ulteriore tentativo di invio
+  Scenario: [TIMELINE_REWORK_3] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_1 da OK in KO, mentre la seconda richiesta di rework modifichi l’ATTEMPT_1 in KO con diversa motivazione, senza che parta un ulteriore tentativo di invio
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |

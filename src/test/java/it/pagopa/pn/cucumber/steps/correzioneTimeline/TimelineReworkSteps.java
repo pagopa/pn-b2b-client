@@ -135,7 +135,6 @@ public class TimelineReworkSteps {
     public void callReworkWithParams(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
 
         try {
@@ -205,7 +204,6 @@ public class TimelineReworkSteps {
                     "Lista non supportata: " + listName
             );
         };
-
         verifyInvalidatedTimelineElementsFailFast(elementsToCheck);
     }
 
@@ -260,20 +258,14 @@ public class TimelineReworkSteps {
         if (reworkId == null) {
             throw new AssertionError("ReworkId nullo | IUN=" + iun);
         }
-
         AtomicReference<List<String>> lastFoundStatuses = new AtomicReference<>(List.of());
-
         try {
             await()
                     .atMost(timeoutSeconds, SECONDS)
                     .pollInterval(pollIntervalSeconds, SECONDS)
                     .until(() -> {
 
-                        ReworkItemsResponse response =
-                                reworkTimelineClient.retrieveNotificationReworkById(
-                                        iun,
-                                        reworkId
-                                );
+                        ReworkItemsResponse response = reworkTimelineClient.retrieveNotificationReworkById(iun, reworkId);
 
                         List<String> statuses = response.getItems().stream()
                                 .map(item -> item.getStatus().getValue())
@@ -281,12 +273,7 @@ public class TimelineReworkSteps {
 
                         lastFoundStatuses.set(statuses);
 
-                        log.info(
-                                "Polling rework | IUN={} | reworkId={} | stati trovati={}",
-                                iun,
-                                reworkId,
-                                statuses
-                        );
+                        log.info("Polling rework | IUN={} | reworkId={} | stati trovati={}", iun, reworkId, statuses);
 
                         return statuses.contains(expectedStatus);
                     });
@@ -305,39 +292,27 @@ public class TimelineReworkSteps {
         }
     }
 
-//    @Then("viene invocato il consolidatore con i seguenti dati:")
-//    public void vieneInvocatoIlConsolidatoreCustom(DataTable params) {
-//
-//        Map<String, String> inputData = params.asMaps().get(0);
-//        Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
-//        try {
-//            sharedSteps
-//                    .getPnExternalServiceClient()
-//                    .pushConsolidatoreNotificationAttach(mapInfo);
-//        } catch (HttpStatusCodeException e) {
-//            this.sharedSteps.setNotificationError(e);
-//        }
-//    }
-
     @Then("viene invocato il consolidatore con i seguenti dati:")
     public void vieneInvocatoIlConsolidatoreCustom(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
 
-        String body = null;
-        try {
-            body = sharedSteps.getPnExternalServiceClient()
-                    .pushConsolidatoreNotificationAttach(mapInfo);
-        } catch (HttpStatusCodeException e) {
-
-            body = e.getResponseBodyAsString();
-        }
-        assertTrue(
-                body != null && !body.contains("\"resultCode\":\"500") && !body.contains("\"resultCode\":\"403"),
-                String.format("Chiamata al consolidatore fallita | IUN=%s | body=%s",
+        String body = Assertions.assertDoesNotThrow(
+                () -> sharedSteps.getPnExternalServiceClient()
+                        .pushConsolidatoreNotificationAttach(mapInfo),
+                () -> String.format(
+                        "Chiamata al consolidatore fallita | IUN=%s",
+                        mapInfo.get("iun")
+                )
+        );
+        Assertions.assertFalse(
+                body.contains("\"resultCode\":\"500") || body.contains("\"resultCode\":\"403"),
+                () -> String.format(
+                        "Errore applicativo dal consolidatore | IUN=%s | body=%s",
                         mapInfo.get("iun"),
-                        body)
+                        body
+                )
         );
     }
 
@@ -380,47 +355,6 @@ public class TimelineReworkSteps {
 
         return mapInfo;
     }
-
-//    private Map<String, String> populateConsolidatoreMapCustom(
-//            Map<String, String> inputData) {
-//
-//        String iun = sharedSteps.getNotificationIun();
-//
-//        Instant now = Instant.now().plusSeconds(3600);
-//
-//        Map<String, String> mapInfo = new HashMap<>();
-//
-//        mapInfo.put("requestId", buildRequestId(
-//                        iun,
-//                        inputData.get("recIndex"),
-//                        inputData.get("attemptId"),
-//                        inputData.get("pcRetry")
-//                )
-//        );
-//
-////        if (inputData.get("attachment") != null) {
-////            mapInfo.put("attachments", buildSingleAttachment(inputData.get("attachment"), now));
-////        } else {
-////            mapInfo.put("attachments", null);
-////        }
-//
-//        // attachments (multi)
-//        String attachmentsJson = buildAttachmentsFromInput(inputData, now);
-//        mapInfo.put("attachments", attachmentsJson);
-//
-//        mapInfo.put("clientRequestTimeStamp", B2bUtils.getOffsetDateTimeFromDate(now));
-//        mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
-//        mapInfo.put("discoveredAddress", null);
-//        mapInfo.put("iun", iun);
-//        mapInfo.put("productType", inputData.getOrDefault("productType", null));
-//        mapInfo.put("registeredLetterCode", null);
-//        mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
-//        mapInfo.put("statusDateTime", B2bUtils.getOffsetDateTimeFromDate(now));
-//        mapInfo.put("statusDescription", "QA");
-//
-//        return mapInfo;
-//    }
-
 
     private String buildAttachmentsFromInput(
             Map<String, String> inputData,
