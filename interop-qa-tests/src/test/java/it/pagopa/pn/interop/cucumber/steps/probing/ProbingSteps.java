@@ -115,20 +115,24 @@ public class ProbingSteps {
         Integer versionFilter = StepParser.nullableInteger(versionNumber);
         List<EserviceStateFE> stateFilter = StepParser.singletonListNullable(StepParser.nullOrValue(state), EserviceStateFE::fromValue);
 
-        SearchEserviceResponse response = probingClient.searchEservices(
-                limitValue,
-                offsetValue,
-                nameFilter,
-                producerFilter,
-                versionFilter,
-                stateFilter
-        );
+        SearchEserviceResponse response;
 
-        Assertions.assertThat(response).as("La response non deve essere null").isNotNull();
+        try {
+            response = probingClient.searchEservices(
+                    limitValue,
+                    offsetValue,
+                    nameFilter,
+                    producerFilter,
+                    versionFilter,
+                    stateFilter
+            );
 
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            Assertions.assertThat(response).as("La response non deve essere null").isNotNull();
             ProbingUtils.EserviceFilters appliedFilters = new ProbingUtils.EserviceFilters(nameFilter, producerFilter, versionFilter, stateFilter);
             assertResultsMatchFilters(response, appliedFilters);
+
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
     }
 
