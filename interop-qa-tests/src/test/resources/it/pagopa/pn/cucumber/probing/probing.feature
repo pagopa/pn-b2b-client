@@ -1,18 +1,5 @@
 Feature: Probing
 
-  Scenario Outline: [TEST]
-    Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    When vengono recuperati dal catalogo gli e-service con limit "<limit>" e offset "<offset>" e filtri eserviceName "<eserviceName>", producerName "<producerName>", versionNumber "<versionNumber>", state "<state>"
-    Then la response riporta lo status code <statusCode>
-
-    Examples:
-    # --- Baseline / boundaries (no filters) ---
-      | limit | offset | eserviceName | producerName | versionNumber | state | statusCode |
-
-    # --- Filter values edge cases (%blank treated as no filter) ---
-      | 10    | 0      | %blank       | %null        | %null         | %null | 200        |
-
-
     #BUG: https://pagopa.atlassian.net/browse/PIN-9074
   Scenario Outline: [GET_STATUS] - Health probing-ms check
     Given il microservizio <ms> risulta attivo
@@ -235,9 +222,10 @@ Feature: Probing
 
   Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
     Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
+    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 
     Examples:
     # BEFORE window (inizia tra poco)

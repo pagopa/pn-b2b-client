@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.OffsetTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -264,7 +267,7 @@ public class ProbingSteps {
             actual.setProbingEnabled(response.getProbingEnabled());
             actual.setState(response.getState().getValue());
 
-            probingContext.setLastResponseTime(response.getResponseReceived() != null ? LocalDateTime.parse(response.getResponseReceived()) : null);
+            probingContext.setLastResponseTime(response.getResponseReceived() != null ? OffsetTime.parse(response.getResponseReceived()) : null);
 
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -313,15 +316,17 @@ public class ProbingSteps {
     @Then("verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency {string}, startDate {string}, endDate {string}")
     public void assertScheduler(String pollingFrequency, String startDate, String endDate) throws Exception {
 
-        OffsetDateTime start = resolver.resolveDateToken(startDate);
-        OffsetDateTime end = resolver.resolveDateToken(endDate);
+        OffsetTime start = resolver.resolvePollingStartTime(startDate);
+        OffsetTime end = resolver.resolvePollingEndTime(endDate);
 
         Assertions.assertThat(start).as("startDate non deve essere null").isNotNull();
         Assertions.assertThat(end).as("endDate non deve essere null").isNotNull();
         Assertions.assertThat(end).as("endDate deve essere dopo startDate").isAfter(start);
 
-        Instant startI = start.toInstant();
-        Instant endI = end.toInstant();
+        LocalDate today = LocalDate.now();
+
+        Instant startI = start.atDate(today).toInstant();
+        Instant endI = end.atDate(today).toInstant();
         Instant now = Instant.now();
 
         // CONTRATTO: frequency è in minuti (minimum: 1)
@@ -471,7 +476,8 @@ public class ProbingSteps {
         Long eserviceRecordId = resolver.getEserviceRecordId();
         this.getEserviceMainData(String.valueOf(eserviceRecordId));
         this.getEserviceProbingData(String.valueOf(eserviceRecordId));
-        return probingContext.getLastResponseTime().toInstant(ZoneOffset.UTC);
+
+        return probingContext.getLastResponseTime().atDate(LocalDate.now()).toInstant();
     }
 
     private void assertResultsMatchFilters(SearchEserviceResponse response, ProbingUtils.EserviceFilters filters) {
