@@ -53,14 +53,14 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
         this.httpCallExecutor = httpCallExecutor;
 
         // --- probing core ---
-        ApiClient probingApiClient = createProbingApiClient(null);
+        ApiClient probingApiClient = createProbingApiClient(probingBearerTokenKms);
         this.statusApi = new StatusApi(probingApiClient);
         this.eServicesApi = new EServicesApi(probingApiClient);
         this.producersApi = new ProducersApi(probingApiClient);
 
         // --- probingStatistics ---
         it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient statsApiClient =
-            createStatisticsApiClient(null);
+            createStatisticsApiClient(probingBearerTokenTelemetry);
         this.statisticsStatusApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.StatusApi(statsApiClient);
         this.telemetryApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.TelemetryApi(statsApiClient);
     }
@@ -83,7 +83,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     private ApiClient createProbingApiClient(String bearerToken) {
         ApiClient apiClient = new ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
-        // apiClient.setBearerToken(bearerToken);
+        apiClient.setBearerToken(bearerToken);
         return apiClient;
     }
 
@@ -91,7 +91,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
         it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient apiClient =
                 new it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
-        // apiClient.setBearerToken(bearerToken);
+        apiClient.setBearerToken(bearerToken);
         return apiClient;
     }
 
