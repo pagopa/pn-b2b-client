@@ -17,6 +17,7 @@ import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.ita
 @Setter
 @AllArgsConstructor
 public class EserviceRow {
+    private Long id;
     private UUID eserviceId;
     private UUID versionId;
     private String eserviceName;
@@ -53,7 +54,7 @@ public class EserviceRow {
     /**
      * Crea la riga deterministica corrispondente a gs=i (1-based).
      */
-    public static EserviceRow atIndex(int i) {
+    public static EserviceRow atIndex(long i) {
         if (i <= 0) throw new IllegalArgumentException("Index i must be >= 1");
 
         UUID eserviceId = uuidFromLongSeed(i);
@@ -61,7 +62,7 @@ public class EserviceRow {
 
         String eserviceName = nameFromIndex(i);
         String producerName = "Producer " + (((i - 1) % 50) + 1);
-        String technology = TECHNOLOGIES.get((i - 1) % TECHNOLOGIES.size());
+        String technology = TECHNOLOGIES.get((int) ((i - 1) % TECHNOLOGIES.size()));
 
         List<String> basePath = List.of(
                 "/api/v1/" + eserviceName.toLowerCase(),
@@ -73,6 +74,7 @@ public class EserviceRow {
         );
 
         return new EserviceRow(
+                i,
                 eserviceId,
                 versionId,
                 eserviceName,
@@ -101,7 +103,7 @@ public class EserviceRow {
     // Utilities pubbliche
     // ------------------------
 
-    public static String nameFromIndex(int i) {
+    public static String nameFromIndex(long i) {
         if (i <= 0) throw new IllegalArgumentException("Index i must be >= 1");
         return "ESVC-" + String.format("%08d", i);
     }

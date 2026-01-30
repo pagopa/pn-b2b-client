@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 
 import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateBE;
-import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -71,17 +69,7 @@ public class ProbingResolver {
     }
 
     public Long getEserviceRecordId() {
-        String name = probingContext.getActualEserviceRow().getEserviceName();
-        probingClient.getHttpCallExecutor().snapshot();
-        List<SearchEserviceContent> results = probingClient.findEserviceByName(name);
-        probingClient.getHttpCallExecutor().resetFormSnapshot();
-
-        if (results.size() != 1) {
-            throw new IllegalStateException(
-                    "Impossibile recuperare univocamente eserviceRecordId per eservice '" + name + "'. Trovati: " + results.size()
-            );
-        }
-        return results.get(0).getEserviceRecordId();
+        return probingContext.getActualEserviceRow().getId();
     }
 
     public Integer resolveFrequency(String raw) {
