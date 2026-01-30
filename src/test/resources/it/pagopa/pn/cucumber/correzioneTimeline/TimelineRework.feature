@@ -1446,7 +1446,7 @@ Feature: Test relativi al SRS di correzione timeline
 
 
   Scenario: [TIMELINE_r7w] Rework notifica monodestinatario deceduto.
-    Given imposto lo iun di SharedSteps a "ULGA-DJRQ-PTNR-202601-A-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "HZTN-VDQR-DUNM-202601-Z-1" e la pa a "Comune_Multi"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M03                          | REASON52 |

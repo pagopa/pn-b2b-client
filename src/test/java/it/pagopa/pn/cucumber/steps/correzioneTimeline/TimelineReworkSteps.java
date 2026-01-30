@@ -20,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -33,7 +36,7 @@ public class TimelineReworkSteps {
 
     @Before("@timelineRework")
     public void beforeMethod() {
-        this.now=null;
+        this.timestampString=null;
     }
 
     @Value("${pn.external.allowed.future.offset.duration}")
@@ -45,7 +48,7 @@ public class TimelineReworkSteps {
     private ReworkResponse reworkResponse;
     private HttpStatus httpStatusCode;
 
-    private Instant now;
+    private String timestampString;
 
     public TimelineReworkSteps(ReworkTimelineClientImpl reworkTimelineClient, SharedSteps sharedSteps) {
         this.reworkTimelineClient = reworkTimelineClient;
@@ -352,18 +355,20 @@ public class TimelineReworkSteps {
         );
     }
 
-    private Instant getOrInitNow() {
-        if (now == null) {
-            now = Instant.now().minusSeconds(120);
+    private String getOrInitNow() {
+        if (timestampString == null) {
+            OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(30).withNano(0);
+             timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
+
         }
-        return now;
+        return timestampString;
     }
 
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
         String iun = sharedSteps.getNotificationIun();
 
         //Instant now = Instant.now().minusSeconds(3600);
-        Instant now = getOrInitNow();
+        String timestampStringL = getOrInitNow();
 
         Map<String, Object> mapInfo = new HashMap<>();
 
@@ -380,21 +385,21 @@ public class TimelineReworkSteps {
             attachment.put("documentType", inputData.get("attachment_1"));
             attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf");
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
-            attachment.put("date", B2bUtils.getOffsetDateTimeFromDate(now));
+            attachment.put("date", timestampStringL);
 
             mapInfo.put("attachments", Collections.singletonList(attachment));
         } else {
             mapInfo.put("attachments", null);
         }
 
-        mapInfo.put("clientRequestTimeStamp", B2bUtils.getOffsetDateTimeFromDate(now));
+        mapInfo.put("clientRequestTimeStamp", timestampStringL);
         mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
         mapInfo.put("discoveredAddress", null);
         mapInfo.put("iun", iun);
         mapInfo.put("productType", inputData.getOrDefault("productType", null));
         mapInfo.put("registeredLetterCode", "QATEST");
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
-        mapInfo.put("statusDateTime", B2bUtils.getOffsetDateTimeFromDate(now));
+        mapInfo.put("statusDateTime", timestampStringL);
         mapInfo.put("statusDescription", "Quality assurance");
 
         return mapInfo;
