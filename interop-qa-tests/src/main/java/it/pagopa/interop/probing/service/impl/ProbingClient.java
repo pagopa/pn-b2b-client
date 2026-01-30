@@ -211,8 +211,8 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     public void updateEserviceFrequency(UUID eserviceId, UUID versionId, Integer frequency, OffsetTime startTime, OffsetTime endTime) {
         ChangeProbingFrequencyRequest req = new ChangeProbingFrequencyRequest();
         req.setFrequency(frequency);
-        req.setStartTime(startTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-        req.setEndTime(endTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        req.setStartTime(startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) : null);
+        req.setEndTime(endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) : null);
 
         performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, req));
 
