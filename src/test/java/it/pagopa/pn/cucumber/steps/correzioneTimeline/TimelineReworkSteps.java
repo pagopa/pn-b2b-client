@@ -36,7 +36,7 @@ public class TimelineReworkSteps {
 
     @Before("@timelineRework")
     public void beforeMethod() {
-        this.timestampString=null;
+        this.timestampString = null;
     }
 
     @Value("${pn.external.allowed.future.offset.duration}")
@@ -74,6 +74,7 @@ public class TimelineReworkSteps {
             httpStatusCode = exception.getStatusCode();
         }
     }
+
     @And("viene correttamente aggiornata la richiesta di rework con i seguenti dati:")
     public void updateRequestRework(DataTable params) {
 
@@ -102,6 +103,7 @@ public class TimelineReworkSteps {
                 )
         );
     }
+
     private UpdateReworkRequest createUpdateReworkRequest(String expectedStatusCode, String expectedDeliveryFailureCause) {
         UpdateReworkRequest request = new UpdateReworkRequest();
 
@@ -356,11 +358,12 @@ public class TimelineReworkSteps {
     }
 
     private String getOrInitNow() {
-        if (timestampString == null) {
-            OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(30).withNano(0);
-             timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
+        // if (timestampString == null) {
+        // OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(30).withNano(0);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).withNano(0);
+        timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
 
-        }
+        //  }
         return timestampString;
     }
 
@@ -369,6 +372,7 @@ public class TimelineReworkSteps {
 
         //Instant now = Instant.now().minusSeconds(3600);
         String timestampStringL = getOrInitNow();
+
 
         Map<String, Object> mapInfo = new HashMap<>();
 
