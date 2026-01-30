@@ -213,10 +213,8 @@ public class ProbingSteps {
         try {
             probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue, endValue);
 
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             Long eserviceRecordId = resolver.getEserviceRecordId();
             EserviceRow expected = probingContext.getExpectedEserviceRow();
-
             expected.setPollingFrequency(frequencyValue);
             httpCallExecutor.snapshot();
 
