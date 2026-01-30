@@ -53,7 +53,9 @@ public class ProbingResolver {
 
     public Long getEserviceRecordId() {
         String name = probingContext.getActualEserviceRow().getEserviceName();
+        probingClient.getHttpCallExecutor().snapshot();
         List<SearchEserviceContent> results = probingClient.findEserviceByName(name);
+        probingClient.getHttpCallExecutor().resetFormSnapshot();
 
         if (results.size() != 1) {
             throw new IllegalStateException(
