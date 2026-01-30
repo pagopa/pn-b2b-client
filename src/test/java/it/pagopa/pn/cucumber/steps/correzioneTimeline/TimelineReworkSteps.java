@@ -392,7 +392,7 @@ public class TimelineReworkSteps {
         mapInfo.put("discoveredAddress", null);
         mapInfo.put("iun", iun);
         mapInfo.put("productType", inputData.getOrDefault("productType", null));
-        mapInfo.put("registeredLetterCode", null);
+        mapInfo.put("registeredLetterCode", "QATEST");
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
         mapInfo.put("statusDateTime", B2bUtils.getOffsetDateTimeFromDate(now));
         mapInfo.put("statusDescription", "Quality assurance");
