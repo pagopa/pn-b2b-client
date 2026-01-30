@@ -327,11 +327,12 @@ public class RaddAltSteps {
     protected void startTransactionActRaddAlternative(String operationId, boolean retry) {
         ActStartTransactionRequest actStartTransactionRequest = createActStartTransactionRequest(operationId);
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
-        this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
-
-        if (this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry) {
-            waitFor(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
+        int attempts = 5;
+        for (int i = 0; i < attempts; i++) {
             this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
+            if (this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry) {
+                waitFor(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
+            } else break;
         }
         System.out.println("startTransactionResponse: " + startTransactionResponse);
     }
