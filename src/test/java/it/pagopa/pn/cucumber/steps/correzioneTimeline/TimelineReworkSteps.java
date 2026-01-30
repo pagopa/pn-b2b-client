@@ -371,7 +371,7 @@ public class TimelineReworkSteps {
         String iun = sharedSteps.getNotificationIun();
 
         //Instant now = Instant.now().minusSeconds(3600);
-        String timestampStringL = getOrInitNow();
+        String timestampStringMethod = getOrInitNow();
 
 
         Map<String, Object> mapInfo = new HashMap<>();
@@ -389,21 +389,21 @@ public class TimelineReworkSteps {
             attachment.put("documentType", inputData.get("attachment_1"));
             attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf");
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
-            attachment.put("date", timestampStringL);
+            attachment.put("date", timestampStringMethod);
 
             mapInfo.put("attachments", Collections.singletonList(attachment));
         } else {
             mapInfo.put("attachments", null);
         }
 
-        mapInfo.put("clientRequestTimeStamp", timestampStringL);
+        mapInfo.put("clientRequestTimeStamp", timestampStringMethod);
         mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
         mapInfo.put("discoveredAddress", null);
         mapInfo.put("iun", iun);
         mapInfo.put("productType", inputData.getOrDefault("productType", null));
         mapInfo.put("registeredLetterCode", "QATEST");
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
-        mapInfo.put("statusDateTime", timestampStringL);
+        mapInfo.put("statusDateTime", timestampStringMethod);
         mapInfo.put("statusDescription", "Quality assurance");
 
         return mapInfo;
