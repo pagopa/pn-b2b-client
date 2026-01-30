@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalTime;
+import java.time.OffsetTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,8 +40,6 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     private final String probingBearerTokenKms;
     private final String probingBearerTokenTelemetry;
 
-    private final HttpCallExecutor httpCallExecutor;
-
     public ProbingClient(RestTemplate restTemplate,
                          ProbingClientConfigs probingClientConfigs,
                          HttpCallExecutor httpCallExecutor) {
@@ -50,7 +49,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
         this.probingBearerTokenKms = probingClientConfigs.getBearerTokenKms();
         this.probingBearerTokenTelemetry = probingClientConfigs.getBearerTokenTelemetry();
 
-        this.httpCallExecutor = httpCallExecutor;
+        super.httpCallExecutor = httpCallExecutor;
 
         // --- probing core ---
         ApiClient probingApiClient = createProbingApiClient(probingBearerTokenKms);
@@ -209,13 +208,17 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
 
     @Override
-    public void updateEserviceFrequency(UUID eserviceId, UUID versionId, Integer frequency, LocalTime startTime, LocalTime endTime) {
+    public void updateEserviceFrequency(UUID eserviceId, UUID versionId, Integer frequency, OffsetTime startTime, OffsetTime endTime) {
         ChangeProbingFrequencyRequest req = new ChangeProbingFrequencyRequest();
         req.setFrequency(frequency);
-        req.setStartTime(startTime.toString());
-        req.setEndTime(endTime.toString());
+        req.setStartTime(startTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        req.setEndTime(endTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
 
         performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, req));
+
+        if (!super.httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            throw new IllegalStateException("Errore durante l'update della frequency dell'e-ervice con id: " + eserviceId);
+        }
     }
 
     @Override

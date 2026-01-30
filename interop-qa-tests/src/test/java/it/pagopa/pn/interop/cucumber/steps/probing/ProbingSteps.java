@@ -207,10 +207,11 @@ public class ProbingSteps {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
         Integer frequencyValue = resolver.resolveFrequency(frequency);
-        OffsetDateTime startValue = resolver.resolveDateToken(startDate);
-        OffsetDateTime endValue = resolver.resolveDateToken(endDate);
+        OffsetTime startValue = resolver.resolvePollingStartTime(startDate);
+        OffsetTime endValue = resolver.resolvePollingEndTime(endDate);
 
-        probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue.toLocalTime(), endValue.toLocalTime());
+        try {
+            probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue, endValue);
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             Long eserviceRecordId = resolver.getEserviceRecordId();
@@ -228,6 +229,9 @@ public class ProbingSteps {
             );
 
             httpCallExecutor.resetFormSnapshot();
+
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
     }
 

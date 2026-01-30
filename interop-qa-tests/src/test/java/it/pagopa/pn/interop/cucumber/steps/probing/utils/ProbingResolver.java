@@ -7,6 +7,7 @@ import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.RequiredArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -145,6 +146,39 @@ public class ProbingResolver {
         }
 
         return OffsetDateTime.parse(token);
+    }
+
+    public OffsetTime resolvePollingStartTime(String raw) {
+        ResolvableToken resToken = ResolvableToken.from(raw);
+        if (resToken == null) {
+            OffsetDateTime resolvedDate = resolveDateToken(raw);
+            if (resolvedDate == null) return null;
+            return ProbingUtils.italyToday(resolveDateToken(raw).toLocalTime());
+        }
+
+        return resolve(raw, "startDate",
+                () -> probingContext.getActualEserviceRow().getPollingStartTime(),
+                null,
+                null,
+                () -> probingContext.getExpectedEserviceRow().getPollingStartTime()
+        );
+    }
+
+    public OffsetTime resolvePollingEndTime(String raw) {
+        ResolvableToken resToken = ResolvableToken.from(raw);
+        if (resToken == null) {
+            OffsetDateTime resolvedDate = resolveDateToken(raw);
+            if (resolvedDate == null) return null;
+            return ProbingUtils.italyToday(resolveDateToken(raw).toLocalTime());
+        }
+
+        return resolve(raw,
+                "endDate",
+                () -> probingContext.getActualEserviceRow().getPollingEndTime(),
+                null,
+                null,
+                () -> probingContext.getExpectedEserviceRow().getPollingEndTime()
+        );
     }
 
     private Integer resolveIntegerDelta(String raw) {

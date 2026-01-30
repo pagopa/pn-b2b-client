@@ -3,13 +3,24 @@ package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateFE;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ProbingUtils {
     public record PollingPolicy(int maxTry, long sleepMs) {
+    }
+
+    private static final ZoneId ROME = ZoneId.of("Europe/Rome");
+
+    public static OffsetTime italyToday(LocalTime time) {
+        // “oggi” secondo l’Italia
+        LocalDate todayRome = LocalDate.now(ROME);
+
+        // offset corretto per oggi in Italia (CET/CEST)
+        ZoneOffset offset = ZonedDateTime.of(todayRome, time, ROME).getOffset();
+
+        return OffsetTime.of(time.withNano(0), offset);
     }
 
     public static boolean isWithinExpectedWindow(OffsetDateTime now, OffsetDateTime expectedStartDate, OffsetDateTime expectedEndDate) {

@@ -7,8 +7,11 @@ import lombok.Setter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.util.List;
 import java.util.UUID;
+
+import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.italyToday;
 
 @Getter
 @Setter
@@ -25,8 +28,8 @@ public class EserviceRow {
     private int versionNumber;
     private int lockVersion;
     private boolean probingEnabled;
-    private LocalTime pollingStartTime;
-    private LocalTime pollingEndTime;
+    private OffsetTime pollingStartTime;
+    private OffsetTime pollingEndTime;
     private int pollingFrequency;
 
     // ------------------------
@@ -34,12 +37,12 @@ public class EserviceRow {
     // ------------------------
     private static final List<String> TECHNOLOGIES = List.of("REST", "SOAP");
 
-    private static final LocalTime POLLING_START = LocalTime.of(8, 0);
-    private static final LocalTime POLLING_END = LocalTime.of(20, 0);
+    private static final OffsetTime POLLING_START = italyToday(LocalTime.of(9, 0, 0));
+    private static final OffsetTime POLLING_END = italyToday(LocalTime.of(18, 0, 0));
     private static final int POLLING_FREQUENCY = 15;
     private static final boolean PROBING_ENABLED = false;
 
-    private static final String STATE_DEFAULT = "PUBLISHED";
+    private static final String STATE_DEFAULT = "ACTIVE";
     private static final int VERSION_NUMBER_DEFAULT = 1;
     private static final int LOCK_VERSION_DEFAULT = 0;
 
