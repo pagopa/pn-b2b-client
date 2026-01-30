@@ -201,24 +201,23 @@ Feature: Probing
     Examples:
     # Happy paths
       | eserviceRecordId | frequency | startDate | endDate | statusCode |
-      | %actual          | %actual   | now+1h    | now+2h  | 200        |
+      | %actual          | %actual   | now-20h   | now-10h | 200        |
 
     # eserviceRecordId invalid values
-      | %null            | %actual   | now+1h    | now+2h  | 400        |
-      | %random          | %actual   | now+1h    | now+2h  | 400        |
-      | -1               | %actual   | now+1h    | now+2h  | 400        |
+      | %null            | %actual   | now-20h   | now-10h | 400        |
+      | %random          | %actual   | now-20h   | now-10h | 400        |
+      | -1               | %actual   | now-20h   | now-10h | 400        |
 
     # frequency invalid values
-      | %actual          | %null     | now+1h    | now+2h  | 400        |
-      | %actual          | -1        | now+1h    | now+2h  | 400        |
+      | %actual          | %null     | now-20h   | now-10h | 400        |
+      | %actual          | -1        | now-20h   | now-10h | 400        |
 
     # startDate invalid values
-      | %actual          | %actual   | %null     | now+2h  | 400        |
-      | %actual          | %actual   | abc       | now+2h  | 400        |
-
+      | %actual          | %actual   | %null     | now-10h | 400        |
+      | %actual          | %actual   | abc       | now-10h | 400        |
     # endDate invalid values
-      | %actual          | %actual   | now+1h    | %null   | 400        |
-      | %actual          | %actual   | now+1h    | abc     | 400        |
+      | %actual          | %actual   | now-20h   | %null   | 400        |
+      | %actual          | %actual   | now-20h   | abc     | 400        |
 
   Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
