@@ -17,6 +17,7 @@ Feature: finalità agevolata, purpose from purpose template
       | true                 | false                | 400        |
       | false                | true                 | 400        |
 
+  @purposeTemplate @purposeFromPurposeTemplate
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WITH_PERSONAL_DATA_1] Creazione di una finalità a partire da un template di finalità agevolata
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData <personalDataEservice>
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
