@@ -150,13 +150,12 @@ public class ProbingSteps {
         ChangeProbingStateRequest probingState = new ChangeProbingStateRequest()
                 .probingEnabled(nullableBoolean(probingEnabled));
 
-        probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
-
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+        try {
+            probingClient.updateEserviceProbingState(eserviceUuid, versionUuid, probingState);
             httpCallExecutor.snapshot();
 
             EserviceRow expected = probingContext.getExpectedEserviceRow();
-            expected.setProbingEnabled(Boolean.valueOf(probingEnabled));
+            expected.setProbingEnabled(Boolean.parseBoolean(probingEnabled));
 
             PollingService.makePolling(
                     () -> probingClient.getEserviceProbingData(eserviceRecordId),
@@ -167,6 +166,8 @@ public class ProbingSteps {
             );
 
             httpCallExecutor.resetFormSnapshot();
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
     }
 
