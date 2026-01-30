@@ -61,7 +61,7 @@ public class TimelineReworkSteps {
         Map<String, String> inputData = params.asMaps().get(0);
 
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
-        String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
+        String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : "REWORK_0.TRY_0.RECINDEX_0");
 
         UpdateReworkRequest updateReworkRequest =
                 createUpdateReworkRequest(
