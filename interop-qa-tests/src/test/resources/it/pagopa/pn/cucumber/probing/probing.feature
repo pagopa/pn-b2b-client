@@ -1,5 +1,19 @@
 Feature: Probing
 
+  Scenario Outline: [TEST]
+    Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
+    When vengono recuperati dal catalogo gli e-service con limit "<limit>" e offset "<offset>" e filtri eserviceName "<eserviceName>", producerName "<producerName>", versionNumber "<versionNumber>", state "<state>"
+    Then la response riporta lo status code <statusCode>
+
+    Examples:
+    # --- Baseline / boundaries (no filters) ---
+      | limit | offset | eserviceName | producerName | versionNumber | state | statusCode |
+
+    # --- Filter values edge cases (%blank treated as no filter) ---
+      | 10    | 0      | %blank       | %null        | %null         | %null | 200        |
+
+
+    #BUG: https://pagopa.atlassian.net/browse/PIN-9074
   Scenario Outline: [GET_STATUS] - Health probing-ms check
     Given il microservizio <ms> risulta attivo
     Then la response riporta lo status code 204
@@ -25,12 +39,12 @@ Feature: Probing
       | 10    | 0      | %expected    | %null        | %null         | %null  | 200        |
       | 10    | 0      | %null        | %expected    | %null         | %null  | 200        |
       | 10    | 0      | %null        | %null        | 1             | %null  | 200        |
-      | 10    | 0      | %null        | %null        | %null         | ONLINE | 200        |
+      | 10    | 0      | %null        | %null        | %null         | ACTIVE | 200        |
 
     # --- Multi-filter (AND) ---
       | 10    | 0      | %expected    | %expected    | %null         | %null  | 200        |
       | 10    | 0      | %null        | %expected    | 1             | %null  | 200        |
-      | 10    | 0      | %expected    | %expected    | 1             | ONLINE | 200        |
+      | 10    | 0      | %expected    | %expected    | 1             | ACTIVE | 200        |
 
     # --- Required params missing ---
       | %null | 0      | %null        | %null        | %null         | %null  | 400        |
@@ -49,6 +63,7 @@ Feature: Probing
       | 10    | 0      | %null        | %null        | 0             | %null  | 400        |
       | 10    | 0      | %null        | %null        | -1            | %null  | 400        |
 
+    #BUG: https://pagopa.atlassian.net/browse/PIN-9078
   Scenario Outline: [UPDATE_FREQUENCY] - Aggiornamento frequency e finestra temporale per e-service
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "<eserviceId>" e versionId "<versionId>" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
