@@ -177,14 +177,13 @@ public class ProbingSteps {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
         Long eserviceRecordId = resolver.getEserviceRecordId();
-        EserviceStateBE stateBE = EserviceStateBE.fromValue(eserviceState);
+        EserviceStateBE stateBE = resolver.resolveEserviceStateBE(eserviceState);
 
         ChangeEserviceStateRequest operationalState = new ChangeEserviceStateRequest()
                 .eServiceState(parseNullableSafe(eserviceState, EserviceStateBE::fromValue));
 
-        probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
-
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+        try {
+            probingClient.updateEserviceState(eserviceUuid, versionUuid, operationalState);
             EserviceRow expected = probingContext.getExpectedEserviceRow();
             expected.setState(stateBE.getValue());
 
@@ -199,6 +198,9 @@ public class ProbingSteps {
             );
 
             httpCallExecutor.resetFormSnapshot();
+
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
     }
 

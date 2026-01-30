@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 
+import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateBE;
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
@@ -49,6 +50,24 @@ public class ProbingResolver {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return raw;
         return resolve(raw, "producer", () -> probingContext.getActualEserviceRow().getProducerName(), null, () -> "", () -> probingContext.getExpectedEserviceRow().getProducerName());
+    }
+
+    public EserviceStateBE resolveEserviceStateBE(String raw) {
+        if (raw == null) return null;
+
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token != null) {
+            return resolve(
+                    raw,
+                    "state",
+                    () -> EserviceStateBE.fromValue(probingContext.getActualEserviceRow().getState()),
+                    null,
+                    null,
+                    () -> EserviceStateBE.fromValue(probingContext.getExpectedEserviceRow().getState())
+            );
+        }
+
+        return EserviceStateBE.fromValue(raw);
     }
 
     public Long getEserviceRecordId() {

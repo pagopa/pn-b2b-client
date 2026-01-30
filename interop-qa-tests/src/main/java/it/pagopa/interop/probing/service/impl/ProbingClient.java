@@ -233,6 +233,10 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     @Override
     public void updateEserviceState(UUID eserviceId, UUID versionId, ChangeEserviceStateRequest request) {
         performOperation(() -> eServicesApi.updateEserviceStateWithHttpInfo(eserviceId, versionId, request));
+
+        if (!super.httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            throw new IllegalStateException("Errore durante l'update dell'eservice state con e-service id: " + eserviceId);
+        }
     }
 
     @Override
