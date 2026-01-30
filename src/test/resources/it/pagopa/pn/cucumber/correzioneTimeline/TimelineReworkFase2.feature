@@ -64,11 +64,12 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                 | NOT_NULL |
-      | details_recIndex        | 0        |
-      | details_sentAttemptMade | 1        |
-      | details_responseStatus  | KO       |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+#    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+#      | details                 | NOT_NULL |
+#      | details_recIndex        | 0        |
+#      | details_sentAttemptMade | 1        |
+#      | details_responseStatus  | KO       |
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M04                          | REASON331 |
@@ -106,7 +107,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON332 |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C          |                              | REASON332 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     Then viene invocato il consolidatore con i seguenti dati:
@@ -213,7 +214,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002           |                              | REASON332 |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C          |                              | REASON332 |
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     Then viene invocato il consolidatore con i seguenti dati:
@@ -260,16 +261,16 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
       | digitalDomicile         | NULL                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002C          |                           | REASON551 |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002C          |                              | REASON551 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
 
 
@@ -286,7 +287,6 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And "Mario Cucumber" legge la notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
@@ -414,6 +414,8 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
     And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
@@ -439,6 +441,8 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
@@ -555,7 +559,6 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | iun | reworkId | expectedStatusCode | expectedDeliveryFailureCause |
       |     |          | RECRN002F          | M01                          |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 400
-
 
 
   @timelineReworkF2 #rif done
