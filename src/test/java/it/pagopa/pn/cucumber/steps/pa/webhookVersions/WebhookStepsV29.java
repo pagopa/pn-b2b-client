@@ -480,8 +480,8 @@ public class WebhookStepsV29 implements WebhookStepsInterface {
 
     @Override
     public <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement) {
-        AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV27> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
-        result.setTimelineElementCategory(TimelineElementCategoryV27.valueOf(timelineEventCategory));
+        AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV28> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
+        result.setTimelineElementCategory(TimelineElementCategoryV28.valueOf(timelineEventCategory));
         result.setWaiting(timingForElement.waiting());
         result.setNumCheck(timingForElement.numCheck());
         return (AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T>) result;
