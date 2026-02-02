@@ -193,6 +193,7 @@ Feature: Probing
       | %null            | %actual   | 400        |
       | %random          | %actual   | 400        |
 
+    #PRECONDIZIONE: Aver mockato le response a nell'intervallo specificato
   Scenario Outline: [GET_ESERVICE_TELEMETRY] - Recupera la telemetria di un e-service tramite il suo eserviceRecordId e filtro temporale
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene recuperata la telemetria dell'e-service con eserviceRecordId "<eserviceRecordId>" e impostando pollingFrequency "<frequency>" , startDate "<startDate>" , endDate "<endDate>"
