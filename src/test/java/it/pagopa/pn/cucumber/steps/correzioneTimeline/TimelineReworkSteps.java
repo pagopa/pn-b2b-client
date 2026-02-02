@@ -15,7 +15,6 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -34,13 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 public class TimelineReworkSteps {
 
-    @Before("@timelineRework")
+    @Before("@timelineReworkF2 or @timelineRework")
     public void beforeMethod() {
         this.timestampString = null;
     }
-
-    @Value("${pn.external.allowed.future.offset.duration}")
-    private String pnEcConsAllowedFutureOffsetDuration;
 
     private final ReworkTimelineClientImpl reworkTimelineClient;
     private final SharedSteps sharedSteps;
@@ -53,6 +49,11 @@ public class TimelineReworkSteps {
     public TimelineReworkSteps(ReworkTimelineClientImpl reworkTimelineClient, SharedSteps sharedSteps) {
         this.reworkTimelineClient = reworkTimelineClient;
         this.sharedSteps = sharedSteps;
+    }
+
+    @And("viene resettato il timestamp")
+    public void resetTimestamp() {
+        this.timestampString = null;
     }
 
     @And("viene aggiornata la richiesta di rework con i seguenti dati:")
@@ -358,12 +359,12 @@ public class TimelineReworkSteps {
     }
 
     private String getOrInitNow() {
-        // if (timestampString == null) {
+         if (timestampString == null) {
         // OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(30).withNano(0);
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).withNano(0);
         timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
 
-        //  }
+          }
         return timestampString;
     }
 
