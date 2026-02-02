@@ -262,6 +262,17 @@ Feature: Probing
       | 1         | now-10m   | now-1m  |
       | 5         | now       | now+2m  |
 
+  Scenario: [PROBING_COMPLETE_PROCESS] - Processo completo di probing con aggiornamento stato e telemetria
+    Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
+    And il microservizio "probing-api" risulta attivo
+    And il microservizio "probing-statistics-api" risulta attivo
+    When viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
+    And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
+    And viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "%expected" e pollingFrequency "1"
+    Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "1", startDate "now", endDate "now+1m"
+    And la telemetria dell'e-service risulta aggiornata con successo
+    And lo stato di probing dell'e-service viene aggiornato con valore "ACTIVE"
+
   Scenario: [LOAD] 20k enable e verifica update dopo N periodi
     Given preparo il load test probing con:
       | totalEservices | workers | frequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
