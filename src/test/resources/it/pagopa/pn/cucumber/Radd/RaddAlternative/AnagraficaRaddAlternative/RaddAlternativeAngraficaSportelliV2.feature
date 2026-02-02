@@ -650,7 +650,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "400"
 
-  @patchGeo @deleteNewSite
+  @raddAnagraficaV2 @patchGeo @deleteNewSite
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_21] - PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -686,7 +686,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 45.0   | xyz     | 400                | TO_BE_DEFINED               |
       | "45"   | "9"     | 400                | TO_BE_DEFINED               |
 
-  @putSelectiveRadd @deleteNewSite
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_22] - PUT Selective – validazione campi RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -703,66 +703,80 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then la response deve restituire status code <expectedStatusCode>
 
     Examples:
-      | field               | value                                      | expectedStatusCode |
-      | NOT_MANDATORY_NULL  |                                            | 200                |
-      | NOT_MANDATORY_BLANK |                                            | 200                |
-      | description         | Nuova descrizione valida                   | 200                |
-      | description         | Descrizione con numeri 123                 | 200                |
-      | description         | Descrizione con simboli - _ .              | 200                |
-      | phoneNumbers        | +3933312345678                             | 200                |
-      | phoneNumbers        | +3933312345678,+393339999999               | 200                |
-      | phoneNumbers        | 800123456                                  | 200                |
-      | email               | test@test.com                              | 200                |
-      | email               | nome.cognome@test.it                       | 200                |
-      | email               | test_123@test-domain.com                   | 200                |
-      | email               | BLANK                                      | 200                |
-      | email               | NULL                                       | 200                |
-      | website             | https://www.site.it                        | 200                |
-      | website             | http://site.com                            | 200                |
-      | website             | www.site.it                                | 200                |
-      | website             | BLANK                                      | 200                |
-      | website             | NULL                                       | 200                |
-      | openingTime         | BLANK                                      | 200                |
-      | openingTime         | NULL                                       | 200                |
-      | endValidity         | BLANK                                      | 200                |
-      | endValidity         | NULL                                       | 200                |
-      | externalCodes       | EXT1                                       | 200                |
-      | externalCodes       | EXT1,EXT2                                  | 200                |
-      | description         | BLANK                                      | 400                |
-      | description         | NULL                                       | 400                |
-      | description         | <201_characters>                           | 400                |
-      | phoneNumbers        | []                                         | 400                |
-      | phoneNumbers        | BLANK                                      | 400                |
-      | phoneNumbers        | NULL                                       | 400                |
-      | phoneNumbers        | 39333123ABCD                               | 400                |
-      | phoneNumbers        | +393                                       | 400                |
-      | phoneNumbers        | +3933312345678,+393339999999,+393338888888 | 400                |
-      | email               | test                                       | 400                |
-      | email               | test@                                      | 400                |
-      | email               | test@.it                                   | 400                |
-      | website             | htp://site                                 | 400                |
-      | website             | http:/site                                 | 400                |
-      | website             | site                                       | 400                |
-      | addressRow          | TEST VIA 123                               | 400                |
-      | addressRow          | BLANK                                      | 400                |
-      | addressRow          | NULL                                       | 400                |
-      | addressCap          | 00000                                      | 400                |
-      | addressCap          | BLANK                                      | 400                |
-      | addressCap          | NULL                                       | 400                |
-      | addressCity         | TESTCITY                                   | 400                |
-      | addressCity         | BLANK                                      | 400                |
-      | addressCity         | NULL                                       | 400                |
-      | addressProvince     | TT                                         | 400                |
-      | addressProvince     | BLANK                                      | 400                |
-      | addressProvince     | NULL                                       | 400                |
-      | addressCountry      | TT                                         | 400                |
-      | addressCountry      | BLANK                                      | 400                |
-      | addressCountry      | NULL                                       | 400                |
-      | externalCodes       | BLANK                                      | 400                |
-      | externalCodes       | NULL                                       | 400                |
-      | externalCodes       | []                                         | 400                |
+      | field               | value                                        | expectedStatusCode |
+      | NOT_MANDATORY_NULL  |                                              | 200                |
+      | NOT_MANDATORY_BLANK |                                              | 200                |
+      | description         | Nuova descrizione valida                     | 200                |
+      | description         | Descrizione con numeri 123                   | 200                |
+      | description         | Descrizione con simboli - _ .                | 200                |
+      | phoneNumbers        | +3933312345678                               | 200                |
+      | phoneNumbers        | +3933312345678,+393339999999                 | 200                |
+      | phoneNumbers        | 800123456                                    | 200                |
+      | email               | test@test.com                                | 200                |
+      | email               | nome.cognome@test.it                         | 200                |
+      | email               | test_123@test-domain.com                     | 200                |
+      | email               | BLANK                                        | 200                |
+      | website             | https://www.site.it                          | 200                |
+      | website             | http://site.com                              | 200                |
+      | website             | www.site.it                                  | 200                |
+      | website             | BLANK                                        | 200                |
+      | website             | <script>alert(1)</script>                    | 200                |
+      | website             | javascript:alert(1)                          | 200                |
+      | website             | <img src=x onerror=alert(1)>                 | 200                |
+      | openingTime         | BLANK                                        | 200                |
+      | openingTime         | lun 08:00-13:30,15:00-18:00; mar 08:00-13:30 | 200                |
+      | openingTime         | lun 08:00-18:00; mar 08:00-18:00             | 200                |
+      | openingTime         | lun-gio 08:00-18:00; ven 08:00-13:00         | 200                |
+      | openingTime         | aperto solo il mercoledì                     | 200                |
+      | openingTime         | 24/7                                         | 200                |
+      | openingTime         | lun 9-18                                     | 200                |
+      | endValidity         | BLANK                                        | 200                |
+      | endValidity         | 2030-12-31                                   | 200                |
+      | externalCodes       | EXT1                                         | 200                |
+      | externalCodes       | EXT1,EXT2                                    | 200                |
+      | description         | BLANK                                        | 400                |
+      | description         | NULL                                         | 400                |
+      | description         | <201_characters>                             | 400                |
+      | phoneNumbers        | []                                           | 400                |
+      | phoneNumbers        | BLANK                                        | 400                |
+      | phoneNumbers        | NULL                                         | 400                |
+      | phoneNumbers        | 39333123ABCD                                 | 400                |
+      | phoneNumbers        | +393                                         | 400                |
+      | phoneNumbers        | +3933312345678,+393339999999,+393338888888   | 400                |
+      | email               | NULL                                         | 400                |
+      | email               | test                                         | 400                |
+      | email               | test@                                        | 400                |
+      | email               | test@.it                                     | 400                |
+      | website             | NULL                                         | 400                |
+      | website             | htp://site                                   | 400                |
+      | website             | http:/site                                   | 400                |
+      | website             | site                                         | 400                |
+      | addressRow          | TEST VIA 123                                 | 400                |
+      | addressRow          | BLANK                                        | 400                |
+      | addressRow          | NULL                                         | 400                |
+      | addressCap          | 00000                                        | 400                |
+      | addressCap          | BLANK                                        | 400                |
+      | addressCap          | NULL                                         | 400                |
+      | addressCity         | TESTCITY                                     | 400                |
+      | addressCity         | BLANK                                        | 400                |
+      | addressCity         | NULL                                         | 400                |
+      | addressProvince     | TT                                           | 400                |
+      | addressProvince     | BLANK                                        | 400                |
+      | addressProvince     | NULL                                         | 400                |
+      | addressCountry      | TT                                           | 400                |
+      | addressCountry      | BLANK                                        | 400                |
+      | addressCountry      | NULL                                         | 400                |
+      | externalCodes       | BLANK                                        | 400                |
+      | externalCodes       | NULL                                         | 400                |
+      | externalCodes       | []                                           | 400                |
+      | openingTime         | NULL                                         | 400                |
+      | endValidity         | NULL                                         | 400                |
+      | endValidity         | 2024/01/01                                   | 400                |
+      | endValidity         | 01-01-2024                                   | 400                |
+      | endValidity         | 20240101                                     | 400                |
+      | endValidity         | 2020-01-01                                   | 400                |
 
-  @putSelectiveRadd @deleteNewSite
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_23] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
