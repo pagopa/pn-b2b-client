@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.probing;
 
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -25,6 +24,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -313,6 +313,20 @@ public class ProbingSteps {
         probingContext.setExpectedEserviceRow(eserviceRow);
     }
 
+    @Given("vengono calcolate le informazioni di probing relative ad un e-service con health check {word} presente a catalogo")
+    public void getEserviceRowWithOutcome(String outcomeStr) {
+        EserviceRow.Outcome outcome = EserviceRow.Outcome.valueOf(outcomeStr.toUpperCase());
+
+        int okCount = ProbingContext.ESERVICE_OK_COUNT;
+        int errorCount = ProbingContext.ESERVICE_KO_COUNT;
+        int randomCount = ProbingContext.ESERVICE_RANDOM_COUNT;
+
+        EserviceRow row = EserviceRow.pickByOutcome(outcome, okCount, errorCount, randomCount);
+
+        probingContext.setActualEserviceRow(row);
+        probingContext.setExpectedEserviceRow(row);
+    }
+
     @Then("verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency {string}, startDate {string}, endDate {string}")
     public void assertScheduler(String pollingFrequency, String startDate, String endDate) throws Exception {
 
@@ -404,6 +418,81 @@ public class ProbingSteps {
         Duration tolerance = Duration.ofSeconds(2);
 
         assertNotAdvancing(observe, tolerance, "Il probing sta aggiornando anche se probingEnabled=false");
+    }
+
+    @And("la telemetria dell'e-service risulta aggiornata con successo")
+    public void assertTelemetry() {
+        EserviceRow row = probingContext.getActualEserviceRow();
+        List<TelemetryDataEserviceResponse> actualTelemetry = probingContext.getActualTelemetry();
+
+        Assertions.assertThat(actualTelemetry)
+                .as("La telemetria dell'e-service non deve essere vuota")
+                .isNotEmpty()
+                .allSatisfy(t -> Assertions.assertThat(t).isNotNull());
+
+        for (TelemetryDataEserviceResponse t : actualTelemetry) {
+
+            Assertions.assertThat(t.getPerformances()).as("performances non deve essere null").isNotNull();
+            Assertions.assertThat(t.getFailures()).as("failures non deve essere null").isNotNull();
+            Assertions.assertThat(t.getPercentages()).as("percentages non deve essere null").isNotNull();
+
+            boolean hasKoFailure = t.getFailures().stream()
+                    .anyMatch(f -> f != null && "KO".equalsIgnoreCase(String.valueOf(f.getStatus())));
+
+            boolean hasOkPercentage = t.getPercentages().stream()
+                    .anyMatch(p -> p != null && "OK".equalsIgnoreCase(String.valueOf(p.getStatus())));
+
+            // opzionale ma utile: performance “sensate”
+            boolean hasAnyPerformance = !t.getPerformances().isEmpty();
+            boolean hasNonNegativeResponseTime = t.getPerformances().stream()
+                    .filter(Objects::nonNull)
+                    .allMatch(p -> p.getResponseTime() >= 0);
+
+            Assertions.assertThat(hasNonNegativeResponseTime)
+                    .as("responseTime deve essere >= 0 quando presente")
+                    .isTrue();
+
+            // Pattern "tutto OK"
+            boolean looksLikeOk = !hasKoFailure && hasOkPercentage && hasAnyPerformance;
+
+            // Pattern "tutto KO" (in questo caso non richiedo per forza percentages KO, perché non hai mostrato payload KO completo)
+            boolean looksLikeKo = hasKoFailure && !hasOkPercentage;
+
+            switch (row.getOutcome()) {
+                case OK -> {
+                    Assertions.assertThat(looksLikeOk)
+                            .as("Outcome OK: mi aspetto un pattern coerente di successo (no KO failures + OK percentages + performances)")
+                            .isTrue();
+                }
+                case ERROR -> {
+                    Assertions.assertThat(looksLikeKo)
+                            .as("Outcome ERROR: mi aspetto un pattern coerente di KO (KO failures + no OK percentages)")
+                            .isTrue();
+                }
+                case RANDOM -> {
+                    boolean mixed = hasKoFailure && hasOkPercentage;
+
+                    Assertions.assertThat(looksLikeOk || looksLikeKo || mixed)
+                            .as("Outcome RANDOM: accetto pattern OK, KO oppure misto (potrei essere 'sfortunato' e beccare tutto OK o tutto KO)")
+                            .isTrue();
+
+                    Assertions.assertThat(hasAnyPerformance || !t.getFailures().isEmpty() || !t.getPercentages().isEmpty())
+                            .as("Outcome RANDOM: mi aspetto almeno un contenuto tra performances/failures/percentages")
+                            .isTrue();
+                }
+                default -> throw new IllegalStateException("Outcome non gestito: " + row.getOutcome());
+            }
+        }
+    }
+
+    @And("lo stato di probing dell'e-service viene aggiornato con valore {string}")
+    public void assertEserviceState(String eserviceState) {
+        EserviceStateBE stateBE = resolver.resolveEserviceStateBE(eserviceState);
+        EserviceRow actual = probingContext.getActualEserviceRow();
+
+        Assertions.assertThat(actual.getState())
+                .as("Lo stato operativo dell'e-service non coincide con quello atteso")
+                .isEqualTo(stateBE.getValue());
     }
 
     private void assertNotAdvancing(Duration observe, Duration tolerance, String message) throws Exception {
@@ -499,24 +588,5 @@ public class ProbingSteps {
 
     private boolean isNullOrBlank(String value) {
         return value == null || value.trim().isEmpty();
-    }
-
-    @And("la telemetria dell'e-service risulta aggiornata con successo")
-    public void telemetryPresent() {
-        List<TelemetryDataEserviceResponse> actualTelemetry = probingContext.getActualTelemetry();
-
-        Assertions.assertThat(actualTelemetry)
-                .as("La telemetria dell'e-service non deve essere vuota")
-                .isNotEmpty();
-    }
-
-    @And("lo stato di probing dell'e-service viene aggiornato con valore {string}")
-    public void eserviceStateUpdated(String eserviceState) {
-        EserviceStateBE stateBE = resolver.resolveEserviceStateBE(eserviceState);
-        EserviceRow actual = probingContext.getActualEserviceRow();
-
-        Assertions.assertThat(actual.getState())
-                .as("Lo stato operativo dell'e-service non coincide con quello atteso")
-                .isEqualTo(stateBE.getValue());
     }
 }

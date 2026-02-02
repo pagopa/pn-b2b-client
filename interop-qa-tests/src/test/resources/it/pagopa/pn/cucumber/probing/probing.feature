@@ -262,16 +262,23 @@ Feature: Probing
       | 1         | now-10m   | now-1m  |
       | 5         | now       | now+2m  |
 
-  Scenario: [PROBING_COMPLETE_PROCESS] - Processo completo di probing con aggiornamento stato e telemetria
-    Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
-    And il microservizio "probing-api" risulta attivo
-    And il microservizio "probing-statistics-api" risulta attivo
-    When viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
+  Scenario Outline: [PROBING_COMPLETE_PROCESS] - Processo completo di probing con aggiornamento stato e telemetria
+    Given vengono calcolate le informazioni di probing relative ad un e-service con health check <mockResponse> presente a catalogo
+    And vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
+    When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
+    And viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "%expected" e pollingFrequency "<frequency>"
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
-    And viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "%expected" e pollingFrequency "1"
-    Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "1", startDate "now", endDate "now+1m"
-    And la telemetria dell'e-service risulta aggiornata con successo
+    Then la telemetria dell'e-service risulta aggiornata con successo
     And lo stato di probing dell'e-service viene aggiornato con valore "ACTIVE"
+    And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
+
+    Examples:
+    # BEFORE window (inizia tra poco)
+      | frequency | startDate | endDate | mockResponse |
+      | 1         | now+1m    | now+10m | OK           |
+      | 1         | now+1m    | now+10m | ERROR        |
+      | 1         | now+1m    | now+10m | RANDOM       |
 
   Scenario: [LOAD] 20k enable e verifica update dopo N periodi
     Given preparo il load test probing con:
