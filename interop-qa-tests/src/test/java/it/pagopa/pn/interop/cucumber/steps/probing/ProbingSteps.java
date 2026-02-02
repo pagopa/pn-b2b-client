@@ -32,7 +32,6 @@ import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
 @Slf4j
 public class ProbingSteps {
-    private static final Duration NOT_ADVANCING_TOLERANCE = Duration.ofSeconds(1);
 
     private final IHttpExecutor httpCallExecutor;
     private final ProbingClient probingClient;
@@ -295,8 +294,8 @@ public class ProbingSteps {
     public void getEserviceTelemetry(String eserviceRecordId, String pollingFrequency, String startDate, String endDate) {
         Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
         Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
-        String startDateValue = resolver.resolveDateToken(startDate).toString();
-        String endDateValue = resolver.resolveDateToken(endDate).toString();
+        String startDateValue = dateTimeOrNull(startDate).toString();
+        String endDateValue = dateTimeOrNull(endDate).toString();
 
         TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
         Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();

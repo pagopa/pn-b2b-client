@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -129,40 +128,12 @@ public class ProbingResolver {
         return 1 + (int) (Math.random() * Integer.MAX_VALUE);
     }
 
-    public OffsetDateTime resolveDateToken(String raw) {
-        if (raw == null) return null;
-
-        String token = raw.trim();
-        String lower = token.toLowerCase();
-
-        OffsetDateTime now = OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-        if (lower.equals("now")) return now;
-
-        // now+ / now- con suffisso h/m/s
-        if (lower.startsWith("now+") || lower.startsWith("now-")) {
-            boolean plus = lower.charAt(3) == '+';
-            String amountPart = lower.substring(4); // es: "15s", "2h", "10m"
-
-            char unit = amountPart.charAt(amountPart.length() - 1);
-            long value = Long.parseLong(amountPart.substring(0, amountPart.length() - 1));
-
-            return switch (unit) {
-                case 'h' -> plus ? now.plusHours(value) : now.minusHours(value);
-                case 'm' -> plus ? now.plusMinutes(value) : now.minusMinutes(value);
-                case 's' -> plus ? now.plusSeconds(value) : now.minusSeconds(value);
-                default -> throw new IllegalArgumentException("Unità non supportata nel token: " + token);
-            };
-        }
-
-        return OffsetDateTime.parse(token);
-    }
-
     public OffsetTime resolvePollingStartTime(String raw) {
         ResolvableToken resToken = ResolvableToken.from(raw);
         if (resToken == null) {
-            OffsetDateTime resolvedDate = resolveDateToken(raw);
+            OffsetDateTime resolvedDate = dateTimeOrNull(raw);
             if (resolvedDate == null) return null;
-            return ProbingUtils.italyToday(resolveDateToken(raw).toLocalTime());
+            return ProbingUtils.italyToday(dateTimeOrNull(raw).toLocalTime());
         }
 
         return resolve(raw, "startDate",
@@ -176,9 +147,9 @@ public class ProbingResolver {
     public OffsetTime resolvePollingEndTime(String raw) {
         ResolvableToken resToken = ResolvableToken.from(raw);
         if (resToken == null) {
-            OffsetDateTime resolvedDate = resolveDateToken(raw);
+            OffsetDateTime resolvedDate = dateTimeOrNull(raw);
             if (resolvedDate == null) return null;
-            return ProbingUtils.italyToday(resolveDateToken(raw).toLocalTime());
+            return ProbingUtils.italyToday(dateTimeOrNull(raw).toLocalTime());
         }
 
         return resolve(raw,
