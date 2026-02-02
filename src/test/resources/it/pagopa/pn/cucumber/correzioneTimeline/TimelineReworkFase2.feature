@@ -490,12 +490,13 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | <iun> | <reworkId> | <expectedStatusCode> | <expectedDeliveryFailureCause> |
     And si verifica che la chiamata sia andata in errore con il seguente status code: <statusCode>
     Examples:
-      | iun         | reworkId    | expectedStatusCode | expectedDeliveryFailureCause | statusCode |
-      |             |             |                    |                              | 400        |
-      |             |             | RECAG001B          | M123                         | 400        |
-      |             |             | RECAG003C          |                              |            |
-      | inesistente |             | RECRN002F          | M02                          | 404        |
-      |             | inesistente | RECRN002F          | M02                          | 404        |
+      | iun                       | reworkId                  | expectedStatusCode | expectedDeliveryFailureCause | statusCode |
+      |                           |                           | RECRN002F          |                              | 400        |
+      |                           |                           |                    | M01                          | 400        |
+      |                           |                           | RECRN002F          | M123                         | 400        |
+      |                           |                           | RECAG003C          |                              | 400        |
+      | WPUJ-CCCC-AAAA-202602-Q-1 |                           | RECRN002F          | M01                          | 404        |
+      |                           | REWORK_0.TRY_0.RECINDEX_1 | RECRN002F          | M01                          | 404        |
 
   @timelineReworkF2 #rif 1 204
   Scenario: [TIMELINE_REWORK_9_2] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso con successo
