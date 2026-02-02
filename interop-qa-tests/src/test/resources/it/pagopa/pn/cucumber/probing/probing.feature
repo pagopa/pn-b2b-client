@@ -250,7 +250,7 @@ Feature: Probing
     # Window shorter than period
       | 5         | now       | now+2m  |
 
-  Scenario Outline: [SCHEDULING] - Probing disabled non aggiorna mai
+  Scenario Outline: [SCHEDULING_2] - Probing disabled non aggiorna mai
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
