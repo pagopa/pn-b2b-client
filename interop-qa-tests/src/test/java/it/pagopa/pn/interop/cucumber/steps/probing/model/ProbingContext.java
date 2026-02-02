@@ -13,7 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 @Setter
 public class ProbingContext{
-    static int ESERVICE_SIZE = 2;
+    public static int ESERVICE_OK_COUNT = 10_000;
+    public static int ESERVICE_KO_COUNT = 5_000;
+    public static int ESERVICE_RANDOM_COUNT = 5_000;
+    public static int ESERVICE_SIZE = ESERVICE_OK_COUNT + ESERVICE_KO_COUNT + ESERVICE_RANDOM_COUNT;
+
     final Integer threadNumber;
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
