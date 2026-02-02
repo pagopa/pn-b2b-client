@@ -123,14 +123,20 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details                      | NOT_NULL                                                |
-      | details_responseStatus       | OK                                                      |
-      | details_sendingReceipts      | [{"id": null, "system": null}]                          |
-      | details_digitalAddress       | {"address": "testpagopa3@pec.pagopa.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                       |
-      | details_digitalAddressSource | SPECIAL                                                 |
-      | details_sentAttemptMade      | 0                                                       |
+      | details                 | NOT_NULL                                                |
+      | details_responseStatus  | OK                                                      |
+      | details_sendingReceipts | [{"id": null, "system": null}]                          |
+      | details_digitalAddress  | {"address": "testpagopa3@pec.pagopa.it", "type": "PEC"} |
+      | details_recIndex        | 0                                                       |
+      | details_sentAttemptMade | 0                                                       |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @addressBook1 @liberiProfessionisti @ignoreHotfixTemp #temp #(NO indirizzo GENERALE & SPECIALE - SI indirizzo PIATTAFORMA) scenario 13
@@ -159,12 +165,18 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | details                      | NOT_NULL                                            |
       | details_responseStatus       | OK                                                  |
       | details_sendingReceipts      | [{"id": null, "system": null}]                      |
       | details_digitalAddress       | {"address": "example@pecSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                   |
-      | details_digitalAddressSource | PLATFORM                                            |
       | details_sentAttemptMade      | 0                                                   |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"

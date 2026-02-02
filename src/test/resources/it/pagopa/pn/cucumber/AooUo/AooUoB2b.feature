@@ -41,7 +41,6 @@ Feature: verifica feature aoo/uo
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
-      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                              |
@@ -70,7 +69,6 @@ Feature: verifica feature aoo/uo
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
-      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                              |
@@ -97,7 +95,6 @@ Feature: verifica feature aoo/uo
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
-      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                              |
@@ -125,7 +122,6 @@ Feature: verifica feature aoo/uo
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
-      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                              |

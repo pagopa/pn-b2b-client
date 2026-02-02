@@ -20,10 +20,14 @@ Feature: Notifica pagata
       | details_recIndex | 0        |
     And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL |
+      | details_isAvailable          | true     |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
-      | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details          | NOT_NULL |
