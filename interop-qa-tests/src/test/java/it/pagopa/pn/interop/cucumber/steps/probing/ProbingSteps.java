@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.probing;
 
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -499,5 +500,24 @@ public class ProbingSteps {
 
     private boolean isNullOrBlank(String value) {
         return value == null || value.trim().isEmpty();
+    }
+
+    @And("la telemetria dell'e-service risulta aggiornata con successo")
+    public void telemetryPresent() {
+        List<TelemetryDataEserviceResponse> actualTelemetry = probingContext.getActualTelemetry();
+
+        Assertions.assertThat(actualTelemetry)
+                .as("La telemetria dell'e-service non deve essere vuota")
+                .isNotEmpty();
+    }
+
+    @And("lo stato di probing dell'e-service viene aggiornato con valore {string}")
+    public void eserviceStateUpdated(String eserviceState) {
+        EserviceStateBE stateBE = resolver.resolveEserviceStateBE(eserviceState);
+        EserviceRow actual = probingContext.getActualEserviceRow();
+
+        Assertions.assertThat(actual.getState())
+                .as("Lo stato operativo dell'e-service non coincide con quello atteso")
+                .isEqualTo(stateBE.getValue());
     }
 }
