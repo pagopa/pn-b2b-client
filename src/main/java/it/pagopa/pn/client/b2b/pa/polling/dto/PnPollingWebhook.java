@@ -18,7 +18,7 @@ public class PnPollingWebhook {
     private TimelineElementCategoryV26 timelineElementCategoryV26;
     private TimelineElementCategoryV26 timelineElementCategoryV27;
     private TimelineElementCategoryV27 timelineElementCategoryV28;
-    private TimelineElementCategoryV27 timelineElementCategoryV29;
+    private TimelineElementCategoryV28 timelineElementCategoryV29;
 
     private NotificationStatus notificationStatusV20;
     private NotificationStatus notificationStatusV23;

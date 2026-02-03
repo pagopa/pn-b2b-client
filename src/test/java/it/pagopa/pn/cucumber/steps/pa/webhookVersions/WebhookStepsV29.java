@@ -344,7 +344,7 @@ public class WebhookStepsV29 implements WebhookStepsInterface {
 
     @Override
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
-        TimelineElementCategoryV27 timeLineOrStatus = ((TimelineElementCategoryV27) timelineForStream.getTimelineElementCategory());
+        TimelineElementCategoryV28 timeLineOrStatus = ((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
         PnPollingServiceWebhookV29 webhook = (PnPollingServiceWebhookV29) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V29);
         PnPollingResponseV29 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
@@ -390,7 +390,7 @@ public class WebhookStepsV29 implements WebhookStepsInterface {
 
     @Override
     public boolean checkTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
-        TimelineElementCategoryV27 timelineElementInternalCategory = TimelineElementCategoryV27.valueOf(((TimelineElementCategoryV27) timelineForStream.getTimelineElementCategory()).name());
+        TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.valueOf(((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory()).name());
         boolean finish = false;
         for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
             try {
@@ -436,7 +436,7 @@ public class WebhookStepsV29 implements WebhookStepsInterface {
     public <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
         try {
             assertThat(progressResponseElement).as(NOT_NULL_P_R_E).isNotNull();
-            TimelineElementCategoryV27 timelineElementInternalCategory = TimelineElementCategoryV27.valueOf(((TimelineElementCategoryV27) timelineForStream.getTimelineElementCategory()).name());
+            TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.valueOf(((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory()).name());
 
             FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 elementToCheck = fullSentNotification.getTimeline().stream()
@@ -499,8 +499,8 @@ public class WebhookStepsV29 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        if (timeLineOrStatus instanceof TimelineElementCategoryV27) {
-            pnPollingWebhook.setTimelineElementCategoryV29((TimelineElementCategoryV27) timeLineOrStatus);
+        if (timeLineOrStatus instanceof TimelineElementCategoryV28) {
+            pnPollingWebhook.setTimelineElementCategoryV29((TimelineElementCategoryV28) timeLineOrStatus);
             progressResponseElementList.clear();
             pnPollingWebhook.setProgressResponseElementListV29(progressResponseElementList);
         } else if (timeLineOrStatus instanceof NotificationStatusV26) {
