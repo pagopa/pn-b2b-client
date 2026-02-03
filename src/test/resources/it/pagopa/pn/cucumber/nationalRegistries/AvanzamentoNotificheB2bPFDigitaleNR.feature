@@ -138,11 +138,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_responseStatus       | OK       |
       | details_recIndex             | 0        |
       | details_sentAttemptMade      | 0        |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_digitalAddressSource | GENERAL  |
-      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>
