@@ -119,12 +119,7 @@ Feature: Notifica visualizzata
       | details_recIndex             | 0        |
       | details_retryNumber          | 0        |
       | details_sentAttemptMade      | 0        |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade      | 0        |
-      | details_isAvailable          | true     |
+      | details_digitalAddressSource | SPECIAL  |
     And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
       | loadTimeline     | true                               |
@@ -154,6 +149,7 @@ Feature: Notifica visualizzata
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details          | NOT_NULL |

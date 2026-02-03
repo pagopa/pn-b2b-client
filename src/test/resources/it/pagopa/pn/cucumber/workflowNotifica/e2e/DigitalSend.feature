@@ -33,6 +33,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                      |
       | details_digitalAddress       | {"address": "example@pecSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                   |
+      | details_digitalAddressSource | PLATFORM                                            |
       | details_sentAttemptMade      | 0                                                   |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
@@ -46,6 +47,7 @@ Feature: Digital send e2e
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 0        |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details          | NOT_NULL |
@@ -76,6 +78,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                              |
@@ -109,6 +112,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 1                                                                     |
       | isFirstSendRetry             | true                                                                  |
     # secondo invio
@@ -124,6 +128,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                           |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                        |
+      | details_digitalAddressSource | PLATFORM                                                 |
       | details_sentAttemptMade      | 1                                                        |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
@@ -150,6 +155,7 @@ Feature: Digital send e2e
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 1        |
       | isFirstSendRetry             | true     |
     And si attende che sia presente il perfezionamento per decorrenza termini
@@ -185,6 +191,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                              |
@@ -218,6 +225,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 1                                                                     |
       | isFirstSendRetry             | true                                                                  |
     # secondo invio
@@ -233,6 +241,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                         |
       | details_digitalAddress       | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                      |
+      | details_digitalAddressSource | PLATFORM                                               |
       | details_sentAttemptMade      | 1                                                      |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
@@ -259,6 +268,7 @@ Feature: Digital send e2e
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 1        |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details          | NOT_NULL |
@@ -295,6 +305,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                |
+      | details_digitalAddressSource | PLATFORM                                                         |
       | details_sentAttemptMade      | 0                                                                |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                         |
@@ -328,6 +339,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                |
+      | details_digitalAddressSource | PLATFORM                                                         |
       | details_sentAttemptMade      | 1                                                                |
       | isFirstSendRetry             | true                                                             |
     # secondo invio
@@ -343,6 +355,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                         |
       | details_digitalAddress       | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                      |
+      | details_digitalAddressSource | PLATFORM                                               |
       | details_sentAttemptMade      | 1                                                      |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
@@ -369,6 +382,7 @@ Feature: Digital send e2e
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 1        |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details          | NOT_NULL |
@@ -402,6 +416,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                |
+      | details_digitalAddressSource | PLATFORM                                                         |
       | details_sentAttemptMade      | 0                                                                |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details                      | NOT_NULL                                                         |
@@ -434,6 +449,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                |
+      | details_digitalAddressSource | PLATFORM                                                         |
       | details_sentAttemptMade      | 1                                                                |
       | isFirstSendRetry             | true                                                             |
     # secondo invio
@@ -449,6 +465,7 @@ Feature: Digital send e2e
       | details_sendingReceipts      | [{"id": null, "system": null}]                           |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                        |
+      | details_digitalAddressSource | PLATFORM                                                 |
       | details_sentAttemptMade      | 1                                                        |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
@@ -484,6 +501,7 @@ Feature: Digital send e2e
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 1        |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details                 | NOT_NULL                                                                                                                                                                                  |

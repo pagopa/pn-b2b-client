@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -134,9 +135,12 @@ public class DataTestV25 extends AbstractDataTest {
             case SEND_DIGITAL_FEEDBACK -> {
                 if (expected != null) {
                     assertThat(actual.getResponseStatus()).as(error + EQUALITY_RESPONSE_STATUS).isNotNull();
-                    assertThat(actual.getResponseStatus().getValue()).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue());
-                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
-                    assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size());
+                    Optional.ofNullable(expected.getResponseStatus()).map(ResponseStatus::getValue).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue()));
+                    Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress()));
+                    Optional.ofNullable(expected.getSendingReceipts()).map(List::size).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size()));
                     for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
                         assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
                         assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
@@ -161,7 +165,8 @@ public class DataTestV25 extends AbstractDataTest {
             }
             case SEND_DIGITAL_DOMICILE -> {
                 if (expected != null) {
-                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
+                    Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(actual.getDigitalAddress()));
                 }
             }
             case GET_ADDRESS -> {

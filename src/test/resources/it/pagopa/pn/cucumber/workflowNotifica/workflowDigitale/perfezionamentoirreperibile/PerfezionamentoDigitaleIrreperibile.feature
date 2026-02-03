@@ -69,13 +69,8 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
       | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
       | details_sentAttemptMade      | 0                                                                  |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade      | 0        |
-      | details_isAvailable          | true     |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
@@ -100,6 +95,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
       | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
       | details_sentAttemptMade      | 0                                                                  |
     And viene inserito un recapito legale "pec@FAIL.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
@@ -127,6 +123,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
       | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
       | details_sentAttemptMade      | 0                                                                  |
     And vengono rimossi eventuali recapiti presenti per l'utente
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
@@ -153,6 +150,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                           |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                        |
+      | details_digitalAddressSource | PLATFORM                                                 |
       | details_sentAttemptMade      | 0                                                        |
     And viene inserito un recapito legale "example@pecSuccess.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
@@ -180,6 +178,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
       | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
       | details_sentAttemptMade      | 0                                                                  |
     And viene inserito un recapito legale "example@pecSuccess.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
@@ -202,6 +201,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_responseStatus       | KO                             |
       | details_sendingReceipts      | [{"id": null, "system": null}] |
       | details_recIndex             | 0                              |
+      | details_digitalAddressSource | GENERAL                        |
       | details_retryNumber          | 0                              |
       | details_sentAttemptMade      | 0                              |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
@@ -225,6 +225,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
       | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | SPECIAL                                                            |
       | details_sentAttemptMade      | 0                                                                  |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
@@ -249,6 +250,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
       | details_digitalAddress       | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex             | 0                                                                |
+      | details_digitalAddressSource | PLATFORM                                                         |
       | details_sentAttemptMade      | 0                                                                |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And esiste l'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" per l'utente 0

@@ -252,6 +252,7 @@ Feature: Workflow analogico
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details                 | NOT_NULL                                                                                                                                                                                     |
