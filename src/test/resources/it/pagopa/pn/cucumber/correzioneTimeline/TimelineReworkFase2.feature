@@ -122,6 +122,9 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON331 |
@@ -202,7 +205,9 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_1 | PCRETRY_0 | RECINDEX_0 | RECRN002F  |                      |              |              |
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    Then verifico la non presenza di elementi di timeline con stringa "ATTEMPT_1"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
 
   @timelineReworkF2 #rif 3.4
@@ -234,6 +239,9 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002C          | M02                          | REASON332 |
@@ -250,6 +258,9 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002C  |                      |              |              |
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
 
    #TODO solo Manuale
@@ -274,8 +285,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-
+    Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C          |                              | REASON551 |
