@@ -388,10 +388,10 @@ public class TimelineReworkSteps {
             Map<String, Object> attachment = new HashMap<>();
             attachment.put("id", "1");
             attachment.put("documentType", inputData.get("attachment_1"));
-//            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf");
-//            attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
-            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf");
+            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf");
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
+//            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf");
+//            attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
             attachment.put("date", timestampStringMethod);
 
             mapInfo.put("attachments", Collections.singletonList(attachment));
