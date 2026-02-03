@@ -1589,12 +1589,12 @@ public class AnagraficaRaddAltSteps {
     // --- (START) --- PN-17459 | PN-17678 --- (START) --- //
     @When("aggiorno la sede RADD tramite PATCH impostando")
     public void aggiornoLaSedeRaddTramitePatchImpostando(DataTable dataTable) {
-        Map<String, String> values = dataTable.asMap(String.class, String.class);
+        Map<String, String> values = dataTable.asMaps().get(0);
         UpdateRegistryRequestV2 request = new UpdateRegistryRequestV2();
-//        Coordinates coordinates = new Coordinates();
-//        coordinates.setLatitude(mapValue(values.get("latitude"));
-//        coordinates.setLongitude(mapValue(values.get("longitude"));
-//        request.setCoordinates(coordinates);
+        Coordinates coordinates = new Coordinates();
+        coordinates.setLatitude(mapDouble(values.get("latitude")));
+        coordinates.setLongitude(mapDouble(values.get("longitude")));
+        request.setCoordinates(coordinates);
         this.updateRegistryRequestV2 = request;
         executePatch(request);
     }
@@ -1607,6 +1607,22 @@ public class AnagraficaRaddAltSteps {
 
         SelectiveUpdateRegistryRequestV2 request = buildSelectivePutRequestFromCreationRequest();
         applyPutSelectiveField(request, field, value);
+        executePutSelective(request);
+    }
+
+    @When("aggiorno la sede RADD tramite PUT Selective utilizzando la request {string} impostando")
+    public void updateSelective(String requestType, DataTable table) {
+
+        Map<String, String> row = table.asMaps().get(0);
+        String field = row.get("field");
+        String value = mapValue(row.get("value"));
+        SelectiveUpdateRegistryRequestV2 request;
+        if ("ALWAYS".equals(requestType)) request = new SelectiveUpdateRegistryRequestV2Always(buildSelectivePutRequestFromCreationRequest());
+        else if ("NON_NULL".equals(requestType)) request = buildSelectivePutRequestFromCreationRequest();
+        else throw new IllegalStateException("requestType non valido.");
+
+        applyPutSelectiveField(request, field, value);
+
         executePutSelective(request);
     }
 
@@ -1646,6 +1662,13 @@ public class AnagraficaRaddAltSteps {
         else if(StringUtils.equalsIgnoreCase(value, "BLANK")) return "";
         else if(StringUtils.equalsIgnoreCase(value, "<201_characters>")) return "A".repeat(201);
         else return value;
+    }
+
+    private Double mapDouble(String value) {
+        if (value == null) return null;
+        else if ("NULL".equalsIgnoreCase(value)) return null;
+        try { return Double.valueOf(value); }
+        catch (NumberFormatException e) { throw e; }
     }
 
     private void applyPutSelectiveField(SelectiveUpdateRegistryRequestV2 request, String field, String value){
