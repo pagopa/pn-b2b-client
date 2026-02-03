@@ -6,7 +6,7 @@ import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -522,25 +522,25 @@ public class NotificationUtilsV25 extends B2bUtils {
         return b2bClient.sendNewNotificationV25(request);
     }
 
-    public PnPollingResponseV28 waitForEvent(NewNotificationResponse response, String pollingStrategy, String notificationStatus) {
+    public PnPollingResponseV29 waitForEvent(NewNotificationResponse response, String pollingStrategy, String notificationStatus) {
         IPnPollingService pollingService = pollingFactory.getPollingService(getPollingStrategy(pollingStrategy));
-        return (PnPollingResponseV28) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(notificationStatus).build());
+        return (PnPollingResponseV29) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(notificationStatus).build());
     }
 
     public static String getPollingStrategy(String pollingStrategy) {
         return switch (pollingStrategy) {
-            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V28;
-            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V28;
-            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V28;
-            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V28;
-            case TIMELINE_SLOW_E2E -> PnPollingStrategy.TIMELINE_SLOW_E2E_V28;
-            case TIMELINE_EXTRA_RAPID -> PnPollingStrategy.TIMELINE_EXTRA_RAPID_V28;
-            case STATUS_EXTRA_RAPID -> PnPollingStrategy.STATUS_EXTRA_RAPID_V28;
-            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V28;
-            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V28;
-            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V28;
-            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V28;
-            case WEBHOOK -> PnPollingStrategy.WEBHOOK_V28;
+            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V29;
+            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V29;
+            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V29;
+            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V29;
+            case TIMELINE_SLOW_E2E -> PnPollingStrategy.TIMELINE_SLOW_E2E_V29;
+            case TIMELINE_EXTRA_RAPID -> PnPollingStrategy.TIMELINE_EXTRA_RAPID_V29;
+            case STATUS_EXTRA_RAPID -> PnPollingStrategy.STATUS_EXTRA_RAPID_V29;
+            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V29;
+            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V29;
+            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V29;
+            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V29;
+            case WEBHOOK -> PnPollingStrategy.WEBHOOK_V29;
             default ->
                     throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 26: " + pollingStrategy);
         };

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class BundleFullReceivedNotificationV26 {
+public class BundleFullReceivedNotification {
     private String idempotenceToken;
     private String paProtocolNumber;
     private String subject;
@@ -20,7 +20,7 @@ public class BundleFullReceivedNotificationV26 {
     private NotificationFeePolicy notificationFeePolicy;
     private String cancelledIun;
 
-    private FullReceivedNotificationV26.PhysicalCommunicationTypeEnum physicalCommunicationType;
+    private FullReceivedNotificationV27.PhysicalCommunicationTypeEnum physicalCommunicationType;
 
     @lombok.ToString.Exclude
     private String senderDenomination;
@@ -32,7 +32,7 @@ public class BundleFullReceivedNotificationV26 {
     private Integer paFee;
     private Integer vat;
 
-    private FullReceivedNotificationV26.PagoPaIntModeEnum pagoPaIntMode;
+    private FullReceivedNotificationV27.PagoPaIntModeEnum pagoPaIntMode;
     private List<String> additionalLanguages;
     private String senderPaId;
     private String iun;
@@ -41,10 +41,10 @@ public class BundleFullReceivedNotificationV26 {
     private Boolean documentsAvailable;
     private String version;
     private UsedServices usedServices;
-    private BundleNotificationStatusV26 notificationStatus;
-    private List<TimelineElementV27> timeline;
+    private BundleNotificationStatus notificationStatus;
+    private List<TimelineElementV28> timeline;
 
-    public enum BundleNotificationStatusV26 {
+    public enum BundleNotificationStatus {
         IN_VALIDATION("IN_VALIDATION"),
         ACCEPTED("ACCEPTED"),
         REFUSED("REFUSED"),
@@ -60,14 +60,14 @@ public class BundleFullReceivedNotificationV26 {
 
         private final String value;
 
-        BundleNotificationStatusV26(String value) {
+        BundleNotificationStatus(String value) {
             this.value = value;
         }
 
-        public static BundleNotificationStatusV26 fromValue(String value) {
-            for (BundleNotificationStatusV26 notificationStatusV26 : BundleNotificationStatusV26.values()) {
-                if (notificationStatusV26.value.equals(value)) {
-                    return notificationStatusV26;
+        public static BundleNotificationStatus fromValue(String value) {
+            for (BundleNotificationStatus notificationStatus : BundleNotificationStatus.values()) {
+                if (notificationStatus.value.equals(value)) {
+                    return notificationStatus;
                 }
             }
             throw new IllegalArgumentException("Unexpected value '" + value + "'");
