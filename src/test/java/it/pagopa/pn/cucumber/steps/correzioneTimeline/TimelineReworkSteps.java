@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
@@ -29,7 +28,6 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-@Component
 public class TimelineReworkSteps {
 
     @Before("@timelineReworkF2 or @timelineRework")
