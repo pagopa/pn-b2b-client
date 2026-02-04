@@ -57,10 +57,8 @@ public class TimelineReworkSteps {
     public void updateRequestReworkWithError(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
         String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : "REWORK_0.TRY_0.RECINDEX_0");
-
         UpdateReworkRequest updateReworkRequest =
                 createUpdateReworkRequest(
                         getParams(inputData, "expectedStatusCode", null),
@@ -77,10 +75,8 @@ public class TimelineReworkSteps {
     public void updateRequestRework(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
         String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
-
         if (reworkId == null) {
             throw new AssertionError("reworkId nullo | IUN=" + iun);
         }
@@ -90,7 +86,6 @@ public class TimelineReworkSteps {
                         getParams(inputData, "expectedStatusCode", null),
                         getParams(inputData, "expectedDeliveryFailureCause", null)
                 );
-
         Assertions.assertDoesNotThrow(
                 () -> reworkTimelineClient.updateNotificationRework(iun, reworkId, updateReworkRequest),
                 () -> String.format(
@@ -104,7 +99,6 @@ public class TimelineReworkSteps {
 
     private UpdateReworkRequest createUpdateReworkRequest(String expectedStatusCode, String expectedDeliveryFailureCause) {
         UpdateReworkRequest request = new UpdateReworkRequest();
-
         if (expectedStatusCode != null) {
             request.setExpectedStatusCode(expectedStatusCode);
         }
@@ -147,9 +141,7 @@ public class TimelineReworkSteps {
     public void callReworkWithParamsWithError(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
-
         try {
             reworkResponse =
                     reworkTimelineClient.notificationRework(
@@ -175,7 +167,6 @@ public class TimelineReworkSteps {
 
         Map<String, String> inputData = params.asMaps().get(0);
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
-
         try {
             reworkResponse =
                     reworkTimelineClient.notificationRework(
@@ -250,7 +241,6 @@ public class TimelineReworkSteps {
     public void verifyInvalidatedTimelineElementsFailFast(List<String> elementsToCheck) {
         FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-
         TimelineElementV28 reworkedElement = timeline.stream()
                 .filter(e -> e.getCategory() != null)
                 .filter(e -> "NOTIFICATION_TIMELINE_REWORKED"
@@ -265,7 +255,6 @@ public class TimelineReworkSteps {
         if (invalidatedHistory == null || invalidatedHistory.isEmpty()) {
             throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
         }
-
         List<String> invalidElementIds = invalidatedHistory.stream()
                 .flatMap(h -> h.getRelatedTimelineElements().stream())
                 .map(TimelineElementV28::getElementId)
@@ -293,7 +282,6 @@ public class TimelineReworkSteps {
 
         String iun = sharedSteps.getNotificationIun();
         String reworkId = reworkResponse.getReworkId();
-
         if (reworkId == null) {
             throw new AssertionError("ReworkId nullo | IUN=" + iun);
         }
@@ -303,20 +291,14 @@ public class TimelineReworkSteps {
                     .atMost(timeoutSeconds, SECONDS)
                     .pollInterval(pollIntervalSeconds, SECONDS)
                     .until(() -> {
-
                         ReworkItemsResponse response = reworkTimelineClient.retrieveNotificationReworkById(iun, reworkId);
-
                         List<String> statuses = response.getItems().stream()
                                 .map(item -> item.getStatus().getValue())
                                 .toList();
-
                         lastFoundStatuses.set(statuses);
-
                         log.info("Polling rework | IUN={} | reworkId={} | stati trovati={}", iun, reworkId, statuses);
-
                         return statuses.contains(expectedStatus);
                     });
-
         } catch (ConditionTimeoutException e) {
             throw new RuntimeException(
                     String.format(
@@ -336,7 +318,6 @@ public class TimelineReworkSteps {
 
         Map<String, String> inputData = params.asMaps().get(0);
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
-
         String body = Assertions.assertDoesNotThrow(
                 () -> sharedSteps.getPnExternalServiceClient()
                         .pushConsolidatoreNotificationAttach(mapInfo),
@@ -357,28 +338,23 @@ public class TimelineReworkSteps {
 
     private String getOrInitNow() {
         if (timestampString == null) {
-
             OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).withNano(0);
             timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
-
         }
         return timestampString;
     }
 
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
+
         String iun = sharedSteps.getNotificationIun();
-
         String timestampStringMethod = getOrInitNow();
-
         Map<String, Object> mapInfo = new HashMap<>();
-
         mapInfo.put("requestId", buildRequestId(
                 iun,
                 inputData.get("recIndex"),
                 inputData.get("attemptId"),
                 inputData.get("pcRetry")
         ));
-
         if (inputData.get("attachment_1") != null) {
             Map<String, Object> attachment = new HashMap<>();
             attachment.put("id", "1");
@@ -386,12 +362,10 @@ public class TimelineReworkSteps {
             attachment.put("uri", this.getAttachmentEnvironmentBased());
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
             attachment.put("date", timestampStringMethod);
-
             mapInfo.put("attachments", Collections.singletonList(attachment));
         } else {
             mapInfo.put("attachments", null);
         }
-
         mapInfo.put("clientRequestTimeStamp", timestampStringMethod);
         mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
         mapInfo.put("discoveredAddress", null);
@@ -401,7 +375,6 @@ public class TimelineReworkSteps {
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
         mapInfo.put("statusDateTime", timestampStringMethod);
         mapInfo.put("statusDescription", "Quality assurance");
-
         return mapInfo;
     }
 

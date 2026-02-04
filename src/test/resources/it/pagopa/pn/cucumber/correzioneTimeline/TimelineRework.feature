@@ -977,7 +977,7 @@ Feature: Test relativi al SRS di correzione timeline
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 3 secondi
 
   @timelineRework
-  Scenario: [TIMELINE_REWORK_55] Verifica che la Correzione ATTEMPT_0 multidestinatario EFFECTIVE_DATE: verifica sincronizzazione stato*** tempistiche e vedi step per controlli
+  Scenario: [TIMELINE_REWORK_55] Verifica che la Correzione ATTEMPT_0 multidestinatario EFFECTIVE_DATE
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |

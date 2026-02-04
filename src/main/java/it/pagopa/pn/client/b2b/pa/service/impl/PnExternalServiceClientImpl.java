@@ -668,10 +668,9 @@ public class PnExternalServiceClientImpl {
                 headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    private ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfoAttach(
-            Map<String, Object> mapInfo) {
+    private <T> ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfoAttach(Map<String, T> mapInfo) {
         Object postBody = null;
-        List<Map<String, Object>> requestList = new ArrayList<>();
+        List<Map<String, T>> requestList = new ArrayList<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             requestList.add(mapInfo);
