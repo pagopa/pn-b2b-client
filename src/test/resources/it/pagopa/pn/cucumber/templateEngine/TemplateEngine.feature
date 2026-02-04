@@ -606,8 +606,8 @@ Feature: Template engine
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "una notifica da parte di"
 
-  @templateAAR
-  Scenario Outline: Recupero template avviso di avvenuta ricezione - testo informativo e codice fiscale neutro
+  @templateEngine
+  Scenario Outline: [TEMPLATE-ENGINE_42] Verifica dell'intero template AAR-NO-RADD per PF e PG per le lingue IT,DE,FR,SL
   When recupero il template per "avviso di avvenuta ricezione" in lingua "<language>" con recipient Type "<recipientType>"
   Then verifico che il template è in formato ".pdf"
   And controllo che per il template "avviso di avvenuta ricezione" il file "pdf" sia in lingua "<language>"
@@ -622,8 +622,8 @@ Feature: Template engine
   | slovena | PF |
   | slovena | PG |
 
-  @templateAAR
-  Scenario Outline: Recupero template avviso di avvenuta ricezione - testo informativo e codice fiscale neutro
+  @templateEngine
+  Scenario Outline: [TEMPLATE-ENGINE_43] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL
   When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>" con recipient Type "<recipientType>"
   Then verifico che il template è in formato ".pdf"
   And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
