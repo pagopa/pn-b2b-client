@@ -10,7 +10,6 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.core.ConditionTimeoutException;
@@ -18,13 +17,11 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -35,7 +32,7 @@ public class TimelineReworkSteps {
 
     @Before("@timelineReworkF2 or @timelineRework")
     public void beforeMethod() {
-        this.timestampString = null;
+        this.resetTimestamp();
     }
 
     private final ReworkTimelineClientImpl reworkTimelineClient;
@@ -60,10 +57,8 @@ public class TimelineReworkSteps {
     public void updateRequestReworkWithError(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
         String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : "REWORK_0.TRY_0.RECINDEX_0");
-
         UpdateReworkRequest updateReworkRequest =
                 createUpdateReworkRequest(
                         getParams(inputData, "expectedStatusCode", null),
@@ -80,10 +75,8 @@ public class TimelineReworkSteps {
     public void updateRequestRework(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
         String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
-
         if (reworkId == null) {
             throw new AssertionError("reworkId nullo | IUN=" + iun);
         }
@@ -93,7 +86,6 @@ public class TimelineReworkSteps {
                         getParams(inputData, "expectedStatusCode", null),
                         getParams(inputData, "expectedDeliveryFailureCause", null)
                 );
-
         Assertions.assertDoesNotThrow(
                 () -> reworkTimelineClient.updateNotificationRework(iun, reworkId, updateReworkRequest),
                 () -> String.format(
@@ -107,7 +99,6 @@ public class TimelineReworkSteps {
 
     private UpdateReworkRequest createUpdateReworkRequest(String expectedStatusCode, String expectedDeliveryFailureCause) {
         UpdateReworkRequest request = new UpdateReworkRequest();
-
         if (expectedStatusCode != null) {
             request.setExpectedStatusCode(expectedStatusCode);
         }
@@ -150,9 +141,7 @@ public class TimelineReworkSteps {
     public void callReworkWithParamsWithError(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
-
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
-
         try {
             reworkResponse =
                     reworkTimelineClient.notificationRework(
@@ -178,7 +167,6 @@ public class TimelineReworkSteps {
 
         Map<String, String> inputData = params.asMaps().get(0);
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
-
         try {
             reworkResponse =
                     reworkTimelineClient.notificationRework(
@@ -253,7 +241,6 @@ public class TimelineReworkSteps {
     public void verifyInvalidatedTimelineElementsFailFast(List<String> elementsToCheck) {
         FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-
         TimelineElementV28 reworkedElement = timeline.stream()
                 .filter(e -> e.getCategory() != null)
                 .filter(e -> "NOTIFICATION_TIMELINE_REWORKED"
@@ -268,7 +255,6 @@ public class TimelineReworkSteps {
         if (invalidatedHistory == null || invalidatedHistory.isEmpty()) {
             throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
         }
-
         List<String> invalidElementIds = invalidatedHistory.stream()
                 .flatMap(h -> h.getRelatedTimelineElements().stream())
                 .map(TimelineElementV28::getElementId)
@@ -296,7 +282,6 @@ public class TimelineReworkSteps {
 
         String iun = sharedSteps.getNotificationIun();
         String reworkId = reworkResponse.getReworkId();
-
         if (reworkId == null) {
             throw new AssertionError("ReworkId nullo | IUN=" + iun);
         }
@@ -306,20 +291,14 @@ public class TimelineReworkSteps {
                     .atMost(timeoutSeconds, SECONDS)
                     .pollInterval(pollIntervalSeconds, SECONDS)
                     .until(() -> {
-
                         ReworkItemsResponse response = reworkTimelineClient.retrieveNotificationReworkById(iun, reworkId);
-
                         List<String> statuses = response.getItems().stream()
                                 .map(item -> item.getStatus().getValue())
                                 .toList();
-
                         lastFoundStatuses.set(statuses);
-
                         log.info("Polling rework | IUN={} | reworkId={} | stati trovati={}", iun, reworkId, statuses);
-
                         return statuses.contains(expectedStatus);
                     });
-
         } catch (ConditionTimeoutException e) {
             throw new RuntimeException(
                     String.format(
@@ -339,7 +318,6 @@ public class TimelineReworkSteps {
 
         Map<String, String> inputData = params.asMaps().get(0);
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
-
         String body = Assertions.assertDoesNotThrow(
                 () -> sharedSteps.getPnExternalServiceClient()
                         .pushConsolidatoreNotificationAttach(mapInfo),
@@ -359,46 +337,35 @@ public class TimelineReworkSteps {
     }
 
     private String getOrInitNow() {
-         if (timestampString == null) {
-        // OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes(30).withNano(0);
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).withNano(0);
-        timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
-
-          }
+        if (timestampString == null) {
+            OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).withNano(0);
+            timestampString = now.format(DateTimeFormatter.ISO_INSTANT);
+        }
         return timestampString;
     }
 
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
+
         String iun = sharedSteps.getNotificationIun();
-
-        //Instant now = Instant.now().minusSeconds(3600);
         String timestampStringMethod = getOrInitNow();
-
-
         Map<String, Object> mapInfo = new HashMap<>();
-
         mapInfo.put("requestId", buildRequestId(
                 iun,
                 inputData.get("recIndex"),
                 inputData.get("attemptId"),
                 inputData.get("pcRetry")
         ));
-
         if (inputData.get("attachment_1") != null) {
             Map<String, Object> attachment = new HashMap<>();
             attachment.put("id", "1");
             attachment.put("documentType", inputData.get("attachment_1"));
-            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf");
+            attachment.put("uri", this.getAttachmentEnvironmentBased());
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
-//            attachment.put("uri", "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf");
-//            attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
             attachment.put("date", timestampStringMethod);
-
             mapInfo.put("attachments", Collections.singletonList(attachment));
         } else {
             mapInfo.put("attachments", null);
         }
-
         mapInfo.put("clientRequestTimeStamp", timestampStringMethod);
         mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
         mapInfo.put("discoveredAddress", null);
@@ -408,52 +375,23 @@ public class TimelineReworkSteps {
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
         mapInfo.put("statusDateTime", timestampStringMethod);
         mapInfo.put("statusDescription", "Quality assurance");
-
         return mapInfo;
     }
 
-    private String buildAttachmentsFromInput(
-            Map<String, String> inputData,
-            Instant date) {
-
-        List<String> documentTypes = inputData.entrySet().stream()
-                .filter(e -> e.getKey().startsWith("attachment_"))
-                .sorted(Map.Entry.comparingByKey())
-                .map(Map.Entry::getValue)
-                .filter(Objects::nonNull)
-                .filter(v -> !v.isBlank())
-                .toList();
-
-        if (documentTypes.isEmpty()) {
-            return null;
-        }
-        String attachmentsBody = documentTypes.stream()
-                .map(dt -> buildSingleAttachment(dt, date))
-                .collect(Collectors.joining(","));
-
-        return "[ " + attachmentsBody + " ]";
+    private String getAttachmentEnvironmentBased() {
+        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        return switch (environment) {
+            case "dev" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf";
+            case "test" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf";
+            case "uat" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-dd7dc6811b024202ac66044671f3e2ad.pdf";
+            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
+        };
     }
 
     private String buildRequestId(String iun, String recindex, String attempt, String pcRetry) {
         return String.format(
                 "PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
                 iun, recindex, attempt, pcRetry
-        );
-    }
-
-    private String buildSingleAttachment(String documentType, Instant date) {
-
-        return """
-                {
-                  "id": "1",
-                  "documentType": "%s",
-                  "uri": "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf",
-                  "sha256": "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=",
-                  "date": "%s"
-                }
-                """.formatted(
-                documentType,
-                B2bUtils.getOffsetDateTimeFromDate(date)
         );
     }
 }

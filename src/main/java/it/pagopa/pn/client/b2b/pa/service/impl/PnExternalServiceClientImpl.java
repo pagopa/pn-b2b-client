@@ -634,44 +634,9 @@ public class PnExternalServiceClientImpl {
 
     }
 
-    private ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfo(
-            Map<String, String> mapInfo) {
+    private <T> ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfoAttach(Map<String, T> mapInfo) {
         Object postBody = null;
-        List<Map<String, String>> requestList = new ArrayList<>();
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            requestList.add(mapInfo);
-            postBody = objectMapper.writeValueAsString(requestList);
-        } catch (JsonProcessingException exception) {
-            log.error("Error during parse Json", exception.getMessage());
-        }
-
-        final Map<String, Object> uriVariables = new HashMap<>();
-
-        final HttpHeaders headerParams = new HttpHeaders();
-        headerParams.add("x-pagopa-extch-service-id", "pn-cons-000");
-        headerParams.add("x-api-key", consolidatoreApiKey);
-
-        final String[] localVarAccepts = {
-                "application/json", "application/problem+json"
-        };
-        final List<MediaType> localVarAccept = MediaType.parseMediaTypes(
-                StringUtils.arrayToCommaDelimitedString(localVarAccepts));
-        final MediaType localVarContentType = MediaType.APPLICATION_JSON;
-
-        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
-        };
-
-        return invokeAPI(dataVaultBasePath,
-                "/consolidatore-ingress/v1/push-progress-events/",
-                HttpMethod.PUT, uriVariables, null, postBody,
-                headerParams, localVarAccept, localVarContentType, returnType);
-    }
-
-    private ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfoAttach(
-            Map<String, Object> mapInfo) {
-        Object postBody = null;
-        List<Map<String, Object>> requestList = new ArrayList<>();
+        List<Map<String, T>> requestList = new ArrayList<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             requestList.add(mapInfo);
@@ -701,11 +666,7 @@ public class PnExternalServiceClientImpl {
                 headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    public String pushConsolidatoreNotification(Map<String, String> mapInfo) {
-        return pushConsolidatoreNotificationWithHttpInfo(mapInfo).getBody();
-    }
-
-    public String pushConsolidatoreNotificationAttach(Map<String, Object> mapInfo) {
+    public <T> String pushConsolidatoreNotificationAttach(Map<String, T> mapInfo) {
         return pushConsolidatoreNotificationWithHttpInfoAttach(mapInfo).getBody();
     }
 
