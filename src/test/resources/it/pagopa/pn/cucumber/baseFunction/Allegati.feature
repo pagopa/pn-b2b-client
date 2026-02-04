@@ -108,10 +108,11 @@ Feature: Allegati notifica
   @RetentionAllegati
   Scenario: [B2B_PN8120_2] Analizzando una notifica analogica perfezionata, verificare che la retention degli allegati non venga modificata anche post visualizzazione
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_RS |
