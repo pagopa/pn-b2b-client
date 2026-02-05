@@ -26,7 +26,7 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "SEND - Nuova notifica da";
+        return "SEND - Nouvelle notification de • Nuova notifica da string - string";
     }
 
     private NotificationAarForSubject createRequest(boolean body, TemplateRequestContext context) {
