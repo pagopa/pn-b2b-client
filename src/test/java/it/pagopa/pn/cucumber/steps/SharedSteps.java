@@ -518,12 +518,6 @@ public class SharedSteps {
             }
         }
     }
-    @Then("fullsentnotification")
-    public void getElementsDetailsFromFullSentNotification() {
-
-        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-    }
 
     @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
     public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
