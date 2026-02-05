@@ -50,8 +50,8 @@
         <!-- Le due property sottostanti (relative all'ultima versione) coincidono con le due di sopra.
         Questa duplicità è dovuta al fatto che al rilascio di una nuova versione, alcune execution dovranno usare le versioni più
          recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione v25 -->
-        <open.api.version.delivery>d90ca16f039dae243dcf7d2d805b00a94097d392</open.api.version.delivery>
-        <open.api.version.delivery.push>9e486010b7103547b0da6bf9136d14f87da43fd6</open.api.version.delivery.push>
+        <open.api.version.delivery>v2.22.0-RC.4</open.api.version.delivery>
+        <open.api.version.delivery.push>v2.22.0-RC.1</open.api.version.delivery.push>
 
         <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.5.0</open.api.version.mandate>
