@@ -17,6 +17,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -150,6 +151,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceValidationStatusAcceptedExtraRapidV28.class,
         PnPollingServiceStatusExtraRapidV28.class,
         PnPollingServiceTimelineExtraRapidV28.class,
+
+        PnPollingServiceTimelineRapidV29.class,
+        PnPollingServiceStatusRapidV29.class,
+        PnPollingServiceTimelineSlowV29.class,
+        PnPollingServiceTimelineSlowE2eV29.class,
+        PnPollingServiceStatusSlowV29.class,
+        PnPollingServiceValidationStatusV29.class,
+        PnPollingServiceValidationStatusNoAcceptedV29.class,
+        PnPollingServiceValidationStatusAcceptedShortV29.class,
+        PnPollingServiceWebhookV29.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV29.class,
+        PnPollingServiceStatusExtraRapidV29.class,
+        PnPollingServiceTimelineExtraRapidV29.class,
 
         MailSenderConfig.class,
         PnParserService.class,
