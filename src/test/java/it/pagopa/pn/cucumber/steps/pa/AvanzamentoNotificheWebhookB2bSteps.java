@@ -136,7 +136,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return StreamVersion.V28;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V29;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }
@@ -593,7 +593,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElement = webhookStepsInterface.searchStatusElementInWebhook(null, 0, 0, searchElementResult);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification
                     .getNotificationStatusHistory().stream()
                     .filter(elem -> elem.getStatus().getValue().equals(notificationStatus.getValue()))
@@ -730,7 +730,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         } else {
             try {
                 Assertions.assertNotNull(progressResponseElement);
-                FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+                FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
                 Assertions.assertFalse(fullSentNotification
                         .getTimeline()
                         .stream()
