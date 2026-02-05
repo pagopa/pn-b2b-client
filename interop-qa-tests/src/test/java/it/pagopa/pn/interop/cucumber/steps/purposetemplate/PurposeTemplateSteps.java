@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
+import static java.util.Objects.nonNull;
+import static org.apache.commons.collections4.IterableUtils.isEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.And;
@@ -46,12 +48,14 @@ import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplate
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.PurposeTemplateResolver;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -397,6 +401,13 @@ public class PurposeTemplateSteps {
             .eserviceId(eServiceId);
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, request));
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            pollingService.makePolling(
+                () -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 30, null, null),
+                result -> !isEmpty(result.getResults()),
+                "Non è stato rilevato alcun e-service associato al purpose template %s".formatted(ptId)
+            );
+        }
     }
 
     @Then("si effettua la get degli e-service associati al purpose template {exists}")
@@ -477,24 +488,51 @@ public class PurposeTemplateSteps {
     public void changePurposeTemplateStateGradually(PurposeTemplateState ptState) {
         switch (ptState) {
             case PUBLISHED -> {
+                waitUntilStateIn(PurposeTemplateState.DRAFT);
+
                 activatePurposeTemplate(true);
+                waitUntilStateIn(PurposeTemplateState.PUBLISHED);
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La pubblicazione non è andata a buon fine").isTrue();
             }
             case SUSPENDED -> {
+                waitUntilStateIn(PurposeTemplateState.DRAFT);
+
                 activatePurposeTemplate(true);
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La pubblicazione non è andata a buon fine").isTrue();
+                waitUntilStateIn(PurposeTemplateState.PUBLISHED);
+
                 suspendPurposeTemplate(true);
+                waitUntilStateIn(PurposeTemplateState.SUSPENDED);
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La sospensione non è andata a buon fine").isTrue();
             }
             case ARCHIVED -> {
+                waitUntilStateIn(PurposeTemplateState.DRAFT);
+
                 activatePurposeTemplate(true);
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La pubblicazione non è andata a buon fine").isTrue();
+                waitUntilStateIn(PurposeTemplateState.PUBLISHED);
+
                 suspendPurposeTemplate(true);
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("La sospensione non è andata a buon fine").isTrue();
+                waitUntilStateIn(PurposeTemplateState.SUSPENDED);
+
                 archivePurposeTemplate(true);
+                waitUntilStateIn(PurposeTemplateState.ARCHIVED);
                 assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("L'archiviazione non è andata a buon fine").isTrue();
             }
         }
+    }
+
+    private void waitUntilStateIn(@Nonnull PurposeTemplateState ptState) {
+        UUID purposeTemplateId = sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId();
+        pollingService.makePolling(
+            () -> purposeTemplateClient.getPurposeTemplateWithHttpInfo(purposeTemplateId),
+            response ->
+                response.getStatusCode().is2xxSuccessful()
+                    && nonNull(response.getBody())
+                    && ptState.equals(response.getBody().getState()),
+            "Non è stato possibile reperire il purpose template '%s' nello stato desiderato '%s'".formatted(purposeTemplateId, ptState)
+        );
     }
 
     @And("il purpose template {exists} viene riattivato")
@@ -705,12 +743,18 @@ public class PurposeTemplateSteps {
     }
 
     @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata")
+    @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata con successo")
     public void deleteAnnotationDocument(boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = riskAnalysis.getId();
         UUID docId = exists ? uploadedDocument.getId() : UUID.randomUUID();
 
         httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId));
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId)),
+            responseStatusCode -> responseStatusCode.equals(HttpStatus.NOT_FOUND),
+            "Il documento non è risultato inesistente come previsto"
+        );
     }
 
     @When("viene recuperato il documento {exists} dell'annotazione precedentemente creata")
@@ -1150,6 +1194,7 @@ public class PurposeTemplateSteps {
 
     @When("l'utente tenta di effettuare la modifica parziale del purpose template")
     public void patchPurposeTemplate() {
+        sharedStepsContext.getPurposeTemplateContext().setUpdatedAt(OffsetDateTime.now());
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
         patchAssistant.patchResource(request);
     }
@@ -1157,8 +1202,9 @@ public class PurposeTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")
     public void patchEService(String tenant, M2MRole m2mRole) {
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        patchAssistant.patchResource(request, token);
+        String readToken = clientTokenConfigurator.getLastToken();
+        String patchToken = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
+        patchAssistant.patchResource(request, readToken, patchToken);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del purpose template specificando un sottoinsieme di informazioni")

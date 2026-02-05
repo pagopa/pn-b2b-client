@@ -25,7 +25,8 @@ Feature: finalità agevolata, purpose from purpose template
     And viene creato un nuovo purpose template con handlePersonalData <personalDataTemplate>
     And il purpose template creato viene spostato in stato PUBLISHED
     When si crea una finalità a partire dal purpose template creato
-    And si ottiene response status code 200
+    Then si ottiene response status code 200
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
     Then si ottiene response status code 409
 

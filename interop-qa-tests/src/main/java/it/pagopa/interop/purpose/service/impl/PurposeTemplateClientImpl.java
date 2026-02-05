@@ -31,9 +31,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -135,7 +137,13 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     }
 
     @Override
-    public EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, List<UUID> producerIds, String eserviceName) throws RestClientException {
+    public ResponseEntity<PurposeTemplateWithCompactCreator> getPurposeTemplateWithHttpInfo(
+        UUID purposeTemplateId) throws RestClientException {
+        return purposesTemplateApi.getPurposeTemplateWithHttpInfo(purposeTemplateId);
+    }
+
+    @Override
+    public EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, @Nullable List<UUID> producerIds, @Nullable String eserviceName) throws RestClientException {
         return purposesTemplateApi.getPurposeTemplateEServices(purposeTemplateId, offset, limit, producerIds, eserviceName);
     }
 

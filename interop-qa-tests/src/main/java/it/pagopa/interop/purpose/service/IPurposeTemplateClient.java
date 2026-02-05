@@ -1,13 +1,29 @@
 package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.LinkEServiceToPurposeTemplateRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
-import org.springframework.web.client.RestClientException;
-
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 
 public interface IPurposeTemplateClient extends SettableBearerToken {
     RiskAnalysisTemplateAnswerResponse addPurposeTemplateRiskAnalysisAnswer(UUID purposeTemplateId, RiskAnalysisTemplateAnswerRequest riskAnalysisTemplateAnswerRequest) throws RestClientException;
@@ -21,8 +37,13 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
     CatalogPurposeTemplates getCatalogPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> creatorIds, List<UUID> eserviceIds, TenantKind targetTenantKind, Boolean excludeExpiredRiskAnalysis, Boolean handlesPersonalData) throws RestClientException;
     CreatorPurposeTemplates getCreatorPurposeTemplates(Integer offset, Integer limit, String q, List<UUID> eserviceIds, List<PurposeTemplateState> states) throws RestClientException;
     PurposeTemplateWithCompactCreator getPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
-    EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, List<UUID> producerIds, String eserviceName) throws RestClientException;
+
+    ResponseEntity<PurposeTemplateWithCompactCreator> getPurposeTemplateWithHttpInfo(
+        UUID purposeTemplateId) throws RestClientException;
+
+    EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, @Nullable List<UUID> producerIds, @Nullable String eserviceName) throws RestClientException;
     File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException;
+
     EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException;
     void publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     void suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;

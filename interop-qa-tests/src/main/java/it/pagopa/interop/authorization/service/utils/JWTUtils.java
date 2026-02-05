@@ -16,7 +16,7 @@ public final class JWTUtils {
         private String signature;
     }
 
-    public JWTUtils() {
+    private JWTUtils() {
         throw new AssertionError("Can't instantiate utility class");
     }
 
