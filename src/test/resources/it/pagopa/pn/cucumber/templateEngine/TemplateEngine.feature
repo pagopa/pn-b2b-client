@@ -458,7 +458,7 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_33_1] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - lingua errata
     When recupero l'oggetto per "avviso di cortesia per email object" in lingua "francese"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "italiana"
+    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "francese"
 
   @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_2] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body vuoto
