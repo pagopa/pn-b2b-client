@@ -352,7 +352,8 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-emd-integration/refs/heads/develop/docs/openapi/api-private.yaml</inputSpec>
+<!--                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-emd-integration/refs/heads/develop/docs/openapi/api-private.yaml</inputSpec>-->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-emd-integration/a32cff1b34b4d12eddf03f870aeea010331490d0/docs/openapi/api-private.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -373,6 +374,40 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.api</apiPackage>
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--EMD api message core-->
+                    <execution>
+                        <id>generate-internal-emd-api-message-core</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/cstar-infrastructure/86deb3e7a90daa98baf6a7e55c20c26cbbb269ad/src/domains/mil-app-poc/api/emd_message_core/openapi.emd.yml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd-core.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd-core.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd-core.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd-core.model</modelPackage>
                         </configuration>
                     </execution>
                     <!--internal client raddFsu -->
