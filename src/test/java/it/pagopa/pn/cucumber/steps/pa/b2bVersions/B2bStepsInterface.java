@@ -97,4 +97,8 @@ public interface B2bStepsInterface {
     void vieneSchedulatoIlPerfezionamento(String timelineEventCategory, Map<String, String> dataMap);
 
     void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale);
+
+    void checkReworkTimelineWithVersion();
+
+
 }
