@@ -424,7 +424,7 @@ public class PurposesSteps {
             String riskAnalysisForm,
             String dailyCalls
     ) {
-        UUID purposeIdValue = uuidOrRandomOrNull(purposeId);
+        UUID purposeIdValue = buildPurposeIdValue(purposeId);
 
         // default valido (include un RiskAnalysisFormSeed valido)
         PurposePatchRequest req = purposePatchAssistant.buildDefaultPatchRequest();
@@ -459,6 +459,17 @@ public class PurposesSteps {
         this.httpCallExecutor.performCall(
                 () -> purposeClient.patchPurpose(purposeIdValue, req)
         );
+    }
+
+    private UUID buildPurposeIdValue(String purposeId) {
+        UUID purposeIdValue;
+        // FIXME logica da centralizzare in StepParser
+        if(purposeId.contains("actual")) {
+            purposeIdValue = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+        } else {
+            purposeIdValue = uuidOrRandomOrNull(purposeId);
+        }
+        return purposeIdValue;
     }
 
     @Then("la finalità è stata parzialmente modificata correttamente")
@@ -504,7 +515,7 @@ public class PurposesSteps {
             String freeOfChargeReason,
             String dailyCalls
     ) {
-        UUID purposeIdValue = uuidOrRandomOrNull(purposeId);
+        UUID purposeIdValue = buildPurposeIdValue(purposeId);
 
         // default valido
         ReversePurposePatchRequest req = reversePurposePatchAssistant.buildDefaultPatchRequest();
