@@ -1,0 +1,71 @@
+name: Dev Activity Report
+
+on:
+  schedule:
+    - cron: "0 18 * * *"  # tutti i giorni alle 18:00 UTC
+  workflow_dispatch:     # permette run manuale
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout all branches
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all remotes
+        run: git fetch --all --prune
+
+      - name: Generate Report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "*Dev Activity Report - $TODAY*" > report.txt
+          echo "" >> report.txt
+
+          CONTRIBUTORS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --pretty="%an" | sort | uniq)
+
+          for DEV in $CONTRIBUTORS; do
+            COMMITS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --pretty=oneline | wc -l)
+
+            SIZE=$(git log --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --shortstat \
+              | grep "files changed" \
+              | awk '{sum+=$4} END {print sum+0}')
+
+            PUSH=$(gh api repos/${{ github.repository }}/events \
+              --jq '[.[] | select(.type=="PushEvent" and .actor.login=="'"$DEV"'")] | length')
+
+            PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
+
+            if [ "$COMMITS" -eq 0 ]; then
+              STATUS="❌ No commit"
+            elif [ "$COMMITS" -gt 15 ]; then
+              STATUS="⚠️ Non-atomic commits?"
+            elif [ "$PUSH" -eq 0 ]; then
+              STATUS="⚠️ No push"
+            else
+              STATUS="✅ OK"
+            fi
+
+            echo "👨‍💻 $DEV" >> report.txt
+            echo "Commits: $COMMITS | Lines: $SIZE | Push: $PUSH | PR: $PR | $STATUS" >> report.txt
+            echo "" >> report.txt
+          done
+
+          echo "REPORT<<EOF" >> $GITHUB_ENV
+          cat report.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send Slack message
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          payload: |
+            {
+              "text": "${{ env.REPORT }}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
