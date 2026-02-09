@@ -194,7 +194,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+    Then viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG003F          | M01                          | REASON16 |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 400
@@ -333,7 +333,7 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+    Then viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG003F          | M01                          | REASON26 |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 400
