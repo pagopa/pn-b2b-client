@@ -8,6 +8,8 @@ on:
 jobs:
   report:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout all branches
@@ -60,7 +62,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Send Slack message
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
           payload: |
