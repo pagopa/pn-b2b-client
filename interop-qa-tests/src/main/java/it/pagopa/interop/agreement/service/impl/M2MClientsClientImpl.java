@@ -5,13 +5,14 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -44,7 +45,7 @@ public class M2MClientsClientImpl implements IM2MClientsClient {
 
     @Override
     public Purposes getClientPurposes(UUID clientId, int offset, int limit) {
-        return clientsApi.getClientPurposes(clientId, offset, limit);
+        return clientsApi.getClientPurposes(clientId, offset, limit, null, null);
     }
 
     @Override
