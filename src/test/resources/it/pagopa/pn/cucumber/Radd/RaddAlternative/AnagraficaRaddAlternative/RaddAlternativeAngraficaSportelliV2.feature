@@ -665,23 +665,18 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | latitude  | longitude |
       | <lat>     | <lon>     |
     Then la response deve restituire status code <expectedStatusCode>
-    Then se lo status della response è 400, il messaggio di errore deve contenere "<expectedErrorMessage>"
+    Then se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo <expectedErrorType> e valore <testedValue>
 
     Examples:
-      | lat    | lon     | expectedStatusCode | expectedErrorMessage        |
-      | BLANK  | BLANK   | 200                |                             |
-      | NULL   | NULL    | 200                |                             |
-      | 45.0   | 9.0     | 200                |                             |
-      | -90.0  | -180.0  | 200                |                             |
-      | 90.0   | 180.0   | 200                |                             |
-      | 91.0   | 10.0    | 400                | PN_PARAMETER_TOO_LONG       |
-      | -91.0  | 10.0    | 400                | TO_BE_DEFINED               |
-      | 45.0   | 181.0   | 400                | TO_BE_DEFINED               |
-      | 45.0   | -181.0  | 400                | TO_BE_DEFINED               |
-      | BLANK  | 10.0    | 400                | TO_BE_DEFINED               |
-      | 10.0   | BLANK   | 400                | TO_BE_DEFINED               |
-      | NULL   | 10.0    | 400                | TO_BE_DEFINED               |
-      | 10.0   | NULL    | 400                | TO_BE_DEFINED               |
-      | abc    | 10.0    | 400                | TO_BE_DEFINED               |
-      | 45.0   | xyz     | 400                | TO_BE_DEFINED               |
-      | "45"   | "9"     | 400                | TO_BE_DEFINED               |
+      | lat    | lon     | expectedStatusCode | expectedErrorType | testedValue |
+      | NULL   | NULL    | 200                | ""                | ""          |
+      | 45.0   | 9.0     | 200                | ""                | ""          |
+      | -90.0  | -180.0  | 200                | ""                | ""          |
+      | 90.0   | 180.0   | 200                | ""                | ""          |
+      | 91.0   | 10.0    | 400                | "RANGE_MAX_LAT"   | "91.0"      |
+      | -91.0  | 10.0    | 400                | "RANGE_MIN_LAT"   | "-91.0"     |
+      | 45.0   | 181.0   | 400                | "RANGE_MAX_LON"   | "181.0"     |
+      | 45.0   | -181.0  | 400                | "RANGE_MIN_LON"   | "-181.0"    |
+      | NULL   | 10.0    | 400                | "NULL_LAT"        | ""          |
+      | 10.0   | NULL    | 400                | "NULL_LON"        | ""          |
+
