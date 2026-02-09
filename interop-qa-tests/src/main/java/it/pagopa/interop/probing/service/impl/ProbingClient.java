@@ -3,8 +3,7 @@ package it.pagopa.interop.probing.service.impl;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.generated.openapi.clients.probing.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.probing.api.EServicesApi;
-import it.pagopa.interop.generated.openapi.clients.probing.api.ProducersApi;
-import it.pagopa.interop.generated.openapi.clients.probing.api.StatusApi;
+import it.pagopa.interop.generated.openapi.clients.probing.api.HealthApi;
 import it.pagopa.interop.generated.openapi.clients.probing.model.*;
 import it.pagopa.interop.probing.config.ProbingClientConfigs;
 import it.pagopa.interop.probing.service.IProbingClient;
@@ -26,12 +25,11 @@ import java.util.UUID;
 public class ProbingClient extends AbstractClient implements IProbingClient {
 
     // --- probing (core) ---
-    private final StatusApi statusApi;
+    private final HealthApi statusApi;
     private final EServicesApi eServicesApi;
-    private final ProducersApi producersApi;
 
     // --- probingStatistics ---
-    private final it.pagopa.interop.generated.openapi.clients.probingStatistics.api.StatusApi statisticsStatusApi;
+    private final it.pagopa.interop.generated.openapi.clients.probingStatistics.api.HealthApi statisticsStatusApi;
     private final it.pagopa.interop.generated.openapi.clients.probingStatistics.api.TelemetryApi telemetryApi;
 
     private final RestTemplate restTemplate;
@@ -53,14 +51,13 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
         // --- probing core ---
         ApiClient probingApiClient = createProbingApiClient(probingBearerTokenKms);
-        this.statusApi = new StatusApi(probingApiClient);
+        this.statusApi = new HealthApi(probingApiClient);
         this.eServicesApi = new EServicesApi(probingApiClient);
-        this.producersApi = new ProducersApi(probingApiClient);
 
         // --- probingStatistics ---
         it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient statsApiClient =
             createStatisticsApiClient(probingBearerTokenTelemetry);
-        this.statisticsStatusApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.StatusApi(statsApiClient);
+        this.statisticsStatusApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.HealthApi(statsApiClient);
         this.telemetryApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.TelemetryApi(statsApiClient);
     }
 
@@ -70,7 +67,6 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
         ApiClient probingApiClient = createProbingApiClient(bearerToken);
         this.statusApi.setApiClient(probingApiClient);
         this.eServicesApi.setApiClient(probingApiClient);
-        this.producersApi.setApiClient(probingApiClient);
 
         // --- probingStatistics ---
         it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient statsApiClient =
@@ -96,7 +92,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
     @Override
     public void getProbingApiHealthStatus() {
-        performOperation(statusApi::getHealthStatusWithHttpInfo);
+        performOperation(statusApi::getStatusWithHttpInfo);
     }
 
     @Override
@@ -241,7 +237,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
     @Override
     public List<SearchProducerNameResponse> getEservicesProducers(Integer limit, Integer offset, String producerName) {
-        return performOperation(() -> producersApi.getEservicesProducersWithHttpInfo(limit, offset, producerName))
+        return performOperation(() -> eServicesApi.getEservicesProducersWithHttpInfo(limit, offset, producerName))
                 .orElseThrow(() -> new IllegalStateException(
                         "Errore nel recupero producers (response non 2xx o body nullo)"
                 ));
@@ -249,7 +245,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
     @Override
     public void getStatisticsHealthStatus() {
-        performOperation(statisticsStatusApi::getHealthStatusWithHttpInfo);
+        performOperation(statisticsStatusApi::getStatusWithHttpInfo);
     }
 
     @Override
