@@ -140,6 +140,11 @@ public class ApiServiceDeskSteps {
         }
     }
 
+     @And("si verifica che lo stato della notifica recuperata sia: {string}")
+     public void verifyNotificationStatus(String expectedStatus) {
+        Assertions.assertEquals(timelineResponse.getIunStatus().getValue(), expectedStatus);
+     }
+
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
     public void createVerifyUnreachableRequest(String cf) {
         createRequestByFiscalCode(cf, true);
