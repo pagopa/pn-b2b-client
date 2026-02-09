@@ -25,8 +25,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TODAY=$(date -u +%Y-%m-%d)
-          echo "*Dev Activity Report - $TODAY*" > report.txt
-          echo "" >> report.txt
+          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*\n\n"
 
           CONTRIBUTORS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --pretty="%an" | sort | uniq)
 
@@ -52,22 +51,15 @@ jobs:
               STATUS="✅ OK"
             fi
 
-            echo "👨‍💻 $DEV" >> report.txt
-            echo "Commits: $COMMITS | Lines: $SIZE | Push: $PUSH | PR: $PR | $STATUS" >> report.txt
-            echo "" >> report.txt
+            PAYLOAD_TEXT+="👨‍💻 $DEV\n"
+            PAYLOAD_TEXT+="Commits: $COMMITS\nLines changed: $SIZE\nPush: $PUSH\nOpen PR: $PR\nStatus: $STATUS\n\n"
           done
 
-          echo "REPORT<<EOF" >> $GITHUB_ENV
-          cat report.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          echo "{\"channel\": \"${SLACK_CHANNEL_ID}\", \"text\": \"$PAYLOAD_TEXT\", \"mrkdwn\": true}" > dev_payload.json
 
       - name: Send Slack message
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          payload: |
-            {
-              "text": "${{ env.REPORT }}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload-file-path: dev_payload.json
