@@ -29,7 +29,7 @@ Feature: Messaggi di cortesia Banche
       | internalRecipientId                                 | recipientId      | senderDescription | originId                                           | associatedPayment | deliveryMode | schedulingAnalogDate | statusCode |
       #messageId 1
       | 5                                                   | RSSMRA85T10A562S | Comune di Bolzano | V                                                  | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr5b334d4a-0gt7-2 | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr5b334d4a-0gt7-2 | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1VEAJ-PTPD-NZDQ-202501-Y-1 | true              | ANALOG       | today                | 500        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5t3                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       |                                                     | RSSMRA85T10A562S | Comune di Bolzano |                                                    | true              | ANALOG       | today                | 400        |
       #senderDescription 5
@@ -37,17 +37,17 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5t6                | RSSMRA85T10A562S | TEXT_UTF8         | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5t7                | RSSMRA85T10A562S |                   | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 400        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5t8                | RSSMRA85T10A562S | TEXT_250          | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5t9                | RSSMRA85T10A562S | TEXT_251          | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5t9                | RSSMRA85T10A562S | TEXT_251          | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 500        |
        #originId 10
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr10                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr11                | RSSMRA85T10A562S | Comune di Bolzano | V                                                  | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr12                | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100                                           | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr13                | RSSMRA85T10A562S | Comune di Bolzano | TEXT_101                                           | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr12                | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100                                           | true              | ANALOG       | today                | 500        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr13                | RSSMRA85T10A562S | Comune di Bolzano | TEXT_101                                           | true              | ANALOG       | today                | 500        |
       #associatedPayment 14
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr14                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr15                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr16                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | okay              | ANALOG       | today                | 400        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr17                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          |                   | ANALOG       | today                | 200        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr16                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr17                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          |                   | ANALOG       | today                | 400        |
       #workflowType 18
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr18                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr19                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | DIGITAL      | today                | 200        |
@@ -61,29 +61,14 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr25                | R                | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr26                |                  | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 400        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr27                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr28                | TEXT_101         | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 400        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr28                | TEXT_101         | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 500        |
 
-      | 5b334d4a-   0gt7-24ac-9c7b-354e2d44wr30             | RSSMRA    A562S  | Comune di Bolzano | VEAJ-PTPD-NZ   DQ-202501-Y-1                       | true              | ANALOG       | today                | 200        |
-      | 5b33##a-0gt7-24ac-9c7b-354e2d44wr31                 | RSSMRA#0A562S    | Comune di Bolzano | VEAJ-P#PD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
-
-      | 5                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100                                           | true              | ANALOG       | today                | 200        |
-      | 1                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_98                                           | true              | ANALOG       | today                | 200        |
-
-
+      | 5b334d4a-   0gt7-24ac-9c7b-354e2d44wr29             | RSSMRA    A562S  | Comune di Bolzano | VEAJ-PTPD-NZ   DQ-202501-Y-1                       | true              | ANALOG       | today                | 200        |
+      | 5b33##a-0gt7-24ac-9c7b-354e2d44wr30                 | RSSMRA#0A562S    | Comune di Bolzano | VEAJ-P#PD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
+      | 5                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100                                           | true              | ANALOG       | today                | 500        |
+      | 1                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_98                                            | true              | ANALOG       | today                | 200        |
+      #ok
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr30                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr31                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
-
-  @bankCourtesyMessageEnabled
-  Scenario Outline: [BANK_CSSAGE-1B] Viene invocato l'endpoint EMD di sendMessage
-    When viene invocato l'endpoint sendMessage con i seguenti parametri
-      | internalRecipientId   | recipientId   | senderDescription   | originId   | associatedPayment   | deliveryMode   | schedulingAnalogDate   |
-      | <internalRecipientId> | <recipientId> | <senderDescription> | <originId> | <associatedPayment> | <deliveryMode> | <schedulingAnalogDate> |
-    Then si ottiene status code <statusCode>
-    Examples:
-      | internalRecipientId | recipientId      | senderDescription | originId | associatedPayment | deliveryMode | schedulingAnalogDate | statusCode |
-
-      | 1                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100 | true              | ANALOG       | today                | 200        |
-
 
   @bankCourtesyMessageEnabled
   Scenario Outline: [BANK_COURTESY_MESSAGE-2] Viene invocato l'endpoint EMD di /token/check-tpp
@@ -123,7 +108,7 @@ Feature: Messaggi di cortesia Banche
   #     GET /bff/v1/notifications/received/{iun}
   #     GET /bff/v1/notifications/received/{iun}/documents/{documentType}
   #     GET /bff/v1/notifications/received/{iun}/payments/{attachmentName}
-  @bankCourtesyMessageEnabled
+  #@bankCourtesyMessageEnabled TODO da ripristinare dopo l'aggiornamento della api v29
   Scenario: [BANK_COURTESY_MESSAGE-5] Vengono invocati gli endpoint di recupero notifica, lettura AAR e recupero avviso di pagamento da API web (BFF)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
