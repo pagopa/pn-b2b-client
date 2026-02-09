@@ -1,9 +1,11 @@
 package it.pagopa.interop.agreement.service.impl;
 
 import it.pagopa.interop.agreement.service.IM2MClientsClient;
+import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.ClientsApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -12,13 +14,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.UUID;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MClientsClientImpl implements IM2MClientsClient {
+public class M2MClientsClientImpl extends AbstractClient implements IM2MClientsClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
@@ -46,6 +49,14 @@ public class M2MClientsClientImpl implements IM2MClientsClient {
     @Override
     public Purposes getClientPurposes(UUID clientId, int offset, int limit) {
         return clientsApi.getClientPurposes(clientId, offset, limit, null, null);
+    }
+
+    @Override
+    public Purposes getClientPurposes(UUID clientId, Integer offset, Integer limit, List<UUID> eserviceIds, List<PurposeVersionState> states) {
+        return performOperation(() -> clientsApi.getClientPurposesWithHttpInfo(clientId, offset, limit, eserviceIds, states)
+        ).orElseThrow(() -> new RuntimeException(
+                "Errore nel recupero dei client (response non 2xx o body nullo)"
+        ));
     }
 
     @Override
