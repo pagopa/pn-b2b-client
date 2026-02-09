@@ -1390,18 +1390,12 @@ public class ApiServiceDeskSteps {
     }
 
     public OffsetDateTime getDate(String dateInputString) {
-        OffsetDateTime resultDate;
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         OffsetDateTime sentAt = OffsetDateTime.now();
-        if (dateInputString == null) return null;
+        if ("NULL".equalsIgnoreCase(dateInputString)) return null;
         return switch (dateInputString.toUpperCase()) {
             case "LAST_TEN_MINUTES" -> sentAt.minusMinutes(10);
             case "TODAY" -> sentAt.truncatedTo(ChronoUnit.DAYS);
-            default -> {
-                LocalDateTime localDate = LocalDate.parse(dateInputString, dateTimeFormatter).atStartOfDay();
-                resultDate = OffsetDateTime.of(localDate, sentAt.getOffset());
-                yield resultDate;
-            }
+            default -> LocalDate.parse(dateInputString).atStartOfDay().atOffset(ZoneOffset.UTC);
         };
     }
 
