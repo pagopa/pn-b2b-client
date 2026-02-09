@@ -669,7 +669,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
     Examples:
       | lat    | lon     | expectedStatusCode | expectedErrorType | testedValue |
-      | NULL   | NULL    | 200                | ""                | ""          |
       | 45.0   | 9.0     | 200                | ""                | ""          |
       | -90.0  | -180.0  | 200                | ""                | ""          |
       | 90.0   | 180.0   | 200                | ""                | ""          |
@@ -679,4 +678,5 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 45.0   | -181.0  | 400                | "RANGE_MIN_LON"   | "-181.0"    |
       | NULL   | 10.0    | 400                | "NULL_LAT"        | ""          |
       | 10.0   | NULL    | 400                | "NULL_LON"        | ""          |
+      | NULL   | NULL    | 400                | NULL_LAT_LON      | ""          |
 

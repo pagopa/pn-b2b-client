@@ -1683,6 +1683,8 @@ public class AnagraficaRaddAltSteps {
                 return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
             case "NULL_LON":
                 return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
+            case "NULL_LAT_LON":
+                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
             default:
                 return "UNKNOWN_ERROR";
         }
