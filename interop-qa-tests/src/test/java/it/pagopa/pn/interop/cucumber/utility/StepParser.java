@@ -69,28 +69,6 @@ public final class StepParser {
         return parseCore(value, true, UUID::randomUUID, UUID::fromString);
     }
 
-    public static Boolean parseNullableBooleanOrNull(String value) {
-        String v = normalize(value);
-        if (v == null) return null;
-
-        ResolvableToken token = ResolvableToken.from(v);
-
-        if (token == ResolvableToken.RANDOM) {
-            return ThreadLocalRandom.current().nextBoolean();
-        }
-
-        // Boolean.parseBoolean NON lancia eccezioni:
-        // "true" -> true
-        // qualunque altra stringa -> false
-        // quindi intercettiamo esplicitamente solo true/false
-        if ("true".equalsIgnoreCase(v)) return true;
-        if ("false".equalsIgnoreCase(v)) return false;
-
-        // invalido -> null (così l'API può rispondere 400)
-        return null;
-    }
-
-
     public static Integer intOrRandomOrNull(String value) {
         return parseCore(value, true, () -> ThreadLocalRandom.current().nextInt(), Integer::parseInt);
     }

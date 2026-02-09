@@ -5,7 +5,10 @@ public enum ResolvableToken {
     NULL("%null"),
     KEEP("%keep"),
     RANDOM("%random"),
-    BLANK("%blank");
+    BLANK("%blank"),
+
+    EMPTY_LIST("%empty_list"),
+    NULL_ELEMENT_LIST("%null_element_list");
 
     private final String value;
 
