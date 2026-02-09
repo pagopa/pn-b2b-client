@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.api.Not
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.UpdateReworkRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -33,5 +34,8 @@ public class ReworkTimelineClientImpl {
 
     public ReworkItemsResponse retrieveNotificationReworkById(String iun, String reworkId) {
         return reworkApi.retrieveNotificationRework(iun, reworkId);
+    }
+    public void updateNotificationRework(String iun, String reworkId, UpdateReworkRequest updateReworkRequest) {
+         reworkApi.updateNotificationRework(iun, reworkId, updateReworkRequest);
     }
 }
