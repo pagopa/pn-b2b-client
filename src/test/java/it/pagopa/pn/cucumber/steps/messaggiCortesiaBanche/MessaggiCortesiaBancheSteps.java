@@ -91,6 +91,8 @@ public class MessaggiCortesiaBancheSteps {
                 return RandomStringUtils.randomAlphabetic(100);
             case "TEXT_101":
                 return RandomStringUtils.randomAlphabetic(101);
+            case "TEXT_98":
+                return RandomStringUtils.randomAlphabetic(98);
             case "TEXT_UTF8":
                 return "Messaggio con caratteri UTF-8 àèìòù € 漢字 😊UTF-8: à è ì ò ù, é ç ñ, €, ©, ™ e lettere non latine come α β γ.";
             default:

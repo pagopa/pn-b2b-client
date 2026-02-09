@@ -47,7 +47,7 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr14                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr15                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr16                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | okay              | ANALOG       | today                | 400        |
-      #| 5b334d4a-0gt7-24ac-9c7b-354e2d44wr17                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          |                   | ANALOG       | today                | 200        |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr17                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          |                   | ANALOG       | today                | 200        |
       #workflowType 18
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr18                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr19                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | DIGITAL      | today                | 200        |
@@ -66,8 +66,24 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-   0gt7-24ac-9c7b-354e2d44wr30             | RSSMRA    A562S  | Comune di Bolzano | VEAJ-PTPD-NZ   DQ-202501-Y-1                       | true              | ANALOG       | today                | 200        |
       | 5b33##a-0gt7-24ac-9c7b-354e2d44wr31                 | RSSMRA#0A562S    | Comune di Bolzano | VEAJ-P#PD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
 
+      | 5                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100                                           | true              | ANALOG       | today                | 200        |
+      | 1                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_98                                           | true              | ANALOG       | today                | 200        |
+
+
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr30                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr31                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
+
+  @bankCourtesyMessageEnabled
+  Scenario Outline: [BANK_CSSAGE-1B] Viene invocato l'endpoint EMD di sendMessage
+    When viene invocato l'endpoint sendMessage con i seguenti parametri
+      | internalRecipientId   | recipientId   | senderDescription   | originId   | associatedPayment   | deliveryMode   | schedulingAnalogDate   |
+      | <internalRecipientId> | <recipientId> | <senderDescription> | <originId> | <associatedPayment> | <deliveryMode> | <schedulingAnalogDate> |
+    Then si ottiene status code <statusCode>
+    Examples:
+      | internalRecipientId | recipientId      | senderDescription | originId | associatedPayment | deliveryMode | schedulingAnalogDate | statusCode |
+
+      | 1                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100 | true              | ANALOG       | today                | 200        |
+
 
   @bankCourtesyMessageEnabled
   Scenario Outline: [BANK_COURTESY_MESSAGE-2] Viene invocato l'endpoint EMD di /token/check-tpp
