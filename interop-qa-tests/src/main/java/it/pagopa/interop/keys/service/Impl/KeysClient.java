@@ -31,28 +31,26 @@ public class KeysClient extends AbstractClient implements IKeysClient {
         this.basePath = interopClientConfigs.getApiv3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
-        this.keysApi = new KeysApi(createApiClient());
+        this.keysApi = new KeysApi(createKeysApiClient());
     }
 
-    private ApiClient createApiClient() {
+    private ApiClient createKeysApiClient() {
         ApiClient apiClient = new ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
 
     public Key getJWKByKid(String kid) {
-		        return performOperation(SimpleOperation.of(
-                () -> keysApi.getJWKByKidWithHttpInfo(kid),
-                response -> response.getBody()
+		        return performOperation((
+                () -> keysApi.getJWKByKidWithHttpInfo(kid)
         )).orElseThrow(() -> new IllegalStateException(
                 "Errore nel recupero del JWK (response non 2xx o body nullo)"
         ));
     }
 
     public ProducerKey getProducerJWKByKid(String kid) {
-        return performOperation(SimpleOperation.of(
-                () -> keysApi.getProducerJWKByKidWithHttpInfo(kid),
-                response -> response.getBody()
+        return performOperation((
+                () -> keysApi.getProducerJWKByKidWithHttpInfo(kid)
         )).orElseThrow(() -> new IllegalStateException(
                 "Errore nel recupero del producer JWK (response non 2xx o body nullo)"
         ));
