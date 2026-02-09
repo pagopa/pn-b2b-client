@@ -5,6 +5,7 @@ import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -42,6 +43,23 @@ public final class StepParser {
             if (safe) return null;
             throw ex;
         }
+    }
+
+    private static <T> List<T> parseSingletonListCore(String raw, boolean safe, Supplier<T> randomSupplier, Function<String, T> parser) {
+        T v = parseCore(raw, safe, randomSupplier, parser);
+        if (v == null) return null;
+
+        ResolvableToken token = ResolvableToken.from(raw);
+        if (token == null) return List.of(v);
+
+        List<T> result = new ArrayList<>();
+        result.add(null);
+
+        return switch (token) {
+            case EMPTY_LIST -> List.of();
+            case NULL_ELEMENT_LIST -> result;
+            default -> throw new IllegalArgumentException("Unknown token: " + token);
+        };
     }
 
     public static String nullOrBlankOrValue(String value) {
@@ -82,7 +100,64 @@ public final class StepParser {
     }
 
     public static <E> List<E> singletonListNullable(String value, Function<String, E> mapper) {
-        return parseCore(value, true, null, v -> List.of(mapper.apply(v)));
+        return parseCore(
+                value,
+                true,
+                null,
+                raw -> {
+                    ResolvableToken token = ResolvableToken.from(raw);
+
+                    if (token != null) {
+                        List<E> nullElementList = new ArrayList<>();
+                        nullElementList.add(null);
+
+                        if (token == ResolvableToken.EMPTY_LIST) return List.of();
+                        if (token == ResolvableToken.NULL_ELEMENT_LIST) return nullElementList;
+                        throw new IllegalStateException("Token non gestito: " + token);
+                    }
+
+                    return List.of(mapper.apply(raw));
+                });
+    }
+
+    public static <E> List<E> singletonFilterList(
+            String value,
+            Supplier<E> expectedSupplier,
+            Supplier<E> actualSupplier,
+            Function<String, E> mapper
+    ) {
+        return parseCore(
+                value,
+                true,
+                null,
+                raw -> {
+                    ResolvableToken token = ResolvableToken.from(raw);
+
+                    // non-token: mappa il valore e mettilo in lista
+                    if (token == null) {
+                        return List.of(mapper.apply(raw));
+                    }
+
+                    // token generali da filtro
+                    if (token == ResolvableToken.NULL) return null;
+                    if (token == ResolvableToken.BLANK) return null;
+                    if (token == ResolvableToken.EXPECTED) {
+                        return expectedSupplier != null ? List.of(expectedSupplier.get()) : null;
+                    }
+                    if (token == ResolvableToken.ACTUAL) {
+                        return actualSupplier != null ? List.of(actualSupplier.get()) : null;
+                    }
+
+                    // token specifici liste
+                    if (token == ResolvableToken.EMPTY_LIST) return List.of();
+
+                    if (token == ResolvableToken.NULL_ELEMENT_LIST) {
+                        return java.util.Collections.singletonList(null);
+                    }
+
+                    throw new IllegalStateException("Token non gestito: " + token);
+                }
+        );
     }
 
     public static Duration durationOrNull(String s) {

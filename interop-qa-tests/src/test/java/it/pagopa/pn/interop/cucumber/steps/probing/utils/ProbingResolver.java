@@ -1,70 +1,84 @@
 package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 
 import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateBE;
-import it.pagopa.interop.probing.service.impl.ProbingClient;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
-import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
+import it.pagopa.pn.interop.cucumber.utility.StepParser;
 import lombok.RequiredArgsConstructor;
 
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.UUID;
-import java.util.function.Supplier;
-
-import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
 @RequiredArgsConstructor
-public class ProbingResolver {
+public class ProbingResolver extends AbstractResolver {
 
-    private final ProbingClient probingClient;
     private final ProbingContext probingContext;
 
     public UUID resolveEserviceId(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return uuidOrRandomOrNull(raw);
-        return resolve(raw, "eserviceId", () -> probingContext.getActualEserviceRow().getEserviceId(), () -> uuidOrRandomOrNull(ResolvableToken.RANDOM.value()), null, () -> probingContext.getExpectedEserviceRow().getEserviceId());
+        return resolveOrParse(
+                raw,
+                StepParser::uuidOrRandomOrNull,
+                () -> probingContext.getActualEserviceRow().getEserviceId(),
+                () -> probingContext.getExpectedEserviceRow().getEserviceId(),
+                UUID::randomUUID,
+                null
+        );
     }
 
     public UUID resolveVersionId(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return uuidOrRandomOrNull(raw);
-        return resolve(raw, "versionId", () -> probingContext.getActualEserviceRow().getVersionId(), () -> uuidOrRandomOrNull(ResolvableToken.RANDOM.value()), null, () -> probingContext.getExpectedEserviceRow().getVersionId());
+        return resolveOrParse(
+                raw,
+                StepParser::uuidOrRandomOrNull,
+                () -> probingContext.getActualEserviceRow().getVersionId(),
+                () -> probingContext.getExpectedEserviceRow().getVersionId(),
+                UUID::randomUUID,
+                null
+        );
     }
 
     public Long resolveEserviceRecordId(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return longOrRandomOrNull(raw);
-        return resolve(raw, "eserviceRecordId", this::getEserviceRecordId, () -> longOrRandomOrNull(ResolvableToken.RANDOM.value()), null, this::getEserviceRecordId);
+        return resolveOrParse(
+                raw,
+                StepParser::longOrRandomOrNull,
+                this::getEserviceRecordId,
+                this::getEserviceRecordId,
+                () -> 1L + (long) (Math.random() * Long.MAX_VALUE),
+                null
+        );
     }
 
     public String resolveEserviceName(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return raw;
-        return resolve(raw, "eserviceName", () -> probingContext.getActualEserviceRow().getEserviceName(), null, () -> "", () -> probingContext.getExpectedEserviceRow().getEserviceName());
+        return resolveOrParse(
+                raw,
+                v -> v, // non token: ritorna raw
+                () -> probingContext.getActualEserviceRow().getEserviceName(),
+                () -> probingContext.getExpectedEserviceRow().getEserviceName(),
+                null,
+                () -> ""
+        );
     }
 
     public String resolveProducer(String raw) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return raw;
-        return resolve(raw, "producer", () -> probingContext.getActualEserviceRow().getProducerName(), null, () -> "", () -> probingContext.getExpectedEserviceRow().getProducerName());
+        return resolveOrParse(
+                raw,
+                v -> v,
+                () -> probingContext.getActualEserviceRow().getProducerName(),
+                () -> probingContext.getExpectedEserviceRow().getProducerName(),
+                null,
+                () -> ""
+        );
     }
 
     public EserviceStateBE resolveEserviceStateBE(String raw) {
-        if (raw == null) return null;
-
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token != null) {
-            return resolve(
-                    raw,
-                    "state",
-                    () -> EserviceStateBE.fromValue(probingContext.getActualEserviceRow().getState()),
-                    null,
-                    null,
-                    () -> EserviceStateBE.fromValue(probingContext.getExpectedEserviceRow().getState())
-            );
-        }
-
-        return EserviceStateBE.fromValue(raw);
+        return resolveOrParse(
+                raw,
+                v -> v == null ? null : EserviceStateBE.fromValue(v),
+                () -> EserviceStateBE.fromValue(probingContext.getActualEserviceRow().getState()),
+                () -> EserviceStateBE.fromValue(probingContext.getExpectedEserviceRow().getState()),
+                null,
+                null
+        );
     }
 
     public Long getEserviceRecordId() {
@@ -74,54 +88,31 @@ public class ProbingResolver {
     public Integer resolveFrequency(String raw) {
         if (raw == null) return null;
 
-        // 1) calcola il delta (+N / -N)
+        // 1) delta (+N / -N)
         int delta = resolveIntegerDelta(raw);
 
-        // 2) estrai la parte base (prima di + / -)
+        // 2) parte base (prima di + / -) -> se non c'è operatore resta tutta la stringa
         String basePart = raw;
         int plusIdx = raw.indexOf('+');
-        int minusIdx = raw.indexOf('-', 1);
+        int minusIdx = raw.indexOf('-', 1); // evita il "-" iniziale tipo "-1"
         int opIdx = plusIdx >= 0 ? plusIdx : minusIdx;
         if (opIdx >= 0) {
             basePart = raw.substring(0, opIdx).trim();
         }
 
-        // 3) risolvi il valore base (token o valore semplice)
-        ResolvableToken token = ResolvableToken.from(basePart);
+        // 3) risolvi base: token -> actual/expected/random/null, altrimenti parse int
+        Integer baseValue = resolveOrParse(
+                basePart,
+                StepParser::intOrRandomOrNull, // NON token
+                () -> probingContext.getActualEserviceRow().getPollingFrequency(),
+                () -> probingContext.getExpectedEserviceRow().getPollingFrequency(),
+                ProbingResolver::randomPositiveInt,
+                null
+        );
 
-        Integer baseValue;
-        if (token == null) {
-            baseValue = intOrRandomOrNull(basePart);
-        } else {
-            baseValue = resolve(
-                    basePart,
-                    "frequency",
-                    () -> probingContext.getActualEserviceRow().getPollingFrequency(),
-                    ProbingResolver::randomPositiveInt,
-                    null,
-                    () -> probingContext.getExpectedEserviceRow().getPollingFrequency()
-            );
-        }
-
-        // 4) applica il delta
+        // 4) applica delta
         if (baseValue == null) return null;
         return baseValue + delta;
-    }
-
-    private <T> T resolve(String raw, String fieldName, Supplier<T> actualSupplier, Supplier<T> randomSupplier, Supplier<T> blankSupplier, Supplier<T> expectedSupplier) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) {
-            // non è un token -> lascia che lo interpretino i parser specifici (uuidOrRandomOrNull / intOrRandomOrNull / parse date ecc.)
-            return null;
-        }
-
-        return switch (token) {
-            case ACTUAL -> actualSupplier.get();
-            case NULL -> null;
-            case RANDOM -> randomSupplier.get();
-            case EXPECTED -> expectedSupplier.get();
-            case BLANK -> blankSupplier.get();
-        };
     }
 
     private static int randomPositiveInt() {
@@ -129,37 +120,29 @@ public class ProbingResolver {
     }
 
     public OffsetTime resolvePollingStartTime(String raw) {
-        ResolvableToken resToken = ResolvableToken.from(raw);
-        if (resToken == null) {
-            OffsetDateTime resolvedDate = dateTimeOrNull(raw);
-            if (resolvedDate == null) return null;
-            return ProbingUtils.italyToday(dateTimeOrNull(raw).toLocalTime());
-        }
-
-        return resolve(raw, "startDate",
+        return resolveOrParse(
+                raw,
+                v -> {
+                    OffsetDateTime dt = StepParser.dateTimeOrNull(v);
+                    return dt == null ? null : ProbingUtils.italyToday(dt.toLocalTime());
+                },
                 () -> probingContext.getActualEserviceRow().getPollingStartTime(),
-                null,
-                null,
                 () -> probingContext.getExpectedEserviceRow().getPollingStartTime()
         );
     }
 
     public OffsetTime resolvePollingEndTime(String raw) {
-        ResolvableToken resToken = ResolvableToken.from(raw);
-        if (resToken == null) {
-            OffsetDateTime resolvedDate = dateTimeOrNull(raw);
-            if (resolvedDate == null) return null;
-            return ProbingUtils.italyToday(dateTimeOrNull(raw).toLocalTime());
-        }
-
-        return resolve(raw,
-                "endDate",
+        return resolveOrParse(
+                raw,
+                v -> {
+                    OffsetDateTime dt = StepParser.dateTimeOrNull(v);
+                    return dt == null ? null : ProbingUtils.italyToday(dt.toLocalTime());
+                },
                 () -> probingContext.getActualEserviceRow().getPollingEndTime(),
-                null,
-                null,
                 () -> probingContext.getExpectedEserviceRow().getPollingEndTime()
         );
     }
+
 
     private Integer resolveIntegerDelta(String raw) {
         if (raw == null) return 0;
