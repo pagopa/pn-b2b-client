@@ -650,7 +650,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "400"
 
-  @patchGeo @deleteNewSite
+  @raddAnagraficaV2 @patchGeo @deleteNewSite
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_21] - PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
