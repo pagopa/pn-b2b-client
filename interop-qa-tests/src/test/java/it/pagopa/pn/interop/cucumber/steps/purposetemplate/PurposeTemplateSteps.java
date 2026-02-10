@@ -476,8 +476,14 @@ public class PurposeTemplateSteps {
     public void changePurposeTemplateState(boolean exists, PurposeTemplateState ptState) {
         switch (ptState) {
             case PUBLISHED -> activatePurposeTemplate(exists);
-            case SUSPENDED -> suspendPurposeTemplate(exists);
-            case ARCHIVED -> archivePurposeTemplate(exists);
+            case SUSPENDED -> {
+                activatePurposeTemplate(exists);
+                suspendPurposeTemplate(exists);
+            }
+            case ARCHIVED -> {
+                activatePurposeTemplate(exists);
+                archivePurposeTemplate(exists);
+            }
         }
     }
 
