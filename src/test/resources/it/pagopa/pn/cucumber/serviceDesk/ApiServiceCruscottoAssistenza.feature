@@ -608,7 +608,7 @@ Feature: Api Service Cruscotto Assistenza
 
   #https://pagopa.atlassian.net/browse/PN-15961
   @serviceDeskRefinement @cruscottoAssistenza
-  Scenario: [SERVICE_DESK_TIMELINE_MISSING_VALUE_1_B] verifica presenza elemento REFINEMENT nella response di service desk
+  Scenario: [SERVICE_DESK_TIMELINE_RETURNED_TO_SENDER_1] verifica presenza elemento RETURNED_TO_SENDER nella response di service desk
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
