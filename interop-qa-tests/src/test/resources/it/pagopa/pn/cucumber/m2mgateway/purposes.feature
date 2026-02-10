@@ -791,6 +791,18 @@ Feature: Gestione purposes attraverso APIs M2M V2
     # UUID valido ma sicuramente inesistente
       | 00000000-0000-0000-0000-000000000000 | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
 
+  # Aggiunto a posteriori della stesura degli scenari di test per verificare l'affermazione
+  # "Il controllo completo della validità della RA viene applicato in fase di attivazione (da Draft a Active)."
+  # in https://pagopa.atlassian.net/browse/PIN-9164?focusedCommentId=291410
+  @purpose-m2m-patch
+  Scenario: [M2M_PURPOSE_PUBLISH_INVALID_RA] - L'attivazione di una finalità contenente una risk analysis errata deve condurre ad un errore
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And viene aggiornato il draft purpose con purposeId "%actual" e title "titolo valido", description "descrizione valida", isFreeOfCharge "true", freeOfChargeReason "reason", riskAnalysisForm "%invalid", dailyCalls "10"
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene lo status code 400
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
