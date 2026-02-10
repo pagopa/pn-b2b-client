@@ -15,7 +15,6 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
-import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerCsvUtils;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
@@ -54,7 +53,6 @@ public class DelayerSteps {
     private final DelayerLambdaClient lambdaClient;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
-    private final DelayerCsvUtils delayerCsvUtils;
     private final SharedSteps sharedSteps;
     private Map<String, Integer> availableCapacityByDriver = new HashMap<>();
     private List<DelayerPaperDelivery> frozenExpected = new ArrayList<>();
@@ -69,27 +67,7 @@ public class DelayerSteps {
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
         this.utils = new DelayerPaperDeliveryUtils(context);
         this.validator = new DelayerValidator(context, lambdaClient, utils);
-        this.delayerCsvUtils = new DelayerCsvUtils();
         this.sharedSteps = sharedSteps;
-    }
-
-    @Given("^la notifica appena creata viene inserita nel csv: (notificationCancelled.csv|tcCancelNotificationFrozen.csv) e caricato su S3$")
-    public void updateAndUploadCsv(String csvName) {
-        Path basePath = Paths.get(
-                "src", "test", "resources", "it",
-                "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
-                "delayer", "csv");
-//        delayerCsvUtils.replaceCsvContent(basePath.resolve(csvName), "{placeholder}", sharedSteps.getNotificationIun());
-    }
-
-    @After("@restoreCsv")
-    public void restoreCsv() {
-        Path basePath = Paths.get(
-                "src", "test", "resources", "it",
-                "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
-                "delayer", "csv");
-//        delayerCsvUtils.replaceCsvContent(basePath.resolve("notificationCancelled.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
-//        delayerCsvUtils.replaceCsvContent(basePath.resolve("tcCancelNotificationFrozen.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -102,7 +80,7 @@ public class DelayerSteps {
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
     public void populateTargetTable(String csvName) throws Exception {
-        lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
+        lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName, context.expectedDeliveryDate);
     }
 
     @Then("vengono puliti i dati dalle tabelle target")
@@ -183,8 +161,8 @@ public class DelayerSteps {
                         .mapToInt(capMap::get)
                         .sum();
 
-             /*   if (!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
-                    throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong"); */
+                if (!capMap.get(provinceDriverKey).equals(totalProvinceCapacity))
+                    throw new RuntimeException("Driver province capacity " + provinceDriverKey + " is wrong");
 
                 long distinctSenders = context.actualCsv.stream()
                         .filter(d -> driver.equals(d.getUnifiedDeliveryDriver()))
@@ -254,18 +232,11 @@ public class DelayerSteps {
                 entityId -> availableCapacityByDriver.get(entityId) - difference);
     }
 
-    @And("viene verificata che la capacità disponibile per i seguenti driver sia uguale a: {int}")
+    @And("viene verificata che la capacità utilizzata per i seguenti driver sia uguale a: {int}")
     public void assertCapacityEqualsTo(int expected, DataTable dataTable) {
         assertCapacity(dataTable,
                 (driver, province) -> lambdaClient.getUsedCapacity(driver, province, context.expectedDeliveryDate),
                 entityId -> expected);
-    }
-
-    @And("viene verificata che la capacità usata per i seguenti driver sia uguale al numero di spedizioni congelate meno quella annullata")
-    public void assertCapacityFrozen(DataTable dataTable) {
-        assertCapacity(dataTable,
-                (driver, province) -> lambdaClient.getUsedCapacity(driver, province, context.expectedDeliveryDate),
-                entityId -> frozenExpected.size() - 1);
     }
 
     private void assertCapacity(DataTable dataTable,

@@ -53,9 +53,6 @@ public class DelayerCsvLoader {
                         : LocalDate.parse(deliveryDate).format(DateTimeFormatter.ISO_LOCAL_DATE);
 
             } else context.expectedDeliveryDate = getCurrentMonday();
-
-//            LocalDate monday = deliveryDate != null ? LocalDate.parse(deliveryDate) : LocalDate.now().with(DayOfWeek.MONDAY);
-//            context.expectedDeliveryDate = monday.format(DateTimeFormatter.ISO_LOCAL_DATE);
         }
     }
 

@@ -318,9 +318,4 @@ public class DelayerPlanner {
         return map;
     }
 
-    private void freezeNotifications(List<DelayerPaperDelivery> list, WorkflowSteps step, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
-        String deliveryDate = getNextMonday(1);
-        frozenByStep.get(step.name()).addAll(utils.deepCopyAndUpdateKeys(list, WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate));
-    }
-
 }

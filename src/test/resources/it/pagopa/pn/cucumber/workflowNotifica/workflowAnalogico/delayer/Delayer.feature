@@ -842,7 +842,7 @@
         | csv                | TOT |
         | "tcZeroDriver.csv" | 15  |
 
-    @delayer12 @restoreCsv
+    @delayer12
     #La capacità di recapito di un driver non cambia se la spedizione viene annullata prima che essa venga pianificata
     #Esempio:
     #- martedì 2 dicembre viene inviata al delayer la spedizione (la PREPARE)
@@ -886,8 +886,7 @@
         | unifiedDeliveryDriverId |
         | Fulmine~80124           |
 
-
-    @delayer13 @restoreCsv
+    @delayer13
     #La capacità di recapito di un driver non cambia se la spedizione viene congelata e poi successivamente annullata ma comunque prima che essa venga pianificata
     #Esempio:
     #- martedì 2 dicembre viene inviata al delayer la spedizione (la PREPARE)
@@ -897,51 +896,45 @@
     #- l'algoritmo non pianificherà la spedizione (e di conseguenza non consumerà capacità di recapito e di stampa)
     Scenario: [DELAYER-TC13] Viene verificata che la capacità di recapito di un driver non cambi in caso di spedizione congelata ma annullata prima della pianificazione
       Given vengono puliti i dati dalle tabelle target
+      Given il CSV "tcCancelNotificationFrozen.csv" contiene 13 notifiche distribuite tra i seguenti test case:
+        | seed                        | quantita | deliveryWeek |
+        | tcCancelNotificationFrozen_ | 13       | NEXT_MONDAY  |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId    | comparative | limit |
+        | Poste~NA    | almeno      | 1     |
+        | Poste~80125 | almeno      | 1     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Poste~NA                | almeno      | 1     |
+        | Poste~80125             | almeno      | 1     |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId | comparative | limit |
+        | Poste~NA                | almeno      | 1     |
+        | Poste~80125             | almeno      | 1     |
       Given viene generata una nuova notifica
         | subject            | invio notifica con cucumber |
         | senderDenomination | Comune di milano            |
       And destinatario
-        | denomination                 | Test digitale ok |
-        | taxId                        | JHKRFU96H15F068N |
-        | digitalDomicile              | NULL             |
-        | physicalAddress_municipality | Napoli           |
-        | physicalAddress_province     | NA               |
-        | physicalAddress_zip          | 80124            |
+        | denomination                 | Test digitale ok  |
+        | taxId                        | DVNLRD52D15M059P  |
+        | digitalDomicile              | NULL              |
+        | physicalAddress_address      | Via@OK_AR_BLOCKED |
+        | physicalAddress_municipality | Napoli            |
+        | physicalAddress_province     | NA                |
+        | physicalAddress_zip          | 80125             |
       When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-#      And la notifica appena creata viene inserita nel csv: tcCancelNotifcationFrozen.csv e caricato su S3
-#      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed           | quantita |
-        | tcSplitSender_ | 14       |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId                   | comparative | limit |
-        | splitSender1CAP1_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~890~P9 | almeno      | 10    |
-        | splitSender1CAP2_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~890~P9 | almeno      | 4     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | esattamente | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | esattamente | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | esattamente | 4     |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | almeno      | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | almeno      | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
+      And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
       And viene impostato il limite massimo di 180000 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
-#      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And il CSV "tcCancelNotificationFrozen.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di 1 settimane
+      #si procede con annullamento notifica
+      And la notifica può essere annullata dal sistema tramite codice IUN
+      And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-#      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate futura
-#      And imposto la deliveryWeek alla data in cui sono pianificate le spedizioni congelate
-      And viene verificata che la capacità usata per i seguenti driver sia uguale al numero di spedizioni congelate meno quella annullata
-        | unifiedDeliveryDriverId     |
-        | splitDriver1CAP1_P9~P9      |
-        | splitDriver1CAP1_P9~CAP1_P9 |
-
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di 2 settimane
+      And imposto la deliveryWeek in avanti di 2 settimane
+      And viene verificata che la capacità utilizzata per i seguenti driver sia uguale a: 3
+        | unifiedDeliveryDriverId |
+        | Poste~80125             |
 
