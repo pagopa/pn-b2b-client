@@ -2,14 +2,15 @@ name: Dev Activity Report
 
 on:
   schedule:
-    - cron: "0 18 * * *"  # tutti i giorni alle 18:00 UTC
+    - cron: "0 18 * * *"  # ogni giorno alle 18:00 UTC
   workflow_dispatch:     # permette run manuale
+
+permissions:
+  contents: read
 
 jobs:
   report:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - name: Checkout all branches
@@ -23,51 +24,66 @@ jobs:
       - name: Generate Report
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
           TODAY=$(date -u +%Y-%m-%d)
-          echo "*Dev Activity Report - $TODAY*" > report.txt
-          echo "" >> report.txt
+          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*\n\n"
 
           CONTRIBUTORS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --pretty="%an" | sort | uniq)
 
-          for DEV in $CONTRIBUTORS; do
-            COMMITS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --pretty=oneline | wc -l)
+          echo "Contributors found:"
+          echo "$CONTRIBUTORS"
 
-            SIZE=$(git log --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --shortstat \
-              | grep "files changed" \
-              | awk '{sum+=$4} END {print sum+0}')
+          if [ -z "$CONTRIBUTORS" ]; then
+            PAYLOAD_TEXT+="⚠️ No contributors detected today.\n"
+          else
+            for DEV in $CONTRIBUTORS; do
 
-            PUSH=$(gh api repos/${{ github.repository }}/events \
-              --jq '[.[] | select(.type=="PushEvent" and .actor.login=="'"$DEV"'")] | length')
+              COMMITS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --pretty=oneline | wc -l)
 
-            PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
+              SIZE=$(git log --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --shortstat \
+                | grep "files changed" \
+                | awk '{sum+=$4} END {print sum+0}')
 
-            if [ "$COMMITS" -eq 0 ]; then
-              STATUS="❌ No commit"
-            elif [ "$COMMITS" -gt 15 ]; then
-              STATUS="⚠️ Non-atomic commits?"
-            elif [ "$PUSH" -eq 0 ]; then
-              STATUS="⚠️ No push"
-            else
-              STATUS="✅ OK"
-            fi
+              PUSH=$(gh api repos/${{ github.repository }}/events \
+                --jq '[.[] | select(.type=="PushEvent" and .actor.login=="'"$DEV"'")] | length')
 
-            echo "👨‍💻 $DEV" >> report.txt
-            echo "Commits: $COMMITS | Lines: $SIZE | Push: $PUSH | PR: $PR | $STATUS" >> report.txt
-            echo "" >> report.txt
-          done
+              PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
 
-          echo "REPORT<<EOF" >> $GITHUB_ENV
-          cat report.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+              if [ "$COMMITS" -eq 0 ]; then
+                STATUS="❌ No commit"
+              elif [ "$COMMITS" -gt 15 ]; then
+                STATUS="⚠️ Possibly non-atomic commits"
+              elif [ "$PUSH" -eq 0 ]; then
+                STATUS="⚠️ No push"
+              else
+                STATUS="✅ OK"
+              fi
+
+              PAYLOAD_TEXT+="👨‍💻 $DEV\n"
+              PAYLOAD_TEXT+="Commits: $COMMITS\n"
+              PAYLOAD_TEXT+="Lines changed: $SIZE\n"
+              PAYLOAD_TEXT+="Push: $PUSH\n"
+              PAYLOAD_TEXT+="Open PR: $PR\n"
+              PAYLOAD_TEXT+="Status: $STATUS\n\n"
+            done
+          fi
+
+          # Creo JSON sicuro per Slack usando jq
+          jq -n \
+            --arg channel "$SLACK_CHANNEL_ID" \
+            --arg text "$PAYLOAD_TEXT" \
+            '{channel:$channel, text:$text, mrkdwn:true}' \
+            > dev_payload.json
+
+      - name: Debug payload
+        run: |
+          echo "=== DEV PAYLOAD ==="
+          cat dev_payload.json
 
       - name: Send Slack message
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          payload: |
-            {
-              "text": "${{ env.REPORT }}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload-file-path: dev_payload.json
