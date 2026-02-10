@@ -85,14 +85,14 @@ public class RestTemplateConfiguration {
                 .build();
     }
 
-    @Bean(name = "defaultRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate defaultRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-
-        return restTemplate;
-    }
+//    @Bean(name = "defaultRestTemplate")
+//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+//    public RestTemplate defaultRestTemplate() {
+//        RestTemplate restTemplate = new RestTemplate();
+//        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+//
+//        return restTemplate;
+//    }
 
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 
