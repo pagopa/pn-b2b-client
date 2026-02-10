@@ -1,12 +1,10 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
@@ -53,12 +51,10 @@ public class DelayerSteps {
     private final DelayerLambdaClient lambdaClient;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
-    private final SharedSteps sharedSteps;
     private Map<String, Integer> availableCapacityByDriver = new HashMap<>();
-    private List<DelayerPaperDelivery> frozenExpected = new ArrayList<>();
 
     @Autowired
-    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName, SharedSteps sharedSteps) {
+    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
 
         this.context = new DelayerContext();
         this.csvLoader = new DelayerCsvLoader(context);
@@ -67,7 +63,6 @@ public class DelayerSteps {
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
         this.utils = new DelayerPaperDeliveryUtils(context);
         this.validator = new DelayerValidator(context, lambdaClient, utils);
-        this.sharedSteps = sharedSteps;
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -378,7 +373,7 @@ public class DelayerSteps {
     @Then("verifica che le opportune notifiche siano state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente per almeno un test case")
     public void checkFrozen(String ws) throws Exception {
         WorkflowSteps step = valueOf(ws);
-        frozenExpected = context.expectedPianification.values().stream()
+        List<DelayerPaperDelivery> frozenExpected = context.expectedPianification.values().stream()
                 .flatMap(m -> m.getOrDefault("FROZEN", List.of()).stream())
                 .toList();
         validator.checkFrozen(step, frozenExpected);
