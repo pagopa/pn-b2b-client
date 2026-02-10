@@ -1607,20 +1607,6 @@ public class AnagraficaRaddAltSteps {
         Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
     }
 
-//    @Then("se lo status della response è 400, il messaggio di errore deve contenere {string}")
-//    public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedErrorType, double testedValue) throws JsonProcessingException {
-//        if (lastHttpStatus != 400) return;
-//        HttpStatusCodeException e = sharedSteps.getNotificationError();
-//        assertNotNull(e, "Attesa una risposta di errore HTTP ma nessuna eccezione è stata intercettata");
-//        String body = e.getResponseBodyAsString();
-//        ObjectMapper mapper = new ObjectMapper();
-//        Problem problem = mapper.readValue(body, Problem.class);
-//        String expectedDetail = buildExpectedErrorMessage(expectedErrorType, testedValue);
-//        boolean found = problem.getErrors().stream().anyMatch(err -> expectedDetail.equals(err.getDetail()));
-////        boolean found = problem.getErrors().stream().anyMatch(err -> expectedMessage.equals(err.getCode()));
-//        assertTrue(found,"Codice errore atteso non trovato. Atteso: " + expectedMessage + " - Body: " + body );
-//    }
-
     @Then("se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo {string} e valore {string}")
     public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedErrorType, String testedValueString) throws JsonProcessingException {
         if (lastHttpStatus != 400) return;
@@ -1632,6 +1618,16 @@ public class AnagraficaRaddAltSteps {
         String expectedDetail = buildExpectedErrorMessage(expectedErrorType, testedValueString);
         boolean found = problem.getErrors().stream().anyMatch(err -> expectedDetail.contains(err.getDetail()));
         assertTrue(found, "Messaggio di errore atteso non trovato. Atteso: " + expectedDetail + " - Body: " + body);
+    }
+
+    @Then("se lo status della response è 200, la response deve contenere i valori corretti per lat {string} e lon {string}")
+    public void seLoStatusDellaResponseE200LaResponseDeveContenereINuoviValori(String expectedLat, String expectedLon) {
+        if (lastHttpStatus != 200) return;
+        assertNotNull(registryV2Response, "registryV2Response è null");
+        String actualLat = registryV2Response != null ? registryV2Response.getNormalizedAddress().getLatitude() : null;
+        String actualLon = registryV2Response != null ? registryV2Response.getNormalizedAddress().getLongitude() : null;
+        assertEquals(expectedLat, actualLat, "Latitude non corretta. Attesa: " + expectedLat + " trovata: " + actualLat);
+        assertEquals(expectedLon, actualLon, "Longitude non corretta. Attesa: " + expectedLon + " trovata: " + actualLon);
     }
 
     private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {

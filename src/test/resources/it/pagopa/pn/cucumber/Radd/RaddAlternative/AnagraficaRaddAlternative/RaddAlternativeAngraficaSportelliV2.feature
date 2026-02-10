@@ -666,6 +666,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | <lat>     | <lon>     |
     Then la response deve restituire status code <expectedStatusCode>
     Then se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo <expectedErrorType> e valore <testedValue>
+    Then se lo status della response è 200, la response deve contenere i valori corretti per lat "<lat>" e lon "<lon>"
 
     Examples:
       | lat    | lon     | expectedStatusCode | expectedErrorType | testedValue |
@@ -678,5 +679,5 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 45.0   | -181.0  | 400                | "RANGE_MIN_LON"   | "-181.0"    |
       | NULL   | 10.0    | 400                | "NULL_LAT"        | ""          |
       | 10.0   | NULL    | 400                | "NULL_LON"        | ""          |
-      | NULL   | NULL    | 400                | "NULL_LAT_LON"      | ""          |
+      | NULL   | NULL    | 400                | "NULL_LAT_LON"    | ""          |
 
