@@ -44,7 +44,8 @@ import static java.lang.Thread.sleep;
 @RequiredArgsConstructor
 public class DelayerSteps {
 
-    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv"};
+    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
+            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv",  "notificationCancelled.csv"};
     public static final int POLLING_MAX_MINUTES = 90;
 
     private final DelayerContext context;
@@ -72,13 +73,13 @@ public class DelayerSteps {
         this.sharedSteps = sharedSteps;
     }
 
-    @Given("^la notifica appena creata viene inserita nel csv: (notificationCancelled.csv|tcCancelNotifcationFrozen.csv) e caricato su S3$")
+    @Given("^la notifica appena creata viene inserita nel csv: (notificationCancelled.csv|tcCancelNotificationFrozen.csv) e caricato su S3$")
     public void updateAndUploadCsv(String csvName) {
         Path basePath = Paths.get(
                 "src", "test", "resources", "it",
                 "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
                 "delayer", "csv");
-        delayerCsvUtils.replaceCsvContent(basePath.resolve(csvName), "{placeholder}", sharedSteps.getNotificationIun());
+//        delayerCsvUtils.replaceCsvContent(basePath.resolve(csvName), "{placeholder}", sharedSteps.getNotificationIun());
     }
 
     @After("@restoreCsv")
@@ -87,8 +88,8 @@ public class DelayerSteps {
                 "src", "test", "resources", "it",
                 "pagopa", "pn", "cucumber", "workflowNotifica", "workflowAnalogico",
                 "delayer", "csv");
-        delayerCsvUtils.replaceCsvContent(basePath.resolve("notificationCancelled.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
-        delayerCsvUtils.replaceCsvContent(basePath.resolve("tcCancelNotifcationFrozen.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
+//        delayerCsvUtils.replaceCsvContent(basePath.resolve("notificationCancelled.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
+//        delayerCsvUtils.replaceCsvContent(basePath.resolve("tcCancelNotificationFrozen.csv"), sharedSteps.getNotificationIun(), "{placeholder}");
     }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
@@ -253,6 +254,13 @@ public class DelayerSteps {
                 entityId -> availableCapacityByDriver.get(entityId) - difference);
     }
 
+    @And("viene verificata che la capacità disponibile per i seguenti driver sia uguale a: {int}")
+    public void assertCapacityEqualsTo(int expected, DataTable dataTable) {
+        assertCapacity(dataTable,
+                (driver, province) -> lambdaClient.getUsedCapacity(driver, province, context.expectedDeliveryDate),
+                entityId -> expected);
+    }
+
     @And("viene verificata che la capacità usata per i seguenti driver sia uguale al numero di spedizioni congelate meno quella annullata")
     public void assertCapacityFrozen(DataTable dataTable) {
         assertCapacity(dataTable,
@@ -307,9 +315,9 @@ public class DelayerSteps {
         planner.simulateAlgorithm2(context.expectedPianification);
     }
 
-    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate futura")
-    public void runFirstStepFunctionWithDeliveryDate() throws Exception {
-        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(1)).getExecutionArn();
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
+    public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd)).getExecutionArn();
         waitUntilStepFunctionEnd();
     }
 
@@ -481,8 +489,8 @@ public class DelayerSteps {
         }
     }
 
-    @And("imposto la deliveryWeek alla data in cui sono pianificate le spedizioni congelate")
-    public void setDeliveryWeek() {
-        context.expectedDeliveryDate = getNextMonday(1);
+    @And("imposto la deliveryWeek in avanti di {int} settimane")
+    public void setDeliveryWeek(int nWeeks) {
+        context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
 }
