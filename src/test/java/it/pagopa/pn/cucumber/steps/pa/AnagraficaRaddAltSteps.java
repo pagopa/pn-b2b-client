@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
@@ -16,6 +18,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.*;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.Problem;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
@@ -1631,13 +1634,27 @@ public class AnagraficaRaddAltSteps {
         Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
     }
 
-    @Then("se lo status della response è 400, il messaggio di errore deve contenere {string}")
-    public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedMessage) {
+    @Then("se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo {string} e valore {string}")
+    public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedErrorType, String testedValueString) throws JsonProcessingException {
         if (lastHttpStatus != 400) return;
         HttpStatusCodeException e = sharedSteps.getNotificationError();
         assertNotNull(e, "Attesa una risposta di errore HTTP ma nessuna eccezione è stata intercettata");
         String body = e.getResponseBodyAsString();
-        assertTrue(body.contains(expectedMessage),"Messaggio di errore atteso non trovato. Atteso: " + expectedMessage + " - Body: " + body );
+        ObjectMapper mapper = new ObjectMapper();
+        Problem problem = mapper.readValue(body, Problem.class);
+        String expectedDetail = buildExpectedErrorMessage(expectedErrorType, testedValueString);
+        boolean found = problem.getErrors().stream().anyMatch(err -> expectedDetail.contains(err.getDetail()));
+        assertTrue(found, "Messaggio di errore atteso non trovato. Atteso: " + expectedDetail + " - Body: " + body);
+    }
+
+    @Then("se lo status della response è 200, la response deve contenere i valori corretti per lat {string} e lon {string}")
+    public void seLoStatusDellaResponseE200LaResponseDeveContenereINuoviValori(String expectedLat, String expectedLon) {
+        if (lastHttpStatus != 200) return;
+        assertNotNull(registryV2Response, "registryV2Response è null");
+        String actualLat = registryV2Response != null ? registryV2Response.getNormalizedAddress().getLatitude() : null;
+        String actualLon = registryV2Response != null ? registryV2Response.getNormalizedAddress().getLongitude() : null;
+        assertEquals(expectedLat, actualLat, "Latitude non corretta. Attesa: " + expectedLat + " trovata: " + actualLat);
+        assertEquals(expectedLon, actualLon, "Longitude non corretta. Attesa: " + expectedLon + " trovata: " + actualLon);
     }
 
     private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {
@@ -1737,6 +1754,27 @@ public class AnagraficaRaddAltSteps {
                 break;
             default:
                 throw new IllegalArgumentException("Campo non gestito nel PUT Selective: " + field);
+        }
+    }
+
+    private String buildExpectedErrorMessage(String errorType, String value) {
+        switch (errorType) {
+            case "RANGE_MAX_LAT":
+                return "Validation errors: [format attribute \"double\" not supported, numeric instance is greater than the required maximum (maximum: 90, found: " + value + ")]";
+            case "RANGE_MIN_LAT":
+                return "Validation errors: [numeric instance is lower than the required minimum (minimum: -90, found: " + value + "), format attribute \"double\" not supported]";
+            case "RANGE_MAX_LON":
+                return "Validation errors: [format attribute \"double\" not supported, numeric instance is greater than the required maximum (maximum: 180, found: " + value + ")]";
+            case "RANGE_MIN_LON":
+                return "Validation errors: [format attribute \"double\" not supported, numeric instance is lower than the required minimum (minimum: -180, found: " + value + ")]";
+            case "NULL_LAT":
+                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
+            case "NULL_LON":
+                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
+            case "NULL_LAT_LON":
+                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
+            default:
+                return "UNKNOWN_ERROR";
         }
     }
 
