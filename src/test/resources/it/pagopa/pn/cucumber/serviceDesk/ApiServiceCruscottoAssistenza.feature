@@ -617,13 +617,18 @@ Feature: Api Service Cruscotto Assistenza
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    And viene chiamato service desk e si controlla la presenza dell'elemento "RETURNED_TO_SENDER" nella response
+    #controllo API service-desk
+    And viene chiamato service desk e si controlla la presenza dell'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED" nella response
+    And si verifica che lo stato della notifica recuperata sia: "RETURNED_TO_SENDER"
     And come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
-      | startDate | TODAY            |
-      | endDate   | LAST_TEN_MINUTES |
+      | paId      | 4db941cf-17e1-4751-9b7b |
+      | startDate | TODAY                   |
+      | endDate   | LAST_TEN_MINUTES        |
     Then Il servizio risponde correttamente
-
 
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email

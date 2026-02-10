@@ -6,7 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
@@ -327,11 +327,12 @@ public class RaddAltSteps {
     protected void startTransactionActRaddAlternative(String operationId, boolean retry) {
         ActStartTransactionRequest actStartTransactionRequest = createActStartTransactionRequest(operationId);
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
-        this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
-
-        if (this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry) {
-            waitFor(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
+        int attempts = 5;
+        for (int i = 0; i < attempts; i++) {
             this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
+            if (this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry) {
+                waitFor(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
+            } else break;
         }
         System.out.println("startTransactionResponse: " + startTransactionResponse);
     }
@@ -671,7 +672,7 @@ public class RaddAltSteps {
 
     //TODO, c'è un metodo ad hoc per il taxId in SharedSteps
     private String getRecipientZeroTaxId() {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 

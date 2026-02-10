@@ -6,7 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
@@ -139,6 +139,11 @@ public class ApiServiceDeskSteps {
             Assertions.assertTrue(hasRefinementCategory, "La categoria " + elemento + " non è presente nella timeline.");
         }
     }
+
+     @And("si verifica che lo stato della notifica recuperata sia: {string}")
+     public void verifyNotificationStatus(String expectedStatus) {
+        Assertions.assertEquals(timelineResponse.getIunStatus().getValue(), expectedStatus);
+     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
     public void createVerifyUnreachableRequest(String cf) {
@@ -863,7 +868,7 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
+            FullSentNotificationV28 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
             documentsRequest = new DocumentsRequest();
             if (fullSentNotification != null) {
                 setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());
@@ -1385,18 +1390,12 @@ public class ApiServiceDeskSteps {
     }
 
     public OffsetDateTime getDate(String dateInputString) {
-        OffsetDateTime resultDate;
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         OffsetDateTime sentAt = OffsetDateTime.now();
-        if (dateInputString == null) return null;
+        if ("NULL".equalsIgnoreCase(dateInputString)) return null;
         return switch (dateInputString.toUpperCase()) {
             case "LAST_TEN_MINUTES" -> sentAt.minusMinutes(10);
             case "TODAY" -> sentAt.truncatedTo(ChronoUnit.DAYS);
-            default -> {
-                LocalDateTime localDate = LocalDate.parse(dateInputString, dateTimeFormatter).atStartOfDay();
-                resultDate = OffsetDateTime.of(localDate, sentAt.getOffset());
-                yield resultDate;
-            }
+            default -> LocalDate.parse(dateInputString).atStartOfDay().atOffset(ZoneOffset.UTC);
         };
     }
 
