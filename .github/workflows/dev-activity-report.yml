@@ -27,26 +27,45 @@ jobs:
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
           TODAY=$(date -u +%Y-%m-%d)
-          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*\n\n"
+          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*"
+          PAYLOAD_TEXT+=$'\n\n'
 
-          CONTRIBUTORS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --pretty="%an" | sort | uniq)
+          CONTRIBUTORS=$(git log origin/develop \
+            --since="$TODAY 00:00" \
+            --until="$TODAY 23:59" \
+            --all \
+            --pretty="%an" | sort -u)
 
           echo "Contributors found:"
           echo "$CONTRIBUTORS"
 
           if [ -z "$CONTRIBUTORS" ]; then
-            PAYLOAD_TEXT+="⚠️ No contributors detected today.\n"
+            PAYLOAD_TEXT+="⚠️ No contributors detected today."
+            PAYLOAD_TEXT+=$'\n'
           else
             for DEV in $CONTRIBUTORS; do
 
-              COMMITS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --pretty=oneline | wc -l)
+              COMMITS=$(git log origin/develop \
+                --since="$TODAY 00:00" \
+                --until="$TODAY 23:59" \
+                --all \
+                --author="$DEV" \
+                --pretty=oneline | wc -l)
 
-              SIZE=$(git log --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --shortstat \
+              SIZE=$(git log \
+                --since="$TODAY 00:00" \
+                --until="$TODAY 23:59" \
+                --all \
+                --author="$DEV" \
+                --shortstat \
                 | grep "files changed" \
                 | awk '{sum+=$4} END {print sum+0}')
 
-              PUSH=$(gh api repos/${{ github.repository }}/events \
-                --jq '[.[] | select(.type=="PushEvent" and .actor.login=="'"$DEV"'")] | length')
+              PUSH=$(git log origin \
+                --since="$TODAY 00:00" \
+                --until="$TODAY 23:59" \
+                --author="$DEV" \
+                --pretty=oneline | wc -l)
 
               PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
 
@@ -60,12 +79,18 @@ jobs:
                 STATUS="✅ OK"
               fi
 
-              PAYLOAD_TEXT+="👨‍💻 $DEV\n"
-              PAYLOAD_TEXT+="Commits: $COMMITS\n"
-              PAYLOAD_TEXT+="Lines changed: $SIZE\n"
-              PAYLOAD_TEXT+="Push: $PUSH\n"
-              PAYLOAD_TEXT+="Open PR: $PR\n"
-              PAYLOAD_TEXT+="Status: $STATUS\n\n"
+              PAYLOAD_TEXT+="👨‍💻 $DEV"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Commits: $COMMITS"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Lines changed: $SIZE"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Push: $PUSH"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Open PR: $PR"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Status: $STATUS"
+              PAYLOAD_TEXT+=$'\n\n'
             done
           fi
 
