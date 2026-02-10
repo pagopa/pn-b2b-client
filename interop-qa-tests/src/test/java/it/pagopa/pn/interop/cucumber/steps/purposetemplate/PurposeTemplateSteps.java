@@ -749,8 +749,16 @@ public class PurposeTemplateSteps {
     }
 
     @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata")
-    @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata con successo")
     public void deleteAnnotationDocument(boolean exists) {
+        UUID ptId = createdPurposeTemplate.getId();
+        UUID answerId = riskAnalysis.getId();
+        UUID docId = exists ? uploadedDocument.getId() : UUID.randomUUID();
+
+        httpCallExecutor.performCall(() -> purposeTemplateClient.deleteRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, docId));
+    }
+
+    @When("viene eliminato il documento {exists} dell'annotazione precedentemente creata con successo")
+    public void successfullyDeleteAnnotationDocument(boolean exists) {
         UUID ptId = createdPurposeTemplate.getId();
         UUID answerId = riskAnalysis.getId();
         UUID docId = exists ? uploadedDocument.getId() : UUID.randomUUID();
