@@ -542,7 +542,7 @@ Feature: Api Service Cruscotto Assistenza
     Then Il servizio risponde correttamente con presenza delle apiKey
     Examples:
       | paID                                 |
-      | 026e8c72-7944-4dcd-8668-f596447fec6d |
+      | a95dace4-4a47-4149-a814-0e669113ce40 |
     #Response 200 OK
 
 #026e8c72-7944-4dcd-8668-f596447fec6d MILANO
@@ -685,6 +685,7 @@ Feature: Api Service Cruscotto Assistenza
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune "default"
