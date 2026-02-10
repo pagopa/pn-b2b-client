@@ -476,6 +476,15 @@ public class PurposeTemplateSteps {
     public void changePurposeTemplateState(boolean exists, PurposeTemplateState ptState) {
         switch (ptState) {
             case PUBLISHED -> activatePurposeTemplate(exists);
+            case SUSPENDED -> suspendPurposeTemplate(exists);
+            case ARCHIVED -> archivePurposeTemplate(exists);
+        }
+    }
+
+    @And("il purpose template {exists} viene correttamente spostato in stato {ptState}")
+    public void properlyChangePurposeTemplateState(boolean exists, PurposeTemplateState ptState) {
+        switch (ptState) {
+            case PUBLISHED -> activatePurposeTemplate(exists);
             case SUSPENDED -> {
                 activatePurposeTemplate(exists);
                 suspendPurposeTemplate(exists);
