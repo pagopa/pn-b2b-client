@@ -16,9 +16,9 @@ Feature: Gestione purpose templates attraverso APIs M2M V2
     And il purpose template restituito è coerente con le modifiche effettuate
     And il purpose template è stato parzialmente modificato correttamente
     When l'utente tenta di effettuare la modifica parziale del purpose template specificando un insieme vuoto di informazioni
-    Then si ottiene lo status code 400
-    #And il purpose template restituito è coerente con le modifiche effettuate
-    #And il purpose template è stato parzialmente modificato correttamente
+    Then si ottiene lo status code 200
+    And il purpose template restituito è coerente con le modifiche effettuate
+    And il purpose template è stato parzialmente modificato correttamente
 
   @purpose-template-m2m-patch
   Scenario: [INTEROP-PT-M2M-PATCH_02] Un utente con ruolo M2M NON può effettuare una modifica parziale di un purpose template (Parte2#Scenario intorno a 147)
