@@ -16,7 +16,6 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     # Nota: Modificato l'ordine degli step: prima leggeva per utente 1 e 0, e poi controllava la presenza del DigitalAddress per 0 e 1
     # Poiché la lettura dell'elemento di timeline sovrascrive il valore di timelineElement, lo step era destinato a fallire
-    # TODO MATTEO: controllare l'eventuale presenza di altre casistiche come questa
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry per l utente 0
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -76,7 +75,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | recipientType   | PG               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @liberiProfessionisti @mockNR #scenario 7
@@ -115,7 +120,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | recipientType   | PG               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -133,7 +144,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -150,7 +167,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK---------->aslnapoli1centro@pec.aslna1centro.it
@@ -166,7 +189,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #3 (MITTENTE) Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC
@@ -187,7 +216,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -203,7 +238,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @hotfix26_2
@@ -250,5 +291,11 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | GENERAL  |
+      | details_responseStatus       | OK       |
+      | details_recIndex             | 0        |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"

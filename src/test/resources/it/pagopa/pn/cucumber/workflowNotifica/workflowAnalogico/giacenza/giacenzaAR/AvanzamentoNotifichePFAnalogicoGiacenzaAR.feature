@@ -140,10 +140,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_recIndex           | 0        |
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_deliveryDetailCode | RECRN005A|
-      | details_recIndex           | 0        |
-      | details_sentAttemptMade    | 0        |
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECRN005A |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                    |
       | details_deliveryDetailCode | RECRN005B                   |
@@ -158,7 +158,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                             |
+      | digitalDomicile         | NULL                               |
       | physicalAddress_address | Via@FAIL_CompiutaGiacenza_AR_ERR_2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005B"
@@ -221,10 +221,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_recIndex           | 0        |
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                 |
-      | details_deliveryDetailCode | RECRN003A                |
-      | details_recIndex           | 0                        |
-      | details_sentAttemptMade    | 0                        |
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECRN003A |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                 |
       | details_deliveryDetailCode | RECRN003B                |
@@ -269,10 +269,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_recIndex           | 0        |
       | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                    |
-      | details_deliveryDetailCode | RECRN004A                   |
-      | details_recIndex           | 0                           |
-      | details_sentAttemptMade    | 0                           |
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECRN004A |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                    |
       | details_deliveryDetailCode | RECRN004B                   |
@@ -290,8 +290,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_6] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR PN-5927
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_address | Via@FAIL-CompiutaGiacenza-gt10_AR |

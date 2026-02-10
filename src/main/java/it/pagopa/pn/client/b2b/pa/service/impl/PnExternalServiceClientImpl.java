@@ -634,10 +634,9 @@ public class PnExternalServiceClientImpl {
 
     }
 
-    private ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfo(
-            Map<String, String> mapInfo) {
+    private <T> ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfoAttach(Map<String, T> mapInfo) {
         Object postBody = null;
-        List<Map<String, String>> requestList = new ArrayList<>();
+        List<Map<String, T>> requestList = new ArrayList<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             requestList.add(mapInfo);
@@ -659,8 +658,7 @@ public class PnExternalServiceClientImpl {
                 StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
-        };
+        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {};
 
         return invokeAPI(dataVaultBasePath,
                 "/consolidatore-ingress/v1/push-progress-events/",
@@ -668,8 +666,8 @@ public class PnExternalServiceClientImpl {
                 headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    public String pushConsolidatoreNotification(Map<String, String> mapInfo) {
-        return pushConsolidatoreNotificationWithHttpInfo(mapInfo).getBody();
+    public <T> String pushConsolidatoreNotificationAttach(Map<String, T> mapInfo) {
+        return pushConsolidatoreNotificationWithHttpInfoAttach(mapInfo).getBody();
     }
 
     //OPEN SEARCH RESPONSE
