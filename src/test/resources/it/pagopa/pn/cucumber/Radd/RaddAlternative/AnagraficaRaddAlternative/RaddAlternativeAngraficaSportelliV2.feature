@@ -681,7 +681,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | NULL   | NULL    | 400                | "NULL_LAT_LON"    | ""          |
 
 
-  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_22] - PUT Selective – validazione campi RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -757,7 +757,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 57 | website             | javascript:alert(1)                          | 403              |
       | 58 | website             | <img src=x onerror=alert(1)>                 | 403              |
 
-  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_23] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
