@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "0 18 * * *"  # ogni giorno alle 18:00 UTC
   workflow_dispatch:     # permette run manuale
+    inputs:
+        report_date:
+          description: "Date to analyze (YYYY-MM-DD). Leave empty for today UTC."
+          required: false
 
 permissions:
   contents: read
@@ -26,30 +30,83 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*\n\n"
+          
+          if [ -n "${{ github.event.inputs.report_date }}" ]; then
+            TODAY="${{ github.event.inputs.report_date }}"
+          else
+            TODAY=$(date -u +%Y-%m-%d)
+          fi
 
-          CONTRIBUTORS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --pretty="%an" | sort | uniq)
+          echo "Using date: $TODAY"
+          
+          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*"
+          PAYLOAD_TEXT+=$'\n\n'
+
+          # Lista branch remoti
+          BRANCHES=($(git for-each-ref --format='%(refname:short)' refs/remotes/origin/))
+
+          # Mappa autori Git → login GitHub + bot detection
+          declare -A AUTHOR_MAP
+
+          for BR in "${BRANCHES[@]}"; do
+            SHAS=($(git log "$BR" --since="$TODAY 00:00" --until="$TODAY 23:59" --pretty="%H"))
+
+            for SHA in "${SHAS[@]}"; do
+              LOGIN=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.login' 2>/dev/null)
+              NAME=$(git log -1 --format="%an" $SHA)
+
+              # fallback al nome Git se non c'è login
+              if [ -z "$LOGIN" ] || [ "$LOGIN" == "null" ]; then
+                LOGIN="$NAME"
+              fi
+
+              # Bot detection
+              IS_BOT=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.type' 2>/dev/null)
+              if [[ "$IS_BOT" == "Bot" ]]; then
+                LOGIN="${LOGIN}[bot]"
+              fi
+
+              AUTHOR_MAP["$LOGIN"]=1
+            done
+          done
+
+          # Array finale dei contributor
+          CONTRIBUTORS=("${!AUTHOR_MAP[@]}")
 
           echo "Contributors found:"
-          echo "$CONTRIBUTORS"
+          printf '%s\n' "${CONTRIBUTORS[@]}"
 
-          if [ -z "$CONTRIBUTORS" ]; then
-            PAYLOAD_TEXT+="⚠️ No contributors detected today.\n"
+          if [ ${#CONTRIBUTORS[@]} -eq 0 ]; then
+            PAYLOAD_TEXT+="⚠️ No contributors detected today."
+            PAYLOAD_TEXT+=$'\n'
           else
-            for DEV in $CONTRIBUTORS; do
+            echo "$CONTRIBUTORS" | while IFS= read -r DEV; do
+            for DEV in "${CONTRIBUTORS[@]}"; do
+              echo "Processing $DEV"
+            
+              # Recupero SHA dei commit del giorno dell'utente
+              DEV_SHAS=()
+              for BR in "${BRANCHES[@]}"; do
+                BR_SHAS=($(git log "$BR" --since="$TODAY 00:00" --until="$TODAY 23:59" --author="$DEV" --pretty="%H"))
+                DEV_SHAS+=("${BR_SHAS[@]}")
+              done
 
-              COMMITS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --pretty=oneline | wc -l)
+              # Conteggio commit
+              COMMITS=${#DEV_SHAS[@]}
 
-              SIZE=$(git log --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --shortstat \
-                | grep "files changed" \
-                | awk '{sum+=$4} END {print sum+0}')
+              # Lines changed
+              SIZE=0
+              for SHA in "${DEV_SHAS[@]}"; do
+                CHG=$(git show --shortstat "$SHA" 2>/dev/null | grep "files changed" | awk '{sum+=$4} END {print sum+0}')
+                SIZE=$((SIZE + CHG))
+              done
 
-              PUSH=$(gh api repos/${{ github.repository }}/events \
-                --jq '[.[] | select(.type=="PushEvent" and .actor.login=="'"$DEV"'")] | length')
+              # Push detection semantica
+              PUSH=$COMMITS
 
+              # PR aperte
               PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
-
+            
               if [ "$COMMITS" -eq 0 ]; then
                 STATUS="❌ No commit"
               elif [ "$COMMITS" -gt 15 ]; then
@@ -59,13 +116,20 @@ jobs:
               else
                 STATUS="✅ OK"
               fi
-
-              PAYLOAD_TEXT+="👨‍💻 $DEV\n"
-              PAYLOAD_TEXT+="Commits: $COMMITS\n"
-              PAYLOAD_TEXT+="Lines changed: $SIZE\n"
-              PAYLOAD_TEXT+="Push: $PUSH\n"
-              PAYLOAD_TEXT+="Open PR: $PR\n"
-              PAYLOAD_TEXT+="Status: $STATUS\n\n"
+            
+              PAYLOAD_TEXT+="👨‍💻 $DEV"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Commits: $COMMITS"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Lines changed: $SIZE"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Push: $PUSH"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Open PR: $PR"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Status: $STATUS"
+              PAYLOAD_TEXT+=$'\n\n'
+              
             done
           fi
 
