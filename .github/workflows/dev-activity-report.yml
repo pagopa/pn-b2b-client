@@ -71,27 +71,35 @@ jobs:
           echo "Total unique commits: ${#UNIQUE_SHAS[@]}"
 
           # Mappa autori Git → login GitHub + bot detection
+          declare -A COMMIT_LOGIN
           declare -A AUTHOR_MAP
-          declare -A AUTHOR_SHAS
+
+          # Mappa autori Git → login GitHub + bot detection
+          declare -A COMMIT_LOGIN
+          declare -A AUTHOR_MAP
 
           for SHA in "${UNIQUE_SHAS[@]}"; do
-
-            LOGIN=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.login' 2>/dev/null || true)
+            API=$(gh api repos/${{ github.repository }}/commits/$SHA 2>/dev/null || true)
+            
+            if [ -z "$API" ]; then
+              echo "Warning: Skipping $SHA (API call failed)"
+              continue
+            fi
+            
+            LOGIN=$(echo "$API" | jq -r '.author.login // empty')
+            TYPE=$(echo "$API" | jq -r '.author.type // empty')
             NAME=$(git log -1 --format="%an" "$SHA")
 
             if [ -z "$LOGIN" ] || [ "$LOGIN" == "null" ]; then
               LOGIN="$NAME"
             fi
 
-            TYPE=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.type' 2>/dev/null || true)
-
             if [[ "$TYPE" == "Bot" ]]; then
               LOGIN="${LOGIN}[bot]"
             fi
 
+            COMMIT_LOGIN["$SHA"]="$LOGIN"
             AUTHOR_MAP["$LOGIN"]=1
-            AUTHOR_SHAS["$LOGIN"]+="$SHA"$'\n'
-
           done
 
           # Array finale dei contributor
@@ -107,39 +115,29 @@ jobs:
             for DEV in "${CONTRIBUTORS[@]}"; do
               echo "Processing $DEV"
             
+              # Find this developer's commits
               DEV_SHAS=()
-
-              for BR in "${BRANCHES[@]}"; do
-                mapfile -t BR_SHAS < <(
-                  git log "$BR" \
-                  --since="$TODAY 00:00" \
-                  --until="$TODAY 23:59" \
-                  --author="$DEV" \
-                  --pretty="%H"
-                )
-                DEV_SHAS+=("${BR_SHAS[@]}")
-              done
+              while IFS= read -r SHA; do
+                if [[ "${COMMIT_LOGIN[$SHA]}" == "$DEV" ]]; then
+                  DEV_SHAS+=("$SHA")
+                fi
+              done < <(printf '%s\n' "${UNIQUE_SHAS[@]}")
 
               COMMITS=${#DEV_SHAS[@]}
 
+              # Calculate lines changed
               SIZE=0
               for SHA in "${DEV_SHAS[@]}"; do
-                CHG=$(git show --shortstat "$SHA" 2>/dev/null \
-                  | grep "files changed" \
-                  | awk '{sum+=$4} END {print sum+0}')
-                SIZE=$((SIZE + CHG))
+                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1+$2} END {print sum+0}')
+                SIZE=$((SIZE + LINES))
               done
 
-              PUSH=$COMMITS
-
-              PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
-
+              PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
+              
               if [ "$COMMITS" -eq 0 ]; then
                 STATUS="❌ No commit"
               elif [ "$COMMITS" -gt 15 ]; then
                 STATUS="⚠️ Possibly non-atomic commits"
-              elif [ "$PUSH" -eq 0 ]; then
-                STATUS="⚠️ No push"
               else
                 STATUS="✅ OK"
               fi
@@ -149,8 +147,6 @@ jobs:
               PAYLOAD_TEXT+="Commits: $COMMITS"
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Lines changed: $SIZE"
-              PAYLOAD_TEXT+=$'\n'
-              PAYLOAD_TEXT+="Push: $PUSH"
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Open PR: $PR"
               PAYLOAD_TEXT+=$'\n'
