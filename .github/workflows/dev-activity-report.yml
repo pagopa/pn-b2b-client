@@ -30,9 +30,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
-
-          set -euo pipefail
-          
+        
           if [ -n "${{ github.event.inputs.report_date }}" ]; then
             TODAY="${{ github.event.inputs.report_date }}"
           else
@@ -128,8 +126,8 @@ jobs:
               # Calculate lines changed
               SIZE=0
               for SHA in "${DEV_SHAS[@]}"; do
-                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1+$2} END {print sum+0}')
-                SIZE=$((SIZE + LINES))
+                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1+$2} END {print sum+0}' || echo "0")
+                SIZE=$((SIZE + ${LINES:-0}))
               done
 
               PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
