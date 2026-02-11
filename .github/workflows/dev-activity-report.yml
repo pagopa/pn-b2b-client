@@ -122,11 +122,11 @@ jobs:
               done < <(printf '%s\n' "${UNIQUE_SHAS[@]}")
 
               COMMITS=${#DEV_SHAS[@]}
-
-              # Calculate lines changed
+              
+              # Calculate lines changed (insertions only)
               SIZE=0
               for SHA in "${DEV_SHAS[@]}"; do
-                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1+$2} END {print sum+0}' || echo "0")
+                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1} END {print sum+0}' || echo "0")
                 SIZE=$((SIZE + ${LINES:-0}))
               done
 
@@ -144,7 +144,7 @@ jobs:
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Commits: $COMMITS"
               PAYLOAD_TEXT+=$'\n'
-              PAYLOAD_TEXT+="Lines changed: $SIZE"
+              PAYLOAD_TEXT+="Lines added: $SIZE"$'\n'
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Open PR: $PR"
               PAYLOAD_TEXT+=$'\n'
