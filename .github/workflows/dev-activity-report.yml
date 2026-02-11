@@ -104,13 +104,21 @@ jobs:
             PAYLOAD_TEXT+="⚠️ No contributors detected today."
             PAYLOAD_TEXT+=$'\n'
           else
-            echo "$CONTRIBUTORS" | while IFS= read -r DEV; do
             for DEV in "${CONTRIBUTORS[@]}"; do
               echo "Processing $DEV"
             
-              mapfile -t DEV_SHAS < <(
-                printf "%s" "${AUTHOR_SHAS[$DEV]}"
-              )
+              DEV_SHAS=()
+
+              for BR in "${BRANCHES[@]}"; do
+                mapfile -t BR_SHAS < <(
+                  git log "$BR" \
+                  --since="$TODAY 00:00" \
+                  --until="$TODAY 23:59" \
+                  --author="$DEV" \
+                  --pretty="%H"
+                )
+                DEV_SHAS+=("${BR_SHAS[@]}")
+              done
 
               COMMITS=${#DEV_SHAS[@]}
 
