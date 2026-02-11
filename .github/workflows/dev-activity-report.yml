@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "0 18 * * *"  # ogni giorno alle 18:00 UTC
   workflow_dispatch:     # permette run manuale
+    inputs:
+        report_date:
+          description: "Date to analyze (YYYY-MM-DD). Leave empty for today UTC."
+          required: false
 
 permissions:
   contents: read
@@ -26,7 +30,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
+          
+          if [ -n "${{ github.event.inputs.report_date }}" ]; then
+            TODAY="${{ github.event.inputs.report_date }}"
+          else
+            TODAY=$(date -u +%Y-%m-%d)
+          fi
+
+          echo "Using date: $TODAY"
+          
           PAYLOAD_TEXT="*Dev Activity Report - $TODAY*"
           PAYLOAD_TEXT+=$'\n\n'
 
@@ -52,30 +64,41 @@ jobs:
           else
             for DEV in $CONTRIBUTORS; do
 
-              COMMITS=$(git log origin/develop \
-                --since="$TODAY 00:00" \
-                --until="$TODAY 23:59" \
-                --all \
-                --author="$DEV" \
-                --pretty=oneline | wc -l)
-
-              SIZE=$(git log \
-                --since="$TODAY 00:00" \
-                --until="$TODAY 23:59" \
-                --all \
-                --author="$DEV" \
-                --shortstat \
-                | grep "files changed" \
-                | awk '{sum+=$4} END {print sum+0}')
-
-              PUSH=$(git log origin \
-                --since="$TODAY 00:00" \
-                --until="$TODAY 23:59" \
-                --author="$DEV" \
-                --pretty=oneline | wc -l)
-
+              echo "Processing $DEV"
+            
+              # Recupero SHA dei commit dell'utente (già mappati via API)
+              DEV_SHAS=$(
+                git log origin/develop \
+                  --since="$TODAY 00:00" \
+                  --until="$TODAY 23:59" \
+                  --all \
+                  --pretty="%H" |
+                while read SHA; do
+                  LOGIN=$(gh api repos/${{ github.repository }}/commits/$SHA \
+                    --jq '.author.login' 2>/dev/null)
+                  if [ "$LOGIN" = "$DEV" ]; then
+                    echo "$SHA"
+                  fi
+                done
+              )
+            
+              # Commit count reale
+              COMMITS=$(echo "$DEV_SHAS" | grep -c .)
+            
+              # Lines changed reali
+              SIZE=$(echo "$DEV_SHAS" |
+                while read SHA; do
+                  git show --shortstat $SHA
+                done |
+                grep "files changed" |
+                awk '{sum+=$4} END {print sum+0}')
+            
+              # Push detection semantica stabile
+              PUSH=$COMMITS
+            
+              # PR aperte
               PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
-
+            
               if [ "$COMMITS" -eq 0 ]; then
                 STATUS="❌ No commit"
               elif [ "$COMMITS" -gt 15 ]; then
@@ -85,7 +108,7 @@ jobs:
               else
                 STATUS="✅ OK"
               fi
-
+            
               PAYLOAD_TEXT+="👨‍💻 $DEV"
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Commits: $COMMITS"
@@ -98,6 +121,7 @@ jobs:
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Status: $STATUS"
               PAYLOAD_TEXT+=$'\n\n'
+              
             done
           fi
 
