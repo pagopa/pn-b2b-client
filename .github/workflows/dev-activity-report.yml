@@ -44,7 +44,7 @@ jobs:
 
           echo "Mapping git authors → github logins..."
           CONTRIBUTORS=$(
-          git log origin/develop \
+          git log --remotes=origin \
             --since="$TODAY 00:00" \
             --until="$TODAY 23:59" \
             --all \
@@ -68,7 +68,7 @@ jobs:
             
               # Recupero SHA dei commit dell'utente (già mappati via API)
               DEV_SHAS=$(
-                git log origin/develop \
+                git log --remotes=origin \
                   --since="$TODAY 00:00" \
                   --until="$TODAY 23:59" \
                   --all \
