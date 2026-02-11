@@ -30,11 +30,18 @@ jobs:
           PAYLOAD_TEXT="*Dev Activity Report - $TODAY*"
           PAYLOAD_TEXT+=$'\n\n'
 
-          CONTRIBUTORS=$(git log origin/develop \
+          echo "Mapping git authors → github logins..."
+          CONTRIBUTORS=$(
+          git log origin/develop \
             --since="$TODAY 00:00" \
             --until="$TODAY 23:59" \
             --all \
-            --pretty="%an" | sort -u)
+            --pretty="%H" |
+          while read SHA; do
+            gh api repos/${{ github.repository }}/commits/$SHA \
+              --jq '.author.login' 2>/dev/null
+          done | sort | uniq
+          )
 
           echo "Contributors found:"
           echo "$CONTRIBUTORS"
