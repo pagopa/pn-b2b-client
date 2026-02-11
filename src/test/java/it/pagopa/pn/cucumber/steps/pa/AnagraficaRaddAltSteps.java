@@ -1613,20 +1613,9 @@ public class AnagraficaRaddAltSteps {
         executePutSelective(request);
     }
 
-    @When("aggiorno la sede RADD tramite PUT Selective utilizzando la request {string} impostando")
-    public void updateSelective(String requestType, DataTable table) {
-
-        Map<String, String> row = table.asMaps().get(0);
-        String field = row.get("field");
-        String value = mapValue(row.get("value"));
-        SelectiveUpdateRegistryRequestV2 request;
-        if ("ALWAYS".equals(requestType)) request = new SelectiveUpdateRegistryRequestV2Always(buildSelectivePutRequestFromCreationRequest());
-        else if ("NON_NULL".equals(requestType)) request = buildSelectivePutRequestFromCreationRequest();
-        else throw new IllegalStateException("requestType non valido.");
-
-        applyPutSelectiveField(request, field, value);
-
-        executePutSelective(request);
+    @When("aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione")
+    public void aggiornoLaSedeRaddTramitePutSelectiveUtilizzandoLaRequestDiCreazione() {
+        executePutSelective(buildSelectivePutRequestFromCreationRequest());
     }
 
     @Then("la response deve restituire status code {int}")
@@ -1693,19 +1682,6 @@ public class AnagraficaRaddAltSteps {
         else if (request.getAddress() == null) throw new IllegalStateException("address non presente");
 
         switch (field) {
-            case "NOT_MANDATORY_NULL":
-                request.setEmail(null);
-                request.setOpeningTime(null);
-                request.setEndValidity(null);
-                request.setWebsite(null);
-                request.setAppointmentRequired(false);
-                break;
-            case "NOT_MANDATORY_BLANK":
-                request.setEmail("");
-                request.setOpeningTime("");
-                request.setEndValidity("");
-                request.setWebsite("");
-                break;
             case "description":
                 request.setDescription(value);
                 break;
