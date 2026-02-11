@@ -27,4 +27,20 @@ Feature: Gestione utenti con API M2M V3
     And si verifica che le liste di utenze restituite coincidano
 
 
+  Scenario Outline: [M2M_V3_GET_USER] Recupero utente specifico purchè appartenente al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M <m2mRoles>
+    And viene invocata l'API per il recupero dell'utente "<userId>" purchè appartenente al tenant del richiedente
+    Then si ottiene status code <statusCode>
+
+    Examples:
+      | userId                               | m2mRoles  | statusCode |
+      | 17a84b7b-dce6-4b8f-a1ae-85926c55f02e | m2m-admin | 200        |
+      | null                                 | m2m-admin | 400        |
+      #userId valido ma non presente in db
+      | 56a84b7b-dce6-4b3f-a1ae-85926c55f02e | m2m-admin | 404        |
+      #userId appartenete ad un tenant differente
+      | e0477bcc-3baf-4755-aa31-375c051acb44 | m2m-admin | 404        |
+      | 17a84b7b-dce6-4b8f-a1ae-85926c55f02e | m2m       | 403        |
+    #da implementare -> i 2 status 401
+
 

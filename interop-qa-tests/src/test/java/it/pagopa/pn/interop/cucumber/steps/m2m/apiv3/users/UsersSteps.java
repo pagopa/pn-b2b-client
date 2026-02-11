@@ -49,6 +49,18 @@ public class UsersSteps {
         }
     }
 
+    @When("viene invocata l'API per il recupero dell'utente {string} purchè appartenente al tenant del richiedente")
+    public void getUser(String userId) {
+        UUID requestedUserId = parseNullableUuid(userId);
+        try {
+            User response = usersClient.getUser(requestedUserId);
+            Assertions.assertThat(response)
+                    .as("La response contenente l'utente non deve essere null")
+                    .isNotNull();
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
+    }
 
     @Then("si verifica che le liste di utenze restituite coincidano")
     public void verifyUsersListsCoincide() {
