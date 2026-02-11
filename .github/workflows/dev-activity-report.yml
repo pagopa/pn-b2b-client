@@ -30,6 +30,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
+
+          set -euo pipefail
           
           if [ -n "${{ github.event.inputs.report_date }}" ]; then
             TODAY="${{ github.event.inputs.report_date }}"
@@ -43,31 +45,53 @@ jobs:
           PAYLOAD_TEXT+=$'\n\n'
 
           # Lista branch remoti
-          BRANCHES=($(git for-each-ref --format='%(refname:short)' refs/remotes/origin/))
+          mapfile -t BRANCHES < <(
+            git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+            | grep -v 'HEAD'
+          )
+
+          # SHA globali unici del giorno
+          ALL_SHAS=()
+
+          for BR in "${BRANCHES[@]}"; do
+            mapfile -t TMP < <(
+              git log "$BR" \
+                --since="$TODAY 00:00" \
+                --until="$TODAY 23:59" \
+                --pretty="%H" || true
+            )
+            ALL_SHAS+=("${TMP[@]}")
+          done
+
+          # deduplica
+          mapfile -t UNIQUE_SHAS < <(
+            printf "%s\n" "${ALL_SHAS[@]}" | sort -u
+          )
+
+          echo "Total unique commits: ${#UNIQUE_SHAS[@]}"
 
           # Mappa autori Git → login GitHub + bot detection
           declare -A AUTHOR_MAP
+          declare -A AUTHOR_SHAS
 
-          for BR in "${BRANCHES[@]}"; do
-            SHAS=($(git log "$BR" --since="$TODAY 00:00" --until="$TODAY 23:59" --pretty="%H"))
+          for SHA in "${UNIQUE_SHAS[@]}"; do
 
-            for SHA in "${SHAS[@]}"; do
-              LOGIN=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.login' 2>/dev/null)
-              NAME=$(git log -1 --format="%an" $SHA)
+            LOGIN=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.login' 2>/dev/null || true)
+            NAME=$(git log -1 --format="%an" "$SHA")
 
-              # fallback al nome Git se non c'è login
-              if [ -z "$LOGIN" ] || [ "$LOGIN" == "null" ]; then
-                LOGIN="$NAME"
-              fi
+            if [ -z "$LOGIN" ] || [ "$LOGIN" == "null" ]; then
+              LOGIN="$NAME"
+            fi
 
-              # Bot detection
-              IS_BOT=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.type' 2>/dev/null)
-              if [[ "$IS_BOT" == "Bot" ]]; then
-                LOGIN="${LOGIN}[bot]"
-              fi
+            TYPE=$(gh api repos/${{ github.repository }}/commits/$SHA --jq '.author.type' 2>/dev/null || true)
 
-              AUTHOR_MAP["$LOGIN"]=1
-            done
+            if [[ "$TYPE" == "Bot" ]]; then
+              LOGIN="${LOGIN}[bot]"
+            fi
+
+            AUTHOR_MAP["$LOGIN"]=1
+            AUTHOR_SHAS["$LOGIN"]+="$SHA"$'\n'
+
           done
 
           # Array finale dei contributor
@@ -84,29 +108,24 @@ jobs:
             for DEV in "${CONTRIBUTORS[@]}"; do
               echo "Processing $DEV"
             
-              # Recupero SHA dei commit del giorno dell'utente
-              DEV_SHAS=()
-              for BR in "${BRANCHES[@]}"; do
-                BR_SHAS=($(git log "$BR" --since="$TODAY 00:00" --until="$TODAY 23:59" --author="$DEV" --pretty="%H"))
-                DEV_SHAS+=("${BR_SHAS[@]}")
-              done
+              mapfile -t DEV_SHAS < <(
+                printf "%s" "${AUTHOR_SHAS[$DEV]}"
+              )
 
-              # Conteggio commit
               COMMITS=${#DEV_SHAS[@]}
 
-              # Lines changed
               SIZE=0
               for SHA in "${DEV_SHAS[@]}"; do
-                CHG=$(git show --shortstat "$SHA" 2>/dev/null | grep "files changed" | awk '{sum+=$4} END {print sum+0}')
+                CHG=$(git show --shortstat "$SHA" 2>/dev/null \
+                  | grep "files changed" \
+                  | awk '{sum+=$4} END {print sum+0}')
                 SIZE=$((SIZE + CHG))
               done
 
-              # Push detection semantica
               PUSH=$COMMITS
 
-              # PR aperte
               PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
-            
+
               if [ "$COMMITS" -eq 0 ]; then
                 STATUS="❌ No commit"
               elif [ "$COMMITS" -gt 15 ]; then
