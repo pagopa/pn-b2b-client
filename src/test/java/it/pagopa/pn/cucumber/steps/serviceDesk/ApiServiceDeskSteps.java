@@ -1580,11 +1580,17 @@ public class ApiServiceDeskSteps {
     }
 
     private boolean checkAddressAndChannelType(String addressType, String addressCategory, Address data) {
+        boolean result = false;
         if (addressType.equals("cortesia")) {
-            return data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+            if (data.getCourtesyAddressType() != null && data.getCourtesyAddressType().equals(CourtesyAddressType.COURTESY)) {
+                result = data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+            }
         } else if (addressType.equals("legale")) {
-            return data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+            if (data.getLegalAddressType() != null && data.getLegalAddressType().equals(LegalAddressType.LEGAL)) {
+                result = data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+            }
         } else throw new IllegalArgumentException("addressType not valid");
+        return result;
     }
 
 

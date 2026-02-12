@@ -630,6 +630,27 @@ Feature: Api Service Cruscotto Assistenza
       | endDate   | LAST_TEN_MINUTES        |
     Then Il servizio risponde correttamente
 
+  @serviceDeskRefinement @cruscottoAssistenza
+  Scenario: [TIMELINE_REWORK_11] verificare che il nuovo elemento di timeline generato in seguito ad una richiesta di correzione (con suffisso _reworked) non sia visibile, per la lettura notifiche lato mittente, utilizzando una versione delle api precedente alla 2.8
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON30 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 15 secondi controllando ogni 3 secondi
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    #controllo API service-desk
+    And viene chiamato service desk e si controlla la presenza dell'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED" nella response
+
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -674,11 +695,14 @@ Feature: Api Service Cruscotto Assistenza
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_5] Recupero del profilo destinatario che ha selezionato il Domicilio Digitale come recapito legale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And viene attivato il servizio SERCQ SEND per il comune "default"
-    And viene verificato che Sercq sia "abilitato" per il comune "default"
-    #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And viene attivato il servizio SERCQ SEND come indirizzo di "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "uguali" tra di loro
+    And viene disabilitato il servizio SERCQ SEND per la PA "default"
 
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_6] Recupero del profilo destinatario che ha rimosso il Domicilio Digitale come recapito legale

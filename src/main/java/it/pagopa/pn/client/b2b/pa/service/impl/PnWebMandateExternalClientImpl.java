@@ -15,6 +15,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffSearchMandateResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffUpdateRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -40,7 +41,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     private final String basePath;
 
 
-    public PnWebMandateExternalClientImpl(RestTemplate restTemplate,
+    public PnWebMandateExternalClientImpl(@Qualifier("customRestTemplate") RestTemplate restTemplate,
                                           @Value("${pn.webapi.external.base-url}") String basePath,
                                           @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                           @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
@@ -56,7 +57,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.mandateServiceApi = new MandateApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+        this.mandateServiceApi = new MandateApi(newApiClient(restTemplate, basePath, marioCucumberBearerToken,userAgent));
         this.bearerTokenSetted = BearerTokenType.USER_1;
     }
 
