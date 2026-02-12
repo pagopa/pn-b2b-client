@@ -4,8 +4,8 @@ import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
-import it.pagopa.interop.agreement.service.IM2MClientsClient;
 import it.pagopa.interop.agreement.service.IM2MTenantClient;
+import it.pagopa.interop.agreement.service.m2m.v2.IM2MClientsClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MDeclaredAttributeClient;
@@ -18,10 +18,10 @@ import it.pagopa.interop.delegate.service.IM2MDelegationClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateAttributeClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
-import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.event.service.IM2MEventClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
@@ -29,6 +29,7 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.pn.interop.cucumber.steps.common.Auth;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 @ScenarioScope
 @RequiredArgsConstructor
 public class ClientTokenConfigurator {
+    private Auth auth;
     private String lastToken;
 
     private final IAuthorizationClient authorizationClient;
@@ -102,4 +104,6 @@ public class ClientTokenConfigurator {
         m2mPurposeTemplateClient.setBearerToken(token);
     }
 
+    public void setBearerToken(Auth auth) {
+    }
 }

@@ -1,6 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
+import it.pagopa.pn.interop.cucumber.steps.config.model.ApiProfile;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
 @TestConfiguration
 /**
@@ -27,4 +30,13 @@ public class CucumberScopedBeans {
                                         BlobFileCreator blobFileCreator) {
         return new EserviceSteps(sharedStepsContext, clientTokenConfigurator, blobFileCreator);
     }*/
+
+    @Bean
+    public ApiProfile apiProfile(Environment env) {
+        return ApiProfile.from(
+                env.getProperty("api.mode", ApiProfile.Mode.class, ApiProfile.Mode.AUTO),
+                env.getProperty("api.m2m.version", ApiProfile.M2mVersion.class, ApiProfile.M2mVersion.V2)
+//                env.getProperty("api.bff.version", "", "")
+        );
+    }
 }

@@ -1,11 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
-import static org.apache.commons.lang3.ObjectUtils.allNull;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.agreement.service.IM2MClientsClient;
+import it.pagopa.interop.agreement.service.m2m.v2.IM2MClientsClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -15,10 +12,14 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
+
+import static org.apache.commons.lang3.ObjectUtils.allNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClientSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;

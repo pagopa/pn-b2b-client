@@ -1,17 +1,18 @@
-package it.pagopa.interop.agreement.service.impl;
+package it.pagopa.interop.agreement.service.impl.m2m.v2;
 
-import it.pagopa.interop.agreement.service.IM2MClientsClient;
+import it.pagopa.interop.agreement.service.m2m.v2.IM2MClientsClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode

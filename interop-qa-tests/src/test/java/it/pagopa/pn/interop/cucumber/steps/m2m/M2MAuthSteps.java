@@ -9,12 +9,14 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.config.model.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
+
 
 public class M2MAuthSteps {
 
@@ -28,14 +30,17 @@ public class M2MAuthSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
+    private final ApiProfile profile;
 
     public M2MAuthSteps(
         ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext
+        SharedStepsContext sharedStepsContext,
+        ApiProfile profile
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+        this.profile = profile;
     }
 
     @Given("l'utente è un {m2mRole} dell'ente {delegationRole}")
@@ -52,6 +57,7 @@ public class M2MAuthSteps {
         DPoPTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
         sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
+        if (profile.getMode().equals(ApiProfile.))
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(selfcareRole.toUpperCase()));
