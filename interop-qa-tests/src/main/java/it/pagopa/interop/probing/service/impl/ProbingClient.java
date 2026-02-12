@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,9 @@ import java.util.UUID;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class ProbingClient extends AbstractClient implements IProbingClient {
+
+    private static final DateTimeFormatter UTC_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(java.time.ZoneOffset.UTC);
+
 
     // --- probing (core) ---
     private final HealthApi statusApi;
@@ -56,7 +61,7 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
 
         // --- probingStatistics ---
         it.pagopa.interop.generated.openapi.clients.probingStatistics.ApiClient statsApiClient =
-            createStatisticsApiClient(probingBearerTokenTelemetry);
+                createStatisticsApiClient(probingBearerTokenTelemetry);
         this.statisticsStatusApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.HealthApi(statsApiClient);
         this.telemetryApi = new it.pagopa.interop.generated.openapi.clients.probingStatistics.api.TelemetryApi(statsApiClient);
     }
@@ -207,8 +212,14 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     public void updateEserviceFrequency(UUID eserviceId, UUID versionId, Integer frequency, OffsetTime startTime, OffsetTime endTime) {
         ChangeProbingFrequencyRequest req = new ChangeProbingFrequencyRequest();
         req.setFrequency(frequency);
-        req.setStartTime(startTime != null ? startTime.format(DateTimeFormatter.ISO_LOCAL_TIME) : null);
-        req.setEndTime(endTime != null ? endTime.format(DateTimeFormatter.ISO_LOCAL_TIME) : null);
+        req.setStartTime(startTime != null
+                ? startTime.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
+                : null
+        );
+        req.setEndTime(endTime != null
+                ? endTime.withOffsetSameInstant(ZoneOffset.UTC).toLocalTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
+                : null
+        );
 
         performOperation(() -> eServicesApi.updateEserviceFrequencyWithHttpInfo(eserviceId, versionId, req));
 
@@ -257,12 +268,17 @@ public class ProbingClient extends AbstractClient implements IProbingClient {
     }
 
     @Override
-    public it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse filteredStatisticsEservices(Long eserviceRecordId, Integer pollingFrequency, String startDate, String endDate) {
+    public it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse filteredStatisticsEservices(Long eserviceRecordId, Integer pollingFrequency, OffsetDateTime startDate, OffsetDateTime endDate) {
         return performOperation(() -> telemetryApi.filteredStatisticsEservicesWithHttpInfo(
-                eserviceRecordId, pollingFrequency, startDate, endDate
+                eserviceRecordId, pollingFrequency, toUtcDateTimeFormat(startDate), toUtcDateTimeFormat(endDate)
         ))
                 .orElseThrow(() -> new IllegalStateException(
                         "Errore nel recupero statistiche filtrate e-service (response non 2xx o body nullo)"
                 ));
+    }
+
+    public static String toUtcDateTimeFormat(OffsetDateTime dt) {
+        if (dt == null) return null;
+        return UTC_FMT.format(dt.toInstant());
     }
 }

@@ -19,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.OffsetTime;
+import java.time.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -267,7 +264,7 @@ public class ProbingSteps {
             actual.setProbingEnabled(response.getProbingEnabled());
             actual.setState(response.getState().getValue());
 
-            probingContext.setLastResponseTime(response.getResponseReceived() != null ? OffsetTime.parse(response.getResponseReceived()) : null);
+            probingContext.setLastResponseTime(response.getResponseReceived() != null ? OffsetDateTime.parse(response.getResponseReceived()) : null);
 
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -295,8 +292,8 @@ public class ProbingSteps {
     public void getEserviceTelemetry(String eserviceRecordId, String pollingFrequency, String startDate, String endDate) {
         Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
         Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
-        String startDateValue = dateTimeOrNull(startDate).toString();
-        String endDateValue = dateTimeOrNull(endDate).toString();
+        OffsetDateTime startDateValue = dateTimeOrNull(startDate);
+        OffsetDateTime endDateValue = dateTimeOrNull(endDate);
 
         TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
         Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();
@@ -566,7 +563,7 @@ public class ProbingSteps {
         this.getEserviceMainData(String.valueOf(eserviceRecordId));
         this.getEserviceProbingData(String.valueOf(eserviceRecordId));
 
-        return probingContext.getLastResponseTime().atDate(LocalDate.now()).toInstant();
+        return probingContext.getLastResponseTime().toInstant();
     }
 
     private void assertResultsMatchFilters(SearchEserviceResponse response, ProbingUtils.EserviceFilters filters) {

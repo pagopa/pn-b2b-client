@@ -5,7 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.probingStatistics.model.Telem
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.OffsetTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,7 +24,7 @@ public class ProbingContext{
     private List<SearchEserviceContent> actualResults;
     private EserviceRow actualEserviceRow;
     private EserviceRow expectedEserviceRow;
-    private OffsetTime lastResponseTime;
+    private OffsetDateTime lastResponseTime;
     private List<TelemetryDataEserviceResponse> actualTelemetry = new ArrayList<>();
     private List<TelemetryDataEserviceResponse> expectedTelemetry = new ArrayList<>();
 

@@ -4,6 +4,7 @@ import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.probing.model.*;
 import it.pagopa.interop.generated.openapi.clients.probingStatistics.model.TelemetryDataEserviceResponse;
 
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.List;
 import java.util.UUID;
@@ -67,7 +68,7 @@ public interface IProbingClient extends SettableBearerToken {
     TelemetryDataEserviceResponse filteredStatisticsEservices(
             Long eserviceRecordId,
             Integer pollingFrequency,
-            String startDate,
-            String endDate
+            OffsetDateTime startDate,
+            OffsetDateTime endDate
     );
 }
