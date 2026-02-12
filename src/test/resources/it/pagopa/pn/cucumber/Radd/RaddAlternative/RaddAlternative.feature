@@ -1406,7 +1406,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                                         |
-      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Given viene generata una nuova notifica
@@ -1414,7 +1414,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                                         |
-      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Given viene generata una nuova notifica
@@ -1422,7 +1422,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Milano                            |
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                                         |
-      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     When la persona fisica Mario Cucumber chiede di verificare la presenza di notifiche
