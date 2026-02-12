@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.users.service.UsersClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +23,12 @@ public class UsersSteps {
     private final UsersClient usersClient;
     private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
-    private final UsersContext usersContext;
+    private final TenantContext tenantContext;
 
-    public UsersSteps(UsersClient usersClient, SharedStepsContext sharedStepsContext, UsersContext usersContext) {
+    public UsersSteps(UsersClient usersClient, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
         this.usersClient = usersClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.usersContext = usersContext;
+        this.tenantContext = tenantContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.usersClient.setHttpCallExecutor(this.httpCallExecutor);
     }
@@ -43,7 +44,7 @@ public class UsersSteps {
             Assertions.assertThat(response)
                     .as("La response contenente la lista utenti non deve essere null")
                     .isNotNull();
-            usersContext.setM2mUsers(response.getResults());
+            tenantContext.setM2mUsers(response.getResults());
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
@@ -64,8 +65,8 @@ public class UsersSteps {
 
     @Then("si verifica che le liste di utenze restituite coincidano")
     public void verifyUsersListsCoincide() {
-        List<User> m2mUsers = usersContext.getM2mUsers();
-        List<it.pagopa.interop.generated.openapi.clients.bff.model.User> selfcareUsers = usersContext.getSelfcareUsers();
+        List<User> m2mUsers = tenantContext.getM2mUsers();
+        List<it.pagopa.interop.generated.openapi.clients.bff.model.User> selfcareUsers = tenantContext.getSelfcareUsers();
 
         Assertions.assertThat(m2mUsers)
                 .as("La lista utenti M2M non deve essere null")

@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.User;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,13 @@ import java.util.UUID;
 public class SelfcareSteps {
     private final ISelfcareClient selfcareClient;
     private final IdentityService identityService;
+    private final TenantContext tenantContext;
     private HttpStatus httpStatus;
 
-    public SelfcareSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
+    public SelfcareSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
         this.selfcareClient = clientTokenConfigurator.getISelfcareClient();
         this.identityService = sharedStepsContext.getIdentityService();
+        this.tenantContext = tenantContext;
     }
 
     @When("viene invocata l'API di recupero utenze per l'istituzione: {string}")
@@ -31,6 +34,7 @@ public class SelfcareSteps {
         try {
             ResponseEntity<List<User>> institutionsSelfcareResponse = selfcareClient.getInstitutionUsers(tenantId, null, null, null);
             httpStatus = institutionsSelfcareResponse.getStatusCode();
+            tenantContext.setSelfcareUsers(institutionsSelfcareResponse.getBody());
         } catch (HttpStatusCodeException e) {
             httpStatus = e.getStatusCode();
         }
