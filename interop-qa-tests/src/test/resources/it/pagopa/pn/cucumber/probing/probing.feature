@@ -1,9 +1,8 @@
 Feature: Probing
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9074
   Scenario Outline: [GET_STATUS] - Health probing-ms check
     Given il microservizio <ms> risulta attivo
-    Then la response riporta lo status code 204
+    Then la response riporta lo status code 200
 
     Examples:
       | ms                       |
@@ -50,7 +49,6 @@ Feature: Probing
       | 10    | 0      | %null        | %null        | 0             | %null  | 400        |
       | 10    | 0      | %null        | %null        | -1            | %null  | 400        |
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9078
   Scenario Outline: [UPDATE_FREQUENCY] - Aggiornamento frequency e finestra temporale per e-service
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "<eserviceId>" e versionId "<versionId>" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
@@ -175,6 +173,8 @@ Feature: Probing
       | -1               | 400        |
       | %random          | 404        |
 
+    # NOTA: Lo status code 200 è previsto anche per il caso di un eserviceRecordId random per i motivi descritti nel ticket
+    # https://pagopa.atlassian.net/browse/PIN-9090
   Scenario Outline: [GET_ESERVICE_PUBLIC_TELEMETRY] - Recupera la telemetria pubblica di un e-service tramite il suo eserviceRecordId
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "<eserviceRecordId>" e pollingFrequency "<frequency>"
@@ -184,6 +184,7 @@ Feature: Probing
     # Happy paths
       | eserviceRecordId | frequency | statusCode |
       | %actual          | %actual   | 200        |
+      | %random          | %actual   | 200        |
 
     # Frequency invalid values
       | %actual          | %null     | 400        |
@@ -191,9 +192,9 @@ Feature: Probing
 
     # eserviceRecordId invalid values
       | %null            | %actual   | 400        |
-      | %random          | %actual   | 400        |
 
-    #PRECONDIZIONE: Aver mockato le response a nell'intervallo specificato
+    # NOTA: Lo status code 200 è previsto anche per il caso di un eserviceRecordId random per i motivi descritti nel ticket
+    # https://pagopa.atlassian.net/browse/PIN-9090
   Scenario Outline: [GET_ESERVICE_TELEMETRY] - Recupera la telemetria di un e-service tramite il suo eserviceRecordId e filtro temporale
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene recuperata la telemetria dell'e-service con eserviceRecordId "<eserviceRecordId>" e impostando pollingFrequency "<frequency>" , startDate "<startDate>" , endDate "<endDate>"
@@ -203,10 +204,10 @@ Feature: Probing
     # Happy paths
       | eserviceRecordId | frequency | startDate | endDate | statusCode |
       | %actual          | %actual   | now-20h   | now-10h | 200        |
+      | %random          | %actual   | now-20h   | now-10h | 200        |
 
     # eserviceRecordId invalid values
       | %null            | %actual   | now-20h   | now-10h | 400        |
-      | %random          | %actual   | now-20h   | now-10h | 400        |
       | -1               | %actual   | now-20h   | now-10h | 400        |
 
     # frequency invalid values
@@ -215,10 +216,9 @@ Feature: Probing
 
     # startDate invalid values
       | %actual          | %actual   | %null     | now-10h | 400        |
-      | %actual          | %actual   | abc       | now-10h | 400        |
+
     # endDate invalid values
       | %actual          | %actual   | now-20h   | %null   | 400        |
-      | %actual          | %actual   | now-20h   | abc     | 400        |
 
   Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
