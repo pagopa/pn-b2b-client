@@ -56,11 +56,15 @@ Feature: avanzamento b2b notifica multi destinatario analogico RS
   @dev  @workflowDigitale
   Scenario: [B2B_TIMELINE_MULTI_RIS_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL         |
+      | physicalAddress_State   | ALBANIA      |
+      | physicalAddress_zip     | ZONE_1       |
       | physicalAddress_address | Via@fail_RIS |
+      | payment_pagoPaForm      | NOALLEGATO   |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1

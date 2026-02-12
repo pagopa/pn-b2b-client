@@ -975,8 +975,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @perfezionamentoAR @workflowAnalogico
   Scenario Outline: [B2B_PERFEZIONAMENTO_AR_1] Verifica che il deliveryDetailCode del feedback sia PNRN012 con timestamp pari a RECRN010+10gg quando lo scarto tra RECRN010 e il secondo evento è superiore a 10 giorni
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | userTest         |
       | taxId                   | CLMCST42R12D969Z |
