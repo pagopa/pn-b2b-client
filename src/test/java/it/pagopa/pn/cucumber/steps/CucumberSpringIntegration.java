@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
@@ -196,8 +197,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EventTimelineParser.class,
         PnMandateAppIoClientImpl.class,
         ReworkTimelineClientImpl.class,
-
         LambdaInvoker.class,
+        TemplateEngineConfigBean.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
