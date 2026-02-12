@@ -173,6 +173,7 @@ public final class StepParser {
     }
 
     public static OffsetDateTime dateTimeOrNull(String raw) {
+        raw = normalize(raw);
         if (raw == null) return null;
 
         String token = raw.trim();
