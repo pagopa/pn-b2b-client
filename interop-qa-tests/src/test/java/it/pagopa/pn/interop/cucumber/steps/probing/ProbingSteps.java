@@ -295,11 +295,13 @@ public class ProbingSteps {
         OffsetDateTime startDateValue = dateTimeOrNull(startDate);
         OffsetDateTime endDateValue = dateTimeOrNull(endDate);
 
-        TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
-        Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();
+        try {
+            TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
+            Assertions.assertThat(response).as("La response contenente la telemetria dell'e-service non deve essere null").isNotNull();
 
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             probingContext.getActualTelemetry().add(response);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
     }
 
