@@ -275,24 +275,19 @@ public class SafeStorageSteps {
     @Given("viene caricato su SafeStorage il documento {string} con contentType {string} di tipo {string} e status {string}")
     public void uploadNewDocument(String resourcePath, String contentType, String documentType, String status) {
         String sha256 = computeAndSetSha(resourcePath);
-
         FileCreationRequest request = new FileCreationRequest();
         request.setContentType(contentType);
         request.setStatus(status != null ? status : "SAVED");
         request.setDocumentType(documentType);
-
         try {
             // Chiamata al servizio Safe Storage per registrare il file
             FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
-
             // Upload vero e proprio sulla presigned URL
             loadToPresignedUrl(fileCreationResponse, sha256, resourcePath, B2bUtils.APPLICATION_JSON);
-
         } catch (HttpClientErrorException httpExc) {
             throw new RuntimeException(httpExc);
         }
     }
-
 
     @Given("viene caricato un nuovo pdf di 0 byte")
     public void uploadNewEmptyDocument() {
@@ -847,11 +842,9 @@ public class SafeStorageSteps {
 
     @Given("viene eseguita la chiamata a safeStorage per ottenere la presigned-url di upload")
     public void getPresignedUrlUpload() {
-
         if (clientId.equalsIgnoreCase("pn-delivery")) {
             safeStorageClient.setApiKey("pn-delivery_api_key");
         }
-
         String resourcePath = "classpath:/multa.pdf";
         String sha256 = computeAndSetSha(resourcePath);
         FileCreationRequest request = new FileCreationRequest();
@@ -870,11 +863,9 @@ public class SafeStorageSteps {
 
     @Given("viene eseguita la chiamata a safeStorage per ottenere la presigned-url di download")
     public void getPresignedUrlDownload() {
-
         if (clientId.equalsIgnoreCase("pn-delivery")) {
             safeStorageClient.setApiKey("pn-delivery_api_key");
         }
-
         String fileKey = safeStorageStepsPojo.getFileCreationResponse().getKey();
         assertThat(fileKey).as("La file key del documento non dev'essere null").isNotNull();
 
@@ -924,18 +915,11 @@ public class SafeStorageSteps {
                 String downloadUrl = safeStorageStepsPojo.getFileDownloadResponse().getDownload().getUrl();
                 log.info("Download presigned url: " + downloadUrl);
 
-                HttpClient client = HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(10))
-                        .build();
-
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(downloadUrl))
-                        .GET()
-                        .build();
+                HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+                HttpRequest request = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).GET().build();
 
                 try {
                     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
                     int statusCode = response.statusCode();
                     String body = response.body();
                     log.info("HTTP status code: " + response.statusCode());

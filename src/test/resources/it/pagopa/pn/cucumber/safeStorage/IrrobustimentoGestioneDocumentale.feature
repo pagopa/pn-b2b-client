@@ -18,7 +18,7 @@ Feature: PN-17452 Irrobustimento Gestione Documentale
     Then l'operazione di "upload" restituisce status code 403
 
   @presignedUrlTimeout
-  #il client usato in questo test non ha DurationMinutestUpload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
+  #il client usato in questo test non ha DurationMinutesUpload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
   Scenario: [PRESIGNED_URL_TIMEOUT_UPLOAD_OK_2] Upload di un documento tramite presignedUrl valida da parte di un client che non ha DurationMinutestUpload impostato su pn-SsAnagraficaClient
     Given il client "pn-delivery" ha il campo "DurationMinutestUpload" valorizzato a 0 minuti
     And viene eseguita la chiamata a safeStorage per ottenere la presigned-url di upload
@@ -26,7 +26,7 @@ Feature: PN-17452 Irrobustimento Gestione Documentale
     Then l'operazione di "upload" restituisce status code 200
 
   @presignedUrlTimeout
-  #il client usato in questo test non ha DurationMinutestUpload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
+  #il client usato in questo test non ha DurationMinutesUpload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
   Scenario: [PRESIGNED_URL_TIMEOUT_UPLOAD_KO_2] Upload di un documento tramite presignedUrl scaduta da parte di un client che non ha DurationMinutestUpload impostato su pn-SsAnagraficaClient
     Given il client "pn-delivery" ha il campo "DurationMinutestUpload" valorizzato a 0 minuti
     And viene eseguita la chiamata a safeStorage per ottenere la presigned-url di upload
@@ -54,7 +54,7 @@ Feature: PN-17452 Irrobustimento Gestione Documentale
     Then l'operazione di "download" restituisce status code 403
 
   @presignedUrlTimeout
-  #il client usato in questo test non ha DurationMinutestDownload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
+  #il client usato in questo test non ha DurationMinutesDownload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
   Scenario: [PRESIGNED_URL_TIMEOUT_DOWNLOAD_OK_2] Download di un documento tramite presignedUrl valida da parte di un client che non ha DurationMinutestDownload impostato su pn-SsAnagraficaClient
     Given il client "pn-delivery" ha il campo "DurationMinutestDownload" valorizzato a 0 minuti
     And viene eseguita la chiamata a safeStorage per ottenere la presigned-url di upload
@@ -64,7 +64,7 @@ Feature: PN-17452 Irrobustimento Gestione Documentale
     Then l'operazione di "download" restituisce status code 200
 
   @presignedUrlTimeout
-  #il client usato in questo test non ha DurationMinutestDownload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
+  #il client usato in questo test non ha DurationMinutesDownload impostato su pn-SsAnagraficaClient, ma ha il valore di default dell'application.properties di safe storage
   Scenario: [PRESIGNED_URL_TIMEOUT_DOWNLOAD_KO_2] Download di un documento tramite presignedUrl scaduta da parte di un client che non ha DurationMinutestDownload impostato su pn-SsAnagraficaClient
     Given il client "pn-delivery" ha il campo "DurationMinutestDownload" valorizzato a 0 minuti
     And viene eseguita la chiamata a safeStorage per ottenere la presigned-url di upload
