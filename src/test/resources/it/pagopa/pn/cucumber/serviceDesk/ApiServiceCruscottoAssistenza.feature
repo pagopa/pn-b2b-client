@@ -631,7 +631,7 @@ Feature: Api Service Cruscotto Assistenza
     Then Il servizio risponde correttamente
 
   @serviceDeskRefinement @cruscottoAssistenza
-  Scenario: [TIMELINE_REWORK_11] verificare che il nuovo elemento di timeline generato in seguito ad una richiesta di correzione (con suffisso _reworked) non sia visibile, per la lettura notifiche lato mittente, utilizzando una versione delle api precedente alla 2.8
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_REWORK] Verificare che il nuovo elemento di timeline NOTIFICATION_TIMELINE_REWORKED generato in seguito ad una richiesta di correzione sia visibile da serviceDesk
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -649,7 +649,8 @@ Feature: Api Service Cruscotto Assistenza
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 15 secondi controllando ogni 3 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     #controllo API service-desk
-    And viene chiamato service desk e si controlla la presenza dell'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED" nella response
+    And viene chiamato service desk e si controlla la presenza dell'elemento "NOTIFICATION_TIMELINE_REWORKED" nella response
+    And si verifica che lo stato della notifica recuperata sia: "VIEWED"
 
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email
