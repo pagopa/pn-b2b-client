@@ -72,10 +72,6 @@ jobs:
           declare -A COMMIT_LOGIN
           declare -A AUTHOR_MAP
 
-          # Mappa autori Git → login GitHub + bot detection
-          declare -A COMMIT_LOGIN
-          declare -A AUTHOR_MAP
-
           for SHA in "${UNIQUE_SHAS[@]}"; do
             API=$(gh api repos/${{ github.repository }}/commits/$SHA 2>/dev/null || true)
             
@@ -175,14 +171,17 @@ jobs:
               fi
 
               PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
+              PR=${PR:-0}
 
               # PRs merged today
               PR_MERGED=$(gh pr list --author "$DEV" --state merged \
                 --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+              PR_MERGED=${PR_MERGED:-0}
 
               # PRs reviewed by this developer
               PR_REVIEWED=$(gh search prs --reviewer "$DEV" \
                 --merged "$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+              PR_REVIEWED=${PR_REVIEWED:-0}
 
               # Cumulative status with smart thresholds
               ISSUES=()
@@ -237,19 +236,20 @@ jobs:
 
           ## **New Threshold Summary**
 
-          | Metric | Threshold | Alert |
-          |--------|-----------|-------|
-          | **Avg commit size** | >500 lines | ❌ Critical - hard to review |
-          | **Commits** | >25 + <50L avg | ⚠️ Too many tiny commits |
-          | **Commits** | >5 but 0 merged | ⚠️ Work not integrated |
-          | **PR reviews** | 0 but has merges | ⚠️ Not helping team |
-          | **Conv commits** | <60% (3+ commits) | ⚠️ Low compliance |
-          | **Activity** | 0 commits | ❌ Inactive |
+          ## | Metric | Threshold | Alert |
+          ## |--------|-----------|-------|
+          ## | **Avg commit size** | >500 lines | ❌ Critical - hard to review |
+          ## | **Commits** | >25 + <50L avg | ⚠️ Too many tiny commits |
+          ## | **Commits** | >5 but 0 merged | ⚠️ Work not integrated |
+          ## | **PR reviews** | 0 but has merges | ⚠️ Not helping team |
+          ## | **Conv commits** | <60% (3+ commits) | ⚠️ Low compliance |
+          ## | **Activity** | 0 commits | ❌ Inactive |
           
           # Team-level metrics
           PAYLOAD_TEXT+=$'\n'"*📊 Team Summary*"$'\n'
           TOTAL_COMMITS=${#UNIQUE_SHAS[@]}
           TOTAL_PRS=$(gh pr list --state merged --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+          TOTAL_PRS=${TOTAL_PRS:-0}
           ACTIVE_DEVS=${#CONTRIBUTORS[@]}
           
           if [ "$ACTIVE_DEVS" -gt 0 ]; then
