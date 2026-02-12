@@ -376,7 +376,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Examples:
       | sequence                | physicalAddress             | deliveryDetailCode | category   | flowThrow           |
       | OK_RIR_INVALID_DATETIME | Via@OK_RIR_INVALID_DATETIME | RECRI003B          | DATE_ERROR | SEQUENCE_VALIDATION |
-      | OK_RIR_TIMESTAMP_ERR    | Via@OK_AR_TIMESTAMP_ERR     | RECRI003B          | DATE_ERROR | SEQUENCE_VALIDATION |
+      | OK_RIR_TIMESTAMP_ERR    | Via@OK_RIR_TIMESTAMP_ERR    | RECRI003B          | DATE_ERROR | SEQUENCE_VALIDATION |
 
       #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
