@@ -131,7 +131,15 @@ jobs:
               done
 
               PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
-              
+
+              # PRs merged today
+              PR_MERGED=$(gh pr list --author "$DEV" --state merged \
+                --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+
+              # PRs reviewed by this developer
+              PR_REVIEWED=$(gh search prs --reviewer "$DEV" \
+                --merged "$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+                
               if [ "$COMMITS" -eq 0 ]; then
                 STATUS="❌ No commit"
               elif [ "$COMMITS" -gt 15 ]; then
@@ -148,11 +156,30 @@ jobs:
               PAYLOAD_TEXT+=$'\n'
               PAYLOAD_TEXT+="Open PR: $PR"
               PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="PRs merged today: $PR_MERGED"$'\n'
+              PAYLOAD_TEXT+="PRs reviewed: $PR_REVIEWED"$'\n'
               PAYLOAD_TEXT+="Status: $STATUS"
               PAYLOAD_TEXT+=$'\n\n'
               
             done
           fi
+
+          # Team-level metrics
+          PAYLOAD_TEXT+=$'\n'"*📊 Team Summary*"$'\n'
+          TOTAL_COMMITS=${#UNIQUE_SHAS[@]}
+          TOTAL_PRS=$(gh pr list --state merged --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+          ACTIVE_DEVS=${#CONTRIBUTORS[@]}
+          
+          if [ "$ACTIVE_DEVS" -gt 0 ]; then
+            AVG_COMMITS_PER_DEV=$((TOTAL_COMMITS / ACTIVE_DEVS))
+          else
+            AVG_COMMITS_PER_DEV=0
+          fi
+
+          PAYLOAD_TEXT+="Total commits: $TOTAL_COMMITS"$'\n'
+          PAYLOAD_TEXT+="PRs merged: $TOTAL_PRS"$'\n'
+          PAYLOAD_TEXT+="Active developers: $ACTIVE_DEVS"$'\n'
+          PAYLOAD_TEXT+="Avg commits/developer: $AVG_COMMITS_PER_DEV"$'\n'
 
           # Creo JSON sicuro per Slack usando jq
           jq -n \
