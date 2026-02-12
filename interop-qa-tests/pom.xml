@@ -44,6 +44,12 @@
             <version>${aws.sdk.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>cognitoidentityprovider</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
         <!-- Gson: Library for serializing and deserializing Java objects to and from JSON format -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
