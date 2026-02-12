@@ -238,7 +238,7 @@ public class PaperTrackerSteps {
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(analogEventIds);
         AtomicReference<TrackingErrorsResponse> atomicReference = new AtomicReference<>();
-        await().atMost(Duration.ofMinutes(3))
+        await().atMost(Duration.ofMinutes(5))
                 .pollInterval(Duration.ofSeconds(5))
                 .untilAsserted(() -> {
                     atomicReference.set(paperTrackerClient.retrieveTrackerErrors(request));

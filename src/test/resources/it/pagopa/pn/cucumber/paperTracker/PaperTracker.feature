@@ -234,7 +234,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
-  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4]
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti aspettando l'evento CON020
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -243,6 +243,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | physicalAddress_address | <physicalAddress> |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
@@ -262,14 +263,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_GIACENZA_AR_2                | Via@OK_GIACENZA_AR_2                | ANALOG_SUCCESS_WORKFLOW            |
       | OK_GIACENZA_AR_3                | Via@OK_GIACENZA_AR_3                | ANALOG_SUCCESS_WORKFLOW            |
       | OK_GIACENZA_AR_4                | Via@OK_GIACENZA_AR_4                | ANALOG_SUCCESS_WORKFLOW            |
-
       | OK_AR_BAD_EVENT                 | Via@OK_AR_BAD_EVENT                 | ANALOG_SUCCESS_WORKFLOW            |
-
       | FAIL_IndirizzoInesistenteAR     | Via@FAIL_IndirizzoInesistenteAR     | ANALOG_SUCCESS_WORKFLOW            |
       | FAIL-DiscoveryIrreperibile_AR   | Via@FAIL-DiscoveryIrreperibile_AR   | ANALOG_FAILURE_WORKFLOW            |
-
       | OK-WO-Giacenza_AR               | Via@OK-WO-Giacenza_AR               | ANALOG_SUCCESS_WORKFLOW            |
-      | OK-M_AR                         | Via@OK-M_AR                         | ANALOG_SUCCESS_WORKFLOW            |
       | FAIL-Irreperibile_AR_SLOW       | Via@FAIL-Irreperibile_AR_SLOW       | ANALOG_SUCCESS_WORKFLOW            |
       | OK_AR-CON020-7Z1P               | Via@OK_AR-CON020-7Z1P               | ANALOG_SUCCESS_WORKFLOW            |
       | OK_AR-CON020-ZIP1P              | Via@OK_AR-CON020-ZIP1P              | ANALOG_SUCCESS_WORKFLOW            |
@@ -277,17 +274,32 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR-CON020-ZIP2P              | Via@OK_AR-CON020-ZIP2P              | ANALOG_SUCCESS_WORKFLOW            |
       | OK_AR-CON020-7Z3P               | Via@OK_AR-CON020-7Z3P               | ANALOG_SUCCESS_WORKFLOW            |
       | OK_AR-CON020-ZIP3P              | Via@OK_AR-CON020-ZIP3P              | ANALOG_SUCCESS_WORKFLOW            |
-      | OK-Giacenza_AR_ZIP              | Via@OK-Giacenza_AR_ZIP              | ANALOG_SUCCESS_WORKFLOW            |
-
-      | FAIL_DECEDUTO_SLOW_AR           | Via@FAIL_DECEDUTO_SLOW_AR           | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
-      | FAIL_DECEDUTO_AR                | Via@FAIL_DECEDUTO_AR                | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
-      | FAIL-CON996_PCRETRY_DECEDUTO-AR | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
       | OK_AR_OCR_FAIL                  | Via@OK_AR_OCR_FAIL                  | ANALOG_SUCCESS_WORKFLOW            |
       | OK_AR_OCR_PENDING               | Via@OK_AR_OCR_PENDING               | ANALOG_SUCCESS_WORKFLOW            |
-
       | FAIL_CON996_PCRETRY_FURTO_AR    | Via@FAIL_CON996_PCRETRY_FURTO_AR    | ANALOG_SUCCESS_WORKFLOW            |
       | OK_PCRETRY_CON996_AR            | Via@OK_PCRETRY_CON996_AR            | ANALOG_SUCCESS_WORKFLOW            |
       | OK_AR_ALL_CON                   | Via@OK_AR_ALL_CON                   | ANALOG_SUCCESS_WORKFLOW            |
+
+  @paperTrackerARRunMode
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti per le sequence in cui non è previsto l'evento CON020
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | <physicalAddress> |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
+    Then si controlla che non ci siano eventi duplicati
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    Examples:
+      | sequence                        | physicalAddress                     | waitUntil                          |
+      | OK-M_AR                         | Via@OK-M_AR                         | ANALOG_SUCCESS_WORKFLOW            |
+      | OK-Giacenza_AR_ZIP              | Via@OK-Giacenza_AR_ZIP              | ANALOG_SUCCESS_WORKFLOW            |
+      | FAIL_DECEDUTO_SLOW_AR           | Via@FAIL_DECEDUTO_SLOW_AR           | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
+      | FAIL_DECEDUTO_AR                | Via@FAIL_DECEDUTO_AR                | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
+      | FAIL-CON996_PCRETRY_DECEDUTO-AR | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
 
   #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
