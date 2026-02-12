@@ -1,0 +1,201 @@
+name: Dev Activity Report
+
+on:
+  schedule:
+    - cron: "0 18 * * *"  # ogni giorno alle 18:00 UTC
+  workflow_dispatch:     # permette run manuale
+    inputs:
+        report_date:
+          description: "Date to analyze (YYYY-MM-DD). Leave empty for today UTC."
+          required: false
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout all branches
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all remotes
+        run: git fetch --all --prune
+
+      - name: Generate Report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+        
+          if [ -n "${{ github.event.inputs.report_date }}" ]; then
+            TODAY="${{ github.event.inputs.report_date }}"
+          else
+            TODAY=$(date -u +%Y-%m-%d)
+          fi
+
+          echo "Using date: $TODAY"
+          
+          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*"
+          PAYLOAD_TEXT+=$'\n\n'
+
+          # Lista branch remoti
+          mapfile -t BRANCHES < <(
+            git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+            | grep -v 'HEAD'
+          )
+
+          # SHA globali unici del giorno
+          ALL_SHAS=()
+
+          for BR in "${BRANCHES[@]}"; do
+            mapfile -t TMP < <(
+              git log "$BR" \
+                --since="$TODAY 00:00" \
+                --until="$TODAY 23:59" \
+                --pretty="%H" || true
+            )
+            ALL_SHAS+=("${TMP[@]}")
+          done
+
+          # deduplica
+          mapfile -t UNIQUE_SHAS < <(
+            printf "%s\n" "${ALL_SHAS[@]}" | sort -u
+          )
+
+          echo "Total unique commits: ${#UNIQUE_SHAS[@]}"
+
+          # Mappa autori Git → login GitHub + bot detection
+          declare -A COMMIT_LOGIN
+          declare -A AUTHOR_MAP
+
+          # Mappa autori Git → login GitHub + bot detection
+          declare -A COMMIT_LOGIN
+          declare -A AUTHOR_MAP
+
+          for SHA in "${UNIQUE_SHAS[@]}"; do
+            API=$(gh api repos/${{ github.repository }}/commits/$SHA 2>/dev/null || true)
+            
+            if [ -z "$API" ]; then
+              echo "Warning: Skipping $SHA (API call failed)"
+              continue
+            fi
+            
+            LOGIN=$(echo "$API" | jq -r '.author.login // empty')
+            TYPE=$(echo "$API" | jq -r '.author.type // empty')
+            NAME=$(git log -1 --format="%an" "$SHA")
+
+            if [ -z "$LOGIN" ] || [ "$LOGIN" == "null" ]; then
+              LOGIN="$NAME"
+            fi
+
+            if [[ "$TYPE" == "Bot" ]]; then
+              LOGIN="${LOGIN}[bot]"
+            fi
+
+            COMMIT_LOGIN["$SHA"]="$LOGIN"
+            AUTHOR_MAP["$LOGIN"]=1
+          done
+
+          # Array finale dei contributor
+          CONTRIBUTORS=("${!AUTHOR_MAP[@]}")
+
+          echo "Contributors found:"
+          printf '%s\n' "${CONTRIBUTORS[@]}"
+
+          if [ ${#CONTRIBUTORS[@]} -eq 0 ]; then
+            PAYLOAD_TEXT+="⚠️ No contributors detected today."
+            PAYLOAD_TEXT+=$'\n'
+          else
+            for DEV in "${CONTRIBUTORS[@]}"; do
+              echo "Processing $DEV"
+            
+              # Find this developer's commits
+              DEV_SHAS=()
+              while IFS= read -r SHA; do
+                if [[ "${COMMIT_LOGIN[$SHA]}" == "$DEV" ]]; then
+                  DEV_SHAS+=("$SHA")
+                fi
+              done < <(printf '%s\n' "${UNIQUE_SHAS[@]}")
+
+              COMMITS=${#DEV_SHAS[@]}
+              
+              # Calculate lines changed (insertions only)
+              SIZE=0
+              for SHA in "${DEV_SHAS[@]}"; do
+                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1} END {print sum+0}' || echo "0")
+                SIZE=$((SIZE + ${LINES:-0}))
+              done
+
+              PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
+
+              # PRs merged today
+              PR_MERGED=$(gh pr list --author "$DEV" --state merged \
+                --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+
+              # PRs reviewed by this developer
+              PR_REVIEWED=$(gh search prs --reviewer "$DEV" \
+                --merged "$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+                
+              if [ "$COMMITS" -eq 0 ]; then
+                STATUS="❌ No commit"
+              elif [ "$COMMITS" -gt 15 ]; then
+                STATUS="⚠️ Possibly non-atomic commits"
+              else
+                STATUS="✅ OK"
+              fi
+            
+              PAYLOAD_TEXT+="👨‍💻 $DEV"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Commits: $COMMITS"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Lines added: $SIZE"$'\n'
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="Open PR: $PR"
+              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="PRs merged today: $PR_MERGED"$'\n'
+              PAYLOAD_TEXT+="PRs reviewed: $PR_REVIEWED"$'\n'
+              PAYLOAD_TEXT+="Status: $STATUS"
+              PAYLOAD_TEXT+=$'\n\n'
+              
+            done
+          fi
+
+          # Team-level metrics
+          PAYLOAD_TEXT+=$'\n'"*📊 Team Summary*"$'\n'
+          TOTAL_COMMITS=${#UNIQUE_SHAS[@]}
+          TOTAL_PRS=$(gh pr list --state merged --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+          ACTIVE_DEVS=${#CONTRIBUTORS[@]}
+          
+          if [ "$ACTIVE_DEVS" -gt 0 ]; then
+            AVG_COMMITS_PER_DEV=$((TOTAL_COMMITS / ACTIVE_DEVS))
+          else
+            AVG_COMMITS_PER_DEV=0
+          fi
+
+          PAYLOAD_TEXT+="Total commits: $TOTAL_COMMITS"$'\n'
+          PAYLOAD_TEXT+="PRs merged: $TOTAL_PRS"$'\n'
+          PAYLOAD_TEXT+="Active developers: $ACTIVE_DEVS"$'\n'
+          PAYLOAD_TEXT+="Avg commits/developer: $AVG_COMMITS_PER_DEV"$'\n'
+
+          # Creo JSON sicuro per Slack usando jq
+          jq -n \
+            --arg channel "$SLACK_CHANNEL_ID" \
+            --arg text "$PAYLOAD_TEXT" \
+            '{channel:$channel, text:$text, mrkdwn:true}' \
+            > dev_payload.json
+
+      - name: Debug payload
+        run: |
+          echo "=== DEV PAYLOAD ==="
+          cat dev_payload.json
+
+      - name: Send Slack message
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload-file-path: dev_payload.json
