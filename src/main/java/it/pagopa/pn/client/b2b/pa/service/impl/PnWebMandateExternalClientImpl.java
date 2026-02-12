@@ -161,6 +161,10 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
 
     public void rejectMandate(String mandateId) throws RestClientException {
+        System.out.println("Thread name: " +
+                Thread.currentThread().getName() + " -> " +
+                        restTemplate.getRequestFactory().getClass()
+        );
         mandateServiceApi.rejectMandateV1(mandateId);
     }
 
