@@ -312,7 +312,6 @@ public enum TimelineEventId {
         }
     },
 
-    //TODO VAS
     PUBLIC_REGISTRY_VALIDATION_CALL("PUBLIC_REGISTRY_VALIDATION_CALL") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -324,7 +323,6 @@ public enum TimelineEventId {
         }
     },
 
-    //TODO VAS
     PUBLIC_REGISTRY_VALIDATION_RESPONSE("PUBLIC_REGISTRY_VALIDATION_RESPONSE") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -338,6 +336,16 @@ public enum TimelineEventId {
                     .append("IUN_")
                     .append(eventId.getIun());
             return sb.toString();
+        }
+    },
+    NOTIFICATION_TIMELINE_REWORKED("NOTIFICATION_TIMELINE_REWORKED") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
         }
     };
 
