@@ -6,22 +6,22 @@ DECLARE
   -- =====================
   -- CONFIG (MODIFICABILE)
   -- =====================
-v_ok_count     int := 10000;
+v_ok_count            int := 1;
   v_error_count
-int := 5000;
+int := 1;
   v_random_count
-int := 5000;
+int := 1;
 
   v_base_host
 text := 'http://probing-be-eservice-mock.qa:8080';
 
-  -- polling (ora italiana con DST)
+  -- polling (UTC)
   v_polling_start_time
-timetz := (time '08:00' AT TIME ZONE 'Europe/Rome')::timetz;
+timetz := '08:00:00+00';
   v_polling_end_time
-timetz := (time '17:00' AT TIME ZONE 'Europe/Rome')::timetz;
+timetz := '17:00:00+00';
   v_polling_frequency
-int    := 15;
+int    := 1;
 
   v_probing_enabled_default
 boolean := false;
@@ -35,7 +35,8 @@ BEGIN
 
   IF
 v_eservices_count <= 0 THEN
-    RAISE EXCEPTION 'Total eservices count must be > 0 (ok=% , error=% , random=%).',
+    RAISE EXCEPTION
+      'Total eservices count must be > 0 (ok=% , error=% , random=%).',
       v_ok_count, v_error_count, v_random_count;
 END IF;
 
@@ -57,7 +58,7 @@ INSERT INTO qa_probing.eservices (id,
     OVERRIDING SYSTEM VALUE
 SELECT gs::bigint AS id,
 
-      -- UUID deterministico da gs (
+    -- UUID deterministico da gs (
     substr(md5(gs::bigint::text), 1, 8) || '-' ||
     substr(md5(gs::bigint::text), 9, 4) || '-' ||
     substr(md5(gs::bigint::text), 13, 4) || '-' ||
@@ -65,7 +66,7 @@ SELECT gs::bigint AS id,
     substr(md5(gs::bigint::text), 21, 12)
     )::uuid AS eservice_id,
 
-      -- UUID deterministico da (1000000000 + gs) (
+    -- UUID deterministico da (1000000000 + gs) (
     substr(md5((1000000000 + gs::bigint)::text), 1, 8) || '-' ||
     substr(md5((1000000000 + gs::bigint)::text), 9, 4) || '-' ||
     substr(md5((1000000000 + gs::bigint)::text), 13, 4) || '-' ||
@@ -74,40 +75,40 @@ SELECT gs::bigint AS id,
     )::uuid AS version_id, ('ESVC-' || lpad(gs::text, 8, '0')) AS eservice_name,
        ('Producer ' || ((gs - 1) % 50 + 1)) AS producer_name,
 
-      -- Tecnologia: deterministica e NON NULL (pari/dispari)
-      CASE WHEN (gs % 2) = 0 THEN 'SOAP' ELSE 'REST'
+    -- Tecnologia: deterministica e NON NULL (pari/dispari)
+    CASE WHEN (gs % 2) = 0 THEN 'SOAP' ELSE 'REST'
 END AS eservice_technology,
 
-      -- base_path: host fisso + endpoint coerente con tecnologia + outcome configurabile
-      ARRAY[
-        v_base_host ||
-        CASE WHEN (gs % 2) = 0
-          THEN '/soap/interop/probing/'
-          ELSE '/rest/interop/probing/'
+    -- base_path: host fisso + endpoint coerente con tecnologia + outcome configurabile
+    ARRAY[
+      v_base_host ||
+      CASE WHEN (gs % 2) = 0
+        THEN '/soap/interop/probing/'
+        ELSE '/rest/interop/probing/'
 END
 ||
-        CASE
-          WHEN gs <= v_ok_count THEN 'ok'
-          WHEN gs <= v_ok_count + v_error_count THEN 'error'
-          ELSE 'random'
+      CASE
+        WHEN gs <= v_ok_count THEN 'ok'
+        WHEN gs <= v_ok_count + v_error_count THEN 'error'
+        ELSE 'random'
 END
 ||
-        '/status'
-      ]::varchar[] AS base_path,
+      '/status'
+    ]::varchar[] AS base_path,
 
-      ARRAY['AUD_' || (1 + ((gs - 1) % 20))]::varchar[] AS audience,
-      'ACTIVE' AS state,
-      1 AS version_number,
-      0 AS lock_version,
-      v_probing_enabled_default AS probing_enabled,
-      v_polling_start_time AS polling_start_time,
-      v_polling_end_time   AS polling_end_time,
-      v_polling_frequency  AS polling_frequency
-
+    ARRAY['AUD_' || (1 + ((gs - 1) % 20))]::varchar[] AS audience,
+    'ACTIVE' AS state,
+    1 AS version_number,
+    0 AS lock_version,
+    v_probing_enabled_default AS probing_enabled,
+    v_polling_start_time AS polling_start_time,
+    v_polling_end_time   AS polling_end_time,
+    v_polling_frequency  AS polling_frequency
   FROM generate_series(1, v_eservices_count) gs;
 
   RAISE
 NOTICE 'Inserted % rows (ok=% , error=% , random=%).',
     v_eservices_count, v_ok_count, v_error_count, v_random_count;
 
-END $$;
+END
+$$;
