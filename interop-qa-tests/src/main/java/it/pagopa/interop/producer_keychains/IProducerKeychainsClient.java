@@ -1,13 +1,14 @@
 package it.pagopa.interop.producer_keychains;
 
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
 
 import java.util.UUID;
 
 public interface IProducerKeychainsClient {
 
-    ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed);
+    CreatedResource createProducerKeychain(ProducerKeychainSeed producerKeychainSeed);
 
-    void deleteProducerKeychainKeyById(UUID keychainId, String keyId);
+    ProducerKeychain getProducerKeychain(UUID producerKeychainId);
 }

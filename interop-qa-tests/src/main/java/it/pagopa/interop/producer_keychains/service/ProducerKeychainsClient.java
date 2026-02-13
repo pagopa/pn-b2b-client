@@ -3,13 +3,11 @@ package it.pagopa.interop.producer_keychains.service;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ProducerKeychainsApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServices;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.JWKs;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKeychain;
+import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
 import it.pagopa.interop.producer_keychains.IProducerKeychainsClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 
@@ -26,30 +24,35 @@ import org.springframework.web.client.RestTemplate;
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class ProducerKeychainsClient extends AbstractClient implements IProducerKeychainsClient {
 
-    private final ProducerKeychainsApi producerKeychainsApi;
+    private final ProducerKeychainApi producerKeychainApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
     public ProducerKeychainsClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
-        this.basePath = interopClientConfigs.getApiv3BaseUrl();
+        this.basePath = interopClientConfigs.getBaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
-        this.producerKeychainsApi = new ProducerKeychainsApi(createProducerKeychainsApiClient());
+        this.producerKeychainApi = new ProducerKeychainApi(createProducerKeychainApiClient("dummyBearer"));
     }
 
-    private ApiClient createProducerKeychainsApiClient() {
+    private ApiClient createProducerKeychainApiClient(String bearerToken) {
         ApiClient apiClient = new ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
+        apiClient.setBearerToken(bearerToken);
         return apiClient;
     }
 
-    public ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed) {
-        return performOperation(() -> producerKeychainsApi.createProducerKeychainKeyWithHttpInfo(keychainId, keySeed)).orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)"));
+    public CreatedResource createProducerKeychain(ProducerKeychainSeed producerKeychainSeed) {
+        return performOperation(SimpleOperation.of(() -> producerKeychainApi.createProducerKeychain(producerKeychainSeed), res -> res)).orElseThrow(() -> new IllegalStateException("Errore nella creazione del producer keychain (response non 2xx o body nullo)"));
     }
 
-    public void deleteProducerKeychainKeyById(UUID keychainId, String keyId) {
-        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, keyId)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
+    public ProducerKeychain getProducerKeychain(UUID producerKeychainId) {
+        return performOperation(SimpleOperation.of(() -> producerKeychainApi.getProducerKeychain(producerKeychainId), res -> res)).orElseThrow(() -> new IllegalStateException("Errore nel recupero del producer keychain (response non 2xx o body nullo)"));
     }
 
+
+    public void setBearerToken(String bearerToken) {
+        this.producerKeychainApi.setApiClient(createProducerKeychainApiClient(bearerToken));
+    }
 }
