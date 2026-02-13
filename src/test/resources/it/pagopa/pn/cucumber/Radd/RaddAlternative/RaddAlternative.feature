@@ -476,10 +476,11 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-59] PF/PG - Scansione QR code esistente, associato al CF corretto, per una notifica multi destinatario con allegati di pagamento (Avvisi PagoPA e F24)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
-      | feePolicy          | DELIVERY_MODE                                |
-      | paFee              | 0                                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | feePolicy             | DELIVERY_MODE                                |
+      | paFee                 | 0                                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
