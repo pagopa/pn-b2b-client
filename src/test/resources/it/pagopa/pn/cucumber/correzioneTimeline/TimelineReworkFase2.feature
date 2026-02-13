@@ -234,7 +234,6 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
-    Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
   @timelineReworkF2 #rif 5.1
   Scenario: [TIMELINE_REWORK_7] verificare che non sia possibile effettuare la correzione di una timeline su una notifica visualizzata dal destinatario, in cui è presente un ATTEMPT_1 in OK da invalidare completamente
@@ -381,7 +380,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V23"
     Then controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V2"
 
-  @timelineReworkF2 @cleanWebhook @webhookV29 #rif 6.3
+  @timelineReworkF2 @cleanWebhook @webhookV29 @webhook3 #rif 6.3
   Scenario: [TIMELINE_REWORK_12] Lettura nuovo evento di timeline dallo stream
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -404,7 +403,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED" con la versione "più recente"
 
-  @timelineReworkF2 @cleanWebhook @webhookV23
+  @timelineReworkF2 @cleanWebhook @webhookV23 @webhook3
   Scenario: [TIMELINE_REWORK_13] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23" e filtro status "DEFAULT"
@@ -548,6 +547,8 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C          |                              | REASON554 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001A  |                      |              |              |
@@ -557,6 +558,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
     And viene aggiornata la richiesta di rework con i seguenti dati:
@@ -564,7 +566,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       |     |          | RECRN002F          | M01                          |
     And si verifica che la chiamata sia andata in errore con il seguente status code: 400
 
-  @timelineReworkF2 @cleanWebhook @webhookV25
+  @timelineReworkF2 @cleanWebhook @webhookV25 @webhook1
   Scenario: [TIMELINE_REWORK_13B] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro status "DEFAULT"
@@ -576,7 +578,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -589,7 +591,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
 
-  @timelineReworkF2 @cleanWebhook
+  @timelineReworkF2 @cleanWebhook @webhookV28 @webhook2
   Scenario: [TIMELINE_REWORK_13C] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V28" e filtro status "DEFAULT"
@@ -601,7 +603,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -614,7 +616,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si invoca l'api Webhook versione "V28" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V28"
 
-  @timelineReworkF2
+  @timelineReworkF2 @cleanWebhook @webhook2
   Scenario: [TIMELINE_REWORK_13D] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro status "DEFAULT"
@@ -626,7 +628,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
