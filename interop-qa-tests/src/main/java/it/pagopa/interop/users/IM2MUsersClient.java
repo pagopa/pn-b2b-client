@@ -5,7 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import java.util.List;
 import java.util.UUID;
 
-public interface IUsersClient {
+public interface IM2MUsersClient {
 
 	User getUser(UUID userId);
 
