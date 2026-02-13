@@ -31,7 +31,7 @@ public class BFFProducerKeychainsSteps {
 
     }
 
-    @And("esiste un producer keychain {string} con descrizione {string}")
+    @And("esiste un producer keychain con nome {string} e con descrizione {string}")
     public void createProducerKeychainWithoutAssociatedUsers(String name, String description) {
 
         ProducerKeychainSeed seed = new ProducerKeychainSeed().name(name).description(description).members(List.of());

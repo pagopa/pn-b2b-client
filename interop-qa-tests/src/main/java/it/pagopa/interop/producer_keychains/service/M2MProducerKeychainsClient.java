@@ -5,6 +5,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ProducerKeychainsApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
 import it.pagopa.interop.producer_keychains.IM2MProducerKeychainsClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -48,4 +49,7 @@ public class M2MProducerKeychainsClient extends AbstractClient implements IM2MPr
         performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, keyId)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
     }
 
+    public void createProducerKeychainUserAssociation(UUID producerKeychainId, LinkUser linkUser) {
+        performOperation(() -> producerKeychainsApi.addProducerKeychainUserWithHttpInfo(producerKeychainId, linkUser)).orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)"));
+    }
 }
