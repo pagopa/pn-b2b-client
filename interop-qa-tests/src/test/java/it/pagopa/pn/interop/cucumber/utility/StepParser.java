@@ -17,7 +17,7 @@ public final class StepParser {
     private StepParser() {
     }
 
-    private static String normalize(String value) {
+    public static String normalize(String value) {
         if (value == null) return null;
 
         String v = value.trim();

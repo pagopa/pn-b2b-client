@@ -224,31 +224,33 @@ Feature: Probing
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
-    Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
+    Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "<clockScheduler>", startDate "<startDate>", endDate "<endDate>"
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 
     Examples:
-    # BEFORE window (inizia tra poco)
-      | frequency | startDate | endDate |
-      | 1         | now+1m    | now+10m |
+    # BEFORE window (inizia tra poco): deve NON avanzare prima dello start,
+    # e poi (se la finestra è abbastanza lunga) deve avanzare almeno una volta dentro.
+      | frequency | clockScheduler | startDate | endDate |
+      | 1         | 3              | now+1m    | now+5m  |
 
-    # IN window (già dentro)
-      | 1         | now-5m    | now+10m |
+    # IN window (già dentro): finestra lunga -> atteso almeno 1 update
+      | 1         | 3              | now-5m    | now+5m  |
 
-    # AFTER window (finita da poco)
-      | 1         | now-10m   | now-1m  |
+    # AFTER window (finita da poco): deve NON avanzare dopo end
+      | 1         | 3              | now-10m   | now-1m  |
 
-    # Boundary start (start = now)
-      | 1         | now       | now+10m |
+    # Boundary start (start = now): finestra lunga -> atteso almeno 1 update
+      | 1         | 3              | now       | now+5m  |
 
-    # Boundary end (end = now)
-      | 1         | now-10m   | now     |
+    # Boundary end (end = now): deve NON avanzare (siamo fuori finestra)
+      | 1         | 3              | now-10m   | now     |
 
-    # Start & stop nello stesso test
-      | 1         | now       | now+2m  |
+    # Start & stop nello stesso test (finestra corta): NON pretendere update,
+    # ma se accade deve rispettare end e poi deve fermarsi.
+      | 1         | 3              | now       | now+2m  |
 
-    # Window shorter than period
-      | 5         | now       | now+2m  |
+    # Window shorter than period: NON pretendere update
+      | 5         | 3              | now       | now+2m  |
 
   Scenario Outline: [SCHEDULING_2] - Probing disabled non aggiorna mai
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
@@ -258,8 +260,8 @@ Feature: Probing
 
     Examples:
       | frequency | startDate | endDate |
-      | 1         | now-5m    | now+10m |
-      | 1         | now+1m    | now+10m |
+      | 1         | now-5m    | now+4m  |
+      | 1         | now+1m    | now+4m  |
       | 1         | now-10m   | now-1m  |
       | 5         | now       | now+2m  |
 
@@ -267,7 +269,7 @@ Feature: Probing
     Given vengono calcolate le informazioni di probing relative ad un e-service con health check <mockResponse> presente a catalogo
     And vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
-    When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", startDate "<startDate>", endDate "<endDate>"
+    When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "3", startDate "<startDate>", endDate "<endDate>"
     And viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "%expected" e pollingFrequency "<frequency>"
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
     Then la telemetria dell'e-service risulta aggiornata con successo

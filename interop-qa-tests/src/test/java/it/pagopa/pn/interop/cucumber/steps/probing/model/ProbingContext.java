@@ -18,6 +18,8 @@ public class ProbingContext{
     public static int ESERVICE_RANDOM_COUNT = 5_000;
     public static int ESERVICE_SIZE = ESERVICE_OK_COUNT + ESERVICE_KO_COUNT + ESERVICE_RANDOM_COUNT;
 
+    public static int SCHEDULER_INTERVAL = 3;
+
     final Integer threadNumber;
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 

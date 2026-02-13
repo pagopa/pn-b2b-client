@@ -6,6 +6,7 @@ import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.UUID;
@@ -113,6 +114,11 @@ public class ProbingResolver extends AbstractResolver {
         // 4) applica delta
         if (baseValue == null) return null;
         return baseValue + delta;
+    }
+
+    public Duration resolveSchedulerInterval(String row) {
+        String normalizedRow = StepParser.normalize(row);
+        return Duration.ofMinutes(normalizedRow == null ? ProbingContext.SCHEDULER_INTERVAL : Integer.parseInt(row));
     }
 
     private static int randomPositiveInt() {

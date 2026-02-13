@@ -326,8 +326,20 @@ public class ProbingSteps {
         probingContext.setExpectedEserviceRow(row);
     }
 
-    @Then("verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency {string}, startDate {string}, endDate {string}")
-    public void assertScheduler(String pollingFrequency, String startDate, String endDate) throws Exception {
+    @Then("verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency {string}, clockScheduler {string}, startDate {string}, endDate {string}")
+    public void assertScheduler(String pollingFrequency, String clockScheduler, String startDate, String endDate) throws Exception {
+
+        // --- Inputs
+        Duration tick = resolver.resolveSchedulerInterval(clockScheduler);
+        Assertions.assertThat(tick)
+                .as("clockScheduler deve essere valorizzato e > 0")
+                .isNotNull()
+                .isGreaterThan(Duration.ZERO);
+
+        int freqMinutes = resolver.resolveFrequency(pollingFrequency);
+        Assertions.assertThat(freqMinutes)
+                .as("pollingFrequency (minutes) deve essere >= 1")
+                .isGreaterThanOrEqualTo(1);
 
         OffsetTime start = resolver.resolvePollingStartTime(startDate);
         OffsetTime end = resolver.resolvePollingEndTime(endDate);
@@ -336,80 +348,88 @@ public class ProbingSteps {
         Assertions.assertThat(end).as("endDate non deve essere null").isNotNull();
         Assertions.assertThat(end).as("endDate deve essere dopo startDate").isAfter(start);
 
+        // --- Instants
         LocalDate today = LocalDate.now();
-
         Instant startI = start.atDate(today).toInstant();
         Instant endI = end.atDate(today).toInstant();
+
+        // --- Policy (solo tick + jitter)
+        Duration jitter = Duration.ofSeconds(20);
+        Duration unit = tick.plus(jitter);
+        Duration notAdvancingTolerance = Duration.ofSeconds(2);
+        Duration boundaryBuffer = Duration.ofSeconds(1);
+
         Instant now = Instant.now();
 
-        // CONTRATTO: frequency è in minuti (minimum: 1)
-        int freqMinutes = resolver.resolveFrequency(pollingFrequency);
-        Assertions.assertThat(freqMinutes)
-                .as("pollingFrequency (minutes) deve essere >= 1")
-                .isGreaterThanOrEqualTo(1);
+        // --- AFTER: fuori finestra
+        if (!now.isBefore(endI)) {
+            assertNotAdvancing(unit, notAdvancingTolerance,
+                    "Il probing sta avanzando DOPO la finestra attesa");
+            return;
+        }
 
-        Duration period = Duration.ofMinutes(freqMinutes);
-
-        // Policy su tolleranze
-        Duration notAdvancingTolerance = Duration.ofSeconds(2); // piccoli delta (jitter/rounding/clock skew)
-        Duration observeOutside = Duration.ofSeconds(20); // abbastanza per capire se sta aggiornando "a sorpresa"
-        Duration observeInsideMax = Duration.ofSeconds(90); // se freq=1m possiamo ragionevolmente vedere 1 update
-
-        // Semantica finestra: [start, end)
-        boolean before = now.isBefore(startI);
-        boolean after = !now.isBefore(endI); // now >= end
-
-        if (before) {
-            // 1) Prima della finestra: non deve avanzare
-            assertNotAdvancing(observeOutside, notAdvancingTolerance, "Il probing sta avanzando PRIMA della finestra attesa");
-
-            // 2) Se la finestra inizia a breve e finisce a breve, facciamo anche start&stop in un solo test (utile per casi tipo now+1m / now+2m)
+        // --- BEFORE: fuori finestra (non deve avanzare fino allo start)
+        if (now.isBefore(startI)) {
             Duration untilStart = Duration.between(now, startI);
-            if (!untilStart.isNegative() && untilStart.compareTo(Duration.ofSeconds(30)) <= 0) {
-                waitUntil(startI, Duration.ofSeconds(35)); // cap
+            Duration observe = min(unit, untilStart.minus(boundaryBuffer));
 
-                // Dentro finestra: osserviamo, ma senza imporre "deve avanzare" perché non sappiamo se first-run è immediato.
-                observeAndValidateInside(endI, observeInsideMax, notAdvancingTolerance, "Durante la finestra (appena iniziata) il probing si comporta in modo incoerente");
+            if (!observe.isNegative() && !observe.isZero()) {
+                assertNotAdvancing(observe, notAdvancingTolerance,
+                        "Il probing sta avanzando PRIMA della finestra attesa");
             }
 
-            return;
+            // best effort: prova a entrare in finestra al massimo entro 1 unit
+            waitUntil(startI, unit);
+
+            now = Instant.now();
+            if (!now.isBefore(endI)) {
+                // finestra scaduta durante l'attesa
+                return;
+            }
+            if (now.isBefore(startI)) {
+                // non siamo entrati (attesa cappata): stop qui
+                return;
+            }
         }
 
-        if (after) {
-            // Dopo la finestra: non deve avanzare
-            assertNotAdvancing(observeOutside, notAdvancingTolerance, "Il probing sta avanzando DOPO la finestra attesa");
-            return;
-        }
+        // --- INSIDE: siamo in finestra
+        now = Instant.now();
+        if (now.isBefore(endI)) {
+            verifyInsideWindow(endI, now, unit, notAdvancingTolerance, tick, jitter);
 
-        // Siamo dentro finestra
-        // Se la finestra termina a breve (short window), facciamo start&stop nello stesso test:
-        Duration untilEnd = Duration.between(now, endI);
-
-        if (!untilEnd.isNegative() && untilEnd.compareTo(Duration.ofSeconds(45)) <= 0) {
-            // Fase "durante finestra": se avanza, deve essere <= end (+ tolleranza)
-            observeAndValidateInside(endI, untilEnd.plusSeconds(2), notAdvancingTolerance, "Durante la finestra corta il probing si comporta in modo incoerente");
-
-            // Aspetta fino a end, poi verifica che non avanzi più
-            waitUntil(endI, Duration.ofSeconds(60));
-            assertNotAdvancing(observeOutside, notAdvancingTolerance, "Il probing non si è fermato dopo endDate (finestra corta)");
-            return;
-        }
-
-        // Finestra “normale”: qui possiamo essere più ambiziosi SOLO se è ragionevole osservare un update.
-        // Se period è 1 minuto, in 90s in genere lo vediamo. Se period è 10 minuti, no.
-        Duration observeInside = min(observeInsideMax, period.plusSeconds(20)); // per freq=1m => 80s circa
-        boolean canReasonablySeeAtLeastOneTick = period.compareTo(observeInsideMax) <= 0;
-
-        if (canReasonablySeeAtLeastOneTick) {
-            // Qui ci aspettiamo di vedere almeno un avanzamento entro observeInside
-            assertAdvancingWithin(observeInside,
-                    "Il probing non sta avanzando durante la finestra (atteso almeno 1 update dato che period=" + period + ")");
-        } else {
-            // Periodo troppo grande per essere osservabile
-            // non imponiamo l’avanzamento, ma se avanza deve comunque rispettare end.
-            observeAndValidateInside(endI, observeInside, notAdvancingTolerance, "Durante la finestra il probing avanza in modo incoerente rispetto alla endDate");
+            // --- STOP: aspetta end (max 1 unit) e poi non deve avanzare per 1 unit
+            waitUntil(endI, unit);
+            // assorbe eventuale update tardivo, poi verifica stabilità
+            assertStopsAfterEnd(unit, notAdvancingTolerance,
+                    "Il probing non si è fermato stabilmente dopo endDate");
         }
     }
+
+    private void verifyInsideWindow(
+            Instant endI,
+            Instant now,
+            Duration unit,
+            Duration notAdvancingTolerance,
+            Duration tick,
+            Duration jitter
+    ) throws Exception {
+
+        Duration untilEnd = Duration.between(now, endI);
+        if (untilEnd.isNegative() || untilEnd.isZero()) return;
+
+        // Se manca meno di 1 unit alla fine finestra, non ha senso pretendere advancing: best effort
+        if (untilEnd.compareTo(unit) < 0) {
+            observeAndValidateInside(endI, untilEnd.plusSeconds(2), notAdvancingTolerance,
+                    "Dentro finestra ma troppo vicini alla endDate per pretendere un update (unit=" + unit + ")");
+            return;
+        }
+
+        // Altrimenti: mi aspetto almeno 1 update entro 1 unit (tick + jitter)
+        assertAdvancingWithin(unit,
+                "Il probing non sta avanzando durante la finestra (atteso >=1 update entro 1 unit=" + unit +
+                        ", tick=" + tick + ", jitter=" + jitter + ")");
+    }
+
 
     @Then("verifica che la responseReceived NON sia aggiornata quando probing è disabilitato")
     public void assertSchedulerWhenProbingDisabled() throws Exception {
@@ -499,11 +519,11 @@ public class ProbingSteps {
         TimeUnit.MILLISECONDS.sleep(observe.toMillis());
         Instant t2 = readLastResponseTime();
 
-        long deltaMillis = Math.abs(t2.toEpochMilli() - t1.toEpochMilli());
+        long deltaMillis = t2.toEpochMilli() - t1.toEpochMilli(); // niente abs
 
         Assertions.assertThat(deltaMillis)
                 .as(message + " (delta=" + deltaMillis + "ms, tolerance=" + tolerance.toMillis() + "ms)")
-                .isLessThanOrEqualTo(tolerance.toMillis());
+                .isBetween(0L, tolerance.toMillis()); // non deve diminuire, né avanzare troppo
     }
 
     private void assertAdvancingWithin(Duration observe, String message) throws Exception {
@@ -546,6 +566,15 @@ public class ProbingSteps {
             }
         }
     }
+
+    private void assertStopsAfterEnd(Duration unit, Duration tolerance, String message) throws Exception {
+        // Fase 1: assorbi un eventuale update tardivo (1 unit)
+        TimeUnit.MILLISECONDS.sleep(unit.toMillis());
+
+        // Fase 2: ora deve essere stabile per 1 unit
+        assertNotAdvancing(unit, tolerance, message);
+    }
+
 
     private void waitUntil(Instant target, Duration maxWait) throws Exception {
         Instant now = Instant.now();
