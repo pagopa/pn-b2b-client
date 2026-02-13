@@ -3,17 +3,17 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.keys;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.keys.service.Impl.KeysClient;
+import it.pagopa.interop.keys.service.Impl.M2MKeysClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
 @Slf4j
 public class KeysSteps {
-    private final KeysClient keysClient;
+    private final M2MKeysClient keysClient;
     private final IHttpExecutor httpCallExecutor;
 
-    public KeysSteps(KeysClient keysClient, SharedStepsContext sharedStepsContext) {
+    public KeysSteps(M2MKeysClient keysClient, SharedStepsContext sharedStepsContext) {
         this.keysClient = keysClient;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.keysClient.setHttpCallExecutor(this.httpCallExecutor);
