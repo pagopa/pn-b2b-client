@@ -50,7 +50,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "PA1" ha già creato una finalità in stato "<statoFinalità>" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
     When l'utente aggiorna quella finalità per quell'e-service in erogazione inversa
-    Then si ottiene status code 403
+    Then si ottiene status code 400
 
     Examples: 
       | statoFinalità        |
@@ -58,3 +58,15 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
       | SUSPENDED            |
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
+
+  @sad-path
+  @nrt-minimal
+  Scenario: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_4] Tentare di modificare una finalità generata a partire da un purpose template conduce ad un errore
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    And il purpose template creato viene spostato in stato PUBLISHED
+    And si crea una finalità a partire dal purpose template creato
+    When l'utente aggiorna quella finalità per quell'e-service in erogazione inversa
+    Then si ottiene status code 409

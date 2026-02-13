@@ -84,15 +84,16 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
       | security |
 
   #29(KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_CREATOR] Associazione di un eService a una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
+  Scenario: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_CREATOR] Associazione di un eService a una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
     And il purpose template creato viene associato all'e-service
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
 
   #30(KO)
   @purposeTemplate @purposeTemplateEservice
@@ -179,8 +180,9 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
       | security |
 
   #36(KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateEservice
-  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_CREATOR] Disassociazione di un eService da una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
+  Scenario: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_CREATOR] Disassociazione di un eService da una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
@@ -188,7 +190,7 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
     And il purpose template creato viene associato all'e-service
     Given l'utente è un "admin" di "GSP"
     And il purpose template creato viene disassociato dall'e-service
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
 
   #37(KO)
   @purposeTemplate @purposeTemplateEservice

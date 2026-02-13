@@ -20,6 +20,9 @@ import java.util.Map;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClient {
+
+    private final RestTemplate restTemplate;
+    private final String safeStorageBaseUrl;
     private final String clientIdSafeStorage;
     private final FileUploadApi fileUploadApi;
     private final FileDownloadApi fileDownloadApi;
@@ -30,6 +33,8 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
                                           @Value("${pn.safeStorage.apikey}") String apiKeySafeStorage,
                                           @Value("${pn.safeStorage.clientId}") String clientIdSafeStorage) {
 
+        this.restTemplate = restTemplate;
+        this.safeStorageBaseUrl = safeStorageBaseUrl;
         this.clientIdSafeStorage = clientIdSafeStorage;
 
         fileUploadApi = new FileUploadApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
@@ -102,5 +107,22 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
     public ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> additionalFileTagsMassiveUpdateWithHttpInfo(
             String cxId, AdditionalFileTagsMassiveUpdateRequest additionalFileTagsMassiveUpdateRequest) throws RestClientException {
         return this.additionalFileTagsApi.additionalFileTagsMassiveUpdateWithHttpInfo(cxId, additionalFileTagsMassiveUpdateRequest);
+    }
+
+    @Override
+    public void setApiKey(String apiKey) {
+        fileUploadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
+        fileDownloadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
+        additionalFileTagsApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
+    }
+
+    @Override
+    public boolean setApiKeys(ApiKeyType apiKey) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ApiKeyType getApiKeySetted() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

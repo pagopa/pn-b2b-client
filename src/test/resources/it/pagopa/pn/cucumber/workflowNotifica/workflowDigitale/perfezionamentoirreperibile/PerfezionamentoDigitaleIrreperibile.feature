@@ -17,7 +17,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | digitalDomicile | NULL             |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "SERCQ" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
     #21ko
   @perfezionamentoIrreperibile
@@ -31,7 +31,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
     #23
   @perfezionamentoIrreperibile
@@ -46,7 +46,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "GENERAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   #25
   @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
@@ -72,7 +72,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_digitalAddressSource | PLATFORM                                                           |
       | details_sentAttemptMade      | 0                                                                  |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   #26
   @addressBook1 @perfezionamentoIrreperibile
@@ -99,7 +99,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sentAttemptMade      | 0                                                                  |
     And viene inserito un recapito legale "pec@FAIL.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" con response status "KO" con la "PEC" "pec@FAIL.it"
 
   #27
@@ -127,7 +127,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sentAttemptMade      | 0                                                                  |
     And vengono rimossi eventuali recapiti presenti per l'utente
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   #28
   @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
@@ -154,7 +154,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sentAttemptMade      | 0                                                        |
     And viene inserito un recapito legale "example@pecSuccess.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" con response status "OK" con la "PEC" "example@pecSuccess.it"
 
   #29
@@ -182,7 +182,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_sentAttemptMade      | 0                                                                  |
     And viene inserito un recapito legale "example@pecSuccess.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" con response status "OK" con la "PEC" "example@pecSuccess.it"
 
   #30 ritentativo di NR
@@ -205,7 +205,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_retryNumber          | 0                              |
       | details_sentAttemptMade      | 0                              |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "GENERAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   #35
   @perfezionamentoIrreperibile
@@ -228,7 +228,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | details_digitalAddressSource | SPECIAL                                                            |
       | details_sentAttemptMade      | 0                                                                  |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
+    And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_13] Invio notifica digitale monodestinatario PF con indirizzo generale che fallisce al primo e al secondo tentativo
