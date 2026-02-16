@@ -44,7 +44,6 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr26                |                  | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 400        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr27                | RSSMRA85T10A562S | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44wr28                | TEXT_101         | Comune di Bolzano | VEAJ-PTPD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 500        |
-
       | 5b334d4a-   0gt7-24ac-9c7b-354e2d44wr29             | RSSMRA    A562S  | Comune di Bolzano | VEAJ-PTPD-NZ   DQ-202501-Y-1                       | true              | ANALOG       | today                | 200        |
       | 5b33##a-0gt7-24ac-9c7b-354e2d44wr30                 | RSSMRA#0A562S    | Comune di Bolzano | VEAJ-P#PD-NZDQ-202501-Y-1                          | true              | ANALOG       | today                | 200        |
       | 5                                                   | RSSMRA85T10A562S | Comune di Bolzano | TEXT_100                                           | true              | ANALOG       | today                | 500        |
