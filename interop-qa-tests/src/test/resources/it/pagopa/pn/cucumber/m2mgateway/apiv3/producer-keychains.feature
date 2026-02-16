@@ -103,3 +103,25 @@ Feature: Gestione dei producer keychais - API v3
       | EC      |
       | RSA     |
 
+  Scenario Outline: [GET_PRODUCER_KEY] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene status code 200
+    When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene status code 200
+    Then viene recuperata la producer-key con kid "<kid>"
+    And si ottiene status code <statusCode>
+
+    #TODO: da implementare -> 401, 429
+    Examples:
+      | keyType | kid         | statusCode |
+      | EC      | %actual     | 200        |
+      | EC      | %random     | 404        |
+      | EC      | invalid-kid | 400        |
+
+      | RSA     | %actual     | 200        |
+      | RSA     | %random     | 404        |
+      | RSA     | invalid-kid | 400        |

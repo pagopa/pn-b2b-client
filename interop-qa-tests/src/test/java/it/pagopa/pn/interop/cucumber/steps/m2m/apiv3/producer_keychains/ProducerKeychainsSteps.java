@@ -64,4 +64,16 @@ public class ProducerKeychainsSteps {
             log.warn(e.getMessage());
         }
     }
+
+    @And("viene recuperata la producer-key con kid {string}")
+    public void getProducerKey(String rawKid) {
+        String kid = resolver.resolveKid(rawKid);
+
+        try {
+            ProducerKey pKey = producerKeychainsClient.getProducerKey(kid);
+            context.setProducerKey(pKey);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
+    }
 }
