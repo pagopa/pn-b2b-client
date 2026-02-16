@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
 import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
@@ -20,11 +21,13 @@ public class ProducerKeychainsSteps {
     private final M2MProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsResolver resolver;
+    private final ProducerKeychainsContext context;
 
     public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext) {
         this.producerKeychainsClient = producerKeychainsClient;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
+        this.context = producerKeychainsContext;
         this.resolver = new ProducerKeychainsResolver(producerKeychainsContext, sharedStepsContext);
 
     }
@@ -55,7 +58,8 @@ public class ProducerKeychainsSteps {
             UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
             KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
 
-            this.producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+            ProducerKey key = this.producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+            context.setProducerKey(key);
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
