@@ -224,7 +224,9 @@ Feature: Probing
   Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    And la response riporta lo status code 204
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
+    And la response riporta lo status code 204
     Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "<clockScheduler>", startDate "<startDate>", endDate "<endDate>"
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 
@@ -256,7 +258,9 @@ Feature: Probing
   Scenario Outline: [SCHEDULING_2] - Probing disabled non aggiorna mai
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
+    And la response riporta lo status code 204
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    And la response riporta lo status code 204
     Then verifica che la responseReceived NON sia aggiornata quando probing è disabilitato
 
     Examples:
@@ -269,10 +273,14 @@ Feature: Probing
   Scenario Outline: [PROBING_COMPLETE_PROCESS] - Processo completo di probing con aggiornamento stato e telemetria
     Given vengono calcolate le informazioni di probing relative ad un e-service con health check <mockResponse> presente a catalogo
     And vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
+    And la response riporta lo status code 204
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
+    And la response riporta lo status code 204
     When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "3", startDate "<startDate>", endDate "<endDate>"
     And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "now-3m" , endDate "now"
+    And la response riporta lo status code 200
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
+    And la response riporta lo status code 200
     Then la telemetria dell'e-service risulta aggiornata con successo
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 

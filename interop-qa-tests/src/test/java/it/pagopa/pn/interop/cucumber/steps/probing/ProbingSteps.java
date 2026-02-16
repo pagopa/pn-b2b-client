@@ -638,7 +638,14 @@ public class ProbingSteps {
     private Instant readLastResponseTime() {
         Long eserviceRecordId = resolver.getEserviceRecordId();
         this.getEserviceMainData(String.valueOf(eserviceRecordId));
+
+        if (!httpCallExecutor.getResponseStatus().is2xxSuccessful())
+            throw new RuntimeException("Errore durante il recupero dei mainData per l'eservice con eserviceRecordId: " + eserviceRecordId);
+
         this.getEserviceProbingData(String.valueOf(eserviceRecordId));
+
+        if (!httpCallExecutor.getResponseStatus().is2xxSuccessful())
+            throw new RuntimeException("Errore durante il recupero dei probingData per l'eservice con eserviceRecordId: " + eserviceRecordId);
 
         OffsetDateTime last = probingContext.getLastResponseTime();
         if (last == null) {
