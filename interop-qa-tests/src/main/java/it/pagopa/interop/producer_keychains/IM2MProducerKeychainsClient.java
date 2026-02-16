@@ -9,5 +9,5 @@ public interface IM2MProducerKeychainsClient {
 
     ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed);
 
-    void deleteProducerKeychainKeyById(UUID keychainId, String keyId);
+    void deleteProducerKeychainKeyById(UUID keychainId, UUID keyId);
 }

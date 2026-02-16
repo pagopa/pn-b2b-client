@@ -54,22 +54,10 @@ public class ProducerKeychainsSteps {
                 linkUser.setUserId(userIdValue);
             }
 
-                pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(
-                        () -> producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser)),
-                    status -> status == HttpStatus.NO_CONTENT,
-                    "Errore durante la creazione dell'associazione utente-producer keychain");
+            pollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser)), status -> status == HttpStatus.NO_CONTENT, "Errore durante la creazione dell'associazione utente-producer keychain");
 
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()
-                    && userIdValue != null
-                    && producerKeychainValue != null) {
-                pollingService.makePolling(
-                        () -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0),
-                        users -> httpCallExecutor.getResponseStatus().is2xxSuccessful()
-                                && users != null
-                                && users.getResults() != null
-                                && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())),
-                        "L'utente non risulta associato alla producer keychain dopo la creazione");
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
+                pollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())), "L'utente non risulta associato alla producer keychain dopo la creazione");
             }
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -97,23 +85,30 @@ public class ProducerKeychainsSteps {
         List<User> m2mUsers = tenantContext.getM2mUsers();
         List<it.pagopa.interop.generated.openapi.clients.bff.model.User> selfcareUsers = tenantContext.getSelfcareUsers();
 
-        Assertions.assertThat(m2mUsers)
-                .as("La lista utenti M2M non deve essere null")
-                .isNotNull();
-        Assertions.assertThat(selfcareUsers)
-                .as("La lista utenti Selfcare non deve essere null")
-                .isNotNull();
+        Assertions.assertThat(m2mUsers).as("La lista utenti M2M non deve essere null").isNotNull();
+        Assertions.assertThat(selfcareUsers).as("La lista utenti Selfcare non deve essere null").isNotNull();
 
-        Set<UUID> m2mUserIds = m2mUsers.stream()
-                .map(User::getUserId)
-                .collect(Collectors.toSet());
-        Set<UUID> selfcareUserIds = selfcareUsers.stream()
-                .map(it.pagopa.interop.generated.openapi.clients.bff.model.User::getUserId)
-                .collect(Collectors.toSet());
+        Set<UUID> m2mUserIds = m2mUsers.stream().map(User::getUserId).collect(Collectors.toSet());
+        Set<UUID> selfcareUserIds = selfcareUsers.stream().map(it.pagopa.interop.generated.openapi.clients.bff.model.User::getUserId).collect(Collectors.toSet());
 
-        Assertions.assertThat(selfcareUserIds)
-            .as("Gli userId restituiti da M2M devono essere contenuti in quelli di Selfcare")
-            .containsAll(m2mUserIds);
+        Assertions.assertThat(selfcareUserIds).as("Gli userId restituiti da M2M devono essere contenuti in quelli di Selfcare").containsAll(m2mUserIds);
+    }
+
+    @When("l'utente elimina l'associazione tra l'utenza con userId {string} e la producer keychain {string}")
+    public void deleteProducerKeychainUserAssociation(String userId, String producerKeychainId) {
+        UUID userIdValue = parseNullableUuid(userId);
+        UUID producerKeychainValue = resolveProducerKeychainId(producerKeychainId);
+
+        try {
+
+            pollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.deleteProducerKeychainKeyById(producerKeychainValue, userIdValue)), status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione dell'associazione utente-producer keychain");
+
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
+                pollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().noneMatch(user -> userIdValue.equals(user.getUserId())), "L'utente risulta ancora associato alla producer keychain dopo l'eliminazione");
+            }
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     private UUID parseNullableUuid(String value) {
