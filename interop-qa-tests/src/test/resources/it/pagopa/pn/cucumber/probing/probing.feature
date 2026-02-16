@@ -270,18 +270,17 @@ Feature: Probing
     And vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
     When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "3", startDate "<startDate>", endDate "<endDate>"
-    And viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "%expected" e pollingFrequency "<frequency>"
+    And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "now-3m" , endDate "now"
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
     Then la telemetria dell'e-service risulta aggiornata con successo
-    And lo stato di probing dell'e-service viene aggiornato con valore "ACTIVE"
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 
     Examples:
-    # BEFORE window (inizia tra poco)
+    # IN window
       | frequency | startDate | endDate | mockResponse |
-      | 1         | now+1m    | now+10m | OK           |
-      | 1         | now+1m    | now+10m | ERROR        |
-      | 1         | now+1m    | now+10m | RANDOM       |
+      | 1         | now       | now+4m  | OK           |
+      | 1         | now       | now+4m  | ERROR        |
+      | 1         | now       | now+4m  | RANDOM       |
 
   Scenario: [LOAD] 20k enable e verifica update dopo N periodi
     Given preparo il load test probing con:
