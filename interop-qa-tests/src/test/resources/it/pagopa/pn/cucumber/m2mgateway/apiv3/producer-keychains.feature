@@ -131,3 +131,43 @@ Feature: Gestione dei producer keychais - API v3
     # Kid invalido (RSA)
       | RSA     | %random     | 404        |
       | RSA     | invalid-kid | 400        |
+
+  Scenario Outline: [DELETE_PRODUCER_KEY] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene status code 200
+    When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene status code 200
+    Given l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
+    Then viene eliminata la producer-key con keychainId "<keychainId>", kid "<kid>"
+    And si ottiene status code <statusCode>
+
+    #TODO: da implementare -> 401, 429
+    Examples:
+    # Happy path (EC)
+      | keyType | kid         | keychainId | tenant | statusCode |
+      | EC      | %actual     | %actual    | PA1    | 204        |
+
+    # Tenant richiedente non associato al keychain (EC)
+      | EC      | %actual     | %actual    | PA2    | 404        |
+
+    # Kid/Keychain invalido (EC)
+      | EC      | %random     | %actual    | PA1    | 404        |
+      | EC      | invalid-kid | %actual    | PA1    | 400        |
+      | EC      | %actual     | %random    | PA1    | 400        |
+      | EC      | %actual     | %null      | PA1    | 400        |
+
+    # Happy path (RSA)
+      | RSA     | %actual     | %actual    | PA1    | 204        |
+
+    # Tenant richiedente non associato al keychain (RSA)
+      | RSA     | %actual     | %actual    | PA2    | 404        |
+
+     # Kid/Keychain invalido (RSA)
+      | RSA     | %random     | %actual    | PA1    | 404        |
+      | RSA     | invalid-kid | %actual    | PA1    | 400        |
+      | RSA     | %actual     | %random    | PA1    | 400        |
+      | RSA     | %actual     | %null      | PA1    | 400        |

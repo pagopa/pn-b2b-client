@@ -76,4 +76,16 @@ public class ProducerKeychainsSteps {
             log.warn(e.getMessage());
         }
     }
+
+    @And("viene eliminata la producer-key con keychainId {string}, kid {string}")
+    public void deleteProducerKey(String rawKid, String rawKeychainId) {
+        String kid = resolver.resolveKid(rawKid);
+        UUID keychainId = resolver.resolveKeychain(rawKeychainId);
+
+        try {
+            producerKeychainsClient.deleteProducerKeychainKeyByKid(keychainId, kid);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
+    }
 }
