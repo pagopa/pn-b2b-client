@@ -3,59 +3,39 @@ package it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind;
-import it.pagopa.pn.interop.cucumber.enums.ResolvableToken;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
+import it.pagopa.pn.interop.cucumber.utility.StepParser;
+import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.intOrRandomOrNull;
-import static it.pagopa.pn.interop.cucumber.utility.StepParser.uuidOrRandomOrNull;
 
 @RequiredArgsConstructor
-public class PurposeTemplateResolver {
+public class PurposeTemplateResolver extends AbstractResolver {
 
     private final SharedStepsContext sharedStepsContext;
     private final PurposeTemplateContext purposeTemplateContext;
     private final IdentityService identityService;
 
-    // ========== helper generico token ==========
-    private <T> T resolveToken(
-            String raw,
-            Supplier<T> actualSupplier,
-            Supplier<T> randomSupplier,
-            Supplier<T> blankSupplier,
-            T currentValueForKeep
-    ) {
-        ResolvableToken token = ResolvableToken.from(raw);
-        if (token == null) return null;
-
-        return switch (token) {
-            case ACTUAL -> actualSupplier.get();
-            case NULL -> null;
-            case RANDOM -> randomSupplier.get();
-            case KEEP -> currentValueForKeep;
-            case BLANK -> blankSupplier == null ? null : blankSupplier.get();
-        };
-    }
-
-    // ========== offset / limit ==========
     public Integer resolveOffset(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return intOrRandomOrNull(raw);
 
-        return resolveToken(
+        return resolveOrParse(
                 raw,
-                () -> purposeTemplateContext.getActualOffset(),
+                StepParser::nullableInteger,
+                purposeTemplateContext::getActualOffset,
                 PurposeTemplateResolver::randomNonNegativeInt,
                 null,
-                purposeTemplateContext.getActualOffset()
+                purposeTemplateContext::getActualOffset
         );
     }
 
@@ -63,12 +43,13 @@ public class PurposeTemplateResolver {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return intOrRandomOrNull(raw);
 
-        return resolveToken(
+        return resolveOrParse(
                 raw,
-                () -> purposeTemplateContext.getActualLimit(),
+                StepParser::nullableInteger,
+                purposeTemplateContext::getActualLimit,
                 PurposeTemplateResolver::randomPositiveInt,
                 null,
-                purposeTemplateContext.getActualLimit()
+                purposeTemplateContext::getActualLimit
         );
     }
 
@@ -80,21 +61,20 @@ public class PurposeTemplateResolver {
         return (int) (Math.random() * Integer.MAX_VALUE);
     }
 
-    // ========== purposeTitle ==========
     public String resolvePurposeTitle(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return raw; // stringa “normale”
 
-        return resolveToken(
+        return resolveOrParse(
                 raw,
-                () -> purposeTemplateContext.getActualPurposeTitle(),
+                StepParser::nullOrValue,
+                purposeTemplateContext::getActualPurposeTitle,
                 () -> "PT-" + UUID.randomUUID(),
                 () -> "",
-                purposeTemplateContext.getActualPurposeTitle()
+                purposeTemplateContext::getActualPurposeTitle
         );
     }
 
-    // ========== handlesPersonalData ==========
     public Boolean resolveHandlesPersonalData(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) {
@@ -106,16 +86,16 @@ public class PurposeTemplateResolver {
             return null;
         }
 
-        return resolveToken(
+        return resolveOrParse(
                 raw,
-                () -> purposeTemplateContext.getActualHandlesPersonalData(),
+                StepParser::nullableBoolean,
+                purposeTemplateContext::getActualHandlesPersonalData,
                 () -> Math.random() < 0.5,
                 null,
-                purposeTemplateContext.getActualHandlesPersonalData()
+                purposeTemplateContext::getActualHandlesPersonalData
         );
     }
 
-    // ========== targetTenantKind ==========
     public TargetTenantKind resolveTargetTenantKind(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) {
@@ -127,12 +107,13 @@ public class PurposeTemplateResolver {
             }
         }
 
-        return resolveToken(
+        return resolveOrParse(
                 raw,
+                TargetTenantKind::valueOf,
                 () -> TargetTenantKind.valueOf(sharedStepsContext.getTenantType()),
                 PurposeTemplateResolver::randomTargetTenantKind,
                 null,
-                TargetTenantKind.valueOf(sharedStepsContext.getTenantType())
+                () -> TargetTenantKind.valueOf(sharedStepsContext.getTenantType())
         );
     }
 
@@ -141,58 +122,51 @@ public class PurposeTemplateResolver {
         return values[(int) (Math.random() * values.length)];
     }
 
-    // ========== creatorIds (List<UUID>) ==========
     public List<UUID> resolveCreatorIds(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return parseUuidList(raw);
         UUID organizationId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
 
-        return resolveToken(
+        return resolveOrParse(
                 raw,
-                () -> organizationId == null
-                        ? null
-                        : Collections.singletonList(organizationId),
-                () -> Collections.singletonList(UUID.randomUUID()),
-                Collections::emptyList,
-                organizationId == null
-                        ? null
-                        : Collections.singletonList(organizationId)
+                v -> Collections.singletonList(UUID.fromString(v)),
+                () -> organizationId == null ? null : Collections.singletonList(organizationId), // ACTUAL
+                () -> Collections.singletonList(UUID.randomUUID()),                               // EXPECTED (se davvero lo vuoi così)
+                Collections::emptyList,                                                           // RANDOM
+                () -> organizationId == null ? null : Collections.singletonList(organizationId)  // BLANK  ✅ qui era l’errore
         );
+
     }
 
-    // ========== eserviceIds (List<UUID>) ==========
     public List<UUID> resolveEserviceIds(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return parseUuidList(raw);
 
-        return resolveToken(
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+
+        return resolveOrParse(
                 raw,
-                () -> sharedStepsContext.getEServicesCommonContext().getEserviceId() == null
-                        ? Collections.emptyList()
-                        : List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()),
+                v -> Collections.singletonList(UUID.fromString(v)),
+                () -> eserviceId == null ? Collections.emptyList() : List.of(eserviceId),
                 () -> Collections.singletonList(UUID.randomUUID()),
                 Collections::emptyList,
-                sharedStepsContext.getEServicesCommonContext().getEserviceId() == null
-                        ? Collections.emptyList()
-                        : List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                () -> eserviceId == null ? Collections.emptyList() : List.of(eserviceId)
         );
     }
 
-    // ========== states (List<PurposeTemplateState>) ==========
     public List<PurposeTemplateState> resolveStates(String raw) {
         ResolvableToken token = ResolvableToken.from(raw);
         if (token == null) return parseEnumList(raw, PurposeTemplateState.class);
 
-        return resolveToken(
+        PurposeTemplateState actualState = purposeTemplateContext.getActualState();
+
+        return resolveOrParse(
                 raw,
-                () -> purposeTemplateContext.getActualState() == null
-                        ? null
-                        : Collections.singletonList(purposeTemplateContext.getActualState()),
+                (v) -> Collections.emptyList(),
+                () -> actualState == null ? null : Collections.singletonList(actualState),
                 () -> Collections.singletonList(randomPurposeTemplateState()),
                 Collections::emptyList,
-                purposeTemplateContext.getActualState() == null
-                        ? null
-                        : Collections.singletonList(purposeTemplateContext.getActualState())
+                () -> actualState == null ? null : Collections.singletonList(actualState)
         );
     }
 
@@ -201,7 +175,6 @@ public class PurposeTemplateResolver {
         return values[(int) (Math.random() * values.length)];
     }
 
-    // ========== parsing helpers ==========
     private List<UUID> parseUuidList(String raw) {
         if (raw == null) return null;
         String v = raw.trim();
@@ -212,7 +185,7 @@ public class PurposeTemplateResolver {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 // riusa parser di progetto: gestisce anche "RANDOM"/"NULL" ecc.
-                .map(s -> uuidOrRandomOrNull(s))
+                .map(StepParser::uuidOrRandomOrNull)
                 .collect(Collectors.toList());
     }
 
