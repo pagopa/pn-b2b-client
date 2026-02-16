@@ -108,7 +108,7 @@ Feature: Messaggi di cortesia Banche
   #     GET /bff/v1/notifications/received/{iun}
   #     GET /bff/v1/notifications/received/{iun}/documents/{documentType}
   #     GET /bff/v1/notifications/received/{iun}/payments/{attachmentName}
-  #@bankCourtesyMessageEnabled TODO da ripristinare dopo l'aggiornamento della api v29
+  @bankCourtesyMessageEnabled
   Scenario: [BANK_COURTESY_MESSAGE-5] Vengono invocati gli endpoint di recupero notifica, lettura AAR e recupero avviso di pagamento da API web (BFF)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |

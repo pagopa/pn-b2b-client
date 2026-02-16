@@ -17,13 +17,11 @@ public class EmdIntegrationApiImpl {
     private final CheckTppApi checkTppApi;
     private final PaymentApi paymentApi;
 
-
     public EmdIntegrationApiImpl(RestTemplate restTemplate,
                                  @Value("${pn.delivery.base-url}") String basePath) {
         this.messageApi = new MessageApi(createApiClient(restTemplate, basePath));
         this.checkTppApi = new CheckTppApi(createApiClient(restTemplate, basePath));
         this.paymentApi = new PaymentApi(createApiClient(restTemplate, basePath));
-
     }
 
     private ApiClient createApiClient(RestTemplate restTemplate, String basePath) {
