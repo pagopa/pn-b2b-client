@@ -63,9 +63,9 @@ Feature: Gestione dei producer keychais - API v3
     Examples:
       | keyType | keychainId | tenant | statusCode |
       | EC      | %actual    | PA2    | 404        |
-      | EC      | %random    | PA1    | 404        |
-      | RSA     | %actual    | PA12   | 404        |
-      | RSA     | %random    | PA1    | 404        |
+      | EC      | %random    | PA1    | 400        |
+      | RSA     | %actual    | PA2    | 404        |
+      | RSA     | %random    | PA1    | 400        |
 
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_3] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
