@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization.dpop;
 
-import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -21,6 +20,8 @@ import java.security.KeyPair;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
 @Slf4j
 public class DPoPSteps {
@@ -173,7 +174,7 @@ public class DPoPSteps {
     }
 
     private String generateDpopProofWith(String keyType, String typValue, HttpMethod httpMethod, String oAuthServerUrl) {
-       var keyPair = dPoPTokenService.generateKeyPair(keyType);
+        var keyPair = generateKeyPair(keyType);
 
         boolean shouldOverride = !Objects.equals(typValue, DEFAULT_TYP)
                 || !Objects.equals(httpMethod, DEFAULT_HTTP_METHOD)
@@ -185,8 +186,8 @@ public class DPoPSteps {
     }
 
     private String generateMaliciousDpopProof(String keyType){
-        var legittimPair = dPoPTokenService.generateKeyPair(keyType);
-        var maliciousPair = dPoPTokenService.generateKeyPair(keyType);
+        var legittimPair = generateKeyPair(keyType);
+        var maliciousPair = generateKeyPair(keyType);
 
         var keyPair = new KeyPair(legittimPair.getKeyPair().getPublic(), maliciousPair.getKeyPair().getPrivate());
         var keyPairDecorator = KeyPairDecorator.of(keyPair);
