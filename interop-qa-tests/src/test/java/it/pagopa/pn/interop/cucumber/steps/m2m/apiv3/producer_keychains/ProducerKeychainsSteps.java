@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 @Slf4j
 public class ProducerKeychainsSteps {
@@ -26,6 +28,7 @@ public class ProducerKeychainsSteps {
     private final SharedStepsContext sharedStepsContext;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final TenantContext tenantContext;
+    private final PollingService pollingService;
 
     public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
 
@@ -34,6 +37,7 @@ public class ProducerKeychainsSteps {
         this.tenantContext = tenantContext;
         this.producerKeychainsContext = producerKeychainsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
         this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
 
     }
@@ -50,7 +54,23 @@ public class ProducerKeychainsSteps {
                 linkUser.setUserId(userIdValue);
             }
 
-            producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser);
+                pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(
+                        () -> producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser)),
+                    status -> status == HttpStatus.NO_CONTENT,
+                    "Errore durante la creazione dell'associazione utente-producer keychain");
+
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()
+                    && userIdValue != null
+                    && producerKeychainValue != null) {
+                pollingService.makePolling(
+                        () -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0),
+                        users -> httpCallExecutor.getResponseStatus().is2xxSuccessful()
+                                && users != null
+                                && users.getResults() != null
+                                && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())),
+                        "L'utente non risulta associato alla producer keychain dopo la creazione");
+            }
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
