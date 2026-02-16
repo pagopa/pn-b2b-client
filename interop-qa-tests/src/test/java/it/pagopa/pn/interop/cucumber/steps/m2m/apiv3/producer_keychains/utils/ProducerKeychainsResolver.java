@@ -66,4 +66,15 @@ public class ProducerKeychainsResolver extends AbstractResolver {
                 () -> null
         );
     }
+
+    public String resolveKid(String raw) {
+        return resolveOrParse(
+                raw,
+                (r) -> r,
+                () -> context.getProducerKey().getJwk().getKid(),
+                () -> context.getProducerKey().getJwk().getKid(),
+                () -> UUID.randomUUID().toString(),
+                () -> null
+        );
+    }
 }
