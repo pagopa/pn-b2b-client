@@ -57,7 +57,7 @@ public class ProbingLoadSteps {
         totalEservices = Integer.parseInt(row.get("totalEservices"));
         workers = Integer.parseInt(row.get("workers"));
 
-        frequencyMinutes = Integer.parseInt(row.get("frequency"));
+        frequencyMinutes = Integer.parseInt(row.get("schedulerFrequency"));
         startDateExpr = row.get("startDate");
         endDateExpr = row.get("endDate");
 
@@ -68,7 +68,7 @@ public class ProbingLoadSteps {
         Assertions.assertThat(totalEservices).as("totalEservices").isGreaterThan(0);
         Assertions.assertThat(workers).as("workers").isGreaterThan(0);
 
-        Assertions.assertThat(frequencyMinutes).as("frequency").isGreaterThanOrEqualTo(1);
+        Assertions.assertThat(frequencyMinutes).as("schedulerFrequency").isGreaterThanOrEqualTo(1);
         Assertions.assertThat(waitPeriods).as("waitPeriods").isGreaterThanOrEqualTo(1);
         Assertions.assertThat(extraWait).as("extraWait").isNotNull();
         Assertions.assertThat(recentTolerance).as("recentTolerance").isNotNull();
@@ -76,7 +76,7 @@ public class ProbingLoadSteps {
         // Attesa = N * frequency + buffer
         waitDuration = Duration.ofMinutes((long) frequencyMinutes * (long) waitPeriods).plus(extraWait);
 
-        log.info("LOAD setup: total={}, workers={}, frequency={}m, window=[{}, {}], waitPeriods={}, extraWait={}, waitDuration={}, recentTolerance={}",
+        log.info("LOAD setup: total={}, workers={}, schedulerFrequency={}m, window=[{}, {}], waitPeriods={}, extraWait={}, waitDuration={}, recentTolerance={}",
                 totalEservices, workers, frequencyMinutes, startDateExpr, endDateExpr, waitPeriods, extraWait, waitDuration, recentTolerance
         );
     }
@@ -110,7 +110,7 @@ public class ProbingLoadSteps {
         log.info("Enable completato. enableTimeUtc={}", enableTimeUtc);
     }
 
-    @And("attendo N periodi di frequency più extraWait")
+    @And("attendo N=waitPeriods periodi più extraWait")
     public void waitNPeriodsPlusExtra() {
         log.info("Attendo {}", waitDuration);
         sleep(waitDuration);
@@ -145,7 +145,7 @@ public class ProbingLoadSteps {
             List<String> top = notOk.stream().limit(30).toList();
             throw new AssertionError(
                     "Verifica fallita: " + notOk.size() + "/" + totalEservices + " eservice non aggiornati dopo l'enable.\n" +
-                            "Parametri: frequency=" + frequencyMinutes + "m, waitPeriods=" + waitPeriods + ", extraWait=" + extraWait +
+                            "Parametri: schedulerFrequency=" + frequencyMinutes + "m, waitPeriods=" + waitPeriods + ", extraWait=" + extraWait +
                             ", waitDuration=" + waitDuration + ", tolerance=" + recentTolerance + "\n" +
                             "Esempi (max 30):\n" + String.join("\n", top)
             );

@@ -286,11 +286,11 @@ Feature: Probing
   @loadTest
   Scenario: [LOAD] 20k enable e verifica update dopo N periodi
     Given preparo il load test probing con:
-      | totalEservices | workers | frequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
-      | 20000          | 100     | 1         | now-1m    | now+10m | 1           | 45s       | 45s             |
+      | totalEservices | workers | schedulerFrequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
+      | 20000          | 100     | 3                  | now-1m    | now+10m | 1           | 45s       | 45s             |
     When aggiorno scheduling in parallelo per tutti gli eservice
     And abilito probing in parallelo per tutti gli eservice
-    And attendo N periodi di frequency più extraWait
+    And attendo N=waitPeriods periodi più extraWait
     Then verifico in parallelo che responseReceived sia valorizzata e aggiornata dopo l'enable per tutti gli eservice
     And disabilito probing in parallelo per tutti gli eservice
 
