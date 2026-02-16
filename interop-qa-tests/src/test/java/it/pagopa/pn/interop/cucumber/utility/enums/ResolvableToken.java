@@ -1,11 +1,14 @@
-package it.pagopa.pn.interop.cucumber.enums;
+package it.pagopa.pn.interop.cucumber.utility.enums;
 
 public enum ResolvableToken {
     ACTUAL("%actual"),
     NULL("%null"),
-    KEEP("%keep"),
+    EXPECTED("%expected"),
     RANDOM("%random"),
-    BLANK("%blank");
+    BLANK("%blank"),
+
+    EMPTY_LIST("%empty_list"),
+    NULL_ELEMENT_LIST("%null_element_list");
 
     private final String value;
 
@@ -29,5 +32,4 @@ public enum ResolvableToken {
         return null;
     }
 }
-
 
