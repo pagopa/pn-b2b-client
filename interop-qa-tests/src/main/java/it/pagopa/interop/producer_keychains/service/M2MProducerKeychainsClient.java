@@ -53,8 +53,8 @@ public class M2MProducerKeychainsClient extends AbstractClient implements IM2MPr
         return performOperation(() -> producerKeychainsApi.createProducerKeychainKeyWithHttpInfo(keychainId, keySeed)).orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)"));
     }
 
-    public void deleteProducerKeychainKeyById(UUID keychainId, String keyId) {
-        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, keyId)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
+    public void deleteProducerKeychainKeyByKid(UUID keychainId, String kid) {
+        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, kid)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
     }
 
     public void createProducerKeychainUserAssociation(UUID producerKeychainId, LinkUser linkUser) {
