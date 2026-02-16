@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 import io.cucumber.java.en.And;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
@@ -10,6 +11,7 @@ import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeyc
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 
 @Slf4j
 public class ProducerKeychainsSteps {
@@ -45,6 +47,21 @@ public class ProducerKeychainsSteps {
         }
     }
 
+    @And("l'utente viene invocata l'API di recupero utenze associate alla producer keychain {string} con limit {string} offset {string}")
+    public void getProducerKeychainUsers(String producerKeychainId, String limit, String offset) {
+        UUID producerKeychainValue = resolveProducerKeychainId(producerKeychainId);
+        Integer limitValue = parseNullableInteger(limit);
+        Integer offsetValue = parseNullableInteger(offset);
+
+        try {
+
+            Users response = producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, limitValue, offsetValue);
+            Assertions.assertThat(response).as("La response contenente l'id del producer keychain creato non deve essere null").isNotNull();
+
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
+    }
 
     private UUID parseNullableUuid(String value) {
         if (value == null || "null".equalsIgnoreCase(value)) {
@@ -64,6 +81,13 @@ public class ProducerKeychainsSteps {
             return UUID.randomUUID();
         }
         return null;
+    }
+
+    private Integer parseNullableInteger(String value) {
+        if (value == null || "null".equalsIgnoreCase(value)) {
+            return null;
+        }
+        return Integer.valueOf(value);
     }
 
 }

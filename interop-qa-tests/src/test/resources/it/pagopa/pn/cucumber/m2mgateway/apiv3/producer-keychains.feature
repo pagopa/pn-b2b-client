@@ -22,3 +22,21 @@ Feature: Gestione dei producer keychains - API v3
       | e490f02e-9429-4b38-bb11-ddb8a561fb62 | PKCreata           | m2m-admin | 404        |
 
       | 17a84b7b-dce6-4b8f-a1ae-85926c55f02e | PKC1               | m2m       | 403        |
+
+  Scenario Outline: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    When l'utente viene invocata l'API di recupero utenze associate alla producer keychain "<producerKeychainId>" con limit "<limit>" offset "<offset>"
+    Then si ottiene status code <statusCode>
+
+    #da implementare -> i 2 status 401
+    Examples:
+      | producerKeychainId | limit | offset | statusCode |
+      | PKCreata           | 10    | 0      | 200        |
+      | null               | 10    | 0      | 400        |
+      | PKCreata           | null  | 0      | 400        |
+      | PKCreata           | -1    | 0      | 400        |
+      | PKCreata           | 51    | 0      | 400        |
+      | PKCreata           | 10    | null   | 400        |
+      | PKCreata           | 10    | -1     | 400        |
+      | PKCNonEsistente    | 10    | 0      | 404        |
