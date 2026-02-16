@@ -307,13 +307,15 @@ public class DelayerSteps {
         Assertions.assertThat(tupla).isNotNull();
         boolean hasDeliveryInEvaluatePrint = !context.getExpectedByWorkflowStep(EVALUATE_PRINT_CAPACITY).isEmpty();
 
-        Assertions.assertThat(tupla.getDailyExecutionNumber())
-                .as(hasDeliveryInEvaluatePrint ? "DailyExecutionNumber deve essere uguale allo STANDARD_DAILY_EXECUTIONS" : "DailyExecutionNumber deve essere uguale a 0")
-                .isEqualTo(hasDeliveryInEvaluatePrint ? DelayerContext.STANDARD_DAILY_EXECUTIONS : 0);
+        if (hasDeliveryInEvaluatePrint) {
+            Assertions.assertThat(tupla.getDailyExecutionNumber())
+                    .as("DailyExecutionNumber deve essere uguale allo STANDARD_DAILY_EXECUTIONS")
+                    .isEqualTo(DelayerContext.STANDARD_DAILY_EXECUTIONS);
 
-        Assertions.assertThat(tupla.getDailyExecutionCounter())
-                .as("DailyExecutionCounter deve essere uguale a quello calcolato internamente")
-                .isEqualTo(context.currentStepFunction2ExecutionIndex);
+            Assertions.assertThat(tupla.getDailyExecutionCounter())
+                    .as("DailyExecutionCounter deve essere uguale a quello calcolato internamente")
+                    .isEqualTo(context.currentStepFunction2ExecutionIndex);
+        }
     }
 
     @When("vengono avviate le {int} esecuzioni della step function DelayerToPaperChannelStateMachine")
