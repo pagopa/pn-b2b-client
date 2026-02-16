@@ -1,3 +1,4 @@
+@probing
 Feature: Probing
 
   Scenario Outline: [GET_STATUS] - Health probing-ms check
@@ -282,6 +283,7 @@ Feature: Probing
       | 1         | now       | now+4m  | ERROR        |
       | 1         | now       | now+4m  | RANDOM       |
 
+  @loadTest
   Scenario: [LOAD] 20k enable e verifica update dopo N periodi
     Given preparo il load test probing con:
       | totalEservices | workers | frequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
