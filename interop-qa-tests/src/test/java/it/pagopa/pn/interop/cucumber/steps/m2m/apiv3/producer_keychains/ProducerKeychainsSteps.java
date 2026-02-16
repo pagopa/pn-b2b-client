@@ -32,7 +32,7 @@ public class ProducerKeychainsSteps {
 
     }
 
-    @And("l'utente associa l'utenza con userId {string} alla producer keychain {string}")
+    @And("viene associato l'utente {string} alla producer keychain {string}")
     public void createProducerKeychainUserAssociation(String userId, String producerKeychainId) {
         UUID userIdValue = resolver.resolveUserId(userId);
         UUID producerKeychainValue = resolver.resolveKeychain(producerKeychainId);

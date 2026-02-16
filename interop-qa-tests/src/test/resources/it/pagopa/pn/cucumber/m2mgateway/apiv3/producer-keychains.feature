@@ -6,7 +6,7 @@ Feature: Gestione dei producer keychais - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
-    When l'utente associa l'utenza con userId "<userId>" alla producer keychain "<producerKeychainId>"
+    When viene associato l'utente "<userId>" alla producer keychain "<producerKeychainId>"
     Then si ottiene status code <statusCode>
 
     #TODO: da implementare -> i 2 status 401
@@ -29,7 +29,7 @@ Feature: Gestione dei producer keychais - API v3
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_1] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    And l'utente associa l'utenza con userId "%actual" alla producer keychain "%actual"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
     And si ottiene status code 200
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key   | name   | alg   | use   | keychainId |
@@ -52,7 +52,7 @@ Feature: Gestione dei producer keychais - API v3
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_2] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    And l'utente associa l'utenza con userId "%actual" alla producer keychain "%actual"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
     And si ottiene status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
@@ -70,7 +70,7 @@ Feature: Gestione dei producer keychais - API v3
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_3] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    And l'utente associa l'utenza con userId "%actual" alla producer keychain "%actual"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
     And si ottiene status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M <m2mRoles>
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
@@ -87,7 +87,7 @@ Feature: Gestione dei producer keychais - API v3
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_4] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    And l'utente associa l'utenza con userId "%actual" alla producer keychain "%actual"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
     And si ottiene status code 200
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
