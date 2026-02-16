@@ -117,11 +117,17 @@ Feature: Gestione dei producer keychais - API v3
 
     #TODO: da implementare -> 401, 429
     Examples:
+    # Happy path (EC)
       | keyType | kid         | statusCode |
       | EC      | %actual     | 200        |
+
+    # Kid invalido (EC)
       | EC      | %random     | 404        |
       | EC      | invalid-kid | 400        |
 
+     # Happy path (RSA)
       | RSA     | %actual     | 200        |
+
+    # Kid invalido (RSA)
       | RSA     | %random     | 404        |
       | RSA     | invalid-kid | 400        |
