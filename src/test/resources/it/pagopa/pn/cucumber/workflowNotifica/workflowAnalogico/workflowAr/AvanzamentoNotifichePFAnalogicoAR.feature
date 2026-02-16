@@ -132,8 +132,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_AR_6] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@fail-Discovery_AR |
