@@ -1,37 +1,38 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
-
-import java.util.UUID;
-
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 public class ProducerKeychainsSteps {
     private final M2MProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
-    private final SharedStepsContext sharedStepsContext;
-    private final ProducerKeychainsContext producerKeychainsContext;
+    private final ProducerKeychainsResolver resolver;
 
     public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext) {
-
         this.producerKeychainsClient = producerKeychainsClient;
-        this.sharedStepsContext = sharedStepsContext;
-        this.producerKeychainsContext = producerKeychainsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
+        this.resolver = new ProducerKeychainsResolver(producerKeychainsContext, sharedStepsContext);
 
     }
 
     @And("l'utente associa l'utenza con userId {string} alla producer keychain {string}")
     public void createProducerKeychainUserAssociation(String userId, String producerKeychainId) {
-        UUID userIdValue = parseNullableUuid(userId);
-        UUID producerKeychainValue = resolveProducerKeychainId(producerKeychainId);
+        UUID userIdValue = resolver.resolveUserId(userId);
+        UUID producerKeychainValue = resolver.resolveKeychain(producerKeychainId);
 
         try {
             LinkUser linkUser = new LinkUser();
@@ -45,25 +46,18 @@ public class ProducerKeychainsSteps {
         }
     }
 
+    @And("l'utente crea una nuova chiave di tipo {string} all'interno del producer-keychains con:")
+    public void createKey(String keyType, DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps();
 
-    private UUID parseNullableUuid(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
+        try {
+            Map<String, String> seed = rows.get(0);
+            UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
+            KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
+
+            this.producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
-        return UUID.fromString(value);
     }
-
-    private UUID resolveProducerKeychainId(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
-        }
-        if ("PKCreata".equalsIgnoreCase(value)) {
-            return producerKeychainsContext.getProducerKeychainId();
-        }
-        if ("PKCNonEsistente".equalsIgnoreCase(value)) {
-            return UUID.randomUUID();
-        }
-        return null;
-    }
-
 }
