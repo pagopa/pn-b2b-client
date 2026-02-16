@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ import java.util.stream.Stream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class PaperTrackerSteps {
@@ -234,9 +237,14 @@ public class PaperTrackerSteps {
 
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(analogEventIds);
-
-        TrackingErrorsResponse errorsResponse = paperTrackerClient.retrieveTrackerErrors(request);
-        assertThat(errorsResponse).as("La TrackingErrorsResponse non dev'essere null").isNotNull();
+        AtomicReference<TrackingErrorsResponse> atomicReference = new AtomicReference<>();
+        await().atMost(Duration.ofMinutes(10))
+                .pollInterval(Duration.ofSeconds(10))
+                .untilAsserted(() -> {
+                    atomicReference.set(paperTrackerClient.retrieveTrackerErrors(request));
+                    assertThat(atomicReference.get().getResults()).isNotEmpty();
+                });
+        TrackingErrorsResponse errorsResponse = atomicReference.get();
         List<TrackingErrorsResponseResultsInner> innerErrorList = errorsResponse.getResults();
         assertThat(innerErrorList).as("La TrackingErrorsResponseResultsInner non dev'essere vuota").isNotEmpty();
         TrackingErrorsResponseResultsInner innerError = innerErrorList.get(0);
