@@ -8,14 +8,14 @@ Feature: Gestione utenti con API M2M V3
 
     Examples:
       | limit | offset | roles | m2mRoles  | statusCode |
-      | 10    | 0      | null  | m2m-admin | 200        |
+      | 10    | 0      | %null | m2m-admin | 200        |
       | 10    | 0      | admin | m2m-admin | 200        |
-      | null  | 0      | null  | m2m-admin | 400        |
-      | 10    | null   | null  | m2m-admin | 400        |
-      | -1    | null   | null  | m2m-admin | 400        |
-      | 51    | null   | null  | m2m-admin | 400        |
-      | null  | -1     | null  | m2m-admin | 400        |
-      | null  | -1     | null  | m2m       | 403        |
+      | %null | 0      | %null | m2m-admin | 400        |
+      | 10    | %null  | %null | m2m-admin | 400        |
+      | -1    | %null  | %null | m2m-admin | 400        |
+      | 51    | %null  | %null | m2m-admin | 400        |
+      | %null | -1     | %null | m2m-admin | 400        |
+      | %null | -1     | %null | m2m       | 403        |
     #da implementare -> i 2 status 401
 
   Scenario: [M2M_V3_GET_USERS] Verifica che gli utenti attivi restituiti appartengano al tenant del richiedente
@@ -34,13 +34,14 @@ Feature: Gestione utenti con API M2M V3
 
     Examples:
       | userId                               | m2mRoles  | statusCode |
-      | 17a84b7b-dce6-4b8f-a1ae-85926c55f02e | m2m-admin | 200        |
-      | null                                 | m2m-admin | 400        |
+      | %actual                              | m2m-admin | 200        |
+      | %null                                | m2m-admin | 400        |
       #userId valido ma non presente in db
-      | 56a84b7b-dce6-4b3f-a1ae-85926c55f02e | m2m-admin | 404        |
+      | %random                              | m2m-admin | 404        |
       #userId appartenete ad un tenant differente
       | e0477bcc-3baf-4755-aa31-375c051acb44 | m2m-admin | 404        |
-      | 17a84b7b-dce6-4b8f-a1ae-85926c55f02e | m2m       | 403        |
+
+      | %actual                              | m2m       | 403        |
     #da implementare -> i 2 status 401
 
 

@@ -7,9 +7,9 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.users.utils.UsersResolver;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,6 +24,7 @@ public class UsersSteps {
     private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
     private final TenantContext tenantContext;
+    private final UsersResolver resolver;
 
     public UsersSteps(M2MV3UsersClient usersClient, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
         this.usersClient = usersClient;
@@ -31,13 +32,14 @@ public class UsersSteps {
         this.tenantContext = tenantContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.usersClient.setHttpCallExecutor(this.httpCallExecutor);
+        this.resolver = new UsersResolver(sharedStepsContext);
     }
 
     @When("viene invocata l'API di recupero utenze appartenenti al tenant del richiedente con limit {string} offset {string} e roles {string}")
     public void getUsers(String limit, String offset, String roles) {
-        Integer requestedLimit = parseNullableInteger(limit);
-        Integer requestedOffset = parseNullableInteger(offset);
-        List<String> requestedRoles = parseNullableRoles(roles);
+        Integer requestedLimit = resolver.resolveInteger(limit);
+        Integer requestedOffset = resolver.resolveInteger(offset);
+        List<String> requestedRoles = resolver.resolveRoles(roles);
 
         try {
             Users response = usersClient.getUsers(requestedLimit, requestedOffset, requestedRoles);
@@ -52,7 +54,7 @@ public class UsersSteps {
 
     @When("viene invocata l'API per il recupero dell'utente {string} purchè appartenente al tenant del richiedente")
     public void getUser(String userId) {
-        UUID requestedUserId = parseNullableUuid(userId);
+        UUID requestedUserId = resolver.resolveUserId(userId);
         try {
             User response = usersClient.getUser(requestedUserId);
             Assertions.assertThat(response)
@@ -87,27 +89,4 @@ public class UsersSteps {
                 .isEqualTo(selfcareUserIds);
     }
 
-    private Integer parseNullableInteger(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
-        }
-        return Integer.valueOf(value);
-    }
-
-    private List<String> parseNullableRoles(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
-        }
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(role -> !role.isEmpty())
-                .toList();
-    }
-
-    private UUID parseNullableUuid(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
-        }
-        return UUID.fromString(value);
-    }
 }
