@@ -1,7 +1,7 @@
 package it.pagopa.interop.authorization.service.utils;
 
-import org.springframework.http.HttpHeaders;
+import java.util.Map;
 
 public interface SettableHeaders {
-    void setHeaders(HttpHeaders headers);
+    void setHeaders(Map<String, String> headers);
 }

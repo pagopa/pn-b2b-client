@@ -1,6 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
 import io.cucumber.spring.CucumberContextConfiguration;
+import it.pagopa.interop.M2MVersionsMapper;
+import it.pagopa.interop.M2MVersionsMapperImpl;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.agreement.service.impl.AgreementClientImpl;
@@ -193,7 +195,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PurposeTemplatePatchContext.class,
         PurposeTemplatePatchOperationsAssistant.class,
         PurposeTemplateMapperImpl.class,
-        ApiProfileConfiguration.class
+        ApiProfileConfiguration.class,
+        M2MVersionsMapper.class,
+        M2MVersionsMapperImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
