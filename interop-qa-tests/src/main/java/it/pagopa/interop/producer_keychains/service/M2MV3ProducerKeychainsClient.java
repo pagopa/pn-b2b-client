@@ -9,7 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
-import it.pagopa.interop.producer_keychains.IM2MProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -22,14 +22,14 @@ import java.util.UUID;
 @ToString
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class M2MProducerKeychainsClient extends AbstractClient implements IM2MProducerKeychainsClient {
+public class M2MV3ProducerKeychainsClient extends AbstractClient implements IM2MV3ProducerKeychainsClient {
 
     private final ProducerKeychainsApi producerKeychainsApi;
     private final KeysApi keysApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MProducerKeychainsClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
+    public M2MV3ProducerKeychainsClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;

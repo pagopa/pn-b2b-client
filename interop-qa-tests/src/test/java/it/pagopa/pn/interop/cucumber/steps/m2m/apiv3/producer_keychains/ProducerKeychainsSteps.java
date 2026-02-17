@@ -10,7 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
-import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
@@ -30,14 +30,14 @@ import org.springframework.http.HttpStatus;
 
 @Slf4j
 public class ProducerKeychainsSteps {
-    private final M2MProducerKeychainsClient producerKeychainsClient;
+    private final M2MV3ProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsResolver resolver;
     private final ProducerKeychainsContext context;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final TenantContext tenantContext;
 
-    public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
+    public ProducerKeychainsSteps(M2MV3ProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
 
         this.producerKeychainsClient = producerKeychainsClient;
         this.tenantContext = tenantContext;

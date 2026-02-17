@@ -7,7 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 
 import java.util.UUID;
 
-public interface IM2MProducerKeychainsClient {
+public interface IM2MV3ProducerKeychainsClient {
 
     ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed);
 
