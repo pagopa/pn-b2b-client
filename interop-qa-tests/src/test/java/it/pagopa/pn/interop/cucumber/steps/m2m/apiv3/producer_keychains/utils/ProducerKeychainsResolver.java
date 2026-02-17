@@ -42,39 +42,21 @@ public class ProducerKeychainsResolver extends AbstractResolver {
     }
 
     public UUID resolveKeychain(String raw) {
-        return resolveOrParse(
-                raw,
-                UUID::fromString,
-                context::getProducerKeychainId,
-                context::getProducerKeychainId,
-                UUID::randomUUID,
-                () -> null
-
-        );
+        return resolveOrParse(raw, UUID::fromString, context::getProducerKeychainId, context::getProducerKeychainId, UUID::randomUUID, () -> null);
     }
 
     public UUID resolveUserId(String raw) {
         final Role role = sharedStepsContext.getRole();
         final String tenant = sharedStepsContext.getTenantType();
 
-        return resolveOrParse(
-                raw,
-                UUID::fromString,
-                () -> sharedStepsContext.getIdentityService().getUserId(tenant, role.getValue()),
-                () -> sharedStepsContext.getIdentityService().getUserId(tenant, role.getValue()),
-                UUID::randomUUID,
-                () -> null
-        );
+        return resolveOrParse(raw, UUID::fromString, () -> sharedStepsContext.getIdentityService().getUserId(tenant, role.getValue()), () -> sharedStepsContext.getIdentityService().getUserId(tenant, role.getValue()), UUID::randomUUID, () -> null);
     }
 
     public String resolveKid(String raw) {
-        return resolveOrParse(
-                raw,
-                (r) -> r,
-                () -> context.getProducerKey().getJwk().getKid(),
-                () -> context.getProducerKey().getJwk().getKid(),
-                () -> UUID.randomUUID().toString(),
-                () -> null
-        );
+        return resolveOrParse(raw, (r) -> r, () -> context.getProducerKey().getJwk().getKid(), () -> context.getProducerKey().getJwk().getKid(), () -> UUID.randomUUID().toString(), () -> null);
+    }
+
+    public Integer resolveInteger(String raw) {
+        return resolveOrParse(raw, Integer::valueOf, null, null, null, () -> null);
     }
 }

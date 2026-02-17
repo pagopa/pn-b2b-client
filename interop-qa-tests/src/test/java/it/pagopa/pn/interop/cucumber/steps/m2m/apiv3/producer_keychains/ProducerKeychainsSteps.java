@@ -15,10 +15,13 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
+import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
@@ -31,7 +34,6 @@ public class ProducerKeychainsSteps {
     private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsResolver resolver;
     private final ProducerKeychainsContext context;
-    private final SharedStepsContext sharedStepsContext;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final TenantContext tenantContext;
     private final PollingService pollingService;
@@ -39,7 +41,6 @@ public class ProducerKeychainsSteps {
     public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
 
         this.producerKeychainsClient = producerKeychainsClient;
-        this.sharedStepsContext = sharedStepsContext;
         this.tenantContext = tenantContext;
         this.producerKeychainsContext = producerKeychainsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -51,8 +52,6 @@ public class ProducerKeychainsSteps {
     }
 
     @And("viene associato l'utente {string} alla producer keychain {string}")
-    @And("l'utente associa l'utenza con userId {string} alla producer keychain {string}")
-    @And("esiste un utente con id {string} associato alla keychain creata {string}")
     public void createProducerKeychainUserAssociation(String userId, String producerKeychainId) {
         UUID userIdValue = resolver.resolveUserId(userId);
         UUID producerKeychainValue = resolver.resolveKeychain(producerKeychainId);
@@ -75,9 +74,9 @@ public class ProducerKeychainsSteps {
 
     @And("viene invocata l'API di recupero utenze associate alla producer keychain {string} con limit {string} offset {string}")
     public void getProducerKeychainUsers(String producerKeychainId, String limit, String offset) {
-        UUID producerKeychainValue = resolveProducerKeychainId(producerKeychainId);
-        Integer limitValue = parseNullableInteger(limit);
-        Integer offsetValue = parseNullableInteger(offset);
+        UUID producerKeychainValue = resolver.resolveKeychain(producerKeychainId);
+        Integer limitValue = resolver.resolveInteger(limit);
+        Integer offsetValue = resolver.resolveInteger(offset);
 
         try {
 
@@ -122,12 +121,12 @@ public class ProducerKeychainsSteps {
 
     @When("l'utente elimina l'associazione tra l'utenza con userId {string} e la producer keychain {string}")
     public void deleteProducerKeychainUserAssociation(String userId, String producerKeychainId) {
-        UUID userIdValue = parseNullableUuid(userId);
-        UUID producerKeychainValue = resolveProducerKeychainId(producerKeychainId);
+        UUID userIdValue = resolver.resolveUserId(userId);
+        UUID producerKeychainValue = resolver.resolveKeychain(producerKeychainId);
 
         try {
 
-            pollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.deleteProducerKeychainKeyById(producerKeychainValue, userIdValue)), status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione dell'associazione utente-producer keychain");
+            pollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.deleteProducerKeychainUserAssociationById(producerKeychainValue, userIdValue)), status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione dell'associazione utente-producer keychain");
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
                 pollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().noneMatch(user -> userIdValue.equals(user.getUserId())), "L'utente risulta ancora associato alla producer keychain dopo l'eliminazione");
@@ -159,12 +158,4 @@ public class ProducerKeychainsSteps {
             log.warn(e.getMessage());
         }
     }
-
-    private Integer parseNullableInteger(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
-        }
-        return Integer.valueOf(value);
-    }
-
 }
