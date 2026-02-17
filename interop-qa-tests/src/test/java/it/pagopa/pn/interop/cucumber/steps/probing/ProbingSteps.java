@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.italyToday;
 import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.matchesAllFilters;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
@@ -220,6 +221,8 @@ public class ProbingSteps {
 
         try {
             probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue, endValue);
+            probingContext.setActualStartTime(startValue);
+            probingContext.setActualEndTime(endValue);
 
             Long eserviceRecordId = resolver.getEserviceRecordId();
             EserviceRow expected = probingContext.getExpectedEserviceRow();
@@ -295,8 +298,8 @@ public class ProbingSteps {
     public void getEserviceTelemetry(String eserviceRecordId, String pollingFrequency, String startDate, String endDate) {
         Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
         Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
-        OffsetDateTime startDateValue = dateTimeOrNull(startDate);
-        OffsetDateTime endDateValue = dateTimeOrNull(endDate);
+        OffsetDateTime startDateValue = italyToday(resolver.resolvePollingStartTime(startDate));
+        OffsetDateTime endDateValue = italyToday(resolver.resolvePollingEndTime(endDate));
 
         try {
             TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);

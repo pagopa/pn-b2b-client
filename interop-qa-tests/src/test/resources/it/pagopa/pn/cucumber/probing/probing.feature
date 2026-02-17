@@ -277,7 +277,7 @@ Feature: Probing
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
     And la response riporta lo status code 204
     When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "3", startDate "<startDate>", endDate "<endDate>"
-    And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "now-20m" , endDate "now-1m"
+    And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "%actual" , endDate "%actual"
     And la response riporta lo status code 200
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
     And la response riporta lo status code 200

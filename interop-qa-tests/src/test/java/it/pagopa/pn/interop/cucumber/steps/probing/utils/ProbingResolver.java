@@ -132,8 +132,8 @@ public class ProbingResolver extends AbstractResolver {
                     OffsetDateTime dt = StepParser.dateTimeOrNull(v);
                     return dt == null ? null : ProbingUtils.italyToday(dt.toLocalTime());
                 },
-                () -> probingContext.getActualEserviceRow().getPollingStartTime(),
-                () -> probingContext.getExpectedEserviceRow().getPollingStartTime()
+                probingContext::getActualStartTime,
+                probingContext::getActualEndTime
         );
     }
 
@@ -144,8 +144,8 @@ public class ProbingResolver extends AbstractResolver {
                     OffsetDateTime dt = StepParser.dateTimeOrNull(v);
                     return dt == null ? null : ProbingUtils.italyToday(dt.toLocalTime());
                 },
-                () -> probingContext.getActualEserviceRow().getPollingEndTime(),
-                () -> probingContext.getExpectedEserviceRow().getPollingEndTime()
+                probingContext::getActualStartTime,
+                probingContext::getActualEndTime
         );
     }
 

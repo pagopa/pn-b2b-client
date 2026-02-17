@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +28,8 @@ public class ProbingContext{
     private EserviceRow actualEserviceRow;
     private EserviceRow expectedEserviceRow;
     private OffsetDateTime lastResponseTime;
+    private OffsetTime actualStartTime;
+    private OffsetTime actualEndTime;
     private List<TelemetryDataEserviceResponse> actualTelemetry = new ArrayList<>();
     private List<TelemetryDataEserviceResponse> expectedTelemetry = new ArrayList<>();
 

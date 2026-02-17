@@ -4,11 +4,13 @@ import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateFE
 import it.pagopa.interop.generated.openapi.clients.probing.model.SearchEserviceContent;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ProbingUtils {
 
     private static final ZoneId ROME = ZoneId.of("Europe/Rome");
+    private static final DateTimeFormatter UTC_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(java.time.ZoneOffset.UTC);
 
     public record EserviceFilters(String eserviceName, String producerName, Integer versionNumber,
                                   List<EserviceStateFE> states) {
@@ -22,6 +24,21 @@ public class ProbingUtils {
         ZoneOffset offset = ZonedDateTime.of(todayRome, time, ROME).getOffset();
 
         return OffsetTime.of(time.withNano(0), offset);
+    }
+
+    public static OffsetDateTime italyToday(OffsetTime time) {
+        if (time == null) return null;
+
+        // “oggi” secondo l’Italia (stabile anche se la JVM gira in UTC)
+        LocalDate todayRome = LocalDate.now(ROME);
+
+        // Combina la data italiana con l'ora del time, mantenendo il suo offset
+        return time.withNano(0).atDate(todayRome);
+    }
+
+    public static String toUtcDateTimeFormat(OffsetDateTime dt) {
+        if (dt == null) return null;
+        return UTC_FMT.format(dt.toInstant());
     }
 
     public static boolean matchesAllFilters(SearchEserviceContent item, EserviceFilters f) {
