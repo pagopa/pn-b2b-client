@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.probing.model;
 
+import it.pagopa.pn.interop.cucumber.steps.probing.utils.EserviceRowAllocator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -141,38 +142,9 @@ public class EserviceRow {
             int errorCount,
             int randomCount
     ) {
-        int total = okCount + errorCount + randomCount;
-        if (total <= 0) {
-            throw new IllegalArgumentException("Total eservices count must be > 0");
-        }
-
-        long index;
-
-        switch (outcome) {
-            case OK -> {
-                if (okCount <= 0) {
-                    throw new IllegalArgumentException("No OK eservices available");
-                }
-                index = 1L;
-            }
-            case ERROR -> {
-                if (errorCount <= 0) {
-                    throw new IllegalArgumentException("No ERROR eservices available");
-                }
-                index = 1L + okCount;
-            }
-            case RANDOM -> {
-                if (randomCount <= 0) {
-                    throw new IllegalArgumentException("No RANDOM eservices available");
-                }
-                index = 1L + okCount + errorCount;
-            }
-            default -> throw new IllegalStateException("Unsupported outcome: " + outcome);
-        }
-
+        long index = EserviceRowAllocator.nextIndex(outcome, okCount, errorCount, randomCount);
         return atIndex(index, okCount, errorCount, randomCount, DEFAULT_BASE_HOST);
     }
-
 
     /**
      * Overload "comodo": usa i default dello script per host e count.
