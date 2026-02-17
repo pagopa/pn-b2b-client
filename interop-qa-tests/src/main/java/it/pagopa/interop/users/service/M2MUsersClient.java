@@ -29,7 +29,7 @@ public class M2MUsersClient extends AbstractClient implements IM2MUsersClient {
 
     public M2MUsersClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
-        this.basePath = interopClientConfigs.getApiv3BaseUrl();
+        this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
         this.usersApi = new UsersApi(createUsersApiClient());

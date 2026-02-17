@@ -31,7 +31,7 @@ public class M2MProducerKeychainsClient extends AbstractClient implements IM2MPr
 
     public M2MProducerKeychainsClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
-        this.basePath = interopClientConfigs.getApiv3BaseUrl();
+        this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
         this.producerKeychainsApi = new ProducerKeychainsApi(createProducerKeychainsApiClient());

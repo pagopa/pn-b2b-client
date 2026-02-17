@@ -15,8 +15,8 @@ public class InteropClientConfigs {
     @Value("${m2m.base-url}")
     private String m2mBaseUrl;
 
-    @Value("${apiv3.base-url}")
-    private String apiv3BaseUrl;
+    @Value("${m2m.v3.base-url")
+    private String m2mV3BaseUrl;
 
     @Value("${remote-wellknown-url}")
     private String remoteWellknownUrl;
