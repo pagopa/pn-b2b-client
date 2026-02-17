@@ -1,6 +1,7 @@
 package it.pagopa.interop.producer_keychains;
 
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 
@@ -13,6 +14,8 @@ public interface IM2MProducerKeychainsClient {
     void deleteProducerKeychainKeyByKid(UUID keychainId, String keyId);
 
     ProducerKey getProducerKey(String kid);
+
+    void createProducerKeychainUserAssociation(UUID producerKeychainId, LinkUser linkUser);
 
     Users getProducerKeychainUsers(UUID producerKeychainId, Integer limit, Integer offset);
 
