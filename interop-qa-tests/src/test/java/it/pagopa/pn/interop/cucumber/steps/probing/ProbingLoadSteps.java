@@ -205,7 +205,7 @@ public class ProbingLoadSteps {
 
             long start = System.nanoTime();
 
-            for (int i = 0; i < total; i++) {
+            for (int i = 1; i <= total; i++) {
                 final int idx = i;
                 futures.add(pool.submit(() -> {
                     try {
