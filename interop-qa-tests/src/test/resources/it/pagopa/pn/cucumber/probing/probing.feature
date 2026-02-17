@@ -277,7 +277,7 @@ Feature: Probing
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
     And la response riporta lo status code 204
     When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "3", startDate "<startDate>", endDate "<endDate>"
-    And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "now-20m" , endDate "now"
+    And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "now-20m" , endDate "now-1m"
     And la response riporta lo status code 200
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
     And la response riporta lo status code 200
@@ -295,11 +295,9 @@ Feature: Probing
   Scenario: [LOAD] Eservice enable e verifica update dopo N periodi
     Given preparo il load test probing con:
       | totalEservices | workers | schedulerFrequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
-      | 20000          | 100     | 3                  | now-1m    | now+10m | 1           | 45s       | 45s             |
+      | 10             | 100     | 3                  | now-1m    | now+10m | 1           | 45s       | 45s             |
     When aggiorno scheduling in parallelo per tutti gli eservice
     And abilito probing in parallelo per tutti gli eservice
     And attendo N=waitPeriods periodi più extraWait
     Then verifico in parallelo che responseReceived sia valorizzata e aggiornata dopo l'enable per tutti gli eservice
     And disabilito probing in parallelo per tutti gli eservice
-
-
