@@ -180,7 +180,7 @@ public class EserviceRow {
      */
     public static EserviceRow atIndex(long i) {
         // default come tuo script di esempio: ok=1, error=0, random=1
-        return atIndex(i, 1, 0, 1, DEFAULT_BASE_HOST);
+        return atIndex(i, ProbingContext.ESERVICE_OK_COUNT, ProbingContext.ESERVICE_KO_COUNT, ProbingContext.ESERVICE_RANDOM_COUNT, DEFAULT_BASE_HOST);
     }
 
     public static EserviceRow fromName(String eserviceName, int okCount, int errorCount, int randomCount, String baseHost) {
