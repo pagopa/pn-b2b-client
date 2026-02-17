@@ -235,3 +235,12 @@ Feature: Gestione dei producer keychains - API v3
       | e490f02e-9429-4b38-bb11-ddb8a561fb62 | PKCreata           | m2m-admin | 404        |
 
       | c7dc1a86-31f6-4fe9-89cd-184201e29d75 | PKCreata           | m2m       | 403        |
+
+  Scenario : [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_2] Eliminazione associazione tra utenza e producer keychain specificatiazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene status code 200
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
+    And si ottiene status code 404
