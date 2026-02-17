@@ -4,11 +4,11 @@ $$ DECLARE
 -- =====================
 -- CONFIG (MODIFICABILE)
 -- =====================
-v_ok_count int := 1;
+v_ok_count int := 10000;
 v_error_count
-int := 1;
+int := 5000;
 v_random_count
-int := 1;
+int := 5000;
 v_base_host
 text := 'http://probing-be-eservice-mock.qa:8080';
 -- polling (UTC)
