@@ -292,7 +292,7 @@ Feature: Probing
       | 1         | now       | now+4m  | RANDOM       |
 
   @loadTest
-  Scenario: [LOAD] 20k enable e verifica update dopo N periodi
+  Scenario: [LOAD] Eservice enable e verifica update dopo N periodi
     Given preparo il load test probing con:
       | totalEservices | workers | schedulerFrequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
       | 20000          | 100     | 3                  | now-1m    | now+10m | 1           | 45s       | 45s             |
