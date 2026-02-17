@@ -136,13 +136,8 @@ public class EserviceRow {
      * Restituisce un EserviceRow coerente con lo script dato l'Outcome richiesto.
      * Usa il primo indice valido per quell'outcome.
      */
-    public static EserviceRow pickByOutcome(
-            Outcome outcome,
-            int okCount,
-            int errorCount,
-            int randomCount
-    ) {
-        long index = EserviceRowAllocator.nextIndex(outcome, okCount, errorCount, randomCount);
+    public static EserviceRow pickByOutcome(Outcome outcome, int okCount, int errorCount, int randomCount) {
+        long index = EserviceRowAllocator.nextByOutcome(outcome, okCount, errorCount, randomCount);
         return atIndex(index, okCount, errorCount, randomCount, DEFAULT_BASE_HOST);
     }
 

@@ -14,6 +14,7 @@ import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.EserviceRow;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
+import it.pagopa.pn.interop.cucumber.steps.probing.utils.EserviceRowAllocator;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
@@ -309,10 +310,18 @@ public class ProbingSteps {
 
     @Given("vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo")
     public void getEserviceRow() {
-        EserviceRow eserviceRow = EserviceRow.atIndex(probingContext.getThreadNumber());
+        int ok = ProbingContext.ESERVICE_OK_COUNT;
+        int ko = ProbingContext.ESERVICE_KO_COUNT;
+        int rnd = ProbingContext.ESERVICE_RANDOM_COUNT;
+
+        long preferred = probingContext.getThreadNumber();
+        long index = EserviceRowAllocator.reservePreferred(preferred, ok, ko, rnd);
+
+        EserviceRow eserviceRow = EserviceRow.atIndex(index);
         probingContext.setActualEserviceRow(eserviceRow);
         probingContext.setExpectedEserviceRow(eserviceRow);
     }
+
 
     @Given("vengono calcolate le informazioni di probing relative ad un e-service con health check {word} presente a catalogo")
     public void getEserviceRowWithOutcome(String outcomeStr) {
