@@ -2,30 +2,6 @@
   #TODO: Check Agid-JWT-Signature, Digest
 Feature: Gestione dei producer keychains - API v3
 
-  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Associazione utenze a producer keychain
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
-    When viene associato l'utente "<userId>" alla producer keychain "<producerKeychainId>"
-    Then si ottiene status code <statusCode>
-
-    #TODO: da implementare -> i 2 status 401
-    Examples:
-      | tenant | userId  | producerKeychainId | m2mRoles  | statusCode |
-      | PA1    | %actual | %actual            | m2m-admin | 204        |
-      | PA1    | %null   | %actual            | m2m-admin | 400        |
-      | PA1    | %actual | %null              | m2m-admin | 400        |
-      | PA1    | %actual | %random            | m2m-admin | 404        |
-
-    #userId valido ma inesistente -> 404
-      | PA1    | %random | %actual            | m2m-admin | 404        |
-
-    #userId valido ma appartenente ad un altro tenant -> 404
-      | PA2    | %actual | %actual            | m2m-admin | 404        |
-
-    # utente non autorizzato
-      | PA1    | %actual | %actual            | m2m       | 403        |
-
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_1] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -172,6 +148,41 @@ Feature: Gestione dei producer keychains - API v3
       | RSA     | invalid-kid | %actual    | PA1    | 400        |
       | RSA     | %actual     | %random    | PA1    | 400        |
       | RSA     | %actual     | %null      | PA1    | 400        |
+
+  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
+    When viene associato l'utente "<userId>" alla producer keychain "<producerKeychainId>"
+    Then si ottiene status code <statusCode>
+
+    #TODO: da implementare -> i 2 status 401
+    Examples:
+      | tenant | userId  | producerKeychainId | m2mRoles  | statusCode |
+      | PA1    | %actual | %actual            | m2m-admin | 204        |
+      | PA1    | %null   | %actual            | m2m-admin | 400        |
+      | PA1    | %actual | %null              | m2m-admin | 400        |
+      | PA1    | %actual | %random            | m2m-admin | 404        |
+
+    #userId valido ma inesistente -> 404
+      | PA1    | %random | %actual            | m2m-admin | 404        |
+
+    #userId valido ma appartenente ad un altro tenant -> 404
+      | PA2    | %actual | %actual            | m2m-admin | 404        |
+
+    # utente non autorizzato
+      | PA1    | %actual | %actual            | m2m       | 403        |
+
+
+  Scenario: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_2] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene status code 200
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene status code 404
+
   Scenario Outline: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -200,7 +211,7 @@ Feature: Gestione dei producer keychains - API v3
     Then si verifica che la chiamata a selfcare abbia ritornato uno status code: 200
     And si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante
 
-  Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Eliminazione associazione tra utenza e producer keychain specificatiazione utenze a producer keychain
+  Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Eliminazione associazione tra utenza e producer keychain specificatiazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1" con ruolo M2M <m2mRoles>
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And esiste un utente con id "c7dc1a86-31f6-4fe9-89cd-184201e29d75" associato alla keychain creata "PKCreata"
