@@ -32,8 +32,6 @@ import org.springframework.http.HttpMethod;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
@@ -138,7 +136,7 @@ public class DPoPTokenService extends AbstractClient {
         return dpopProofService.validateCnfJkt(accessToken, dpopJwt);
     }
 
-    public KeyPairDecorator generateKeyPair(String keyType) {
+    public static KeyPairDecorator generateKeyPair(String keyType) {
         return switch (keyType) {
             case "EC" -> KeyPairDecorator.of("EC", 256);
             case "RSA" -> KeyPairDecorator.of("RSA", 2048);

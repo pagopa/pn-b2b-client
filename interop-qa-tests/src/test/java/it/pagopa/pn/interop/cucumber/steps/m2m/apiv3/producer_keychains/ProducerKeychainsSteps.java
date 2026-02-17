@@ -1,30 +1,36 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
-
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
+
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
+
+
 
 @Slf4j
 public class ProducerKeychainsSteps {
     private final M2MProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
+    private final ProducerKeychainsResolver resolver;
+    private final ProducerKeychainsContext context;
     private final SharedStepsContext sharedStepsContext;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final TenantContext tenantContext;
@@ -39,14 +45,17 @@ public class ProducerKeychainsSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
+        this.context = producerKeychainsContext;
+        this.resolver = new ProducerKeychainsResolver(producerKeychainsContext, sharedStepsContext);
 
     }
 
+    @And("viene associato l'utente {string} alla producer keychain {string}")
     @And("l'utente associa l'utenza con userId {string} alla producer keychain {string}")
     @And("esiste un utente con id {string} associato alla keychain creata {string}")
     public void createProducerKeychainUserAssociation(String userId, String producerKeychainId) {
-        UUID userIdValue = parseNullableUuid(userId);
-        UUID producerKeychainValue = resolveProducerKeychainId(producerKeychainId);
+        UUID userIdValue = resolver.resolveUserId(userId);
+        UUID producerKeychainValue = resolver.resolveKeychain(producerKeychainId);
 
         try {
             LinkUser linkUser = new LinkUser();
@@ -80,6 +89,23 @@ public class ProducerKeychainsSteps {
         }
     }
 
+    @And("l'utente crea una nuova chiave di tipo {string} all'interno del producer-keychains con:")
+    public void createKey(String keyType, DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps();
+
+        try {
+            Map<String, String> seed = rows.get(0);
+            UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
+            KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
+
+            ProducerKey key = this.producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+            context.setProducerKey(key);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
+    }
+
+
     @When("si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante")
     public void verifyUsersPresence() {
         List<User> m2mUsers = tenantContext.getM2mUsers();
@@ -111,24 +137,27 @@ public class ProducerKeychainsSteps {
         }
     }
 
-    private UUID parseNullableUuid(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
+    @And("viene recuperata la producer-key con kid {string}")
+    public void getProducerKey(String rawKid) {
+        String kid = resolver.resolveKid(rawKid);
+        try {
+            ProducerKey pKey = producerKeychainsClient.getProducerKey(kid);
+            context.setProducerKey(pKey);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
-        return UUID.fromString(value);
     }
 
-    private UUID resolveProducerKeychainId(String value) {
-        if (value == null || "null".equalsIgnoreCase(value)) {
-            return null;
+    @And("viene eliminata la producer-key con keychainId {string}, kid {string}")
+    public void deleteProducerKey(String rawKid, String rawKeychainId) {
+        String kid = resolver.resolveKid(rawKid);
+        UUID keychainId = resolver.resolveKeychain(rawKeychainId);
+
+        try {
+            producerKeychainsClient.deleteProducerKeychainKeyByKid(keychainId, kid);
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
         }
-        if ("PKCreata".equalsIgnoreCase(value)) {
-            return producerKeychainsContext.getProducerKeychainId();
-        }
-        if ("PKCNonEsistente".equalsIgnoreCase(value)) {
-            return UUID.randomUUID();
-        }
-        return null;
     }
 
     private Integer parseNullableInteger(String value) {
