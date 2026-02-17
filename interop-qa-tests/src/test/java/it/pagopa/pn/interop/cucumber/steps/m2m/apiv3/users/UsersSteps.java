@@ -5,7 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
-import it.pagopa.interop.users.service.M2MUsersClient;
+import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 
@@ -20,12 +20,12 @@ import org.assertj.core.api.Assertions;
 
 @Slf4j
 public class UsersSteps {
-    private final M2MUsersClient usersClient;
+    private final M2MV3UsersClient usersClient;
     private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
     private final TenantContext tenantContext;
 
-    public UsersSteps(M2MUsersClient usersClient, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
+    public UsersSteps(M2MV3UsersClient usersClient, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
         this.usersClient = usersClient;
         this.sharedStepsContext = sharedStepsContext;
         this.tenantContext = tenantContext;

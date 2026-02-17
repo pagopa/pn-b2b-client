@@ -6,7 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.UsersApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
-import it.pagopa.interop.users.IM2MUsersClient;
+import it.pagopa.interop.users.IM2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 
 import java.util.List;
@@ -21,13 +21,13 @@ import org.springframework.web.client.RestTemplate;
 @ToString
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class M2MUsersClient extends AbstractClient implements IM2MUsersClient {
+public class M2MV3UsersClient extends AbstractClient implements IM2MV3UsersClient {
 
     private final UsersApi usersApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MUsersClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
+    public M2MV3UsersClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
