@@ -29,7 +29,7 @@ Feature: Gestione utenti con API M2M V3
 
   Scenario Outline: [M2M_V3_GET_USER] Recupero utente specifico purchè appartenente al tenant del richiedente
     Given l'utente è un "admin" di "PA1" con ruolo M2M <m2mRoles>
-    And viene invocata l'API per il recupero dell'utente "<userId>" purchè appartenente al tenant del richiedente
+    When viene invocata l'API per il recupero dell'utente "<userId>" purchè appartenente al tenant del richiedente
     Then si ottiene status code <statusCode>
 
     Examples:
