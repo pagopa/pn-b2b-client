@@ -66,7 +66,7 @@ public class DPoPTokenService extends AbstractClient {
         this.dpopProofService = dpopProofService;
     }
 
-    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String tenantType, String purposeId) {
         TokenKey tokenKey = TokenKey.of(tenantType, M2MRole.M2M_ADMIN);
 
         return tokenCache.computeIfAbsent(tokenKey, key -> {
@@ -75,7 +75,7 @@ public class DPoPTokenService extends AbstractClient {
         });
     }
 
-    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, String clientId, KeyPair keyPair, ClientType clientType, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, String clientId, KeyPair keyPair, ClientType clientType, @NonNull String tenantType, String purposeId) {
         log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, clientId);
         return retrieveAccessToken(clientId, keyPair, clientType, purposeId, dpopProof);
     }
@@ -118,7 +118,7 @@ public class DPoPTokenService extends AbstractClient {
         )).orElse(Pair.of(dpopProof, new VoucherResponse()));
     }
 
-    public Pair<Integer, String> sendRequestWithDuplicateDpopHeaders(@NonNull String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String purposeId, @NonNull String dpopProof) {
+    public Pair<Integer, String> sendRequestWithDuplicateDpopHeaders(@NonNull String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, String purposeId, @NonNull String dpopProof) {
         try {
             String clientAssertion = generateClientAssertion(clientId, keyPair, clientType, purposeId);
             String requestBody = buildFormRequestBody(clientId, clientAssertion);
