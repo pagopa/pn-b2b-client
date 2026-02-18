@@ -58,13 +58,13 @@ Feature: Probing
     Examples:
     # Happy paths
       | eserviceId | versionId | frequency  | startDate | endDate | statusCode |
-      | %actual    | %actual   | %actual    | %actual   | %actual | 204        |
-      | %actual    | %actual   | %actual+10 | %actual   | %actual | 204        |
+      | %actual    | %actual   | %actual    | now-2h    | now+2m  | 204        |
+      | %actual    | %actual   | %actual+10 | now-2h    | now+2m  | 204        |
       | %actual    | %actual   | %actual    | now+1h    | now+2h  | 204        |
 
     # Frequency invalid
-      | %actual    | %actual   | -1         | %actual   | %actual | 400        |
-      | %actual    | %actual   | 0          | %actual   | %actual | 400        |
+      | %actual    | %actual   | -1         | now-2h    | now+2m  | 400        |
+      | %actual    | %actual   | 0          | now-2h    | now+2m  | 400        |
 
     # Window invalid
       | %actual    | %actual   | %actual    | now+2h    | now+1h  | 400        |
@@ -72,10 +72,10 @@ Feature: Probing
       | %actual    | %actual   | %actual    | now+1h    | %null   | 400        |
 
     # Not found (wrong ids)
-      | %null      | %actual   | %actual    | %actual   | %actual | 400        |
-      | %actual    | %null     | %actual    | %actual   | %actual | 400        |
-      | %random    | %actual   | %actual    | %actual   | %actual | 404        |
-      | %actual    | %random   | %actual    | %actual   | %actual | 404        |
+      | %null      | %actual   | %actual    | now-2h    | now+2m  | 400        |
+      | %actual    | %null     | %actual    | now-2h    | now+2m  | 400        |
+      | %random    | %actual   | %actual    | now-2h    | now+2m  | 404        |
+      | %actual    | %random   | %actual    | now-2h    | now+2m  | 404        |
 
   Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing con combinazioni id/versione
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
@@ -287,9 +287,9 @@ Feature: Probing
     Examples:
     # IN window
       | frequency | startDate | endDate | mockResponse |
-      | 1         | now       | now+4m  | OK           |
-      | 1         | now       | now+4m  | ERROR        |
-      | 1         | now       | now+4m  | RANDOM       |
+      | 1         | now+1m    | now+10m | OK           |
+      | 1         | now+1m    | now+10m | ERROR        |
+      | 1         | now+1m    | now+10m | RANDOM       |
 
   @loadTest
   Scenario: [LOAD] Eservice enable e verifica update dopo N periodi

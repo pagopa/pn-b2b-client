@@ -30,7 +30,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.italyToday;
 import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.matchesAllFilters;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 
@@ -216,13 +215,17 @@ public class ProbingSteps {
         UUID eserviceUuid = resolver.resolveEserviceId(eserviceId);
         UUID versionUuid = resolver.resolveVersionId(versionId);
         Integer frequencyValue = resolver.resolveFrequency(frequency);
-        OffsetTime startValue = resolver.resolvePollingStartTime(startDate);
-        OffsetTime endValue = resolver.resolvePollingEndTime(endDate);
+        OffsetDateTime startValue = resolver.resolvePollingStartTime(startDate);
+        OffsetDateTime endValue = resolver.resolvePollingEndTime(endDate);
+
 
         try {
-            probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startValue, endValue);
-            probingContext.setActualStartTime(startValue);
-            probingContext.setActualEndTime(endValue);
+            OffsetTime startTime = startValue.toOffsetTime();
+            OffsetTime endTime = endValue.toOffsetTime();
+
+            probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startTime, endTime);
+            probingContext.setActualStartTime(startTime);
+            probingContext.setActualEndTime(endTime);
 
             Long eserviceRecordId = resolver.getEserviceRecordId();
             EserviceRow expected = probingContext.getExpectedEserviceRow();
@@ -298,8 +301,8 @@ public class ProbingSteps {
     public void getEserviceTelemetry(String eserviceRecordId, String pollingFrequency, String startDate, String endDate) {
         Long recordIdValue = resolver.resolveEserviceRecordId(eserviceRecordId);
         Integer poolingFrequencyValue = resolver.resolveFrequency(pollingFrequency);
-        OffsetDateTime startDateValue = italyToday(resolver.resolvePollingStartTime(startDate));
-        OffsetDateTime endDateValue = italyToday(resolver.resolvePollingEndTime(endDate));
+        OffsetDateTime startDateValue = resolver.resolvePollingStartTime(startDate);
+        OffsetDateTime endDateValue = resolver.resolvePollingEndTime(endDate);
 
         try {
             TelemetryDataEserviceResponse response = probingClient.filteredStatisticsEservices(recordIdValue, poolingFrequencyValue, startDateValue, endDateValue);
@@ -355,8 +358,8 @@ public class ProbingSteps {
                 .as("pollingFrequency (minutes) deve essere >= 1")
                 .isGreaterThanOrEqualTo(1);
 
-        OffsetTime start = resolver.resolvePollingStartTime(startDate);
-        OffsetTime end = resolver.resolvePollingEndTime(endDate);
+        OffsetTime start = resolver.resolvePollingStartTime(startDate).toOffsetTime();
+        OffsetTime end = resolver.resolvePollingEndTime(endDate).toOffsetTime();
 
         Assertions.assertThat(start).as("startDate non deve essere null").isNotNull();
         Assertions.assertThat(end).as("endDate non deve essere null").isNotNull();
@@ -375,14 +378,14 @@ public class ProbingSteps {
 
         Instant now = Instant.now();
 
-        // --- AFTER: fuori finestra
+        // --- AFTER: dopo la finestra
         if (!now.isBefore(endI)) {
             assertNotAdvancing(unit, notAdvancingTolerance,
                     "Il probing sta avanzando DOPO la finestra attesa");
             return;
         }
 
-        // --- BEFORE: fuori finestra (non deve avanzare fino allo start)
+        // --- BEFORE: prima della finestra (non deve avanzare fino allo start)
         if (now.isBefore(startI)) {
             Duration untilStart = Duration.between(now, startI);
             Duration observe = min(unit, untilStart.minus(boundaryBuffer));

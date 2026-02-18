@@ -8,8 +8,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.util.UUID;
+
+import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.italyToday;
 
 @RequiredArgsConstructor
 public class ProbingResolver extends AbstractResolver {
@@ -125,30 +126,23 @@ public class ProbingResolver extends AbstractResolver {
         return 1 + (int) (Math.random() * Integer.MAX_VALUE);
     }
 
-    public OffsetTime resolvePollingStartTime(String raw) {
+    public OffsetDateTime resolvePollingStartTime(String raw) {
         return resolveOrParse(
                 raw,
-                v -> {
-                    OffsetDateTime dt = StepParser.dateTimeOrNull(v);
-                    return dt == null ? null : ProbingUtils.italyToday(dt.toLocalTime());
-                },
-                probingContext::getActualStartTime,
-                probingContext::getActualEndTime
+                StepParser::dateTimeOrNull,
+                () -> italyToday(probingContext.getActualStartTime()),
+                () -> italyToday(probingContext.getActualStartTime())
         );
     }
 
-    public OffsetTime resolvePollingEndTime(String raw) {
+    public OffsetDateTime resolvePollingEndTime(String raw) {
         return resolveOrParse(
                 raw,
-                v -> {
-                    OffsetDateTime dt = StepParser.dateTimeOrNull(v);
-                    return dt == null ? null : ProbingUtils.italyToday(dt.toLocalTime());
-                },
-                probingContext::getActualStartTime,
-                probingContext::getActualEndTime
+                StepParser::dateTimeOrNull,
+                () -> italyToday(probingContext.getActualEndTime()),
+                () -> italyToday(probingContext.getActualEndTime())
         );
     }
-
 
     private Integer resolveIntegerDelta(String raw) {
         if (raw == null) return 0;
