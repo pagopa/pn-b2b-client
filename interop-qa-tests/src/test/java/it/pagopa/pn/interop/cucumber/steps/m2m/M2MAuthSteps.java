@@ -56,8 +56,7 @@ public class M2MAuthSteps {
         clientTokenConfigurator.setBearerToken(token);
 
         // Dpop Auth
-        // TODO: bisogna creare la purpose id
-        Auth auth = Auth.of(clientId.toString(), null, tenant, selfcareRole.toUpperCase(), preparedClient.keyPair().getKeyPair());
+        Auth auth = Auth.of(clientId.toString(), tenant, selfcareRole.toUpperCase(), preparedClient.keyPair().getKeyPair());
         clientTokenConfigurator.setAuth(auth);
 
         sharedStepsContext.setUserToken(token);

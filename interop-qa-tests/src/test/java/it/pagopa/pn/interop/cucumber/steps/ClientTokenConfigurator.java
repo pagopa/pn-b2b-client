@@ -20,6 +20,7 @@ import it.pagopa.interop.eservice.service.IM2MEServiceAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.event.service.IM2MEventClient;
+import it.pagopa.interop.producer_keychains.IM2MProducerKeychainsClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -65,6 +66,7 @@ public class ClientTokenConfigurator {
     private final ISelfcareClient iSelfcareClient;
     private final IPurposeTemplateClient purposeTemplateClient;
     private final IM2MPurposeTemplateClient m2mPurposeTemplateClient;
+    private final IM2MProducerKeychainsClient producerKeychainsClient;
 
     public void setBearerToken(String token) {
         this.lastToken = token;
@@ -100,8 +102,7 @@ public class ClientTokenConfigurator {
     }
 
     public void setAuth(Auth auth) {
-
-
+        producerKeychainsClient.setAuth(auth);
     }
 
 }
