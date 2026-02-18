@@ -2,14 +2,19 @@ name: Dev Activity Report
 
 on:
   schedule:
-    - cron: "0 18 * * *"  # tutti i giorni alle 18:00 UTC
+    - cron: "0 18 * * *"  # ogni giorno alle 18:00 UTC
   workflow_dispatch:     # permette run manuale
+    inputs:
+        report_date:
+          description: "Date to analyze (YYYY-MM-DD). Leave empty for today UTC."
+          required: false
+
+permissions:
+  contents: read
 
 jobs:
   report:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - name: Checkout all branches
@@ -23,51 +28,256 @@ jobs:
       - name: Generate Report
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          echo "*Dev Activity Report - $TODAY*" > report.txt
-          echo "" >> report.txt
+        
+          if [ -n "${{ github.event.inputs.report_date }}" ]; then
+            TODAY="${{ github.event.inputs.report_date }}"
+          else
+            TODAY=$(date -u +%Y-%m-%d)
+          fi
 
-          CONTRIBUTORS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --pretty="%an" | sort | uniq)
+          echo "Using date: $TODAY"
+          
+          PAYLOAD_TEXT="*Dev Activity Report - $TODAY*"
+          PAYLOAD_TEXT+=$'\n\n'
 
-          for DEV in $CONTRIBUTORS; do
-            COMMITS=$(git log origin/develop --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --pretty=oneline | wc -l)
+          # Lista branch remoti
+          mapfile -t BRANCHES < <(
+            git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+            | grep -v 'HEAD'
+          )
 
-            SIZE=$(git log --since="$TODAY 00:00" --until="$TODAY 23:59" --all --author="$DEV" --shortstat \
-              | grep "files changed" \
-              | awk '{sum+=$4} END {print sum+0}')
+          # SHA globali unici del giorno
+          ALL_SHAS=()
 
-            PUSH=$(gh api repos/${{ github.repository }}/events \
-              --jq '[.[] | select(.type=="PushEvent" and .actor.login=="'"$DEV"'")] | length')
-
-            PR=$(gh pr list --author "$DEV" --state open --json number | jq length)
-
-            if [ "$COMMITS" -eq 0 ]; then
-              STATUS="❌ No commit"
-            elif [ "$COMMITS" -gt 15 ]; then
-              STATUS="⚠️ Non-atomic commits?"
-            elif [ "$PUSH" -eq 0 ]; then
-              STATUS="⚠️ No push"
-            else
-              STATUS="✅ OK"
-            fi
-
-            echo "👨‍💻 $DEV" >> report.txt
-            echo "Commits: $COMMITS | Lines: $SIZE | Push: $PUSH | PR: $PR | $STATUS" >> report.txt
-            echo "" >> report.txt
+          for BR in "${BRANCHES[@]}"; do
+            mapfile -t TMP < <(
+              git log "$BR" \
+                --since="$TODAY 00:00" \
+                --until="$TODAY 23:59" \
+                --pretty="%H" || true
+            )
+            ALL_SHAS+=("${TMP[@]}")
           done
 
-          echo "REPORT<<EOF" >> $GITHUB_ENV
-          cat report.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          # deduplica
+          mapfile -t UNIQUE_SHAS < <(
+            printf "%s\n" "${ALL_SHAS[@]}" | sort -u
+          )
+
+          echo "Total unique commits: ${#UNIQUE_SHAS[@]}"
+
+          # Mappa autori Git → login GitHub + bot detection
+          declare -A COMMIT_LOGIN
+          declare -A AUTHOR_MAP
+
+          for SHA in "${UNIQUE_SHAS[@]}"; do
+            API=$(gh api repos/${{ github.repository }}/commits/$SHA 2>/dev/null || true)
+            
+            if [ -z "$API" ]; then
+              echo "Warning: Skipping $SHA (API call failed)"
+              continue
+            fi
+            
+            LOGIN=$(echo "$API" | jq -r '.author.login // empty')
+            TYPE=$(echo "$API" | jq -r '.author.type // empty')
+            NAME=$(git log -1 --format="%an" "$SHA")
+
+            if [ -z "$LOGIN" ] || [ "$LOGIN" == "null" ]; then
+              LOGIN="$NAME"
+            fi
+
+            if [[ "$TYPE" == "Bot" ]]; then
+              LOGIN="${LOGIN}[bot]"
+            fi
+
+            COMMIT_LOGIN["$SHA"]="$LOGIN"
+            AUTHOR_MAP["$LOGIN"]=1
+          done
+
+          # Array finale dei contributor
+          CONTRIBUTORS=("${!AUTHOR_MAP[@]}")
+
+          # Exclude specific contributors
+          EXCLUDED_CONTRIBUTORS=("dependabot[bot]" "github-actions[bot]" "renovate[bot]" "francescosinopoli")
+
+          # Filter out excluded contributors
+          FILTERED_CONTRIBUTORS=()
+          for DEV in "${CONTRIBUTORS[@]}"; do
+            EXCLUDED=false
+            for EXCL in "${EXCLUDED_CONTRIBUTORS[@]}"; do
+              if [[ "$DEV" == "$EXCL" ]]; then
+                EXCLUDED=true
+                break
+              fi
+            done
+            
+            if [ "$EXCLUDED" == false ]; then
+              FILTERED_CONTRIBUTORS+=("$DEV")
+            fi
+          done
+
+          # Replace CONTRIBUTORS with filtered list
+          CONTRIBUTORS=("${FILTERED_CONTRIBUTORS[@]}")
+          
+          echo "Contributors found:"
+          printf '%s\n' "${CONTRIBUTORS[@]}"
+
+          if [ ${#CONTRIBUTORS[@]} -eq 0 ]; then
+            PAYLOAD_TEXT+="⚠️ No contributors detected today."
+            PAYLOAD_TEXT+=$'\n'
+          else
+            for DEV in "${CONTRIBUTORS[@]}"; do
+              echo "Processing $DEV"
+            
+              # Find this developer's commits
+              DEV_SHAS=()
+              while IFS= read -r SHA; do
+                if [[ "${COMMIT_LOGIN[$SHA]}" == "$DEV" ]]; then
+                  DEV_SHAS+=("$SHA")
+                fi
+              done < <(printf '%s\n' "${UNIQUE_SHAS[@]}")
+
+              COMMITS=${#DEV_SHAS[@]}
+              
+              # Calculate lines changed (insertions only)
+              SIZE=0
+              for SHA in "${DEV_SHAS[@]}"; do
+                LINES=$(git show --numstat "$SHA" 2>/dev/null | awk '{sum+=$1} END {print sum+0}' || echo "0")
+                SIZE=$((SIZE + ${LINES:-0}))
+              done
+
+              # Average commit size
+              if [ "$COMMITS" -gt 0 ]; then
+                AVG_SIZE=$((SIZE / COMMITS))
+              else
+                AVG_SIZE=0
+              fi
+
+              # Conventional commit compliance
+              CONVENTIONAL=0
+              for SHA in "${DEV_SHAS[@]}"; do
+                MSG=$(git log -1 --format="%s" "$SHA")
+                if [[ "$MSG" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|build|ci|revert)(\(.+\))?:.+ ]]; then
+                  CONVENTIONAL=$((CONVENTIONAL + 1))
+                fi
+              done
+
+              if [ "$COMMITS" -gt 0 ]; then
+                CONV_PERCENT=$((CONVENTIONAL * 100 / COMMITS))
+              else
+                CONV_PERCENT=0
+              fi
+
+              PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
+              PR=${PR:-0}
+
+              # PRs merged today
+              PR_MERGED=$(gh pr list --author "$DEV" --state merged \
+                --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+              PR_MERGED=${PR_MERGED:-0}
+
+              # PRs reviewed by this developer
+              PR_REVIEWED=$(gh search prs --reviewer "$DEV" \
+                --merged "$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+              PR_REVIEWED=${PR_REVIEWED:-0}
+
+              # Cumulative status with smart thresholds
+              ISSUES=()
+
+              # Critical: No activity
+              if [ "$COMMITS" -eq 0 ]; then
+                ISSUES+=("❌ Inactive")
+              fi
+
+              # Critical: Very large commits (hard to review)
+              if [ "$COMMITS" -gt 0 ] && [ "$AVG_SIZE" -gt 500 ]; then
+                ISSUES+=("❌ Avg ${AVG_SIZE}L/commit")
+              fi
+
+              # Warning: Work not integrated
+              if [ "$PR_MERGED" -eq 0 ] && [ "$COMMITS" -gt 5 ]; then
+                ISSUES+=("Not merged")
+              fi
+
+              # Warning: No collaboration
+              if [ "$PR_REVIEWED" -eq 0 ] && [ "$PR_MERGED" -gt 0 ]; then
+                ISSUES+=("No reviews")
+              fi
+
+              # Warning: Process compliance
+              if [ "$CONV_PERCENT" -lt 60 ] && [ "$COMMITS" -ge 3 ]; then
+                ISSUES+=("Conv ${CONV_PERCENT}%")
+              fi
+
+              # Warning: Too many tiny commits (possible thrashing)
+              if [ "$COMMITS" -gt 25 ] && [ "$AVG_SIZE" -lt 50 ]; then
+                ISSUES+=("$COMMITS micro-commits")
+              fi
+
+              # Build final status
+              if [ ${#ISSUES[@]} -eq 0 ]; then
+                STATUS="✅ Healthy"
+              else
+                # Join all issues with " | "
+                STATUS=$(IFS=" | "; echo "${ISSUES[*]}")
+              fi
+            
+              PAYLOAD_TEXT+="👨‍💻 $DEV"$'\n'
+              PAYLOAD_TEXT+="Commits: $COMMITS | Avg size: $AVG_SIZE lines"$'\n'
+              PAYLOAD_TEXT+="Lines added: $SIZE"$'\n'
+              PAYLOAD_TEXT+="PRs: Open $PR | Merged today $PR_MERGED | Reviewed $PR_REVIEWED"$'\n'
+              PAYLOAD_TEXT+="Quality: Conventional commits ${CONV_PERCENT}%"$'\n'
+              PAYLOAD_TEXT+="Status: $STATUS"$'\n\n'
+              
+            done
+          fi
+
+          ## **New Threshold Summary**
+
+          ## | Metric | Threshold | Alert |
+          ## |--------|-----------|-------|
+          ## | **Avg commit size** | >500 lines | ❌ Critical - hard to review |
+          ## | **Commits** | >25 + <50L avg | ⚠️ Too many tiny commits |
+          ## | **Commits** | >5 but 0 merged | ⚠️ Work not integrated |
+          ## | **PR reviews** | 0 but has merges | ⚠️ Not helping team |
+          ## | **Conv commits** | <60% (3+ commits) | ⚠️ Low compliance |
+          ## | **Activity** | 0 commits | ❌ Inactive |
+          
+          # Team-level metrics
+          PAYLOAD_TEXT+=$'\n'"*📊 Team Summary*"$'\n'
+          TOTAL_COMMITS=${#UNIQUE_SHAS[@]}
+          TOTAL_PRS=$(gh pr list --state merged --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+          TOTAL_PRS=${TOTAL_PRS:-0}
+          ACTIVE_DEVS=${#CONTRIBUTORS[@]}
+          
+          if [ "$ACTIVE_DEVS" -gt 0 ]; then
+            AVG_COMMITS_PER_DEV=$((TOTAL_COMMITS / ACTIVE_DEVS))
+          else
+            AVG_COMMITS_PER_DEV=0
+          fi
+
+          PAYLOAD_TEXT+="Total commits: $TOTAL_COMMITS"$'\n'
+          PAYLOAD_TEXT+="PRs merged: $TOTAL_PRS"$'\n'
+          PAYLOAD_TEXT+="Active developers: $ACTIVE_DEVS"$'\n'
+          PAYLOAD_TEXT+="Avg commits/developer: $AVG_COMMITS_PER_DEV"$'\n'
+
+          # Creo JSON sicuro per Slack usando jq
+          jq -n \
+            --arg channel "$SLACK_CHANNEL_ID" \
+            --arg text "$PAYLOAD_TEXT" \
+            '{channel:$channel, text:$text, mrkdwn:true}' \
+            > dev_payload.json
+
+      - name: Debug payload
+        run: |
+          echo "=== DEV PAYLOAD ==="
+          cat dev_payload.json
 
       - name: Send Slack message
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          payload: |
-            {
-              "text": "${{ env.REPORT }}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload-file-path: dev_payload.json

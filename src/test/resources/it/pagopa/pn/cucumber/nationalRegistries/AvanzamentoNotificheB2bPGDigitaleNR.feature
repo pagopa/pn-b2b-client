@@ -6,13 +6,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId                   | 05370920653               |
-      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
-      | recipientType           | PG                        |
+      | taxId           | 05370920653 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     And destinatario
-      | taxId                   | 10959831008               |
-      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
-      | recipientType           | PG                        |
+      | taxId           | 70472431207 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     # Nota: Modificato l'ordine degli step: prima leggeva per utente 1 e 0, e poi controllava la presenza del DigitalAddress per 0 e 1
     # Poiché la lettura dell'elemento di timeline sovrascrive il valore di timelineElement, lo step era destinato a fallire
@@ -34,7 +34,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | details                      | NOT_NULL                                         |
       | details_responseStatus       | OK                                               |
       | details_sendingReceipts      | [{"id": null, "system": null}]                   |
-      | details_digitalAddress       | {"address": "10959831008@pec.it", "type": "PEC"} |
+      | details_digitalAddress       | {"address": "70472431207@pec.it", "type": "PEC"} |
       | details_recIndex             | 1                                                |
       | details_digitalAddressSource | GENERAL                                          |
       | details_sentAttemptMade      | 0                                                |
@@ -90,10 +90,10 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination            | Test digitale ok          |
-      | taxId                   | 05370920653               |
-      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
-      | recipientType           | PG                        |
+      | denomination    | Test digitale ok |
+      | taxId           | 85001990176      |
+      | digitalDomicile | NULL             |
+      | recipientType   | PG               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
@@ -101,7 +101,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | details                      | NOT_NULL                                         |
       | details_responseStatus       | OK                                               |
       | details_sendingReceipts      | [{"id": null, "system": null}]                   |
-      | details_digitalAddress       | {"address": "05370920653@pec.it", "type": "PEC"} |
+      | details_digitalAddress       | {"address": "85001990176@pec.it", "type": "PEC"} |
       | details_recIndex             | 0                                                |
       | details_digitalAddressSource | GENERAL                                          |
       | details_sentAttemptMade      | 0                                                |

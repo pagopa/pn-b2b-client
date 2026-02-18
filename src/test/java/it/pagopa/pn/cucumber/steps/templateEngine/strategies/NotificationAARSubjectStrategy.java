@@ -26,7 +26,21 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "SEND - Nuova notifica da";
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "SEND - Nuova notifica da string - string";
+            }
+            case "TEDESCA" -> {
+                yield "SEND - Neue Zustellung von • Nuova notifica da string - string";
+            }
+            case "SLOVENA" -> {
+                yield "SEND - Nova obvestila od • Nuova notifica da string - string";
+            }
+            case "FRANCESE" -> {
+                yield "SEND - Nouvelle notification de • Nuova notifica da string - string";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
     }
 
     private NotificationAarForSubject createRequest(boolean body, TemplateRequestContext context) {
