@@ -906,7 +906,7 @@ public class AnagraficaRaddAltSteps {
                 softly.assertThat(firstCode)
                         .withFailMessage("Il primo externalCode non deve essere null")
                         .isNotNull();
-                        //.hasSizeGreaterThan(4);
+                //.hasSizeGreaterThan(4);
             }
 
             // appointmentRequired → booleano
@@ -1589,10 +1589,10 @@ public class AnagraficaRaddAltSteps {
         return raddOperator;
     }
 
-    // --- (START) --- PN-17459 | PN-17678 --- (START) --- //
+    // --- (START) --- PN-17459 | PN-17689 --- (START) --- //
     @When("aggiorno la sede RADD tramite PATCH impostando")
     public void aggiornoLaSedeRaddTramitePatchImpostando(DataTable dataTable) {
-        Map<String, String> values = dataTable.asMaps().get(0);
+        Map<String, String> values = dataTable.asMaps(String.class, String.class).get(0);
         UpdateRegistryRequestV2 request = new UpdateRegistryRequestV2();
         Coordinates coordinates = new Coordinates();
         coordinates.setLatitude(mapDouble(values.get("latitude")));
@@ -1671,7 +1671,7 @@ public class AnagraficaRaddAltSteps {
     }
 
     private Double mapDouble(String value) {
-        if (value == null) return null;
+        if (StringUtils.isBlank(value)) return null;
         else if ("NULL".equalsIgnoreCase(value)) return null;
         try { return Double.valueOf(value); }
         catch (NumberFormatException e) { throw e; }
@@ -1774,6 +1774,6 @@ public class AnagraficaRaddAltSteps {
             this.sharedSteps.setNotificationError(e);
         }
     }
-    // --- (END) --- PN-17459 | PN-17678 --- (END) --- //
+    // --- (END) --- PN-17459 | PN-17689 --- (END) --- //
 
 }
