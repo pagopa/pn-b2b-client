@@ -3,6 +3,7 @@ package it.pagopa.interop.common.client;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.DPoPAccessTokenSupplier;
+import it.pagopa.interop.common.interceptor.BearerTokenInterceptor;
 import it.pagopa.interop.common.interceptor.DPoPInterceptor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,22 +18,24 @@ public abstract class AbstractDPoPClient extends AbstractClient {
     private final DPoPAccessTokenSupplier dpopAccessTokenSupplier;
 
     public AbstractDPoPClient(RestTemplate baseRestTemplate, DPoPTokenService dPoPTokenService) {
+        this.dpopAccessTokenSupplier = new DPoPAccessTokenSupplier(dPoPTokenService);
+
+        // Gestione RestTemplate
         RestTemplate restTemplate = new RestTemplate(baseRestTemplate.getRequestFactory());
         restTemplate.setUriTemplateHandler(baseRestTemplate.getUriTemplateHandler());
         restTemplate.setErrorHandler(baseRestTemplate.getErrorHandler());
         restTemplate.setMessageConverters(baseRestTemplate.getMessageConverters());
 
-        // copia interceptors esistenti e aggiungi DPoP
         dpopInterceptor = new DPoPInterceptor(dPoPTokenService, null);
         restTemplate.setInterceptors(new java.util.ArrayList<>(baseRestTemplate.getInterceptors()));
+        restTemplate.getInterceptors().add(new BearerTokenInterceptor(dpopAccessTokenSupplier));
         restTemplate.getInterceptors().add(dpopInterceptor);
         dpopRestTemplate = restTemplate;
-
-        this.dpopAccessTokenSupplier = new DPoPAccessTokenSupplier(dPoPTokenService);
     }
 
-    public void setBearerToken(Auth auth) {
+    public void setAuth(Auth auth) {
         dpopInterceptor.setKeyPair(auth.getKeyPair());
         dpopAccessTokenSupplier.setAuth(auth);
+        dpopAccessTokenSupplier.prefetch();
     }
 }
