@@ -1,6 +1,7 @@
 package it.pagopa.interop.producer_keychains.service;
 
-import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.KeysApi;
@@ -21,15 +22,15 @@ import java.util.UUID;
 @ToString
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class M2MProducerKeychainsClient extends AbstractClient implements IM2MProducerKeychainsClient {
+public class M2MProducerKeychainsClient extends AbstractDPoPClient implements IM2MProducerKeychainsClient {
 
     private final ProducerKeychainsApi producerKeychainsApi;
     private final KeysApi keysApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MProducerKeychainsClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
-        this.restTemplate = restTemplate;
+    public M2MProducerKeychainsClient(RestTemplate baseRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor, DPoPTokenService dPoPTokenService) {
+        super(baseRestTemplate, dPoPTokenService);
+
         this.basePath = interopClientConfigs.getApiv3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
@@ -38,13 +39,13 @@ public class M2MProducerKeychainsClient extends AbstractClient implements IM2MPr
     }
 
     private ApiClient createProducerKeychainsApiClient() {
-        ApiClient apiClient = new ApiClient(restTemplate);
+        ApiClient apiClient = new ApiClient(dpopRestTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
 
     private ApiClient createKeysApiClient() {
-        ApiClient apiClient = new ApiClient(restTemplate);
+        ApiClient apiClient = new ApiClient(dpopRestTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }

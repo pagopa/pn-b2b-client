@@ -32,6 +32,7 @@ import org.springframework.http.HttpMethod;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
@@ -79,6 +80,11 @@ public class DPoPTokenService extends AbstractClient {
         return retrieveAccessToken(client, purposeId, dpopProof);
     }
 
+    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, String clientId, KeyPair keyPair, @NonNull String tenantType, @NonNull String purposeId) {
+        log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, clientId);
+        return retrieveAccessToken(clientId, keyPair, purposeId, dpopProof);
+    }
+
     private Pair<String, VoucherResponse> retrieveAccessToken(PreparedClient client, String purposeId, String dpopProof) {
         try {
             dpopProofService.verifyDpopProof(dpopProof);
@@ -89,6 +95,25 @@ public class DPoPTokenService extends AbstractClient {
         String clientAssertion = generateClientAssertion(client, purposeId);
         VoucherRequest request = VoucherRequest.builder()
                 .clientId(client.clientId().toString())
+                .clientAssertion(clientAssertion)
+                .build();
+
+        return this.performOperation(SimpleOperation.of(
+                () -> voucherService.requestVoucher(request, dpopProof),
+                response -> Pair.of(dpopProof, new ObjectMapper().convertValue(response, VoucherResponse.class))
+        )).orElse(Pair.of(dpopProof, new VoucherResponse()));
+    }
+
+    private Pair<String, VoucherResponse> retrieveAccessToken(String clientId, KeyPair keyPair, String purposeId, String dpopProof) {
+        try {
+            dpopProofService.verifyDpopProof(dpopProof);
+        } catch (RuntimeException e) {
+            log.warn("Proof DPoP non valida: {}", e.getMessage());
+        }
+
+        String clientAssertion = generateClientAssertion(clientId, keyPair, purposeId);
+        VoucherRequest request = VoucherRequest.builder()
+                .clientId(clientId)
                 .clientAssertion(clientAssertion)
                 .build();
 
@@ -153,7 +178,26 @@ public class DPoPTokenService extends AbstractClient {
         );
     }
 
+    public String buildDpopProof(KeyPair keyPair) {
+        return dpopProofService.buildProof(
+                keyPair.getPrivate(),
+                keyPair.getPublic(),
+                "POST",
+                dpopHtu
+        );
+    }
+
     public String buildProofWith(KeyPairDecorator keyPair, String typ, HttpMethod httpMethod, String htu) {
+        return dpopProofService.buildProofWith(
+                keyPair.getPrivate(),
+                keyPair.getPublic(),
+                httpMethod.toString(),
+                htu,
+                typ
+        );
+    }
+
+    public String buildProofWith(KeyPair keyPair, String typ, HttpMethod httpMethod, String htu) {
         return dpopProofService.buildProofWith(
                 keyPair.getPrivate(),
                 keyPair.getPublic(),
@@ -171,6 +215,19 @@ public class DPoPTokenService extends AbstractClient {
                         .clientId(client.clientId().toString())
                         .publicKey(client.keyPair().getPublic())
                         .privateKey(client.keyPair().getPrivate())
+                        .purposeId(purposeId)
+                        .assertionTtlSeconds(300)
+                        .build()
+        );
+    }
+
+    private String generateClientAssertion(@NonNull String clientId, @NonNull KeyPair keyPair, @NonNull String purposeId) {
+        return voucherService.createClientAssertion(
+                ClientAssertionOptions.builder()
+                        .clientType(ClientType.CONSUMER)
+                        .clientId(clientId)
+                        .publicKey(keyPair.getPublic())
+                        .privateKey(keyPair.getPrivate())
                         .purposeId(purposeId)
                         .assertionTtlSeconds(300)
                         .build()
