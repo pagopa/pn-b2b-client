@@ -17,6 +17,7 @@ import it.pagopa.interop.attribute.service.IM2MV3CertifiedAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MV3DeclaredAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MV3VerifiedAttributeClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
+import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
@@ -288,6 +289,11 @@ public class ClientTokenConfigurator {
     @SuppressWarnings("unchecked")
     private <T> T getProxy(Class<T> interfaceClass) {
         return (T) proxies.get(interfaceClass);
+    }
+
+    public void setAuth(Auth auth) {
+
+
     }
 
 }

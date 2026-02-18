@@ -1,6 +1,5 @@
 package it.pagopa.interop.producer_keychains.service;
 
-import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.KeysApi;
@@ -8,7 +7,6 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ProducerKeyc
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import java.util.UUID;
@@ -17,20 +15,25 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
+import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
+import java.util.UUID;
 
 @ToString
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class M2MV3ProducerKeychainsClient extends AbstractClient implements
+public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements
     IM2MV3ProducerKeychainsClient {
 
     private final ProducerKeychainsApi producerKeychainsApi;
     private final KeysApi keysApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MV3ProducerKeychainsClient(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
-        this.restTemplate = restTemplate;
+    public M2MV3ProducerKeychainsClient(RestTemplate baseRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor, DPoPTokenService dPoPTokenService) {
+        super(baseRestTemplate, dPoPTokenService);
+
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
@@ -39,13 +42,13 @@ public class M2MV3ProducerKeychainsClient extends AbstractClient implements
     }
 
     private ApiClient createProducerKeychainsApiClient() {
-        ApiClient apiClient = new ApiClient(restTemplate);
+        ApiClient apiClient = new ApiClient(dpopRestTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
 
     private ApiClient createKeysApiClient() {
-        ApiClient apiClient = new ApiClient(restTemplate);
+        ApiClient apiClient = new ApiClient(dpopRestTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
