@@ -2,6 +2,7 @@ package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,7 +30,7 @@ public class DPoPAccessTokenSupplier implements java.util.function.Supplier<Stri
             String dpopForTokenEndpoint = tokenService.buildDpopProof(auth.getKeyPair());
 
             // 2) chiama token endpoint per ottenere voucher
-            var pair = tokenService.getAccessTokenWithoutCache(dpopForTokenEndpoint, auth.getClientId(), auth.getKeyPair(), auth.getTenantType(), auth.getPurposeId());
+            var pair = tokenService.getAccessTokenWithoutCache(dpopForTokenEndpoint, auth.getClientId(), auth.getKeyPair(), ClientAssertionOptions.ClientType.API, auth.getTenantType(), auth.getPurposeId());
             VoucherResponse vr = pair.getRight();
 
             this.token = vr.getAccessToken();

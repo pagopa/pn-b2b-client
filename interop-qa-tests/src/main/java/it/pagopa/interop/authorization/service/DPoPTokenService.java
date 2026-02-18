@@ -66,52 +66,28 @@ public class DPoPTokenService extends AbstractClient {
         this.dpopProofService = dpopProofService;
     }
 
-    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String tenantType, @NonNull String purposeId) {
         TokenKey tokenKey = TokenKey.of(tenantType, M2MRole.M2M_ADMIN);
 
         return tokenCache.computeIfAbsent(tokenKey, key -> {
-            log.info("Richiesta access token (cached) - Tenant: {}, Client: {}", tenantType, client.clientId());
-            return retrieveAccessToken(client, purposeId, dpopProof);
+            log.info("Richiesta access token (cached) - Tenant: {}, Client: {}", tenantType, clientId);
+            return retrieveAccessToken(clientId, keyPair, clientType, purposeId, dpopProof);
         });
     }
 
-    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
-        log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, client.clientId());
-        return retrieveAccessToken(client, purposeId, dpopProof);
-    }
-
-    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, String clientId, KeyPair keyPair, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, String clientId, KeyPair keyPair, ClientType clientType, @NonNull String tenantType, @NonNull String purposeId) {
         log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, clientId);
-        return retrieveAccessToken(clientId, keyPair, purposeId, dpopProof);
+        return retrieveAccessToken(clientId, keyPair, clientType, purposeId, dpopProof);
     }
 
-    private Pair<String, VoucherResponse> retrieveAccessToken(PreparedClient client, String purposeId, String dpopProof) {
+    private Pair<String, VoucherResponse> retrieveAccessToken(String clientId, KeyPair keyPair, ClientType clientKind, String purposeId, String dpopProof) {
         try {
             dpopProofService.verifyDpopProof(dpopProof);
         } catch (RuntimeException e) {
             log.warn("Proof DPoP non valida: {}", e.getMessage());
         }
 
-        String clientAssertion = generateClientAssertion(client, purposeId);
-        VoucherRequest request = VoucherRequest.builder()
-                .clientId(client.clientId().toString())
-                .clientAssertion(clientAssertion)
-                .build();
-
-        return this.performOperation(SimpleOperation.of(
-                () -> voucherService.requestVoucher(request, dpopProof),
-                response -> Pair.of(dpopProof, new ObjectMapper().convertValue(response, VoucherResponse.class))
-        )).orElse(Pair.of(dpopProof, new VoucherResponse()));
-    }
-
-    private Pair<String, VoucherResponse> retrieveAccessToken(String clientId, KeyPair keyPair, String purposeId, String dpopProof) {
-        try {
-            dpopProofService.verifyDpopProof(dpopProof);
-        } catch (RuntimeException e) {
-            log.warn("Proof DPoP non valida: {}", e.getMessage());
-        }
-
-        String clientAssertion = generateClientAssertion(clientId, keyPair, purposeId);
+        String clientAssertion = generateClientAssertion(clientId, keyPair, clientKind, purposeId);
         VoucherRequest request = VoucherRequest.builder()
                 .clientId(clientId)
                 .clientAssertion(clientAssertion)
@@ -123,10 +99,29 @@ public class DPoPTokenService extends AbstractClient {
         )).orElse(Pair.of(dpopProof, new VoucherResponse()));
     }
 
-    public Pair<Integer, String> sendRequestWithDuplicateDpopHeaders(@NonNull PreparedClient client, @NonNull String purposeId, @NonNull String dpopProof) {
+    private Pair<String, VoucherResponse> retrieveAccessToken(String clientId, ClientType clientType, KeyPair keyPair, String purposeId, String dpopProof) {
         try {
-            String clientAssertion = generateClientAssertion(client, purposeId);
-            String requestBody = buildFormRequestBody(client.clientId().toString(), clientAssertion);
+            dpopProofService.verifyDpopProof(dpopProof);
+        } catch (RuntimeException e) {
+            log.warn("Proof DPoP non valida: {}", e.getMessage());
+        }
+
+        String clientAssertion = generateClientAssertion(clientId, keyPair, clientType, purposeId);
+        VoucherRequest request = VoucherRequest.builder()
+                .clientId(clientId)
+                .clientAssertion(clientAssertion)
+                .build();
+
+        return this.performOperation(SimpleOperation.of(
+                () -> voucherService.requestVoucher(request, dpopProof),
+                response -> Pair.of(dpopProof, new ObjectMapper().convertValue(response, VoucherResponse.class))
+        )).orElse(Pair.of(dpopProof, new VoucherResponse()));
+    }
+
+    public Pair<Integer, String> sendRequestWithDuplicateDpopHeaders(@NonNull String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String purposeId, @NonNull String dpopProof) {
+        try {
+            String clientAssertion = generateClientAssertion(clientId, keyPair, clientType, purposeId);
+            String requestBody = buildFormRequestBody(clientId, clientAssertion);
 
             HttpPost post = new HttpPost(dpopHtu);
             post.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -208,31 +203,23 @@ public class DPoPTokenService extends AbstractClient {
     }
 
     // === UTILITY ===
-    private String generateClientAssertion(@NonNull PreparedClient client, @NonNull String purposeId) {
-        return voucherService.createClientAssertion(
-                ClientAssertionOptions.builder()
-                        .clientType(ClientType.CONSUMER)
-                        .clientId(client.clientId().toString())
-                        .publicKey(client.keyPair().getPublic())
-                        .privateKey(client.keyPair().getPrivate())
-                        .purposeId(purposeId)
-                        .assertionTtlSeconds(300)
-                        .build()
-        );
-    }
+    private String generateClientAssertion(@NonNull String clientId, @NonNull KeyPair keyPair, ClientType clientKind, String purposeId) {
 
-    private String generateClientAssertion(@NonNull String clientId, @NonNull KeyPair keyPair, @NonNull String purposeId) {
-        return voucherService.createClientAssertion(
+        ClientAssertionOptions.ClientAssertionOptionsBuilder builder =
                 ClientAssertionOptions.builder()
-                        .clientType(ClientType.CONSUMER)
+                        .clientType(clientKind)
                         .clientId(clientId)
                         .publicKey(keyPair.getPublic())
                         .privateKey(keyPair.getPrivate())
-                        .purposeId(purposeId)
-                        .assertionTtlSeconds(300)
-                        .build()
-        );
+                        .assertionTtlSeconds(300);
+
+        if (ClientType.CONSUMER.equals(clientKind)) {
+            builder.purposeId(purposeId);
+        }
+
+        return voucherService.createClientAssertion(builder.build());
     }
+
 
     private String buildFormRequestBody(String clientId, String clientAssertion) {
         return "grant_type=client_credentials"
