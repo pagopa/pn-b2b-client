@@ -651,7 +651,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And l'operazione ha prodotto un errore con status code "400"
 
   @raddAnagraficaV2 @patchGeo @deleteNewSite
-  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_21] - PATCH – validazione latitudine e longitudine RADD
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_23] - PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
@@ -682,7 +682,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
 
   @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
-  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_22] - PUT Selective – validazione campi RADD
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_24] - PUT Selective – validazione campi RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
@@ -758,7 +758,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 58 | website             | <img src=x onerror=alert(1)>                 | 403              |
 
   @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
-  Scenario: [RADD_ANAGRAFICA_CRUD_V2_23] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_25] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
       | address_radd_row      | via roma      |
