@@ -9,7 +9,6 @@ import java.security.KeyPair;
 @Getter
 public class Auth {
     private final String clientId;
-    private final String purposeId;
     private final String tenantType;
     private final String role;
     private final KeyPair keyPair;
