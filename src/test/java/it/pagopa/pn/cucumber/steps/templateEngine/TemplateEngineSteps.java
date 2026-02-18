@@ -1,7 +1,5 @@
 package it.pagopa.pn.cucumber.steps.templateEngine;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,7 +8,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextF
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
-import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdfparser.PDFParser;
@@ -30,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Slf4j
 public class TemplateEngineSteps {
 
@@ -43,6 +43,7 @@ public class TemplateEngineSteps {
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
     private List<HttpStatusCodeException> templateFileExceptions = new ArrayList<>();
+    private String recipientType = "PF";
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
                                TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
@@ -50,7 +51,6 @@ public class TemplateEngineSteps {
         this.contextFactory = contextFactory;
         this.templateEngineObjectFields = templateEngineObjectFields;
     }
-
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")
     public void recuperoIlTemplatePerInLinguaConIlBody(String templateType, String language, String body) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
@@ -60,12 +60,24 @@ public class TemplateEngineSteps {
     @When("recupero (il template)(l'oggetto) per {string} di tipo {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String notificationType, String language) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, new HashMap<>());
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("context_recipientType", recipientType); // todo t mc.
+        parameters.put("recipient_recipientType", recipientType); // todo t mc.
+        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, parameters);
     }
 
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String language) {
         recuperoIlTemplatePerInLingua(templateType, "semplice", language);
+    }
+    @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con recipient Type {string}")
+    public void recuperoIlTemplatePerInLinguaRecType(String templateType, String language, String recipientType) {
+        this.recipientType = recipientType;
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("context_recipientType", recipientType); // todo t mc.
+        parameters.put("recipient_recipientType", recipientType); // todo t mc.
+        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
 
     @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:")
@@ -150,8 +162,8 @@ public class TemplateEngineSteps {
                 .count() - 1;
     }
 
-    private String getTextToRetrieve(String language, TemplateType templateType) {
-        return templateEngineStrategy.get(templateType).getTextToCheckLanguage(language);
+    private String getTextToRetrieve(String language, TemplateType templateType, String recipientType) {
+        return templateEngineStrategy.get(templateType).getTextToCheckLanguage(language, recipientType);
     }
 
     @And("controllo che nel file {string} contenga il (campo)(testo) {string} valorizzato (a)(con) {string}")
@@ -170,15 +182,10 @@ public class TemplateEngineSteps {
         }
     }
 
-    @Then("verifico che il template è in formato {string} in lingua {string}")
-    public void verificoCheIlTemplateÈInFormatoInLingua(String fileType, String language) {
-        controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua("", fileType, language);
-    }
-
     @And("controllo che per il template {string} il file {string} sia in lingua {string}")
     public void controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua(String templateType, String fileType, String languange) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        String textToFind = getTextToRetrieve(languange, templateTypeObject);
+        String textToFind = getTextToRetrieve(languange, templateTypeObject, recipientType);
         if (fileType.equals("pdf")) {
             assertThat(result.getFileTextRetrieved()).isNotNull();
             assertThat(result.retrieveFormattedText())
@@ -210,5 +217,15 @@ public class TemplateEngineSteps {
             }
             default -> throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
         }
+    }
+
+    @And("il corpo del messaggio contiene il testo {string}")
+    public void checkMessageContents(String message) {
+        Assertions.assertNotNull(result.getFileTextRetrieved(), "Nessun testo recuperato");
+
+        String formattedText = result.retrieveFormattedText();
+
+        Assertions.assertTrue(formattedText.contains(message),
+                "Il corpo del messaggio non contiene il testo atteso: " + message);
     }
 }

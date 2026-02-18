@@ -365,7 +365,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | details.physicalAddress.address | __REGEX__.*\\b\\d+/\\d+\\b.* |
 
   @bugAvanzamentoNotifiche
-  Scenario: [BUG-MAPPING-INDIRIZZO-ANPR_2] Verificare il non inserimento del "/" tra il civico e la lettera. (es: 5L)
+  Scenario: [BUG-MAPPING-INDIRIZZO-ANPR_2] Verificare l'inserimento del "/" tra il civico e la lettera. (es: 5/L)
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -375,6 +375,39 @@ Feature: avanzamento notifiche b2b persona fisica
       | taxId                   | FRMTTR76M06B715E          |
       | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
     Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
       | details.sentAttemptMade         | 1                             |
-      | details.physicalAddress.address | __REGEX__..*\b\d+[A-Za-z]\b.* |
+      | details.physicalAddress.address | __REGEX__.*\\d+/[A-Za-z]$     |
+
+  @bugAvanzamentoNotifiche
+  Scenario: [BUG-MAPPING-INDIRIZZO-ANPR_3] Verificare l'inserimento del "/" tra il civico e la lettera quando la lettera è di tipo alfanumerico (es: 1A)
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | digitalDomicile         | NULL                      |
+      | taxId                   | BNCLFA80L13F924G          |
+      | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
+      | details.sentAttemptMade         | 1                                |
+      | details.physicalAddress.address | __REGEX__.*\\s\\d+(/[\\w\\d]+)?$ |
+
+  @bugAvanzamentoNotifiche
+  Scenario: [BUG-MAPPING-INDIRIZZO-ANPR_4] Verificare il non inserimento del "/" tra il civico e la lettera quando la lettera è null
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | digitalDomicile         | NULL                      |
+      | taxId                   | CSRGGL44L13H501E          |
+      | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
+      | details.sentAttemptMade         | 1                   |
+      | details.physicalAddress.address | __REGEX__.*\\s\\d+$ |

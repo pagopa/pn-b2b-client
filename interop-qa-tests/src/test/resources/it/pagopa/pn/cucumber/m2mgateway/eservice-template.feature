@@ -1,4 +1,4 @@
-Feature: Gestione degli eServices template
+Feature: Gestione degli eServices template attraverso APIs M2M V2
 
   @happy-path
   Scenario Outline: [M2MG_ESERVICETEMPLATES_1] Recupero corretto delle versioni di un template e-service con utente autorizzato (Scenario 17)

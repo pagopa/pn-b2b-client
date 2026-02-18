@@ -227,42 +227,10 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveSentNotificationDocument(iun, docIndex);
     }
 
-    //TODO MATTEO UGUALI A SOPRA
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docIndex) {
-//        refreshAndSetTokenInteropClient();
-//        return senderReadB2BApi.retrieveSentNotificationDocument(iun, docIndex);
-//    }
-//
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV2(String iun, Integer docIndex) {
-//        refreshAndSetTokenInteropClient();
-//        return senderReadB2BApi.retrieveSentNotificationDocument(iun, docIndex);
-//    }
-//
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV21(String iun, Integer docidx) {
-//        refreshAndSetTokenInteropClient();
-//        return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
-//    }
-
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachmentName, Integer attachmentIdx) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachmentName, attachmentIdx);
     }
-
-    //TODO MATTEO UGUALI A SOPRA
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV1(String iun, Integer recipientIdx, String attachmentName) {
-//        refreshAndSetTokenInteropClient();
-//        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachmentName);
-//    }
-//
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV2(String iun, Integer recipientIdx, String attachmentName) {
-//        refreshAndSetTokenInteropClient();
-//        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachmentName);
-//    }
-//
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV21(String iun, Integer recipientIdx, String attachmentName, Integer attachmentIdx) {
-//        refreshAndSetTokenInteropClient();
-//        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachmentName, attachmentIdx);
-//    }
 
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
         refreshAndSetTokenInteropClient();
@@ -456,6 +424,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public FullSentNotificationV27 getSentNotificationV27(String iun) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationV27(iun);
+    }
+
+    @Override
+    public FullSentNotificationV28 getSentNotificationV28(String iun) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveSentNotificationV28(iun);
     }
 
     @Override

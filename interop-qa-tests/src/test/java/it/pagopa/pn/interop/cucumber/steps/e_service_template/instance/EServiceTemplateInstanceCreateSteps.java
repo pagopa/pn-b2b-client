@@ -58,13 +58,13 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie")
     public void createEServiceFromTemplateMinimalSpec() {
-        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), null);
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpec() {
         InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class);
-        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), seed);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service indicando un template inesistente")
@@ -124,7 +124,7 @@ public class EServiceTemplateInstanceCreateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId()
                     ),
                     ResponseEntity::getStatusCode),
                 res -> {
@@ -141,8 +141,8 @@ public class EServiceTemplateInstanceCreateSteps {
             );
 
             EServiceTemplateVersionDetails eServiceSourceTemplate = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()).getBody();
+                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()).getBody();
             Optional<EServiceTemplateInstance> eServiceCreatedFromTemplate = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody()
                 .getResults()
                 .stream()

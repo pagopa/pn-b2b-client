@@ -20,16 +20,20 @@ import org.junit.platform.suite.api.Suite;
     @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
         "html:target/cucumber-report.html"),
     @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
-    @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
+    @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix", "e-service-template-receive"})
 @IncludeTags({
     // BFF
     "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
-    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila",
+    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "selfcare",
+    "app-edit-ff-on", "llgg", "e-service-template",
 
     // M2M
-    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices"
+    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
+    "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
+    "m2m-parte2-ottobre", "m2mEservices",
+
 })
 public class NrtTest {
 }

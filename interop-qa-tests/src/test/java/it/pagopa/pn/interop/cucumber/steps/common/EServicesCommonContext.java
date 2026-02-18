@@ -1,6 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -22,10 +24,37 @@ public class EServicesCommonContext {
     private List<EServiceDescriptor> retrievedEservicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
+    private int groupId; // id dell'ultimo gruppo di attributi creato
+
+    private List<UUID> certifiedAttributesIds = new ArrayList<>();
+    private List<UUID> declaredAttributesIds = new ArrayList<>();
+    private List<UUID> verifiedAttributesIds = new ArrayList<>();
+
+    private List<UUID> removedCertifiedAttributesIds = new ArrayList<>();
+    private List<UUID> removedDeclaredAttributesIds = new ArrayList<>();
+    private List<UUID> removedVerifiedAttributesIds = new ArrayList<>();
+
     private UUID documentId;
     private UUID documentId2;
+    private List<DocumentMetadata> documentsMetadata;
+
     private UUID interfaceId;
+    private String interfaceName;
     private UUID oldDescriptorId;
     private String name;
 
+    private OffsetDateTime creationTimestamp;
+    private OffsetDateTime publicationTimestamp;
+    private OffsetDateTime eServiceEditTimestamp;
+
+    public void addCertifiedAttributes(List<UUID> attributesIds) {
+        this.certifiedAttributesIds.addAll(attributesIds);
+    }
+
+    public void addDeclaredAttributes(List<UUID> attributesIds) {
+        this.declaredAttributesIds.addAll(attributesIds);
+    }
+    public void addVerifiedAttributes(List<UUID> attributesIds) {
+        this.verifiedAttributesIds.addAll(attributesIds);
+    }
 }

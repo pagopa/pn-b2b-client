@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -16,7 +17,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -52,7 +53,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
                                           @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                           @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                           @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                          @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                          @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
                                           @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
@@ -82,8 +83,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public BundleFullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return deepCopy(recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId), BundleFullReceivedNotificationV26.class);
+    public BundleFullReceivedNotification getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV27(iun, mandateId), BundleFullReceivedNotification.class);
     }
 
     @Override
@@ -155,7 +156,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
                 this.bearerTokenSetted = BearerTokenType.USER_3;
             }
             case PG_1 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
             }
             case PG_2 -> {
@@ -183,6 +184,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
         try {
             String json = objMapper.writeValueAsString(obj);

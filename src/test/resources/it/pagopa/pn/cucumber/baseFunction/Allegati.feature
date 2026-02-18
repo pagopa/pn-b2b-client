@@ -108,17 +108,18 @@ Feature: Allegati notifica
   @RetentionAllegati
   Scenario: [B2B_PN8120_2] Analizzando una notifica analogica perfezionata, verificare che la retention degli allegati non venga modificata anche post visualizzazione
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_RS |
-      | payment_pagoPaForm      | SI        |
-      | payment_f24             | NULL      |
-      | apply_cost_pagopa       | SI        |
-      | payment_multy_number    | 1         |
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@ok_RS    |
+      | payment_pagoPaForm      | SI           |
+      | payment_f24             | NULL         |
+      | apply_cost_pagopa       | SI           |
+      | payment_multy_number    | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista

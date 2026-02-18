@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
+import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -8,14 +9,18 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
-    private final ITemplateEngineClient templateEngineClient;
 
-    public NotificationAARRADDaltStrategy(ITemplateEngineClient templateEngineClient) {
+    private final ITemplateEngineClient templateEngineClient;
+    private final TemplateEngineMessageConfigs configs;
+
+    public NotificationAARRADDaltStrategy(ITemplateEngineClient templateEngineClient, TemplateEngineMessageConfigs configs) {
         this.templateEngineClient = templateEngineClient;
+        this.configs = configs;
     }
 
     @Override
@@ -26,27 +31,12 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
-        return switch (language.toUpperCase()) {
-            case  "ITALIANA" -> {
-                yield "Accedi subito ai documenti online seguendo le istruzioni, o se preferisci, ritira i documenti in forma cartacea presso uno dei Punti di ritiro SEND (CAF e altri esercenti convenzionati). Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione.";
-            }
-            case "TEDESCA" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE Benachrichtigung über den erfolgten Empfang • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von der Körperschaft string erhalten: . Sollten siehe die zugestellten Dokumente diese Dokumente nicht der vorliegenden Mitteilung beigefügt sein";
-            }
-            case "SLOVENA" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE Obvestilo o prejemu: • Avviso di Avvenuta Ricezione (AAR): string Prejeli ste uradno sporočilo od string: . Če niso vključeni v to obvestilo, Prejeli ste uradno sporočilo od do dokumentov .";
-            }
-            case "FRANCESE" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE Accusé de réception • Avviso di Avvenuta Ricezione (AAR): string Vous avez reçu une communication ayant une valeur juridique de string: . S'ils ne figurent voir les documents notifiés.";
-            }
-            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
-        };
+    public String getTextToCheckLanguage(String language, String recipientType) {
+        return getYamlText("aar-radd", recipientType, language);
     }
 
     private NotificationAarRaddAlt createRequest(boolean body, TemplateRequestContext context) {
-        if (!body)
-            return null;
+        if (!body) return null;
 
         return new NotificationAarRaddAlt()
                 .recipient(createRecipient(context))
@@ -85,4 +75,21 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
                         .paDenomination(data.getPaDenomination()))
                 .orElse(null);
     }
+
+    private String getYamlText(String templateKey, String recipientType, String language) {
+        TemplateEngineMessageConfigs.LocalizedText localizedText =
+                Optional.ofNullable(configs.getMessages().get(templateKey))
+                        .map(inner -> inner.get(recipientType.toLowerCase()))
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Template non trovato: " + templateKey + " " + recipientType));
+
+        return switch (language.toUpperCase()) {
+            case "ITALIANA" -> localizedText.getIt();
+            case "TEDESCA" -> localizedText.getDe();
+            case "FRANCESE" -> localizedText.getFr();
+            case "SLOVENA" -> localizedText.getSl();
+            default -> throw new IllegalArgumentException("Lingua non valida: " + language);
+        };
+    }
+
 }

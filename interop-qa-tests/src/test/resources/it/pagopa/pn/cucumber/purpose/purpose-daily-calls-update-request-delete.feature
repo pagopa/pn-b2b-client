@@ -1,9 +1,10 @@
 @daily_calls_update_request
 Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
-  Tutti gli utenti autorizzati di enti fruitori possono cancellare una richiesta di aggiornamento di una stima di carico 
+  Tutti gli utenti autorizzati di enti fruitori possono cancellare una richiesta di aggiornamento di una stima di carico
 
+  @nrt-minimal
   @daily_calls_update_request_delete1
-  Scenario Outline: Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, va a buon fine
+  Scenario Outline: [CANCELLAZIONE_STIMA_CARICO_1] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -41,8 +42,9 @@ Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
       | PA1  | admin | SUSPENDED     |       204 |
 
   @sad-path
+  @nrt-minimal
   @daily_calls_update_request_delete2
-  Scenario: Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, e successivamente portata in stato ARCHIVED dal fruitore, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore. NB: a livello tecnico, nel momento in cui una finalità viene archiviata, viene eliminata dalla finalità la versione in WAITING_FOR_APPROVAL.
+  Scenario: [CANCELLAZIONE_STIMA_CARICO_2] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, e successivamente portata in stato ARCHIVED dal fruitore, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, ottiene un errore. NB: a livello tecnico, nel momento in cui una finalità viene archiviata, viene eliminata dalla finalità la versione in WAITING_FOR_APPROVAL.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -53,8 +55,9 @@ Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
     Then si ottiene status code 404
 
   @sad-path
+  @nrt-minimal
   @daily_calls_update_request_delete3
-  Scenario Outline: Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, ottiene un errore
+  Scenario Outline: [CANCELLAZIONE_STIMA_CARICO_3] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -63,7 +66,7 @@ Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
     When l'utente richiede la cancellazione della richiesta di aggiornamento della stima di carico
     Then si ottiene status code 403
 
-    Examples: 
+    Examples:
       | statoFinalita |
       | ACTIVE        |
       | SUSPENDED     |

@@ -20,7 +20,7 @@ public class ValidPecBodyObjectStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public String getTextToCheckLanguage(String language) {
+    public String getTextToCheckLanguage(String language, String recipientType) {
         return "SEND - Domicilio digitale PEC confermato";
     }
 }

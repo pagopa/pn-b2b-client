@@ -50,7 +50,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
 
     @When("l'utente tenta la modifica della risk analysis dell'e-service template")
     public void editRiskAnalysisFromEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         UUID riskAnalysisId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisId();
 
         EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = testAssistant.getEServiceRiskAnalysisSeed(false);
@@ -66,19 +66,19 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         //  l'id subito dopo la creazione, e quindi collocato in contesto di classe come per
         //  gli altri id
         List<EServiceTemplateRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()).getRiskAnalysis();
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId()).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
         }
 
         UUID riskAnalysisId = riskAnalysis.get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex()).getId();
         EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = new EServiceTemplateRiskAnalysisSeed();
-        editRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), riskAnalysisId, editedRiskAnalysisSeed);
+        editRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), riskAnalysisId, editedRiskAnalysisSeed);
     }
 
     @When("l'utente tenta la modifica di una risk analysis inesistente nell'e-service template")
     public void editNonExistentRiskAnalysisFromEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
 
         String tenantType = sharedStepsContext.getTenantType();
         String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
@@ -90,7 +90,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
 
     @When("l'utente tenta la modifica di una risk analysis inserendo il nome di un'altra risk analysis")
     public void editRiskAnalysisFromEServiceTemplateWithSameName() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
 
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(
@@ -117,7 +117,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
 
     @Then("la modifica della risk analysis dell'e-service è stata effettuata correttamente")
     public void checkRiskAnalysisEditedFromEServiceTemplate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
 
         try {
             pollingService.makePolling(

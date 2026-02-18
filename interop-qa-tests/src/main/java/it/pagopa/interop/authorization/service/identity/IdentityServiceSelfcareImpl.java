@@ -1,6 +1,7 @@
 package it.pagopa.interop.authorization.service.identity;
 
 import it.pagopa.interop.authorization.domain.Tenant;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import java.util.List;
@@ -74,6 +75,11 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
             .map(Tenant::getKind)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+    }
+
+    @Override
+    public DPoPTokenService.PreparedClient getPreparedClient(UUID clientId) {
+        throw new RuntimeException("Not implemented yet");
     }
 
 }

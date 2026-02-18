@@ -20,7 +20,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +39,6 @@ public class EServiceTemplateVersionUpdateSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateInfoMapper templateInfoMapper;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
     private final EasyRandom easyRandom;
 
@@ -50,7 +48,6 @@ public class EServiceTemplateVersionUpdateSteps {
     public EServiceTemplateVersionUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateInfoMapper templateInfoMapper,
         DescriptorAttributesMapper descriptorAttributesMapper
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -59,7 +56,6 @@ public class EServiceTemplateVersionUpdateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateInfoMapper = templateInfoMapper;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
         this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
@@ -88,14 +84,14 @@ public class EServiceTemplateVersionUpdateSteps {
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
             .attributes(new EServiceTemplateAttributesSeed())
             //.attributes(new EServiceTemplateAttributesSeed().declared(
-            //    List.of(List.of(new EServiceTemplateVersionAttributeSeed().id(UUID.randomUUID()).explicitAttributeVerification(false)))))
+            //    List.of(List.of(new EServiceTemplateVersionAttributeSeed().setId(UUID.randomUUID()).explicitAttributeVerification(false)))))
             .dailyCallsPerConsumer(100)
             .dailyCallsTotal(1000)
             .voucherLifespan(86400)
             .description("Nuova descrizione della versione"));
         updateEServiceTemplateVersion(
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed());
     }
 
@@ -117,8 +113,8 @@ public class EServiceTemplateVersionUpdateSteps {
                 .voucherLifespan(86400)
                 .description("Nuova descrizione della versione"));
         updateEServiceTemplateVersion(
-                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
                 this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed());
     }
 
@@ -131,15 +127,15 @@ public class EServiceTemplateVersionUpdateSteps {
     @When("l'utente tenta di modificare la versione dell'e-service template indicando una specifica vuota")
     public void updateEServiceTemplateVersionWithEmptySpec() {
         updateEServiceTemplateVersion(
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
-            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             new UpdateEServiceTemplateVersionSeed());
     }
 
     @Then("le modifiche alla versione sono state applicate correttamente")
     public void checkEServiceTemplateVersionUpdate() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
 
         if(!httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             fail("Le modifiche alla versione dell'e-service template non sono state "
