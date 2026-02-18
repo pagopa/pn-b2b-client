@@ -63,7 +63,9 @@ public class ProducerKeychainsSteps {
             PollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser)), status -> status == HttpStatus.NO_CONTENT, "Errore durante la creazione dell'associazione utente-producer keychain", 30, 1_000L);
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
+                httpCallExecutor.snapshot();
                 PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())), "L'utente non risulta associato alla producer keychain dopo la creazione", 30, 1_000L);
+                httpCallExecutor.resetFormSnapshot();
             }
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -99,9 +101,11 @@ public class ProducerKeychainsSteps {
 
             context.setProducerKey(key);
 
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && key != null && key.getProducerKeychainId() != null) {
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && key != null) {
+                httpCallExecutor.snapshot();
                 String kid = String.valueOf(key.getProducerKeychainId());
                 PollingService.makePolling(() -> producerKeychainsClient.getProducerKey(kid), createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && kid.equals(String.valueOf(createdKey.getProducerKeychainId())), "La chiave non risulta creata correttamente dopo la creazione", 30, 1_000L);
+                httpCallExecutor.resetFormSnapshot();
             }
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -133,7 +137,9 @@ public class ProducerKeychainsSteps {
             PollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.deleteProducerKeychainUserAssociationById(producerKeychainValue, userIdValue)), status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione dell'associazione utente-producer keychain", 30, 1_000L);
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
+                httpCallExecutor.snapshot();
                 PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().noneMatch(user -> userIdValue.equals(user.getUserId())), "L'utente risulta ancora associato alla producer keychain dopo l'eliminazione", 30, 1_000L);
+                httpCallExecutor.resetFormSnapshot();
             }
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -160,6 +166,7 @@ public class ProducerKeychainsSteps {
             PollingService.makePolling(() -> httpCallExecutor.performCall(() -> producerKeychainsClient.deleteProducerKeychainKeyByKid(keychainId, kid)), status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione della chiave del producer keychain", 30, 1_000L);
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                httpCallExecutor.snapshot();
                 PollingService.makePolling(() -> {
                     try {
                         producerKeychainsClient.getProducerKey(kid);
@@ -167,6 +174,7 @@ public class ProducerKeychainsSteps {
                     }
                     return httpCallExecutor.getResponseStatus();
                 }, status -> status == HttpStatus.NOT_FOUND, "La chiave risulta ancora presente dopo l'eliminazione", 30, 1_000L);
+                httpCallExecutor.resetFormSnapshot();
             }
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
