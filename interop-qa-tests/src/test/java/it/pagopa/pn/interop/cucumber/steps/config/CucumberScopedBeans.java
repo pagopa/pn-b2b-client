@@ -1,6 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
+import io.cucumber.spring.ScenarioScope;
+import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
 @TestConfiguration
 /**
@@ -27,4 +30,10 @@ public class CucumberScopedBeans {
                                         BlobFileCreator blobFileCreator) {
         return new EserviceSteps(sharedStepsContext, clientTokenConfigurator, blobFileCreator);
     }*/
+
+    @Bean
+    @ScenarioScope
+    public ProducerKeychainsContext producerKeychainsContext() {
+        return new ProducerKeychainsContext();
+    }
 }
