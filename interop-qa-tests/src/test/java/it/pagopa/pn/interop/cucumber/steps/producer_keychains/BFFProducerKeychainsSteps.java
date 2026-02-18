@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.producer_keychains;
 
 import io.cucumber.java.en.And;
-import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
 import it.pagopa.interop.producer_keychains.service.ProducerKeychainsClient;
@@ -15,20 +14,15 @@ import java.util.List;
 @Slf4j
 public class BFFProducerKeychainsSteps {
     private final ProducerKeychainsClient producerKeychainsClient;
-    private final IHttpExecutor httpCallExecutor;
-    private final SharedStepsContext sharedStepsContext;
     private final ProducerKeychainsContext producerKeychainsContext;
 
     public BFFProducerKeychainsSteps(ProducerKeychainsClient producerKeychainsClient,
                                      SharedStepsContext sharedStepsContext,
                                      ProducerKeychainsContext producerKeychainsContext) {
 
-        this.producerKeychainsClient = producerKeychainsClient;
-        this.sharedStepsContext = sharedStepsContext;
         this.producerKeychainsContext = producerKeychainsContext;
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
-
+        this.producerKeychainsClient = producerKeychainsClient;
+        this.producerKeychainsClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
     }
 
     @And("esiste un producer keychain con nome {string} e con descrizione {string}")

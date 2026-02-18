@@ -35,6 +35,7 @@ import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.service.ProducerKeychainsClient;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeTemplateClientImpl;
@@ -181,7 +182,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PurposeTemplatePatchContext.class,
         PurposeTemplatePatchOperationsAssistant.class,
         M2MProducerKeychainsClient.class,
-        PurposeTemplateMapperImpl.class
+        PurposeTemplateMapperImpl.class,
+        ProducerKeychainsClient.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
