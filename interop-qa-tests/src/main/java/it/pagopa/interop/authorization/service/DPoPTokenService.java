@@ -14,6 +14,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.operation.SimpleOperation;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Setter;
@@ -41,13 +42,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class DPoPTokenService extends AbstractClient {
 
     @Setter
     private IdentityService identityService;
 
-    private final DataPreparationService dataPreparationService;
     private final DPoPVoucherService voucherService;
     private final DpopProofService dpopProofService;
     private final Map<TokenKey, Pair<String, VoucherResponse>> tokenCache = new ConcurrentHashMap<>();
@@ -58,12 +58,11 @@ public class DPoPTokenService extends AbstractClient {
     public record PreparedClient(UUID clientId, KeyPairDecorator keyPair, KeyType keyType) {
     }
 
-    public DPoPTokenService(IdentityService identityService, DataPreparationService dataPreparationService,
-                            DPoPVoucherService voucherService, DpopProofService dpopProofService) {
+    public DPoPTokenService(IdentityService identityService, DPoPVoucherService voucherService, DpopProofService dpopProofService, HttpCallExecutor httpCallExecutor) {
         this.identityService = identityService;
-        this.dataPreparationService = dataPreparationService;
         this.voucherService = voucherService;
         this.dpopProofService = dpopProofService;
+        super.setHttpCallExecutor(httpCallExecutor);
     }
 
     public Pair<String, VoucherResponse> getAccessToken(String dpopProof, String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String tenantType, String purposeId) {
