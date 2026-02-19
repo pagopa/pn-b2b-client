@@ -3,11 +3,12 @@
 Feature: Gestione dei producer keychais - API v3
 
   Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Associazione utenze a producer keychain
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
     When viene associato l'utente "<userId>" alla producer keychain "<producerKeychainId>"
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     #TODO: da implementare -> i 2 status 401
     Examples:
