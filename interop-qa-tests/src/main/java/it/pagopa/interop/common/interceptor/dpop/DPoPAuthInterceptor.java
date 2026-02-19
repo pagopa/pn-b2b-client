@@ -10,16 +10,16 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 import java.security.KeyPair;
 
-public class DPoPInterceptor implements ClientHttpRequestInterceptor {
+public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
     private final DPoPTokenService dpopService;
     private final java.util.function.Supplier<String> tokenSupplier;
 
     @Setter
     private volatile KeyPair keyPair;
 
-    public DPoPInterceptor(DPoPTokenService dpopService,
-                           java.util.function.Supplier<String> tokenSupplier,
-                           KeyPair keyPair) {
+    public DPoPAuthInterceptor(DPoPTokenService dpopService,
+                               java.util.function.Supplier<String> tokenSupplier,
+                               KeyPair keyPair) {
         this.dpopService = dpopService;
         this.tokenSupplier = tokenSupplier;
         this.keyPair = keyPair;

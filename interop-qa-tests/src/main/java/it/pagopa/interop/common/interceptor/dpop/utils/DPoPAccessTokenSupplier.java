@@ -1,4 +1,4 @@
-package it.pagopa.interop.authorization.service.utils;
+package it.pagopa.interop.common.interceptor.dpop.utils;
 
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
