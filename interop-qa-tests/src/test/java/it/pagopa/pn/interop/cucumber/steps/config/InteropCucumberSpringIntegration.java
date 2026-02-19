@@ -40,6 +40,7 @@ import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
 import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
+import it.pagopa.interop.event.mapper.M2MV3EventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
@@ -198,6 +199,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ApiProfileConfiguration.class,
         M2MVersionsMapper.class,
         M2MVersionsMapperImpl.class,
+        M2MV3EventMapperImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
