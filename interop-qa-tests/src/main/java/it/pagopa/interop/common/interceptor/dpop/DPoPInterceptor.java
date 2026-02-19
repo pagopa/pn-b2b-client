@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.interceptor;
+package it.pagopa.interop.common.interceptor.dpop;
 
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import lombok.Setter;
