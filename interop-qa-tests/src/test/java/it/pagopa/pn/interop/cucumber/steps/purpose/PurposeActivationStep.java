@@ -17,6 +17,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,7 +54,8 @@ public class PurposeActivationStep {
     @Given("{string} ha già creato e pubblicato un e-service con una soglia di carico tale da gestire una sola chiamata")
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        String eserviceName = String.format("e-service-%d", sharedStepsContext.getTestSeed());
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+        String eserviceName = String.format("e-service-%d-TA-%s", sharedStepsContext.getTestSeed(), timestamp);
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                 new EServiceSeed().name(eserviceName),

@@ -1,5 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
@@ -40,7 +43,8 @@ public class EServiceCreationSteps {
     @Given("l'utente ha già creato un e-service contenente anche il primo descrittore")
     public void userCreateEServiceWithDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+        String eserviceName = String.format("e-service-%s-TA-%s", sharedStepsContext.getTestSeed(), timestamp);
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setName(eserviceName);
@@ -51,7 +55,8 @@ public class EServiceCreationSteps {
     @When("l'utente crea un e-service")
     public void userCreatesEservice() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+        String eserviceName = String.format("e-service-%s-TA-%s", sharedStepsContext.getTestSeed(), timestamp);
 
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEService(new EServiceSeed().name(eserviceName)

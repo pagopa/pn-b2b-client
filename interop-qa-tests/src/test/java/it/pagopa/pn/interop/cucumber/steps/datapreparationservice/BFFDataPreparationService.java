@@ -87,6 +87,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.Upper
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -466,8 +467,10 @@ public class BFFDataPreparationService {
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+
         EServiceSeed defaultEserviceSeed = new EServiceSeed()
-                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .name(String.format("e-service-TA-%s", timestamp))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
@@ -492,8 +495,10 @@ public class BFFDataPreparationService {
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptorWithCustomPersonalData(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, Boolean personalData) {
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+
         EServiceSeed defaultEserviceSeed = new EServiceSeed()
-                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .name(String.format("e-service-TA-%s", timestamp))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)

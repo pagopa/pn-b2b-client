@@ -25,12 +25,12 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.Builder;
 import lombok.Data;
 
@@ -160,8 +160,8 @@ public class AgreementCommonSteps {
         List<EServiceDescriptor> eServiceDescriptorList = new ArrayList<>();
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
-            int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-            String eserviceName = String.format("eservice-%d-%d-%d", i, sharedStepsContext.getTestSeed(), randomInt);
+            String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+            String eserviceName = String.format("eservice-%d-%d-TA-%s", i, sharedStepsContext.getTestSeed(), timestamp);
             EServiceSeed eserviceSeed = new EServiceSeed()
                     .name(eserviceName)
                     .personalData(eServiceConfig.map(EServiceConfig::getPersonalData).orElse(false))

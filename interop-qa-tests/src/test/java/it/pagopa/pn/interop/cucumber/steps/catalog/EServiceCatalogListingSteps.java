@@ -19,6 +19,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -59,8 +62,9 @@ public class EServiceCatalogListingSteps {
         List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
         // 1. Create the draft e-services with draft descriptors
         for (int i=0; i<totalEServices; i++) {
+            String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                    new EServiceSeed().name(String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed())),
+                    new EServiceSeed().name(String.format("eservice-%d-%d-TA-%s", i, sharedStepsContext.getTestSeed(), timestamp)),
                     new UpdateEServiceDescriptorSeed());
             eServiceDescriptors.add(eServiceDescriptor);
         }
@@ -95,8 +99,9 @@ public class EServiceCatalogListingSteps {
         List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
         // 1. Create the draft e-services with draft descriptors
         for (int i=0; i<totalEServices; i++) {
+            String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                    new EServiceSeed().name(String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed())).personalData(personalData),
+                    new EServiceSeed().name(String.format("eservice-%d-%d-TA-%s", i, sharedStepsContext.getTestSeed(), timestamp)).personalData(personalData),
                     new UpdateEServiceDescriptorSeed());
             eServiceDescriptors.add(eServiceDescriptor);
         }
@@ -202,7 +207,8 @@ public class EServiceCatalogListingSteps {
     @Given("{string} ha già creato e pubblicato un e-service contenente la keyword {string}")
     public void tenantHasAlreadyCreatedEServiceWithKeyword(String tenantType, String keyword) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        String eServiceName = String.format("e-service-%s-%s", sharedStepsContext.getTestSeed(), keyword);
+        String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH'h'mm'm'ss's'"));
+        String eServiceName = String.format("e-service-%s-%s-TA-%s", sharedStepsContext.getTestSeed(), keyword, timestamp);
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                 new EServiceSeed().name(eServiceName),
