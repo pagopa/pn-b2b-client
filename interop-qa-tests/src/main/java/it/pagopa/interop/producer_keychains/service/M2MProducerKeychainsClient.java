@@ -1,8 +1,8 @@
 package it.pagopa.interop.producer_keychains.service;
 
-import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.client.NoAuthApiClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.KeysApi;
@@ -16,7 +16,6 @@ import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
@@ -29,8 +28,8 @@ public class M2MProducerKeychainsClient extends AbstractDPoPClient implements IM
     private final KeysApi keysApi;
     private final String basePath;
 
-    public M2MProducerKeychainsClient(RestTemplate baseRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor, DPoPTokenService dPoPTokenService) {
-        super(baseRestTemplate, dPoPTokenService);
+    public M2MProducerKeychainsClient(DpopRestTemplate dpopRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
+        super(dpopRestTemplate);
 
         this.basePath = interopClientConfigs.getApiv3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
@@ -40,13 +39,13 @@ public class M2MProducerKeychainsClient extends AbstractDPoPClient implements IM
     }
 
     private ApiClient createProducerKeychainsApiClient() {
-        ApiClient apiClient = new NoAuthApiClient(dpopRestTemplate);
+        ApiClient apiClient = new NoAuthApiClient(super.getRestTemplate());
         apiClient.setBasePath(basePath);
         return apiClient;
     }
 
     private ApiClient createKeysApiClient() {
-        ApiClient apiClient = new NoAuthApiClient(dpopRestTemplate);
+        ApiClient apiClient = new NoAuthApiClient(super.getRestTemplate());
         apiClient.setBasePath(basePath);
         return apiClient;
     }

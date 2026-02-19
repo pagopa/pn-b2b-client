@@ -8,7 +8,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+
+import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.utils.DPoPAccessTokenSupplier;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -53,7 +58,49 @@ public class InteropRestTemplateConfiguration {
         return restTemplate;
     }
 
-    private static class RequestResponseLoggingInterceptor implements ClientHttpRequestInterceptor {
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public DPoPAccessTokenSupplier dpopAccessTokenSupplier(DPoPTokenService tokenService) {
+        return new DPoPAccessTokenSupplier(tokenService);
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public DpopRestTemplate dpopRestTemplate(
+            DPoPTokenService dpoPTokenService,
+            DPoPAccessTokenSupplier dpopAccessTokenSupplier,
+            RestTemplate customRestTemplate // prende il @Primary
+    ) {
+        // RequestFactory "raw" per evitare chain annidata
+        HttpComponentsClientHttpRequestFactory rf = new HttpComponentsClientHttpRequestFactory();
+        rf.setConnectTimeout(990_000);
+        rf.setReadTimeout(990_000);
+        rf.setConnectionRequestTimeout(990_000);
+        rf.setBufferRequestBody(false);
+
+        RestTemplate rt = new RestTemplate(rf);
+
+        // copia i converter (file + multipart ecc)
+        rt.setMessageConverters(customRestTemplate.getMessageConverters());
+        rt.setErrorHandler(customRestTemplate.getErrorHandler());
+        rt.setUriTemplateHandler(customRestTemplate.getUriTemplateHandler());
+
+        // se vuoi mantenere SOLO il logging interceptor dal base:
+        List<ClientHttpRequestInterceptor> base = customRestTemplate.getInterceptors().stream()
+                .filter(i -> i.getClass().getName().contains("RequestResponseLoggingInterceptor"))
+                .toList();
+
+        // initial keyPair null: verrà settata da setAuth()
+        return new DpopRestTemplate(
+                rt,
+                dpoPTokenService,
+                dpopAccessTokenSupplier,
+                new ArrayList<>(base),
+                null
+        );
+    }
+
+    public static class RequestResponseLoggingInterceptor implements ClientHttpRequestInterceptor {
 
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
 
