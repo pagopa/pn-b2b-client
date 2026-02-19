@@ -5,6 +5,7 @@ import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.DPoPAccessTokenSupplier;
 import it.pagopa.interop.common.interceptor.dpop.DPoPInterceptor;
 import it.pagopa.interop.common.interceptor.dpop.DPoPTokenInterceptor;
+import it.pagopa.interop.common.interceptor.dpop.DigestValidationInterceptor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -41,12 +42,16 @@ public class DpopRestTemplate {
         ClientHttpRequestInterceptor dpopTokenInterceptor =
                 new DPoPTokenInterceptor(dpopAccessTokenSupplier);
 
+        ClientHttpRequestInterceptor digestInterceptor =
+                new DigestValidationInterceptor(true); // true = fallisce se manca Digest
+
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         if (baseInterceptors != null) interceptors.addAll(baseInterceptors);
 
         // ordine: token -> dpop -> logging
         interceptors.add(0, dpopInterceptor);
         interceptors.add(0, dpopTokenInterceptor);
+        interceptors.add(new DigestValidationInterceptor(true));
 
         restTemplate.setInterceptors(interceptors);
     }
