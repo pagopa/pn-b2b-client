@@ -131,8 +131,8 @@ public class DPoPSteps {
 
         DpopProofService.ValidationResult result = dPoPTokenService.validateCnfJkt(accessToken, dpopProofJwt);
 
-        Assertions.assertThat(result.isValid())
-                .as("Errore nella validazione del campo cnf.jkt: " + result.getMessage())
+        Assertions.assertThat(result.valid())
+                .as("Errore nella validazione del campo cnf.jkt: " + result.message())
                 .isTrue();
     }
 
@@ -187,7 +187,7 @@ public class DPoPSteps {
                 : dPoPTokenService.buildDpopProof(keyPair);
     }
 
-    private String generateMaliciousDpopProof(String keyType){
+    private String generateMaliciousDpopProof(String keyType) {
         var legittimPair = generateKeyPair(keyType);
         var maliciousPair = generateKeyPair(keyType);
 
