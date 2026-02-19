@@ -35,7 +35,7 @@ Feature: Gestione dei producer keychais - API v3
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key   | name   | alg   | use   | keychainId |
       | <key> | <name> | <alg> | <use> | %actual    |
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     Examples:
       | keyType | key    | name   | alg    | use    | statusCode |
@@ -59,7 +59,7 @@ Feature: Gestione dei producer keychais - API v3
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId   |
       | %valid | %valid | %valid | %valid | <keychainId> |
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     Examples:
       | keyType | keychainId | tenant | statusCode |
@@ -77,7 +77,7 @@ Feature: Gestione dei producer keychais - API v3
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
@@ -97,7 +97,7 @@ Feature: Gestione dei producer keychais - API v3
     And l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    Then si ottiene status code 409
+    Then si ottiene response status code 409
 
     Examples:
       | keyType |
@@ -114,7 +114,7 @@ Feature: Gestione dei producer keychais - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     And si ottiene status code 200
     Then viene recuperata la producer-key con kid "<kid>"
-    And si ottiene status code <statusCode>
+    And si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
@@ -144,7 +144,7 @@ Feature: Gestione dei producer keychais - API v3
     And si ottiene status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     Then viene eliminata la producer-key con keychainId "<keychainId>", kid "<kid>"
-    And si ottiene status code <statusCode>
+    And si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
