@@ -15,6 +15,7 @@ import java.util.List;
 public class BFFProducerKeychainsSteps {
     private final ProducerKeychainsClient producerKeychainsClient;
     private final ProducerKeychainsContext producerKeychainsContext;
+    private final SharedStepsContext sharedStepsContext;
 
     public BFFProducerKeychainsSteps(ProducerKeychainsClient producerKeychainsClient,
                                      SharedStepsContext sharedStepsContext,
@@ -22,19 +23,44 @@ public class BFFProducerKeychainsSteps {
 
         this.producerKeychainsContext = producerKeychainsContext;
         this.producerKeychainsClient = producerKeychainsClient;
+        this.sharedStepsContext = sharedStepsContext;
         this.producerKeychainsClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
     }
 
     @And("esiste un producer keychain con nome {string} e con descrizione {string}")
     public void createProducerKeychainWithoutAssociatedUsers(String name, String description) {
 
-        ProducerKeychainSeed seed = new ProducerKeychainSeed().name(name).description(description).members(List.of());
+        int seed = sharedStepsContext.getTestSeed();
+
+        String uniqueName = buildUniqueName(name, seed);
+        String uniqueDescription = buildUniqueDescription(description, seed);
+
+        ProducerKeychainSeed seedRequest = new ProducerKeychainSeed()
+                .name(uniqueName)
+                .description(uniqueDescription)
+                .members(List.of());
+
         try {
-            CreatedResource response = producerKeychainsClient.createProducerKeychain(seed);
-            Assertions.assertThat(response).as("La response contenente l'id del producer keychain creato non deve essere null").isNotNull();
+            CreatedResource response = producerKeychainsClient.createProducerKeychain(seedRequest);
+            Assertions.assertThat(response)
+                    .as("La response contenente l'id del producer keychain creato non deve essere null")
+                    .isNotNull();
+
             producerKeychainsContext.setProducerKeychainId(response.getId());
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
     }
+
+    private String buildUniqueName(String base, int seed) {
+        String safeBase = (base == null || base.length() < 5) ? "pkname" : base;
+        return safeBase + "-" + seed;
+    }
+
+    private String buildUniqueDescription(String base, int seed) {
+        String safeBase = (base == null || base.length() < 10) ? "producer-keychain" : base;
+        return safeBase + "-" + seed;
+    }
+
+
 }
