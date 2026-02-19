@@ -3,8 +3,8 @@ package it.pagopa.interop.common.client;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.DPoPAccessTokenSupplier;
-import it.pagopa.interop.common.interceptor.BearerTokenInterceptor;
 import it.pagopa.interop.common.interceptor.DPoPInterceptor;
+import it.pagopa.interop.common.interceptor.DPoPTokenInterceptor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
@@ -26,9 +26,9 @@ public abstract class AbstractDPoPClient extends AbstractClient {
         restTemplate.setErrorHandler(baseRestTemplate.getErrorHandler());
         restTemplate.setMessageConverters(baseRestTemplate.getMessageConverters());
 
-        dpopInterceptor = new DPoPInterceptor(dPoPTokenService, null);
+        dpopInterceptor = new DPoPInterceptor(dPoPTokenService, dpopAccessTokenSupplier, null);
         restTemplate.setInterceptors(new java.util.ArrayList<>(baseRestTemplate.getInterceptors()));
-        restTemplate.getInterceptors().add(new BearerTokenInterceptor(dpopAccessTokenSupplier));
+        restTemplate.getInterceptors().add(new DPoPTokenInterceptor(dpopAccessTokenSupplier));
         restTemplate.getInterceptors().add(dpopInterceptor);
         dpopRestTemplate = restTemplate;
     }
