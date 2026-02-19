@@ -2,6 +2,7 @@ package it.pagopa.interop.producer_keychains.service;
 
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.common.client.NoAuthApiClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.KeysApi;
@@ -39,13 +40,13 @@ public class M2MProducerKeychainsClient extends AbstractDPoPClient implements IM
     }
 
     private ApiClient createProducerKeychainsApiClient() {
-        ApiClient apiClient = new ApiClient(dpopRestTemplate);
+        ApiClient apiClient = new NoAuthApiClient(dpopRestTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
 
     private ApiClient createKeysApiClient() {
-        ApiClient apiClient = new ApiClient(dpopRestTemplate);
+        ApiClient apiClient = new NoAuthApiClient(dpopRestTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
