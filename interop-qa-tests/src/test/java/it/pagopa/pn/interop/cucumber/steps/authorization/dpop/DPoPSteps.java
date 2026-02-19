@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization.dpop;
 
-import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -22,6 +21,8 @@ import java.security.KeyPair;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
 @Slf4j
 public class DPoPSteps {
@@ -130,8 +131,8 @@ public class DPoPSteps {
 
         DpopProofService.ValidationResult result = dPoPTokenService.validateCnfJkt(accessToken, dpopProofJwt);
 
-        Assertions.assertThat(result.isValid())
-                .as("Errore nella validazione del campo cnf.jkt: " + result.getMessage())
+        Assertions.assertThat(result.valid())
+                .as("Errore nella validazione del campo cnf.jkt: " + result.message())
                 .isTrue();
     }
 
@@ -175,7 +176,7 @@ public class DPoPSteps {
     }
 
     private String generateDpopProofWith(String keyType, String typValue, HttpMethod httpMethod, String oAuthServerUrl) {
-       var keyPair = dPoPTokenService.generateKeyPair(keyType);
+        var keyPair = generateKeyPair(keyType);
 
         boolean shouldOverride = !Objects.equals(typValue, DEFAULT_TYP)
                 || !Objects.equals(httpMethod, DEFAULT_HTTP_METHOD)
@@ -186,9 +187,9 @@ public class DPoPSteps {
                 : dPoPTokenService.buildDpopProof(keyPair);
     }
 
-    private String generateMaliciousDpopProof(String keyType){
-        var legittimPair = dPoPTokenService.generateKeyPair(keyType);
-        var maliciousPair = dPoPTokenService.generateKeyPair(keyType);
+    private String generateMaliciousDpopProof(String keyType) {
+        var legittimPair = generateKeyPair(keyType);
+        var maliciousPair = generateKeyPair(keyType);
 
         var keyPair = new KeyPair(legittimPair.getKeyPair().getPublic(), maliciousPair.getKeyPair().getPrivate());
         var keyPairDecorator = KeyPairDecorator.of(keyPair);
