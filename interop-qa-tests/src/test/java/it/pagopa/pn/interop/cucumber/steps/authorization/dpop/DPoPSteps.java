@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.DpopProofService;
+import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
@@ -81,27 +82,28 @@ public class DPoPSteps {
         this.dpopProofJwt = this.generateMaliciousDpopProof(keyType);
     }
 
-    @And("{string} cerca di ottenere un access token usando il dpop proof creato")
-    public void getAccessToken(String tenantType) {
+    @And("{string} cerca di ottenere un access token per il client {string} usando il dpop proof creato")
+    public void getAccessToken(String tenantType, String clientKind) {
         var client = resolvePreparedClient();
-        var purposeId = resolvePurposeId();
+        var clientType = ClientAssertionOptions.ClientType.valueOf(clientKind);
+        var purposeId = clientType.equals(ClientAssertionOptions.ClientType.API) ? null : resolvePurposeId();
 
-        Pair<String, VoucherResponse> proofWithToken = dPoPTokenService.getAccessTokenWithoutCache(dpopProofJwt, client, tenantType, purposeId);
+        Pair<String, VoucherResponse> proofWithToken = dPoPTokenService.getAccessTokenWithoutCache(dpopProofJwt, client.clientId().toString(), client.keyPair().getKeyPair(), clientType, tenantType, purposeId);
         this.voucherResponse = proofWithToken.getRight();
     }
 
-    @When("{string} tenta di ottenere un access token usando il dpop proof creato e inviando due header DPoP nella richiesta")
-    public void getAccessTokenWithDuplicateDpop(String tenantType) {
+    @When("{string} tenta di ottenere un access token per il client {string} usando il dpop proof creato e inviando due header DPoP nella richiesta")
+    public void getAccessTokenWithDuplicateDpop(String tenantType, String clientKind) {
         var client = resolvePreparedClient();
         var purposeId = resolvePurposeId();
 
-        Pair<Integer, String> response = dPoPTokenService.sendRequestWithDuplicateDpopHeaders(client, purposeId, dpopProofJwt);
+        Pair<Integer, String> response = dPoPTokenService.sendRequestWithDuplicateDpopHeaders(client.clientId().toString(), client.keyPair().getKeyPair(), ClientAssertionOptions.ClientType.valueOf(clientKind), purposeId, dpopProofJwt);
         context.getHttpCallExecutor().setRawResponse(response.getLeft(), response.getRight());
     }
 
-    @When("{string} tenta di ottenere un access token senza includere l'header DPoP")
-    public void getAccessTokenWithoutDPoP(String tenantType) {
-        this.getAccessToken(tenantType);
+    @When("{string} tenta di ottenere un access token per il client {string} senza includere l'header DPoP")
+    public void getAccessTokenWithoutDPoP(String tenantType, String clientKind) {
+        this.getAccessToken(tenantType, clientKind);
     }
 
     @Then("la response contiene:")
@@ -129,8 +131,8 @@ public class DPoPSteps {
 
         DpopProofService.ValidationResult result = dPoPTokenService.validateCnfJkt(accessToken, dpopProofJwt);
 
-        Assertions.assertThat(result.isValid())
-                .as("Errore nella validazione del campo cnf.jkt: " + result.getMessage())
+        Assertions.assertThat(result.valid())
+                .as("Errore nella validazione del campo cnf.jkt: " + result.message())
                 .isTrue();
     }
 
@@ -185,7 +187,7 @@ public class DPoPSteps {
                 : dPoPTokenService.buildDpopProof(keyPair);
     }
 
-    private String generateMaliciousDpopProof(String keyType){
+    private String generateMaliciousDpopProof(String keyType) {
         var legittimPair = generateKeyPair(keyType);
         var maliciousPair = generateKeyPair(keyType);
 

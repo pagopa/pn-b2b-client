@@ -14,6 +14,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.operation.SimpleOperation;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Setter;
@@ -32,6 +33,7 @@ import org.springframework.http.HttpMethod;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
@@ -40,13 +42,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class DPoPTokenService extends AbstractClient {
 
     @Setter
     private IdentityService identityService;
 
-    private final DataPreparationService dataPreparationService;
     private final DPoPVoucherService voucherService;
     private final DpopProofService dpopProofService;
     private final Map<TokenKey, Pair<String, VoucherResponse>> tokenCache = new ConcurrentHashMap<>();
@@ -57,38 +58,37 @@ public class DPoPTokenService extends AbstractClient {
     public record PreparedClient(UUID clientId, KeyPairDecorator keyPair, KeyType keyType) {
     }
 
-    public DPoPTokenService(IdentityService identityService, DataPreparationService dataPreparationService,
-                            DPoPVoucherService voucherService, DpopProofService dpopProofService) {
+    public DPoPTokenService(IdentityService identityService, DPoPVoucherService voucherService, DpopProofService dpopProofService, HttpCallExecutor httpCallExecutor) {
         this.identityService = identityService;
-        this.dataPreparationService = dataPreparationService;
         this.voucherService = voucherService;
         this.dpopProofService = dpopProofService;
+        super.setHttpCallExecutor(httpCallExecutor);
     }
 
-    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
+    public Pair<String, VoucherResponse> getAccessToken(String dpopProof, String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, @NonNull String tenantType, String purposeId) {
         TokenKey tokenKey = TokenKey.of(tenantType, M2MRole.M2M_ADMIN);
 
         return tokenCache.computeIfAbsent(tokenKey, key -> {
-            log.info("Richiesta access token (cached) - Tenant: {}, Client: {}", tenantType, client.clientId());
-            return retrieveAccessToken(client, purposeId, dpopProof);
+            log.info("Richiesta access token (cached) - Tenant: {}, Client: {}", tenantType, clientId);
+            return retrieveAccessToken(clientId, keyPair, clientType, purposeId, dpopProof);
         });
     }
 
-    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, @NonNull PreparedClient client, @NonNull String tenantType, @NonNull String purposeId) {
-        log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, client.clientId());
-        return retrieveAccessToken(client, purposeId, dpopProof);
+    public Pair<String, VoucherResponse> getAccessTokenWithoutCache(String dpopProof, String clientId, KeyPair keyPair, ClientType clientType, @NonNull String tenantType, String purposeId) {
+        log.info("Richiesta access token (no cache) - Tenant: {}, Client: {}", tenantType, clientId);
+        return retrieveAccessToken(clientId, keyPair, clientType, purposeId, dpopProof);
     }
 
-    private Pair<String, VoucherResponse> retrieveAccessToken(PreparedClient client, String purposeId, String dpopProof) {
+    private Pair<String, VoucherResponse> retrieveAccessToken(String clientId, KeyPair keyPair, ClientType clientKind, String purposeId, String dpopProof) {
         try {
             dpopProofService.verifyDpopProof(dpopProof);
         } catch (RuntimeException e) {
             log.warn("Proof DPoP non valida: {}", e.getMessage());
         }
 
-        String clientAssertion = generateClientAssertion(client, purposeId);
+        String clientAssertion = generateClientAssertion(clientId, keyPair, clientKind, purposeId);
         VoucherRequest request = VoucherRequest.builder()
-                .clientId(client.clientId().toString())
+                .clientId(clientId)
                 .clientAssertion(clientAssertion)
                 .build();
 
@@ -98,10 +98,29 @@ public class DPoPTokenService extends AbstractClient {
         )).orElse(Pair.of(dpopProof, new VoucherResponse()));
     }
 
-    public Pair<Integer, String> sendRequestWithDuplicateDpopHeaders(@NonNull PreparedClient client, @NonNull String purposeId, @NonNull String dpopProof) {
+    private Pair<String, VoucherResponse> retrieveAccessToken(String clientId, ClientType clientType, KeyPair keyPair, String purposeId, String dpopProof) {
         try {
-            String clientAssertion = generateClientAssertion(client, purposeId);
-            String requestBody = buildFormRequestBody(client.clientId().toString(), clientAssertion);
+            dpopProofService.verifyDpopProof(dpopProof);
+        } catch (RuntimeException e) {
+            log.warn("Proof DPoP non valida: {}", e.getMessage());
+        }
+
+        String clientAssertion = generateClientAssertion(clientId, keyPair, clientType, purposeId);
+        VoucherRequest request = VoucherRequest.builder()
+                .clientId(clientId)
+                .clientAssertion(clientAssertion)
+                .build();
+
+        return this.performOperation(SimpleOperation.of(
+                () -> voucherService.requestVoucher(request, dpopProof),
+                response -> Pair.of(dpopProof, new ObjectMapper().convertValue(response, VoucherResponse.class))
+        )).orElse(Pair.of(dpopProof, new VoucherResponse()));
+    }
+
+    public Pair<Integer, String> sendRequestWithDuplicateDpopHeaders(@NonNull String clientId, @NonNull KeyPair keyPair, @NonNull ClientType clientType, String purposeId, @NonNull String dpopProof) {
+        try {
+            String clientAssertion = generateClientAssertion(clientId, keyPair, clientType, purposeId);
+            String requestBody = buildFormRequestBody(clientId, clientAssertion);
 
             HttpPost post = new HttpPost(dpopHtu);
             post.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -153,6 +172,15 @@ public class DPoPTokenService extends AbstractClient {
         );
     }
 
+    public String buildDpopProof(KeyPair keyPair) {
+        return dpopProofService.buildProof(
+                keyPair.getPrivate(),
+                keyPair.getPublic(),
+                "POST",
+                dpopHtu
+        );
+    }
+
     public String buildProofWith(KeyPairDecorator keyPair, String typ, HttpMethod httpMethod, String htu) {
         return dpopProofService.buildProofWith(
                 keyPair.getPrivate(),
@@ -163,19 +191,45 @@ public class DPoPTokenService extends AbstractClient {
         );
     }
 
-    // === UTILITY ===
-    private String generateClientAssertion(@NonNull PreparedClient client, @NonNull String purposeId) {
-        return voucherService.createClientAssertion(
-                ClientAssertionOptions.builder()
-                        .clientType(ClientType.CONSUMER)
-                        .clientId(client.clientId().toString())
-                        .publicKey(client.keyPair().getPublic())
-                        .privateKey(client.keyPair().getPrivate())
-                        .purposeId(purposeId)
-                        .assertionTtlSeconds(300)
-                        .build()
+    public String buildProofWith(KeyPair keyPair, String typ, HttpMethod httpMethod, String htu) {
+        return dpopProofService.buildProofWith(
+                keyPair.getPrivate(),
+                keyPair.getPublic(),
+                httpMethod.toString(),
+                htu,
+                typ
         );
     }
+
+    public String buildProofWithAth(KeyPair keyPair, String typ, HttpMethod httpMethod, String htu, String accessToken) {
+        return dpopProofService.buildProofWithAth(
+                keyPair.getPrivate(),
+                keyPair.getPublic(),
+                httpMethod.toString(),
+                htu,
+                typ,
+                accessToken
+        );
+    }
+
+    // === UTILITY ===
+    private String generateClientAssertion(@NonNull String clientId, @NonNull KeyPair keyPair, ClientType clientKind, String purposeId) {
+
+        ClientAssertionOptions.ClientAssertionOptionsBuilder builder =
+                ClientAssertionOptions.builder()
+                        .clientType(clientKind)
+                        .clientId(clientId)
+                        .publicKey(keyPair.getPublic())
+                        .privateKey(keyPair.getPrivate())
+                        .assertionTtlSeconds(300);
+
+        if (ClientType.CONSUMER.equals(clientKind)) {
+            builder.purposeId(purposeId);
+        }
+
+        return voucherService.createClientAssertion(builder.build());
+    }
+
 
     private String buildFormRequestBody(String clientId, String clientAssertion) {
         return "grant_type=client_credentials"

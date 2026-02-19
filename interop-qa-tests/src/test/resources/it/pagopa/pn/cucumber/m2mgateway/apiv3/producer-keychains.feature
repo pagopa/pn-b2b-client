@@ -1,6 +1,32 @@
 @m2m-apiv3-producer-keychains
   #TODO: Check Agid-JWT-Signature, Digest
 Feature: Gestione dei producer keychains - API v3
+Feature: Gestione dei producer keychais - API v3
+
+  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene status code 200
+    Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
+    When viene associato l'utente "<userId>" alla producer keychain "<producerKeychainId>"
+    Then si ottiene response status code <statusCode>
+
+    #TODO: da implementare -> i 2 status 401
+    Examples:
+      | tenant | userId  | producerKeychainId | m2mRoles  | statusCode |
+      | PA1    | %actual | %actual            | m2m-admin | 204        |
+      | PA1    | %null   | %actual            | m2m-admin | 400        |
+      | PA1    | %actual | %null              | m2m-admin | 400        |
+      | PA1    | %actual | %random            | m2m-admin | 404        |
+
+    #userId valido ma inesistente -> 404
+      | PA1    | %random | %actual            | m2m-admin | 404        |
+
+    #userId valido ma appartenente ad un altro tenant -> 403
+      | PA2    | %actual | %actual            | m2m-admin | 403        |
+
+    # utente non autorizzato
+      | PA1    | %actual | %actual            | m2m       | 403        |
 
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_1] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -10,7 +36,7 @@ Feature: Gestione dei producer keychains - API v3
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key   | name   | alg   | use   | keychainId |
       | <key> | <name> | <alg> | <use> | %actual    |
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     Examples:
       | keyType | key    | name   | alg    | use    | statusCode |
@@ -34,7 +60,7 @@ Feature: Gestione dei producer keychains - API v3
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId   |
       | %valid | %valid | %valid | %valid | <keychainId> |
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     Examples:
       | keyType | keychainId | tenant | statusCode |
@@ -52,7 +78,7 @@ Feature: Gestione dei producer keychains - API v3
     When l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    Then si ottiene status code <statusCode>
+    Then si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
@@ -72,7 +98,7 @@ Feature: Gestione dei producer keychains - API v3
     And l'utente crea una nuova chiave di tipo "<keyType>" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    Then si ottiene status code 409
+    Then si ottiene response status code 409
 
     Examples:
       | keyType |
@@ -89,7 +115,7 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     And si ottiene status code 200
     Then viene recuperata la producer-key con kid "<kid>"
-    And si ottiene status code <statusCode>
+    And si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
@@ -119,7 +145,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     Then viene eliminata la producer-key con keychainId "<keychainId>", kid "<kid>"
-    And si ottiene status code <statusCode>
+    And si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:

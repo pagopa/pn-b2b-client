@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
+import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
@@ -53,6 +54,11 @@ public class M2MAuthSteps {
         sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         clientTokenConfigurator.setBearerToken(token);
+
+        // Dpop Auth
+        Auth auth = Auth.of(clientId.toString(), tenant, selfcareRole.toUpperCase(), preparedClient.keyPair().getKeyPair());
+        clientTokenConfigurator.setAuth(auth);
+
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(selfcareRole.toUpperCase()));
         sharedStepsContext.setTenantType(tenant);
