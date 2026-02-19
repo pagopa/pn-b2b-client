@@ -7,8 +7,7 @@ import static java.util.Map.entry;
 
 public final class ExpectedErrorMessageStrategies {
 
-    private ExpectedErrorMessageStrategies() {
-    }
+    private ExpectedErrorMessageStrategies() {}
 
     private static final Map<String, Function<String, String>> ERROR_STRATEGIES =
         Map.ofEntries(
