@@ -6,10 +6,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSee
 import it.pagopa.interop.producer_keychains.service.ProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-
-import java.util.List;
 
 @Slf4j
 public class BFFProducerKeychainsSteps {

@@ -6,23 +6,22 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.producer_keychains.service.M2MProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ProducerKeychainsSteps {
-    private final M2MProducerKeychainsClient producerKeychainsClient;
+    private final M2MV3ProducerKeychainsClient producerKeychainsClient;
     private final ProducerKeychainsResolver resolver;
     private final ProducerKeychainsContext context;
 
-    public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext) {
+    public ProducerKeychainsSteps(M2MV3ProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext) {
         this.producerKeychainsClient = producerKeychainsClient;
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.producerKeychainsClient.setHttpCallExecutor(httpCallExecutor);

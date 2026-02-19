@@ -29,7 +29,7 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements
     private final KeysApi keysApi;
     private final String basePath;
 
-    public M2MProducerKeychainsClient(DpopRestTemplate dpopRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
+    public M2MV3ProducerKeychainsClient(DpopRestTemplate dpopRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
         super(dpopRestTemplate);
 
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
