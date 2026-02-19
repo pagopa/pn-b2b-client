@@ -55,6 +55,9 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.*;
 
+import it.pagopa.pn.cucumber.steps.pa.strategies.SelectiveUpdateStrategies;
+import it.pagopa.pn.cucumber.steps.pa.strategies.ExpectedErrorMessageStrategies;
+
 @Slf4j
 public class AnagraficaRaddAltSteps {
 
@@ -1631,7 +1634,7 @@ public class AnagraficaRaddAltSteps {
         String body = e.getResponseBodyAsString();
         ObjectMapper mapper = new ObjectMapper();
         Problem problem = mapper.readValue(body, Problem.class);
-        String expectedDetail = buildExpectedErrorMessage(expectedErrorType, testedValueString);
+        String expectedDetail = ExpectedErrorMessageStrategies.build(expectedErrorType, testedValueString);
         boolean found = problem.getErrors().stream().anyMatch(err -> expectedDetail.contains(err.getDetail()));
         assertTrue(found, "Messaggio di errore atteso non trovato. Atteso: " + expectedDetail + " - Body: " + body);
     }
@@ -1677,81 +1680,10 @@ public class AnagraficaRaddAltSteps {
         catch (NumberFormatException e) { throw e; }
     }
 
-    private void applyPutSelectiveField(SelectiveUpdateRegistryRequestV2 request, String field, String value){
+    private void applyPutSelectiveField(SelectiveUpdateRegistryRequestV2 request, String field, String value) {
         if (request == null) throw new IllegalStateException("request non presente");
         else if (request.getAddress() == null) throw new IllegalStateException("address non presente");
-
-        switch (field) {
-            case "description":
-                request.setDescription(value);
-                break;
-            case "phoneNumbers":
-                if (value == null) request.setPhoneNumbers(null);
-                else if ("[]".equals(value)) request.setPhoneNumbers(List.of());
-                else request.setPhoneNumbers(Arrays.stream(value.split(",")).map(String::trim).toList());
-                break;
-            case "externalCodes":
-                if (value == null) request.setExternalCodes(null);
-                else if ("[]".equals(value)) request.setExternalCodes(List.of());
-                else request.setExternalCodes(Arrays.stream(value.split(",")).map(String::trim).toList());
-                break;
-            case "addressRow":
-                request.getAddress().setAddressRow(value);
-                break;
-            case "addressCap":
-                request.getAddress().setCap(value);
-                break;
-            case "addressCity":
-                request.getAddress().setCity(value);
-                break;
-            case "addressProvince":
-                request.getAddress().setProvince(value);
-                break;
-            case "addressCountry":
-                request.getAddress().setCountry(value);
-                break;
-            case "email":
-                request.setEmail(value);
-                break;
-            case "openingTime":
-                request.setOpeningTime(value);
-                break;
-            case "startValidity":
-                request.setStartValidity(value);
-                break;
-            case "endValidity":
-                request.setEndValidity(value);
-                break;
-            case "website":
-                request.setWebsite(value);
-                break;
-            case "appointmentRequired":
-                request.setAppointmentRequired(value == null ? null : Boolean.parseBoolean(value));
-                break;
-            default:
-                throw new IllegalArgumentException("Campo non gestito nel PUT Selective: " + field);
-        }
-    }
-
-    private String buildExpectedErrorMessage(String errorType, String value) {
-        switch (errorType) {
-            case "RANGE_MAX_LAT":
-                return "Validation errors: [format attribute \"double\" not supported, numeric instance is greater than the required maximum (maximum: 90, found: " + value + ")]";
-            case "RANGE_MIN_LAT":
-                return "Validation errors: [numeric instance is lower than the required minimum (minimum: -90, found: " + value + "), format attribute \"double\" not supported]";
-            case "RANGE_MAX_LON":
-                return "Validation errors: [format attribute \"double\" not supported, numeric instance is greater than the required maximum (maximum: 180, found: " + value + ")]";
-            case "RANGE_MIN_LON":
-                return "Validation errors: [format attribute \"double\" not supported, numeric instance is lower than the required minimum (minimum: -180, found: " + value + ")]";
-            case "NULL_LAT":
-                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
-            case "NULL_LON":
-                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
-            case "NULL_LAT_LON":
-                return "Validation errors: [instance type (null) does not match any allowed primitive type (allowed: [\"integer\",\"number\"]), format attribute \"double\" not supported]";
-            default:
-                return "UNKNOWN_ERROR";
-        }
+        SelectiveUpdateStrategies.apply(request, field, value);
     }
 
     private void executePutSelective(SelectiveUpdateRegistryRequestV2 request) {
