@@ -21,8 +21,8 @@ Feature: Gestione dei producer keychais - API v3
     #userId valido ma inesistente -> 404
       | PA1    | %random | %actual            | m2m-admin | 404        |
 
-    #userId valido ma appartenente ad un altro tenant -> 404
-      | PA2    | %actual | %actual            | m2m-admin | 404        |
+    #userId valido ma appartenente ad un altro tenant -> 403
+      | PA2    | %actual | %actual            | m2m-admin | 403        |
 
     # utente non autorizzato
       | PA1    | %actual | %actual            | m2m       | 403        |
