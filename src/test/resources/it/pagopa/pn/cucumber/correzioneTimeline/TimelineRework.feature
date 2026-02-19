@@ -707,7 +707,7 @@ Feature: Test relativi al SRS di correzione timeline
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON43 |
     And si verifica che la richiesta di rework effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 3 secondi
 
-  @timelineRewor
+  @timelineRework
   Scenario: [TIMELINE_REWORK_44] Verifica che la correzione di un ATTEMPT_0 da KO in OK, quando è presente un ATTEMPT_1 in OK
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
