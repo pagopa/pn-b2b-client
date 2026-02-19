@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.interceptor;
+package it.pagopa.interop.common.interceptor.dpop;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpRequest;
