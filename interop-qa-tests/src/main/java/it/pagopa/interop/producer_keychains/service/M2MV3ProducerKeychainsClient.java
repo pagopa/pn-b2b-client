@@ -40,13 +40,13 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements
     }
 
     private ApiClient createProducerKeychainsApiClient() {
-        ApiClient apiClient = new NoAuthApiClient(super.getRestTemplate());
+        ApiClient apiClient = super.getApiClient();
         apiClient.setBasePath(basePath);
         return apiClient;
     }
 
     private ApiClient createKeysApiClient() {
-        ApiClient apiClient = new NoAuthApiClient(super.getRestTemplate());
+        ApiClient apiClient = super.getApiClient();
         apiClient.setBasePath(basePath);
         return apiClient;
     }
