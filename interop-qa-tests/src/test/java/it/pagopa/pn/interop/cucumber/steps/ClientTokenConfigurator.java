@@ -41,6 +41,7 @@ import it.pagopa.interop.eservice.service.IM2MV3EserviceClient;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient;
 import it.pagopa.interop.event.service.IM2MEventClient;
 import it.pagopa.interop.producer_keychains.IM2MProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.IProducerKeychainsClient;
 import it.pagopa.interop.event.service.IM2MV3EventClient;
 import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
@@ -104,6 +105,7 @@ public class ClientTokenConfigurator {
     private final IPurposeTemplateClient purposeTemplateClient;
     private final IM2MPurposeTemplateClient m2mPurposeTemplateClient;
     private final IM2MProducerKeychainsClient producerKeychainsClient;
+    private final IProducerKeychainsClient bffProducerKeychainsClient;
 
     // Clients M2M API v3
     private final IM2MV3AgreementClient m2mV3AgreementClient;
@@ -241,6 +243,7 @@ public class ClientTokenConfigurator {
         iSelfcareClient.setBearerToken(token);
         purposeTemplateClient.setBearerToken(token);
         m2mPurposeTemplateClient.setBearerToken(token);
+        bffProducerKeychainsClient.setBearerToken(token);
     }
 
     @SuppressWarnings("unchecked")
