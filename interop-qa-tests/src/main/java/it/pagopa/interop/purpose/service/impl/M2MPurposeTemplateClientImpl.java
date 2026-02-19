@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTempl
 import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -22,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
         retryFor = {HttpServerErrorException.class},
         backoff = @Backoff(delay = 2000)
 )
+@Primary
 public class M2MPurposeTemplateClientImpl extends AbstractClient implements
     IM2MPurposeTemplateClient {
 

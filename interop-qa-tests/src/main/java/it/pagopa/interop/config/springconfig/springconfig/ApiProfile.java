@@ -6,9 +6,9 @@ import lombok.Value;
 @Value
 @AllArgsConstructor(staticName = "of")
 public class ApiProfile {
-    enum ApiMode { BEST_FIT, RIGHT_FIT }
-    enum ApiM2MVersion { V2, V3 }
-    enum ApiBFFVersion { V1 }
+    public enum ApiMode { BEST_FIT, RIGHT_FIT }
+    public enum ApiM2MVersion { V2, V3 }
+    public enum ApiBFFVersion { V1 }
 
     ApiMode apiMode;
     ApiM2MVersion apiM2MVersion;
