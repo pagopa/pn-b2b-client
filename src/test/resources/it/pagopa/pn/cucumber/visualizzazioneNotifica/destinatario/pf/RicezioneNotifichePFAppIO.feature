@@ -171,13 +171,6 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
-#  Scenario: [QR_CE_6] Viene creata una notifica e recuperato l'F24 tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
-#    And imposto lo iun di SharedSteps a "GZTM-ARKT-JPAY-202510-N-1" e la pa a "Comune_Multi"
-#    And viene generato il QR Code "corretto" per la notifica appena creata
-#    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica
-#    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
-#    And il download non ha prodotto errori
-
   #[TC_13] [TC_14]
   @appIo
   Scenario Outline: [QR_CODE_7] Si verificano gli status code ritornati per il caso negativo dell'API: getReceivedNotificationAttachment

@@ -58,23 +58,26 @@ public class AppIOB2bSteps {
     public void vieneGeneratoIlCodiceQRPerLaNotificaCreata(String qrCodeType) {
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
-            case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
+            case "malformato" ->
+                    sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
         };
     }
+
     @Given("viene generato il QR Code {string} per la notifica di 60 giorni")
     public void vieneGeneratoIlCodiceQRPerLaNotificaOld(String qrCodeType) {
-       sharedSteps.setNotificationIun(iun60gg);
+        sharedSteps.setNotificationIun(iun60gg);
         qrCode = switch (qrCodeType.toLowerCase()) {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
-            case "malformato" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
+            case "malformato" ->
+                    sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
         };
     }
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica con versione {string}")
-    public void userScanQRCodeWithoutLollipopHeader(Destinatario user, String qrCodeBodyUrlVersion ) {
-        userScanQrCode(user, user.getTaxId(), qrCodeBodyUrlVersion );
+    public void userScanQRCodeWithoutLollipopHeader(Destinatario user, String qrCodeBodyUrlVersion) {
+        userScanQrCode(user, user.getTaxId(), qrCodeBodyUrlVersion);
     }
 
     @When("l'utente {destinatario} scansiona il QR Code per recuperare i dettagli della notifica e viene passato l'header lollipop")
@@ -82,7 +85,7 @@ public class AppIOB2bSteps {
         userScanQrCode(user, "CLMCST42R12D969Z", "0.9");
     }
 
-    private void userScanQrCode(Destinatario user, String xPagopaLollipopUserId,String qrCodeBodyUrlVersion) {
+    private void userScanQrCode(Destinatario user, String xPagopaLollipopUserId, String qrCodeBodyUrlVersion) {
 
         String qrCodeBodyUrlTmp = qrCodeBodyUrlVersion.equalsIgnoreCase("1.0")
                 ? qrCodeBodyUrlV2
@@ -95,24 +98,28 @@ public class AppIOB2bSteps {
             notificationServerError = ex;
         }
     }
+
     @When("l'operazione non ha prodotti errori")
-    public void checkExxeption(){
+    public void checkExeption() {
         assertNull(notificationServerError,
                 "notificationServerError non deve essere valorizzato, ma vale: " + notificationServerError);
     }
-
 
     @When("viene chiamato l'endpoint {string} con i seguenti params:")
     public void callScanQRCodeWithParams(String endpoint, DataTable dataTable) {
         Map<String, String> inputParams = dataTable.asMap();
         try {
             switch (endpoint) {
-                case "checkQRCode" -> iPnAppIOB2bClient.checkAarQrCodeIO(inputParams.get("taxId"), new RequestCheckQrMandateDto().aarQrCodeValue(inputParams.get("aarQrCodeValue")));
-                case "getReceivedNotification" -> iPnAppIOB2bClient.getReceivedNotification(inputParams.get("iun"), inputParams.get("taxId"), null);
-                case "getSentNotificationDocument" -> iPnAppIOB2bClient.getSentNotificationDocument(inputParams.get("iun"),
-                        inputParams.get("docIdx") == null ? null : Integer.parseInt(inputParams.get("docIdx")), inputParams.get("taxId"), null);
-                case "getReceivedNotificationAttachment" -> iPnAppIOB2bClient.getReceivedNotificationAttachment(inputParams.get("iun"), inputParams.get("attachmentName"),
-                        inputParams.get("taxId"), Integer.parseInt(inputParams.get("attachmentIdx")), null);
+                case "checkQRCode" ->
+                        iPnAppIOB2bClient.checkAarQrCodeIO(inputParams.get("taxId"), new RequestCheckQrMandateDto().aarQrCodeValue(inputParams.get("aarQrCodeValue")));
+                case "getReceivedNotification" ->
+                        iPnAppIOB2bClient.getReceivedNotification(inputParams.get("iun"), inputParams.get("taxId"), null);
+                case "getSentNotificationDocument" ->
+                        iPnAppIOB2bClient.getSentNotificationDocument(inputParams.get("iun"),
+                                inputParams.get("docIdx") == null ? null : Integer.parseInt(inputParams.get("docIdx")), inputParams.get("taxId"), null);
+                case "getReceivedNotificationAttachment" ->
+                        iPnAppIOB2bClient.getReceivedNotificationAttachment(inputParams.get("iun"), inputParams.get("attachmentName"),
+                                inputParams.get("taxId"), Integer.parseInt(inputParams.get("attachmentIdx")), null);
             }
         } catch (HttpStatusCodeException ex) {
             notificationServerError = ex;
@@ -228,8 +235,10 @@ public class AppIOB2bSteps {
 
     private void downloadPaymentDocument(String typeDocument, String recipient, UUID mandateId) {
         switch (typeDocument.toUpperCase()) {
-            case "F24_FROM_QR" -> downloadF24AppIoByAttachmentName(responseCheckAarMandateDto.getIun(), "F24", recipient, mandateId);
-            case "PAGOPA_FROM_QR" -> downloadPAGOPAAppIo(responseCheckAarMandateDto.getIun(), recipient, "PAGOPA", "0", mandateId);
+            case "F24_FROM_QR" ->
+                    downloadF24AppIoByAttachmentName(responseCheckAarMandateDto.getIun(), "F24", recipient, mandateId);
+            case "PAGOPA_FROM_QR" ->
+                    downloadPAGOPAAppIo(responseCheckAarMandateDto.getIun(), recipient, "PAGOPA", "0", mandateId);
             case "F24" -> downloadF24AppIoByUrl("F24", recipient, mandateId);
             case "PAGOPA" -> {
                 FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
@@ -261,7 +270,8 @@ public class AppIOB2bSteps {
 
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
-            if (verifySha256) assertThat(this.sha256DocumentDownload).as("SHA256 scaricato deve combaciare con quello dichiarato").isEqualTo(downloadResponse.getSha256());
+            if (verifySha256)
+                assertThat(this.sha256DocumentDownload).as("SHA256 scaricato deve combaciare con quello dichiarato").isEqualTo(downloadResponse.getSha256());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             this.notificationServerError = e;
         }
