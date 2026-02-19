@@ -19,14 +19,13 @@ import java.util.UUID;
 @Slf4j
 public class ProducerKeychainsSteps {
     private final M2MProducerKeychainsClient producerKeychainsClient;
-    private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsResolver resolver;
     private final ProducerKeychainsContext context;
 
     public ProducerKeychainsSteps(M2MProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext) {
         this.producerKeychainsClient = producerKeychainsClient;
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.producerKeychainsClient.setHttpCallExecutor(httpCallExecutor);
         this.context = producerKeychainsContext;
         this.resolver = new ProducerKeychainsResolver(producerKeychainsContext, sharedStepsContext);
 
