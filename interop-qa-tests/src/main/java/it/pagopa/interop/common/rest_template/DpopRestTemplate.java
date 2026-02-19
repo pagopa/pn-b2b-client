@@ -2,8 +2,8 @@ package it.pagopa.interop.common.rest_template;
 
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
-import it.pagopa.interop.authorization.service.utils.DPoPAccessTokenSupplier;
-import it.pagopa.interop.common.interceptor.dpop.DPoPInterceptor;
+import it.pagopa.interop.common.interceptor.dpop.utils.DPoPAccessTokenSupplier;
+import it.pagopa.interop.common.interceptor.dpop.DPoPAuthInterceptor;
 import it.pagopa.interop.common.interceptor.dpop.DPoPTokenInterceptor;
 import it.pagopa.interop.common.interceptor.dpop.IntegrityValidationInterceptor;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class DpopRestTemplate {
     @Getter
     private final RestTemplate restTemplate;
 
-    private final DPoPInterceptor dpopInterceptor;
+    private final DPoPAuthInterceptor dpopInterceptor;
     private final DPoPAccessTokenSupplier dpopAccessTokenSupplier;
 
     public DpopRestTemplate(RestTemplate restTemplate,
@@ -33,7 +33,7 @@ public class DpopRestTemplate {
         this.restTemplate = restTemplate;
         this.dpopAccessTokenSupplier = dpopAccessTokenSupplier;
 
-        this.dpopInterceptor = new DPoPInterceptor(
+        this.dpopInterceptor = new DPoPAuthInterceptor(
                 dpopTokenService,
                 dpopAccessTokenSupplier,
                 initialKeyPair
