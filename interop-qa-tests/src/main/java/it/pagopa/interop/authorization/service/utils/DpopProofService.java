@@ -5,15 +5,18 @@ import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.*;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.ECPrivateKey;
@@ -22,6 +25,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -37,12 +41,7 @@ public class DpopProofService {
     @Value("${authorization.server.token.creation.url}")
     private String dpopHtu;
 
-    @Getter
-    @RequiredArgsConstructor
-    @ToString
-    public static class ValidationResult {
-        private final boolean valid;
-        private final String message;
+    public record ValidationResult(boolean valid, String message) {
     }
 
     /**
@@ -191,6 +190,109 @@ public class DpopProofService {
             return new ValidationResult(false, "Errore durante la validazione del token: " + e.getMessage());
         }
     }
+
+    public String buildProofWithAth(PrivateKey privateKey,
+                                    PublicKey publicKey,
+                                    String httpMethod,
+                                    String htu,
+                                    String typ,
+                                    String accessToken) {
+
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new IllegalArgumentException("Missing access token for ath computation");
+        }
+
+        String ath = computeAth(accessToken);
+
+        if (privateKey instanceof ECPrivateKey ecPrivateKey && publicKey instanceof ECPublicKey ecPublicKey)
+            return buildEcDpopProofWithAth(ecPrivateKey, ecPublicKey, httpMethod, htu, typ, ath);
+
+        else if (privateKey instanceof RSAPrivateKey rsaPrivateKey && publicKey instanceof RSAPublicKey rsaPublicKey)
+            return buildRsaDpopProofWithAth(rsaPrivateKey, rsaPublicKey, httpMethod, htu, typ, ath);
+
+        else
+            throw new IllegalArgumentException("Unsupported key pair type for DPoP proof: " +
+                    privateKey.getAlgorithm() + "/" + publicKey.getAlgorithm());
+    }
+
+    private static String computeAth(String accessToken) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(accessToken.getBytes(StandardCharsets.US_ASCII));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
+    }
+
+    private String buildEcDpopProofWithAth(ECPrivateKey privateKey,
+                                           ECPublicKey publicKey,
+                                           String httpMethod,
+                                           String htu,
+                                           String typ,
+                                           String ath) {
+        try {
+            ECKey ecPublicKey = new ECKey.Builder(Curve.P_256, publicKey).build();
+
+            JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                    .type(new JOSEObjectType(typ))
+                    .jwk(ecPublicKey.toPublicJWK())
+                    .build();
+
+            Instant now = Instant.now();
+            JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                    .jwtID(UUID.randomUUID().toString())
+                    .issueTime(Date.from(now))
+                    .claim("htu", htu)
+                    .claim("htm", httpMethod)
+                    .claim("iat", now.getEpochSecond())
+                    .claim("ath", ath) // ✅ REQUIRED
+                    .build();
+
+            SignedJWT jwt = new SignedJWT(header, claims);
+            jwt.sign(new ECDSASigner(privateKey));
+            return jwt.serialize();
+
+        } catch (Exception e) {
+            log.error("Errore durante la generazione della DPoP proof EC con ath e typ '{}'", typ, e);
+            throw new IllegalStateException("Impossibile generare la proof DPoP EC con ath, typ=" + typ, e);
+        }
+    }
+
+    private String buildRsaDpopProofWithAth(RSAPrivateKey privateKey,
+                                            RSAPublicKey publicKey,
+                                            String httpMethod,
+                                            String htu,
+                                            String typ,
+                                            String ath) {
+        try {
+            RSAKey rsaPublicKey = new RSAKey.Builder(publicKey).build();
+
+            JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+                    .type(new JOSEObjectType(typ))
+                    .jwk(rsaPublicKey.toPublicJWK())
+                    .build();
+
+            Instant now = Instant.now();
+            JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                    .jwtID(UUID.randomUUID().toString())
+                    .issueTime(Date.from(now))
+                    .claim("htu", htu)
+                    .claim("htm", httpMethod)
+                    .claim("iat", now.getEpochSecond())
+                    .claim("ath", ath) // ✅ REQUIRED
+                    .build();
+
+            SignedJWT jwt = new SignedJWT(header, claims);
+            jwt.sign(new RSASSASigner(privateKey));
+            return jwt.serialize();
+
+        } catch (Exception e) {
+            log.error("Errore durante la generazione della DPoP proof RSA con ath e typ '{}'", typ, e);
+            throw new IllegalStateException("Impossibile generare la proof DPoP RSA con ath, typ=" + typ, e);
+        }
+    }
+
 
     private String buildEcDpopProof(ECPrivateKey privateKey, ECPublicKey publicKey, String httpMethod, String htu, String typ) {
         try {

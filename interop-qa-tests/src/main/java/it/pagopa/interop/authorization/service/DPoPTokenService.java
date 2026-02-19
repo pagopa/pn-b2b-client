@@ -201,6 +201,17 @@ public class DPoPTokenService extends AbstractClient {
         );
     }
 
+    public String buildProofWithAth(KeyPair keyPair, String typ, HttpMethod httpMethod, String htu, String accessToken) {
+        return dpopProofService.buildProofWithAth(
+                keyPair.getPrivate(),
+                keyPair.getPublic(),
+                httpMethod.toString(),
+                htu,
+                typ,
+                accessToken
+        );
+    }
+
     // === UTILITY ===
     private String generateClientAssertion(@NonNull String clientId, @NonNull KeyPair keyPair, ClientType clientKind, String purposeId) {
 
