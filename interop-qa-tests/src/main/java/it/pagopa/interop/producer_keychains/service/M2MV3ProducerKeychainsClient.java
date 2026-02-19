@@ -24,7 +24,7 @@ import java.util.UUID;
 @ToString
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements IM2MProducerKeychainsClient {
+public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements IM2MV3ProducerKeychainsClient {
 
     private final ProducerKeychainsApi producerKeychainsApi;
     private final KeysApi keysApi;
@@ -33,7 +33,7 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
     public M2MV3ProducerKeychainsClient(RestTemplate baseRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor, DPoPTokenService dPoPTokenService) {
         super(baseRestTemplate, dPoPTokenService);
 
-        this.basePath = interopClientConfigs.getApiv3BaseUrl();
+        this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
 
         this.producerKeychainsApi = new ProducerKeychainsApi(createProducerKeychainsApiClient());
@@ -57,11 +57,11 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
     }
 
     public void deleteProducerKeychainKeyByKid(UUID keychainId, String kid) {
-        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, kid)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
+        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, kid));
     }
 
     public void createProducerKeychainUserAssociation(UUID producerKeychainId, LinkUser linkUser) {
-        performOperation(() -> producerKeychainsApi.addProducerKeychainUserWithHttpInfo(producerKeychainId, linkUser)).orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx)"));
+        performOperation(() -> producerKeychainsApi.addProducerKeychainUserWithHttpInfo(producerKeychainId, linkUser));
     }
 
     public Users getProducerKeychainUsers(UUID producerKeychainId, Integer limit, Integer offset) {
@@ -69,7 +69,7 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
     }
 
     public void deleteProducerKeychainUserAssociationById(UUID keychainId, UUID keyId) {
-        performOperation(() -> producerKeychainsApi.removeProducerKeychainUserWithHttpInfo(keychainId, keyId)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
+        performOperation(() -> producerKeychainsApi.removeProducerKeychainUserWithHttpInfo(keychainId, keyId));
     }
 
     public ProducerKey getProducerKey(String kid) {
@@ -80,3 +80,4 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
         );
     }
 }
+

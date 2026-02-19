@@ -1,5 +1,6 @@
 package it.pagopa.interop.producer_keychains;
 
+import it.pagopa.interop.authorization.service.utils.Authenticable;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
@@ -7,7 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 
 import java.util.UUID;
 
-public interface IM2MV3ProducerKeychainsClient {
+public interface IM2MV3ProducerKeychainsClient extends Authenticable {
 
     ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed);
 
