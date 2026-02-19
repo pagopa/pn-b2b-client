@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.pagopa.interop.authorization.service.DPoPTokenService;
-import it.pagopa.interop.authorization.service.utils.DPoPAccessTokenSupplier;
+import it.pagopa.interop.common.interceptor.dpop.utils.DPoPAccessTokenSupplier;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
