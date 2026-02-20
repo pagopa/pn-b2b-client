@@ -48,6 +48,7 @@ import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
+import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
@@ -184,6 +185,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3ProducerKeychainsClient.class,
         PurposeTemplateMapperImpl.class,
         ProducerKeychainsClient.class,
+        M2MV3UsersClient.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
