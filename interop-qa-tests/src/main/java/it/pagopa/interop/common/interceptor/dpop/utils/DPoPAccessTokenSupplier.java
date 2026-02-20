@@ -6,48 +6,60 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 public class DPoPAccessTokenSupplier implements java.util.function.Supplier<String> {
 
     private final DPoPTokenService tokenService;
     private volatile Auth auth;
 
-    private volatile String token;
-    private volatile long expiresAtMs = 0;
-
-    public synchronized void setAuth(Auth auth) {
-        this.auth = auth;
-        this.token = null;
-        this.expiresAtMs = 0;
+    private static final class TokenState {
+        final String token;
+        final long expiresAtMs;
+        TokenState(String token, long expiresAtMs) {
+            this.token = token;
+            this.expiresAtMs = expiresAtMs;
+        }
     }
 
-    public void prefetch() {
-        get();
+    private volatile TokenState state;
+
+    public synchronized void setAuth(Auth newAuth) {
+        if (Objects.equals(this.auth, newAuth)) {
+            return;
+        }
+        this.auth = newAuth;
+        this.state = null;
     }
 
     @Override
     public String get() {
         Auth a = this.auth;
         if (a == null) {
-            throw new IllegalStateException("DPoPAccessTokenSupplier: auth non impostata. Chiama setBearerToken(Auth) prima di usare il client.");
+            throw new IllegalStateException("DPoPAccessTokenSupplier: auth non impostata. Chiama setAuth(Auth) prima di usare il client.");
         }
 
         long now = System.currentTimeMillis();
-        if (token != null && now < (expiresAtMs - 10_000)) return token;
+        TokenState s = this.state;
+        if (s != null && now < (s.expiresAtMs - 10_000)) {
+            return s.token;
+        }
 
         synchronized (this) {
             a = this.auth;
             if (a == null) {
-                throw new IllegalStateException("DPoPAccessTokenSupplier: auth non impostata. Chiama setBearerToken(Auth) prima di usare il client.");
+                throw new IllegalStateException("DPoPAccessTokenSupplier: auth non impostata. Chiama setAuth(Auth) prima di usare il client.");
             }
 
             now = System.currentTimeMillis();
-            if (token != null && now < (expiresAtMs - 10_000)) return token;
+            s = this.state;
+            if (s != null && now < (s.expiresAtMs - 10_000)) {
+                return s.token;
+            }
 
-            // 1) DPoP proof per auth server (token endpoint)
             String dpopForTokenEndpoint = tokenService.buildDpopProof(a.getKeyPair());
 
-            // 2) chiama token endpoint per ottenere voucher
             var pair = tokenService.getAccessTokenWithoutCache(
                     dpopForTokenEndpoint,
                     a.getClientId(),
@@ -63,14 +75,13 @@ public class DPoPAccessTokenSupplier implements java.util.function.Supplier<Stri
                 throw new IllegalStateException("Access token vuoto/null dal token endpoint");
             }
 
-            this.token = newToken;
-
             Long expiresIn = vr.getExpiresIn();
-            this.expiresAtMs = (expiresIn != null)
+            long newExpiresAt = (expiresIn != null)
                     ? System.currentTimeMillis() + expiresIn * 1000
                     : System.currentTimeMillis() + 240_000;
 
-            return this.token;
+            this.state = new TokenState(newToken, newExpiresAt);
+            return newToken;
         }
     }
 }
