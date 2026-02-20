@@ -2,11 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.APIUnavailableException;
-import it.pagopa.interop.agreement.service.IAgreementClient;
-import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.agreement.service.IM2MAgreementClient;
-import it.pagopa.interop.agreement.service.IM2MClientsClient;
-import it.pagopa.interop.agreement.service.IM2MTenantClient;
+import it.pagopa.interop.agreement.service.*;
 import it.pagopa.interop.agreement.service.IM2MV3AgreementClient;
 import it.pagopa.interop.agreement.service.IM2MV3ClientsClient;
 import it.pagopa.interop.agreement.service.IM2MV3TenantClient;

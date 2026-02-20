@@ -1,7 +1,6 @@
 package it.pagopa.interop.users.service;
 
 import it.pagopa.interop.common.client.AbstractDPoPClient;
-import it.pagopa.interop.common.client.NoAuthApiClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
@@ -10,8 +9,10 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+
 import java.util.List;
 import java.util.UUID;
+
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @ToString
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MV3UsersClient extends AbstractDPoPClient implements IM2MV3UsersClient {
     private final UsersApi usersApi;
     private final String basePath;
@@ -33,7 +34,7 @@ public class M2MV3UsersClient extends AbstractDPoPClient implements IM2MV3UsersC
     }
 
     private ApiClient createUsersApiClient() {
-        ApiClient apiClient = new NoAuthApiClient(super.getRestTemplate());
+        ApiClient apiClient = super.getApiClient();
         apiClient.setBasePath(basePath);
         return apiClient;
     }

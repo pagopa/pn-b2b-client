@@ -77,4 +77,8 @@ public class ProducerKeychainsResolver extends AbstractResolver {
                 () -> null
         );
     }
+
+    public Integer resolveInteger(String raw) {
+        return resolveOrParse(raw, Integer::valueOf, null, null, null, () -> null);
+    }
 }
