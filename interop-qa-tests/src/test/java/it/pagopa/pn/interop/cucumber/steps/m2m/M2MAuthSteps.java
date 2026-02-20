@@ -8,6 +8,7 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
+import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
@@ -29,14 +30,17 @@ public class M2MAuthSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
+    private final ApiProfile apiProfile;
 
     public M2MAuthSteps(
         ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext
+        SharedStepsContext sharedStepsContext,
+        ApiProfile apiProfile
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+        this.apiProfile = apiProfile;
     }
 
     @Given("l'utente è un {m2mRole} dell'ente {delegationRole}")
@@ -47,22 +51,34 @@ public class M2MAuthSteps {
 
     @Given("l'utente è un {string} di {string} con ruolo M2M {m2mRole}")
     public void authenticateM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
+        ApiProfile.ApiMode mode = apiProfile.getApiMode();
+        ApiProfile.ApiM2MVersion version = apiProfile.getApiM2MVersion();
+
+        String roleUpper = selfcareRole.toUpperCase();
         String token = identityService.getToken(tenant, m2MRole.toString());
         UUID clientId = getClientId(token);
 
         DPoPTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
         sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
-        clientTokenConfigurator.setBearerToken(token);
+        boolean bestFit = mode == ApiProfile.ApiMode.BEST_FIT;
+        boolean rightFit = mode == ApiProfile.ApiMode.RIGHT_FIT;
 
-        // Dpop Auth
-        Auth auth = Auth.of(clientId.toString(), tenant, selfcareRole.toUpperCase(), preparedClient.keyPair().getKeyPair());
-        clientTokenConfigurator.setAuth(auth);
+        boolean useBearer = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V2);
+        boolean useDpop   = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
 
-        sharedStepsContext.setUserToken(token);
-        sharedStepsContext.setRole(Role.fromValue(selfcareRole.toUpperCase()));
+        if (useBearer) {
+            clientTokenConfigurator.setBearerToken(token);
+            sharedStepsContext.setUserToken(token);
+        }
+
+        if (useDpop) {
+            Auth auth = Auth.of(clientId.toString(), tenant, roleUpper, preparedClient.keyPair().getKeyPair());
+            clientTokenConfigurator.setAuth(auth);
+        }
+
+        sharedStepsContext.setRole(Role.fromValue(roleUpper));
         sharedStepsContext.setTenantType(tenant);
-
         sharedStepsContext.getClientCommonContext().addClient(clientId);
     }
 
