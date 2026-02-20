@@ -3,8 +3,9 @@ package it.pagopa.interop.purpose.service.impl;
 import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 import it.pagopa.interop.M2MVersionsMapper;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
@@ -13,6 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateDraftPurposeRequest;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
@@ -23,22 +25,20 @@ import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MV3PurposeClientImpl implements IM2MV3PurposeClient {
+public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3PurposeClient {
     private final PurposesApi purposesApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MVersionsMapper vMapper;
 
     public M2MV3PurposeClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         M2MVersionsMapper vMapper
     ) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.purposesApi = new PurposesApi(
             ApiClientUtils.createApiClient(restTemplate, basePath,
@@ -168,6 +168,6 @@ public class M2MV3PurposeClientImpl implements IM2MV3PurposeClient {
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.purposesApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }

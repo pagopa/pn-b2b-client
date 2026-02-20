@@ -3,11 +3,12 @@ package it.pagopa.interop.purpose.service.impl;
 import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 import it.pagopa.interop.M2MVersionsMapper;
-import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposeTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposeTemplatesApi;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeTemplateClient;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
@@ -19,7 +20,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -27,20 +27,19 @@ import org.springframework.web.client.RestTemplate;
         retryFor = {HttpServerErrorException.class},
         backoff = @Backoff(delay = 2000)
 )
-public class M2MV3PurposeTemplateClientImpl extends AbstractClient implements
+public class M2MV3PurposeTemplateClientImpl extends AbstractDPoPClient implements
     IM2MV3PurposeTemplateClient {
 
     private final PurposeTemplatesApi purposesTemplateApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MVersionsMapper vMapper;
 
     public M2MV3PurposeTemplateClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         M2MVersionsMapper vMapper
     ) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.purposesTemplateApi = new PurposeTemplatesApi(
             ApiClientUtils.createApiClient(restTemplate, basePath,
@@ -67,6 +66,6 @@ public class M2MV3PurposeTemplateClientImpl extends AbstractClient implements
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.purposesTemplateApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }

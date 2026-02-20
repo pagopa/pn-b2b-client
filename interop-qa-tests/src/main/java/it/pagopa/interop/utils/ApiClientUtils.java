@@ -1,5 +1,7 @@
 package it.pagopa.interop.utils;
 
+import it.pagopa.interop.common.client.NoAuthApiClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import java.util.Map;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +23,13 @@ public final class ApiClientUtils {
             apiClient.addDefaultHeader(header.getKey(), header.getValue());
         }
 
+        return apiClient;
+    }
+
+    public static ApiClient createApiClient(DpopRestTemplate dpopRestTemplate, String basePath, Map<String, String> headers
+    ) {
+        ApiClient apiClient = new NoAuthApiClient(dpopRestTemplate.getRestTemplate());
+        apiClient.setBasePath(basePath);
         return apiClient;
     }
 }

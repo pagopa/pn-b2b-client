@@ -1,6 +1,8 @@
 package it.pagopa.interop.e_service_template.impl;
 
 import it.pagopa.interop.M2MVersionsMapper;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
@@ -23,27 +25,25 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @ToString
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MV3EServiceTemplateClientImpl implements IM2MV3EServiceTemplateClient {
+public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implements IM2MV3EServiceTemplateClient {
     private final EserviceTemplatesApi eserviceTemplatesApi;
     private final it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi bffEserviceTemplatesApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final EServiceTemplateMainMapper mapper;
     private final M2MVersionsMapper vMapper;
 
     public M2MV3EServiceTemplateClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         EServiceTemplateMainMapper mapper,
         M2MVersionsMapper vMapper
     ) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.eserviceTemplatesApi = new EserviceTemplatesApi(
             ApiClientUtils.createApiClient(restTemplate, basePath,
@@ -57,7 +57,7 @@ public class M2MV3EServiceTemplateClientImpl implements IM2MV3EServiceTemplateCl
     private it.pagopa.interop.generated.openapi.clients.bff.ApiClient createBffApiClient(
         String bearerToken) {
         it.pagopa.interop.generated.openapi.clients.bff.ApiClient apiClient = new it.pagopa.interop.generated.openapi.clients.bff.ApiClient(
-            restTemplate);
+            super.getRestTemplate());
         apiClient.setBasePath(basePath);
 
         apiClient.setBearerToken(bearerToken);
@@ -174,6 +174,6 @@ public class M2MV3EServiceTemplateClientImpl implements IM2MV3EServiceTemplateCl
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.eserviceTemplatesApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }

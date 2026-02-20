@@ -3,15 +3,15 @@ package it.pagopa.interop.e_service_template.impl;
 import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 import it.pagopa.interop.M2MVersionsMapper;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateAttributeClient;
 import it.pagopa.interop.eservice.service.EServiceAttribute;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EserviceDescriptorsListRequest;
 import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapper;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionAttributesGroupSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttributes;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionCertifiedAttributesGroup;
@@ -22,6 +22,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemp
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionVerifiedAttributes;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionVerifiedAttributesGroup;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionAttributesGroupSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
 import java.util.List;
@@ -33,15 +35,13 @@ import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @ToString
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MV3EserviceTemplateAttributeClientImpl implements IM2MV3EServiceTemplateAttributeClient {
+public class M2MV3EserviceTemplateAttributeClientImpl extends AbstractDPoPClient implements IM2MV3EServiceTemplateAttributeClient {
     private final EserviceTemplatesApi templatesApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final EServiceAttributeMapper attributeMapper;
 
@@ -49,11 +49,11 @@ public class M2MV3EserviceTemplateAttributeClientImpl implements IM2MV3EServiceT
     private final M2MVersionsMapper vMapper;
 
     public M2MV3EserviceTemplateAttributeClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         EServiceAttributeMapper mapper,
         M2MVersionsMapper vMapper) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.templatesApi = new EserviceTemplatesApi(ApiClientUtils.createApiClient(restTemplate, basePath,
             Collections.emptyMap()));
@@ -243,6 +243,6 @@ public class M2MV3EserviceTemplateAttributeClientImpl implements IM2MV3EServiceT
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.templatesApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }

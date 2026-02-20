@@ -5,9 +5,10 @@ import static java.util.function.Function.identity;
 
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.attribute.service.IM2MV3DeclaredAttributeClient;
-import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttributeSeed;
@@ -22,25 +23,23 @@ import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MV3DeclaredAttributeClientImpl extends AbstractClient implements
+public class M2MV3DeclaredAttributeClientImpl extends AbstractDPoPClient implements
     IM2MV3DeclaredAttributeClient {
     private final AttributesApi attributesApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MVersionsMapper mapper;
 
     public M2MV3DeclaredAttributeClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         M2MVersionsMapper mapper
     ) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.attributesApi = new AttributesApi(ApiClientUtils.createApiClient(restTemplate, basePath,
             Collections.emptyMap()));
@@ -92,6 +91,6 @@ public class M2MV3DeclaredAttributeClientImpl extends AbstractClient implements
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.attributesApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }

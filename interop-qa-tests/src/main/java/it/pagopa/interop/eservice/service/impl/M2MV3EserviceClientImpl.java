@@ -3,19 +3,20 @@ package it.pagopa.interop.eservice.service.impl;
 import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 import it.pagopa.interop.M2MVersionsMapper;
-import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDelegationUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceNameUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
 import java.util.List;
@@ -27,24 +28,22 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @ToString
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MV3EserviceClientImpl extends AbstractClient implements IM2MV3EserviceClient {
+public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV3EserviceClient {
     private final EservicesApi eservicesApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MVersionsMapper vMapper;
     private final EserviceListRequest defaultEserviceListRequest;
 
     public M2MV3EserviceClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         M2MVersionsMapper vMapper) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.eservicesApi = new EservicesApi(
             ApiClientUtils.createApiClient(restTemplate, basePath,
@@ -163,6 +162,6 @@ public class M2MV3EserviceClientImpl extends AbstractClient implements IM2MV3Ese
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.eservicesApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }

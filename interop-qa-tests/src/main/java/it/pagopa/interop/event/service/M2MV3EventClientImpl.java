@@ -2,6 +2,8 @@ package it.pagopa.interop.event.service;
 
 import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
+import it.pagopa.interop.common.client.AbstractDPoPClient;
+import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.event.domain.M2MEventRequest;
 import it.pagopa.interop.event.domain.M2MEvents;
@@ -14,22 +16,20 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MV3EventClientImpl implements IM2MV3EventClient {
+public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3EventClient {
     private final EventsApi eventsApi;
-    private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MV3EventMapper mapper;
 
     public M2MV3EventClientImpl(
-        RestTemplate restTemplate,
+        DpopRestTemplate restTemplate,
         InteropClientConfigs interopClientConfigs,
         M2MV3EventMapper mapper
     ) {
-        this.restTemplate = restTemplate;
+        super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.eventsApi = new EventsApi(
             ApiClientUtils.createApiClient(restTemplate, basePath,
@@ -143,6 +143,6 @@ public class M2MV3EventClientImpl implements IM2MV3EventClient {
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.eventsApi.setApiClient(
-            ApiClientUtils.createApiClient(restTemplate, basePath, headers));
+            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }
