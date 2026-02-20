@@ -154,7 +154,6 @@ Feature: Gestione dei producer keychains - API v3
     # Tenant richiedente non associato al keychain (RSA)
       | RSA     | %actual     | %actual    | PA2    | 404        |
 
-
      # Kid/Keychain invalido (RSA)
       | RSA     | %random     | %actual    | PA1    | 404        |
       | RSA     | invalid-kid | %actual    | PA1    | 400        |

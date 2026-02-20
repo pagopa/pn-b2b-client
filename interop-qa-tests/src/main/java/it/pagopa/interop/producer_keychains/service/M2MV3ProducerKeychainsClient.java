@@ -50,11 +50,12 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
     }
 
     public ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed) {
-        return performOperation(() -> producerKeychainsApi.createProducerKeychainKeyWithHttpInfo(keychainId, keySeed)).orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)"));
+        return performOperation(() -> producerKeychainsApi.createProducerKeychainKeyWithHttpInfo(keychainId, keySeed))
+                .orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)"));
     }
 
     public void deleteProducerKeychainKeyByKid(UUID keychainId, String kid) {
-        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, kid));
+        performOperation(() -> producerKeychainsApi.deleteProducerKeychainKeyByIdWithHttpInfo(keychainId, kid)).orElseThrow(() -> new IllegalStateException("Errore nella cancellazione della chiave del producer keychain (response non 2xx)"));
     }
 
     public void createProducerKeychainUserAssociation(UUID producerKeychainId, LinkUser linkUser) {
