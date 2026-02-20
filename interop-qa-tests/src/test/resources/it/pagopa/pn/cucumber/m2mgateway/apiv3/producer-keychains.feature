@@ -203,6 +203,7 @@ Feature: Gestione dei producer keychains - API v3
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
     When viene invocata l'API di recupero utenze associate alla producer keychain "<producerKeychainId>" con limit "<limit>" offset "<offset>"
     Then si ottiene response status code <statusCode>
 
