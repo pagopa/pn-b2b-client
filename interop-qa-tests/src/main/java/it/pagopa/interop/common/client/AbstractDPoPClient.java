@@ -4,6 +4,7 @@ import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 public abstract class AbstractDPoPClient extends AbstractClient {
@@ -16,6 +17,10 @@ public abstract class AbstractDPoPClient extends AbstractClient {
 
     protected ApiClient getApiClient() {
         return new NoAuthApiClient(dpop.getRestTemplate());
+    }
+
+    protected RestTemplate getRestTemplate() {
+        return dpop.getRestTemplate();
     }
 
     public void setAuth(Auth auth) {
