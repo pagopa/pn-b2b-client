@@ -243,6 +243,10 @@ public class ClientTokenConfigurator {
         bffProducerKeychainsClient.setBearerToken(token);
     }
 
+    public void setAuth(Auth auth) {
+        m2mV3ProducerKeychainsClient.setAuth(auth);
+    }
+
     @SuppressWarnings("unchecked")
     private <T, U extends T, V extends T> T makeClientProxy(Class<T> clientInterface, U clientV2, V clientV3) {
         InvocationHandler handler = (proxy, method, args) -> {
@@ -292,10 +296,6 @@ public class ClientTokenConfigurator {
     @SuppressWarnings("unchecked")
     private <T> T getProxy(Class<T> interfaceClass) {
         return (T) proxies.get(interfaceClass);
-    }
-
-    public void setAuth(Auth auth) {
-        m2mV3ProducerKeychainsClient.setAuth(auth);
     }
 
 }
