@@ -1,6 +1,9 @@
 package it.pagopa.interop.common.interceptor.dpop;
 
 import it.pagopa.interop.authorization.service.DPoPTokenService;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javax.annotation.Nonnull;
 import lombok.Setter;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -31,16 +34,26 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
         if (kp == null) throw new IllegalStateException("DPoPInterceptor: keyPair non impostata");
 
         String token = tokenSupplier.get(); // access token in chiaro
+        URI uri = request.getURI();
         String dpop = dpopService.buildProofWithAth(
                 kp,
                 "dpop+jwt",
                 org.springframework.http.HttpMethod.valueOf(request.getMethod().name()),
-                request.getURI().toString(),
+                buildHtuUri(uri).toString(),
                 token
         );
 
         request.getHeaders().set("DPoP", dpop);
         return execution.execute(request, body);
+    }
+
+    @Nonnull
+    private static URI buildHtuUri(URI uri) {
+        try {
+            return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Errore nella generazione del claim 'htu': l'URI utilizzato non risulta scomponibile nelle sue parti fondamentali", e);
+        }
     }
 }
 
