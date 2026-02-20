@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Data
-public class IndicizzazioneStepsPojo {
+public class SafeStorageStepsPojo {
 
     private String sha256;
     private List<FileCreationResponse> createdFiles;
@@ -28,8 +28,12 @@ public class IndicizzazioneStepsPojo {
     private int maxTagsPerDocument;
     private int maxValuesPerTagDocument;
     private int maxValuesPerTagPerRequest;
+    //irrobustimento gestione documentale
+    private FileCreationResponse fileCreationResponse;
+    private FileDownloadResponse fileDownloadResponse;
+    private String resourcePath;
 
-    public IndicizzazioneStepsPojo() {
+    public SafeStorageStepsPojo() {
         this.createdFiles = new LinkedList<>();
         this.fileKeyInesistenti = new LinkedList<>();
     }

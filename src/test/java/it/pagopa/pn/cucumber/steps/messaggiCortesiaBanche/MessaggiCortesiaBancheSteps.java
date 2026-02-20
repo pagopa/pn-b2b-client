@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageRequestBody;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model.SendMessageResponse;
 import it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain.EmdCheckTppEndpoint;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.ResponseEntity;
@@ -67,14 +68,35 @@ public class MessaggiCortesiaBancheSteps {
     }
 
     @DataTableType
-    public SendMessageRequestBody getSendMessageRequestBody(Map<String, String> row) {
+    public SendMessageRequestBody sendMessageRequestBodyMapper(Map<String, String> row) {
         return new SendMessageRequestBody()
-                .internalRecipientId(row.get("internalRecipientId"))
-                .recipientId(row.get("recipientId"))
-                .senderDescription(row.get("senderDescription"))
-                .originId(row.get("originId"))
-                .associatedPayment(row.get("associatedPayment") != null ? Boolean.valueOf(row.get("associatedPayment")) : null)
-                .deliveryMode(row.get("deliveryMode") != null ? SendMessageRequestBody.DeliveryModeEnum.valueOf(row.get("deliveryMode")) : null)
+                .internalRecipientId(resolveText(row.get("internalRecipientId")))
+                .recipientId(resolveText(row.get("recipientId")))
+                .senderDescription(resolveText(row.get("senderDescription")))
+                .originId(resolveText(row.get("originId")))
+                .associatedPayment(row.get("associatedPayment") != null && !row.get("associatedPayment").isEmpty() ? Boolean.valueOf(row.get("associatedPayment")) : null)
+                .deliveryMode(row.get("deliveryMode") != null && !row.get("deliveryMode").isEmpty() ? SendMessageRequestBody.DeliveryModeEnum.valueOf(row.get("deliveryMode")) : null)
                 .schedulingAnalogDate(row.get("schedulingAnalogDate") != null ? DateTime.now().toString() : null);
+    }
+
+    private String resolveText(String value) {
+        if (value == null) return null;
+
+        switch (value) {
+            case "TEXT_250":
+                return RandomStringUtils.randomAlphabetic(250);
+            case "TEXT_251":
+                return RandomStringUtils.randomAlphabetic(251);
+            case "TEXT_100":
+                return RandomStringUtils.randomAlphabetic(100);
+            case "TEXT_101":
+                return RandomStringUtils.randomAlphabetic(101);
+            case "TEXT_98":
+                return RandomStringUtils.randomAlphabetic(98);
+            case "TEXT_UTF8":
+                return "Messaggio con caratteri UTF-8 àèìòù € 漢字 😊UTF-8: à è ì ò ù, é ç ñ, €, ©, ™ e lettere non latine come α β γ.";
+            default:
+                return value;
+        }
     }
 }

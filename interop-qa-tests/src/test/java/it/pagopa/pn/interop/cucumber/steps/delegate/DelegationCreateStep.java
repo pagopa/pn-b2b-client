@@ -160,12 +160,14 @@ public class DelegationCreateStep {
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
+    @And("l'utente concede la disponibilità a ricevere le deleghe in erogazione")
     public void userGrantsProducerDelegationAvailability() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         setDelegationAvailability(sharedStepsContext.getTenantType(), producerStrategyUsing(tenantsApi), true, false);
     }
 
     @And("l'ente {string} concede la disponibilità a ricevere deleghe")
+    @And("l'ente {string} concede la disponibilità a ricevere deleghe in erogazione")
     public void tenantGrantsProducerDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         setDelegationAvailability(tenantType, producerStrategyUsing(tenantsApi), true, false);
@@ -224,6 +226,7 @@ public class DelegationCreateStep {
     }
 
     @And("l'ente {string} richiede la creazione di una delega per l'ente {string} con successo")
+    @And("l'ente {string} richiede la creazione di una delega in erogazione per l'ente {string} con successo")
     public void createDelegateSuccessfully(String delegatorTenantType, String tenantType) {
         createDelegateImpl(delegatorTenantType, tenantType);
         checkDelegation();

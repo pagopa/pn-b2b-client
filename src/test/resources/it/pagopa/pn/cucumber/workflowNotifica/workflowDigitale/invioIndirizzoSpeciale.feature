@@ -399,19 +399,21 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_recIndex             | 0        |
     And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
-      | loadTimeline     | false     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+      | loadTimeline     | false                        |
+      | details          | NOT_NULL                     |
+      | legalFactsIds    | [{"category": "SENDER_ACK"}] |
+      | details_recIndex | 0                            |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | loadTimeline     | false     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-
-
+      | loadTimeline                 | false    |
+      | details                      | NOT_NULL |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_recIndex             | 1        |
+      | details_isAvailable          | true     |
 
 
   @dev

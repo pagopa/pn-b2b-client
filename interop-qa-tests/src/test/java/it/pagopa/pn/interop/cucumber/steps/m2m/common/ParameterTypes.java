@@ -27,4 +27,22 @@ public class ParameterTypes {
         return EntityIdType.fromString(idType);
     }
 
+    @ParameterType("e-service|agreement|attribute|purpose|tenant|e-service template|key|client|producer key|producer keychain|producer delegation|consumer delegation")
+    public InteropEntityKind interopEntityKind(String entityString) {
+        return switch (entityString) {
+            case "e-service" -> InteropEntityKind.E_SERVICE;
+            case "agreement" -> InteropEntityKind.AGREEMENT;
+            case "attribute" -> InteropEntityKind.ATTRIBUTE;
+            case "purpose" -> InteropEntityKind.PURPOSE;
+            case "tenant" -> InteropEntityKind.TENANT;
+            case "e-service template" -> InteropEntityKind.E_SERVICE_TEMPLATE;
+            case "key" -> InteropEntityKind.KEY;
+            case "client" -> InteropEntityKind.CLIENT;
+            case "producer key" -> InteropEntityKind.PRODUCER_KEY;
+            case "producer keychain" -> InteropEntityKind.PRODUCER_KEYCHAIN;
+            case "producer delegation" -> InteropEntityKind.PRODUCER_DELEGATION;
+            case "consumer delegation" -> InteropEntityKind.CONSUMER_DELEGATION;
+            default -> throw new IllegalArgumentException("Tipo di entità INTEROP non supportata: " + entityString);
+        };
+    }
 }
