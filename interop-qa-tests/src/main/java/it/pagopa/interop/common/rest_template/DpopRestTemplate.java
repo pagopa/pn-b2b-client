@@ -40,7 +40,7 @@ public class DpopRestTemplate {
         );
 
         ClientHttpRequestInterceptor dpopTokenInterceptor =
-                new DPoPTokenInterceptor(dpopAccessTokenSupplier);
+                new DPoPTokenInterceptor(dpopAccessTokenSupplier::get);
 
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         if (baseInterceptors != null) interceptors.addAll(baseInterceptors);
@@ -56,8 +56,7 @@ public class DpopRestTemplate {
     public void setAuth(Auth auth) {
         dpopInterceptor.setKeyPair(auth.getKeyPair());
         dpopAccessTokenSupplier.setAuth(auth);
-        dpopAccessTokenSupplier.prefetch();
-        log.info("DpopRestTemplate setAuth: keyPair+auth updated, token prefetched");
+        log.info("DpopRestTemplate setAuth: keyPair+auth updated");
     }
 }
 
