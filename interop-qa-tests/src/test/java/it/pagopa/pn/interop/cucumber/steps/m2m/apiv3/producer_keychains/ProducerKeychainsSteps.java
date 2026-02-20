@@ -58,16 +58,15 @@ public class ProducerKeychainsSteps {
                 linkUser.setUserId(userIdValue);
             }
 
-            PollingService.makePolling(() -> {
-                producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser);
-                return httpCallExecutor.getResponseStatus();
-            }, status -> status.is2xxSuccessful(), "Errore durante la creazione dell'associazione utente-producer keychain", 30, 1_000L);
+            producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser);
+
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
                 httpCallExecutor.snapshot();
                 PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())), "L'utente non risulta associato alla producer keychain dopo la creazione", 30, 1_000L);
                 httpCallExecutor.resetFormSnapshot();
             }
+
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
@@ -82,6 +81,7 @@ public class ProducerKeychainsSteps {
         try {
 
             Users response = producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, limitValue, offsetValue);
+            tenantContext.setM2mUsers(response.getResults());
             Assertions.assertThat(response).as("La response contenente l'id del producer keychain creato non deve essere null").isNotNull();
 
         } catch (IllegalStateException e) {
@@ -98,7 +98,7 @@ public class ProducerKeychainsSteps {
             UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
             KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
 
-            ProducerKey key = PollingService.makePolling(() -> this.producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed), createdKey -> createdKey != null, "Errore durante la creazione della chiave del producer keychain", 30, 1_000L);
+            ProducerKey key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
 
             producerKeychainsContext.setProducerKey(key);
 
@@ -108,6 +108,8 @@ public class ProducerKeychainsSteps {
                 PollingService.makePolling(() -> producerKeychainsClient.getProducerKey(kid), createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && kid.equals(String.valueOf(createdKey.getProducerKeychainId())), "La chiave non risulta creata correttamente dopo la creazione", 30, 1_000L);
                 httpCallExecutor.resetFormSnapshot();
             }
+
+
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
@@ -135,16 +137,15 @@ public class ProducerKeychainsSteps {
 
         try {
 
-            PollingService.makePolling(() -> {
-                producerKeychainsClient.deleteProducerKeychainUserAssociationById(producerKeychainValue, userIdValue);
-                return httpCallExecutor.getResponseStatus();
-            }, status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione dell'associazione utente-producer keychain", 30, 1_000L);
+            producerKeychainsClient.deleteProducerKeychainUserAssociationById(producerKeychainValue, userIdValue);
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
                 httpCallExecutor.snapshot();
                 PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().noneMatch(user -> userIdValue.equals(user.getUserId())), "L'utente risulta ancora associato alla producer keychain dopo l'eliminazione", 30, 1_000L);
                 httpCallExecutor.resetFormSnapshot();
             }
+
+
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
@@ -167,10 +168,8 @@ public class ProducerKeychainsSteps {
         UUID keychainId = resolver.resolveKeychain(rawKeychainId);
 
         try {
-            PollingService.makePolling(() -> {
-                producerKeychainsClient.deleteProducerKeychainKeyByKid(keychainId, kid);
-                return httpCallExecutor.getResponseStatus();
-            }, status -> status == HttpStatus.NO_CONTENT, "Errore durante l'eliminazione della chiave del producer keychain", 30, 1_000L);
+
+            producerKeychainsClient.deleteProducerKeychainKeyByKid(keychainId, kid);
 
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 httpCallExecutor.snapshot();
@@ -183,6 +182,8 @@ public class ProducerKeychainsSteps {
                 }, status -> status == HttpStatus.NOT_FOUND, "La chiave risulta ancora presente dopo l'eliminazione", 30, 1_000L);
                 httpCallExecutor.resetFormSnapshot();
             }
+
+
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
