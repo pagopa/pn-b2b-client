@@ -52,14 +52,80 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         // bufferizza body (consuma lo stream)
         byte[] responseBody = StreamUtils.copyToByteArray(response.getBody());
 
-        // 1) Digest check
-        validateDigestIfPresentOrRequired(request, response, responseBody);
+        try {
+            // 1) Digest check
+            validateDigestIfPresentOrRequired(request, response, responseBody);
 
-        // 2) Agid-JWT-Signature checks (structure + signed_headers match)
-        validateAgidJwtSignatureIfPresentOrRequired(request, response);
+            // 2) Agid-JWT-Signature checks (structure + signed_headers match)
+            validateAgidJwtSignatureIfPresentOrRequired(request, response);
+
+        } catch (IntegrityValidationException ex) {
+            // logga sempre la response "così com'è arrivata"
+            logIntegrityFailure(request, response, responseBody, ex);
+            throw ex;
+        }
 
         // ritorna response con body riutilizzabile
         return new CachedBodyClientHttpResponse(response, responseBody);
+    }
+
+    private void logIntegrityFailure(
+            org.springframework.http.HttpRequest request,
+            ClientHttpResponse response,
+            byte[] responseBody,
+            IntegrityValidationException ex
+    ) {
+        try {
+            HttpStatus status = response.getStatusCode();
+            HttpHeaders headers = response.getHeaders();
+
+            // body preview (max 2KB)
+            String bodyPreview = previewBody(responseBody, 2048);
+
+            // headers redatti
+            Map<String, List<String>> safeHeaders = redactHeaders(headers);
+
+            log.error(
+                    "Integrity validation FAILED for {} {} -> status={} ({})\nResponse headers={}\nResponse bodyLen={} preview={}\nCause={}",
+                    request.getMethod(),
+                    request.getURI(),
+                    status.value(),
+                    status.getReasonPhrase(),
+                    safeHeaders,
+                    responseBody != null ? responseBody.length : -1,
+                    bodyPreview,
+                    ex.getMessage()
+            );
+        } catch (Exception logEx) {
+            // se per qualche motivo non riesce a loggare, non bloccare l'eccezione originale
+            log.error("Integrity validation FAILED for {} {} (unable to log response details). Cause={}",
+                    request.getMethod(), request.getURI(), ex.getMessage(), logEx);
+        }
+    }
+
+    private static String previewBody(byte[] body, int maxBytes) {
+        if (body == null || body.length == 0) return "<empty>";
+        int len = Math.min(body.length, maxBytes);
+        String s = new String(body, 0, len, StandardCharsets.UTF_8);
+        if (body.length > maxBytes) s += "...(truncated)";
+        return s;
+    }
+
+    private static Map<String, List<String>> redactHeaders(HttpHeaders headers) {
+        Map<String, List<String>> out = new LinkedHashMap<>();
+        headers.forEach((k, v) -> {
+            if (k == null) return;
+            String key = k.trim();
+            if (key.equalsIgnoreCase("Authorization")
+                    || key.equalsIgnoreCase("DPoP")
+                    || key.equalsIgnoreCase("Cookie")
+                    || key.equalsIgnoreCase("Set-Cookie")) {
+                out.put(key, List.of("<redacted>"));
+            } else {
+                out.put(key, v);
+            }
+        });
+        return out;
     }
 
     private void validateDigestIfPresentOrRequired(
