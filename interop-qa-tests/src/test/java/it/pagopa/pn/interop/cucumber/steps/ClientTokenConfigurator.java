@@ -28,6 +28,7 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.users.IM2MV3UsersClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -69,6 +70,7 @@ public class ClientTokenConfigurator {
     private final IM2MPurposeTemplateClient m2mPurposeTemplateClient;
     private final IM2MV3ProducerKeychainsClient producerKeychainsClient;
     private final IProducerKeychainsClient bffProducerKeychainsClient;
+    private final IM2MV3UsersClient usersClient;
 
     public void setBearerToken(String token) {
         this.lastToken = token;
@@ -106,6 +108,7 @@ public class ClientTokenConfigurator {
 
     public void setAuth(Auth auth) {
         producerKeychainsClient.setAuth(auth);
+        usersClient.setAuth(auth);
     }
 
 }
