@@ -102,7 +102,6 @@ public class DelegheTemporaneeSteps {
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
 
-        mandateCreationResponse = null;
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
                     taxId, null, null, null, null,

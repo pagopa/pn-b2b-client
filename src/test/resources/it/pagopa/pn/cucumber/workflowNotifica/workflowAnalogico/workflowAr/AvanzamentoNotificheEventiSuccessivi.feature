@@ -16,11 +16,10 @@ Feature: Gestione Feedback Analogici Duplicati
   @workflowAnalogico
   Scenario: [B2B_FEEDBACK_ANALOG_2] Invio notifica Analogica - Caso avanzamento spedizione e ricezione eventi di PROGRESS
     Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di milano            |
-      | physicalCommunication | REGISTERED_LETTER_890       |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL            |
+      | digitalDomicile_address | test@fail.it    |
       | physicalAddress_address | Via@OK_START_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
