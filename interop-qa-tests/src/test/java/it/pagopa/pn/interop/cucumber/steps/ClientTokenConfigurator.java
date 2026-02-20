@@ -245,6 +245,23 @@ public class ClientTokenConfigurator {
 
     public void setAuth(Auth auth) {
         m2mV3ProducerKeychainsClient.setAuth(auth);
+        m2mV3AgreementClient.setAuth(auth);
+        m2mV3TenantClient.setAuth(auth);
+        m2mV3DelegationClient.setAuth(auth);
+        m2mV3CertifiedAttributeClient.setAuth(auth);
+        m2mV3DeclaredAttributeClient.setAuth(auth);
+        m2mV3VerifiedAttributeClient.setAuth(auth);
+        m2mV3EServiceAttributeClient.setAuth(auth);
+        m2mV3EServiceTemplateAttributeClient.setAuth(auth);
+        m2mV3EserviceClient.setAuth(auth);
+        m2mV3EserviceDescriptorClient.setAuth(auth);
+        m2mV3EServiceTemplateClient.setAuth(auth);
+        m2mV3PurposeClient.setAuth(auth);
+        m2mV3PurposeTemplateClient.setAuth(auth);
+        m2mV3ClientsClient.setAuth(auth);
+        m2mV3EventClient.setAuth(auth);
+        m2mV3ProducerKeychainsClient.setAuth(auth);
+        m2mV3UsersClient.setAuth(auth);
     }
 
     @SuppressWarnings("unchecked")
