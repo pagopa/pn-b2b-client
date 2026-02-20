@@ -21,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,11 +52,11 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIdx, String xPagopaCxTaxid, UUID mandate) throws RestClientException {
-        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid, mandate,null, null, null,null,null,null,null,null,null,null);
+        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid, mandate,null, null, null,null,null,null,xPagopaCxTaxid,null,null,null);
     }
 
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid, UUID mandateId) throws RestClientException {
-        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null,null, null, null,null,null,null,null,null, null);
+        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null,null, null, null,null,null,xPagopaCxTaxid,null,null, null);
     }
 
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid, UUID mandateId, String xPagopaPnIoSrc) throws RestClientException {
@@ -63,7 +64,7 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String xPagopaCxTaxid, Integer attachmentIdx, UUID mandateId) throws RestClientException {
-        return this.appIoPnPaymentsApi.getReceivedNotificationAttachment(iun, attachmentName, xPagopaCxTaxid, attachmentIdx, mandateId, null, null, null,  null, null, null, null, null, null, null);
+        return this.appIoPnPaymentsApi.getReceivedNotificationAttachment(iun, attachmentName, xPagopaCxTaxid, attachmentIdx, mandateId, null, null, null,  null, null, null, xPagopaCxTaxid, null, null, null);
     }
 
     public ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, String xPagopaLollipopUserId, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException {
