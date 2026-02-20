@@ -36,7 +36,7 @@ public class ProducerKeychainsResolver extends AbstractResolver {
         keySeed.setKey(nKey != null ? bffKeySeed.getKey() : null);
         keySeed.setName(nName != null ? bffKeySeed.getName() : null);
         keySeed.setAlg(nAlg != null ? bffKeySeed.getAlg() : null);
-        keySeed.setUse(nUse == null ? null : KeyUse.valueOf(nUse));
+        keySeed.setUse(nUse != null ? KeyUse.valueOf(bffKeySeed.getUse().getValue()) : null);
 
         return keySeed;
     }
