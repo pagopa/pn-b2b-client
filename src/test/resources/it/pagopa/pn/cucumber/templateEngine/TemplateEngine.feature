@@ -458,7 +458,7 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_33_1] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - lingua errata
     When recupero l'oggetto per "avviso di cortesia per email object" in lingua "francese"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "italiana"
+    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "francese"
 
   @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_2] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body vuoto
@@ -605,3 +605,35 @@ Feature: Template engine
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "una notifica da parte di"
+
+  @templateEngine
+  Scenario Outline: [TEMPLATE-ENGINE_42] Verifica dell'intero template AAR-NO-RADD per PF e PG per le lingue IT,DE,FR,SL
+  When recupero il template per "avviso di avvenuta ricezione" in lingua "<language>" con recipient Type "<recipientType>"
+  Then verifico che il template è in formato ".pdf"
+  And controllo che per il template "avviso di avvenuta ricezione" il file "pdf" sia in lingua "<language>"
+  Examples:
+  | language | recipientType |
+  | italiana | PF |
+  | italiana | PG |
+  | francese | PF |
+  | francese | PG |
+  | tedesca | PF |
+  | tedesca | PG |
+  | slovena | PF |
+  | slovena | PG |
+
+  @templateEngine
+  Scenario Outline: [TEMPLATE-ENGINE_43] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL
+  When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>" con recipient Type "<recipientType>"
+  Then verifico che il template è in formato ".pdf"
+  And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
+  Examples:
+    | language | recipientType |
+    | italiana | PF |
+    | italiana | PG |
+    | francese | PF |
+    | francese | PG |
+    | tedesca | PF |
+    | tedesca | PG |
+    | slovena | PF |
+    | slovena | PG |

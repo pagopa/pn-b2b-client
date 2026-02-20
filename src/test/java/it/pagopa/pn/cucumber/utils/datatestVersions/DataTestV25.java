@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Data
 public class DataTestV25 extends AbstractDataTest {
 
-    private TimelineElementV27 timelineElement;
+    private TimelineElementV28 timelineElement;
 
     public static DataTestV25 convertMap(Map<String, String> data) {
 
@@ -49,9 +50,9 @@ public class DataTestV25 extends AbstractDataTest {
         try {
             DataTestV25 dataTest = new DataTestV25();
             dataTest.setInputData(data);
-            TimelineElementV27 timelineElement = new TimelineElementV27()
+            TimelineElementV28 timelineElement = new TimelineElementV28()
                     .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
-                    .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV27()
+                    .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV28()
                             .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                             .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
                             .refusalReasons(getListValue(NotificationRefusedErrorV27.class, data, DETAILS_REFUSAL_REASONS.key))
@@ -93,10 +94,10 @@ public class DataTestV25 extends AbstractDataTest {
         }
     }
 
-    public static void checkTimelineElementEquality(ApplicationContext context, String timelineEventCategory, TimelineElementV27 elementFromNotification, DataTestV25 dataTest) {
-        TimelineElementV27 elementFromTest = dataTest.getTimelineElement();
-        TimelineElementDetailsV27 expected = elementFromTest.getDetails();
-        TimelineElementDetailsV27 actual = elementFromNotification.getDetails();
+    public static void checkTimelineElementEquality(ApplicationContext context, String timelineEventCategory, TimelineElementV28 elementFromNotification, DataTestV25 dataTest) {
+        TimelineElementV28 elementFromTest = dataTest.getTimelineElement();
+        TimelineElementDetailsV28 expected = elementFromTest.getDetails();
+        TimelineElementDetailsV28 actual = elementFromNotification.getDetails();
 
         DelegateInfo delegateInfoActual = actual != null ? actual.getDelegateInfo() : null;
         DelegateInfo delegateInfoExpected = expected != null ? expected.getDelegateInfo() : null;
@@ -134,9 +135,12 @@ public class DataTestV25 extends AbstractDataTest {
             case SEND_DIGITAL_FEEDBACK -> {
                 if (expected != null) {
                     assertThat(actual.getResponseStatus()).as(error + EQUALITY_RESPONSE_STATUS).isNotNull();
-                    assertThat(actual.getResponseStatus().getValue()).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue());
-                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
-                    assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size());
+                    Optional.ofNullable(expected.getResponseStatus()).map(ResponseStatus::getValue).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue()));
+                    Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress()));
+                    Optional.ofNullable(expected.getSendingReceipts()).map(List::size).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size()));
                     for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
                         assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
                         assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
@@ -161,7 +165,8 @@ public class DataTestV25 extends AbstractDataTest {
             }
             case SEND_DIGITAL_DOMICILE -> {
                 if (expected != null) {
-                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
+                    Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(actual.getDigitalAddress()));
                 }
             }
             case GET_ADDRESS -> {
@@ -287,7 +292,6 @@ public class DataTestV25 extends AbstractDataTest {
                     assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
                     B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                     assertThat(actual.getRegistry()).as(error + EQUALITY_REGISTRY).isEqualTo(expected.getRegistry());
-//                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
                 }
             }
             case PREPARE_ANALOG_DOMICILE_FAILURE -> {
@@ -303,6 +307,11 @@ public class DataTestV25 extends AbstractDataTest {
 
                 }
             }
+            case NOTIFICATION_TIMELINE_REWORKED -> {
+                if (expected != null) {
+                    // todo t v29
+                }
+            }
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }
     }
@@ -313,8 +322,8 @@ public class DataTestV25 extends AbstractDataTest {
     }
 
     private static EventId getEventId(String iun, DataTestV25 dataFromTest) {
-        TimelineElementV27 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV27 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV28 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV28 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 

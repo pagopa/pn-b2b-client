@@ -16,7 +16,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.Mandate
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateDto;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
@@ -102,7 +102,6 @@ public class DelegheTemporaneeSteps {
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
 
-        mandateCreationResponse = null;
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
                     taxId, null, null, null, null,
@@ -287,7 +286,7 @@ public class DelegheTemporaneeSteps {
                         n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
         assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
-        FullSentNotificationV27 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(result.getIun());
+        FullSentNotificationV28 notifica120 = sharedSteps.getSentNotificationLastVersionByIun(result.getIun());
         sharedSteps.setNotificationIun(notifica120.getIun());
         log.info("IUN OLDER 120 GG: " + notifica120.getIun());
         log.info("RECIPIENTS OLDER 120 GG: " + notifica120.getRecipients().stream().map(r -> r.getTaxId()).toList());
