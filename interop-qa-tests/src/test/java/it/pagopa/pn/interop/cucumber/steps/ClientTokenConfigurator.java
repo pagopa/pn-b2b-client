@@ -49,6 +49,8 @@ import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -263,37 +265,36 @@ public class ClientTokenConfigurator {
     @SuppressWarnings("unchecked")
     private <T, U extends T, V extends T> T makeClientProxy(Class<T> clientInterface, U clientV2, V clientV3) {
         InvocationHandler handler = (proxy, method, args) -> {
-            // Determiniamo la strategia in base al profilo attuale
             ApiM2MVersion targetVersion = apiProfile.getApiM2MVersion();
             boolean isBestFit = apiProfile.getApiMode() == ApiMode.BEST_FIT;
 
-            // Definiamo l'ordine di chiamata
             T primary = (targetVersion == ApiProfile.ApiM2MVersion.V2) ? clientV2 : clientV3;
             T secondary = (targetVersion == ApiProfile.ApiM2MVersion.V2) ? clientV3 : clientV2;
 
             try {
-                // Primo tentativo
-                return method.invoke(primary, args);
+                return invokeUnwrapped(method, primary, args);
             } catch (APIUnavailableException e) {
-                // Se siamo in BEST_FIT, proviamo il fallback sulla versione alternativa
                 if (isBestFit) {
-                    try {
-                        return method.invoke(secondary, args);
-                    } catch (APIUnavailableException e2) {
-                        // Se fallisce anche il fallback, propaghiamo l'eccezione del secondo tentativo
-                        throw e2;
-                    }
+                    return invokeUnwrapped(method, secondary, args);
                 }
-                // Se siamo in RIGHT_FIT, propaghiamo immediatamente
                 throw e;
             }
         };
 
         return (T) Proxy.newProxyInstance(
-            clientInterface.getClassLoader(),
-            new Class<?>[]{clientInterface},
-            handler
+                clientInterface.getClassLoader(),
+                new Class<?>[]{clientInterface},
+                handler
         );
+    }
+
+    private Object invokeUnwrapped(Method method, Object target, Object[] args) throws Throwable {
+        try {
+            return method.invoke(target, args);
+        } catch (InvocationTargetException ite) {
+            // rilancia la vera eccezione del target
+            throw ite.getCause();
+        }
     }
 
     /**
