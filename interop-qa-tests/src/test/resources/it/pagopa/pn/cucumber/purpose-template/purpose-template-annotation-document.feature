@@ -6,7 +6,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     When vengono caricati <docNumber> documenti <casistica> associati all'annotazione esistente
     Then si ottiene lo status code <statusCode>
@@ -24,7 +24,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     When il purpose template viene gradualmente spostato in stato <state>
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
@@ -41,7 +41,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     When l'utente è un "<ruolo>" di "PA1"
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
@@ -53,16 +53,17 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | security |
 
   #89 (KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_CREATOR] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_CREATOR] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     When l'utente è un "admin" di "GSP"
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
 
   #90 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
@@ -70,7 +71,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     When vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione inesistente
     Then si ottiene lo status code 404
@@ -81,7 +82,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminata l'annotazione esistente per il purpose template
@@ -93,7 +94,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When il purpose template viene gradualmente spostato in stato <state>
@@ -111,7 +112,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When l'utente è un "<ruolo>" di "PA1"
@@ -124,17 +125,18 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | security |
 
   #94 (KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_CREATOR] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_CREATOR] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When l'utente è un "admin" di "GSP"
     And viene eliminata l'annotazione esistente per il purpose template
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
 
   #95 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
@@ -142,7 +144,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminata l'annotazione esistente per il purpose template
@@ -156,7 +158,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminata l'annotazione inesistente per il purpose template
@@ -168,7 +170,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminato il documento esistente dell'annotazione precedentemente creata
@@ -180,7 +182,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When il purpose template viene gradualmente spostato in stato <state>
@@ -198,7 +200,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When l'utente è un "<ruolo>" di "PA1"
@@ -211,17 +213,18 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | security |
 
   #100 (KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_CREATOR] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
+  Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_CREATOR] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When l'utente è un "admin" di "GSP"
     And viene eliminato il documento esistente dell'annotazione precedentemente creata
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
 
   #101 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
@@ -229,7 +232,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     And viene eliminato il documento esistente dell'annotazione precedentemente creata
@@ -242,7 +245,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene eliminato il documento inesistente dell'annotazione precedentemente creata
@@ -254,7 +257,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene recuperato il documento esistente dell'annotazione precedentemente creata
@@ -266,7 +269,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    And viene "creata" un'annotazione con testo entro i 50 caratteri per il purpose template esistente
+    And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     When viene recuperato il documento inesistente dell'annotazione precedentemente creata
