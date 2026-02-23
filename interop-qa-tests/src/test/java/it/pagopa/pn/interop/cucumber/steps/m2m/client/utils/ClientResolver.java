@@ -16,19 +16,8 @@ public class ClientResolver extends AbstractResolver {
         return resolveOrParse(
                 raw,
                 StepParser::uuidOrRandomOrNull,
-                () -> sharedStepsContext.getClientCommonContext().getLastClient(),
-                () -> sharedStepsContext.getClientCommonContext().getLastClient(),
-                UUID::randomUUID,
-                null
-        );
-    }
-
-    public UUID resolveEserviceId(String raw) {
-        return resolveOrParse(
-                raw,
-                StepParser::uuidOrRandomOrNull,
-                () -> sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                () -> sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                () -> sharedStepsContext.getClientCommonContext().getFirstClient(),
+                () -> sharedStepsContext.getClientCommonContext().getFirstClient(),
                 UUID::randomUUID,
                 null
         );
