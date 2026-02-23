@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.rest_template;
 
 import it.pagopa.interop.authorization.domain.Auth;
+import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.common.interceptor.dpop.utils.DPoPAccessTokenSupplier;
 import it.pagopa.interop.common.interceptor.dpop.DPoPAuthInterceptor;
@@ -21,6 +22,7 @@ public class DpopRestTemplate {
     @Getter
     private final RestTemplate restTemplate;
 
+    private final DpopHeaderPolicy dpopHeaderPolicy;
     private final DPoPAuthInterceptor dpopInterceptor;
     private final DPoPAccessTokenSupplier dpopAccessTokenSupplier;
 
@@ -32,15 +34,16 @@ public class DpopRestTemplate {
 
         this.restTemplate = restTemplate;
         this.dpopAccessTokenSupplier = dpopAccessTokenSupplier;
+        this.dpopHeaderPolicy = DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL);
+
+        DPoPTokenInterceptor dpopTokenInterceptor = new DPoPTokenInterceptor(dpopAccessTokenSupplier::get, dpopHeaderPolicy);
 
         this.dpopInterceptor = new DPoPAuthInterceptor(
                 dpopTokenService,
                 dpopAccessTokenSupplier,
+                dpopHeaderPolicy,
                 initialKeyPair
         );
-
-        ClientHttpRequestInterceptor dpopTokenInterceptor =
-                new DPoPTokenInterceptor(dpopAccessTokenSupplier::get);
 
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         if (baseInterceptors != null) interceptors.addAll(baseInterceptors);
@@ -55,8 +58,17 @@ public class DpopRestTemplate {
 
     public void setAuth(Auth auth) {
         dpopInterceptor.setKeyPair(auth.getKeyPair());
+        DpopHeaderPolicy incoming = auth.getDpopHeaderPolicy();
+
+        if (incoming != null) {
+            dpopHeaderPolicy.setMode(incoming.getMode());
+            dpopHeaderPolicy.setInvalidAccessToken(incoming.getInvalidAccessToken());
+            dpopHeaderPolicy.setInvalidDpopProof(incoming.getInvalidDpopProof());
+        } else {
+            dpopHeaderPolicy.setMode(DpopHeaderPolicy.Mode.NORMAL);
+        }
+
         dpopAccessTokenSupplier.setAuth(auth);
-        log.info("DpopRestTemplate setAuth: keyPair+auth updated");
     }
 }
 
