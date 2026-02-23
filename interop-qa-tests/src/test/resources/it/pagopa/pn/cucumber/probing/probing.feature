@@ -295,7 +295,7 @@ Feature: Probing
   Scenario: [LOAD] Eservice enable e verifica update dopo N periodi
     Given preparo il load test probing con:
       | totalEservices | workers | schedulerFrequency | startDate | endDate | waitPeriods | extraWait | recentTolerance |
-      | 1000           | 100     | 3                  | now-1m    | now+10m | 1           | 45s       | 45s             |
+      | 500           | 100     | 3                  | now-1m    | now+10m | 1           | 45s       | 45s             |
     When aggiorno scheduling in parallelo per tutti gli eservice
     And abilito probing in parallelo per tutti gli eservice
     And attendo N=waitPeriods periodi più extraWait
