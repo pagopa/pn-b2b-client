@@ -4,6 +4,7 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.domain.Role;
+import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -86,8 +87,25 @@ public class M2MAuthSteps {
     @Given("viene impostato per l'utente un token m2m non valido")
     @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
-        clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
-        sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
+        ApiProfile.ApiMode mode = apiProfile.getApiMode();
+        ApiProfile.ApiM2MVersion version = apiProfile.getApiM2MVersion();
+
+        boolean bestFit = mode == ApiProfile.ApiMode.BEST_FIT;
+        boolean rightFit = mode == ApiProfile.ApiMode.RIGHT_FIT;
+
+        boolean useBearer = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V2);
+        boolean useDpop   = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
+
+        if(useDpop) {
+            Auth auth = sharedStepsContext.getAuth();
+            auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
+            clientTokenConfigurator.setAuth(auth);
+        }
+
+        if(useBearer) {
+            clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
+            sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
+        }
     }
 
     @Deprecated(forRemoval = true)
