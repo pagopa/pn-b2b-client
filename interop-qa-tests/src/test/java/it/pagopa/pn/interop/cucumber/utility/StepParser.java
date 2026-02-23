@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.utility;
 
-import it.pagopa.pn.interop.cucumber.enums.ResolvableToken;
+import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
