@@ -98,7 +98,7 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UUID documentId
     );
 
-    ResponseEntity<Resource> getDocumentWithHttpInfo(
+    ResponseEntity<File> getDocumentWithHttpInfo(
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId
