@@ -8,7 +8,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.web.client.RestClientException;
 
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public interface IPnWebRecipientClient extends SettableBearerToken {
 
-    BundleFullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException;
+    BundleFullReceivedNotification getFullReceivedNotification(String iun, String mandateId) throws RestClientException;
 
     BffFullNotificationV1 getBffFullNotification(String iun, String mandateId) throws RestClientException;
 

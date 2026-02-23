@@ -5,7 +5,20 @@ import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Client;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.SetAdminToClientRequest;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.retry.annotation.Backoff;
@@ -13,9 +26,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)

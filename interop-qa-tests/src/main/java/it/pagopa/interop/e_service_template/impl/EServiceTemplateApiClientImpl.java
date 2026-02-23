@@ -1,10 +1,19 @@
 package it.pagopa.interop.e_service_template.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+import static java.util.Objects.nonNull;
+
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -14,11 +23,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
 
 /* TODO considerato che le varianti con HTTP info conservano lo stato di errore potrebbe essere
     preferibile utilizzare solo quelle, rimuovere le altre e adattare gli utilizzi di conseguenza */
@@ -262,19 +266,34 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID documentId
     ) {
         try {
-            return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId).getFile();
+            return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId)
+                .getFile();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
     @Override
-    public ResponseEntity<Resource> getDocumentWithHttpInfo(
+    public ResponseEntity<File> getDocumentWithHttpInfo(
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        try {
+            ResponseEntity<Resource> resourceResponseEntity = this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(
+                eServiceTemplateId, eServiceTemplateVersionId, documentId);
+            Resource body = resourceResponseEntity.getBody();
+
+            return new ResponseEntity<>(
+                nonNull(body)
+                    ? createTempFile("e-service-template-document-",body.getInputStream())
+                    : null,
+                resourceResponseEntity.getHeaders(),
+                resourceResponseEntity.getStatusCode()
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

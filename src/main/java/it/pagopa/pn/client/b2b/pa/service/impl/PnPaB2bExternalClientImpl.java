@@ -427,6 +427,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public FullSentNotificationV28 getSentNotificationV28(String iun) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveSentNotificationV28(iun);
+    }
+
+    @Override
     public void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
         refreshAndSetTokenInteropClient();
         this.paymentEventsApi.paymentEventsRequestPagoPaWithHttpInfo(paymentEventsRequestPagoPa);

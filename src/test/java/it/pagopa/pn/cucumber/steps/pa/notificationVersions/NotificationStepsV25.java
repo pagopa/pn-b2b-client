@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV25;
@@ -48,11 +48,11 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public Object getFullSentNotification() {
-        return b2bClient.getSentNotificationV27(sharedSteps.getNotificationIun());
+        return b2bClient.getSentNotificationV28(sharedSteps.getNotificationIun());
     }
 
-    private FullSentNotificationV27 getFullSentNotificationVersioned() {
-        return (FullSentNotificationV27) getFullSentNotification();
+    private FullSentNotificationV28 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV28) getFullSentNotification();
     }
 
     @Override
@@ -176,7 +176,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
                 uploadNotification(null);
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
-                    PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
+                    PnPollingResponseV29 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
                     threadWait(wait);
                     assertThat(pollingResponse.getNotification())
                             .as("La fullSentNotification della notifica appena creata non dev'essere null")
@@ -184,7 +184,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
                     log.info("Request status for " + sharedSteps.getNotificationIun());
                     long startTime = System.currentTimeMillis();
-                    PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
+                    PnPollingResponseV29 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
                     long endTime = System.currentTimeMillis();
                     log.info("Execution time {}ms", (endTime - startTime));
                     StringBuilder error = new StringBuilder();
@@ -206,7 +206,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
                     assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere null").isNotNull();
                     assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere vuoti").isNotEmpty();
                     assertThat(response.getDetails().get(0).getCode()).isEqualToIgnoringCase("NOTIFICATION_CANCELLATION_ACCEPTED");
-                    PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
+                    PnPollingResponseV29 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
                     threadWait(wait);
                     assertThat(pollingResponse.getResult())
                             .as("La notifica dovrebbe essere stata annullata prima di andare in REFUSED")
@@ -245,7 +245,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
-        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(destinatario).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
@@ -307,7 +307,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
-        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
@@ -315,10 +315,10 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void waitForTimelineElement(String timelineElementCategory, Integer attempts) {
-        TimelineElementV27 timelineElement = null;
+        TimelineElementV28 timelineElement = null;
         for (int i = 0; i < attempts; i++) {
             threadWait(sharedSteps.getWorkFlowWait());
-            FullSentNotificationV27 fsn = getFullSentNotificationVersioned();
+            FullSentNotificationV28 fsn = getFullSentNotificationVersioned();
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -344,7 +344,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void checkTaxonomyCode() {
-        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere null")
                 .isNotNull();
@@ -448,7 +448,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
         }
 
         long startTime = System.currentTimeMillis();
-        PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_REFUSED);
+        PnPollingResponseV29 pollingResponse = utils.waitForEvent(notificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_REFUSED);
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms", (endTime - startTime));
 

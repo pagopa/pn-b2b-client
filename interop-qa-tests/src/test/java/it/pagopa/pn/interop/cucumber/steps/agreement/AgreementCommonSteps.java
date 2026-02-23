@@ -299,17 +299,11 @@ public class AgreementCommonSteps {
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(newVersion);
     }
 
+    @And("l'utente pubblica la versione dell'e-service")
     @And("l'utente delegato pubblica la versione dell'e-service")
     public void publishNewVersionOfEService() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         dataPreparationService.bringDescriptorToGivenState(eServiceId, descriptorId, EServiceDescriptorState.WAITING_FOR_APPROVAL, false);
-    }
-
-    @And("l'utente delegante approva la versione dell'e-service")
-    public void approveNewVersionOfEService() {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-        dataPreparationService.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
     }
 }

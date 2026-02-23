@@ -12,10 +12,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
-
-import java.util.UUID;
 
 /** Cucumber steps involving creation, editing, viewing or deletion
  * of E-service template versions */
@@ -70,10 +69,7 @@ public class EServiceTemplateVersionCreateSteps {
 
     @Then("la creazione di una ulteriore versione nell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionCreated() {
-        testAssistant.checkEServiceTemplateVersion(
-                x -> true,
-                "La versione dell'e-service template non è stata creata correttamente"
-        );
+        testAssistant.checkEServiceTemplateVersion(x -> true, "La versione dell'e-service template non è stata creata correttamente");
     }
 
     @Then("la creazione di una ulteriore versione in stato {eServiceTemplateVersionState} nell'e-service template è stata effettuata correttamente")

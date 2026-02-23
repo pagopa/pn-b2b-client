@@ -1125,6 +1125,15 @@ public class B2bStepsV23 implements B2bStepsInterface {
         }
     }
 
+    @Override
+    public void checkReworkTimelineWithVersion() {
+        FullSentNotificationV23 fullSentNotification = getFullSentNotificationVersioned();
+        List<TimelineElementV23> timeline = fullSentNotification.getTimeline();
+
+        TimelineElementV23 reworkedElement = timeline.stream().filter(te -> te.getElementId().contains("REWORK_")).findFirst().orElse(null);
+        assertThat(reworkedElement).as("La timeline dovrebbe contenere almeno un elemento con Rework nel timelineElementId").isNotNull();
+    }
+
     private String getProperty(String fieldPath, TimelineElementV23 lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String sanitizedFieldPath = fieldPath.replace("_", ".");
         return BeanUtils.getProperty(lastTimelineElement, sanitizedFieldPath);

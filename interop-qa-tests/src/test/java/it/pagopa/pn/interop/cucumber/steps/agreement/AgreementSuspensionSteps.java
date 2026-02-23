@@ -23,6 +23,16 @@ public class AgreementSuspensionSteps {
         suspendAgreement(false);
     }
 
+    @When("l'utente {string} di {string} richiede una operazione di sospensione di quella richiesta di fruizione con successo")
+    public void successfullyRequireSuspendAgreement(String role, String tenant) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
+        suspendAgreement(false);
+        if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
+            throw new IllegalStateException("La sospensione della richiesta di fruizione non è stata eseguita con successo");
+        }
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
     @When("l'ente {delegationRole} richiede una operazione di sospensione di quella richiesta di fruizione")
     public void delegateRequireSuspendAgreement(DelegationRole delegationRole) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
