@@ -3,7 +3,7 @@ Feature: Probing
 
   Scenario Outline: [GET_STATUS] - Health probing-ms check
     Given il microservizio <ms> risulta attivo
-    Then la response riporta lo status code 200
+    Then la response ha status code 200
 
     Examples:
       | ms                       |
@@ -13,7 +13,7 @@ Feature: Probing
   Scenario Outline: [GET_ESERVICES_CATALOG] - Consultazione e-service presenti nel catalogo probing (multi-filtro)
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono recuperati dal catalogo gli e-service con limit "<limit>" e offset "<offset>" e filtri eserviceName "<eserviceName>", producerName "<producerName>", versionNumber "<versionNumber>", state "<state>"
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # --- Baseline / boundaries (no filters) ---
@@ -53,7 +53,7 @@ Feature: Probing
   Scenario Outline: [UPDATE_FREQUENCY] - Aggiornamento frequency e finestra temporale per e-service
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "<eserviceId>" e versionId "<versionId>" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # Happy paths
@@ -80,7 +80,7 @@ Feature: Probing
   Scenario Outline: [UPDATE_PROBING_STATE] - Modifica stato di probing con combinazioni id/versione
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene modificato lo stato di probing dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<probingEnabled>" e si verifica che coincida con quanto atteso
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # Happy paths
@@ -102,7 +102,7 @@ Feature: Probing
   Scenario Outline: [UPDATE_OPERATIONAL_STATE] - Modifica stato operativo con combinazioni id/versione
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene modificato lo stato operativo dell'e-service con id "<eserviceId>" e id versione "<versionId>" in "<eserviceState>" e si verifica che coincida con quanto atteso
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # Happy paths
@@ -124,7 +124,7 @@ Feature: Probing
   Scenario Outline: [GET_PRODUCERS] - Recupero lista producers con paginazione
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When recupero la lista dei producers con limit "<limit>" e offset "<offset>" e producerName "<producer>"
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # Happy paths
@@ -153,7 +153,7 @@ Feature: Probing
   Scenario Outline: [GET_ESERVICE_MAIN_DATA] - Recupera i metadati anagrafici di un e-service tramite il suo eserviceRecordId
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono recuperati i main data dell'e-service con eserviceRecordId "<eserviceRecordId>"
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
       | eserviceRecordId | statusCode |
@@ -165,7 +165,7 @@ Feature: Probing
   Scenario Outline: [GET_ESERVICE_PROBING_DATA] - Recupera i dati di probing di un e-service tramite il suo eserviceRecordId
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono recuperati i dati di probing dell'e-service con eserviceRecordId "<eserviceRecordId>"
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
       | eserviceRecordId | statusCode |
@@ -179,7 +179,7 @@ Feature: Probing
   Scenario Outline: [GET_ESERVICE_PUBLIC_TELEMETRY] - Recupera la telemetria pubblica di un e-service tramite il suo eserviceRecordId
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene recuperata la telemetria pubblica dell'e-service con eserviceRecordId "<eserviceRecordId>" e pollingFrequency "<frequency>"
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # Happy paths
@@ -199,7 +199,7 @@ Feature: Probing
   Scenario Outline: [GET_ESERVICE_TELEMETRY] - Recupera la telemetria di un e-service tramite il suo eserviceRecordId e filtro temporale
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When viene recuperata la telemetria dell'e-service con eserviceRecordId "<eserviceRecordId>" e impostando pollingFrequency "<frequency>" , startDate "<startDate>" , endDate "<endDate>"
-    Then la response riporta lo status code <statusCode>
+    Then la response ha status code <statusCode>
 
     Examples:
     # Happy paths
@@ -224,9 +224,9 @@ Feature: Probing
   Scenario Outline: [SCHEDULING] - Update frequency aggiorna lo scheduling
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
-    And la response riporta lo status code 204
+    And la response ha status code 204
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
-    And la response riporta lo status code 204
+    And la response ha status code 204
     Then verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "<clockScheduler>", startDate "<startDate>", endDate "<endDate>"
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 
@@ -258,9 +258,9 @@ Feature: Probing
   Scenario Outline: [SCHEDULING_2] - Probing disabled non aggiorna mai
     Given vengono calcolate le informazioni di probing relative ad un e-service presente a catalogo
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
-    And la response riporta lo status code 204
+    And la response ha status code 204
     When vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
-    And la response riporta lo status code 204
+    And la response ha status code 204
     Then verifica che la responseReceived NON sia aggiornata quando probing è disabilitato
 
     Examples:
@@ -273,14 +273,14 @@ Feature: Probing
   Scenario Outline: [PROBING_COMPLETE_PROCESS] - Processo completo di probing con aggiornamento stato e telemetria
     Given vengono calcolate le informazioni di probing relative ad un e-service con health check <mockResponse> presente a catalogo
     And vengono aggiornati i parametri di probing dell'e-service con eserviceId "%expected" e versionId "%expected" impostando frequency "<frequency>", startDate "<startDate>", endDate "<endDate>" e si verifica che coincidano con quanto atteso
-    And la response riporta lo status code 204
+    And la response ha status code 204
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "true" e si verifica che coincida con quanto atteso
-    And la response riporta lo status code 204
+    And la response ha status code 204
     When verifica che la responseReceived sia aggiornata coerentemente rispetto la frequency "<frequency>", clockScheduler "3", startDate "<startDate>", endDate "<endDate>"
     And viene recuperata la telemetria dell'e-service con eserviceRecordId "%expected" e impostando pollingFrequency "3" , startDate "%actual" , endDate "%actual"
-    And la response riporta lo status code 200
+    And la response ha status code 200
     And vengono recuperati i dati di probing dell'e-service con eserviceRecordId "%expected"
-    And la response riporta lo status code 200
+    And la response ha status code 200
     Then la telemetria dell'e-service risulta aggiornata con successo
     And viene modificato lo stato di probing dell'e-service con id "%expected" e id versione "%expected" in "false" e si verifica che coincida con quanto atteso
 
