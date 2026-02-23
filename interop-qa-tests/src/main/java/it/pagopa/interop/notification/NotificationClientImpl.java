@@ -5,28 +5,21 @@ import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.InAppNotificationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject10;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject11;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject12;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DeleteNotificationsRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notifications;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
 import it.pagopa.interop.notification.cache.NotificationCache;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Predicate;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
+import java.util.function.Predicate;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -109,7 +102,7 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
 
     @Override
     public void deleteAll(List<UUID> ids) {
-        var arg = new InlineObject10();
+        var arg = new DeleteNotificationsRequest();
         arg.setIds(ids);
 
         performOperation(
@@ -126,7 +119,7 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
 
     @Override
     public void readAll(List<UUID> ids){
-        var arg = new InlineObject11();
+        var arg = new DeleteNotificationsRequest();
         arg.setIds(ids);
 
         performOperation(
@@ -143,7 +136,7 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
 
     @Override
     public void unreadAll(List<UUID> ids){
-        var arg = new InlineObject12();
+        var arg = new DeleteNotificationsRequest();
         arg.setIds(ids);
 
         performOperation(

@@ -5,25 +5,19 @@ import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject8;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.notification.cache.NotificationCache;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -112,7 +106,7 @@ public class ProducerKeychainClientImpl extends AbstractClient implements Produc
 
     @Override
     public void addUserToProducerKeychain(UUID keychainId, UUID userId) {
-        performOperation(() -> producerKeychainApi.addProducerKeychainUsersWithHttpInfo(keychainId, new InlineObject8().addUserIdsItem(userId)));
+        performOperation(() -> producerKeychainApi.addProducerKeychainUsersWithHttpInfo(keychainId, new AddUsersToClientRequest().addUserIdsItem(userId)));
     }
 
     @Override
