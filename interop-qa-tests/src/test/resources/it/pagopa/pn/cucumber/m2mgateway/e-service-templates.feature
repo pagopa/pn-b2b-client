@@ -93,16 +93,16 @@ Feature: Test API M2M of e-service template
     And la versione corrente dell'e-service template è in stato <state>
     Examples:
       | mode        | state       | code  |
-      | erogazione  | DRAFT       | 400   |
+      | erogazione  | DRAFT       | 409   |
       | erogazione  | PUBLISHED   | 409   |
-      | erogazione  | DEPRECATED  | 400   |
+      | erogazione  | DEPRECATED  | 409   |
 
     @e-service-template-receive-m2m
     Examples:
       | mode        | state       | code  |
-      | ricezione   | DRAFT       | 400   |
+      | ricezione   | DRAFT       | 409   |
       | ricezione   | PUBLISHED   | 409   |
-      | ricezione   | DEPRECATED  | 400   |
+      | ricezione   | DEPRECATED  | 409   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend

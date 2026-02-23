@@ -1089,6 +1089,7 @@ Feature: Test API of e-service template
       | api   |
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7122
+  # Disc. in corso https://pagopaspa.slack.com/archives/C069AP16WG7/p1771863085164299
   @sad-path
   @e-service-template-receive-bff
   @e-service-template-version-publish
