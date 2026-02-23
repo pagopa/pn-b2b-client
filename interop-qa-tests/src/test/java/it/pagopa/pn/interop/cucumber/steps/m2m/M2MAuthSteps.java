@@ -73,8 +73,9 @@ public class M2MAuthSteps {
         }
 
         if (useDpop) {
-            Auth auth = Auth.of(clientId.toString(), tenant, roleUpper, preparedClient.keyPair().getKeyPair());
+            Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), clientId.toString(), tenant, roleUpper, preparedClient.keyPair().getKeyPair());
             clientTokenConfigurator.setAuth(auth);
+            sharedStepsContext.setAuth(auth);
         }
 
         sharedStepsContext.setRole(Role.fromValue(roleUpper));
