@@ -73,13 +73,7 @@ public class ClientSteps {
         Integer offsetValue = StepParser.nullableInteger(offset);
 
         UUID clientId = clientResolver.resolveClientId(client);
-
-        List<UUID> eserviceIdFilter = StepParser.singletonFilterList(
-                eserviceIds,
-                () -> sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                () -> sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                UUID::fromString
-        );
+        List<UUID> eserviceIdFilter = clientResolver.resolveEserviceIds(eserviceIds);
 
         List<PurposeVersionState> stateFilter = StepParser.singletonListNullable(
                 StepParser.nullOrValue(states),
