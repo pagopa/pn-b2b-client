@@ -160,7 +160,7 @@ Feature: Gestione dei producer keychains - API v3
       | RSA     | %actual     | %random    | PA1    | 400        |
       | RSA     | %actual     | %null      | PA1    | 400        |
 
-  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Associazione utenze a producer keychain
+  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -170,53 +170,45 @@ Feature: Gestione dei producer keychains - API v3
 
     #TODO: da implementare -> i 2 status 401
     Examples:
-      | tenant | userId  | producerKeychainId | m2mRoles  | statusCode |
-      | PA1    | %actual | %actual            | m2m-admin | 204        |
-      | PA1    | %null   | %actual            | m2m-admin | 400        |
-      | PA1    | %actual | %null              | m2m-admin | 400        |
-      | PA1    | %actual | %random            | m2m-admin | 404        |
+      | tenant | userId                               | producerKeychainId | m2mRoles  | statusCode |
+      | PA1    | %actual                              | %actual            | m2m-admin | 204        |
+      | PA1    | %null                                | %actual            | m2m-admin | 400        |
+      | PA1    | %actual                              | %null              | m2m-admin | 400        |
+      | PA1    | %actual                              | %random            | m2m-admin | 404        |
 
     #userId valido ma inesistente -> 404
-      | PA1    | %random | %actual            | m2m-admin | 404        |
+      | PA1    | %random                              | %actual            | m2m-admin | 404        |
 
-    #userId valido ma appartenente ad un altro tenant -> 404
-      | PA2    | %actual | %actual            | m2m-admin | 404        |
+    #producerKeychainId appartenente ad un tenant differente da quello del chiamante
+      | PA2    | %actual                              | %actual            | m2m-admin | 404        |
+    #userId appartenente ad un tenant differente da quello in cui è presente il producerKeychain
+      | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 404        |
 
     # utente non autorizzato
-      | PA1    | %actual | %actual            | m2m       | 403        |
+      | PA1    | %actual                              | %actual            | m2m       | 403        |
 
-
-  Scenario: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_2] Associazione utenze a producer keychain
-    Given l'utente è un "admin" di "PA1"
-    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    And si ottiene response status code 200
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
-    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 404
 
   Scenario Outline: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
     When viene invocata l'API di recupero utenze associate alla producer keychain "<producerKeychainId>" con limit "<limit>" offset "<offset>"
     Then si ottiene response status code <statusCode>
 
     #da implementare -> i 2 status 401
     Examples:
-      | producerKeychainId | limit | offset | statusCode |
-      | %actual            | 10    | 0      | 200        |
-      | %null              | 10    | 0      | 400        |
-      | %actual            | %null | 0      | 400        |
-      | %actual            | -1    | 0      | 400        |
-      | %actual            | 51    | 0      | 400        |
-      | %actual            | 10    | %null  | 400        |
-      | %actual            | 10    | -1     | 400        |
-      | %random            | 10    | 0      | 404        |
+      | tenant | producerKeychainId | limit | offset | statusCode |
+      | PA1    | %actual            | 10    | 0      | 200        |
+      | PA1    | %null              | 10    | 0      | 400        |
+      | PA1    | %actual            | %null | 0      | 400        |
+      | PA1    | %actual            | -1    | 0      | 400        |
+      | PA1    | %actual            | 51    | 0      | 400        |
+      | PA1    | %actual            | 10    | %null  | 400        |
+      | PA1    | %actual            | 10    | -1     | 400        |
+      | PA1    | %random            | 10    | 0      | 404        |
+      | PA2    | %random            | 10    | 0      | 404        |
 
   Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_VERIFICATION] Verifica che gli utenti restituiti, associati al producer keychain specificato, appartengano al tenant del richiedente
     Given l'utente è un "admin" di "PA1"
@@ -232,7 +224,7 @@ Feature: Gestione dei producer keychains - API v3
     Then si verifica che la chiamata a selfcare abbia ritornato uno status code: 200
     And si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante
 
-  Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Eliminazione associazione tra utenza e producer keychain specificati
+  Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Eliminazione associazione tra utenza e producer keychain specificati
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -245,28 +237,19 @@ Feature: Gestione dei producer keychains - API v3
 
     #da implementare -> i 2 status 401
     Examples:
-      | tenant | userId  | producerKeychainId | m2mRoles  | statusCode |
-      | PA1    | %actual | %actual            | m2m-admin | 204        |
-      | PA1    | %actual | %null              | m2m-admin | 400        |
-      | PA1    | %null   | %actual            | m2m-admin | 400        |
+      | tenant | userId                               | producerKeychainId | m2mRoles  | statusCode |
+      | PA1    | %actual                              | %actual            | m2m-admin | 204        |
+      | PA1    | %actual                              | %null              | m2m-admin | 400        |
+      | PA1    | %null                                | %actual            | m2m-admin | 400        |
 
       #userId valido ma inesistente -> 404
-      | PA1    | %random | %actual            | m2m-admin | 404        |
+      | PA1    | %random                              | %actual            | m2m-admin | 404        |
       #producerKeychainId valido ma inesistente -> 404
-      | PA1    | %actual | %random            | m2m-admin | 404        |
+      | PA1    | %actual                              | %random            | m2m-admin | 404        |
 
-      #userId valido ma appartenente ad un altro tenant -> 404
-      | PA2    | %actual | %actual            | m2m-admin | 404        |
+       #producerKeychainId appartenente ad un tenant differente da quello del chiamante
+      | PA2    | %actual                              | %actual            | m2m-admin | 404        |
+      #userId appartenente ad un tenant differente da quello in cui è presente il producerKeychain
+      | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 404        |
 
-      | PA1    | %actual | %actual            | m2m       | 403        |
-
-  Scenario: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_2] Eliminazione associazione tra utenza e producer keychain specificati
-    Given l'utente è un "admin" di "PA1"
-    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
-    And si ottiene response status code 200
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
-    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
-    Then si ottiene response status code 404
+      | PA1    | %actual                              | %actual            | m2m       | 403        |
