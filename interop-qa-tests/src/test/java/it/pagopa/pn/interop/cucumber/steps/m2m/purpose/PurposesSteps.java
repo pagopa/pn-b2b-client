@@ -589,6 +589,7 @@ public class PurposesSteps {
             case NULL_ID -> null;
             case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
             case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
         };
     }
 }

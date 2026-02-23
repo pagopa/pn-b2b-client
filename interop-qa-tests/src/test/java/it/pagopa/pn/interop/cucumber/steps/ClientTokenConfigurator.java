@@ -23,6 +23,9 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.event.service.IM2MEventClient;
+import it.pagopa.interop.notification.INotificationClient;
+import it.pagopa.interop.notification.INotificationConfigClient;
+import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -68,6 +71,9 @@ public class ClientTokenConfigurator {
     private final ISelfcareClient iSelfcareClient;
     private final IPurposeTemplateClient purposeTemplateClient;
     private final IM2MPurposeTemplateClient m2mPurposeTemplateClient;
+    private final INotificationClient notificationClient;
+    private final INotificationConfigClient notificationConfigClient;
+    private final ProducerKeychainClient producerKeychainClient;
 
     public void setBearerToken(String token) {
         this.lastToken = token;
@@ -100,6 +106,9 @@ public class ClientTokenConfigurator {
         iSelfcareClient.setBearerToken(token);
         purposeTemplateClient.setBearerToken(token);
         m2mPurposeTemplateClient.setBearerToken(token);
+        notificationClient.setBearerToken(token);
+        notificationConfigClient.setBearerToken(token);
+        producerKeychainClient.setBearerToken(token);
     }
 
 }
