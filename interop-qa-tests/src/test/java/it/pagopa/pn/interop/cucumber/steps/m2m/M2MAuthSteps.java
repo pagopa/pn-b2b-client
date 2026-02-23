@@ -34,9 +34,9 @@ public class M2MAuthSteps {
     private final ApiProfile apiProfile;
 
     public M2MAuthSteps(
-        ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        ApiProfile apiProfile
+            ClientTokenConfigurator clientTokenConfigurator,
+            SharedStepsContext sharedStepsContext,
+            ApiProfile apiProfile
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -66,7 +66,7 @@ public class M2MAuthSteps {
         boolean rightFit = mode == ApiProfile.ApiMode.RIGHT_FIT;
 
         boolean useBearer = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V2);
-        boolean useDpop   = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
+        boolean useDpop = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
 
         if (useBearer) {
             clientTokenConfigurator.setBearerToken(token);
@@ -94,28 +94,28 @@ public class M2MAuthSteps {
         boolean rightFit = mode == ApiProfile.ApiMode.RIGHT_FIT;
 
         boolean useBearer = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V2);
-        boolean useDpop   = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
+        boolean useDpop = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
 
-        if(useDpop) {
+        if (useDpop) {
             Auth auth = sharedStepsContext.getAuth();
             auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
             clientTokenConfigurator.setAuth(auth);
         }
 
-        if(useBearer) {
+        if (useBearer) {
             clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
             sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
         }
     }
 
-    @Given("viene rimosso l'header di autenticazione DPoP")
+    @Given("viene rimosso l'header Authorization con schema DPoP")
     public void removeDpopAuthHeaders() {
         Auth auth = sharedStepsContext.getAuth();
         auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_AUTH);
         clientTokenConfigurator.setAuth(auth);
     }
 
-    @Given("viene rimosso l'header DPoP proof")
+    @Given("E viene rimosso l'header DPoP contenente il proof")
     public void removeDpopProofHeader() {
         Auth auth = sharedStepsContext.getAuth();
         auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_DPOP);

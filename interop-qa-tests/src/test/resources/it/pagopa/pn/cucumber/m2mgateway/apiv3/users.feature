@@ -28,6 +28,24 @@ Feature: Gestione utenti con API M2M V3
     And si verifica che le liste di utenze restituite coincidano
 
 
+  Scenario: [M2M_V3_GET_USERS_3] Recupero utenti appartenenti al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    And viene invocata l'API di recupero utenze appartenenti al tenant del richiedente con limit "10" offset "0" e roles "%null"
+    Then si ottiene response status code 401
+
+  Scenario: [M2M_V3_GET_USERS_4] Recupero utenti appartenenti al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header Authorization con schema DPoP
+    And viene invocata l'API di recupero utenze appartenenti al tenant del richiedente con limit "10" offset "0" e roles "%null"
+    Then si ottiene response status code 401
+
+  Scenario: [M2M_V3_GET_USERS_5] Recupero utenti appartenenti al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And E viene rimosso l'header DPoP contenente il proof
+    And viene invocata l'API di recupero utenze appartenenti al tenant del richiedente con limit "10" offset "0" e roles "%null"
+    Then si ottiene response status code 401
+
   Scenario Outline: [M2M_V3_GET_USER] Recupero utente specifico purchè appartenente al tenant del richiedente
     Given l'utente è un "admin" di "PA1" con ruolo M2M <m2mRoles>
     When viene invocata l'API per il recupero dell'utente "<userId>" purchè appartenente al tenant del richiedente
@@ -44,5 +62,23 @@ Feature: Gestione utenti con API M2M V3
 
       | %actual                              | m2m       | 403        |
     #da implementare -> i 2 status 401
+
+  Scenario: [M2M_V3_GET_USER_2] Recupero utenti appartenenti al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When viene invocata l'API per il recupero dell'utente "%actual" purchè appartenente al tenant del richiedente
+    Then si ottiene response status code 401
+
+  Scenario: [M2M_V3_GET_USER_3] Recupero utenti appartenenti al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header Authorization con schema DPoP
+    When viene invocata l'API per il recupero dell'utente "%actual" purchè appartenente al tenant del richiedente
+    Then si ottiene response status code 401
+
+  Scenario: [M2M_V3_GET_USER_4] Recupero utenti appartenenti al tenant del richiedente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And E viene rimosso l'header DPoP contenente il proof
+    When viene invocata l'API per il recupero dell'utente "%actual" purchè appartenente al tenant del richiedente
+    Then si ottiene response status code 401
 
 
