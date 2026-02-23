@@ -1,5 +1,8 @@
 package it.pagopa.interop.e_service_template.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+import static java.util.Objects.nonNull;
+
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -7,6 +10,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -260,7 +265,12 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        try {
+            return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId)
+                .getFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
@@ -269,7 +279,21 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        try {
+            ResponseEntity<Resource> resourceResponseEntity = this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(
+                eServiceTemplateId, eServiceTemplateVersionId, documentId);
+            Resource body = resourceResponseEntity.getBody();
+
+            return new ResponseEntity<>(
+                nonNull(body)
+                    ? createTempFile("e-service-template-document-",body.getInputStream())
+                    : null,
+                resourceResponseEntity.getHeaders(),
+                resourceResponseEntity.getStatusCode()
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

@@ -1,13 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
@@ -15,6 +13,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionDocument;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
@@ -31,7 +30,6 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
     private final IdentityService identityService;
     private final CommonUtils commonUtils;
     private final BFFDataPreparationService dataPreparationService;
-    private final PollingService pollingService;
 
     private List<PurposeVersion> purposeVersions;
 
@@ -45,40 +43,31 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
         this.identityService = sharedStepsContext.getIdentityService();
         this.commonUtils = commonUtils;
         this.dataPreparationService = dataPreparationService;
-        this.pollingService = sharedStepsContext.getPollingService();
     }
 
     @When("l'utente scarica il documento di analisi del rischio")
     public void userDownloadRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        PollingService pollingService = sharedStepsContext.getPollingService();
 
-        Purpose getPurposeResponse = clientTokenConfigurator.getPurposeApiClient().getPurpose(
-            UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()));
-        try {
-            getPurposeResponse = pollingService.makePolling(() ->
-                clientTokenConfigurator.getPurposeApiClient().getPurpose(
-                    UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
-                a -> nonNull(requireNonNull(a.getCurrentVersion()).getRiskAnalysisDocument()),
-                "Non è stata rilevata alcuna risk analysis");
-        } catch (PollingPredicateException e) {
-            /* 12/12/2025 nel caso specifico si prevede che lo step possa NON riscontrare una risk
-                analysis (motivo per cui si sopprime l'eccezione), tuttavia viene eseguito il
-                polling per avere ragionevole certezza che la piattaforma abbia avuto il tempo
-                - qualora presente - di generarla. */
-        }
-
+        Purpose getPurposeResponse = pollingService.makePolling(
+            () -> purposeApiClient.getPurpose(
+                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+            res -> nonNull(res.getCurrentVersion().getRiskAnalysisDocument()),
+            "Non è stato prodotto alcun documento di analisi del rischio nel tempo limite"
+        );
         commonUtils.assertValidResponse();
         purposeVersions = getPurposeResponse.getVersions();
 
-        Purpose finalGetPurposeResponse = getPurposeResponse;
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().getRiskAnalysisDocument(
+                () -> purposeApiClient.getRiskAnalysisDocument(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId()),
-                        Optional.ofNullable(finalGetPurposeResponse.getCurrentVersion())
+                        Optional.ofNullable(getPurposeResponse.getCurrentVersion())
                                 .map(PurposeVersion::getRiskAnalysisDocument)
                                 .map(PurposeVersionDocument::getId)
-                                .orElse(null)
+                                .orElseThrow(() -> new IllegalStateException("Alla purpose non è associato alcun documento di analisi del rischio"))
                 )
         );
     }
