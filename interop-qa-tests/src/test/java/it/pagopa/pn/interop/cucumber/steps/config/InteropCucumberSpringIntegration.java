@@ -23,22 +23,24 @@ import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.M2MDelegationClient;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
-import it.pagopa.interop.e_service_template.impl.EServiceTemplateMainMapperImpl;
+import it.pagopa.interop.e_service_template.impl.EServiceTemplateMainMapper;
 import it.pagopa.interop.e_service_template.impl.M2MEServiceTemplateClientImpl;
 import it.pagopa.interop.e_service_template.impl.M2MEserviceTemplateAttributeClientImpl;
-import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
-import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
+import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
+import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceAttributeClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
-import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
-import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
+import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapper;
+import it.pagopa.interop.event.mapper.M2MEventMapper;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
+import it.pagopa.interop.probing.config.ProbingClientConfigs;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeTemplateClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -61,24 +63,25 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapper;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapper;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.mapper.EServiceTemplateVersionMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.mapper.EServiceTemplateVersionQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.mapper.EServiceTemplateVersionMapper;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.mapper.EServiceTemplateVersionQuotasMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapper;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
@@ -120,15 +123,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TracingClientConfigs.class,
         ProbingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
-        QAAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
         EServiceTemplateApiClientImpl.class,
         QAAbstractInteropTracingClient.class,
-        DescriptorAttributesMapperImpl.class,
+        DescriptorAttributesMapper.class,
         EServiceTemplateTestAssistant.class,
         EServiceTemplateStepContext.class,
-        RiskAnalysisMapperImpl.class,
+        RiskAnalysisMapper.class,
         it.pagopa.interop.authorization.service.DataPreparationService.class,
         M2MAgreementClientImpl.class,
         M2MCertifiedAttributeClientImpl.class,
@@ -147,21 +149,21 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MEserviceTemplateAttributeClientImpl.class,
         M2MEventClientImpl.class,
         DelayServiceImpl.class,
-        EServiceMapperImpl.class,
-        EServiceNameMapperImpl.class,
-        EServiceDelegationMapperImpl.class,
-        EServiceDescriptionMapperImpl.class,
-        EServiceDescriptorMapperImpl.class,
-        EServiceTemplateMapperImpl.class,
-        EServiceTemplateVersionQuotasMapperImpl.class,
-        DocumentMapperImpl.class,
-        PurposeMapperImpl.class,
-        ReversePurposeMapperImpl.class,
-        EServiceTemplateVersionMapperImpl.class,
-        EServiceTemplateMainMapperImpl.class,
-        EServiceDescriptorQuotasMapperImpl.class,
-        EServiceAttributeMapperImpl.class,
-        M2MEventMapperImpl.class,
+        EServiceMapper.class,
+        EServiceNameMapper.class,
+        EServiceDelegationMapper.class,
+        EServiceDescriptionMapper.class,
+        EServiceDescriptorMapper.class,
+        EServiceTemplateMapper.class,
+        EServiceTemplateVersionQuotasMapper.class,
+        DocumentMapper.class,
+        PurposeMapper.class,
+        ReversePurposeMapper.class,
+        EServiceTemplateVersionMapper.class,
+        EServiceTemplateMainMapper.class,
+        EServiceDescriptorQuotasMapper.class,
+        EServiceAttributeMapper.class,
+        M2MEventMapper.class,
         EServicePatchContext.class,
         EServiceDescriptorPatchContext.class,
         PurposePatchContext.class,
@@ -185,14 +187,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PurposeTemplateCommonContext.class,
         PurposeTemplatePatchContext.class,
         PurposeTemplatePatchOperationsAssistant.class,
-        PurposeTemplateMapperImpl.class,
+        PurposeTemplateMapper.class,
         NotificationClientImpl.class,
         NotificationConfigClient.class,
         PropertyResolver.class,
         NotificationStore.class,
-        ProducerKeychainClientImpl.class
+        ProducerKeychainClientImpl.class,
         IPurposeTemplateClient.class,
-        PurposeTemplateClientImpl.class,
         ProbingClient.class
 })
 @EnableScheduling
