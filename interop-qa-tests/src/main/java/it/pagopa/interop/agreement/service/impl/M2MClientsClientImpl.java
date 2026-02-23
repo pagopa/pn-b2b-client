@@ -54,7 +54,7 @@ public class M2MClientsClientImpl extends AbstractClient implements IM2MClientsC
     @Override
     public Purposes getClientPurposes(UUID clientId, Integer offset, Integer limit, List<UUID> eserviceIds, List<PurposeVersionState> states) {
         return performOperation(() -> clientsApi.getClientPurposesWithHttpInfo(clientId, offset, limit, eserviceIds, states)
-        ).orElseThrow(() -> new RuntimeException(
+        ).orElseThrow(() -> new IllegalStateException(
                 "Errore nel recupero dei client (response non 2xx o body nullo)"
         ));
     }
