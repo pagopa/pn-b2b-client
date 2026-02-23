@@ -67,12 +67,12 @@ public class ClientSteps {
                 .allMatch(oneOfCreated, "each returned purpose match at least one created purpose");
     }
 
-    @When("vengono recuperate le finalità associate al client con limit {string} e offset {string} e filtri eserviceIds {string}, states {string}")
-    public void getClientPurposesWithPaginationAndFilters(String limit, String offset, String eserviceIds, String states) {
+    @When("vengono recuperate le finalità associate al client {string} con limit {string} e offset {string} e filtri eserviceIds {string}, states {string}")
+    public void getClientPurposesWithPaginationAndFilters(String client, String limit, String offset, String eserviceIds, String states) {
         Integer limitValue = StepParser.nullableInteger(limit);
         Integer offsetValue = StepParser.nullableInteger(offset);
 
-        UUID clientId = clientResolver.resolveClientId(ResolvableToken.ACTUAL.value());
+        UUID clientId = clientResolver.resolveClientId(client);
 
         List<UUID> eserviceIdFilter = StepParser.singletonFilterList(
                 eserviceIds,
@@ -100,10 +100,6 @@ public class ClientSteps {
             Assertions.assertThat(response)
                     .as("La response non deve essere null")
                     .isNotNull();
-
-            Assertions.assertThat(response.getResults().size())
-                    .as("Non si prevedono 0 results in nessun test-case")
-                    .isNotEqualTo(0);
 
             ClientPurposesFilters appliedFilters = new ClientPurposesFilters(eserviceIdFilter, stateFilter);
             assertResultsMatchFilters(response, appliedFilters);
