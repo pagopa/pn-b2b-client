@@ -11,11 +11,12 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapper;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -66,6 +67,28 @@ public class PurposePatchOperationsAssistant extends PurposeGenericPatchOperatio
             .freeOfChargeReason("some reason - " + uuid)
             .riskAnalysisForm(riskAnalysisFormSeed)
             .build();
+    }
+
+    public PurposePatchRequest buildDefaultPatchRequest(boolean validRiskAnalysis) {
+        UUID uuid = UUID.randomUUID();
+
+        String lastToken = clientTokenConfigurator.getLastToken();
+        String tenantType = sharedContext.getTenantType();
+        String token = identityService.getToken(tenantType, null);
+        clientTokenConfigurator.setBearerToken(token);
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, validRiskAnalysis);
+        clientTokenConfigurator.setBearerToken(lastToken);
+
+        RiskAnalysisFormSeed riskAnalysisFormSeed = riskAnalysisMapper.mapBFFToM2M(
+                riskAnalysis.getRiskAnalysisForm());
+        return PurposePatchRequest.builder()
+                .title("patched title - " + uuid)
+                .description("patched description - " + uuid)
+                .dailyCalls(10)
+                .isFreeOfCharge(true)
+                .freeOfChargeReason("some reason - " + uuid)
+                .riskAnalysisForm(riskAnalysisFormSeed)
+                .build();
     }
 
     @Override

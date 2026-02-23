@@ -1,5 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullOrBlankOrValue;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableInteger;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.parseNullableBooleanOrNull;
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.uuidOrRandomOrNull;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -410,6 +414,64 @@ public class PurposesSteps {
         purposePatchAssistant.patchResourceWithInvalidToken(purposePatchAssistant.buildDefaultPatchRequest());
     }
 
+    @When("viene aggiornato il draft purpose con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, riskAnalysisForm {string}, dailyCalls {string}")
+    public void patchDraftPurpose(
+            String purposeId,
+            String title,
+            String description,
+            String isFreeOfCharge,
+            String freeOfChargeReason,
+            String riskAnalysisForm,
+            String dailyCalls
+    ) {
+        UUID purposeIdValue = buildPurposeIdValue(purposeId);
+
+        // default valido (include un RiskAnalysisFormSeed valido)
+        PurposePatchRequest req = purposePatchAssistant.buildDefaultPatchRequest();
+
+        // override SEMPRE (anche a null)
+        req.setTitle(nullOrBlankOrValue(title));
+        req.setDescription(nullOrBlankOrValue(description));
+
+        // boolean: StepParser.nullableBoolean non va bene per invalid -> false,
+        // quindi parse manuale minimale:
+        req.setIsFreeOfCharge(parseNullableBooleanOrNull(isFreeOfCharge));
+
+        req.setFreeOfChargeReason(nullOrBlankOrValue(freeOfChargeReason));
+        req.setDailyCalls(nullableInteger(dailyCalls));
+
+        // riskAnalysisForm: token-based minimale
+        // - %null -> null
+        // - %actual -> lascia quello del default
+        // - %invalid -> riskAnalysis errata
+        String raf = nullOrBlankOrValue(riskAnalysisForm);
+        if (raf == null || raf.isBlank()) {
+            req.setRiskAnalysisForm(null);
+        } else if ("%actual".equalsIgnoreCase(raf) || "actual".equalsIgnoreCase(raf)) {
+            // non fare nulla: resta quello del default builder
+        } else if ("%invalid".equalsIgnoreCase(raf) || "invalid".equalsIgnoreCase(raf)) {
+            // se vuoi random vero, puoi richiamare buildDefaultPatchRequest() e prendere solo il RAF
+            req.setRiskAnalysisForm(purposePatchAssistant.buildDefaultPatchRequest(false).getRiskAnalysisForm());
+        } else {
+            req.setRiskAnalysisForm(null);
+        }
+
+        this.httpCallExecutor.performCall(
+                () -> purposeClient.patchPurpose(purposeIdValue, req)
+        );
+    }
+
+    private UUID buildPurposeIdValue(String purposeId) {
+        UUID purposeIdValue;
+        // FIXME logica da centralizzare in StepParser
+        if(purposeId.contains("actual")) {
+            purposeIdValue = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+        } else {
+            purposeIdValue = uuidOrRandomOrNull(purposeId);
+        }
+        return purposeIdValue;
+    }
+
     @Then("la finalità è stata parzialmente modificata correttamente")
     public void verificaPatchedPurpose() {
         purposePatchAssistant.checkPatchedResource();
@@ -443,6 +505,32 @@ public class PurposesSteps {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
         reversePurposePatchAssistant.patchResource(request);
     }
+
+    @When("viene aggiornata la finalità ad erogazione inversa con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, dailyCalls {string}")
+    public void patchReversePurposeDraft(
+            String purposeId,
+            String title,
+            String description,
+            String isFreeOfCharge,
+            String freeOfChargeReason,
+            String dailyCalls
+    ) {
+        UUID purposeIdValue = buildPurposeIdValue(purposeId);
+
+        // default valido
+        ReversePurposePatchRequest req = reversePurposePatchAssistant.buildDefaultPatchRequest();
+
+        // override SEMPRE (anche se null/blank/invalid -> diventa null e l'API può rispondere 400)
+        req.setTitle(nullOrBlankOrValue(title));
+        req.setDescription(nullOrBlankOrValue(description));
+        req.setIsFreeOfCharge(parseNullableBooleanOrNull(isFreeOfCharge));
+        req.setFreeOfChargeReason(nullOrBlankOrValue(freeOfChargeReason));
+        req.setDailyCalls(nullableInteger(dailyCalls));
+
+        // esegui chiamata
+        httpCallExecutor.performCall(() -> purposeClient.patchReversePurpose(purposeIdValue, req));
+    }
+
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
     public void patchReversePurposeUsing(String tenant, M2MRole m2mRole) {

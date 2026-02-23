@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 @Getter
 @Slf4j
-public abstract class AbstractClient  {
+public abstract class AbstractClient {
 
     @Setter
     protected IHttpExecutor httpCallExecutor;

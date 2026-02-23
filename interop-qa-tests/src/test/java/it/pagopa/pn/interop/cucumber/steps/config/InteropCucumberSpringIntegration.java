@@ -41,9 +41,12 @@ import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
+import it.pagopa.interop.notification.NotificationClientImpl;
+import it.pagopa.interop.notification.NotificationConfigClient;
+import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
-import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
+import it.pagopa.interop.purpose.service.impl.M2MPurposeTemplateClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
@@ -55,6 +58,7 @@ import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
@@ -87,11 +91,16 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOpe
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.PurposeMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
+import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -187,8 +196,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorQuotasPatchOperationsAssistant.class,
         ISelfcareClient.class,
         SelfcareClientImpl.class,
-        IPurposeTemplateClient.class,
         PurposeTemplateClientImpl.class,
+        M2MPurposeTemplateClientImpl.class,
+        PurposeTemplateCommonContext.class,
+        PurposeTemplatePatchContext.class,
+        PurposeTemplatePatchOperationsAssistant.class,
+        PurposeTemplateMapperImpl.class,
         NotificationClientImpl.class,
         NotificationConfigClient.class,
         PropertyResolver.class,

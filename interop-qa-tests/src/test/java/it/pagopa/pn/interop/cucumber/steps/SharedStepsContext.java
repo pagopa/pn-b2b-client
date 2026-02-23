@@ -14,6 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ProducerKeychainCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.notification.model.NotificationCommonContext;
@@ -52,6 +53,7 @@ public class SharedStepsContext {
     private AgreementCommonContext agreementCommonContext;
     private RiskAnalysisCommonContext riskAnalysisCommonContext;
     private EServiceTemplateStepContext eServiceTemplateStepContext;
+    private PurposeTemplateCommonContext purposeTemplateContext;
     private NotificationCommonContext notificationCommonContext = new NotificationCommonContext();
     private ProducerKeychainCommonContext producerKeychainCommonContext;
 
@@ -77,6 +79,7 @@ public class SharedStepsContext {
         agreementCommonContext = new AgreementCommonContext();
         riskAnalysisCommonContext = new RiskAnalysisCommonContext();
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
+        purposeTemplateContext = new PurposeTemplateCommonContext();
         producerKeychainCommonContext = new ProducerKeychainCommonContext();
     }
 
