@@ -1,0 +1,10 @@
+requestId;notificationSentAt;prepareRequestDate;productType;senderPaId;province;cap;attempt;iun;unifiedDeliveryDriver
+tcWeeklyPrintCapacity_1;2025-07-01T00:01:00Z;2025-07-01T00:01:00Z;RS;unknow;P8;CAP1_P8;0;AUTJ-PUKM-KDAJ-250111-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_2;2025-07-02T00:02:00Z;2025-07-02T00:02:00Z;RS;unknow;P8;CAP1_P8;0;AUTJ-PUKM-KDAJ-250112-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_3;2025-07-03T00:03:00Z;2025-07-03T00:03:00Z;RS;unknow;P8;CAP1_P8;0;AUTJ-PUKM-KDAJ-250113-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_4;2025-07-04T00:04:00Z;2025-07-04T00:04:00Z;RS;unknow;P8;CAP1_P8;0;AUTJ-PUKM-KDAJ-250114-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_5;2025-07-05T00:05:00Z;2025-07-05T00:05:00Z;RS;unknow;P8;CAP1_P8;0;AUTJ-PUKM-KDAJ-250115-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_6;2025-07-06T00:06:00Z;2025-07-06T00:06:00Z;AR;unknow;P8;CAP1_P8;1;AUTJ-PUKM-KDAJ-250116-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_7;2025-07-07T00:07:00Z;2025-07-07T00:07:00Z;AR;unknow;P8;CAP1_P8;1;AUTJ-PUKM-KDAJ-250117-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_8;2025-07-08T00:08:00Z;2025-07-08T00:08:00Z;AR;unknow;P8;CAP1_P8;1;AUTJ-PUKM-KDAJ-250118-T-1;infinityDriverP8
+tcWeeklyPrintCapacity_9;2025-07-09T00:09:00Z;2025-07-09T00:09:00Z;AR;unknow;P8;CAP1_P8;1;AUTJ-PUKM-KDAJ-250119-T-1;infinityDriverP8

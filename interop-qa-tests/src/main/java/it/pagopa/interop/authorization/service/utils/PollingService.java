@@ -1,13 +1,14 @@
 package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PollingService {
     private final InteropClientConfigs interopClientConfigs;
 
@@ -34,29 +35,27 @@ public class PollingService {
         throw new PollingPredicateException("Eventual consistency error: " + errorMessage);
     }
 
-    public <T> T makePolling(
-            Supplier<T> promise,
-            Predicate<T> shouldStop,
-            String errorMessage,
-            int maxTries,
-            long sleepMillis
-    ) {
+    public static <T> T makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage, int maxTries, long pollingFrequencyMillis) {
         try {
             for (int i = 0; i < maxTries; i++) {
-
-                Thread.sleep(sleepMillis);
-
+                // Esegue la funzione di polling
                 T response = promise.get();
 
+                // Verifica se la condizione di stop è soddisfatta
                 if (shouldStop.test(response)) {
                     return response;
                 }
+
+                // Attendi prima del prossimo tentativo (solo se non è l'ultimo)
+                if (i < maxTries - 1) {
+                    Thread.sleep(pollingFrequencyMillis);
+                }
             }
         } catch (InterruptedException e) {
-            log.error("Unexpected thread interruption during polling: {}", e.getMessage());
             Thread.currentThread().interrupt();
+            throw new IllegalStateException("Thread interrupted during polling", e);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error during polling: " + e.getMessage());
+            throw new IllegalArgumentException("Error during polling: " + e.getMessage(), e);
         }
 
         throw new PollingPredicateException("Eventual consistency error: " + errorMessage);

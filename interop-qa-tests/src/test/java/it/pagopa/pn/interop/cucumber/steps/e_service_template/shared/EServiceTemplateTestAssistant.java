@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.fail;
 
-import com.google.common.io.Files;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -38,7 +37,8 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import lombok.Data;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.jeasy.random.EasyRandom;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -286,7 +286,8 @@ public class EServiceTemplateTestAssistant {
                         *   sia inviando che ricevendo, anziché restituire void o un
                         *   oggetto File restituiscano un'oggetto hash di qualche tipo; a quel
                         *   punto qui basterà confrontare i valori hash. */
-                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(Files.toByteArray(res.getBody()), lastAddedDocument.body());
+                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(
+                            FileUtils.readFileToByteArray(res.getBody()), lastAddedDocument.body());
                     } catch (IOException e) {
                         throw new RuntimeException("Errore nella lettura del body binario della risposta HTTP: %s".formatted(res), e);
                     }
@@ -301,7 +302,7 @@ public class EServiceTemplateTestAssistant {
 
     public String buildPrettyName(EServiceTemplateDocumentKind kind) {
         return "e-service-template-%s-%d-%d".formatted(kind.toString(), sharedStepsContext.getTestSeed(),
-            RandomUtils.nextInt(1_000_000));
+            RandomUtils.insecure().randomInt(0, 1_000_000));
     }
 
     public void addRiskAnalysisToEServiceTemplateSuccessfully() {

@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -41,6 +42,11 @@ public class EServicesCommonContext {
     private String interfaceName;
     private UUID oldDescriptorId;
     private String name;
+    private String description;
+
+    private OffsetDateTime creationTimestamp;
+    private OffsetDateTime publicationTimestamp;
+    private OffsetDateTime eServiceEditTimestamp;
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

@@ -190,7 +190,7 @@ Feature: Invio messaggi cortesia e2e
       | denomination            | OK-CompiutaGiacenza_890 |
       | taxId                   | CLMCST42R12D969Z        |
       | digitalDomicile         | NULL                    |
-          | physicalAddress_address | Via@ok_AR               |
+      | physicalAddress_address | Via@ok_AR               |
       | payment_pagoPaForm      | SI                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
@@ -262,24 +262,22 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
 
 
-  @addressBook3 @courtesyMessage @cleanAddressBook #rif srs 39
+  @addressBook3 @courtesyMessage @cleanAddressBook @bankCourtesyMessage #rif srs 39
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_12] Verifica successione elementi - Invio DIGITALE con SEND, cortesia TPP solo PF
-    Given si predispone addressbook per l'utente "Dino Sauro"
-    Then l'utente "Dino Sauro" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    Given si predispone addressbook per l'utente "Mario Gherkin"
+    Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Dino Sauro"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     Given viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
-    And destinatario
-      | denomination       | Mario Gherkin    |
-      | taxId              | GRBGPP87L04L741X |
-      | digitalDomicile    | NULL             |
-      | payment_pagoPaForm | SI               |
-        When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And destinatario Mario Gherkin e:
+      | digitalDomicile    | NULL |
+      | payment_pagoPaForm | SI   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
@@ -341,20 +339,18 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
 
 
-  @addressBook3 @courtesyMessage @cleanAddressBook #rif srs 40
+  @addressBook3 @courtesyMessage @cleanAddressBook @bankCourtesyMessage #rif srs 40
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_16] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC, cortesia TPP solo PF
-    Given si predispone addressbook per l'utente "Dino Sauro"
+    Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
-    And destinatario
-      | denomination       | Mario Gherkin    |
-      | taxId              | GRBGPP87L04L741X |
-      | digitalDomicile    | NULL             |
-      | payment_pagoPaForm | SI               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile    | NULL |
+      | payment_pagoPaForm | SI   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "SEND_DIGITAL_DOMICILE" con una differenza massima di 999 secondi
@@ -502,14 +498,12 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
 
-  @courtesyMessage @addressBook3 #rif srs 42
+  @courtesyMessage @addressBook3 @bankCourtesyMessage #rif srs 42
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_24] Verifica successione elementi - Invio DIGITALE con domicilio digitale PEC SPECIALE, cortesia TPP solo PF
     Then viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
-    And destinatario
-      | denomination    | Mario Gherkin             |
-      | taxId           | GRBGPP87L04L741X          |
+    And destinatario Mario Gherkin e:
       | digitalDomicile | testpagopa1@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
@@ -571,7 +565,6 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "EMAIL","address": "provaemail@test.it"} |
 
 
-
   @courtesyMessage @uatCM #rif srs 43
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_27] Verifica successione elementi - Invio ANALOGICO, cortesia APPIO per PF UAT
     Given viene generata una nuova notifica
@@ -590,20 +583,18 @@ Feature: Invio messaggi cortesia e2e
       | details_digitalAddress | {"type": "APPIO", "address": "DISABLED"} |
 
 
-  @courtesyMessage @addressBook3 #rif srs 43
+  @courtesyMessage @addressBook3 @bankCourtesyMessage #rif srs 43
   Scenario: [COURTESY_MESSAGE_SERCQ_F2_28] Verifica successione elementi - Invio ANALOGICO, cortesia TPP solo PF
-    Given si predispone addressbook per l'utente "Dino Sauro"
-    Then l'utente "Dino Sauro" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    Given si predispone addressbook per l'utente "Mario Gherkin"
+    Then l'utente "Mario Gherkin" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Dino Sauro"
+    Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Mario Gherkin"
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario
-      | denomination            | Mario Gherkin    |
-      | taxId                   | GRBGPP87L04L741X |
-      | digitalDomicile         | NULL             |
-      | physicalAddress_address | Via@ok_AR        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And viene verificato che il timestamp dell'evento "SCHEDULE_ANALOG_WORKFLOW" sia immediatamente successivo a quello dell'evento "SEND_COURTESY_MESSAGE" con una differenza massima di 999 secondi
@@ -611,7 +602,6 @@ Feature: Invio messaggi cortesia e2e
       | details                | NOT_NULL                          |
       | details_recIndex       | 0                                 |
       | details_digitalAddress | {"type": "TPP", "address": "APP"} |
-
 
 
   @e2e @addressBook1

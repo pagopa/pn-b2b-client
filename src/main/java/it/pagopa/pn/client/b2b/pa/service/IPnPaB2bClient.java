@@ -22,13 +22,6 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV1(String notificationRequestId, String paProtocolNumber, String idempotenceToken);
 
-    //TODO MATTEO
-//    NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docIndex);
-//
-//    NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV1(String iun, Integer recipientIdx, String attachmentName);
-//
-//    void paymentEventsRequestPagoPaV1(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException;
-
 
     /**
      * V2
@@ -38,13 +31,6 @@ public interface IPnPaB2bClient extends SettableApiKey {
     NewNotificationRequestStatusResponse getNotificationRequestStatusV2(String notificationRequestId);
 
     NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV2(String notificationRequestId, String paProtocolNumber, String idempotenceToken);
-
-    //TODO MATTEO
-//    NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV2(String iun, Integer docIndex);
-//
-//    NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV2(String iun, Integer recipientIdx, String attachmentName);
-//
-//    void paymentEventsRequestPagoPaV2(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException;
 
     /**
      * V21
@@ -100,6 +86,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
     FullSentNotificationV26 getSentNotificationV26(String iun);
 
     FullSentNotificationV27 getSentNotificationV27(String iun);
+
+    FullSentNotificationV28 getSentNotificationV28(String iun);
 
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIndex);

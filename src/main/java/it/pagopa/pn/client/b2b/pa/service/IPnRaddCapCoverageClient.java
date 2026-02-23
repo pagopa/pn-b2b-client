@@ -9,6 +9,8 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
+import java.time.LocalDate;
+
 public interface IPnRaddCapCoverageClient {
 
 
@@ -16,7 +18,7 @@ public interface IPnRaddCapCoverageClient {
 
     Coverage updateCoverage(String cap, String locality, UpdateCoverageRequest updateCoverageRequest) throws RestClientException;
 
-    CheckCoverageResponse checkCoverage(SearchMode searchMode, CheckCoverageRequest checkCoverageRequest) throws RestClientException;
+    CheckCoverageResponse checkCoverage(SearchMode searchMode, CheckCoverageRequest checkCoverageRequest, LocalDate searchDate) throws RestClientException;
 
     ResponseEntity<Coverage> addCoverageWithHttpInfo(CreateCoverageRequest createCoverageRequest) throws RestClientException;
 

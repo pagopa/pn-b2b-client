@@ -1,13 +1,17 @@
 package it.pagopa.interop.purpose.service.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
@@ -18,22 +22,25 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersio
 import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Retryable(
-        retryFor = { HttpServerErrorException.class },
+        retryFor = {HttpServerErrorException.class},
         backoff = @Backoff(delay = 2000)
 )
 public class PurposeApiClientImpl implements IPurposeApiClient {
@@ -139,7 +146,12 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
 
     @Override
     public File getRiskAnalysisDocument(UUID purposeId, UUID versionId, UUID documentId) {
-        return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId);
+        try {
+            Resource resourceResponse = purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId);
+            return createTempFile("riskAnalysis-document-",resourceResponse.getInputStream());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
@@ -150,6 +162,16 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public PurposeVersionResource updateReversePurpose(UUID purposeId, ReversePurposeUpdateContent reversePurposeUpdateContent) {
         return purposesApi.updateReversePurpose(purposeId, reversePurposeUpdateContent);
+    }
+
+    @Override
+    public CreatedResource createPurposeFromTemplate(UUID purposeTemplateId, PurposeFromTemplateSeed purposeFromTemplateSeed) throws RestClientException {
+        return purposesApi.createPurposeFromTemplate(purposeTemplateId, purposeFromTemplateSeed);
+    }
+
+    @Override
+    public PurposeVersionResource patchUpdatePurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPurposeUpdateFromTemplateContent) throws RestClientException {
+        return purposesApi.patchUpdatePurposeFromTemplate(purposeTemplateId, purposeId, patchPurposeUpdateFromTemplateContent);
     }
 
     @Override

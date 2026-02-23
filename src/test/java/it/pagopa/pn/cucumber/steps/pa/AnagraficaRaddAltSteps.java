@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
@@ -16,11 +18,13 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.*;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.Problem;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +54,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.*;
+
+import it.pagopa.pn.cucumber.steps.pa.strategies.SelectiveUpdateStrategies;
+import it.pagopa.pn.cucumber.steps.pa.strategies.ExpectedErrorMessageStrategies;
 
 @Slf4j
 public class AnagraficaRaddAltSteps {
@@ -84,6 +91,8 @@ public class AnagraficaRaddAltSteps {
     protected String locationId;
     protected RegistryV2 registryV2Response;
     protected String PARTNER_ID_NOT_VALID = "#@#";
+
+    protected int lastHttpStatus;
 
     @Autowired
     public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnRaddAlternativeV2ClientImpl raddAltClientV2, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt, SettableAuthTokenRaddCognito settableAuthTokenRaddCognito) {
@@ -900,7 +909,7 @@ public class AnagraficaRaddAltSteps {
                 softly.assertThat(firstCode)
                         .withFailMessage("Il primo externalCode non deve essere null")
                         .isNotNull();
-                        //.hasSizeGreaterThan(4);
+                //.hasSizeGreaterThan(4);
             }
 
             // appointmentRequired → booleano
@@ -1582,5 +1591,121 @@ public class AnagraficaRaddAltSteps {
         raddAltClient.setAuthTokenRadd(raddOperator.getIssuerType());
         return raddOperator;
     }
+
+    // --- (START) --- PN-17459 | PN-17689 --- (START) --- //
+    @When("aggiorno la sede RADD tramite PATCH impostando")
+    public void aggiornoLaSedeRaddTramitePatchImpostando(DataTable dataTable) {
+        Map<String, String> values = dataTable.asMaps(String.class, String.class).get(0);
+        UpdateRegistryRequestV2 request = new UpdateRegistryRequestV2();
+        Coordinates coordinates = new Coordinates();
+        coordinates.setLatitude(mapDouble(values.get("latitude")));
+        coordinates.setLongitude(mapDouble(values.get("longitude")));
+        request.setCoordinates(coordinates);
+        this.updateRegistryRequestV2 = request;
+        executePatch(request);
+    }
+
+    @When("aggiorno la sede RADD tramite PUT Selective impostando")
+    public void aggiornoLaSedeRaddTramitePutSelectiveImpostando(DataTable table) {
+        Map<String, String> row = table.asMaps().get(0);
+        String field = row.get("field");
+        String value = mapValue(row.get("value"));
+
+        SelectiveUpdateRegistryRequestV2 request = buildSelectivePutRequestFromCreationRequest();
+        applyPutSelectiveField(request, field, value);
+        executePutSelective(request);
+    }
+
+    @When("aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione")
+    public void aggiornoLaSedeRaddTramitePutSelectiveUtilizzandoLaRequestDiCreazione() {
+        executePutSelective(buildSelectivePutRequestFromCreationRequest());
+    }
+
+    @Then("la response deve restituire status code {int}")
+    public void laResponseDeveRestituireStatusCode(int expectedStatusCode) {
+        Assertions.assertEquals(expectedStatusCode, lastHttpStatus);
+    }
+
+    @Then("se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo {string} e valore {string}")
+    public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedErrorType, String testedValueString) throws JsonProcessingException {
+        if (lastHttpStatus != 400) return;
+        HttpStatusCodeException e = sharedSteps.getNotificationError();
+        assertNotNull(e, "Attesa una risposta di errore HTTP ma nessuna eccezione è stata intercettata");
+        String body = e.getResponseBodyAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        Problem problem = mapper.readValue(body, Problem.class);
+        String expectedDetail = ExpectedErrorMessageStrategies.build(expectedErrorType, testedValueString);
+        boolean found = problem.getErrors().stream().anyMatch(err -> expectedDetail.contains(err.getDetail()));
+        assertTrue(found, "Messaggio di errore atteso non trovato. Atteso: " + expectedDetail + " - Body: " + body);
+    }
+
+    @Then("se lo status della response è 200, la response deve contenere i valori corretti per lat {string} e lon {string}")
+    public void seLoStatusDellaResponseE200LaResponseDeveContenereINuoviValori(String expectedLat, String expectedLon) {
+        if (lastHttpStatus != 200) return;
+        assertNotNull(registryV2Response, "registryV2Response è null");
+        String actualLat = registryV2Response != null ? registryV2Response.getNormalizedAddress().getLatitude() : null;
+        String actualLon = registryV2Response != null ? registryV2Response.getNormalizedAddress().getLongitude() : null;
+        assertEquals(expectedLat, actualLat, "Latitude non corretta. Attesa: " + expectedLat + " trovata: " + actualLat);
+        assertEquals(expectedLon, actualLon, "Longitude non corretta. Attesa: " + expectedLon + " trovata: " + actualLon);
+    }
+
+    private SelectiveUpdateRegistryRequestV2 buildSelectivePutRequestFromCreationRequest() {
+        if (createRegistryRequestV2 == null) throw new IllegalStateException("CreateRegistryRequestV2 non presente.");
+        else if( createRegistryRequestV2.getAddress() == null) throw new IllegalStateException("CreateRegistryRequestV2.address non presente");
+        SelectiveUpdateRegistryRequestV2 request = new SelectiveUpdateRegistryRequestV2();
+        request.setAddress(cloneAddressFromCreation());
+        request.setDescription("Descrizione RADD");
+        request.setPhoneNumbers(List.of("33312345678"));
+        request.setExternalCodes(List.of("EXT01QA"));
+        return request;
+    }
+
+    private AddressV2 cloneAddressFromCreation() {
+        if (createRegistryRequestV2 == null || createRegistryRequestV2.getAddress() == null) throw new IllegalStateException("CreateRegistryRequestV2 o address non presenti");
+        AddressV2 src = createRegistryRequestV2.getAddress();
+        return new AddressV2().addressRow(src.getAddressRow()).cap(src.getCap()).city(src.getCity()).province(src.getProvince()).country(src.getCountry());
+    }
+
+    private String mapValue(String value){
+        if(StringUtils.equalsIgnoreCase(value, "NULL")) return null;
+        else if(StringUtils.equalsIgnoreCase(value, "BLANK")) return "";
+        else if(StringUtils.equalsIgnoreCase(value, "<201_characters>")) return "A".repeat(201);
+        else return value;
+    }
+
+    private Double mapDouble(String value) {
+        if (StringUtils.isBlank(value)) return null;
+        else if ("NULL".equalsIgnoreCase(value)) return null;
+        try { return Double.valueOf(value); }
+        catch (NumberFormatException e) { throw e; }
+    }
+
+    private void applyPutSelectiveField(SelectiveUpdateRegistryRequestV2 request, String field, String value) {
+        if (request == null) throw new IllegalStateException("request non presente");
+        else if (request.getAddress() == null) throw new IllegalStateException("address non presente");
+        SelectiveUpdateStrategies.apply(request, field, value);
+    }
+
+    private void executePutSelective(SelectiveUpdateRegistryRequestV2 request) {
+        try {
+            registryV2Response = raddAltClientV2.selectiveUpdateRegistry(xPagopaPnCxId, locationId, request);
+            lastHttpStatus = HttpStatus.OK.value();
+        } catch (HttpStatusCodeException e) {
+            lastHttpStatus = e.getStatusCode().value();
+            sharedSteps.setNotificationError(e);
+        }
+    }
+
+    private void executePatch(UpdateRegistryRequestV2 request) {
+        try {
+            RegistryV2 response = raddAltClientV2.updateRegistry( this.xPagopaPnCxId, this.locationId, request );
+            this.registryV2Response = response;
+            this.lastHttpStatus = HttpStatus.OK.value();
+        } catch (HttpStatusCodeException e) {
+            this.lastHttpStatus = e.getStatusCode().value();
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+    // --- (END) --- PN-17459 | PN-17689 --- (END) --- //
 
 }

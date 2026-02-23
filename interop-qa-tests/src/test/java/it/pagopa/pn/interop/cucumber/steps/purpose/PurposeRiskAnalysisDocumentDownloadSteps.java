@@ -1,25 +1,27 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import static java.util.Objects.nonNull;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionDocument;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-import org.junit.jupiter.api.Assertions;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
 
 public class PurposeRiskAnalysisDocumentDownloadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -46,25 +48,26 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
     @When("l'utente scarica il documento di analisi del rischio")
     public void userDownloadRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        dataPreparationService.waitRiskAnalysisDocument();
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        PollingService pollingService = sharedStepsContext.getPollingService();
 
-        Purpose getPurposeResponse = clientTokenConfigurator.getPurposeApiClient().getPurpose(
-                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
+        Purpose getPurposeResponse = pollingService.makePolling(
+            () -> purposeApiClient.getPurpose(
+                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+            res -> nonNull(res.getCurrentVersion().getRiskAnalysisDocument()),
+            "Non è stato prodotto alcun documento di analisi del rischio nel tempo limite"
         );
         commonUtils.assertValidResponse();
         purposeVersions = getPurposeResponse.getVersions();
-        UUID riskAnalysisId = Optional.ofNullable(getPurposeResponse.getCurrentVersion())
-                .map(PurposeVersion::getRiskAnalysisDocument)
-                .map(PurposeVersionDocument::getId)
-                .orElse(null);
-
-        sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
 
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().getRiskAnalysisDocument(
+                () -> purposeApiClient.getRiskAnalysisDocument(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId()),
-                        riskAnalysisId
+                        Optional.ofNullable(getPurposeResponse.getCurrentVersion())
+                                .map(PurposeVersion::getRiskAnalysisDocument)
+                                .map(PurposeVersionDocument::getId)
+                                .orElseThrow(() -> new IllegalStateException("Alla purpose non è associato alcun documento di analisi del rischio"))
                 )
         );
     }

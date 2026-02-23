@@ -9,6 +9,8 @@ import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
+import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
@@ -16,24 +18,27 @@ import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static java.lang.Thread.sleep;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @RequiredArgsConstructor
 public class DelayerSteps {
 
-    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv"};
-    public static final int POLLING_MAX_MINUTES = 45;
+    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv"};
+    public static final int POLLING_MAX_MINUTES = 90;
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
@@ -57,7 +62,7 @@ public class DelayerSteps {
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
     public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
         csvLoader.readCsv(csv, expectedNotificationCount);
-        csvLoader.initializeExpectedDeliveryDate();
+        csvLoader.initializeExpectedDeliveryDate(dataTable);
         csvLoader.initializeLimits();
         csvLoader.initializeSeeds(dataTable);
     }
@@ -210,8 +215,20 @@ public class DelayerSteps {
 
     @And("si presuppone che la capacità di stampa giornaliera sia {word} {int}")
     public void initPrintCapacity(String compare, int limit) {
-        context.printCapacity = calculateLimitByComparativo(compare, limit);
+        context.setPrintCapacity(calculateLimitByComparativo(compare, limit));
         if (context.printCapacity < 0) throw new IllegalArgumentException("Capacità di stampa non valida");
+    }
+
+    @And("viene impostata la capacità di stampa settimanale in modo che sia {word} {int}")
+    public void setWeeklyPrintCapacity(String compare, int limit) {
+        int weeklyPrintCapacity = calculateLimitByComparativo(compare, limit);
+        if (weeklyPrintCapacity < 0) throw new IllegalArgumentException("Capacità di stampa non valida");
+        context.setWeeklyPrintCapacity(weeklyPrintCapacity);
+    }
+
+    @And("viene impostato il limite massimo di {int} spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine")
+    public void setMaxToPhase2(int maxToPhase2) {
+        context.setMaxDeliveryToPhase2ForExecution(maxToPhase2);
     }
 
     @And("vengono simulate internamente le operazioni di BatchWorkflowStateMachine")
@@ -228,24 +245,61 @@ public class DelayerSteps {
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        lambdaClient.invoke("RUN_ALGORITHM", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverCapacities", "pn-PaperDeliveryDriverUsedCapacities",
-                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(context.printCapacity));
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getCurrentMonday()).getExecutionArn();
+        waitUntilStepFunctionEnd();
     }
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        lambdaClient.invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
+        context.currentExecutionArn = lambdaClient.runDelayerToPaperChannel().getExecutionArn();
+        waitUntilStepFunctionEnd();
+        ++context.currentStepFunction2ExecutionIndex;
+        checkPrintCapacityCounter();
+    }
+
+    @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
+    public void checkPrintCapacityCounter(){
+        DelayerPrintCapacityCounter tupla = lambdaClient.getPrintCapacityCounter(context.expectedDeliveryDate);
+        Assertions.assertThat(tupla).isNotNull();
+        boolean hasDeliveryInEvaluatePrint = !context.getExpectedByWorkflowStep(EVALUATE_PRINT_CAPACITY).isEmpty();
+
+        if (hasDeliveryInEvaluatePrint) {
+            Assertions.assertThat(tupla.getDailyExecutionNumber())
+                    .as("DailyExecutionNumber deve essere uguale allo STANDARD_DAILY_EXECUTIONS")
+                    .isEqualTo(DelayerContext.STANDARD_DAILY_EXECUTIONS);
+
+            Assertions.assertThat(tupla.getDailyExecutionCounter())
+                    .as("DailyExecutionCounter deve essere uguale a quello calcolato internamente")
+                    .isEqualTo(context.currentStepFunction2ExecutionIndex);
+        }
+    }
+
+    @When("vengono avviate le {int} esecuzioni della step function DelayerToPaperChannelStateMachine")
+    public void runSecondStepFunctionWithLimit(int expectedExecutions) throws Exception {
+        context.expectedExecutions = expectedExecutions;
+        context.assertPhase2ByExecutionCounter = true;
+
+        while (context.currentStepFunction2ExecutionIndex < context.expectedExecutions) {
+            // Avvio la seconda step function
+            runSecondStepFunction();
+
+            // Prelevo tutte le notifiche in SENT_TO_PREPARE_PHASE_2
+            fetchNotification(SENT_TO_PREPARE_PHASE_2.name());
+
+            // Verifico che siano elaborate le notifiche secondo i limiti e secondo il ranking
+            checkRanking(SENT_TO_PREPARE_PHASE_2.name(), null);
+        }
+
+        context.assertPhase2ByExecutionCounter = false;
     }
 
     @Then("vengono recuperate le notifiche al workflow step {string}")
     public void fetchNotification(String ws) throws Exception {
         WorkflowSteps step = valueOf(ws);
-        List<DelayerPaperDelivery> expected = context.expectedPianification.values().stream()
-                .flatMap(m -> m.getOrDefault(step.name(), List.of()).stream())
-                .toList();
+        List<DelayerPaperDelivery> expected = context.getExpectedByWorkflowStep(step);
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, POLLING_MAX_MINUTES);
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         actual.forEach(dpd -> {
             String seed = extractSeed(dpd);
@@ -263,7 +317,7 @@ public class DelayerSteps {
         if (notExpected.isEmpty()) log.warn("Nessuna notifica esistente per il seed: " + seed);
 
         Set<String> requestIds = notExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 5);
+        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         validator.checkNotExistSilently(actual, seed, step);
     }
@@ -283,15 +337,79 @@ public class DelayerSteps {
         validator.checkFrozen(step, frozenExpected);
     }
 
-    @Given("verifica che la capacità disponibile per ogni tripla (unifiedDeliveryDriver-provincia-deliveryDate) sia {word} {int}")
-    public void checkDriverCapacity(String compare, Integer value) {
-        validator.checkDriverCapacity(compare, value, EVALUATE_DRIVER_CAPACITY);
-    }
-
     @Then("verifica la corretta pianificazione di ogni test case")
     public void assertAll() {
         validator.assertPianifications();
     }
 
+    private void waitUntilStepFunctionEnd() throws InterruptedException {
+        if (context.currentExecutionArn == null) return;
 
+        final String arn = context.currentExecutionArn;
+
+        final long startTime = System.currentTimeMillis();
+        final long maxWaitMillis = TimeUnit.MINUTES.toMillis(POLLING_MAX_MINUTES);
+        final long pollingIntervalMillis = TimeUnit.MINUTES.toMillis(1);
+
+        log.info("Inizio polling Step Function: {}", arn);
+
+        while (true) {
+
+            ExecutionStatusResponse status;
+
+            try {
+                status = lambdaClient.getExecutionStatus(arn);
+            } catch (Exception e) {
+                log.error(e.getCause().toString());
+                if (System.currentTimeMillis() - startTime > TimeUnit.MINUTES.toMillis(5))
+                    throw new RuntimeException("Timeout durante il recupero dello stato della Step Function: " + arn, e);
+
+                sleep(pollingIntervalMillis);
+                continue;
+            }
+
+            String state = status.getStatus();
+            log.info("Stato StepFunction {} → {}", arn, state);
+
+            // Stato non ricevuto
+            if (state == null) {
+                log.warn("Stato null dalla Step Function {}, riprovo...", arn);
+                sleep(pollingIntervalMillis);
+                continue;
+            }
+
+            switch (state) {
+                case "RUNNING":
+                    // continua polling
+                    break;
+
+                case "SUCCEEDED":
+                    log.info("Step Function {} completata con successo.", arn);
+                    return;
+
+                case "FAILED":
+                case "TIMED_OUT":
+                case "ABORTED":
+                    log.error("Step Function {} terminata con errore: {} - cause: {}",
+                            arn, status.getError(), status.getCause());
+                    throw new RuntimeException(
+                            "Step Function TERMINATED WITH ERROR: state=" + state +
+                                    ", error=" + status.getError() +
+                                    ", cause=" + status.getCause()
+                    );
+
+                default:
+                    log.warn("Stato Step Function {} sconosciuto: {}", arn, state);
+                    break;
+            }
+
+            // Controllo timeout
+            if (System.currentTimeMillis() - startTime > maxWaitMillis) {
+                throw new RuntimeException("Timeout: Step Function non è terminata entro 10 minuti: " + arn);
+            }
+
+            // Prossimo polling
+            sleep(pollingIntervalMillis);
+        }
+    }
 }
