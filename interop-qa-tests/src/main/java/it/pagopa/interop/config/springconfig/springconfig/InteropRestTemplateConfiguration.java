@@ -1,16 +1,6 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
 
-import static java.util.List.of;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.common.interceptor.dpop.utils.DPoPAccessTokenSupplier;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
@@ -32,6 +22,16 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.utils.StringUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.List.of;
+
 @Configuration
 @EnableRetry
 public class InteropRestTemplateConfiguration {
@@ -52,9 +52,9 @@ public class InteropRestTemplateConfiguration {
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestResponseLoggingInterceptor());
         restTemplate.getMessageConverters().addAll(of(
-            new FileHttpMessageConverter(),
-            new FileDownloadMultipartConverter()
-            ));
+                new FileHttpMessageConverter(),
+                new FileDownloadMultipartConverter()
+        ));
         return restTemplate;
     }
 
@@ -85,7 +85,7 @@ public class InteropRestTemplateConfiguration {
         rt.setErrorHandler(customRestTemplate.getErrorHandler());
         rt.setUriTemplateHandler(customRestTemplate.getUriTemplateHandler());
 
-        // se vuoi mantenere SOLO il logging interceptor dal base:
+        // SOLO il logging interceptor dal base:
         List<ClientHttpRequestInterceptor> base = customRestTemplate.getInterceptors().stream()
                 .filter(i -> i.getClass().getName().contains("RequestResponseLoggingInterceptor"))
                 .toList();
@@ -126,7 +126,7 @@ public class InteropRestTemplateConfiguration {
         }
 
         private ClientHttpResponse logResponse(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-            try(ClientHttpResponse response = execution.execute(request, body)) {
+            try (ClientHttpResponse response = execution.execute(request, body)) {
 
                 logger.info("Response Status Code: {}", response.getStatusCode());
                 logger.info("Response Status Text: {}", response.getStatusText());
