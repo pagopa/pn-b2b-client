@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.utility;
 
-import it.pagopa.pn.interop.cucumber.enums.ResolvableToken;
+import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 
 import java.util.List;
 import java.util.UUID;
