@@ -44,7 +44,7 @@ public class M2MClientsClientImpl implements IM2MClientsClient {
 
     @Override
     public Purposes getClientPurposes(UUID clientId, int offset, int limit) {
-        return clientsApi.getClientPurposes(clientId, offset, limit);
+        return clientsApi.getClientPurposes(clientId, offset, limit, null, null);
     }
 
     @Override
