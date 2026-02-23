@@ -108,6 +108,20 @@ public class M2MAuthSteps {
         }
     }
 
+    @Given("viene rimosso l'header di autenticazione DPoP")
+    public void removeDpopAuthHeaders() {
+        Auth auth = sharedStepsContext.getAuth();
+        auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_AUTH);
+        clientTokenConfigurator.setAuth(auth);
+    }
+
+    @Given("viene rimosso l'header DPoP proof")
+    public void removeDpopProofHeader() {
+        Auth auth = sharedStepsContext.getAuth();
+        auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_DPOP);
+        clientTokenConfigurator.setAuth(auth);
+    }
+
     @Deprecated(forRemoval = true)
     @Given("l'utente è un {string} di {string} e predispone le credenziali per il ruolo M2M {m2mRole}")
     public void prepareM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
