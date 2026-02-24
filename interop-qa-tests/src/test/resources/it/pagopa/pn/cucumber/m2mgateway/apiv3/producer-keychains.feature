@@ -81,7 +81,7 @@ Feature: Gestione dei producer keychains - API v3
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    Then si ottiene response status code 400
+    Then si ottiene response status code 401
 
   Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_6] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1"
@@ -153,7 +153,7 @@ Feature: Gestione dei producer keychains - API v3
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     Then viene recuperata la producer-key con kid "%actual"
-    And si ottiene response status code 403
+    And si ottiene response status code 401
 
   Scenario: [GET_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
@@ -170,7 +170,7 @@ Feature: Gestione dei producer keychains - API v3
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene rimosso l'header di autenticazione DPoP
     Then viene recuperata la producer-key con kid "%actual"
-    And si ottiene response status code 403
+    And si ottiene response status code 400
 
   Scenario: [GET_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
@@ -187,7 +187,7 @@ Feature: Gestione dei producer keychains - API v3
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene rimosso l'header DPoP proof
     Then viene recuperata la producer-key con kid "%actual"
-    And si ottiene response status code 403
+    And si ottiene response status code 400
 
   Scenario Outline: [DELETE_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
@@ -233,7 +233,7 @@ Feature: Gestione dei producer keychains - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
-    And si ottiene response status code 400
+    And si ottiene response status code 401
     #TODO: da implementare -> 429
 
   Scenario: [DELETE_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
@@ -304,7 +304,7 @@ Feature: Gestione dei producer keychains - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When viene associato l'utente "%actual" alla producer keychain "%actual"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 401
 
   Scenario: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_3] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
@@ -356,7 +356,7 @@ Feature: Gestione dei producer keychains - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When viene invocata l'API di recupero utenze associate alla producer keychain "%actual" con limit "10" offset "0"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 401
 
   Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_3] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
@@ -435,7 +435,7 @@ Feature: Gestione dei producer keychains - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 401
 
   Scenario: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_3] Eliminazione associazione tra utenza e producer keychain specificati
     Given l'utente è un "admin" di "PA1"
