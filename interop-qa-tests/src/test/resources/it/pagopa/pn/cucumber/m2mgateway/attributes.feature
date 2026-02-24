@@ -18,7 +18,8 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @sad-path
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 401
     And certifiedAttribute non restituito
