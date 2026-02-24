@@ -36,13 +36,13 @@ Feature: Gestione utenti con API M2M V3
 
   Scenario: [M2M_V3_GET_USERS_4] Recupero utenti appartenenti al tenant del richiedente
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene rimosso l'header Authorization con schema DPoP
+    And viene rimosso l'header di autenticazione DPoP
     And viene invocata l'API di recupero utenze appartenenti al tenant del richiedente con limit "10" offset "0" e roles "%null"
     Then si ottiene response status code 400
 
   Scenario: [M2M_V3_GET_USERS_5] Recupero utenti appartenenti al tenant del richiedente
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And E viene rimosso l'header DPoP contenente il proof
+    And viene rimosso l'header DPoP proof
     And viene invocata l'API di recupero utenze appartenenti al tenant del richiedente con limit "10" offset "0" e roles "%null"
     Then si ottiene response status code 400
 
@@ -71,13 +71,13 @@ Feature: Gestione utenti con API M2M V3
 
   Scenario: [M2M_V3_GET_USER_3] Recupero utenti appartenenti al tenant del richiedente
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene rimosso l'header Authorization con schema DPoP
+    And viene rimosso l'header di autenticazione DPoP
     When viene invocata l'API per il recupero dell'utente "%actual" purchè appartenente al tenant del richiedente
     Then si ottiene response status code 400
 
   Scenario: [M2M_V3_GET_USER_4] Recupero utenti appartenenti al tenant del richiedente
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And E viene rimosso l'header DPoP contenente il proof
+    And viene rimosso l'header DPoP proof
     When viene invocata l'API per il recupero dell'utente "%actual" purchè appartenente al tenant del richiedente
     Then si ottiene response status code 400
 

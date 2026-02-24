@@ -108,14 +108,14 @@ public class M2MAuthSteps {
         }
     }
 
-    @Given("viene rimosso l'header Authorization con schema DPoP")
+    @Given("viene rimosso l'header di autenticazione DPoP")
     public void removeDpopAuthHeaders() {
         Auth auth = sharedStepsContext.getAuth();
         auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_AUTH);
         clientTokenConfigurator.setAuth(auth);
     }
 
-    @Given("E viene rimosso l'header DPoP contenente il proof")
+    @Given("viene rimosso l'header DPoP proof")
     public void removeDpopProofHeader() {
         Auth auth = sharedStepsContext.getAuth();
         auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_DPOP);
