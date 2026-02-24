@@ -6,6 +6,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
 import it.pagopa.interop.producer_keychains.IProducerKeychainsClient;
@@ -51,6 +52,9 @@ public class ProducerKeychainsClient extends AbstractClient implements IProducer
         return performOperation(SimpleOperation.of(() -> producerKeychainApi.getProducerKeychain(producerKeychainId), res -> res)).orElseThrow(() -> new IllegalStateException("Errore nel recupero del producer keychain (response non 2xx o body nullo)"));
     }
 
+    public void createProducerKeychainKey(UUID producerKeychainId, KeySeed keySeed) {
+        performOperation(() -> producerKeychainApi.createProducerKeyWithHttpInfo(producerKeychainId, keySeed));
+    }
 
     public void setBearerToken(String bearerToken) {
         this.producerKeychainApi.setApiClient(createProducerKeychainApiClient(bearerToken));
