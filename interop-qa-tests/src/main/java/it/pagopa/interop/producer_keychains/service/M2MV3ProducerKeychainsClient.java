@@ -12,7 +12,9 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKe
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
 import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+
 import java.util.UUID;
+
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -74,7 +76,7 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
         return performOperation(
                 () -> keysApi.getProducerJWKByKidWithHttpInfo(kid)
         ).orElseThrow(
-                () -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)")
+                () -> new IllegalStateException("Errore nel recupero della chiave del producer keychain (response non 2xx o body nullo)")
         );
     }
 }
