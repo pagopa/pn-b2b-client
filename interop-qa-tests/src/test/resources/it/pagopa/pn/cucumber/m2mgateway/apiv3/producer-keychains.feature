@@ -69,7 +69,50 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     Then si ottiene response status code 409
 
-  Scenario Outline: [GET_PRODUCER_KEY] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+  Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_5] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    Then si ottiene response status code 400
+
+  Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_6] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header di autenticazione DPoP
+    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    Then si ottiene response status code 400
+
+  Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_7] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header DPoP proof
+    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    Then si ottiene response status code 400
+
+
+  Scenario Outline: [GET_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -95,7 +138,58 @@ Feature: Gestione dei producer keychains - API v3
       | %random | 404        |
       | %null   | 400        |
 
-  Scenario Outline: [DELETE_PRODUCER_KEY] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+  Scenario: [GET_PRODUCER_KEY_2] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene response status code 204
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    Then viene recuperata la producer-key con kid "%actual"
+    And si ottiene response status code 403
+
+  Scenario: [GET_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene response status code 204
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header di autenticazione DPoP
+    Then viene recuperata la producer-key con kid "%actual"
+    And si ottiene response status code 403
+
+  Scenario: [GET_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene response status code 204
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header DPoP proof
+    Then viene recuperata la producer-key con kid "%actual"
+    And si ottiene response status code 403
+
+  Scenario Outline: [DELETE_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -125,7 +219,59 @@ Feature: Gestione dei producer keychains - API v3
       | %actual | %random    | PA1    | 400        |
       | %actual | %null      | PA1    | 400        |
 
-  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Associazione utenze a producer keychain
+  Scenario: [DELETE_PRODUCER_KEY_2] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene response status code 200
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
+    And si ottiene response status code 400
+    #TODO: da implementare -> 429
+
+  Scenario: [DELETE_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene response status code 200
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header di autenticazione DPoP
+    Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
+    And si ottiene response status code 400
+    #TODO: da implementare -> 429
+
+  Scenario: [DELETE_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+      | key    | name   | alg    | use    | keychainId |
+      | %valid | %valid | %valid | %valid | %actual    |
+    And si ottiene response status code 200
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header DPoP proof
+    Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
+    And si ottiene response status code 400
+    #TODO: da implementare -> 429
+
+
+  Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -133,7 +279,6 @@ Feature: Gestione dei producer keychains - API v3
     When viene associato l'utente "<userId>" alla producer keychain "<producerKeychainId>"
     Then si ottiene response status code <statusCode>
 
-    #TODO: da implementare -> i 2 status 401
     Examples:
       | tenant | userId                               | producerKeychainId | m2mRoles  | statusCode |
       | PA1    | %actual                              | %actual            | m2m-admin | 204        |
@@ -152,8 +297,35 @@ Feature: Gestione dei producer keychains - API v3
     # utente non autorizzato
       | PA1    | %actual                              | %actual            | m2m       | 403        |
 
+  Scenario: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_2] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When viene associato l'utente "%actual" alla producer keychain "%actual"
+    Then si ottiene response status code 400
 
-  Scenario Outline: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS] Associazione utenze a producer keychain
+  Scenario: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_3] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header di autenticazione DPoP
+    When viene associato l'utente "%actual" alla producer keychain "%actual"
+    Then si ottiene response status code 400
+
+  Scenario: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_4] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header DPoP proof
+    When viene associato l'utente "%actual" alla producer keychain "%actual"
+    Then si ottiene response status code 400
+
+
+  Scenario Outline: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_1] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -175,6 +347,40 @@ Feature: Gestione dei producer keychains - API v3
       | PA1    | %random            | 10    | 0      | 404        |
       | PA2    | %random            | 10    | 0      | 404        |
 
+  Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_2] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When viene invocata l'API di recupero utenze associate alla producer keychain "%actual" con limit "10" offset "0"
+    Then si ottiene response status code 400
+
+  Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_3] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header di autenticazione DPoP
+    When viene invocata l'API di recupero utenze associate alla producer keychain "%actual" con limit "10" offset "0"
+    Then si ottiene response status code 400
+
+  Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_4] Associazione utenze a producer keychain
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header DPoP proof
+    When viene invocata l'API di recupero utenze associate alla producer keychain "%actual" con limit "10" offset "0"
+    Then si ottiene response status code 400
+
+
   Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_VERIFICATION] Verifica che gli utenti restituiti, associati al producer keychain specificato, appartengano al tenant del richiedente
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -189,7 +395,7 @@ Feature: Gestione dei producer keychains - API v3
     Then si verifica che la chiamata a selfcare abbia ritornato uno status code: 200
     And si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante
 
-  Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Eliminazione associazione tra utenza e producer keychain specificati
+  Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Eliminazione associazione tra utenza e producer keychain specificati
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
@@ -218,3 +424,39 @@ Feature: Gestione dei producer keychains - API v3
       | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 404        |
 
       | PA1    | %actual                              | %actual            | m2m       | 403        |
+
+  Scenario: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_2] Eliminazione associazione tra utenza e producer keychain specificati
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
+    Then si ottiene response status code 400
+
+  Scenario: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_3] Eliminazione associazione tra utenza e producer keychain specificati
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header di autenticazione DPoP
+    When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
+    Then si ottiene response status code 400
+
+  Scenario: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_4] Eliminazione associazione tra utenza e producer keychain specificati
+    Given l'utente è un "admin" di "PA1"
+    And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene associato l'utente "%actual" alla producer keychain "%actual"
+    And si ottiene response status code 204
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene rimosso l'header DPoP proof
+    When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
+    Then si ottiene response status code 400
