@@ -21,11 +21,6 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %null  | %valid | %valid | 400        |
       | %valid | %valid | %null  | %valid | 400        |
       | %valid | %valid | %valid | %null  | 400        |
-      | %valid | %valid | %valid | %valid | 200        |
-      | %null  | %valid | %valid | %valid | 400        |
-      | %valid | %null  | %valid | %valid | 400        |
-      | %valid | %valid | %null  | %valid | 400        |
-      | %valid | %valid | %valid | %null  | 400        |
 
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_2] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1"
@@ -44,27 +39,19 @@ Feature: Gestione dei producer keychains - API v3
       | keychainId | tenant | statusCode |
       | %actual    | PA2    | 404        |
       | %random    | PA1    | 404        |
-      | %actual    | PA2    | 404        |
-      | %random    | PA1    | 404        |
 
-  Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_3] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
+  Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_3] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
     And si ottiene response status code 204
-    Given l'utente è un "admin" di "PA1" con ruolo M2M <m2mRoles>
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    Then si ottiene response status code <statusCode>
-
-    #TODO: da implementare -> 401, 429
-    Examples:
-      | m2mRoles | statusCode |
-      | m2m      | 403        |
-      | m2m      | 403        |
+    Then si ottiene response status code 403
 
   Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_4] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1"
@@ -89,22 +76,24 @@ Feature: Gestione dei producer keychains - API v3
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
     And si ottiene response status code 204
-    When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
-    And si ottiene response status code 200
+    And si ottiene response status code 204
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then viene recuperata la producer-key con kid "<kid>"
     And si ottiene response status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
-      | kid         | statusCode |
+      | kid     | statusCode |
      # Happy path
-      | %actual     | 200        |
+      | %actual | 200        |
 
     # Kid invalido
-      | %random     | 404        |
-      | invalid-kid | 400        |
+      | %random | 404        |
+      | %null   | 400        |
 
   Scenario Outline: [DELETE_PRODUCER_KEY] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
@@ -123,18 +112,18 @@ Feature: Gestione dei producer keychains - API v3
 
     #TODO: da implementare -> 401, 429
     Examples:
-      | kid         | keychainId | tenant | statusCode |
+      | kid     | keychainId | tenant | statusCode |
     # Happy path
-      | %actual     | %actual    | PA1    | 204        |
+      | %actual | %actual    | PA1    | 204        |
 
     # Tenant richiedente non associato al keychain
-      | %actual     | %actual    | PA2    | 404        |
+      | %actual | %actual    | PA2    | 404        |
 
      # Kid/Keychain invalido
-      | %random     | %actual    | PA1    | 404        |
-      | invalid-kid | %actual    | PA1    | 400        |
-      | %actual     | %random    | PA1    | 400        |
-      | %actual     | %null      | PA1    | 400        |
+      | %random | %actual    | PA1    | 404        |
+      | %null   | %actual    | PA1    | 400        |
+      | %actual | %random    | PA1    | 400        |
+      | %actual | %null      | PA1    | 400        |
 
   Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
