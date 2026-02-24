@@ -35,7 +35,14 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | erogazione  | PUBLISHED   |
       | erogazione  | SUSPENDED   |
       | erogazione  | DEPRECATED  |
-    # 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | stato       |
+      | ricezione  | DRAFT       |
+      | ricezione  | PUBLISHED   |
+      | ricezione  | SUSPENDED   |
+      | ricezione  | DEPRECATED  |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_03] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi dichiarati a una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 115)
@@ -55,7 +62,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi dichiarati a una versione di un e-service template indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
@@ -88,7 +99,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_05] Un utente NON può aggiungere degli attributi dichiarati a una versione di un e-service template indicando un auth. token non valido (Parte2#Scenario intorno a 120)
@@ -107,7 +122,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_06] Un utente con ruolo M2M NON può aggiungere degli attributi dichiarati a una versione di un e-service template (Parte2#Scenario intorno a 121)
@@ -126,7 +145,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   # NOTA 27/10/2025: scenario attualmente non presente in SRS
   @m2m-parte2-ottobre
@@ -145,7 +168,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_A] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 244)
@@ -175,7 +202,13 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | erogazione  | PUBLISHED   |
       | erogazione  | SUSPENDED   |
       | erogazione  | DEPRECATED  |
-    # 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | stato       |
+      | ricezione  | PUBLISHED   |
+      | ricezione  | SUSPENDED   |
+      | ricezione  | DEPRECATED  |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service template in stato DRAFT solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
@@ -202,7 +235,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi dichiarati di una versione di un e-service template indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
@@ -225,7 +262,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_LIST_03] Un utente NON può leggere gli attributi dichiarati di una versione di un e-service template indicando un auth. token non valido (Parte2#Scenario intorno a 246)
@@ -240,7 +281,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
     # TODO edit/aggiunta scenari di POST: test con secondo gruppo
 
@@ -257,7 +302,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_02] Un utente con ruolo M2M NON può rimuovere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 270)
@@ -276,7 +325,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_03] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service template indicando degli identificativi inesistenti o appartenenti ad attributi già rimossi (Parte2#Scenario intorno a 271, 273)
@@ -307,7 +360,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_04] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service template indicando un auth. token non valido (Parte2#Scenario intorno a 272)
@@ -324,7 +381,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_05] Un utente NON può rimuovere gli attributi dichiarati di una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 274)
@@ -341,7 +402,11 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Examples:
       | mode        |
       | erogazione  |
-      #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_06] Un utente NON può rimuovere gli attributi dichiarati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
@@ -359,4 +424,10 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | erogazione  | PUBLISHED   |
       | erogazione  | SUSPENDED   |
       | erogazione  | DEPRECATED  |
-    #| ricezione   | 23/10/2025: gli e-service template in mod. ricezione non sono ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | stato       |
+      | ricezione  | PUBLISHED   |
+      | ricezione  | SUSPENDED   |
+      | ricezione  | DEPRECATED  |

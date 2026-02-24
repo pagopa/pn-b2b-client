@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.Role;
@@ -46,6 +47,12 @@ public class ClientCreateStep {
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(role.toUpperCase()));
         sharedStepsContext.setTenantType(tenantType);
+    }
+
+    // Di esclusiva utilità per test e debug locali
+    @And("stampa token di autenticazione")
+    public void printAuthToken() {
+        System.out.println("Token di autenticazione attuale: " + clientTokenConfigurator.getLastToken());
     }
 
     @Given("l'utente è un {string} dell'ente {delegationRole}")

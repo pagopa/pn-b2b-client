@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -104,4 +105,6 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
 
     EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
+
+    FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId);
 }

@@ -1,29 +1,15 @@
 package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.LinkEServiceToPurposeTemplateRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
 
 public interface IPurposeTemplateClient extends SettableBearerToken {
     RiskAnalysisTemplateAnswerResponse addPurposeTemplateRiskAnalysisAnswer(UUID purposeTemplateId, RiskAnalysisTemplateAnswerRequest riskAnalysisTemplateAnswerRequest) throws RestClientException;

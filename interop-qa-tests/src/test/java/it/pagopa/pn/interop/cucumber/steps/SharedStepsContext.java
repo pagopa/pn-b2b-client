@@ -12,10 +12,12 @@ import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.ProducerKeychainCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.notification.model.NotificationCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -52,6 +54,8 @@ public class SharedStepsContext {
     private RiskAnalysisCommonContext riskAnalysisCommonContext;
     private EServiceTemplateStepContext eServiceTemplateStepContext;
     private PurposeTemplateCommonContext purposeTemplateContext;
+    private NotificationCommonContext notificationCommonContext = new NotificationCommonContext();
+    private ProducerKeychainCommonContext producerKeychainCommonContext;
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
@@ -76,9 +80,10 @@ public class SharedStepsContext {
         riskAnalysisCommonContext = new RiskAnalysisCommonContext();
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
         purposeTemplateContext = new PurposeTemplateCommonContext();
+        producerKeychainCommonContext = new ProducerKeychainCommonContext();
     }
 
-    @Before
+    @Before(order = Integer.MIN_VALUE)
     public void configLog(Scenario scenario) {
         MDC.clear();
         MDC.put("scenarioId", extractScenarioId(scenario.getName()));
