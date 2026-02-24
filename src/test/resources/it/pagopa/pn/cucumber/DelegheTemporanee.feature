@@ -303,7 +303,7 @@ Feature: Deleghe Temporanee 15755
     And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "SIGNED NONCE ERRATO"
-    Then l'operazione restituisce codice 500
+    Then l'operazione restituisce codice 422
 
   #29
   @delegheTemporanee

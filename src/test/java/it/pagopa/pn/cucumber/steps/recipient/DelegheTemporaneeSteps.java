@@ -65,8 +65,6 @@ public class DelegheTemporaneeSteps {
 
     private HttpStatusCodeException error;
 
-    private static final String WRONG_NONCE_00000 = "SHfG4qyZtIRQHVsM6XDhZUrlqX0A-rHvenifCW_1PIOG-hPXrICO2NfQVwlTqFehQOVJeT2pL71C0JQcqdqOE85xB5UPhwOcQRCTxXm7Dsl3Z3_daMwQFrCVhIjv6EPWOIrJB-ieAmo0RxBSAggaPUFegGz3ce5vFiXeYAmBOY3DpfuGj3webTj4VgXEvhy-iDegHUCyIVTZLPkbCiB_E_PpSt3clGDf8iS8yGK-iE9ODWRe7at_spFaTb9DCHxVYSXbdVIBVy8oA14uo9GVN1xsV-XN772BUIjLqlcRLqyVwn6a-vrYqCN3ywtdcGdN_AcrWeKUANUIad2m0K3FTA==";
-
     private static final String VALID_QRCODE_404 = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
     @Autowired
@@ -79,6 +77,16 @@ public class DelegheTemporaneeSteps {
         this.ricezioneNotificheWebDelegheSteps = ricezioneNotificheWebDelegheSteps;
         this.cieGeneratorTool = cieGeneratorTool;
         this.bucketS3 = bucketS3;
+    }
+
+    //metodo di background
+    @Given("vengono settati i parametri per il tool CIE")
+    public void setToolCieParameter() {
+        log.info("Inizio il setting dei parametri");
+        System.setProperty("cie.generator.bucket", bucketS3);
+        System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
+        log.info("Parametri settati");
+        System.getenv().entrySet().forEach(x -> log.info("PARAM : " + x));
     }
 
     //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
@@ -137,7 +145,11 @@ public class DelegheTemporaneeSteps {
         String delegatorTaxId = delegator.getTaxId();
         String lollipopUserId = delegate.getTaxId();
         String mandateId = mandateDtoB2b.getMandateId();
-        CIEValidationData cieValidationData = getCieValidationData(delegatorTaxId, mandateDtoB2b.getVerificationCode(), inputParamsType);
+
+        CIEValidationData cieValidationData = getCieValidationData(
+                delegatorTaxId,
+                inputParamsType.equalsIgnoreCase("SIGNED NONCE ERRATO") ? "00000" : mandateDtoB2b.getVerificationCode(),
+                inputParamsType);
 
         switch (inputParamsType.toUpperCase()) {
             //mandateId valido ma inesistente preso da ambiente di hotfix destinato a dare 404 quando la suite gira in DEV/TEST/UAT
@@ -150,8 +162,6 @@ public class DelegheTemporaneeSteps {
                 cieValidationData.setNisData(null);
                 cieValidationData.setSignedNonce(null);
             }
-            //1 possibilità su 100.000 che fallisca, qualora il nonce generato sia proprio 00000
-            case "SIGNED NONCE ERRATO" -> cieValidationData.setSignedNonce(WRONG_NONCE_00000);
             case "NIS DATA CIE ERRATO" -> {
                 String nisDataPubKey = cieValidationData.getNisData().getPubKey();
                 String firstChar = nisDataPubKey.substring(0, 1);
@@ -305,21 +315,10 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    //TODO REMOVE: metodi solo per debug, per evitare di aspettare ogni volta che una notifica vada in accepted
-
     @Given("DEBUGONLY il mandate in uso è quello con id {string} e verificationCode {string}")
     public void mockMandate(String mandateId, String nonce) {
         mandateDtoB2b = new MandateDto();
         mandateDtoB2b.setMandateId(mandateId);
         mandateDtoB2b.setVerificationCode(nonce);
-    }
-
-    @Given("vengono settati i parametri per il tool CIE")
-    public void setToolCieParameter() {
-        log.info("Inizio il setting dei parametri");
-        System.setProperty("cie.generator.bucket", bucketS3);
-        System.setProperty("cie.generator.file-key", "pn-mandate/csca-masterlist/catest.zip");
-        log.info("Parametri settati");
-        System.getenv().entrySet().forEach(x -> log.info("PARAM : " + x));
     }
 }
