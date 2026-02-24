@@ -73,7 +73,8 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_8] La lista degli attributi certificati può essere visionata da un utente con token non valido (Parte2#Scenario 11)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di certifiedAttribute
     Then si ottiene lo status code 401
 
