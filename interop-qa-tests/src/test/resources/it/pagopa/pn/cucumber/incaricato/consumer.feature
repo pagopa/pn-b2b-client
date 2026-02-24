@@ -835,12 +835,18 @@ Feature: Test API Availability in Use of E-Service
     When l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA1"
     Then si ottiene status code 409
 
+  @hotfix-2.15
   Scenario Outline: [TC_INCARICATO_91] Disponendo di una finalità propria verso un certo e-service E di una finalità in delega verso lo stesso e-service, la lettura di entrambe le finalità deve aver successo
     Given "<ente>" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'utente è un "admin" di "PA1"
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
+
+    When l'utente è un "admin" di "PA1"
+    And l'utente richiede la lettura della finalità numero 1
+    Then si ottiene status code 200
+
+    Given l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA1"
     And l'ente "PA1" accetta la delega in fruizione con successo
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service in qualità di delegato
