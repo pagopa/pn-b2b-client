@@ -733,7 +733,8 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_DOCUMENT_2] Il documento dell'analisi del rischio correlato a una finalità non può essere visualizzato specificando un token non valido (Parte2#Scenario 26)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere il documento dell'analisi del rischio correlato a una finalità inesistente
     Then si ottiene status code 401
 
