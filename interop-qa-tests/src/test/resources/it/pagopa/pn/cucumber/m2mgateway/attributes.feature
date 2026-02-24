@@ -219,6 +219,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_8] Accesso negato alla lista degli enti verificatori di un attributo con token non valido
     Given "PA2" ha già creato un attributo verificato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 401
