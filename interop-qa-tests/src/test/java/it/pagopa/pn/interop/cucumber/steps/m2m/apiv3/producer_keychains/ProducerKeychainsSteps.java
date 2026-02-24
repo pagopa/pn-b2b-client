@@ -163,7 +163,7 @@ public class ProducerKeychainsSteps {
     }
 
     @And("viene eliminata la producer-key con keychainId {string}, kid {string}")
-    public void deleteProducerKey(String rawKid, String rawKeychainId) {
+    public void deleteProducerKey(String rawKeychainId, String rawKid) {
         String kid = resolver.resolveKid(rawKid);
         UUID keychainId = resolver.resolveKeychain(rawKeychainId);
 
