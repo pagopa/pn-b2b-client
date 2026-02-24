@@ -235,7 +235,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
-    And viene eliminato il documento esistente dell'annotazione precedentemente creata
+    And viene eliminato il documento esistente dell'annotazione precedentemente creata con successo
     When viene eliminato il documento esistente dell'annotazione precedentemente creata
     Then si ottiene lo status code 404
 
