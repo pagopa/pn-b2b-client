@@ -1,6 +1,7 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
 
+import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.common.interceptor.dpop.utils.DPoPAccessTokenSupplier;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
@@ -41,7 +42,7 @@ public class InteropRestTemplateConfiguration {
     @Bean
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public RestTemplate customRestTemplate() {
+    public RestTemplate customRestTemplate(M2MVersionsMapper mapperV2) {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(990_000);
@@ -51,9 +52,16 @@ public class InteropRestTemplateConfiguration {
         restTemplate.setRequestFactory(requestFactory);
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestResponseLoggingInterceptor());
+
+        FileHttpMessageConverter fileMessageConverter = new FileHttpMessageConverter();
+        FileDownloadMultipartConverter multipartConverterV2 = new FileDownloadMultipartConverter();
+        FileDownloadMultipartConverterV3 multipartConverterV3 = new FileDownloadMultipartConverterV3(
+                multipartConverterV2,
+                mapperV2);
         restTemplate.getMessageConverters().addAll(of(
-                new FileHttpMessageConverter(),
-                new FileDownloadMultipartConverter()
+                fileMessageConverter,
+                multipartConverterV2,
+                multipartConverterV3
         ));
         return restTemplate;
     }
