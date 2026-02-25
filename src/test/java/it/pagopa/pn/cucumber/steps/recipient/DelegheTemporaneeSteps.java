@@ -65,6 +65,7 @@ public class DelegheTemporaneeSteps {
 
     private HttpStatusCodeException error;
 
+    //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
     private static final String VALID_QRCODE_404 = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
 
     @Autowired
@@ -92,24 +93,16 @@ public class DelegheTemporaneeSteps {
     //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
     @When("{destinatario} viene temporaneamente delegato da {string} passando {string}")
     public void creaDelegaTemporanea(Destinatario delegate, String delegator, String inputParamsType) {
-        qrCode = getQRPathEnvironmentBased() + "?aar=" +
-                (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0));
-
+        setQrCode(inputParamsType);
         MandateCreationRequest mandateCreationRequest = new MandateCreationRequest();
         mandateCreationRequest.setAarQrCodeValue(qrCode);
         String taxId = delegate.getTaxId();
         String lollipopUserId = delegate.getTaxId();
-
         switch (inputParamsType.toUpperCase()) {
-            //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
-            case "QRCODE INESISTENTE" ->
-                    mandateCreationRequest.setAarQrCodeValue(getQRPathEnvironmentBased() + VALID_QRCODE_404);
-            case "QRCODE NON VALIDO" -> mandateCreationRequest.setAarQrCodeValue("invalid");
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
-
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
                     taxId, null, null, null, null,
@@ -121,14 +114,23 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    private String getQRPathEnvironmentBased() {
+    private void setQrCode(String inputParamsType) {
         String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
-        return switch (environment) {
-            case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
-            case "test" -> "http://cittadini.test.notifichedigitali.it/io";
-            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
+        String environmentPath;
+        switch (environment) {
+            case "dev" -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
+            case "test" -> environmentPath = "http://cittadini.test.notifichedigitali.it/io";
+            case "uat" -> environmentPath = "https://cittadini.uat.notifichedigitali.it/io/";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
-        };
+        }
+        environmentPath += "?aar=";
+        switch (inputParamsType.toUpperCase()) {
+            case "QRCODE NON VALIDO" -> qrCode = "invalid";
+            case "QRCODE INESISTENTE" -> qrCode = environmentPath + VALID_QRCODE_404;
+            default ->
+                    qrCode = environmentPath + sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
+        }
+        log.info("QR code settato:" + qrCode);
     }
 
     @Then("la delega temporanea è stata correttamente creata")
@@ -197,14 +199,14 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    //TODO: importante, verificare che in tutti gli ambienti, la validità di una delega impostata sia sempre 7 minuti
-    @Given("la delega viene fatta scadere")
-    public void wasteTime() {
-        log.info("Attendo 7 minuti per far scadere la delega");
-        long delayInMilliseconds = 420000L;
+    //TODO: importante, verificare che in tutti gli ambienti, la validità di una delega impostata sia sempre a 5 minuti(accettazione) e 10 minuti (validità delega)
+    @Given("attendo {int} minuti affinché la {string} scada")
+    public void wasteTime(int minutes, String operation) {
+        log.info("Attendo " + minutes + " minuti affinché la " + operation + " scada");
+        long delayInMilliseconds = minutes * 1000L;
         try {
             Thread.sleep(delayInMilliseconds);
-            log.info("Sono trascorsi 7 minuti, la delega ormai è scaduta");
+            log.info("Sono trascorsi " + minutes + " minuti");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("L'attesa è stata interrotta: " + e.getMessage(), e);
