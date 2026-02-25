@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -71,7 +72,8 @@ public class DelegheTemporaneeSteps {
     @Autowired
     public DelegheTemporaneeSteps(SharedSteps sharedSteps,
                                   RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps,
-                                  PnMandateAppIoClientImpl mandateAppIoClient, CieGeneratorTool cieGeneratorTool,
+                                  PnMandateAppIoClientImpl mandateAppIoClient,
+                                  CieGeneratorTool cieGeneratorTool,
                                   @Value("${pn-deleghe-temporanee-bucket-s3}") String bucketS3) {
         this.sharedSteps = sharedSteps;
         this.mandateAppIoClient = mandateAppIoClient;
@@ -90,9 +92,29 @@ public class DelegheTemporaneeSteps {
         System.getenv().entrySet().forEach(x -> log.info("PARAM : " + x));
     }
 
+    @Given("{destinatario} rifiuta l'eventuale delega permanente da parte di {destinatario}")
+    public void rejectPermanentMandateIfPresent(Destinatario delegate, Destinatario delegator) {
+        ricezioneNotificheWebDelegheSteps.setBearerToken(delegate.getDenomination());
+        String delegatorTaxId = delegator.getTaxId();
+
+        List<it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto> mandateList = ricezioneNotificheWebDelegheSteps.getWebMandateClient().searchMandatesByDelegate(delegatorTaxId, null);
+
+        it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto mandateDto = null;
+        for (it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto mandate : mandateList) {
+            log.debug("MANDATE-LIST: {}", mandateList);
+            if (Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
+                mandateDto = mandate;
+                break;
+            }
+        }
+        if (mandateDto != null) {
+            ricezioneNotificheWebDelegheSteps.getWebMandateClient().rejectMandate(mandateDto.getMandateId());
+        }
+    }
+
     //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
-    @When("{destinatario} viene temporaneamente delegato da {string} passando {string}")
-    public void creaDelegaTemporanea(Destinatario delegate, String delegator, String inputParamsType) {
+    @When("{destinatario} viene temporaneamente delegato da {destinatario} passando {string}")
+    public void creaDelegaTemporanea(Destinatario delegate, Destinatario delegator, String inputParamsType) {
         setQrCode(inputParamsType);
         MandateCreationRequest mandateCreationRequest = new MandateCreationRequest();
         mandateCreationRequest.setAarQrCodeValue(qrCode);
@@ -203,7 +225,7 @@ public class DelegheTemporaneeSteps {
     @Given("attendo {int} minuti affinché la {string} scada")
     public void wasteTime(int minutes, String operation) {
         log.info("Attendo " + minutes + " minuti affinché la " + operation + " scada");
-        long delayInMilliseconds = minutes * 1000L;
+        long delayInMilliseconds = minutes * 60000L;
         try {
             Thread.sleep(delayInMilliseconds);
             log.info("Sono trascorsi " + minutes + " minuti");

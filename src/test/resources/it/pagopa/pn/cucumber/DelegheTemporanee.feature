@@ -25,7 +25,7 @@ Feature: Deleghe Temporanee 15755
       | payment_f24        | PAYMENT_F24_FLAT                 |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     And l'operazione non ha prodotto alcun errore
@@ -57,7 +57,7 @@ Feature: Deleghe Temporanee 15755
       | payment_f24        | PAYMENT_F24_FLAT                 |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
@@ -75,7 +75,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" senza aspettare che diventi accepted
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "QRCODE NON VALIDO"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "QRCODE NON VALIDO"
     Then l'operazione restituisce codice 400
 
   #4
@@ -86,7 +86,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" senza aspettare che diventi accepted
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "QRCODE INESISTENTE"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "QRCODE INESISTENTE"
     Then l'operazione restituisce codice 400
 
   #5
@@ -97,7 +97,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "EMPTY REQUEST BODY"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "EMPTY REQUEST BODY"
     Then l'operazione restituisce codice 400
 
   #6
@@ -108,25 +108,26 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "TAXID NULL"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "TAXID NULL"
     Then l'operazione restituisce codice 400
 
   #7
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_CREATION_FAILED_DELEGA_ALREADY_EXISTENT] Creazione senza successo di una delega temporanea (delega già presente per coppia IUN-taxId); Viene fatta dunque scadere, si crea una nuova delega e la si accetta
-    Given viene generata una nuova notifica
-      | subject            | invio notifica delega temporanea |
-      | senderDenomination | comune di Palermo                |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica delega temporanea |
+#      | senderDenomination | comune di Palermo                |
+#    And destinatario Mario Cucumber
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given imposto lo iun di SharedSteps a "GDKD-APZG-HULE-202602-U-1" e la pa a "Comune_Multi"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     Then l'operazione restituisce codice 409
     When attendo 5 minuti affinché la "finestra temporale per accettare la delega" scada
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     Then l'operazione restituisce codice 404
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
@@ -140,7 +141,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Cucumber viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Cucumber viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     Then l'operazione restituisce codice 409
 
   #9 NON FATTIBILE (CREAZIONE FALLITA CAUSA TOKEN ERRATO: non sono previsti token)
@@ -156,7 +157,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
 
   #14
@@ -167,7 +168,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "MANDATE ID INESISTENTE"
     Then l'operazione restituisce codice 404
@@ -180,7 +181,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "MANDATE ID NON VALIDO"
     Then l'operazione restituisce codice 400
@@ -193,7 +194,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "MANDATE ID VUOTO"
     Then l'operazione restituisce codice 400
@@ -206,7 +207,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "EMPTY REQUEST BODY"
     Then l'operazione restituisce codice 400
@@ -219,7 +220,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
     Then l'operazione restituisce codice 403
 
   #20
@@ -230,7 +231,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
@@ -247,7 +248,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When attendo 5 minuti affinché la "finestra temporale per accettare la delega" scada
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
@@ -261,7 +262,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "MRTD DATA CIE ERRATO"
     Then l'operazione restituisce codice 422
@@ -274,7 +275,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI DI UNA CIE SCADUTA"
     Then l'operazione restituisce codice 422
@@ -287,7 +288,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO"
     Then l'operazione restituisce codice 422
@@ -300,7 +301,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "SIGNED NONCE ERRATO"
     Then l'operazione restituisce codice 422
@@ -313,7 +314,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "NIS DATA CIE ERRATO"
     Then l'operazione restituisce codice 422
@@ -326,7 +327,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     When "Mario Gherkin" tenta di accettare la delega temporanea richiamando l'api b2b
     Then l'operazione restituisce codice 400
@@ -335,7 +336,7 @@ Feature: Deleghe Temporanee 15755
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_ACCEPTATION_120_GIORNI] Accettazione senza successo di una delega temporanea che permette la visualizzazione di una notifica più vecchia di 120 giorni
     Given "Comune_Multi" recupera lato web PA una notifica vecchia 120 o più giorni inviata a Mario Cucumber
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
+    When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
@@ -349,7 +350,7 @@ Feature: Deleghe Temporanee 15755
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI_VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI"
     Then l'operazione restituisce codice 400
