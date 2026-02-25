@@ -1,7 +1,5 @@
 package it.pagopa.interop.eservice.service.impl;
 
-import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
-
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -12,22 +10,26 @@ import it.pagopa.interop.eservice.service.IM2MV3EserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDelegationUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceNameUpdateSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 @ToString
 @EqualsAndHashCode
@@ -143,6 +145,11 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         return vMapper.mapToV2(eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription())));
+    }
+
+    @Override
+    public FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.downloadEServiceDescriptorInterface(eServiceId, descriptorId));
     }
 
     @Override

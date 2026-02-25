@@ -216,7 +216,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationConfigClient.class,
         PropertyResolver.class,
         NotificationStore.class,
-        ProducerKeychainClientImpl.class
+        ProducerKeychainClientImpl.class,
         PurposeTemplateMapperImpl.class,
         ApiProfileConfiguration.class,
         M2MVersionsMapper.class,
