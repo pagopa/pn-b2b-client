@@ -17,7 +17,7 @@ Feature: Deleghe Temporanee 15755
   @delegheTemporanee
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
     And viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
@@ -38,7 +38,7 @@ Feature: Deleghe Temporanee 15755
     And l'allegato "F24" non può essere correttamente recuperato da "Mario Gherkin" con delega
     And il documento notificato non può essere correttamente recuperato da "Mario Gherkin" con delega restituendo un errore "404"
     #DELEGA PERMANENTE (DOPO AVER TESTATO CON SUCCESSO QUELLA TEMPORANEA)
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
     When "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Then la lista di deleghe del delegato "Mario Gherkin" non contiene la delega temporanea creata
@@ -47,7 +47,7 @@ Feature: Deleghe Temporanee 15755
   @delegheTemporanee
   #2-13-24-32-33-34
   Scenario: [MANDATE_TEMP_HAPPY_PATH_2] Creazione e accettazione di una delega temporanea e visualizzazione notifica pur in presenza di delega permanente (scenario positivo)
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
@@ -114,12 +114,11 @@ Feature: Deleghe Temporanee 15755
   #7
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_CREATION_FAILED_DELEGA_ALREADY_EXISTENT] Creazione senza successo di una delega temporanea (delega già presente per coppia IUN-taxId); Viene fatta dunque scadere, si crea una nuova delega e la si accetta
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica delega temporanea |
-#      | senderDenomination | comune di Palermo                |
-#    And destinatario Mario Cucumber
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Given imposto lo iun di SharedSteps a "GDKD-APZG-HULE-202602-U-1" e la pa a "Comune_Multi"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica delega temporanea |
+      | senderDenomination | comune di Palermo                |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
@@ -149,7 +148,7 @@ Feature: Deleghe Temporanee 15755
   #10
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_CREATION_OK_DESPITE_PERMANENT] Creazione con successo di una delega temporanea (nonostante ne esista una permanente)
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
     When "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
