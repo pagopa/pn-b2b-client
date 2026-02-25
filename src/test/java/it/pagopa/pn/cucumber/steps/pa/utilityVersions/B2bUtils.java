@@ -544,9 +544,22 @@ public abstract class B2bUtils {
             case PUBLIC_REGISTRY_VALIDATION_CALL -> TimelineEventId.PUBLIC_REGISTRY_VALIDATION_CALL.buildEventId(event);
             case PUBLIC_REGISTRY_VALIDATION_RESPONSE ->
                     TimelineEventId.PUBLIC_REGISTRY_VALIDATION_RESPONSE.buildEventId(event);
-            case NOTIFICATION_TIMELINE_REWORKED ->
-                    TimelineEventId.NOTIFICATION_TIMELINE_REWORKED.buildEventId(event);
+            case NOTIFICATION_TIMELINE_REWORKED -> TimelineEventId.NOTIFICATION_TIMELINE_REWORKED.buildEventId(event);
             default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
+    }
+
+    /**
+     * Sanitize a string before logging to prevent log injection (for example via newlines).
+     *
+     * @param logString the original string value
+     * @return a sanitized version of the string safe to include in log messages
+     */
+    public static String sanitizeLogString(String logString) {
+        if (logString == null) {
+            return null;
+        }
+        // Remove carriage return and newline characters to avoid log forging.
+        return logString.replace("\r", "").replace("\n", "");
     }
 }
