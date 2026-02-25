@@ -21,6 +21,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
@@ -158,7 +159,7 @@ public class DelegheTemporaneeSteps {
             default ->
                     qrCode = environmentPath + sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
         }
-        log.info("QR code settato:" + qrCode);
+        log.info("QR code settato: {}", B2bUtils.sanitizeLogString(qrCode));
     }
 
     @Then("la delega temporanea è stata correttamente creata")
