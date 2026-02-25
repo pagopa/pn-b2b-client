@@ -101,7 +101,7 @@ public class DelegheTemporaneeSteps {
         switch (inputParamsType.toUpperCase()) {
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> taxId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
