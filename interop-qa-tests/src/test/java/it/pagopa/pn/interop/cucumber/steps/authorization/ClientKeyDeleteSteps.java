@@ -3,13 +3,11 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
 import java.util.UUID;
 
 public class ClientKeyDeleteSteps {
@@ -32,6 +30,7 @@ public class ClientKeyDeleteSteps {
 
     @Given("{string} ha già rimosso l'utente con ruolo {string} dai membri di quel client")
     public void removeClientMemberByRole(String tenantType, String role) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         removeMemberFromClient(sharedStepsContext.getClientCommonContext().getFirstClient(), identityService.getUserId(tenantType, role));
     }
 

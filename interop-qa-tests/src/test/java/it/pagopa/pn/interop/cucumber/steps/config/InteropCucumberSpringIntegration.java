@@ -50,6 +50,12 @@ import it.pagopa.interop.eservice.service.mapper.EServiceAttributeMapperImpl;
 import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
 import it.pagopa.interop.event.mapper.M2MV3EventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
+import it.pagopa.interop.notification.NotificationClientImpl;
+import it.pagopa.interop.notification.NotificationConfigClient;
+import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
+import it.pagopa.interop.notification.NotificationClientImpl;
+import it.pagopa.interop.notification.NotificationConfigClient;
+import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
 import it.pagopa.interop.producer_keychains.service.ProducerKeychainsClient;
 import it.pagopa.interop.event.service.M2MV3EventClientImpl;
@@ -100,8 +106,12 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.Purpos
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
+import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
+import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -201,6 +211,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PurposeTemplateCommonContext.class,
         PurposeTemplatePatchContext.class,
         PurposeTemplatePatchOperationsAssistant.class,
+        PurposeTemplateMapperImpl.class,
+        NotificationClientImpl.class,
+        NotificationConfigClient.class,
+        PropertyResolver.class,
+        NotificationStore.class,
+        ProducerKeychainClientImpl.class
         PurposeTemplateMapperImpl.class,
         ApiProfileConfiguration.class,
         M2MVersionsMapper.class,

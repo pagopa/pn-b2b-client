@@ -3,7 +3,6 @@ package it.pagopa.interop.config.springconfig.springconfig;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
@@ -34,8 +34,6 @@ public class FileDownloadMultipartConverter extends AbstractHttpMessageConverter
     protected FileDownloadMultipart readInternal(Class<? extends FileDownloadMultipart> clazz, HttpInputMessage inputMessage)
         throws HttpMessageNotReadableException {
         try {
-            manageInputMessageMark(inputMessage.getBody());
-
             DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
             fileItemFactory.setSizeThreshold(1_000_000);
             fileItemFactory.setFileCleaningTracker(new FileCleaningTracker());
@@ -68,9 +66,9 @@ public class FileDownloadMultipartConverter extends AbstractHttpMessageConverter
                 } else {
                     // È il file vero e proprio
                     if (FileDownloadMultipart.JSON_PROPERTY_FILE.equals(fieldName)) {
-                        FileHttpMessageConverter fileHttpMessageConverter = new FileHttpMessageConverter();
-                        inputMessage.getBody().reset();
-                        result.setFile(fileHttpMessageConverter.read(File.class, inputMessage));
+                        File tempFile = FileHttpMessageConverter.getOutputFilePath().toFile();
+                        item.write(tempFile);
+                        result.setFile(tempFile);
                     }
                 }
             }
@@ -78,23 +76,9 @@ public class FileDownloadMultipartConverter extends AbstractHttpMessageConverter
             return result;
         } catch (FileUploadException | IOException e) {
             throw new HttpMessageNotReadableException("Impossibile fare il parsing della risposta multipart", e, inputMessage);
+        } catch (Exception e) {
+            throw new HttpMessageConversionException("Errore imprevisto durante il parsing della risposta multipart", e);
         }
-    }
-
-    /* DEV. NOTE 24/07/2025: è richiesto il supporto al marking così da poter resettare lo stream,
-    * in modo da permettere la lettura anche al componente FileHttpMessageConverter. Qualora Spring
-    * smettesse di restituire uno stream resettabile, basterebbe smettere di usare
-    * FileHttpMessageConverter e leggere il file direttamente attraverso l'oggetto FileItem,
-    * per esempio con:
-            File tempFile = File.createTempFile("download-", ".tmp");
-            item.write(tempFile);
-            result.setFile(tempFile);
-    */
-    private void manageInputMessageMark(InputStream body) throws IOException {
-        if(!body.markSupported()) {
-            throw new IOException("Need a markable input stream");
-        }
-        body.mark(Integer.MAX_VALUE);
     }
 
     @Override

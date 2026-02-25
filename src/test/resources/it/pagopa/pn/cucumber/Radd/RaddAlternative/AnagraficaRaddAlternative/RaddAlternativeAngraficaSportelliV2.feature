@@ -650,27 +650,124 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "400"
 
-
-  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 66 e 67
-  Scenario: [RADD_ANAGRAFICA_CRUD_V2_18] inserimento sportello RADD con dati corretti
+  @raddAnagraficaV2 @patchGeo @deleteNewSite
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_23] - PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
-      | address_radd_row      | via roma            |
-      | address_radd_cap      | 80133               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | NAPOLI              |
-      | radd_description      | Test QA             |
-      | radd_phoneNumbers     | +390212345678       |
-      | radd_externalCodes    | EXT18QA             |
-      | address_radd_country  | ITALY               |
-      | radd_openingTime      | tue=10:00-20:00#    |
-      | radd_start_validity   | 2030-01-01          |
-      | radd_end_validity     | 2030-02-01          |
-      | radd_email            | teat@test.com       |
-      | radd_website          | https://www.ex1.com |
-      | radd_partner_type     | CAF                 |
-    Then viene richiesta la lista degli sportelli Radd V2 con errore
-      | radd_filter_limit   | 100  |
-      | radd_filter_lastKey | NULL |
-    And viene verificato che l' ultimo sportello inserito venga restituito nella lista tramite locationId
-    Then la response registry V2 deve avere i campi correttamente formattati
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT_PATCH_GEO |
+    When aggiorno la sede RADD tramite PATCH impostando
+      | latitude  | longitude |
+      | <lat>     | <lon>     |
+    Then la response deve restituire status code <expectedStatusCode>
+    Then se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo <expectedErrorType> e valore <testedValue>
+    Then se lo status della response è 200, la response deve contenere i valori corretti per lat "<lat>" e lon "<lon>"
+    Examples:
+      | lat    | lon     | expectedStatusCode | expectedErrorType | testedValue |
+      | 45.0   | 9.0     | 200                | ""                | ""          |
+      | -90.0  | -180.0  | 200                | ""                | ""          |
+      | 90.0   | 180.0   | 200                | ""                | ""          |
+      | 91.0   | 10.0    | 400                | "RANGE_MAX_LAT"   | "91.0"      |
+      | -91.0  | 10.0    | 400                | "RANGE_MIN_LAT"   | "-91.0"     |
+      | 45.0   | 181.0   | 400                | "RANGE_MAX_LON"   | "181.0"     |
+      | 45.0   | -181.0  | 400                | "RANGE_MIN_LON"   | "-181.0"    |
+      | NULL   | 10.0    | 400                | "NULL_LAT"        | ""          |
+      | 10.0   | NULL    | 400                | "NULL_LON"        | ""          |
+      | NULL   | NULL    | 400                | "NULL_LAT_LON"    | ""          |
+
+
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
+  Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_24] - PUT Selective – validazione campi RADD
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT_PUT_SEL   |
+    When aggiorno la sede RADD tramite PUT Selective impostando
+      | field  | value  |
+      | <field>| <value>|
+    Then la response deve restituire status code <expectedStatusCode>
+    Examples:
+      | id | field               | value                                        | expectedStatusCode |
+      | 1  | description         | BLANK                                        | 200              |
+      | 2  | appointmentRequired | true                                         | 200              |
+      | 3  | appointmentRequired | false                                        | 200              |
+      | 4  | description         | Nuova descrizione valida                     | 200              |
+      | 5  | description         | Descrizione con numeri 123                   | 200              |
+      | 6  | description         | Descrizione con simboli - _ .                | 200              |
+      | 7  | phoneNumbers        | +3933312345678                               | 200              |
+      | 8  | phoneNumbers        | +3933312345678,+393339999999                 | 200              |
+      | 9  | phoneNumbers        | 800123456                                    | 200              |
+      | 10  | email               | test@test.com                                | 200              |
+      | 11 | email               | nome.cognome@test.it                         | 200              |
+      | 12 | email               | test_123@test-domain.com                     | 200              |
+      | 13 | website             | https://www.site.it                          | 200              |
+      | 14 | website             | www.site.it                                  | 200              |
+      | 15 | openingTime         | BLANK                                        | 200              |
+      | 16 | openingTime         | lun 08:00-13:30,15:00-18:00; mar 09:00-13:00 | 200              |
+      | 17 | openingTime         | lun 08:00-18:00; mar 08:00-18:00            | 200              |
+      | 18 | openingTime         | lun-gio 08:00-18:00; ven 08:00-13:00        | 200              |
+      | 19 | openingTime         | aperto solo il mercoledì                     | 200              |
+      | 20 | openingTime         | 24/7                                         | 200              |
+      | 21 | openingTime         | lun 9-18                                     | 200              |
+      | 22 | endValidity         | 2030-12-31                                   | 200              |
+      | 23 | externalCodes       | []                                           | 200              |
+      | 24 | externalCodes       | EXT1                                         | 200              |
+      | 25 | externalCodes       | EXT1,EXT2                                    | 200              |
+      | 26 | description         | <201_characters>                             | 400              |
+      | 27 | phoneNumbers        | []                                           | 400              |
+      | 28 | phoneNumbers        | BLANK                                        | 400              |
+      | 29 | phoneNumbers        | 39333123ABCD                                 | 400              |
+      | 30 | phoneNumbers        | +393                                         | 400              |
+      | 31 | phoneNumbers        | +3933312345678,+393339999999,+393338888888  | 400              |
+      | 32 | email               | test                                         | 400              |
+      | 33 | email               | test@                                        | 400              |
+      | 34 | email               | test@.it                                     | 400              |
+      | 35 | email               | BLANK                                        | 400              |
+      | 36 | website             | htp://site                                   | 400              |
+      | 37 | website             | http:/site                                   | 400              |
+      | 38 | website             | http://site.com                              | 400              |
+      | 39 | website             | site                                         | 400              |
+      | 40 | addressRow          | TEST VIA 123                                 | 400              |
+      | 41 | addressRow          | BLANK                                        | 400              |
+      | 42 | addressCap          | 00000                                        | 400              |
+      | 43 | addressCap          | BLANK                                        | 400              |
+      | 44 | addressCity         | TESTCITY                                     | 400              |
+      | 45 | addressCity         | BLANK                                        | 400              |
+      | 46 | addressProvince     | TT                                           | 400              |
+      | 47 | addressProvince     | BLANK                                        | 400              |
+      | 48 | addressCountry      | TT                                           | 400              |
+      | 49 | addressCountry      | BLANK                                        | 400              |
+      | 50 | endValidity         | BLANK                                        | 400              |
+      | 51 | endValidity         | 2024/01/01                                   | 400              |
+      | 52 | endValidity         | 01-01-2024                                   | 400              |
+      | 53 | endValidity         | 20240101                                     | 400              |
+      | 54 | endValidity         | 2020-01-01                                   | 400              |
+      | 55 | website             | BLANK                                        | 400              |
+      | 56 | website             | <script>alert(1)</script>                    | 403              |
+      | 57 | website             | javascript:alert(1)                          | 403              |
+      | 58 | website             | <img src=x onerror=alert(1)>                 | 403              |
+
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_25] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con dati:
+      | address_radd_row      | via roma      |
+      | address_radd_cap      | 80133         |
+      | address_radd_province | NA            |
+      | address_radd_city     | NAPOLI        |
+      | radd_description      | descrizione   |
+      | radd_phoneNumbers     | +390212345678 |
+      | radd_externalCodes    | EXT_PUT_SEL   |
+    Given Effettuo l'autenticazione per l' utente con permessi: "SOLO_LETTURA"
+    When aggiorno la sede RADD tramite PUT Selective utilizzando la request di creazione
+    Then la response deve restituire status code 403
