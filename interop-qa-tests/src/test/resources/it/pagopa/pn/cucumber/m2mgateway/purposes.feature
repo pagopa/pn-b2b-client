@@ -39,7 +39,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la nuova versione della finalità è stata creata correttamente
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -265,7 +264,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
     And la finalità è in stato ACTIVE
 
-  @m2m-false-negative
   # Ticket associati (a cui si deve l'eterogeneità dei codici di risposta previsti)
     # https://pagopa.atlassian.net/browse/PIN-6999
     # https://pagopa.atlassian.net/browse/PIN-7024
@@ -296,7 +294,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | ARCHIVED             | 400  |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2M_PURPOSES_SUSPEND_5_B] Una finalità in stato REJECTED NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -402,7 +399,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità è in stato ACTIVE
 
   @sad-path
-  @m2m-false-negative
   Scenario Outline: [M2MG_PURPOSES_39_A] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -425,7 +421,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | WAITING_FOR_APPROVAL | 409  |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato REJECTED (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -463,7 +458,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | SUSPENDED |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_42] Approvazione negata per utente con ruolo M2M (Scenario 53)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -525,7 +519,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità è in stato WAITING_FOR_APPROVAL
 
   @sad-path
-  @m2m-false-negative
   Scenario Outline: [M2MG_PURPOSES_48_A] Approvazione fallita di una finalità in stato non valido (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -546,7 +539,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | DRAFT     |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_48_B] Approvazione fallita di una finalità in stato REJECTED (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service

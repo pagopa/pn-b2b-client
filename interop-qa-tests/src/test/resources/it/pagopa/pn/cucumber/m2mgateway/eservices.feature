@@ -26,7 +26,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | m2m-admin |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_3] RED - Accesso negato alla lista degli eServices con token non valido (Scenario 82)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -63,7 +62,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | m2m-admin |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_7] Accesso negato al dettaglio di un eService con token non valido (Scenario 85)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -73,7 +71,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And eService non restituito
 
   @sad-path
-  @m2m-false-negative
   Scenario Outline: [M2MG_ESERVICES_8] Errore nel recupero del dettaglio di un eService inesistente (Scenario 86)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
@@ -158,7 +155,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | m2m-admin |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_16] Accesso negato al recupero di un descriptor con token non valido (Scenario 93)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -168,7 +164,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And descriptor non restituito
 
   @sad-path
-  @m2m-false-negative
   Scenario Outline: [M2MG_ESERVICES_17] Errore nel recupero di un descriptor con eserviceId e descriptorId inesistenti (Scenario 94)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
