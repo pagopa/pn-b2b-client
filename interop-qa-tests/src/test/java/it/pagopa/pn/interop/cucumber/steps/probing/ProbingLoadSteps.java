@@ -212,7 +212,8 @@ public class ProbingLoadSteps {
                         fn.accept(idx);
                         ok.increment();
                     } catch (Exception e) {
-                        errors.add("idx=" + idx + " -> " + e.getMessage());
+                        errors.add("idx=" + idx + " -> " + e.getClass().getName() + ": " + e.getMessage());
+                        log.warn("idx={} failed", idx, e);
                     }
                 }));
             }
