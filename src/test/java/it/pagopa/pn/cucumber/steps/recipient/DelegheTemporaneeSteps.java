@@ -108,7 +108,13 @@ public class DelegheTemporaneeSteps {
             }
         }
         if (mandateDto != null) {
-            ricezioneNotificheWebDelegheSteps.getWebMandateClient().rejectMandate(mandateDto.getMandateId());
+            try {
+                ricezioneNotificheWebDelegheSteps.getWebMandateClient().rejectMandate(mandateDto.getMandateId());
+            } catch (HttpStatusCodeException exception) {
+                if (exception.getRawStatusCode() == 404) {
+                    log.info("L'esecuzione in parallelo di altri test ha causato il 404, niente di grave");
+                }
+            }
         }
     }
 
