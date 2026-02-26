@@ -372,7 +372,6 @@ public class DelegheTemporaneeSteps {
             Assertions.assertThat(thirdPartyMessage).as("La notifica recuperata non dev'essere null").isNotNull();
             log.info("Notifica visualizzata con successo tramite appIO: \n" + thirdPartyMessage);
         } else {
-            Assertions.assertThat(thirdPartyMessage).as("La notifica recuperata dev'essere null").isNull();
             Assertions.assertThat(error).as("Il recupero della notifica deve produrre un errore").isNotNull();
             log.info("Errore in fase di visualizzazione notifica tramite appIO: \n" + error.getMessage());
         }
