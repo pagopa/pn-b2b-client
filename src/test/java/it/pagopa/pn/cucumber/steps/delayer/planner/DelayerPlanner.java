@@ -296,12 +296,12 @@ public class DelayerPlanner {
     }
 
     private DelayerPaperDelivery freezeNotification(DelayerPaperDelivery notification) {
-        String deliveryDate = getNextMonday();
+        String deliveryDate = getNextMonday(1);
         return utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
     }
 
     private List<DelayerPaperDelivery> collectAllFrozen(Map<String, List<DelayerPaperDelivery>> frozenByStep) {
-        String deliveryDate = getNextMonday();
+        String deliveryDate = getNextMonday(1);
 
         List<DelayerPaperDelivery> toFreeze = frozenByStep.values().stream()
                 .flatMap(List::stream)
@@ -316,11 +316,6 @@ public class DelayerPlanner {
             map.put(step.name(), new ArrayList<>());
         }
         return map;
-    }
-
-    private void freezeNotifications(List<DelayerPaperDelivery> list, WorkflowSteps step, Map<String, List<DelayerPaperDelivery>> frozenByStep) {
-        String deliveryDate = getNextMonday();
-        frozenByStep.get(step.name()).addAll(utils.deepCopyAndUpdateKeys(list, WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate));
     }
 
 }
