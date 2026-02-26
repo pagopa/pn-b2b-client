@@ -34,4 +34,10 @@ public class AgreementCommonContext {
     public void addDocumentMetadata(DocumentMetadata documentMetadata) {
         this.documentMetadata.add(documentMetadata);
     }
+    public UUID getLastAgreementId() {
+        if (agreementIds == null || agreementIds.isEmpty()) {
+            return null;
+        }
+        return agreementIds.get(agreementIds.size() - 1);
+    }
 }

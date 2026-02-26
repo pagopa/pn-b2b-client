@@ -6,18 +6,25 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenant
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+
 public class PurposeTemplateResolver extends AbstractResolver {
 
     private final SharedStepsContext sharedStepsContext;
     private final PurposeTemplateContext purposeTemplateContext;
     private final IdentityService identityService;
+
+    public PurposeTemplateResolver(SharedStepsContext sharedStepsContext, PurposeTemplateContext purposeTemplateContext, IdentityService identityService) {
+        super(sharedStepsContext);
+
+        this.sharedStepsContext = sharedStepsContext;
+        this.purposeTemplateContext = purposeTemplateContext;
+        this.identityService = identityService;
+    }
 
     public Integer resolveOffset(String raw) {
         return resolveOrParse(
@@ -99,21 +106,6 @@ public class PurposeTemplateResolver extends AbstractResolver {
                 () -> organizationId == null
                         ? null
                         : Collections.singletonList(organizationId),
-                () -> Collections.singletonList(UUID.randomUUID()),
-                Collections::emptyList
-        );
-    }
-
-    public List<UUID> resolveEserviceIds(String raw) {
-        List<UUID> singletonEserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId() == null
-                ? Collections.emptyList()
-                : List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId());
-
-        return resolveOrParse(
-                raw,
-                (uuid) -> Collections.singletonList(UUID.fromString(uuid)),
-                () -> singletonEserviceId,
-                () -> singletonEserviceId,
                 () -> Collections.singletonList(UUID.randomUUID()),
                 Collections::emptyList
         );

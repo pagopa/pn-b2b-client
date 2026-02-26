@@ -1165,6 +1165,15 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
+    public void waitRiskAnalysisDocument() {
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+                purpose -> purpose.getIsDocumentReady(),
+                "Risk analysis document is not ready",
+                30,
+                30_000
+        );
+    }
 
     public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed) {
         httpCallExecutor.performCall(() -> eServiceClient.addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed));

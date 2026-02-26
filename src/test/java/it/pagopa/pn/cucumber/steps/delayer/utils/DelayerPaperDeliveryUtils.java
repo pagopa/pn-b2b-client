@@ -394,8 +394,8 @@ public class DelayerPaperDeliveryUtils {
         }
     }
 
-    public static String getNextMonday() {
-        LocalDate nextMonday = LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(1);
+    public static String getNextMonday(int weeksToAdd) {
+        LocalDate nextMonday = LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(weeksToAdd);
         return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
