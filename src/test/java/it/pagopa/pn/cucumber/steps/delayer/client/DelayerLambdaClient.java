@@ -36,17 +36,28 @@ public class DelayerLambdaClient {
         return rawResult;
     }
 
-    public int getAvailableCapacity(String driver, String provincia, String deliveryDate) {
+    private JsonNode getDriverCapacityNode(String driver, String provincia, String deliveryDate) {
         try {
             String response = invoke("GET_USED_CAPACITY", "pn-PaperDeliveryDriverUsedCapacities", driver, provincia, deliveryDate);
-            JsonNode body = extractBody(response);
-            int declared = body.path("declaredCapacity").asInt(-1);
-            int used = body.path("usedCapacity").asInt(-1);
-            if(declared == -1 && used == -1) return -1;
-            return declared - used;
+            return extractBody(response);
         } catch (Exception e) {
             throw new RuntimeException("Errore durante GET_USED_CAPACITY per driver %s".formatted(driver), e);
         }
+    }
+
+    public int getUsedCapacity(String driver, String provincia, String deliveryDate) {
+        JsonNode body = getDriverCapacityNode(driver, provincia, deliveryDate);
+        return body.path("usedCapacity").asInt(-1);
+    }
+
+    public int getAvailableCapacity(String driver, String provincia, String deliveryDate) {
+        JsonNode body = getDriverCapacityNode(driver, provincia, deliveryDate);
+        int declared = body.path("declaredCapacity").asInt(-1);
+        int used = body.path("usedCapacity").asInt(-1);
+        if (declared == -1 && used == -1) {
+            return -1;
+        }
+        return declared - used;
     }
 
     public FirstStepFunctionResponseWrapper.Payload runBatchWorkflowStateMachine(int printCapacity, String deliveryWeek) throws Exception {

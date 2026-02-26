@@ -14,7 +14,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
-@ExcludeTags({"wait_for_fix"})
+@ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({"hotfix-2.15"})
 public class HotfixTest_2_15 {
 }
