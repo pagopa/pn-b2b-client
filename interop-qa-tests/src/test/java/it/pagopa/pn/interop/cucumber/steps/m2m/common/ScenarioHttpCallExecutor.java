@@ -2,13 +2,13 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.IHttpExecutor;
-import java.util.function.Function;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component
@@ -19,6 +19,10 @@ public class ScenarioHttpCallExecutor implements IHttpExecutor {
     private HttpStatus responseStatus;
     private Object response;
     private String errorMessage;
+
+    private HttpStatus snapResponseStatus;
+    private Object snapResponse;
+    private String snapErrorMessage;
 
     @Override
     public <T> T performCallSavingBodyResponse(Supplier<ResponseEntity<T>> promise) {
@@ -71,6 +75,20 @@ public class ScenarioHttpCallExecutor implements IHttpExecutor {
     public void setRawResponse(int statusCode, Object rawBody) {
         this.responseStatus = HttpStatus.valueOf(statusCode);
         this.response = rawBody;
+    }
+
+    @Override
+    public void snapshot() {
+        this.snapResponseStatus = this.responseStatus;
+        this.snapResponse = this.response;
+        this.snapErrorMessage = this.errorMessage;
+    }
+
+    @Override
+    public void resetFormSnapshot() {
+        this.responseStatus = this.snapResponseStatus;
+        this.response = this.snapResponse;
+        this.errorMessage = this.snapErrorMessage;
     }
 
 }

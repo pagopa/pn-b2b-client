@@ -15,6 +15,7 @@ public class InteropClientConfigs {
     @Value("${m2m.base-url}")
     private String m2mBaseUrl;
 
+
     @Value("${remote-wellknown-url}")
     private String remoteWellknownUrl;
 

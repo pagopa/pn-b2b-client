@@ -36,6 +36,8 @@ import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
+import it.pagopa.interop.probing.config.ProbingClientConfigs;
+import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
@@ -119,6 +121,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TracingFileUtils.class,
         BlobFileCreator.class,
         TracingClientConfigs.class,
+        ProbingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
@@ -190,7 +193,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PropertyResolver.class,
         NotificationStore.class,
         ProducerKeychainClientImpl.class,
-        IPurposeTemplateClient.class
+        IPurposeTemplateClient.class,
+        ProbingClient.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -1,7 +1,5 @@
 package it.pagopa.interop.utils;
 
-import static java.util.Objects.isNull;
-
 import it.pagopa.interop.common.IHttpExecutor;
 import lombok.Data;
 import lombok.Getter;
@@ -16,6 +14,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Getter
 @Data
@@ -25,6 +25,10 @@ public class HttpCallExecutor implements IHttpExecutor {
     private HttpStatus responseStatus;
     private String errorMessage;
     private Object response;
+
+    private HttpStatus snapResponseStatus;
+    private Object snapResponse;
+    private String snapErrorMessage;
 
     @Override
     public <T> HttpStatus performCall(Supplier<T> promise) {
@@ -81,6 +85,20 @@ public class HttpCallExecutor implements IHttpExecutor {
     public void setRawResponse(int statusCode, Object rawBody) {
         this.responseStatus = HttpStatus.valueOf(statusCode);
         this.response = rawBody;
+    }
+
+    @Override
+    public void snapshot() {
+        this.snapResponseStatus = this.responseStatus;
+        this.snapResponse = this.response;
+        this.snapErrorMessage = this.errorMessage;
+    }
+
+    @Override
+    public void resetFormSnapshot() {
+        this.responseStatus = this.snapResponseStatus;
+        this.response = this.snapResponse;
+        this.errorMessage = this.snapErrorMessage;
     }
 
 }

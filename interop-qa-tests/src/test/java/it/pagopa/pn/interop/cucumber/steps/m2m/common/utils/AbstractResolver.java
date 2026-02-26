@@ -42,6 +42,17 @@ public abstract class AbstractResolver {
         };
     }
 
+    // overload comodo quando BLANK/RANDOM non servono
+    protected <T> T resolveOrParse(
+            String raw,
+            Function<String, T> nonTokenParser,
+            Supplier<T> actualSupplier,
+            Supplier<T> expectedSupplier
+    ) {
+        return resolveOrParse(raw, nonTokenParser, actualSupplier, expectedSupplier, null, null);
+    }
+
+
     public List<UUID> resolveEserviceIds(String raw) {
         List<UUID> singletonEserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId() == null
                 ? Collections.emptyList()
