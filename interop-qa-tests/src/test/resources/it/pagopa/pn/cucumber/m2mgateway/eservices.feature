@@ -275,7 +275,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | stato                 |
       | DRAFT                 |
@@ -288,7 +288,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_30] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service se non è il creatore dello stesso (Parte2#Scenario intorno a 46)

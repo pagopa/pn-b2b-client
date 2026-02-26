@@ -539,7 +539,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
     Examples:
       | ruolo        | stato     |
       | admin        | PUBLISHED |
@@ -1338,7 +1338,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la riattivazione della versione dell'e-service template
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
     Examples:
       | stato     |
       | DRAFT     |

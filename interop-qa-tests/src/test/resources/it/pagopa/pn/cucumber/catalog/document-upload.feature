@@ -30,13 +30,12 @@ Feature: Caricamento di un documento di interfaccia
       | PA1  | support      | DRAFT            |       403 |
 
     @sad-path
-    #BUG: https://pagopa.atlassian.net/browse/PIN-7757
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
-      | PA1  | admin | PUBLISHED        |       400 |
-      | PA1  | admin | SUSPENDED        |       400 |
-      | PA1  | admin | DEPRECATED       |       400 |
-      | PA1  | admin | ARCHIVED         |       400 |
+      | PA1  | admin | PUBLISHED        |       409 |
+      | PA1  | admin | SUSPENDED        |       409 |
+      | PA1  | admin | DEPRECATED       |       409 |
+      | PA1  | admin | ARCHIVED         |       409 |
 
   @nrt-minimal
   @document_upload2
