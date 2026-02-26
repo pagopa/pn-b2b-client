@@ -8,16 +8,17 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import net.lingala.zip4j.ZipFile;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -25,16 +26,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.function.Consumer;
-import net.lingala.zip4j.ZipFile;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 public class DescriptorImportSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -55,6 +46,13 @@ public class DescriptorImportSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         this.commonUtils = commonUtils;
+    }
+
+    @Given("l'utente ha già un pacchetto con un eservice in mode RECEIVE ed una risk analysis obsoleta")
+    public void userAddPackageWithOutdatedRiskAnalysis() {
+        folderName = "exportedWithOldRiskAnalysis";
+        updateAndZipConfig(folderName, configJson ->
+                configJson.addProperty("name", "e-service-IMPORTED-" + sharedStepsContext.getTestSeed()), false);
     }
 
     @Given("l'utente ha già un pacchetto correttamente strutturato con un eservice in mode {string}")
