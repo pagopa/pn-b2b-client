@@ -1,5 +1,6 @@
 package it.pagopa.interop.agreement.service.impl;
 
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 import static java.util.Objects.isNull;
 
 import it.pagopa.interop.agreement.service.IEServiceClient;
@@ -28,6 +29,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDes
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
@@ -36,28 +38,20 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -70,7 +64,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public EServiceApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public EServiceApiClientImpl(
+        RestTemplate restTemplate,
+        InteropClientConfigs interopClientConfigs
+    ) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.eservicesApi = new EservicesApi(createApiClient("dummyBearer"));
@@ -166,7 +163,13 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     public File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
-        return eservicesApi.getEServiceDocumentById(eServiceId, descriptorId, documentId);
+        try {
+            Resource resourceResponse = eservicesApi.getEServiceDocumentById(eServiceId,
+                descriptorId, documentId);
+            return createTempFile("e-service-document-",resourceResponse.getInputStream());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed) {
@@ -186,7 +189,12 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     public File getEServiceConsumers(UUID eServiceId) {
-        return eservicesApi.getEServiceConsumers(eServiceId);
+        try {
+            Resource resourceResponse = eservicesApi.getEServiceConsumers(eServiceId);
+            return createTempFile("e-service-document-",resourceResponse.getInputStream());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public EServiceRiskAnalysis getEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId) {
