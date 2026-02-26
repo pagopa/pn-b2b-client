@@ -1,8 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,18 +10,24 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.ParameterTypes;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Getter
 @Setter
@@ -96,6 +99,11 @@ public class ClientCommonSteps {
     public void verifyStatusCode(int statusCode) {
         if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
+    }
+
+    @Then("si ottengono i seguenti status codes: {apiStatuses}")
+    public void verifyStatusCodes(Map<ParameterTypes.ApiSpec, Integer> statusCodeMap) {
+        statusCodeMap.forEach((k,v) -> System.out.println(k + ": " + v));
     }
 
     /* DEV. NOTE 12/03/2025: si differenzia da verifyStatusCode(int statusCode) per la verifica
