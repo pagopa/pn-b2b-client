@@ -3,11 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.config;
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.agreement.service.impl.AgreementClientImpl;
-import it.pagopa.interop.agreement.service.impl.EServiceApiClientImpl;
-import it.pagopa.interop.agreement.service.impl.M2MAgreementClientImpl;
-import it.pagopa.interop.agreement.service.impl.M2MClientsClientImpl;
-import it.pagopa.interop.agreement.service.impl.M2MTenantClientImpl;
+import it.pagopa.interop.agreement.service.impl.*;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.impl.AttributeApiClientImpl;
 import it.pagopa.interop.attribute.service.impl.M2MCertifiedAttributeClientImpl;
@@ -41,10 +37,8 @@ import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
-import it.pagopa.interop.notification.NotificationClientImpl;
-import it.pagopa.interop.notification.NotificationConfigClient;
-import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.M2MPurposeTemplateClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
@@ -63,21 +57,13 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDelegationMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceDescriptionMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapperImpl;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceNameMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapperImpl;
@@ -97,10 +83,8 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTe
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
-import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
-import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -136,7 +120,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BlobFileCreator.class,
         TracingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
-        QAAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
         EServiceTemplateApiClientImpl.class,
@@ -206,7 +189,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationConfigClient.class,
         PropertyResolver.class,
         NotificationStore.class,
-        ProducerKeychainClientImpl.class
+        ProducerKeychainClientImpl.class,
+        IPurposeTemplateClient.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
