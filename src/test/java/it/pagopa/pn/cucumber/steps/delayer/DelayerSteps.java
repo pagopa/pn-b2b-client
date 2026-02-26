@@ -24,8 +24,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
@@ -37,7 +41,8 @@ import static java.lang.Thread.sleep;
 @RequiredArgsConstructor
 public class DelayerSteps {
 
-    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv","spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv"};
+    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
+            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv",  "notificationCancelled.csv"};
     public static final int POLLING_MAX_MINUTES = 90;
 
     private final DelayerContext context;
@@ -46,6 +51,7 @@ public class DelayerSteps {
     private final DelayerLambdaClient lambdaClient;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
+    private Map<String, Integer> availableCapacityByDriver = new HashMap<>();
 
     @Autowired
     public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
@@ -69,7 +75,7 @@ public class DelayerSteps {
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
     public void populateTargetTable(String csvName) throws Exception {
-        lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName);
+        lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName, context.expectedDeliveryDate);
     }
 
     @Then("vengono puliti i dati dalle tabelle target")
@@ -189,6 +195,7 @@ public class DelayerSteps {
             int rawLimit = Integer.parseInt(row.get("limit"));
 
             int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
+            availableCapacityByDriver.put(entityId, actual);
             if (actual == -1) actual = rawLimit;
 
             switch (comparative.toLowerCase()) {
@@ -210,6 +217,37 @@ public class DelayerSteps {
                 default -> throw new IllegalArgumentException("Comparatore non valido: " + comparative);
             }
 
+        }
+    }
+
+    @And("viene verificata che la capacità disponibile per i seguenti driver sia decrementata di: {int}")
+    public void assertCapacityDecremented(int difference, DataTable dataTable) {
+        assertCapacity(dataTable,
+                (driver, province) -> lambdaClient.getAvailableCapacity(driver, province, context.expectedDeliveryDate),
+                entityId -> availableCapacityByDriver.get(entityId) - difference);
+    }
+
+    @And("viene verificata che la capacità utilizzata per i seguenti driver sia uguale a: {int}")
+    public void assertCapacityEqualsTo(int expected, DataTable dataTable) {
+        assertCapacity(dataTable,
+                (driver, province) -> lambdaClient.getUsedCapacity(driver, province, context.expectedDeliveryDate),
+                entityId -> expected);
+    }
+
+    private void assertCapacity(DataTable dataTable,
+                                BiFunction<String, String, Integer> actualCalculator,
+                                Function<String, Integer> expectedCalculator) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> row : rows) {
+            String entityId = row.get("unifiedDeliveryDriverId");
+            String[] parts = entityId.split("~");
+            String driver = parts[0];
+            String province = parts[1];
+            int actual = actualCalculator.apply(driver, province);
+            int expected = expectedCalculator.apply(entityId);
+            Assertions.assertThat(actual)
+                    .as("Capacità residua per driver %s", entityId)
+                    .isEqualTo(expected);
         }
     }
 
@@ -241,6 +279,12 @@ public class DelayerSteps {
     @And("vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine")
     public void runSimulation2() {
         planner.simulateAlgorithm2(context.expectedPianification);
+    }
+
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
+    public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd)).getExecutionArn();
+        waitUntilStepFunctionEnd();
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
@@ -411,5 +455,10 @@ public class DelayerSteps {
             // Prossimo polling
             sleep(pollingIntervalMillis);
         }
+    }
+
+    @And("imposto la deliveryWeek in avanti di {int} settimane")
+    public void setDeliveryWeek(int nWeeks) {
+        context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
 }
