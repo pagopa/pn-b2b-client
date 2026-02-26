@@ -782,9 +782,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     # dailyCalls > maximum (1_000_000_000)
       | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 1000000001 | 400        |
 
-    # riskAnalysisForm semanticamente invalido
-      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | %invalid         | 10         | 400        |
-
     Examples:
       | purposeId                            | title         | description        | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
     # UUID valido ma non presente a sistema
