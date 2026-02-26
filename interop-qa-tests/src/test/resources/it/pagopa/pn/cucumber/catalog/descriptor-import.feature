@@ -56,6 +56,16 @@ Feature: Import di un descrittore
     And il descrittore viene correttamente creato in stato DRAFT
     And l'eservice contiene l'analisi del rischio
 
+  @nrt-minimal
+  @descriptor_import3b
+  Scenario: [DESCRIPTOR_IMPORT_3_B] La richiesta di import di un descrittore di un e-service in erogazione inversa, dato un pacchetto con specificata una versione di risk analysis obsoleta, si conclude con esito negativo
+    Given l'utente è un "admin" di "PA1"
+    Given l'utente ha già un pacchetto con un eservice in mode RECEIVE ed una risk analysis obsoleta
+    Given l'utente ha già richiesto una presignedURL per il caricamento del pacchetto
+    Given è già stato caricato il pacchetto nella presignedURL
+    When l'utente effettua una richiesta di import del descrittore
+    Then si ottiene status code 400
+
   @sad-path
   @nrt-minimal
   @descriptor_import4 @no-parallel
