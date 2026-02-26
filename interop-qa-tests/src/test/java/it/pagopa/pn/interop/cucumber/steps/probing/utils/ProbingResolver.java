@@ -1,10 +1,10 @@
 package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 
 import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateBE;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
-import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -12,10 +12,14 @@ import java.util.UUID;
 
 import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.italyToday;
 
-@RequiredArgsConstructor
 public class ProbingResolver extends AbstractResolver {
 
     private final ProbingContext probingContext;
+
+    public ProbingResolver(SharedStepsContext sharedStepsContext, ProbingContext probingContext) {
+        super(sharedStepsContext);
+        this.probingContext = probingContext;
+    }
 
     public UUID resolveEserviceId(String raw) {
         return resolveOrParse(

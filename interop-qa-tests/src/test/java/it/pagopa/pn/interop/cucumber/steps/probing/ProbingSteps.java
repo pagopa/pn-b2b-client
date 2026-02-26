@@ -46,7 +46,7 @@ public class ProbingSteps {
         this.probingClient = probingClient;
         this.probingClient.setHttpCallExecutor(httpCallExecutor);
         this.probingContext = new ProbingContext();
-        this.resolver = new ProbingResolver(probingContext);
+        this.resolver = new ProbingResolver(sharedStepsContext,probingContext);
     }
 
     @And("il microservizio {string} risulta attivo")
@@ -220,8 +220,8 @@ public class ProbingSteps {
 
 
         try {
-            OffsetTime startTime = startValue.toOffsetTime();
-            OffsetTime endTime = endValue.toOffsetTime();
+            OffsetTime startTime = startValue != null ? startValue.toOffsetTime() : null;
+            OffsetTime endTime = endValue != null ? endValue.toOffsetTime() : null;
 
             probingClient.updateEserviceFrequency(eserviceUuid, versionUuid, frequencyValue, startTime, endTime);
             probingContext.setActualStartTime(startTime);
