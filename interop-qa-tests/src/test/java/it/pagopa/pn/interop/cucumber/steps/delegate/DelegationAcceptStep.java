@@ -84,12 +84,21 @@ public class DelegationAcceptStep {
         }
     }
 
-    @And("l'ente {delegationRole} accetta la delega in fruizione")
-    @And("l'ente {delegationRole} accetta la delega in fruizione con successo")
-    public void consumerDelegationIsAcceptedByTenant(DelegationRole delegationRole) {
-        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+    @And("l'ente delegato accetta la delega in fruizione")
+    @And("l'ente delegato accetta la delega in fruizione con successo")
+    public void consumerDelegationIsAccepted() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        consumerDelegationIsAcceptedImpl();
+    }
 
+    @And("l'ente {string} accetta la delega in fruizione con successo")
+    public void consumerDelegationIsAccepted(String tenant) {
+        String token = identityService.getToken(tenant, null);
+        clientTokenConfigurator.setBearerToken(token);
+        consumerDelegationIsAcceptedImpl();
+    }
+
+    private void consumerDelegationIsAcceptedImpl() {
         OffsetDateTime activatedAt = OffsetDateTime.now();
         approveConsumerDelegation();
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
