@@ -763,27 +763,27 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code <statusCode>
 
     Examples:
-      | purposeId | title                                                         | description                                                                                                                                                                                                                                                | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+      | purposeId | title                                                         | description                                                                                                                                                                                                                                                  | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
     # title troppo corto (< 5)
-      | %actual   | abcd                                                          | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 10         | 400        |
+      | %actual   | abcd                                                          | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 10         | 400        |
 
     # title troppo lungo (> 60)
-      | %actual   | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 10         | 400        |
+      | %actual   | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 10         | 400        |
 
     # description troppo corta (< 10)
-      | %actual   | titolo valido                                                 | short                                                                                                                                                                                                                                                      | true           | reason             | actual           | 10         | 400        |
+      | %actual   | titolo valido                                                 | short                                                                                                                                                                                                                                                        | true           | reason             | actual           | 10         | 400        |
 
     # description troppo lunga (> 250)
       | %actual   | titolo valido                                                 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | true           | reason             | actual           | 10         | 400        |
 
     # dailyCalls < minimum (1)
-      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 0          | 400        |
+      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 0          | 400        |
 
     # dailyCalls > maximum (1_000_000_000)
-      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | actual           | 1000000001 | 400        |
+      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 1000000001 | 400        |
 
     # riskAnalysisForm semanticamente invalido
-      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | %invalid         | 10         | 400        |
+      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | %invalid         | 10         | 400        |
 
     Examples:
       | purposeId                            | title         | description        | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
@@ -792,6 +792,22 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
     # UUID valido ma sicuramente inesistente
       | 00000000-0000-0000-0000-000000000000 | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
+
+  @purpose-m2m-patch
+  Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.2] - Risk analysis invalida
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When viene aggiornato il draft purpose con purposeId "<purposeId>" e title "<title>", description "<description>", isFreeOfCharge "<isFreeOfCharge>", freeOfChargeReason "<freeOfChargeReason>", riskAnalysisForm "<riskAnalysisForm>", dailyCalls "<dailyCalls>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | purposeId | title         | description        | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+
+    # riskAnalysisForm semanticamente invalido
+      | %actual   | titolo valido | descrizione valida | true           | reason             | %invalid         | 10         | 200        |
+
 
   # Aggiunto a posteriori della stesura degli scenari di test per verificare l'affermazione
   # "Il controllo completo della validità della RA viene applicato in fase di attivazione (da Draft a Active)."
@@ -897,26 +913,26 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code <statusCode>
 
     Examples:
-      | purposeId                            | title                                                         | description                                                                                                                                                                                                                                                | isFreeOfCharge | freeOfChargeReason | dailyCalls | statusCode |
+      | purposeId                            | title                                                         | description                                                                                                                                                                                                                                                 | isFreeOfCharge | freeOfChargeReason | dailyCalls | statusCode |
     # title troppo corto (< 5)
-      | %actual                              | abcd                                                          | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 400        |
+      | %actual                              | abcd                                                          | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 400        |
     # title troppo lungo (> 60)
-      | %actual                              | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 400        |
+      | %actual                              | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 400        |
 
     # description troppo corta (< 10)
-      | %actual                              | titolo valido                                                 | short                                                                                                                                                                                                                                                      | true           | reason             | 10         | 400        |
+      | %actual                              | titolo valido                                                 | short                                                                                                                                                                                                                                                       | true           | reason             | 10         | 400        |
     # description troppo lunga (> 250)
       | %actual                              | titolo valido                                                 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | true           | reason             | 10         | 400        |
 
     # dailyCalls sotto minimo (< 1)
-      | %actual                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 0          | 400        |
+      | %actual                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 0          | 400        |
     # dailyCalls sopra massimo (> 1_000_000_000)
-      | %actual                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 1000000001 | 400        |
+      | %actual                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 1000000001 | 400        |
 
     # purposeId inesistente (UUID valido ma non presente)
-      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 404        |
+      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 404        |
     # purposeId sicuramente inesistente
-      | 00000000-0000-0000-0000-000000000000 | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                         | true           | reason             | 10         | 404        |
+      | 00000000-0000-0000-0000-000000000000 | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 404        |
 
 
   @m2m-parte2-settembre @reversePurpose
