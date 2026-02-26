@@ -166,7 +166,7 @@ public class DelegheTemporaneeSteps {
             default ->
                     qrCode = environmentPath + sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
         }
-        log.info("QR code settato: " + qrCode);
+        log.info("QR code settato: {}", qrCode);
     }
 
     @Then("la delega temporanea è stata correttamente creata")
@@ -373,7 +373,7 @@ public class DelegheTemporaneeSteps {
             log.info("Notifica visualizzata con successo tramite appIO: \n" + thirdPartyMessage);
         } else {
             Assertions.assertThat(thirdPartyMessage).as("La notifica recuperata dev'essere null").isNull();
-            Assertions.assertThat(error).as("L'errore prodotto non dev'essere null").isNotNull();
+            Assertions.assertThat(error).as("Il recupero della notifica deve produrre un errore").isNotNull();
             log.info("Errore in fase di visualizzazione notifica tramite appIO: \n" + error.getMessage());
         }
     }
