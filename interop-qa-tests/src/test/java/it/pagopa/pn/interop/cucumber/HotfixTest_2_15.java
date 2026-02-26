@@ -16,5 +16,5 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({"hotfix-2.15"})
-public class HotfixTest {
+public class HotfixTest_2_15 {
 }
