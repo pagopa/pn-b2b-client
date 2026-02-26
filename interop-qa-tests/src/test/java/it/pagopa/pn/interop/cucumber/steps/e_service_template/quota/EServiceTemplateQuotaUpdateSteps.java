@@ -16,7 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
 import lombok.Data;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
@@ -50,7 +50,7 @@ public class EServiceTemplateQuotaUpdateSteps {
     }
 
     private EServiceTemplateVersionQuotasUpdateSeed nextQuotasUpdateSeed() {
-        int dailyCallsPerConsumer = RandomUtils.nextInt(1_000_000_000); // numero massimo supportato
+        int dailyCallsPerConsumer = RandomUtils.insecure().randomInt(0, 1_000_000_000); // numero massimo supportato
         return new EServiceTemplateVersionQuotasUpdateSeed()
             .voucherLifespan(86400)
             .dailyCallsTotal(dailyCallsPerConsumer + 1)

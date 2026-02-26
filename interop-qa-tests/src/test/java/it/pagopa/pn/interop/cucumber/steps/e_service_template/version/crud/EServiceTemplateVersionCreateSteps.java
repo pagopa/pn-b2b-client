@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.version.crud;
 
-import com.google.common.base.Predicates;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -70,7 +69,7 @@ public class EServiceTemplateVersionCreateSteps {
 
     @Then("la creazione di una ulteriore versione nell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionCreated() {
-        testAssistant.checkEServiceTemplateVersion(Predicates.alwaysTrue(), "La versione dell'e-service template non è stata creata correttamente");
+        testAssistant.checkEServiceTemplateVersion(x -> true, "La versione dell'e-service template non è stata creata correttamente");
     }
 
     @Then("la creazione di una ulteriore versione in stato {eServiceTemplateVersionState} nell'e-service template è stata effettuata correttamente")

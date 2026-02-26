@@ -397,7 +397,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@FAIL-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_deliveryDetailCode | CON080   |
@@ -425,12 +424,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex           | 0                           |
       | details_sentAttemptMade    | 0                           |
       | details_attachments        | [{"documentType": "Plico"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL  |
-      | details_deliveryDetailCode | RECAG007C |
-      | details_recIndex           | 0         |
-      | details_sentAttemptMade    | 0         |
-
+    And viene controllato che l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" non esiste
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG007A.5s-RECAG007B[DOC:ARCAD;DOC:Plico].5s-RECAG007C"
 
   @giacenza890Simplified  @esposizioneCadArcad
@@ -778,11 +772,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG006B                 |
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG006C |
-      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL                                                                                                                                                                                                                    |
       | details_recIndex           | 0                                                                                                                                                                                                                           |
@@ -838,23 +827,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG007B                   |
       | details_sentAttemptMade    | 0                           |
       | details_attachments        | [{"documentType": "Plico"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL                                                                                                                                                                                                                 |
-      | details_recIndex           | 0                                                                                                                                                                                                                        |
-      | details_deliveryDetailCode | PNAG012                                                                                                                                                                                                                  |
-      | details_sentAttemptMade    | 0                                                                                                                                                                                                                        |
-      | details_physicalAddress    | {"at": "Presso", "address": "@FAIL-GIACENZA-GT10_890_NO_RECAG012", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus     | OK                                                                                                                                                                                                                       |
-    # TODO come fa a essere OK e non KO il risultato atteso, se è una sequenza di tipo fail?
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG007C |
-      | details_sentAttemptMade    | 0         |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | NULL | NULL |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
-    #PNAG012 come evento di feedback con data: RECAG011A + refinementDuration (1 minuto in DEV)
 
  # SEND_ANALOG_FEEDBACK------------------
   #deliveryDetailCode: RECRN002C

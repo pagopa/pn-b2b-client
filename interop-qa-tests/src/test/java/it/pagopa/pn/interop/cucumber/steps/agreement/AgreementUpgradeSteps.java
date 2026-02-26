@@ -12,15 +12,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpStatus;
-
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 public class AgreementUpgradeSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -40,8 +38,27 @@ public class AgreementUpgradeSteps {
     @When("l'utente richiede un'operazione di upgrade di quella richiesta di fruizione")
     public void requireAgreementUpgrade() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        requireAgreementUpgradeImpl();
+    }
+
+    @When("{string} richiede un'operazione di upgrade di quella richiesta di fruizione")
+    public void requireAgreementUpgradeByUser(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        requireAgreementUpgradeImpl();
+    }
+
+    @When("{string} richiede un'operazione di upgrade di quella richiesta di fruizione con successo")
+    public void successfullyRequireAgreementUpgradeByUser(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        requireAgreementUpgradeImpl();
+        if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
+            throw new IllegalStateException("L'aggiornamento della richiesta di fruizione alla nuova versione dell'e-service non è andata a buon fine");
+        }
+    }
+
+    private void requireAgreementUpgradeImpl() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
+            () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
         );
         if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
             Agreement agreement = ((Agreement) sharedStepsContext.getHttpCallExecutor().getResponse());

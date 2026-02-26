@@ -42,6 +42,7 @@ public class EServicesCommonContext {
     private String interfaceName;
     private UUID oldDescriptorId;
     private String name;
+    private String description;
 
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime publicationTimestamp;

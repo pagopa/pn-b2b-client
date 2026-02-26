@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber;
 import it.pagopa.pn.interop.cucumber.e_service_template.AbstractEServiceTemplateTest;
 import org.junit.platform.suite.api.IncludeTags;
 
-@IncludeTags({"e-service-template-receive"})
+@IncludeTags({"e-service-template-receive-bff", "e-service-template-receive-m2m"})
 @SuppressWarnings("java:S2187")
 public class EServiceTemplateReceiveTest extends AbstractEServiceTemplateTest {
 }

@@ -7,6 +7,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.DeclaredAttributeSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.VerifiedAttributeSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceDescriptorSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceSteps;
+import it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps;
 
 public class ParameterTypes {
 
@@ -22,7 +23,7 @@ public class ParameterTypes {
         };
     }
 
-    @ParameterType("invalid|invalido|null|nullo|inesistente")
+    @ParameterType("invalid|invalido|null|nullo|inesistente|valido")
     public EntityIdType entityIdType(String idType) {
         return EntityIdType.fromString(idType);
     }

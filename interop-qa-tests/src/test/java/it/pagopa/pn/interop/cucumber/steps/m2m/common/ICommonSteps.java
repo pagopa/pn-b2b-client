@@ -1,8 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
+import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public interface ICommonSteps {
     void verifyByHttpStatus(int expectedStatusCode);
