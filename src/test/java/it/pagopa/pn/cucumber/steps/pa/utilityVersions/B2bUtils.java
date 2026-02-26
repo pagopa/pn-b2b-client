@@ -548,18 +548,4 @@ public abstract class B2bUtils {
             default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
     }
-
-    /**
-     * Sanitize a string before logging to prevent log injection (for example via newlines).
-     *
-     * @param logString the original string value
-     * @return a sanitized version of the string safe to include in log messages
-     */
-    public static String sanitizeLogString(String logString) {
-        if (logString == null) {
-            return null;
-        }
-        // Remove carriage return and newline characters to avoid log forging.
-        return logString.replace("\r", "").replace("\n", "");
-    }
 }
