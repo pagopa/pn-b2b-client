@@ -15,6 +15,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
     @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({"hotfix21500"})
+@IncludeTags({"hotfix-2.15"})
 public class HotfixTest {
 }

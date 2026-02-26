@@ -1,4 +1,4 @@
-@hotfix21500
+@hotfix-2.15
 Feature: Gestione dei clients attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
