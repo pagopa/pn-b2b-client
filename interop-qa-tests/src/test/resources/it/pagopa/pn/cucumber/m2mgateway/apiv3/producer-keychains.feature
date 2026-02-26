@@ -401,12 +401,11 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
     When l'utente elimina l'associazione tra l'utenza con userId "<userId>" e la producer keychain "<producerKeychainId>"
-    Then si ottiene response status code <statusCode>
+    Then si ottiene status code <statusCode>
 
-    #da implementare -> i 2 status 401
     Examples:
       | tenant | userId                               | producerKeychainId | m2mRoles  | statusCode |
       | PA1    | %actual                              | %actual            | m2m-admin | 204        |

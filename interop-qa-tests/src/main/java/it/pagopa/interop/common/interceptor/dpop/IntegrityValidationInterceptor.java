@@ -195,8 +195,8 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         require(jwtPayload, "signed_headers");
 
         JsonNode signedHeaders = jwtPayload.get("signed_headers");
-        if (!signedHeaders.isObject()) {
-            throw new IntegrityValidationException("signed_headers claim is not an object");
+        if (!signedHeaders.isArray()) {
+            throw new IntegrityValidationException("signed_headers claim is not an object array");
         }
 
         // match signed_headers values exactly

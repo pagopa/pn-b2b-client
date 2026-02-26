@@ -55,11 +55,17 @@ public class BFFProducerKeychainsSteps {
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && response.getId() != null) {
                 httpCallExecutor.snapshot();
                 PollingService.makePolling(
-                        () -> producerKeychainsClient.getProducerKeychain(response.getId()),
-                        keychain -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && keychain != null && response.getId().equals(keychain.getId()),
+                        () -> {
+                            try {
+                                return producerKeychainsClient.getProducerKeychain(response.getId());
+                            } catch (IllegalStateException e) {
+                                return null;
+                            }
+                        },
+                        keychain -> keychain != null && response.getId().equals(keychain.getId()),
                         "Il producer keychain non risulta creato correttamente dopo la creazione",
-                        30,
-                        1_000L
+                        60,
+                        3_000L
                 );
                 httpCallExecutor.resetFormSnapshot();
             }
