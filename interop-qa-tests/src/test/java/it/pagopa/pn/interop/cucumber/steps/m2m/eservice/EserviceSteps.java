@@ -339,7 +339,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceDelegationSubset() {
         EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
-                .isConsumerDelegable(false)
                 .isClientAccessDelegable(false)
                 .build();
         eServiceDelegationPatchAssistant.patchResource(request);

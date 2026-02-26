@@ -73,6 +73,13 @@ public class AgreementCommonSteps {
         tenantAlreadyHasFruitionRequestWithState(agreementState, token, null);
     }
 
+    @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service in qualità di delegato")
+    public void tenantAlreadyHasFruitionRequestWithStateAndDelegation(String consumer, String agreementState) {
+        String token = identityService.getToken(consumer, null);
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        tenantAlreadyHasFruitionRequestWithState(agreementState, token, delegationId);
+    }
+
     @Given("il {delegationRole} ha una richiesta di fruizione in stato {string} per quell'e-service")
     public void tenantAlreadyHasFruitionRequestWithState(DelegationRole delegationRole, String agreementState) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);

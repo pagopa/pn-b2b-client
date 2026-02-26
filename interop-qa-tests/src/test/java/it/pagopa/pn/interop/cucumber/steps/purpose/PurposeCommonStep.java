@@ -160,6 +160,14 @@ public class PurposeCommonStep {
                 new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
+    @Given("per conto di {string}, {string} ha già creato {int} finalità in stato {string} per quell'eservice")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(String consumer, String executor , int n, String purposeVersionState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(executor, null));
+        UUID consumerId = identityService.getOrganizationId(consumer);
+        createFinalizationWithGivenStatus(consumerId, consumer, n, purposeVersionState,
+            new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+    }
+
     public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef) {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
