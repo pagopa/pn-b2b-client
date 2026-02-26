@@ -365,6 +365,107 @@
                         </configuration>
                     </execution>
 
+                    <!-- Probing API -->
+                    <execution>
+                        <id>generate-probing-external-interop-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+
+                            <inputSpec>
+                                https://raw.githubusercontent.com/pagopa/interop-probing-core/refs/heads/develop/packages/api-clients/open-api/probingApi.yaml
+                            </inputSpec>
+
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+
+                            <configOptions>
+                                <apiPackage>
+                                    it.pagopa.interop.generated.openapi.clients.probing.api
+                                </apiPackage>
+                                <modelPackage>
+                                    it.pagopa.interop.generated.openapi.clients.probing.model
+                                </modelPackage>
+
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(
+                                    com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+                                    )
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+
+                            <globalProperties>
+                                <skipFormModel>false</skipFormModel>
+                            </globalProperties>
+                        </configuration>
+                    </execution>
+
+                    <!-- Probing Statistics API -->
+                    <execution>
+                        <id>generate-probing-statistics-interop-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+
+                            <inputSpec>
+                                https://raw.githubusercontent.com/pagopa/interop-probing-core/refs/heads/develop/packages/api-clients/open-api/probingStatisticsApi.yaml
+                            </inputSpec>
+
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+
+                            <configOptions>
+                                <apiPackage>
+                                    it.pagopa.interop.generated.openapi.clients.probingStatistics.api
+                                </apiPackage>
+                                <modelPackage>
+                                    it.pagopa.interop.generated.openapi.clients.probingStatistics.model
+                                </modelPackage>
+
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(
+                                    com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+                                    )
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+
+                            <globalProperties>
+                                <skipFormModel>false</skipFormModel>
+                            </globalProperties>
+                        </configuration>
+                    </execution>
+
+
                     <execution>
                         <id>generate-m2mGateway-client</id>
                         <goals>
