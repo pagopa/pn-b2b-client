@@ -165,7 +165,9 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
         if (agidJwt == null || agidJwt.isBlank()) {
             if (failOnMissingAgidJwtSignature) {
-                throw new IntegrityValidationException("Missing Agid-JWT-Signature header for " + request.getMethod() + " " + request.getURI());
+                throw new IntegrityValidationException(
+                        "Missing Agid-JWT-Signature header for "
+                                + request.getMethod() + " " + request.getURI());
             }
             log.debug("Agid-JWT-Signature missing for {} {}", request.getMethod(), request.getURI());
             return;
@@ -196,24 +198,33 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
         JsonNode signedHeaders = jwtPayload.get("signed_headers");
         if (!signedHeaders.isArray()) {
-            throw new IntegrityValidationException("signed_headers claim is not an object array");
+            throw new IntegrityValidationException("signed_headers claim is not an array");
         }
 
-        // match signed_headers values exactly
-        Iterator<Map.Entry<String, JsonNode>> it = signedHeaders.fields();
-        while (it.hasNext()) {
-            Map.Entry<String, JsonNode> e = it.next();
-            String headerName = e.getKey(); // e.g. "digest" / "content-type"
-            String expectedValue = e.getValue().asText();
+        for (JsonNode headerObject : signedHeaders) {
 
-            String actualValue = response.getHeaders().getFirst(headerName); // lookup case-insensitive
+            if (!headerObject.isObject() || headerObject.size() != 1) {
+                throw new IntegrityValidationException(
+                        "Each signed_headers element must contain exactly one header entry"
+                );
+            }
+
+            Map.Entry<String, JsonNode> entry = headerObject.fields().next();
+
+            String headerName = entry.getKey(); // es. "digest" / "content-type"
+            String expectedValue = entry.getValue().asText();
+
+            String actualValue = response.getHeaders().getFirst(headerName); // case-insensitive
+
             if (actualValue == null) {
                 actualValue = treatMissingResponseHeaderAsEmptyString ? "" : null;
             }
 
-            if (actualValue == null || !expectedValue.equals(actualValue)) {
+            if (!expectedValue.equals(actualValue)) {
                 throw new IntegrityValidationException(
-                        "signed_headers mismatch for '" + headerName + "' expected='" + expectedValue + "' actual='" + actualValue + "'"
+                        "signed_headers mismatch for '" + headerName +
+                                "' expected='" + expectedValue +
+                                "' actual='" + actualValue + "'"
                 );
             }
         }
