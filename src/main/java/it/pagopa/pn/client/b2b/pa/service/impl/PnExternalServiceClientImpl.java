@@ -661,7 +661,7 @@ public class PnExternalServiceClientImpl {
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {};
 
         return invokeAPI(dataVaultBasePath,
-                "/consolidatore-ingress/v1/push-progress-events/",
+                "/consolidatore-ingress/v1/push-progress-events",
                 HttpMethod.PUT, uriVariables, null, postBody,
                 headerParams, localVarAccept, localVarContentType, returnType);
     }

@@ -416,33 +416,36 @@ Feature: Api Service Cruscotto Assistenza
 
   #CE02.11 Come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
-    Given  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+  Scenario: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
+    Given come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId           | VUOTO      |
+      | searchPageSize | 1          |
+      | startDate      | 2023-01-01 |
+      | endDate        | 2023-12-01 |
     Then il servizio risponde con errore "400"
-    Examples:
-      | paID  | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | VUOTO | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"id","detail":"size must be between 1 and 50"}]}]
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.11_80] Invocazione del servizio con paId inesistente
-    Given  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+  Scenario: [API-SERVICE-CA_CE02.11_80] Invocazione del servizio con paId inesistente
+    Given come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId           | 4db941cf-17e1-4751-9b7b |
+      | searchPageSize | 1                       |
+      | startDate      | 2023-01-01              |
+      | endDate        | 2023-12-01              |
     Then Il servizio risponde correttamente
-    Examples:
-      | paID                    | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | 4db941cf-17e1-4751-9b7b | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #  Response 200 OK
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
+  Scenario: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
     And Il servizio risponde con esito positivo con la lista delle PA
-    When  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    And come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId           | NO_SET     |
+      | searchPageSize | 1          |
+      | startDate      | 2023-01-01 |
+      | endDate        | 2023-12-01 |
     Then Il servizio risponde correttamente
-    Examples:
-      | paID   | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | NO_SET | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #  Response 200 OK a95dace4-4a47-4149-a814-0e669113ce40
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
@@ -539,7 +542,7 @@ Feature: Api Service Cruscotto Assistenza
     Then Il servizio risponde correttamente con presenza delle apiKey
     Examples:
       | paID                                 |
-      | 026e8c72-7944-4dcd-8668-f596447fec6d |
+      | a95dace4-4a47-4149-a814-0e669113ce40 |
     #Response 200 OK
 
 #026e8c72-7944-4dcd-8668-f596447fec6d MILANO
@@ -603,6 +606,52 @@ Feature: Api Service Cruscotto Assistenza
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene chiamato service desk e si controlla la presenza dell'elemento "REFINEMENT" nella response
 
+  #https://pagopa.atlassian.net/browse/PN-15961
+  @serviceDeskRefinement @cruscottoAssistenza
+  Scenario: [SERVICE_DESK_TIMELINE_RETURNED_TO_SENDER_1] verifica presenza elemento RETURNED_TO_SENDER nella response di service desk
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    #controllo API service-desk
+    And viene chiamato service desk e si controlla la presenza dell'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED" nella response
+    And si verifica che lo stato della notifica recuperata sia: "RETURNED_TO_SENDER"
+    And come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:
+      | paId      | 4db941cf-17e1-4751-9b7b |
+      | startDate | TODAY                   |
+      | endDate   | LAST_TEN_MINUTES        |
+    Then Il servizio risponde correttamente
+
+  @serviceDeskRefinement @cruscottoAssistenza
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_REWORK] Verificare che il nuovo elemento di timeline NOTIFICATION_TIMELINE_REWORKED generato in seguito ad una richiesta di correzione sia visibile da serviceDesk
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
+    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason   |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON30 |
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 15 secondi controllando ogni 3 secondi
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    #controllo API service-desk
+    And viene chiamato service desk e si controlla la presenza dell'elemento "NOTIFICATION_TIMELINE_REWORKED" nella response
+    And si verifica che lo stato della notifica recuperata sia: "VIEWED"
+
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -647,17 +696,21 @@ Feature: Api Service Cruscotto Assistenza
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_5] Recupero del profilo destinatario che ha selezionato il Domicilio Digitale come recapito legale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And viene attivato il servizio SERCQ SEND per il comune "default"
-    And viene verificato che Sercq sia "abilitato" per il comune "default"
-    #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And viene attivato il servizio SERCQ SEND come indirizzo di "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "uguali" tra di loro
+    And viene disabilitato il servizio SERCQ SEND per la PA "default"
 
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_6] Recupero del profilo destinatario che ha rimosso il Domicilio Digitale come recapito legale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune "default"

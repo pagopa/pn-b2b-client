@@ -37,6 +37,20 @@ public class PurposeVersionCreateSteps {
     public void userUpdateCallsEstimateBelowThreshold() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         newDailyCalls = 50;
+        sharedStepsContext.getRiskAnalysisCommonContext().setDailyCalls(newDailyCalls);
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurposeVersion(
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                        new PurposeVersionSeed().dailyCalls(newDailyCalls)
+                )
+        );
+    }
+
+    @When("l'utente aggiorna la stima di carico per quella finalità a {int}")
+    public void userUpdateCallsEstimateBelowThreshold(int newDailyCalls) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        this.newDailyCalls = newDailyCalls;
+        sharedStepsContext.getRiskAnalysisCommonContext().setDailyCalls(newDailyCalls);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurposeVersion(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),

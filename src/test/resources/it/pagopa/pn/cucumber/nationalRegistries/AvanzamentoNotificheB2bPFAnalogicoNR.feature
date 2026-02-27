@@ -59,7 +59,7 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 1        |
       | details_responseStatus  | OK       |
-      | details_physicalAddress | {}       |
+      | details_physicalAddress | {"address": "Via Umbria 5/L", "municipality": "PADOVA", "zip": "35127"} |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 

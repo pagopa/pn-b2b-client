@@ -71,6 +71,22 @@ public class PurposeActivationStep {
         activatePurposeInStateForThatEServiceWithDelegate(state, delegationRef);
     }
 
+    @When("l'utente {string} di {string} (ri)attiva la finalità in stato {string} per quell'e-service")
+    public void userActivatesPurposeInStateForThatEService(String role, String tenant, String state) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
+        DelegationRef delegationRef = new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId());
+        activatePurposeInStateForThatEServiceWithDelegate(state, delegationRef);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
+    @When("l'utente {string} di {string} (ri)attiva la finalità in stato {string} per quell'e-service con successo")
+    public void successfullyUserActivatesPurposeInStateForThatEService(String role, String tenant, String state) {
+        userActivatesPurposeInStateForThatEService(role, tenant, state);
+        if(httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException("L'attivazione della finalità non è avvenuta con successo");
+        }
+    }
+
     @When("l'utente {delegationRole} (ri)attiva la finalità in stato {string} per quell'e-service")
     public void userActivatesPurposeInStateForThatEServiceWithDelegate(DelegationRole delegationRole, String state) throws InterruptedException {
         Thread.sleep(2000);

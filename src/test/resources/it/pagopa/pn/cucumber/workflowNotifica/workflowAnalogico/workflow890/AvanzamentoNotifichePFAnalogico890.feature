@@ -90,8 +90,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
     And si verifica che il contenuto degli attachments da inviare in via cartacea abbia 20 attachment di tipo "F24"
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Gherkin e:
       | digitalDomicile                     | NULL                 |
       | physicalAddress_address             | Via@ok_AR            |

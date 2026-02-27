@@ -52,6 +52,12 @@ public class EServiceTemplateNameUpdateSteps {
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
     }
 
+    @When("l'utente tenta la modifica del nome dell'e-service template con successo")
+    public void successfullyEditEServiceTemplateName() {
+        editEServiceTemplateName();
+        checkEServiceTemplateNameEdited();
+    }
+
     @When("l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome")
     public void editEServiceTemplateNameWithSameName() {
         editEServiceTemplateNameWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getName());
@@ -107,10 +113,13 @@ public class EServiceTemplateNameUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.updateEServiceTemplateNameWithHttpInfo(
-
                 eServiceTemplateId,
                 lastTemplateNameUpdateSeed),
             ResponseEntity::getStatusCode);
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            sharedStepsContext.getEServiceTemplateStepContext().setModifiedTemplateName(
+                lastTemplateNameUpdateSeed.getName());
+        }
     }
 
     private boolean areConsistent(EServiceTemplateDetails template, EServiceTemplateNameUpdateSeed lastUpdate) {

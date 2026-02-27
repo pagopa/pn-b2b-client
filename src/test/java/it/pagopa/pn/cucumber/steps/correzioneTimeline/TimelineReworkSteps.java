@@ -22,6 +22,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -42,6 +43,7 @@ public class TimelineReworkSteps {
     private HttpStatus httpStatusCode;
 
     private String timestampString;
+    private List<String> attempt1ElementIds = new ArrayList<>();
 
     public TimelineReworkSteps(ReworkTimelineClientImpl reworkTimelineClient, SharedSteps sharedSteps) {
         this.reworkTimelineClient = reworkTimelineClient;
@@ -55,7 +57,6 @@ public class TimelineReworkSteps {
 
     @And("viene aggiornata la richiesta di rework con i seguenti dati:")
     public void updateRequestReworkWithError(DataTable params) {
-
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
         String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : "REWORK_0.TRY_0.RECINDEX_0");
@@ -73,7 +74,6 @@ public class TimelineReworkSteps {
 
     @And("viene correttamente aggiornata la richiesta di rework con i seguenti dati:")
     public void updateRequestRework(DataTable params) {
-
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getParams(inputData, "iun", sharedSteps.getNotificationIun());
         String reworkId = getParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
@@ -139,7 +139,6 @@ public class TimelineReworkSteps {
 
     @And("viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:")
     public void callReworkWithParamsWithError(DataTable params) {
-
         Map<String, String> inputData = params.asMaps().get(0);
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
         try {
@@ -164,7 +163,6 @@ public class TimelineReworkSteps {
 
     @And("viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:")
     public void callReworkWithParams(DataTable params) {
-
         Map<String, String> inputData = params.asMaps().get(0);
         String attemptId = getParams(inputData, "attemptId", "ATTEMPT_0");
         try {
@@ -237,8 +235,78 @@ public class TimelineReworkSteps {
         verifyInvalidatedTimelineElementsFailFast(elementsToCheck);
     }
 
-
     public void verifyInvalidatedTimelineElementsFailFast(List<String> elementsToCheck) {
+
+        List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory =
+                getInvalidatedHistoryFailFast();
+
+        List<String> invalidElementIds = invalidatedHistory.stream()
+                .flatMap(h -> h.getRelatedTimelineElements().stream())
+                .map(TimelineElementV28::getElementId)
+                .filter(Objects::nonNull)
+                .filter(elementId ->
+                        elementsToCheck.stream()
+                                .noneMatch(elementId::contains)
+                )
+                .toList();
+
+        if (!invalidElementIds.isEmpty()) {
+            log.error("Trovati elementId non validi in relatedTimelineElements:");
+            invalidElementIds.forEach(id -> log.error(" - {}", id));
+        }
+
+        assertTrue(
+                invalidElementIds.isEmpty(),
+                "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
+        );
+    }
+
+    @Then("raccolgo gli elementId della timeline contenenti {string}")
+    public void collectAttempt1ElementIdsFromTimeline(String element) {
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+        attempt1ElementIds.clear();
+        attempt1ElementIds = timeline.stream()
+                .map(TimelineElementV28::getElementId)
+                .filter(Objects::nonNull)
+                .filter(id -> id.contains(element))
+                .toList();
+
+        if (!attempt1ElementIds.isEmpty()) {
+            log.warn("Trovati {} elementId contenenti " + element + ":", attempt1ElementIds.size());
+            attempt1ElementIds.forEach(id -> log.warn(" - {}", id));
+        } else {
+            log.warn("Nessun elementId contenente " + element + " trovato nella timeline");
+        }
+    }
+
+    @Then("verifica che gli elementi appena raccolti siano nella lista di quelli invalidati")
+    public void verifyInvalidatedTimelineElements() {
+
+        List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory =
+                getInvalidatedHistoryFailFast();
+
+        Set<String> invalidatedElementIds = invalidatedHistory.stream()
+                .flatMap(h -> h.getRelatedTimelineElements().stream())
+                .map(TimelineElementV28::getElementId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<String> missingElementIds = attempt1ElementIds.stream()
+                .filter(attemptId -> !invalidatedElementIds.contains(attemptId))
+                .toList();
+
+        if (!missingElementIds.isEmpty()) {
+            log.error("I seguenti elementId non sono presenti in invalidatedHistory:");
+            missingElementIds.forEach(id -> log.error(" - {}", id));
+        }
+        assertTrue(
+                missingElementIds.isEmpty(),
+                "Alcuni elementId non sono presenti in invalidatedHistory: " + missingElementIds
+        );
+    }
+
+    private List<NotificationStatusHistoryInvalidatedElement> getInvalidatedHistoryFailFast() {
         FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         TimelineElementV28 reworkedElement = timeline.stream()
@@ -255,26 +323,7 @@ public class TimelineReworkSteps {
         if (invalidatedHistory == null || invalidatedHistory.isEmpty()) {
             throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
         }
-        List<String> invalidElementIds = invalidatedHistory.stream()
-                .flatMap(h -> h.getRelatedTimelineElements().stream())
-                .map(TimelineElementV28::getElementId)
-                .filter(Objects::nonNull)
-                .filter(elementId ->
-                        elementsToCheck.stream()
-                                .noneMatch(elementId::contains)
-                )
-                .toList();
-
-        if (!invalidElementIds.isEmpty()) {
-            log.error("Trovati elementId non validi in relatedTimelineElements:");
-            invalidElementIds.forEach(id ->
-                    log.error(" - {}", id)
-            );
-        }
-        assertTrue(
-                invalidElementIds.isEmpty(),
-                "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
-        );
+        return invalidatedHistory;
     }
 
     @And("si verifica che la richiesta di rework effettuata sia in stato {string} entro {int} secondi controllando ogni {int} secondi")

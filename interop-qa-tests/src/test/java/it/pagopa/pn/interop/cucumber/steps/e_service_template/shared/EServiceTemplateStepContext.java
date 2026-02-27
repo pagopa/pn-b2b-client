@@ -79,6 +79,8 @@ public class EServiceTemplateStepContext {
     private List<UUID> removedDeclaredAttributesIds = new ArrayList<>();
     private List<UUID> removedVerifiedAttributesIds = new ArrayList<>();
 
+    private String modifiedTemplateName;
+
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(
             RiskAnalysisFormSeed.class);

@@ -39,7 +39,6 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     private final String userAgent;
     private final String basePath;
 
-
     public PnWebMandateExternalClientImpl(RestTemplate restTemplate,
                                           @Value("${pn.webapi.external.base-url}") String basePath,
                                           @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
@@ -56,7 +55,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.mandateServiceApi = new MandateApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+        this.mandateServiceApi = new MandateApi(newApiClient(restTemplate, basePath, marioCucumberBearerToken,userAgent));
         this.bearerTokenSetted = BearerTokenType.USER_1;
     }
 

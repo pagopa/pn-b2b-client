@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.serviceDesk;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -139,6 +140,11 @@ public class ApiServiceDeskSteps {
         }
     }
 
+     @And("si verifica che lo stato della notifica recuperata sia: {string}")
+     public void verifyNotificationStatus(String expectedStatus) {
+        Assertions.assertEquals(timelineResponse.getIunStatus().getValue(), expectedStatus);
+     }
+
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
     public void createVerifyUnreachableRequest(String cf) {
         createRequestByFiscalCode(cf, true);
@@ -274,12 +280,6 @@ public class ApiServiceDeskSteps {
         createPreUploadVideoRequestDocumentSteps(video);
     }
 
-    @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con formato non corretto")
-    public void createPreUploadVideoRequestFormatVideoNotValid() throws Exception {
-        notificationDocument = newDocument("classpath:/video.avi");
-        createPreUploadVideoRequestDocumentSteps();
-    }
-
     @When("viene invocato il servizio UPLOAD VIDEO")
     public void preUploadVideoResponse() {
         try {
@@ -343,15 +343,6 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con preloadIdx vuoto")
     public void createPreUploadVideoRequestPreloadIdxNull() throws Exception {
         createPreUploadVideoRequestSteps(null, "application/octet-stream");
-    }
-
-    @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con preloadIdx errato")
-    public void createPreUploadVideoRequestpreloadIdxNotValid() throws Exception {
-        String resourceName = "classpath:/test.xml";
-        String sha256 = B2bUtils.computeSha256(ctx, resourceName);
-        videoUploadRequest.setPreloadIdx("@@||!!");
-        videoUploadRequest.setSha256(sha256);
-        videoUploadRequest.setContentType("application/octet-stream");
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con ContentType vuoto")
@@ -447,16 +438,6 @@ public class ApiServiceDeskSteps {
         }
         Assertions.assertTrue(multiOperation);
         checkOperationResponseList(listaSplit, operationIdToSearch, status, false, null);
-    }
-
-    @Then("Il servizio SEARCH risponde con esito positivo per lo {string} e lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatusAndIun(String iun, String status) {
-        String operationIdToSearch = operationsResponse.getOperationId();
-        log.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
-        List<OperationResponse> lista = searchResponse.getOperations();
-        Assertions.assertNotNull(lista);
-        log.info("SEARCH " + searchResponse.getOperations().toString());
-        checkOperationResponseList(lista, operationIdToSearch, status, true, iun);
     }
 
     @Then("Il servizio SEARCH risponde con esito positivo con uncompleted iun lo stato della consegna è {string}")
@@ -730,8 +711,8 @@ public class ApiServiceDeskSteps {
         try {
             Integer size = setSearchPageSize(searchPageSize);
             String nextPagesKey = setNextPagesKey(searchNextPagesKey);
-            OffsetDateTime sDate = setDateSearch(startDate);
-            OffsetDateTime eDate = setDateSearch(endDate);
+            OffsetDateTime sDate = getDate(startDate);
+            OffsetDateTime eDate = getDate(endDate);
 
             searchNotificationsRequest = new SearchNotificationsRequest();
             if ("NULL".equalsIgnoreCase(taxId)) {
@@ -940,13 +921,13 @@ public class ApiServiceDeskSteps {
                     .withNano(0);
 
             if (!"NULL".equalsIgnoreCase(startDate)) {
-                sDate = setDateSearch(startDate);
+                sDate = getDate(startDate);
             } else {
                 sDate = OffsetDateTime.parse(myFormatter.format(offsetEndDt));
             }
 
             if (!"NULL".equalsIgnoreCase(endDate)) {
-                eDate = setDateSearch(endDate);
+                eDate = getDate(endDate);
             } else {
                 eDate = OffsetDateTime.parse(myFormatter.format(realEndOfDay));
             }
@@ -963,19 +944,22 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @Given("come operatore devo accedere alla lista di tutte le notifiche depositate da un ente \\(mittente) su Piattaforma Notifiche in un range temporale con paId {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
-    public void comeOperatoreDevoAccedereAllaListaDiTutteLeNotificheDepositateDaUnEnteMittenteSuPiattaformaNotificheInUnRangeTemporaleConPaIdEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String paId, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
+    @Given("come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:")
+    public void retrieveNotificationsFromData(DataTable dataTable) {
+        Map<String, String> inputParams = dataTable.asMap();
+        String paId = Optional.ofNullable(inputParams.get("paId")).map(this::setPaID).orElse(null);
+        String searchNextPagesKey = Optional.ofNullable(inputParams.get("searchNextPagesKey")).orElse(null);
+        Integer searchPageSize = Integer.parseInt(Optional.ofNullable(inputParams.get("searchPageSize")).orElse("10"));
+        OffsetDateTime startDate = Optional.ofNullable(inputParams.get("startDate")).map(this::getDate).orElse(null);
+        OffsetDateTime endDate = Optional.ofNullable(inputParams.get("endDate")).map(this::getDate).orElse(null);
+
+        PaNotificationsRequest paNotificationsRequest = new PaNotificationsRequest();
+        paNotificationsRequest.setId(paId);
+        paNotificationsRequest.setStartDate(startDate);
+        paNotificationsRequest.setEndDate(endDate);
+
         try {
-            Integer size = setSearchPageSize(searchPageSize);
-            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
-            OffsetDateTime sDate = setDateSearch(startDate);
-            OffsetDateTime eDate = setDateSearch(endDate);
-            PaNotificationsRequest paNotificationsRequest = new PaNotificationsRequest();
-            paNotificationsRequest.setId(setPaID(paId));
-            paNotificationsRequest.setStartDate(sDate);
-            paNotificationsRequest.setEndDate(eDate);
-            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromSenderId(size, nextPagesKey, paNotificationsRequest);
-            Assertions.assertNotNull(searchNotificationsResponse);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromSenderId(searchPageSize, searchNextPagesKey, paNotificationsRequest);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
         }
@@ -1405,16 +1389,14 @@ public class ApiServiceDeskSteps {
         analogAddress.setCountry(country);
     }
 
-    public OffsetDateTime setDateSearch(String dateInputString) {
-        OffsetDateTime resultDate = null;
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public OffsetDateTime getDate(String dateInputString) {
         OffsetDateTime sentAt = OffsetDateTime.now();
-
-        if (!"NULL".equalsIgnoreCase(dateInputString)) {
-            LocalDateTime localDate = LocalDate.parse(dateInputString, dateTimeFormatter).atStartOfDay();
-            resultDate = OffsetDateTime.of(localDate, sentAt.getOffset());
-        }
-        return resultDate;
+        if ("NULL".equalsIgnoreCase(dateInputString)) return null;
+        return switch (dateInputString.toUpperCase()) {
+            case "LAST_TEN_MINUTES" -> sentAt.minusMinutes(10);
+            case "TODAY" -> sentAt.truncatedTo(ChronoUnit.DAYS);
+            default -> LocalDate.parse(dateInputString).atStartOfDay().atOffset(ZoneOffset.UTC);
+        };
     }
 
     public String setTaxID(String taxId) {
@@ -1485,21 +1467,23 @@ public class ApiServiceDeskSteps {
     }
 
     public String setPaID(String paId) {
-        String paIDSearch = null;
-        if ("VUOTO".equalsIgnoreCase(paId)) {
-            paIDSearch = "";
-        } else if ("NO_SET".equalsIgnoreCase(paId)) {
-            for (PaSummary paSummary : listPa) {
-                paIDSearch = paSummary.getId();
-                if (paSummary.getName().contains("Milano") || paSummary.getName().contains("Verona") || paSummary.getName().contains("Palermo")) {
-                    paIDSearch = paSummary.getId();
-                    break;
+        String paIDSearch;
+        if (paId == null) return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();;
+        return switch (paId.toUpperCase()) {
+            case "VUOTO" -> "";
+            case "NO_SET" -> {
+                paIDSearch = listPa.get(listPa.size() - 1).getId();
+                for (PaSummary paSummary : listPa) {
+                    String name = paSummary.getName();
+                    if (name.contains("Milano") || name.contains("Verona") || name.contains("Palermo")) {
+                        paIDSearch = paSummary.getId();
+                        break;
+                    }
                 }
+                yield paIDSearch;
             }
-        } else {
-            paIDSearch = paId;
-        }
-        return paIDSearch;
+            default -> paId;
+        };
     }
 
     public Integer setSearchPageSize(String searchPageSize) {
@@ -1596,11 +1580,17 @@ public class ApiServiceDeskSteps {
     }
 
     private boolean checkAddressAndChannelType(String addressType, String addressCategory, Address data) {
+        boolean result = false;
         if (addressType.equals("cortesia")) {
-            return data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+            if (data.getCourtesyAddressType() != null && data.getCourtesyAddressType().equals(CourtesyAddressType.COURTESY)) {
+                result = data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+            }
         } else if (addressType.equals("legale")) {
-            return data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+            if (data.getLegalAddressType() != null && data.getLegalAddressType().equals(LegalAddressType.LEGAL)) {
+                result = data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+            }
         } else throw new IllegalArgumentException("addressType not valid");
+        return result;
     }
 
 
@@ -1612,12 +1602,6 @@ public class ApiServiceDeskSteps {
         Integer statusCode = this.httpResponse.status().value();
         Assertions.assertEquals(expected, statusCode);
     }
-
-    @Given("viene creata una nuova richiesta per invocare il servizio CREATE_ACT_OPERATION con cf: {string}")
-    public void createActOperationReq(String cf) {
-        this.createActOperationRequest = createActOperationRequestSteps(cf);
-    }
-
 
     @Given("viene popolata una richiesta di creazione Act operation con i seguenti dati")
     public void costruisciRichiestaDaMappa(Map<String, String> data) {

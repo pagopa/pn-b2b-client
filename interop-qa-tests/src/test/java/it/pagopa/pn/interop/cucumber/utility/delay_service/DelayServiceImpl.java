@@ -1,9 +1,12 @@
 package it.pagopa.pn.interop.cucumber.utility.delay_service;
 
 import java.time.Duration;
+import java.time.Instant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class DelayServiceImpl implements DelayService {
     private final Duration defaultDelay;
@@ -37,13 +40,17 @@ public class DelayServiceImpl implements DelayService {
 
     @Override
     public void delayFor(Duration delay) {
+        Instant start = Instant.now();
         try {
+            log.info("Waiting for: {}", delay.toString());
             if(delay.isNegative()) {
                 throw new IllegalArgumentException("Delay MUST not be negative");
             }
 
             Thread.sleep(delay.toMillis());
         } catch (InterruptedException e) {
+            Instant end = Instant.now();
+            log.error("Waited for: {}", Duration.between(start, end));
             throw new DelayException("Error occurred trying to delay workflow", e);
         }
     }

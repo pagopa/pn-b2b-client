@@ -515,7 +515,7 @@ public class CoperturaCapRaddSteps {
                     continue;
                 }
 
-                String[] values = line.split(";(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
                 if (values.length < 2) continue;
 
                 String cap = values[0].replace("\"", "").trim();

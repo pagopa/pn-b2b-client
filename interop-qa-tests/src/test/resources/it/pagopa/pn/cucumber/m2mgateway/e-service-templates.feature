@@ -13,7 +13,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   | <-- 30/09/2025 modalità receive non supportata
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -27,7 +31,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   | <-- 30/09/2025 modalità receive non supportata
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -46,13 +54,18 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   | <-- 30/09/2025 modalità receive non supportata
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
   Scenario Outline: [INTEROP-EST-M2M-UNSUSPEND_04] Un utente NON può effettuare la riattivazione di un e-service template indicando un auth token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di SUSPENDED
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di effettuare la riattivazione dell'e-service template
     Then si ottiene status code 401
@@ -63,9 +76,12 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   | <-- 30/09/2025 modalità receive non supportata
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7827
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
+
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
   Scenario Outline: [INTEROP-EST-M2M-UNSUSPEND_05] Un utente con ruolo m2m-admin NON può effettuare la riattivazione di un e-service template in stato diverso da SUSPENDED
@@ -77,12 +93,16 @@ Feature: Test API M2M of e-service template
     And la versione corrente dell'e-service template è in stato <state>
     Examples:
       | mode        | state       | code  |
-      | erogazione  | DRAFT       | 400   |
+      | erogazione  | DRAFT       | 409   |
       | erogazione  | PUBLISHED   | 409   |
-      | erogazione  | DEPRECATED  | 400   |
-    #  | ricezione   | DRAFT       | 400   | <-- 30/09/2025 modalità receive non supportata
-    #  | ricezione   | PUBLISHED   | 409   |
-    #  | ricezione   | DEPRECATED  | 400   |
+      | erogazione  | DEPRECATED  | 409   |
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | state       | code  |
+      | ricezione   | DRAFT       | 409   |
+      | ricezione   | PUBLISHED   | 409   |
+      | ricezione   | DEPRECATED  | 409   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -97,7 +117,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   | <-- 30/09/2025 modalità receive non supportata
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -116,7 +140,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -130,7 +158,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -152,7 +184,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+    
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -168,9 +204,13 @@ Feature: Test API M2M of e-service template
       | PUBLISHED   | erogazione  |
       | DEPRECATED  | erogazione  |
       | SUSPENDED   | erogazione  |
-      #| PUBLISHED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
-      #| DEPRECATED  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
-      #| SUSPENDED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | stato        | mode        |
+      | PUBLISHED   | ricezione   |
+      | DEPRECATED  | ricezione   |
+      | SUSPENDED   | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -185,7 +225,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -204,7 +248,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -218,7 +266,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -240,7 +292,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -256,9 +312,13 @@ Feature: Test API M2M of e-service template
       | PUBLISHED   | erogazione  |
       | DEPRECATED  | erogazione  |
       | SUSPENDED   | erogazione  |
-      #| PUBLISHED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
-      #| DEPRECATED  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
-      #| SUSPENDED   | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | stato        | mode        |
+      | PUBLISHED   | ricezione   |
+      | DEPRECATED  | ricezione   |
+      | SUSPENDED   | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -288,9 +348,13 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        | state     |
       | erogazione  | PUBLISHED |
-      #| ricezione   | PUBLISHED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
       | erogazione  | SUSPENDED |
-      #| ricezione   | SUSPENDED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | state     |
+      | ricezione   | PUBLISHED |
+      | ricezione   | SUSPENDED |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -304,9 +368,13 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        | state     |
       | erogazione  | PUBLISHED |
-      #| ricezione   | PUBLISHED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
       | erogazione  | SUSPENDED |
-      #| ricezione   | SUSPENDED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | state     |
+      | ricezione   | PUBLISHED |
+      | ricezione   | SUSPENDED |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -328,9 +396,13 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        | state     |
       | erogazione  | PUBLISHED |
-      #| ricezione   | PUBLISHED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
       | erogazione  | SUSPENDED |
-      #| ricezione   | SUSPENDED |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | state     |
+      | ricezione   | PUBLISHED |
+      | ricezione   | SUSPENDED |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -345,8 +417,12 @@ Feature: Test API M2M of e-service template
       | stato       | mode        |
       | DRAFT       | erogazione  |
       | DEPRECATED  | erogazione  |
-      #| DRAFT       | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
-      #| DEPRECATED  | ricezione   |  <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | stato        | mode        |
+      | DRAFT       | ricezione   |
+      | DEPRECATED  | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -359,6 +435,7 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
 
+  @m2m-v3-204-to-200
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
   Scenario Outline: [INTEROP-EST-M2M-DELETE_01] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service template
@@ -366,7 +443,7 @@ Feature: Test API M2M of e-service template
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service template
-    Then si ottiene lo status code 204
+    Then si ottiene http status code 204
     And l'e-service template non esiste più
 
     # si verifica che il tentativo di eliminarlo nuovamente si concluda negativamente
@@ -376,7 +453,11 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione  | <-- 10/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -390,12 +471,17 @@ Feature: Test API M2M of e-service template
     Examples:
       | mode        |
       | erogazione  |
-    #  | ricezione  | <-- 10/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
   Scenario: [INTEROP-EST-M2M-DELETE_03] Un utente NON può effettuare la cancellazione di un e-service template indicando un auth. token non valido
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare la cancellazione di un e-service template inesistente
     Then si ottiene lo status code 401
 
@@ -448,9 +534,13 @@ Feature: Test API M2M of e-service template
       | erogazione  | PUBLISHED   |
       | erogazione  | SUSPENDED   |
       | erogazione  | DEPRECATED  |
-    #  | ricezione  | PUBLISHED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | SUSPENDED   | <-- 10/2025 e-service template in mod. receive non ancora supportati
-    #  | ricezione  | DEPRECATED  | <-- 10/2025 e-service template in mod. receive non ancora supportati
+
+    @e-service-template-receive-m2m
+    Examples:
+      | mode        | state       |
+      | ricezione   | PUBLISHED   |
+      | ricezione   | SUSPENDED   |
+      | ricezione   | DEPRECATED  |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
@@ -537,6 +627,7 @@ Feature: Test API M2M of e-service template
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
   Scenario: [INTEROP-EST-M2M-VERSION-CREATE_06] Un utente NON può effettuare la creazione di una nuova versione di un e-service template specificando un auth. token non valido
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente
     Then si ottiene response status code 401
