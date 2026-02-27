@@ -123,6 +123,7 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
   Scenario Outline: [INTEROP-EST-M2M-PATCH_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di un e-service template in stato DRAFT (Parte2#Scenario intorno a 145)
@@ -146,6 +147,7 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
   Scenario Outline: [INTEROP-EST-M2M-PATCH_02] Un utente con ruolo M2M NON può effettuare una modifica parziale di un e-service template (Parte2#Scenario intorno a 147)
@@ -171,6 +173,7 @@ Feature: Test API M2M of e-service template
     When l'utente tenta di effettuare la modifica parziale di un e-service template inesistente
     Then si ottiene lo status code 404
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
   Scenario Outline: [INTEROP-EST-M2M-PATCH_04] Un utente NON può effettuare una modifica parziale di un e-service template indicando un token non valido (Parte2#Scenario intorno a 149)
@@ -190,6 +193,7 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
   Scenario Outline: [INTEROP-EST-M2M-PATCH_05] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 150)
@@ -212,6 +216,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED  | ricezione   |
       | SUSPENDED   | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
   Scenario Outline: [INTEROP-EST-M2M-PATCH_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service template che non gli appartiene (Parte2#Scenario intorno a 151)
@@ -231,6 +236,7 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-M2M-PATCH_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di una versione di un e-service template in stato DRAFT (Parte2#Scenario intorno a 152)
@@ -254,6 +260,7 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-M2M-PATCH_02] Un utente con ruolo M2M NON può effettuare una modifica parziale di una versione di un e-service template (Parte2#Scenario intorno a 154)
@@ -279,6 +286,7 @@ Feature: Test API M2M of e-service template
     When l'utente tenta di effettuare la modifica parziale di una versione inesistente di un e-service template inesistente
     Then si ottiene lo status code 404
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-M2M-PATCH_04] Un utente NON può effettuare una modifica parziale di una versione di un e-service template indicando un token non valido (Parte2#Scenario intorno a 156)
@@ -298,6 +306,7 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-M2M-PATCH_05] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 157)
@@ -320,6 +329,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED  | ricezione   |
       | SUSPENDED   | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
   Scenario: [INTEROP-EST-VERSION-M2M-PATCH_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 158)
@@ -331,6 +341,7 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-QUOTAS-M2M-PATCH_01] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale delle quote una versione di un e-service template in stato DRAFT (Parte2#Scenario intorno a 180)
@@ -356,6 +367,7 @@ Feature: Test API M2M of e-service template
       | ricezione   | PUBLISHED |
       | ricezione   | SUSPENDED |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-QUOTAS-M2M-PATCH_02] Un utente con ruolo M2M NON può effettuare una modifica parziale delle quote una versione di un e-service template (Parte2#Scenario intorno a 182)
@@ -383,6 +395,7 @@ Feature: Test API M2M of e-service template
     When l'utente tenta di effettuare la modifica parziale delle quote di una versione inesistente di un e-service template inesistente
     Then si ottiene lo status code 404
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-QUOTAS-M2M-PATCH_04] Un utente NON può effettuare una modifica parziale delle quote una versione di un e-service template indicando un token non valido (Parte2#Scenario intorno a 184)
@@ -404,6 +417,7 @@ Feature: Test API M2M of e-service template
       | ricezione   | PUBLISHED |
       | ricezione   | SUSPENDED |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
   Scenario Outline: [INTEROP-EST-VERSION-QUOTAS-M2M-PATCH_05] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote una versione di un e-service template in stato diverso da PUBLISHED o SUSPENDED (Parte2#Scenario intorno a 185)
@@ -424,6 +438,7 @@ Feature: Test API M2M of e-service template
       | DRAFT       | ricezione   |
       | DEPRECATED  | ricezione   |
 
+  @m2m-patch
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
   Scenario: [INTEROP-EST-VERSION-QUOTAS-M2M-PATCH_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 186)

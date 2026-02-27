@@ -5,6 +5,7 @@ import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.common.JsonParseException;
 import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -14,11 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ToString
@@ -95,7 +95,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
 
         tokenConfigurator.setBearerToken(getToken);
-        //eventuallySetAuth(getToken);
+        eventuallySetAuth(getToken);
         RESOURCE originalResource = this.getResource(resourceId);
         resourceContext.setOriginalResource(originalResource);
 
@@ -113,34 +113,50 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     }
 
     private void eventuallySetAuth(String token) {
-        if (ApiProfile.ApiM2MVersion.V3.equals(apiProfile.getApiM2MVersion())) {
+        try {
             TokenAuthInfo authInfo = extractTokenAuthInfo(token);
+            if (ApiProfile.ApiM2MVersion.V3.equals(apiProfile.getApiM2MVersion()) && authInfo != null) {
 
-            DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getIdentityService().getPreparedClient(authInfo.cliendId());
-            sharedStepsContext.getClientCommonContext().addClient(preparedClient);
+                DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getIdentityService().getPreparedClient(authInfo.cliendId());
+                sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
-            Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), authInfo.cliendId().toString(), authInfo.tenant(), "ADMIN", preparedClient.keyPair().getKeyPair());
+                Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), authInfo.cliendId().toString(), authInfo.tenant(), "ADMIN", preparedClient.keyPair().getKeyPair());
+                tokenConfigurator.setAuth(auth);
+                sharedStepsContext.setAuth(auth);
+            }
+        } catch (JsonParseException e) {
+            Auth auth = sharedStepsContext.getAuth();
+            auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
             tokenConfigurator.setAuth(auth);
-            sharedStepsContext.setAuth(auth);
         }
     }
 
+    @Nullable
     private TokenAuthInfo extractTokenAuthInfo(String token) {
-        Map<String, Object> jwtPayload = JWTUtils.decodeJwtPayload(token);
-        Object oClientId = getValue(jwtPayload, "client_id");
-        UUID clientId = UUID.fromString(oClientId.toString());
+        try {
+            Map<String, Object> jwtPayload = JWTUtils.decodeJwtPayload(token);
+            Object oClientId = getValue(jwtPayload, "client_id");
+            if(oClientId == null) {
+                return null;
+            }
 
-        Object oOrganizationId = getValue(jwtPayload, "organizationId");
-        UUID organizationId = UUID.fromString(oOrganizationId.toString());
-        String tenant = sharedStepsContext.getIdentityService().getTenant(organizationId);
+            UUID clientId = UUID.fromString(oClientId.toString());
 
-        return new TokenAuthInfo(tenant, clientId);
+            Object oOrganizationId = getValue(jwtPayload, "organizationId");
+            UUID organizationId = UUID.fromString(oOrganizationId.toString());
+            String tenant = sharedStepsContext.getIdentityService().getTenant(organizationId);
+
+            return new TokenAuthInfo(tenant, clientId);
+        } catch (JsonParseException e) {
+            // Al momento siamo in questo caso SOLO se passiamo un token deliberatamente non valido
+            throw e;
+        }
     }
 
-    @Nonnull
+    @Nullable
     private static Object getValue(Map<String, Object> jwtPayload, String fieldKey) {
         Object oClientId = jwtPayload.get(fieldKey);
-        requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(fieldKey));
+        //requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(fieldKey));
         return oClientId;
     }
 

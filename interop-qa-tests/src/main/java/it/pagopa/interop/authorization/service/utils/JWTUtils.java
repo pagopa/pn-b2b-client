@@ -1,11 +1,13 @@
 package it.pagopa.interop.authorization.service.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.common.JsonParseException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 public final class JWTUtils {
     @Data
@@ -29,7 +31,7 @@ public final class JWTUtils {
             byte[] decodedJsonPayload = Base64.getUrlDecoder().decode(part);
             return new ObjectMapper().readValue(decodedJsonPayload, Map.class);
         } catch (IOException e) {
-            throw new RuntimeException("Errore durante la decodifica del token JWT", e);
+            throw new JsonParseException("Errore durante la decodifica del token JWT", e);
         }
     }
 
