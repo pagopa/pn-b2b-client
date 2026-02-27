@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -8,8 +9,7 @@ import java.util.regex.Pattern;
 
 public class ParameterTypes {
     public enum ApiVersion { V1, V2, V3 }
-    public enum ApiSet { BFF, M2M }
-    public record ApiSpec(ApiSet set, ApiVersion version) {}
+    public record ApiSpec(ApiProfile.ApiSet set, ApiVersion version) {}
 
     /* Converte un indice espresso in forma (1,2,3...) in (0,1,2...) */
     @ParameterType("[0-9]+")
@@ -60,7 +60,7 @@ public class ParameterTypes {
             Matcher matcher = pattern.matcher(part);
             if (matcher.find()) {
                 Integer status = Integer.parseInt(matcher.group(1));
-                ApiSet set = ApiSet.valueOf(matcher.group(2).toUpperCase());
+                ApiProfile.ApiSet set = ApiProfile.ApiSet.valueOf(matcher.group(2).toUpperCase());
                 ApiVersion version = ApiVersion.valueOf("V" + matcher.group(3));
 
                 resultMap.put(new ApiSpec(set, version), status);

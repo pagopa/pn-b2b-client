@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
@@ -39,17 +40,21 @@ public class ClientCommonSteps {
     private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
+    private final ApiProfile apiProfile;
+
     private PurposeAdditionDetailsSeed purposeAdditionDetailsSeed;
 
     @Autowired
     public ClientCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
                              BFFDataPreparationService dataPreparationService,
-                             SharedStepsContext sharedStepsContext) {
+                             SharedStepsContext sharedStepsContext,
+                             ApiProfile apiProfile) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
+        this.apiProfile = apiProfile;
     }
 
     @Given("il {delegationRole} ha già creato {int} client {string}")
@@ -113,9 +118,21 @@ public class ClientCommonSteps {
 
     /* 26 02 2026 idea scartata per risolvere la problematica m2m v3 204 -> 200
     * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS */
-    @Then("si ottengono i seguenti status codes: {apiStatuses}")
+    @Then("si ottengono i seguenti response status codes: {apiStatuses}")
     public void verifyStatusCodes(Map<ParameterTypes.ApiSpec, Integer> statusCodeMap) {
-        statusCodeMap.forEach((k,v) -> System.out.println(k + ": " + v));
+        if(apiProfile.getApiMode().equals(ApiProfile.ApiMode.BEST_FIT)) {
+            log.warn("Attenzione: essendo attivata la modalità {} non è garantito che l'ultima call effettuata appartenga al set indicato in configurazione", apiProfile.getApiMode());
+        }
+
+        ParameterTypes.ApiSpec apiSpec = toApiSpec(apiProfile);
+        accuratelyVerifyStatusCode(statusCodeMap.get(apiSpec));
+    }
+
+    public ParameterTypes.ApiSpec toApiSpec(ApiProfile apiProfile) {
+        ParameterTypes.ApiVersion version = apiProfile.getApiSet().equals(ApiProfile.ApiSet.BFF)
+                ? ParameterTypes.ApiVersion.valueOf(apiProfile.getApiBFFVersion().toString())
+                : ParameterTypes.ApiVersion.valueOf(apiProfile.getApiM2MVersion().toString());
+        return new ParameterTypes.ApiSpec(apiProfile.getApiSet(), version);
     }
 
     /* DEV. NOTE 12/03/2025: si differenzia da verifyStatusCode(int statusCode) per la verifica
