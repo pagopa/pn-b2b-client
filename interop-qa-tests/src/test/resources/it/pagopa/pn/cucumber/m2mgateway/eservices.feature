@@ -264,7 +264,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 401
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7410
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato PUBLISHED (Parte2#Scenario intorno a 44)
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -277,7 +276,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | stato                 |
       | DRAFT                 |
@@ -290,7 +289,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_30] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service se non è il creatore dello stesso (Parte2#Scenario intorno a 46)
@@ -378,8 +377,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 200
     And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
-#    And vengono recuperate e salvate le configurazioni attuali della delega dell'eservice
-    # BUG: Possibile bug in quanto non è possibile fare la PATCH aggiornando un solo parametro!
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni
     Then si ottiene lo status code 200
     And l'e-service restituito è coerente con le modifiche effettuate

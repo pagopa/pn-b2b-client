@@ -1,11 +1,21 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.common.utils;
 
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class AbstractResolver {
+
+    protected final SharedStepsContext sharedStepsContext;
+
+    protected AbstractResolver(SharedStepsContext sharedStepsContext) {
+        this.sharedStepsContext = sharedStepsContext;
+    }
 
     protected <T> T resolveOrParse(
             String raw,
@@ -40,5 +50,21 @@ public abstract class AbstractResolver {
             Supplier<T> expectedSupplier
     ) {
         return resolveOrParse(raw, nonTokenParser, actualSupplier, expectedSupplier, null, null);
+    }
+
+
+    public List<UUID> resolveEserviceIds(String raw) {
+        List<UUID> singletonEserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId() == null
+                ? Collections.emptyList()
+                : List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId());
+
+        return resolveOrParse(
+                raw,
+                (uuid) -> Collections.singletonList(UUID.fromString(uuid)),
+                () -> singletonEserviceId,
+                () -> singletonEserviceId,
+                () -> Collections.singletonList(UUID.randomUUID()),
+                Collections::emptyList
+        );
     }
 }

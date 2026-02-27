@@ -82,7 +82,6 @@ Feature: Test API M2M of e-service template
       | mode        |
       | ricezione   |
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7827
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
   Scenario Outline: [INTEROP-EST-M2M-UNSUSPEND_05] Un utente con ruolo m2m-admin NON può effettuare la riattivazione di un e-service template in stato diverso da SUSPENDED

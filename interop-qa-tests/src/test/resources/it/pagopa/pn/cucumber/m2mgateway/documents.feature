@@ -38,13 +38,12 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
     Then si ottiene lo status code 409
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7748
   @m2m-parte2-agosto-rilascio1
   Scenario Outline: [M2MG_DOCUMENTS_07_A] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 54)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | stato       |
       | SUSPENDED   |
@@ -57,7 +56,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_08] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service se non è il creatore dello stesso (Parte2#Scenario intorno a 55)

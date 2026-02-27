@@ -1,13 +1,11 @@
 package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor

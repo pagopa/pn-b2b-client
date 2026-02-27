@@ -2,7 +2,6 @@
 Feature: Caricamento di un documento di interfaccia
   Tutti gli utenti autorizzati di enti erogatori possono caricare un documento di interfaccia ai propri descrittori
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7757
   @nrt-minimal
   @document_upload1
   Scenario Outline: [DESCRIPTOR_UPLOAD_1] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo solo per lo stato DRAFT, altrimenti restituirà errore.
@@ -30,13 +29,12 @@ Feature: Caricamento di un documento di interfaccia
       | PA1  | support      | DRAFT            |       403 |
 
     @sad-path
-    #BUG: https://pagopa.atlassian.net/browse/PIN-7757
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
-      | PA1  | admin | PUBLISHED        |       400 |
-      | PA1  | admin | SUSPENDED        |       400 |
-      | PA1  | admin | DEPRECATED       |       400 |
-      | PA1  | admin | ARCHIVED         |       400 |
+      | PA1  | admin | PUBLISHED        |       409 |
+      | PA1  | admin | SUSPENDED        |       409 |
+      | PA1  | admin | DEPRECATED       |       409 |
+      | PA1  | admin | ARCHIVED         |       409 |
 
   @nrt-minimal
   @document_upload2

@@ -539,7 +539,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
     Examples:
       | ruolo        | stato     |
       | admin        | PUBLISHED |
@@ -1088,8 +1088,6 @@ Feature: Test API of e-service template
       | admin |
       | api   |
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7122
-  # Disc. in corso https://pagopaspa.slack.com/archives/C069AP16WG7/p1771863085164299
   @sad-path
   @e-service-template-receive-bff
   @e-service-template-version-publish
@@ -1099,7 +1097,7 @@ Feature: Test API of e-service template
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua la cancellazione della risk analysis dell'e-service template con successo
     When l'utente tenta la pubblicazione della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 409
 
   @sad-path
   @e-service-template-receive-bff
@@ -1340,7 +1338,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la riattivazione della versione dell'e-service template
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
     Examples:
       | stato     |
       | DRAFT     |
