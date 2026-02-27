@@ -10,19 +10,18 @@ Feature: Gestione Feedback Analogici Duplicati
     And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @workflowAnalogico
   Scenario: [B2B_FEEDBACK_ANALOG_2] Invio notifica Analogica - Caso avanzamento spedizione e ricezione eventi di PROGRESS
     Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di milano            |
-      | physicalCommunication | REGISTERED_LETTER_890        |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL |
+      | digitalDomicile_address | test@fail.it    |
       | physicalAddress_address | Via@OK_START_RS |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
 
   @workflowAnalogico
@@ -31,10 +30,10 @@ Feature: Gestione Feedback Analogici Duplicati
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL_duplicate_feedback |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then viene verificato che per l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non ci siano duplicati
 
@@ -44,10 +43,10 @@ Feature: Gestione Feedback Analogici Duplicati
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                           |
       | physicalAddress_address | Via@FAIL_duplicate_final_event |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then viene verificato che per l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non ci siano duplicati
 
@@ -57,10 +56,10 @@ Feature: Gestione Feedback Analogici Duplicati
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@OK_duplicate_feedback |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then viene verificato che per l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non ci siano duplicati
 
@@ -70,9 +69,9 @@ Feature: Gestione Feedback Analogici Duplicati
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                         |
       | physicalAddress_address | Via@OK_duplicate_final_event |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then viene verificato che per l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non ci siano duplicati

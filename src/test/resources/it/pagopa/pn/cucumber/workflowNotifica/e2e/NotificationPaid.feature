@@ -13,7 +13,7 @@ Feature: Notifica pagata
       | taxId              | CLMCST42R12D969Z   |
       | payment_pagoPaForm | SI                 |
       | payment_f24        | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |
@@ -29,6 +29,7 @@ Feature: Notifica pagata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -47,7 +48,7 @@ Feature: Notifica pagata
       | physicalAddress_address | Via@ok_RS          |
       | payment_pagoPaForm      | SI                 |
       | payment_f24             | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |
@@ -55,9 +56,11 @@ Feature: Notifica pagata
     And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -75,10 +78,11 @@ Feature: Notifica pagata
       | physicalAddress_address | Via@ok_RS          |
       | payment_pagoPaForm      | SI                 |
       | payment_f24             | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |

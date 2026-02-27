@@ -1,0 +1,105 @@
+package it.pagopa.pn.interop.cucumber.steps.authorization;
+
+import com.nimbusds.jose.jwk.KeyType;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.domain.KeyPairDecorator;
+import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+
+import java.util.UUID;
+
+import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
+
+public class ClientKeyReadSteps {
+    private static final long MAX_SAFE_INTEGER = 9007199254740991L;
+
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final IAuthorizationClient authorizationClient;
+    private final SharedStepsContext sharedStepsContext;
+    private final IdentityService identityService;
+    private final IHttpExecutor httpCallExecutor;
+    private final BFFDataPreparationService dataPreparationService;
+
+    public ClientKeyReadSteps(ClientTokenConfigurator clientTokenConfigurator,
+                              SharedStepsContext sharedStepsContext,
+                              BFFDataPreparationService dataPreparationService) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
+        this.sharedStepsContext = sharedStepsContext;
+        this.identityService = sharedStepsContext.getIdentityService();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.dataPreparationService = dataPreparationService;
+    }
+
+    @Given("un {string} di {string} ha caricato una chiave pubblica nel client")
+    public void clientPublicKeyUpload(String role, String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
+        String keyType = "RSA";
+        KeyPairDecorator keyPair = of(keyType, 2048);
+        String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
+
+        // TODO: valutare di far restare solo preparedClient
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
+        DPoPTokenService.PreparedClient preparedClient = new DPoPTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType));
+        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
+
+        sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);
+        sharedStepsContext.getClientCommonContext().setClientPublicKeyAsObj(keyPair.getPublic());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivatePEM());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKeyAsObj(keyPair.getPrivate());
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
+        String keyId = dataPreparationService.addPublicKeyToClient(
+                clientId,
+                KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0));
+        sharedStepsContext.getClientCommonContext().setKeyId(keyId);
+    }
+
+    @Given("un {string} di {string} ha caricato una chiave {string} pubblica nel client")
+    public void clientPublicKeyUpload(String role, String tenantType, String kType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
+
+        int keySize;
+        KeyType keyType = KeyType.parse(kType);
+
+        if (keyType.equals(KeyType.RSA)) keySize = 2048;
+        else if (keyType.equals(KeyType.EC)) keySize = 256;
+        else throw new IllegalArgumentException("Unsupported key type: " + kType);
+
+        KeyPairDecorator keyPair = KeyPairDecorator.of(kType, keySize);
+        String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
+
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
+        DPoPTokenService.PreparedClient preparedClient = new DPoPTokenService.PreparedClient(clientId, keyPair, keyType);
+        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
+
+        sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);
+        sharedStepsContext.getClientCommonContext().setClientPublicKeyAsObj(keyPair.getPublic());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivatePEM());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKeyAsObj(keyPair.getPrivate());
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType.getValue());
+
+        String keyId = dataPreparationService.addPublicKeyToClient(
+                clientId,
+                KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, keyType).get(0)
+        );
+        sharedStepsContext.getClientCommonContext().setKeyId(keyId);
+    }
+
+
+    @When("l'utente richiede la lettura della chiave pubblica")
+    public void userReadPublicKey() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() ->
+                authorizationClient.getClientKeyById(
+                        sharedStepsContext.getClientCommonContext().getFirstClient(),
+                        sharedStepsContext.getClientCommonContext().getKeyId()));
+    }
+
+}

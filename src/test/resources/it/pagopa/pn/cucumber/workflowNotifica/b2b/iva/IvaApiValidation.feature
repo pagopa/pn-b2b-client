@@ -7,16 +7,16 @@ Feature: Validazione campi per feature calcoloIva
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | vat                | <vat>                       |
-      | paFee              | <paFee>                         |
+      | paFee              | <paFee>                     |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
-Examples:
-  | vat  | paFee |
-  | NULL | 10    |
-  | 10   | NULL  |
+    Examples:
+      | vat  | paFee |
+      | NULL | 10    |
+      | 10   | NULL  |
 
 
   @calcoloIva

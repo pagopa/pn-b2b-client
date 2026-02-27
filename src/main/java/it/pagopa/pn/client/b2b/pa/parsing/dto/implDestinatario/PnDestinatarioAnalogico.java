@@ -14,6 +14,7 @@ import java.util.*;
 @SuperBuilder
 @NoArgsConstructor
 public class PnDestinatarioAnalogico extends PnDestinatarioDigitale {
+    private static final String INDIRIZZO_REGEX = "\\b(COSENZA)\\b(\\s+\\1\\b){1}";
     private String indirizzoFisico;
 
     public PnDestinatarioAnalogico(String nomeCognomeRagioneSociale,
@@ -22,7 +23,7 @@ public class PnDestinatarioAnalogico extends PnDestinatarioDigitale {
                                    String tipoDomicilioDigitale,
                                    String indirizzoFisico) {
         super(nomeCognomeRagioneSociale, codiceFiscale, domicilioDigitale, tipoDomicilioDigitale);
-        this.indirizzoFisico = indirizzoFisico;
+        this.indirizzoFisico = indirizzoFisico.replaceAll(INDIRIZZO_REGEX, "$1");
     }
 
     @Override

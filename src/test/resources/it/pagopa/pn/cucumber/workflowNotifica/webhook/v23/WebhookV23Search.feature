@@ -7,7 +7,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -24,7 +24,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -41,7 +41,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -53,7 +53,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -70,7 +70,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -86,7 +86,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -162,8 +162,8 @@ Feature: ricerca di uno stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     When si cancella lo stream creato per il "Comune_Multi" con versione "V23"
-    When si legge lo stream che non esiste e apiKey aggiornata
-    Then l'operazione ha prodotto un errore con status code "400"
+    When si legge lo stream che non esiste e apiKey aggiornata con versione "V23"
+    Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -173,7 +173,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "LAST"
+    When si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "LAST"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -186,7 +186,7 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    When si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile

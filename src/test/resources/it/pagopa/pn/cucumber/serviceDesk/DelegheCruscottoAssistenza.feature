@@ -9,13 +9,12 @@ Feature: Deleghe Cruscotto Assitenza
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Mario Gherkin" e recipientType  "PF"
     And Il servizio risponde correttamente
     Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "Mario Cucumber" recipientType  "PF" e con searchPageSize "1" searchNextPagesKey "NULL" startDate "NULL" endDate "NULL" searchMandateId "NO_SET" searchInternalId "NO_SET"
     And Il servizio risponde correttamente
-
 
 
   @deleghe2  @cruscottoAssistenza
@@ -27,13 +26,12 @@ Feature: Deleghe Cruscotto Assitenza
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario GherkinSrl
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "CucumberSpa" e recipientType  "PG"
     And Il servizio risponde correttamente
     Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "GherkinSrl" recipientType  "PG" e con searchPageSize "1" searchNextPagesKey "NULL" startDate "NULL" endDate "NULL" searchMandateId "NO_SET" searchInternalId "NO_SET"
     And Il servizio risponde correttamente
-
 
 
   @deleghe1  @cruscottoAssistenza
@@ -45,7 +43,7 @@ Feature: Deleghe Cruscotto Assitenza
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Mario Gherkin" e recipientType  "PF"
     And Il servizio risponde correttamente
@@ -61,15 +59,14 @@ Feature: Deleghe Cruscotto Assitenza
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Mario Gherkin" e recipientType  "PF"
     And Il servizio risponde correttamente
     Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "Mario Cucumber" recipientType  "PF" e con searchPageSize "1" searchNextPagesKey "NULL" startDate "NULL" endDate "NULL" searchMandateId "NO_SET" searchInternalId "NULL"
     And il servizio risponde con errore "400"
 
-   #TODO Verificare il comportamento corretto...
-  @deleghe1  @cruscottoAssistenza
+  @deleghe1  @cruscottoAssistenza #TODO Verificare il comportamento corretto...
   Scenario: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma con searchMandateId non coerente con il searchDelegateInternalId
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -78,7 +75,7 @@ Feature: Deleghe Cruscotto Assitenza
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Mario Cucumber" e recipientType  "PF"
     And Il servizio risponde correttamente
@@ -98,7 +95,7 @@ Feature: Deleghe Cruscotto Assitenza
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Mario Cucumber" e recipientType  "PF"
     And Il servizio risponde correttamente

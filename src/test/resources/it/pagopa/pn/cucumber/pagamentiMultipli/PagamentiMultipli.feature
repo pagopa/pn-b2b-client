@@ -15,7 +15,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | apply_cost_f24       | NO   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -30,7 +30,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -47,7 +47,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -66,15 +66,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
     And destinatario
-      | denomination         | Leonardo Da Vinci            |
+      | denomination         | Leonardo Da Vinci             |
       | taxId                | DVNLRD52D15M059P              |
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_DVNLRD52D15M059P  |
+      | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -92,7 +92,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | NO               |
       | payment_multy_number | 1                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -110,7 +110,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -126,7 +126,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -143,7 +143,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -158,7 +158,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 3    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -173,7 +173,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 4    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -190,7 +190,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica
 
@@ -207,7 +207,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -227,7 +227,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -243,10 +243,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  #TODO Vecchio Requisito
+  #Nota: Vecchio Requisito
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
@@ -260,7 +260,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   #29  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
@@ -276,7 +276,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -291,7 +291,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -309,7 +309,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -325,7 +325,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -341,7 +341,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -361,13 +361,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci  |
-      | taxId                | DVNLRD52D15M059P   |
-      | payment_pagoPaForm   | SI                 |
-      | payment_f24          | NULL               |
-      | apply_cost_pagopa    | SI                 |
-      | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -384,13 +384,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci  |
-      | taxId                | DVNLRD52D15M059P   |
-      | payment_pagoPaForm   | SI                 |
-      | payment_f24          | NULL               |
-      | apply_cost_pagopa    | NO                 |
-      | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | NO                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -417,7 +417,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
     #32 PA - inserimento notifica multi destinatario con un solo F24 [TA]
@@ -442,7 +442,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -460,13 +460,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 1
 
 
@@ -484,13 +484,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -519,7 +519,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -539,7 +539,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24"
     And il download non ha prodotto errori
@@ -567,7 +567,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24" per il destinatario 0
     And il download non ha prodotto errori
@@ -588,17 +588,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
-
-
-   #TODO CHIEDERE INFO.............Vecchio Requisito
-  #37 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
-
-
-
 
   #38 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli
@@ -614,19 +607,16 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-
-
- #TODO CHIEDERE INFO.............
   #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]  costi inclusi
@@ -647,18 +637,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-
-#TODO VECCHIO REQUISITO
-  #40 Destinatario - pagamento notifica mono destinatario con un solo avviso pagoPA: verifica stato “In elaborazione”
-
-
- #TODO VECCHIO REQUISITO
-  #41 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata - verifica della presenza stato “Pagato”
-
-
 
   #42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
   @pagamentiMultipli
@@ -673,12 +653,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
-
-  #TODO TEST MANUALE
   #43 Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso costi inclusi
@@ -692,7 +670,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
 
@@ -708,13 +686,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
 
-  #TODO TEST MANUALE
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi
@@ -730,12 +707,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
-
-    #TODO Non è possibile effettuare il pagamento lato Destinatario accertare il pagamento di un solo avviso...Chiudere la posizione debitoria
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
     Given viene generata una nuova notifica
@@ -750,8 +725,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #TODO parametrizzare lo step per avviso di pagamento.......
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -771,7 +745,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
@@ -789,13 +763,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
-  #TODO Non è possibile effettuare il pagamento lato Destinatario quindi si può solo lato PA verificare la posizione Debitoria del Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA e costi inclusi
     Given viene generata una nuova notifica
@@ -809,13 +782,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -834,13 +807,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -869,7 +842,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -890,13 +863,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -904,8 +877,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #49 Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: pagamento di un avviso
-  #TODO Modificare il metodo che verifica il pagamento di un solo avviso......
-  #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: verifica costo della notifica del destinatario 1 e costi inclusi
     Given viene generata una nuova notifica
@@ -920,18 +891,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_pagoPaForm_1 | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_pagoPaForm_1 | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
 
   #50 Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
-  #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: verifica costo della notifica del destinatario 1/2 e costi inclusi
     Given viene generata una nuova notifica
@@ -955,7 +925,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -975,7 +945,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -993,7 +963,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 #SOLO TM
@@ -1011,7 +981,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1030,7 +1000,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1050,7 +1020,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
 
@@ -1070,13 +1040,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -1097,13 +1067,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | NO                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | NO                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -1132,7 +1102,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
@@ -1158,7 +1128,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
@@ -1183,23 +1153,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
-
-
-
-
-#TODO SOLO TM
-  #61 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
-
-#TODO SOLO TM
-  #62 Documento PagoPa: Inserimento dati pagamento e relativa verifica dei dati nel documento generato di avviso PagoPA (es. amount, description, expirationDate, status, ecc.) [TA]
-
-#TODO SOLO TM
-  #63 Documento F24: Inserimento dati pagamento e costruzione del documento F24 e relativa verifica dei dati nel documento generato F24 [TA]
-
-
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_64_3] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy DELIVERY_MODE e destinatario1 con applyCost false -  destinatario2 con applyCost true
@@ -1214,14 +1170,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
 
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1238,24 +1194,16 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 4    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | NO                            |
-      | payment_multy_number | 1                             |
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | NO                |
+      | payment_multy_number | 1                 |
 
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
-
-
-#TODO NO TEST...
-  #65 Timeline: Verifica F24 (scenario negativo: deve essere riscontrata assenza di eventi di pagamento in timeline).. NO TEST...
-
-#TODO NO TEST....
-  #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO TEST...
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_66] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi
     Given viene generata una nuova notifica
@@ -1268,7 +1216,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
@@ -1301,16 +1249,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
     And gli avvisi PagoPa vengono pagati correttamente dal destinatario 1
     And si attende il corretto pagamento della notifica dell'utente 0
     And si attende il corretto pagamento della notifica dell'utente 1
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
-
-
-#TODO da Verificare........
-  #68 Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA]:
 
  # 'PAYMENT_UNAVAILABLE', // Technical Error
  # 'PAYMENT_UNKNOWN', // Payment data error
@@ -1329,7 +1273,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_noticeCode    | 302000100000019421 |
     Then verifica stato pagamento di una notifica con status "REQUIRED"
 
-  #TODO al momento non è possibile effettuare pagamenti..
   @pagamentiMultipli @ignore @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato  errore 409 PAGAMENTO_DUPLICATO
     Given viene generata una nuova notifica
@@ -1361,7 +1304,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
-  #TODO Modificare lo scenario..................
   #Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e delegato possono scaricare l'avviso
   @pagamentiMultipli @deleghe1 @ignore
   Scenario: [B2B-PA-PAY_MULTI_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA e F24
@@ -1380,7 +1322,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
     And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -1405,7 +1347,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
     And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -1425,7 +1367,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -1442,7 +1384,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1477,7 +1419,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_MARIO   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1496,13 +1438,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm      | NULL                  |
-      | payment_f24             | PAYMENT_F24_STANDARD  |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
       | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
-      | title_payment           | F24_STANDARD_MARIO    |
-      | apply_cost_f24          | SI                    |
-      | payment_multy_number    | 1                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | title_payment           | F24_STANDARD_MARIO                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1533,7 +1475,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "F24"
 
@@ -1553,7 +1495,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     #Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     When viene richiesto il download del documento "F24"
@@ -1576,17 +1518,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     #viene fatta la stessa verifica sullo Sha256
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
-#TODO SOLO TM....
-  #75 PA -  Visualizzazione Box Allegati Modelli F24
-
-
-   #76 Destinatario -  Download PAGOPA/F24 con AppIO
+  #76 Destinatario -  Download PAGOPA/F24 con AppIO
   @pagamentiMultipli @appIo
   Scenario: [B2B-PA-PAY_MULTI_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
@@ -1600,7 +1538,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | NO   |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
     And il download non ha prodotto errori
@@ -1619,7 +1557,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                   |
       | apply_cost_pagopa    | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "Mario Cucumber"
     And il download non ha prodotto errori
@@ -1637,8 +1575,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1656,8 +1594,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1680,8 +1618,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1707,8 +1645,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1728,7 +1666,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato il costo = "100" della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -1749,7 +1687,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -1777,7 +1715,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1796,7 +1734,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI              |
       | apply_cost_f24          | NO              |
       | payment_multy_number    | 1               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1815,7 +1753,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1834,7 +1772,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1854,7 +1792,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1874,7 +1812,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1894,7 +1832,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1914,7 +1852,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1934,7 +1872,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1954,7 +1892,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -1973,7 +1911,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -1992,7 +1930,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2012,7 +1950,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2032,7 +1970,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2053,7 +1991,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2073,7 +2011,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2093,7 +2031,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2114,7 +2052,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2136,7 +2074,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2157,7 +2095,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2179,7 +2117,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2199,7 +2137,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2217,7 +2155,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2235,7 +2173,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2254,7 +2192,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2273,7 +2211,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2293,7 +2231,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2312,7 +2250,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2331,7 +2269,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                         |
       | payment_multy_number | 1                                          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2349,7 +2287,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                         |
       | payment_multy_number | 1                                          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2367,7 +2305,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                              |
       | payment_multy_number | 1                                               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2387,7 +2325,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2406,7 +2344,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                 |
       | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2425,7 +2363,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                      |
       | payment_multy_number | 1                                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2444,7 +2382,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                  |
       | payment_multy_number | 1                                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2462,7 +2400,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                  |
       | payment_multy_number | 1                                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2480,7 +2418,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_LOCAL_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                       |
       | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2498,7 +2436,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_REGION_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2516,7 +2454,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_REGION_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2534,7 +2472,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_REGION_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
@@ -2555,7 +2493,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
@@ -2576,7 +2514,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2594,7 +2532,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SOCIAL_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2613,7 +2551,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                     |
       | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2631,7 +2569,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                     |
       | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2650,7 +2588,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                          |
       | payment_multy_number | 1                                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2668,7 +2606,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2686,7 +2624,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2706,7 +2644,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica
 
@@ -2726,7 +2664,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                        |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 4                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # And viene verificato il costo = "100" della notifica
 
@@ -2746,7 +2684,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                 |
       | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2764,7 +2702,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_DC_CLMCST42R12D969Z  |
       | apply_cost_f24       | SI                                     |
       | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2782,7 +2720,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_DC1_CLMCST42R12D969Z   |
       | apply_cost_f24       | SI                                       |
       | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
       #--------------------------DIGITALE---------------------------------
@@ -2802,7 +2740,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2814,14 +2752,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z                       |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -2840,7 +2778,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2852,14 +2790,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z                       |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -2877,7 +2815,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2888,14 +2826,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z                           |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_FLAT                                    |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | NO                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -2913,7 +2851,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2924,14 +2862,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z                           |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_FLAT                                    |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | NO                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -2950,7 +2888,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_AE                      |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
 
@@ -2971,7 +2909,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | PAYMENT_F24_PAYMENT_F24_STANDARD |
       | apply_cost_f24          | NO                               |
       | payment_multy_number    | 3                                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -2993,7 +2931,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 3                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3014,7 +2952,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 3                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @f24 @dev @integration
@@ -3033,7 +2971,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3054,7 +2992,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3076,7 +3014,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3105,7 +3043,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_FLAT_DVNLRD52D15M059P |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 3                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
@@ -3135,7 +3073,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
@@ -3171,12 +3109,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
-
-
-
 
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3193,7 +3128,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 6                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3210,7 +3145,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 9                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
@@ -3227,8 +3162,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
-      | payment_multy_number    | 10                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_multy_number    | 10                                |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
@@ -3249,7 +3184,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                              |
       | apply_cost_f24          | SI                              |
       | payment_multy_number    | 120                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3270,7 +3205,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                              |
       | apply_cost_f24          | SI                              |
       | payment_multy_number    | 120                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3290,7 +3225,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                     |
       | apply_cost_f24          | SI                     |
       | payment_multy_number    | 120                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @cartaceoF24 @120F24
@@ -3308,7 +3243,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                     |
       | apply_cost_f24          | SI                     |
       | payment_multy_number    | 120                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3327,7 +3262,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -3348,7 +3283,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3369,7 +3304,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3389,7 +3324,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 120                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @cartaceoF24 @120F24
@@ -3407,7 +3342,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 120                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3425,7 +3360,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 11                                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
@@ -3445,7 +3380,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3465,7 +3400,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3485,7 +3420,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3505,7 +3440,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 120                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3525,8 +3460,63 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 120                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+
+  @f24 @f24ValidationOff
+  Scenario: [B2B-PA-PAY_VALIDATION_OFF_1] PA - Inserimento notifica mono destinatario con F24 SEMPLIFICATO con FLAG ISVALIDATIONENABLE OFF verso PG con USERNAME non valido.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario CucumberSpa e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                    |
+      | apply_cost_pagopa    | NULL                                    |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1 |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_-SURNAME      |
+      | apply_cost_f24       | SI                                      |
+      | payment_multy_number | 1                                       |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
+  @f24 @f24ValidationOff
+  Scenario: [B2B-PA-PAY_VALIDATION_OFF_2] PA - Inserimento notifica mono destinatario con F24 SEMPLIFICATO con FLAG ISVALIDATIONENABLE OFF verso PF con USERNAME non valido.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                    |
+      | apply_cost_pagopa    | NULL                                    |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1 |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_-SURNAME      |
+      | apply_cost_f24       | SI                                      |
+      | payment_multy_number | 1                                       |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @f24 @f24ValidationOff
+  Scenario: [B2B-PA-PAY_VALIDATION_OFF_3] PA - Inserimento notifica mono destinatario con F24 SEMPLIFICATO con FLAG ISVALIDATIONENABLE OFF verso PG con TAXCODE numerico.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                       |
+      | apply_cost_pagopa    | NULL                                       |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_2    |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_TAXCODE_NUMERICO |
+      | apply_cost_f24       | SI                                         |
+      | payment_multy_number | 1                                          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 

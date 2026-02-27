@@ -1,24 +1,38 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.api.PaperCalculatorApi;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v1.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v20.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v21.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v23.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v24.PnPollingServiceWebhookV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
+import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
+import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
+import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
+import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
+import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
@@ -26,18 +40,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
-        PnPaB2bUtils.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class,
+        B2bMandateServiceClientImpl.class,
         PnExternalServiceClientImpl.class,
         PnWebUserAttributesExternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClient.class,
-        PnWebPaClientImpl.class,
+        PnPaperTrackerClientImpl.class,
+        PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,
@@ -45,37 +60,113 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,
         PnRaddAlternativeClientImpl.class,
+        PnRaddAlternativeV2ClientImpl.class,
+        PnRaddCapCoverageClientImpl.class,
+        PnCfgClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
-        PnPollingServiceTimelineRapidV23.class,
-        PnPollingServiceTimelineRapidV21.class,
-        PnPollingServiceTimelineRapidV20.class,
+        CieGeneratorTool.class,
+
         PnPollingServiceTimelineRapidV1.class,
-        PnPollingServiceStatusRapidV23.class,
-        PnPollingServiceStatusRapidV21.class,
-        PnPollingServiceStatusRapidV20.class,
         PnPollingServiceStatusRapidV1.class,
-        PnPollingServiceTimelineSlowV23.class,
-        PnPollingServiceTimelineSlowE2eV23.class,
-        PnPollingServiceTimelineSlowV21.class,
-        PnPollingServiceTimelineSlowV20.class,
         PnPollingServiceTimelineSlowV1.class,
-        PnPollingServiceStatusSlowV23.class,
-        PnPollingServiceStatusSlowV21.class,
-        PnPollingServiceStatusSlowV20.class,
         PnPollingServiceStatusSlowV1.class,
         PnPollingServiceValidationStatusV1.class,
+
+        PnPollingServiceTimelineRapidV20.class,
+        PnPollingServiceStatusRapidV20.class,
+        PnPollingServiceTimelineSlowV20.class,
+        PnPollingServiceStatusSlowV20.class,
         PnPollingServiceValidationStatusV20.class,
+        PnPollingServiceWebhookV20.class,
+
+        PnPollingServiceTimelineRapidV21.class,
+        PnPollingServiceStatusRapidV21.class,
+        PnPollingServiceTimelineSlowV21.class,
+        PnPollingServiceStatusSlowV21.class,
         PnPollingServiceValidationStatusV21.class,
+
+        PnPollingServiceTimelineRapidV23.class,
+        PnPollingServiceStatusRapidV23.class,
+        PnPollingServiceTimelineSlowV23.class,
+        PnPollingServiceTimelineSlowE2eV23.class,
+        PnPollingServiceStatusSlowV23.class,
         PnPollingServiceValidationStatusV23.class,
         PnPollingServiceValidationStatusNoAcceptedV23.class,
         PnPollingServiceValidationStatusAcceptedShortV23.class,
-        PnPollingServiceWebhookV20.class,
         PnPollingServiceWebhookV23.class,
         PnPollingServiceValidationStatusAcceptedExtraRapidV23.class,
         PnPollingServiceStatusExtraRapidV23.class,
         PnPollingServiceTimelineExtraRapidV23.class,
+
+        PnPollingServiceWebhookV24.class,
+
+        PnPollingServiceTimelineRapidV25.class,
+        PnPollingServiceStatusRapidV25.class,
+        PnPollingServiceTimelineSlowV25.class,
+        PnPollingServiceTimelineSlowE2eV25.class,
+        PnPollingServiceStatusSlowV25.class,
+        PnPollingServiceValidationStatusV25.class,
+        PnPollingServiceValidationStatusNoAcceptedV25.class,
+        PnPollingServiceValidationStatusAcceptedShortV25.class,
+        PnPollingServiceWebhookV25.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV25.class,
+        PnPollingServiceStatusExtraRapidV25.class,
+        PnPollingServiceTimelineExtraRapidV25.class,
+
+        PnPollingServiceTimelineRapidV26.class,
+        PnPollingServiceStatusRapidV26.class,
+        PnPollingServiceTimelineSlowV26.class,
+        PnPollingServiceTimelineSlowE2eV26.class,
+        PnPollingServiceStatusSlowV26.class,
+        PnPollingServiceValidationStatusV26.class,
+        PnPollingServiceValidationStatusNoAcceptedV26.class,
+        PnPollingServiceValidationStatusAcceptedShortV26.class,
+        PnPollingServiceWebhookV26.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV26.class,
+        PnPollingServiceStatusExtraRapidV26.class,
+        PnPollingServiceTimelineExtraRapidV26.class,
+
+        PnPollingServiceTimelineRapidV27.class,
+        PnPollingServiceStatusRapidV27.class,
+        PnPollingServiceTimelineSlowV27.class,
+        PnPollingServiceTimelineSlowE2eV27.class,
+        PnPollingServiceStatusSlowV27.class,
+        PnPollingServiceValidationStatusV27.class,
+        PnPollingServiceValidationStatusNoAcceptedV27.class,
+        PnPollingServiceValidationStatusAcceptedShortV27.class,
+        PnPollingServiceWebhookV27.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV27.class,
+        PnPollingServiceStatusExtraRapidV27.class,
+        PnPollingServiceTimelineExtraRapidV27.class,
+
+        PnPollingServiceTimelineRapidV28.class,
+        PnPollingServiceStatusRapidV28.class,
+        PnPollingServiceTimelineSlowV28.class,
+        PnPollingServiceTimelineSlowE2eV28.class,
+        PnPollingServiceStatusSlowV28.class,
+        PnPollingServiceValidationStatusV28.class,
+        PnPollingServiceValidationStatusNoAcceptedV28.class,
+        PnPollingServiceValidationStatusAcceptedShortV28.class,
+        PnPollingServiceWebhookV28.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV28.class,
+        PnPollingServiceStatusExtraRapidV28.class,
+        PnPollingServiceTimelineExtraRapidV28.class,
+
+        PnPollingServiceTimelineRapidV29.class,
+        PnPollingServiceStatusRapidV29.class,
+        PnPollingServiceTimelineSlowV29.class,
+        PnPollingServiceTimelineSlowE2eV29.class,
+        PnPollingServiceStatusSlowV29.class,
+        PnPollingServiceValidationStatusV29.class,
+        PnPollingServiceValidationStatusNoAcceptedV29.class,
+        PnPollingServiceValidationStatusAcceptedShortV29.class,
+        PnPollingServiceWebhookV29.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV29.class,
+        PnPollingServiceStatusExtraRapidV29.class,
+        PnPollingServiceTimelineExtraRapidV29.class,
+
         MailSenderConfig.class,
         PnParserService.class,
         LegalFactTokenConfiguration.class,
@@ -86,7 +177,28 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnSafeStoragePrivateClientImpl.class,
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
-        PaperCalculatorClientImpl.class
+        PaperCalculatorClientImpl.class,
+        PnExternalRegistryPrivateUserApiImpl.class,
+        IMandateReverseServiceClient.class,
+        MandateReverseServiceClientImpl.class,
+        B2BRecipientExternalClientImpl.class,
+        IBffMandateServiceApi.class,
+        BffMandateServiceClientImpl.class,
+        B2BDeliveryPushServiceClientImpl.class,
+        B2BUserAttributesExternalClientImpl.class,
+        IPnLegalPersonAuthClientImpl.class,
+        IPnLegalPersonVirtualKeyServiceClientImpl.class,
+        IPnTosPrivacyClientImpl.class,
+        TemplateEngineClientImpl.class,
+        TemplateConfiguration.class,
+        TemplateEngineContextFactory.class,
+        EmdIntegrationApiImpl.class,
+        SettableAuthTokenRaddCognito.class,
+        EventTimelineParser.class,
+        PnMandateAppIoClientImpl.class,
+        ReworkTimelineClientImpl.class,
+        LambdaInvoker.class,
+        TemplateEngineConfigBean.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
