@@ -72,10 +72,6 @@ jobs:
           declare -A COMMIT_LOGIN
           declare -A AUTHOR_MAP
 
-          # Mappa autori Git → login GitHub + bot detection
-          declare -A COMMIT_LOGIN
-          declare -A AUTHOR_MAP
-
           for SHA in "${UNIQUE_SHAS[@]}"; do
             API=$(gh api repos/${{ github.repository }}/commits/$SHA 2>/dev/null || true)
             
@@ -103,6 +99,28 @@ jobs:
           # Array finale dei contributor
           CONTRIBUTORS=("${!AUTHOR_MAP[@]}")
 
+          # Exclude specific contributors
+          EXCLUDED_CONTRIBUTORS=("dependabot[bot]" "github-actions[bot]" "renovate[bot]" "francescosinopoli")
+
+          # Filter out excluded contributors
+          FILTERED_CONTRIBUTORS=()
+          for DEV in "${CONTRIBUTORS[@]}"; do
+            EXCLUDED=false
+            for EXCL in "${EXCLUDED_CONTRIBUTORS[@]}"; do
+              if [[ "$DEV" == "$EXCL" ]]; then
+                EXCLUDED=true
+                break
+              fi
+            done
+            
+            if [ "$EXCLUDED" == false ]; then
+              FILTERED_CONTRIBUTORS+=("$DEV")
+            fi
+          done
+
+          # Replace CONTRIBUTORS with filtered list
+          CONTRIBUTORS=("${FILTERED_CONTRIBUTORS[@]}")
+          
           echo "Contributors found:"
           printf '%s\n' "${CONTRIBUTORS[@]}"
 
@@ -130,44 +148,108 @@ jobs:
                 SIZE=$((SIZE + ${LINES:-0}))
               done
 
+              # Average commit size
+              if [ "$COMMITS" -gt 0 ]; then
+                AVG_SIZE=$((SIZE / COMMITS))
+              else
+                AVG_SIZE=0
+              fi
+
+              # Conventional commit compliance
+              CONVENTIONAL=0
+              for SHA in "${DEV_SHAS[@]}"; do
+                MSG=$(git log -1 --format="%s" "$SHA")
+                if [[ "$MSG" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|build|ci|revert)(\(.+\))?:.+ ]]; then
+                  CONVENTIONAL=$((CONVENTIONAL + 1))
+                fi
+              done
+
+              if [ "$COMMITS" -gt 0 ]; then
+                CONV_PERCENT=$((CONVENTIONAL * 100 / COMMITS))
+              else
+                CONV_PERCENT=0
+              fi
+
               PR=$(gh pr list --author "$DEV" --state open --json number 2>/dev/null | jq 'length' || echo 0)
+              PR=${PR:-0}
 
               # PRs merged today
               PR_MERGED=$(gh pr list --author "$DEV" --state merged \
                 --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+              PR_MERGED=${PR_MERGED:-0}
 
               # PRs reviewed by this developer
               PR_REVIEWED=$(gh search prs --reviewer "$DEV" \
                 --merged "$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
-                
+              PR_REVIEWED=${PR_REVIEWED:-0}
+
+              # Cumulative status with smart thresholds
+              ISSUES=()
+
+              # Critical: No activity
               if [ "$COMMITS" -eq 0 ]; then
-                STATUS="❌ No commit"
-              elif [ "$COMMITS" -gt 15 ]; then
-                STATUS="⚠️ Possibly non-atomic commits"
+                ISSUES+=("❌ Inactive")
+              fi
+
+              # Critical: Very large commits (hard to review)
+              if [ "$COMMITS" -gt 0 ] && [ "$AVG_SIZE" -gt 500 ]; then
+                ISSUES+=("❌ Avg ${AVG_SIZE}L/commit")
+              fi
+
+              # Warning: Work not integrated
+              if [ "$PR_MERGED" -eq 0 ] && [ "$COMMITS" -gt 5 ]; then
+                ISSUES+=("Not merged")
+              fi
+
+              # Warning: No collaboration
+              if [ "$PR_REVIEWED" -eq 0 ] && [ "$PR_MERGED" -gt 0 ]; then
+                ISSUES+=("No reviews")
+              fi
+
+              # Warning: Process compliance
+              if [ "$CONV_PERCENT" -lt 60 ] && [ "$COMMITS" -ge 3 ]; then
+                ISSUES+=("Conv ${CONV_PERCENT}%")
+              fi
+
+              # Warning: Too many tiny commits (possible thrashing)
+              if [ "$COMMITS" -gt 25 ] && [ "$AVG_SIZE" -lt 50 ]; then
+                ISSUES+=("$COMMITS micro-commits")
+              fi
+
+              # Build final status
+              if [ ${#ISSUES[@]} -eq 0 ]; then
+                STATUS="✅ Healthy"
               else
-                STATUS="✅ OK"
+                # Join all issues with " | "
+                STATUS=$(IFS=" | "; echo "${ISSUES[*]}")
               fi
             
-              PAYLOAD_TEXT+="👨‍💻 $DEV"
-              PAYLOAD_TEXT+=$'\n'
-              PAYLOAD_TEXT+="Commits: $COMMITS"
-              PAYLOAD_TEXT+=$'\n'
+              PAYLOAD_TEXT+="👨‍💻 $DEV"$'\n'
+              PAYLOAD_TEXT+="Commits: $COMMITS | Avg size: $AVG_SIZE lines"$'\n'
               PAYLOAD_TEXT+="Lines added: $SIZE"$'\n'
-              PAYLOAD_TEXT+=$'\n'
-              PAYLOAD_TEXT+="Open PR: $PR"
-              PAYLOAD_TEXT+=$'\n'
-              PAYLOAD_TEXT+="PRs merged today: $PR_MERGED"$'\n'
-              PAYLOAD_TEXT+="PRs reviewed: $PR_REVIEWED"$'\n'
-              PAYLOAD_TEXT+="Status: $STATUS"
-              PAYLOAD_TEXT+=$'\n\n'
+              PAYLOAD_TEXT+="PRs: Open $PR | Merged today $PR_MERGED | Reviewed $PR_REVIEWED"$'\n'
+              PAYLOAD_TEXT+="Quality: Conventional commits ${CONV_PERCENT}%"$'\n'
+              PAYLOAD_TEXT+="Status: $STATUS"$'\n\n'
               
             done
           fi
 
+          ## **New Threshold Summary**
+
+          ## | Metric | Threshold | Alert |
+          ## |--------|-----------|-------|
+          ## | **Avg commit size** | >500 lines | ❌ Critical - hard to review |
+          ## | **Commits** | >25 + <50L avg | ⚠️ Too many tiny commits |
+          ## | **Commits** | >5 but 0 merged | ⚠️ Work not integrated |
+          ## | **PR reviews** | 0 but has merges | ⚠️ Not helping team |
+          ## | **Conv commits** | <60% (3+ commits) | ⚠️ Low compliance |
+          ## | **Activity** | 0 commits | ❌ Inactive |
+          
           # Team-level metrics
           PAYLOAD_TEXT+=$'\n'"*📊 Team Summary*"$'\n'
           TOTAL_COMMITS=${#UNIQUE_SHAS[@]}
           TOTAL_PRS=$(gh pr list --state merged --search "merged:$TODAY" --json number 2>/dev/null | jq 'length' || echo 0)
+          TOTAL_PRS=${TOTAL_PRS:-0}
           ACTIVE_DEVS=${#CONTRIBUTORS[@]}
           
           if [ "$ACTIVE_DEVS" -gt 0 ]; then

@@ -113,7 +113,7 @@ Feature: Deleghe Temporanee 15755
 
   #7
   @delegheTemporanee
-  Scenario: [MANDATE_TEMP_CREATION_FAILED_DELEGA_ALREADY_EXISTENT] Creazione senza successo di una delega temporanea (delega già presente per coppia IUN-taxId)
+  Scenario: [MANDATE_TEMP_CREATION_FAILED_DELEGA_ALREADY_EXISTENT] Creazione senza successo di una delega temporanea (delega già presente per coppia IUN-taxId); Viene fatta dunque scadere, si crea una nuova delega e la si accetta
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
@@ -123,6 +123,14 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea è stata correttamente creata
     When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI VALIDI"
     Then l'operazione restituisce codice 409
+    When la delega viene fatta scadere
+    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
+    Then l'operazione restituisce codice 404
+    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando "DATI_VALIDI"
+    And la delega temporanea è stata correttamente creata
+    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
+    And l'operazione non ha prodotto alcun errore
+    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   #8
   @delegheTemporanee

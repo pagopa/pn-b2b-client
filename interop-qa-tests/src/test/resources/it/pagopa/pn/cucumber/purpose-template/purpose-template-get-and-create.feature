@@ -118,3 +118,51 @@ Feature: finalità agevolata, purpose template GET
       | api      |
       | support  |
       | security |
+
+  Scenario Outline: [M2M_GET_PURPOSE_TEMPLATES] - Recupera i purpose templates con filtri opzionali
+    Given l'utente è un "admin" di "PA1"
+    And esistono purpose templates di test creati tramite data preparation
+    When vengono recuperati i purpose templates con offset "<offset>", limit "<limit>", purposeTitle "<purposeTitle>", creatorIds "<creatorIds>", eserviceIds "<eserviceIds>", states "<states>", targetTenantKind "<targetTenantKind>", handlesPersonalData "<handlesPersonalData>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+    # Happy paths - filtri singoli + combinazioni base
+      | offset | limit | purposeTitle | creatorIds | eserviceIds | states  | targetTenantKind | handlesPersonalData | statusCode |
+
+    # Nessun filtro (solo paginazione) - deve andare a 200
+      | 0      | 10    | %null        | %null      | %null       | %null   | %null            | %null               | 200        |
+
+    # Filtro singolo: purposeTitle
+      | 0      | 10    | %actual      | %null      | %null       | %null   | %null            | %null               | 200        |
+
+    # Filtro singolo: creatorIds
+      | 0      | 10    | %null        | %actual    | %null       | %null   | %null            | %null               | 200        |
+
+    # Filtro singolo: eserviceIds
+      | 0      | 10    | %null        | %null      | %actual     | %null   | %null            | %null               | 200        |
+
+    # Filtro singolo: states
+      | 0      | 10    | %null        | %null      | %null       | %actual | %null            | %null               | 200        |
+
+    # Filtro singolo: targetTenantKind
+      | 0      | 10    | %null        | %null      | %null       | %null   | %actual          | %null               | 200        |
+
+    # Filtro singolo: handlesPersonalData
+      | 0      | 10    | %null        | %null      | %null       | %null   | %null            | true                | 200        |
+
+    # Combinazione completa
+      | 0      | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 200        |
+
+    # offset invalid
+      | %null  | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
+      | -1     | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
+
+    # limit invalid
+      | 0      | %null | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
+      | 0      | -1    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
+
+    # purposeTitle invalid
+      | 0      | 10    | %null        | %actual    | %actual     | %actual | %actual          | true                | 400        |
+
+    # handlesPersonalData invalid
+      | 0      | 10    | %actual      | %actual    | %actual     | %actual | %actual          | %null               | 400        |

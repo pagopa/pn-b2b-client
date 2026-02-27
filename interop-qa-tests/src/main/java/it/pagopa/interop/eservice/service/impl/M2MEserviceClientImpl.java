@@ -14,6 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDesc
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -153,5 +154,10 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
             case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
             default -> throw new IllegalStateException("Tipo di id non supportato: " + type.name());
         };
+    }
+
+    @Override
+    public FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId) {
+        return this.eservicesApi.downloadEServiceDescriptorInterface(eServiceId, descriptorId);
     }
 }

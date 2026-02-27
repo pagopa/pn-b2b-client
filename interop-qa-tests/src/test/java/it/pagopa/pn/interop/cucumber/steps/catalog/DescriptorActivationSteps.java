@@ -21,4 +21,23 @@ public class DescriptorActivationSteps {
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId())
         );
     }
+
+    @When("l'utente {string} di {string} attiva il descrittore di quell'e-service")
+    public void activeEServiceDescriptor(String role, String tenant) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+        );
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    }
+
+
+    @When("l'utente {string} di {string} attiva il descrittore di quell'e-service con successo")
+    public void successfullyActiveEServiceDescriptor(String role, String tenant) {
+        activeEServiceDescriptor(role, tenant);
+        if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
+            throw new IllegalStateException("L'attivazione del descrittore dell'e-service non ha avuto successo");
+        }
+    }
 }

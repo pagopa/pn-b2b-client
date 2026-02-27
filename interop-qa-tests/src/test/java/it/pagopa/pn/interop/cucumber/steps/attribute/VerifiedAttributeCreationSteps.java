@@ -9,10 +9,9 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
-import java.time.OffsetDateTime;
-
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import org.apache.commons.lang.math.RandomUtils;
+import java.time.OffsetDateTime;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.http.ResponseEntity;
 
 public class VerifiedAttributeCreationSteps {
@@ -34,7 +33,8 @@ public class VerifiedAttributeCreationSteps {
 
     @When("l'utente crea un attributo verificato")
     public void createVerifiedAttribute() {
-        String attributeName = "new verified attribute %d".formatted(RandomUtils.nextInt());
+        String attributeName = "new verified attribute %d".formatted(
+            RandomUtils.insecure().randomInt());
         String attributeDescription = "description test";
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getAttributeApiClient().createVerifiedAttributeRE(

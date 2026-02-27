@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.GetRegistryResponseV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.RegistryV2;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.UpdateRegistryRequestV2;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.SelectiveUpdateRegistryRequestV2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -67,5 +68,9 @@ public class PnRaddAlternativeV2ClientImpl implements IPnRaddAlternativeV2Client
     @Override
     public RegistryV2 addRegistry(String partnerId, CreateRegistryRequestV2 createRegistryRequestV2) throws RestClientException {
         return this.apiAnagraficaCRUDV2.addRegistry(partnerId, createRegistryRequestV2);
+    }
+
+    public RegistryV2 selectiveUpdateRegistry(String partnerId, String locationId, SelectiveUpdateRegistryRequestV2 request) throws RestClientException {
+        return this.apiAnagraficaCRUDV2.selectiveUpdateRegistry(partnerId, locationId, request);
     }
 }
