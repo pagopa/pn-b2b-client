@@ -1,5 +1,4 @@
 @m2m-apiv3-producer-keychains @m2m-v3-204-to-200
-  #TODO: Check Agid-JWT-Signature, Digest
 Feature: Gestione dei producer keychains - API v3
 
   #BUG: https://pagopa.atlassian.net/browse/PIN-9358
