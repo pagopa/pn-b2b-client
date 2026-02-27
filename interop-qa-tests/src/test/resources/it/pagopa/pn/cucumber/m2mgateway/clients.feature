@@ -21,6 +21,7 @@ Feature: Gestione dei clients attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_CLIENTS_PURPOSES_2] Le finalità correlate ad un certo client non possono essere visualizzate specificando un token non valido (Parte2#Scenario 30)
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     Given viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere le finalità associate ad un client inesistente
     Then si ottiene status code 401

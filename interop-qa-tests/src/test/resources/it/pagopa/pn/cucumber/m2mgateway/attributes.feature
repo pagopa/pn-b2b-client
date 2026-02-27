@@ -18,7 +18,8 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @sad-path
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 401
     And certifiedAttribute non restituito
@@ -72,7 +73,8 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_8] La lista degli attributi certificati può essere visionata da un utente con token non valido (Parte2#Scenario 11)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di certifiedAttribute
     Then si ottiene lo status code 401
 
@@ -91,7 +93,8 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_DECLAREDATTRIBUTES_3] Accesso negato al dettaglio di un attributo dichiarato con token non valido (Parte2#Scenario 3)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare declaredAttribute con un id inesistente
     Then si ottiene lo status code 401
     And declaredAttribute non restituito
@@ -141,7 +144,8 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2MG_VERIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo verificato con token non valido (Parte2#Scenario 7)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare verifiedAttribute con un id inesistente
     Then si ottiene lo status code 401
     And verifiedAttribute non restituito
@@ -215,6 +219,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_8] Accesso negato alla lista degli enti verificatori di un attributo con token non valido
     Given "PA2" ha già creato un attributo verificato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 401
@@ -240,6 +245,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_10] Accesso negato alla lista degli enti revocatori di un attributo con token non valido
     Given "PA2" ha già creato un attributo verificato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 401

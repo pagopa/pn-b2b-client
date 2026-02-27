@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Primary
 public class M2MEserviceAttributeClientImpl implements IM2MEServiceAttributeClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;

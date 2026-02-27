@@ -65,6 +65,7 @@ Feature: Test API M2M of e-service template
   Scenario Outline: [INTEROP-EST-M2M-UNSUSPEND_04] Un utente NON può effettuare la riattivazione di un e-service template indicando un auth token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di SUSPENDED
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di effettuare la riattivazione dell'e-service template
     Then si ottiene status code 401
@@ -434,6 +435,7 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
 
+  @m2m-v3-204-to-200
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
   Scenario Outline: [INTEROP-EST-M2M-DELETE_01] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service template
@@ -441,7 +443,7 @@ Feature: Test API M2M of e-service template
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service template
-    Then si ottiene lo status code 204
+    Then si ottiene http status code 204
     And l'e-service template non esiste più
 
     # si verifica che il tentativo di eliminarlo nuovamente si concluda negativamente
@@ -478,7 +480,8 @@ Feature: Test API M2M of e-service template
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
   Scenario: [INTEROP-EST-M2M-DELETE_03] Un utente NON può effettuare la cancellazione di un e-service template indicando un auth. token non valido
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare la cancellazione di un e-service template inesistente
     Then si ottiene lo status code 401
 
@@ -624,6 +627,7 @@ Feature: Test API M2M of e-service template
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
   Scenario: [INTEROP-EST-M2M-VERSION-CREATE_06] Un utente NON può effettuare la creazione di una nuova versione di un e-service template specificando un auth. token non valido
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente
     Then si ottiene response status code 401

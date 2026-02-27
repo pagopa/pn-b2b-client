@@ -18,7 +18,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   Scenario: [M2M_AGREEMENTS_LIST_2] La lista degli agreements NON può essere visionata da un utente che ha presentato un token m2m scaduto
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "<ente>" ha un agreement m2m attivo per ciascun e-service di "PA1"
+    And "PA1" ha un agreement m2m attivo per ciascun e-service di "PA1"
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare una lista di 1 agreements creati
     Then si ottiene lo status code 401
@@ -41,7 +41,8 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_AGREEMENTS_PURPOSES_2] La lista delle finalità correlate a un agreement non può essere visualizzata specificando un token non valido (Parte2#Scenario 14)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere la lista delle finalità correlate a una richiesta di fruizione inesistente
     Then si ottiene status code 401
 
@@ -69,7 +70,8 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_AGREEMENTS_DOCUMENTS_2] La lista dei documenti correlati a un agreement non può essere visualizzata specificando un token non valido (Parte2#Scenario 18)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere la lista dei documenti correlati a una richiesta di fruizione inesistente
     Then si ottiene status code 401
 

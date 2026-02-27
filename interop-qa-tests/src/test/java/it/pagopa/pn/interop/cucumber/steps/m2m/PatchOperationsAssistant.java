@@ -1,24 +1,43 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import it.pagopa.interop.authorization.domain.Auth;
+import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.UUID;
+
+import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE_ID> {
+    record TokenAuthInfo(String tenant, UUID cliendId) {};
+
     private final ResourceMapper<PATCH_REQUEST, RESOURCE> resourceMapper;
     private final IHttpExecutor httpExecutor;
     private final DelayService delayService;
     private final ResourceContext<RESOURCE> resourceContext;
     private final ClientTokenConfigurator tokenConfigurator;
     private final String resourceSimpleName;
+
+    /* DEV. NOTE 25 02 2026: in controtendenza rispetto alla best practice, si opta per la tecnica field injection
+    * invece che di constructor injection, per evitare di dover aggiornare tutte le classi concrete, nell'ottica
+    * che questo sistema sarà migliorato con refactor futuri */
+    @Autowired
+    private SharedStepsContext sharedStepsContext;
 
     /* di solito associato a step del tipo
      * "l'utente tenta di effettuare la modifica parziale di ..." */
@@ -72,6 +91,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
 
         tokenConfigurator.setBearerToken(getToken);
+        setAuth(getToken);
         RESOURCE originalResource = this.getResource(resourceId);
         resourceContext.setOriginalResource(originalResource);
 
@@ -80,10 +100,42 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         resourceContext.setExpectedResource(expectedPatchedResource);
 
         tokenConfigurator.setBearerToken(patchToken);
+        setAuth(patchToken);
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
 
         tokenConfigurator.setBearerToken(previousAuthToken);
+        setAuth(previousAuthToken);
+    }
+
+    private void setAuth(String token) {
+        TokenAuthInfo authInfo = extractTokenAuthInfo(token);
+
+        DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getIdentityService().getPreparedClient(authInfo.cliendId());
+        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
+
+        Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), authInfo.cliendId().toString(), authInfo.tenant(), "ADMIN", preparedClient.keyPair().getKeyPair());
+        tokenConfigurator.setAuth(auth);
+        sharedStepsContext.setAuth(auth);
+    }
+
+    private TokenAuthInfo extractTokenAuthInfo(String token) {
+        Map<String, Object> jwtPayload = JWTUtils.decodeJwtPayload(token);
+        Object oClientId = getValue(jwtPayload, "client_id");
+        UUID clientId = UUID.fromString(oClientId.toString());
+
+        Object oOrganizationId = getValue(jwtPayload, "organizationId");
+        UUID organizationId = UUID.fromString(oOrganizationId.toString());
+        String tenant = sharedStepsContext.getIdentityService().getTenant(organizationId);
+
+        return new TokenAuthInfo(tenant, clientId);
+    }
+
+    @Nonnull
+    private static Object getValue(Map<String, Object> jwtPayload, String fieldKey) {
+        Object oClientId = jwtPayload.get(fieldKey);
+        requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(fieldKey));
+        return oClientId;
     }
 
     /* di solito associato a step del tipo

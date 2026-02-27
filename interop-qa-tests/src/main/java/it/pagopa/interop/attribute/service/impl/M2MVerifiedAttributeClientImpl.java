@@ -16,6 +16,7 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 @EqualsAndHashCode(callSuper = true)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Primary
 public class M2MVerifiedAttributeClientImpl extends AbstractClient implements
     IM2MVerifiedAttributeClient {
     private final AttributesApi attributesApi;

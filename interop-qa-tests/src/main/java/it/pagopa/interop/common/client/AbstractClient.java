@@ -2,9 +2,6 @@ package it.pagopa.interop.common.client;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
