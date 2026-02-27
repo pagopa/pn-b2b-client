@@ -431,7 +431,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | SUSPENDED   |
 
     # Corretto 400 in 409
-    # Bug https://pagopa.atlassian.net/browse/PIN-8606
+  # Ticket https://pagopa.atlassian.net/browse/QA-10948
   @m2m-patch
   Scenario Outline: [M2MG_ESERVICES_41_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in uno stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
