@@ -4,7 +4,8 @@ Feature: Gestione degli attributi verificati degli e-service templates templates
 
   # TODO aggiornare gli "Scenario intorno a ..." di questo e di tutti i file feature
   #   del rilascio di ottobre, escluso eservices-verified-attributes.feature
-  
+
+  @m2m-v3-204-to-200
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_VERIFIED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi verificati a una versione di un e-service template (Parte2#Scenario intorno a 197)
     Given l'utente è un "admin" di "PA1"
@@ -16,14 +17,14 @@ Feature: Gestione degli attributi verificati degli e-service templates templates
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service template]
     When l'utente tenta di aggiungere gli attributi verificati numeri da 2 a 3 al gruppo dell'e-service template
-    Then si ottiene lo status code 204
+    Then si ottiene http status code 204
 
     # Verifica che il risultato sia coerente e che non sia stato modificato l'attributo caricato in fase di creazione
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service template]
     And gli attributi verificati sono stati aggiunti correttamente al gruppo dell'e-service template
     And i precedenti attributi verificati del gruppo dell'e-service template sono rimasti invariati
     When l'utente tenta di aggiungere l'attributo verificato numero 4 al gruppo dell'e-service template
-    Then si ottiene lo status code 204
+    Then si ottiene http status code 204
 
     # Verifica che il risultato sia coerente e che non siano stati modificati gli attributi aggiunti in precedenza
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service template]

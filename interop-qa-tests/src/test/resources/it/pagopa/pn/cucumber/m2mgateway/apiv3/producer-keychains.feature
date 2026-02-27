@@ -8,7 +8,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key   | name   | alg   | use   | keychainId |
       | <key> | <name> | <alg> | <use> | %actual    |
@@ -28,7 +28,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId   |
@@ -46,7 +46,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
@@ -59,7 +59,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
@@ -75,7 +75,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
@@ -89,7 +89,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene rimosso l'header di autenticazione DPoP
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
@@ -103,7 +103,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene rimosso l'header DPoP proof
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
@@ -118,7 +118,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1"
     When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
@@ -144,7 +144,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1"
     When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
@@ -161,7 +161,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1"
     When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
@@ -178,7 +178,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1"
     When l'utente crea una chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
@@ -196,7 +196,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
@@ -226,7 +226,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
@@ -243,7 +243,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
@@ -260,7 +260,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
       | key    | name   | alg    | use    | keychainId |
       | %valid | %valid | %valid | %valid | %actual    |
@@ -282,7 +282,7 @@ Feature: Gestione dei producer keychains - API v3
 
     Examples:
       | tenant | userId                               | producerKeychainId | m2mRoles  | statusCode |
-      | PA1    | %actual                              | %actual            | m2m-admin | 204        |
+      | PA1    | %actual                              | %actual            | m2m-admin | 200        |
       | PA1    | %null                                | %actual            | m2m-admin | 400        |
       | PA1    | %actual                              | %null              | m2m-admin | 400        |
       | PA1    | %actual                              | %random            | m2m-admin | 404        |
@@ -388,7 +388,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     When viene invocata l'API di recupero utenze associate alla producer keychain "%actual" con limit "10" offset "0"
     Then si ottiene response status code 200
     And l'utente è un "admin" di "PA1"
@@ -432,7 +432,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
@@ -444,7 +444,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene rimosso l'header di autenticazione DPoP
     When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"
@@ -456,7 +456,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene associato l'utente "%actual" alla producer keychain "%actual"
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene rimosso l'header DPoP proof
     When l'utente elimina l'associazione tra l'utenza con userId "%actual" e la producer keychain "%actual"

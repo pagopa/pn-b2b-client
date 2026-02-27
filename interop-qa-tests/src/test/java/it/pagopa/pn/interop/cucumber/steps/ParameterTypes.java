@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -59,7 +60,7 @@ public class ParameterTypes {
             Matcher matcher = pattern.matcher(part);
             if (matcher.find()) {
                 Integer status = Integer.parseInt(matcher.group(1));
-                ApiSet set = ApiSet.valueOf(matcher.group(2).toUpperCase());
+                ApiProfile.ApiSet set = ApiProfile.ApiSet.valueOf(matcher.group(2).toUpperCase());
                 ApiVersion version = ApiVersion.valueOf("V" + matcher.group(3));
 
                 resultMap.put(new ApiSpec(set, version), status);
