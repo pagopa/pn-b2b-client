@@ -5,6 +5,7 @@ import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
@@ -38,6 +39,9 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     * che questo sistema sarà migliorato con refactor futuri */
     @Autowired
     private SharedStepsContext sharedStepsContext;
+
+    @Autowired
+    private ApiProfile apiProfile;
 
     /* di solito associato a step del tipo
      * "l'utente tenta di effettuare la modifica parziale di ..." */
@@ -91,7 +95,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
 
         tokenConfigurator.setBearerToken(getToken);
-        setAuth(getToken);
+        //eventuallySetAuth(getToken);
         RESOURCE originalResource = this.getResource(resourceId);
         resourceContext.setOriginalResource(originalResource);
 
@@ -100,23 +104,25 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         resourceContext.setExpectedResource(expectedPatchedResource);
 
         tokenConfigurator.setBearerToken(patchToken);
-        setAuth(patchToken);
+        eventuallySetAuth(patchToken);
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
 
         tokenConfigurator.setBearerToken(previousAuthToken);
-        setAuth(previousAuthToken);
+        eventuallySetAuth(previousAuthToken);
     }
 
-    private void setAuth(String token) {
-        TokenAuthInfo authInfo = extractTokenAuthInfo(token);
+    private void eventuallySetAuth(String token) {
+        if (ApiProfile.ApiM2MVersion.V3.equals(apiProfile.getApiM2MVersion())) {
+            TokenAuthInfo authInfo = extractTokenAuthInfo(token);
 
-        DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getIdentityService().getPreparedClient(authInfo.cliendId());
-        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
+            DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getIdentityService().getPreparedClient(authInfo.cliendId());
+            sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
-        Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), authInfo.cliendId().toString(), authInfo.tenant(), "ADMIN", preparedClient.keyPair().getKeyPair());
-        tokenConfigurator.setAuth(auth);
-        sharedStepsContext.setAuth(auth);
+            Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), authInfo.cliendId().toString(), authInfo.tenant(), "ADMIN", preparedClient.keyPair().getKeyPair());
+            tokenConfigurator.setAuth(auth);
+            sharedStepsContext.setAuth(auth);
+        }
     }
 
     private TokenAuthInfo extractTokenAuthInfo(String token) {
