@@ -189,6 +189,7 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "%actual"
     And si ottiene response status code 400
 
+  @m2m-v3-204-to-200
   Scenario Outline: [DELETE_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -202,7 +203,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene response status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     Then viene eliminata la producer-key con keychainId "<keychainId>", kid "<kid>"
-    And si ottiene response status code <statusCode>
+    And si ottiene http status code <statusCode>
 
     #TODO: da implementare -> 401, 429
     Examples:
@@ -395,6 +396,7 @@ Feature: Gestione dei producer keychains - API v3
     Then si verifica che la chiamata a selfcare abbia ritornato uno status code: 200
     And si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante
 
+  @m2m-v3-204-to-200
   Scenario Outline: [M2M_V3_DELETE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Eliminazione associazione tra utenza e producer keychain specificati
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -404,7 +406,7 @@ Feature: Gestione dei producer keychains - API v3
     And si ottiene status code 200
     Given l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRoles>
     When l'utente elimina l'associazione tra l'utenza con userId "<userId>" e la producer keychain "<producerKeychainId>"
-    Then si ottiene status code <statusCode>
+    Then si ottiene http status code <statusCode>
 
     Examples:
       | tenant | userId                               | producerKeychainId | m2mRoles  | statusCode |

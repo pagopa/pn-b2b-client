@@ -289,6 +289,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
 
     # TODO edit/aggiunta scenari di POST: test con secondo gruppo
 
+  @m2m-v3-204-to-200
   @m2m-parte2-ottobre
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_01] Un utente con ruolo M2M-ADMIN può rimuovere gli attributi certificati di una versione di un e-service template in stato DRAFT (Parte2#Scenario intorno a 268)
     Given l'utente è un "admin" di "PA1"
@@ -297,7 +298,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea un gruppo di attributi associati all'e-service template contenente 2 attributi certificati con successo
     When l'utente tenta di rimuovere l'attributo certificato numero 2 dal gruppo dell'e-service template
-    Then si ottiene lo status code 200
+    Then si ottiene http status code 200
     And è stato rimosso dall'e-service template solo l'attributo certificato numero 2
     Examples:
       | mode        |

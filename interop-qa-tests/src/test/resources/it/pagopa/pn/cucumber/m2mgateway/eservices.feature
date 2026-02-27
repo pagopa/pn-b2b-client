@@ -186,12 +186,13 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 200
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
+  @m2m-v3-204-to-200
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_ESERVICES_18] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service (Parte2#Scenario intorno a 32)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la cancellazione dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene http status code 200
     When l'utente tenta di recuperare l'e-service creato
     Then si ottiene lo status code 404
 

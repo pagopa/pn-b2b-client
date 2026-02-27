@@ -436,6 +436,7 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
 
+  @m2m-v3-204-to-200
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
   Scenario Outline: [INTEROP-EST-M2M-DELETE_01] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un e-service template
@@ -443,7 +444,7 @@ Feature: Test API M2M of e-service template
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la cancellazione dell'e-service template
-    Then si ottiene lo status code 204
+    Then si ottiene http status code 204
     And l'e-service template non esiste più
 
     # si verifica che il tentativo di eliminarlo nuovamente si concluda negativamente

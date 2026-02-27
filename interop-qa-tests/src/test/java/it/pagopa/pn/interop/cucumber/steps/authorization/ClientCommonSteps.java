@@ -101,6 +101,18 @@ public class ClientCommonSteps {
         else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
+    /* 26 02 2026 introdotto per risolvere la problematica 204 -> 200 m2m v3
+    * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS
+    * Altre idee sono state scartate, per il momento lo si sta mantenendo uguale allo step soprastante
+    * per mancanze di idee migliori, nell'ottica che lo si potrà migliorare in un secondo momento. */
+    @Then("si ottiene http status code {int}")
+    public void verifyHttpStatusCode(int statusCode) {
+        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
+        else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
+    }
+
+    /* 26 02 2026 idea scartata per risolvere la problematica m2m v3 204 -> 200
+    * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS */
     @Then("si ottengono i seguenti status codes: {apiStatuses}")
     public void verifyStatusCodes(Map<ParameterTypes.ApiSpec, Integer> statusCodeMap) {
         statusCodeMap.forEach((k,v) -> System.out.println(k + ": " + v));

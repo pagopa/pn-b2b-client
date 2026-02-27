@@ -68,13 +68,14 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then non è presente alcuna interfaccia per l'e-service
 
+  @m2m-v3-204-to-200
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_09] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un'interfaccia di un e-service in stato DRAFT (Parte2#Scenario intorno a 56)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente effettua il caricamento dell'interfaccia dell'e-service con successo
     When l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene http status code 200
     And non è presente alcuna interfaccia per l'e-service
 
   @m2m-parte2-agosto-rilascio1
