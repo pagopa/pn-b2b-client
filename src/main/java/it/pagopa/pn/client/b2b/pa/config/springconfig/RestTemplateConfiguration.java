@@ -25,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -38,7 +37,8 @@ public class RestTemplateConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
         RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        interceptors.add(new RequestAndTraceIdInterceptor());
         return restTemplate;
     }
 
@@ -80,21 +80,19 @@ public class RestTemplateConfiguration {
 
         return HttpClients.custom()
                 .setConnectionManager(poolingHttpClientConnectionManager)
-                .evictExpiredConnections()
-                .evictIdleConnections(30, TimeUnit.SECONDS)
                 .setDefaultRequestConfig(requestConfig)
                 .setRetryHandler(httpRequestRetryHandler)
                 .build();
     }
 
-//    @Bean(name = "defaultRestTemplate")
-//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-//    public RestTemplate defaultRestTemplate() {
-//        RestTemplate restTemplate = new RestTemplate();
-//        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-//
-//        return restTemplate;
-//    }
+    @Bean(name = "defaultRestTemplate")
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public RestTemplate defaultRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+
+        return restTemplate;
+    }
 
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 
