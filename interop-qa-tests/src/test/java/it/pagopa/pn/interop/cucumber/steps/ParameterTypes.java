@@ -8,8 +8,7 @@ import java.util.regex.Pattern;
 
 public class ParameterTypes {
     public enum ApiVersion { V1, V2, V3 }
-    public enum ApiSet { BFF, M2M }
-    public record ApiSpec(ApiSet set, ApiVersion version) {}
+    public record ApiSpec(ApiProfile.ApiSet set, ApiVersion version) {}
 
     /* Converte un indice espresso in forma (1,2,3...) in (0,1,2...) */
     @ParameterType("[0-9]+")
