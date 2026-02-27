@@ -29,11 +29,13 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     And l'operazione non ha prodotto alcun errore
+    Then la notifica può essere correttamente letta tramite appIo dal delegato Mario Gherkin
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
     And il documento notificato può essere correttamente recuperato da "Mario Gherkin" con delega
     #35-36 (RIPROVO DOPO AVER FATTO SCADERE LA VALIDITA' DELLA DELEGA)
     When attendo 10 minuti affinché la "validità della delega" scada
+    Then la notifica non può essere correttamente letta tramite appIo dal delegato Mario Gherkin
     Then la notifica non può essere correttamente letta da "Mario Gherkin" con delega
     And l'allegato "F24" non può essere correttamente recuperato da "Mario Gherkin" con delega
     And il documento notificato non può essere correttamente recuperato da "Mario Gherkin" con delega restituendo un errore "404"
@@ -61,6 +63,7 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea è stata correttamente creata
     When la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
+    Then la notifica può essere correttamente letta tramite appIo dal delegato Mario Gherkin
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
     And il documento notificato può essere correttamente recuperato da "Mario Gherkin" con delega
@@ -130,6 +133,7 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
+    Then la notifica può essere correttamente letta tramite appIo dal delegato Mario Gherkin
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   #8
@@ -339,6 +343,7 @@ Feature: Deleghe Temporanee 15755
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
+    Then la notifica può essere correttamente letta tramite appIo dal delegato Mario Gherkin
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   #39

@@ -9,6 +9,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.CIEValidationData;
@@ -17,16 +18,17 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.Mandate
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateDto;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -37,6 +39,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -50,6 +53,8 @@ public class DelegheTemporaneeSteps {
     private final RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps;
 
     private final IPnMandateAppIoClient mandateAppIoClient;
+
+    private final IPnAppIOB2bClient appIOB2bClient;
 
     private final CieGeneratorTool cieGeneratorTool;
 
@@ -74,11 +79,13 @@ public class DelegheTemporaneeSteps {
     public DelegheTemporaneeSteps(SharedSteps sharedSteps,
                                   RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps,
                                   PnMandateAppIoClientImpl mandateAppIoClient,
+                                  IPnAppIOB2bClient appIOB2bClient,
                                   CieGeneratorTool cieGeneratorTool,
                                   @Value("${pn-deleghe-temporanee-bucket-s3}") String bucketS3) {
         this.sharedSteps = sharedSteps;
         this.mandateAppIoClient = mandateAppIoClient;
         this.ricezioneNotificheWebDelegheSteps = ricezioneNotificheWebDelegheSteps;
+        this.appIOB2bClient = appIOB2bClient;
         this.cieGeneratorTool = cieGeneratorTool;
         this.bucketS3 = bucketS3;
     }
@@ -159,7 +166,7 @@ public class DelegheTemporaneeSteps {
             default ->
                     qrCode = environmentPath + sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
         }
-        log.info("QR code settato: {}", B2bUtils.sanitizeLogString(qrCode));
+        log.info("QR code settato: {}", qrCode);
     }
 
     @Then("la delega temporanea è stata correttamente creata")
@@ -351,5 +358,22 @@ public class DelegheTemporaneeSteps {
         mandateDtoB2b = new MandateDto();
         mandateDtoB2b.setMandateId(mandateId);
         mandateDtoB2b.setVerificationCode(nonce);
+    }
+
+    @Then("la notifica {canBe} essere correttamente letta tramite appIo dal delegato {destinatario}")
+    public void delegateReadsNotificationWithAppIO(boolean canBeRead, Destinatario delegate) {
+        ThirdPartyMessage thirdPartyMessage = null;
+        try {
+            thirdPartyMessage = appIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), delegate.getTaxId(), UUID.fromString(mandateDtoB2b.getMandateId()));
+        } catch (HttpStatusCodeException exception) {
+            error = exception;
+        }
+        if (canBeRead) {
+            Assertions.assertThat(thirdPartyMessage).as("La notifica recuperata non dev'essere null").isNotNull();
+            log.info("Notifica visualizzata con successo tramite appIO: \n" + thirdPartyMessage);
+        } else {
+            Assertions.assertThat(error).as("Il recupero della notifica deve produrre un errore").isNotNull();
+            log.info("Errore in fase di visualizzazione notifica tramite appIO: \n" + error.getMessage());
+        }
     }
 }
