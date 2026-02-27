@@ -14,6 +14,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
         @ConfigurationParameter(key = "api.m2m.version", value = "V3"),
+        @ConfigurationParameter(key = "api.set", value = "M2M"),
         @ConfigurationParameter(key = "api.mode", value = "RIGHT_FIT"),
 })
 @ExcludeTags({"wait_for_fix"})

@@ -1,23 +1,26 @@
 package it.pagopa.interop.agreement.service.impl;
 
-import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
-
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.agreement.service.IM2MV3ClientsClient;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ClientsApi;
 import it.pagopa.interop.utils.ApiClientUtils;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 @ToString
 @EqualsAndHashCode
@@ -50,6 +53,19 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
         it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purposes v3Bean = clientsApi.getClientPurposes(
             clientId, offset, limit, null, null);
         return this.mapper.mapToV2(v3Bean);
+    }
+
+    @Override
+    public Purposes getClientPurposes(UUID clientId, Integer offset, Integer limit, List<UUID> eserviceIds, List<PurposeVersionState> states) {
+        return performOperation(() -> clientsApi.getClientPurposesWithHttpInfo(
+                clientId,
+                offset,
+                limit,
+                eserviceIds,
+                mapper.mapToPStateV3(states))
+        ).map(mapper::mapToV2).orElseThrow(() -> new IllegalStateException(
+                "Errore nel recupero dei client (response non 2xx o body nullo)"
+        ));
     }
 
     @Override

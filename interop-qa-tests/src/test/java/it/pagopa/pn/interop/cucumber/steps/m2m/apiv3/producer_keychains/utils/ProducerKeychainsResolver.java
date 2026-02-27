@@ -10,17 +10,19 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
-import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
 import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
-@RequiredArgsConstructor
 public class ProducerKeychainsResolver extends AbstractResolver {
 
     private final ProducerKeychainsContext context;
-    private final SharedStepsContext sharedStepsContext;
+
+    public ProducerKeychainsResolver(ProducerKeychainsContext context, SharedStepsContext sharedStepsContext) {
+        super(sharedStepsContext);
+        this.context = context;
+    }
 
     public KeySeed resolveKeySeed(String keyType, String key, String name, String alg, String use) {
         KeyPairDecorator keyPair = generateKeyPair(keyType);

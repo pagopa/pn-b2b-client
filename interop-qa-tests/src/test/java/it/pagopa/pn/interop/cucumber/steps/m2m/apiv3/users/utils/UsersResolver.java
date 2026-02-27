@@ -3,17 +3,16 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.users.utils;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-
-@RequiredArgsConstructor
 public class UsersResolver extends AbstractResolver {
 
-    private final SharedStepsContext sharedStepsContext;
+    public UsersResolver(SharedStepsContext sharedStepsContext) {
+        super(sharedStepsContext);
+    }
 
     public UUID resolveUserId(String raw) {
         final Role role = sharedStepsContext.getRole();
