@@ -38,7 +38,7 @@ Feature: Gestione dei producer keychains - API v3
 
     Examples:
       | keychainId | tenant | statusCode |
-      | %actual    | PA2    | 404        |
+      | %actual    | PA2    | 403        |
       | %random    | PA1    | 404        |
 
   Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_3] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
@@ -299,9 +299,9 @@ Feature: Gestione dei producer keychains - API v3
       | PA1    | %random                              | %actual            | m2m-admin | 404        |
 
     #producerKeychainId appartenente ad un tenant differente da quello del chiamante
-      | PA2    | %actual                              | %actual            | m2m-admin | 404        |
+      | PA2    | %actual                              | %actual            | m2m-admin | 403        |
     #userId appartenente ad un tenant differente da quello in cui è presente il producerKeychain
-      | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 403        |
+      | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 404        |
 
     # utente non autorizzato
       | PA1    | %actual                              | %actual            | m2m       | 403        |
@@ -353,7 +353,7 @@ Feature: Gestione dei producer keychains - API v3
       | PA1    | %actual            | 10    | %null  | 400        |
       | PA1    | %actual            | 10    | -1     | 400        |
       | PA1    | %random            | 10    | 0      | 404        |
-      | PA2    | %random            | 10    | 0      | 403        |
+      | PA2    | %actual            | 10    | 0      | 403        |
 
   Scenario: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_2] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
