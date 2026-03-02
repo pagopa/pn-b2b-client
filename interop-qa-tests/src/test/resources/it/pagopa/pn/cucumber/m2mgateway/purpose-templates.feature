@@ -35,6 +35,7 @@ Feature: Gestione purpose templates attraverso APIs M2M V2
     When l'utente tenta di effettuare la modifica parziale di un purpose template inesistente
     Then si ottiene lo status code 404
 
+  @m2m-patch
   @purpose-template-m2m-patch
   Scenario: [INTEROP-PT-M2M-PATCH_04] Un utente NON può effettuare una modifica parziale di un purpose template indicando un token non valido (Parte2#Scenario intorno a 149)
     Given l'utente è un "admin" di "PA1"

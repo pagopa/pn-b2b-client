@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                         "html:target/cucumber-report.html," +
                         "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V3;" +
-                        "api.mode=BEST_FIT;" +
+                        "api.mode=RIGHT_FIT;" +
                         "api.set=M2M"
         ),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
