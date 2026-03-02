@@ -1,11 +1,28 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.digitaladdresses.AddressesApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.privacy.UserConsentsApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffAddressType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffAddressVerificationRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffChannelType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.AllApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.CourtesyApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.LegalApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
@@ -15,6 +32,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -22,10 +42,8 @@ import java.util.List;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttributesClient {
     private final RestTemplate restTemplate;
-    private final ConsentsApi consentsApi;
-    private final LegalApi legalApi;
-    private final AllApi allApi;
-    private final CourtesyApi courtesyApiAddressBook;
+    private final UserConsentsApi consentsApi;
+    private final AddressesApi addressesApi;
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
@@ -35,6 +53,9 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     private final String userBearerTokenScaduto;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
+
+    private final String aldaMeriniBearerToken;
+    private final String mariaMontessoriBearerToken;
     private final String userAgent;
     private final String basePath;
 
@@ -49,6 +70,8 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                                                  @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
                                                  @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                                  @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+                                                 @Value("${pn.bearer-token.pg3}") String aldaMeriniBearerToken,
+                                                 @Value("${pn.bearer-token.pg4}") String mariaMontessoriBearerToken,
                                                  @Value("${pn.webapi.external.user-agent}") String userAgent) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
@@ -56,32 +79,31 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         this.leonardoBearerToken = leonardoBearerToken;
         this.galileoBearerToken = galileoBearerToken;
         this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto= userBearerTokenScaduto;
+        this.userBearerTokenScaduto = userBearerTokenScaduto;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.aldaMeriniBearerToken = aldaMeriniBearerToken;
+        this.mariaMontessoriBearerToken = mariaMontessoriBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.consentsApi = new ConsentsApi(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-        this.legalApi = new LegalApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-        this.allApi = new AllApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-        this.courtesyApiAddressBook = new CourtesyApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
+        this.consentsApi = new UserConsentsApi(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
+        this.addressesApi = new AddressesApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
     }
 
-    private static it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient newConsentsApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
-        it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient newApiClient =
-                new it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient(restTemplate);
+    private static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.ApiClient newConsentsApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.ApiClient newApiClient =
+                new it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.setBearerToken(bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.ApiClient newAddressBookApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
-        it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.ApiClient newApiClient =
-                new it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.ApiClient(restTemplate);
+    private static ApiClient newAddressBookApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.setBearerToken(bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -91,79 +113,61 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         switch (bearerToken) {
             case USER_1:
                 this.consentsApi.setApiClient(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
                 this.consentsApi.setApiClient(newConsentsApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
             case USER_3:
                 this.consentsApi.setApiClient(newConsentsApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
-
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
                 beenSet = true;
                 break;
             case USER_4:
                 this.consentsApi.setApiClient(newConsentsApiClient(restTemplate, basePath, galileoBearerToken, userAgent));
-
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, galileoBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, galileoBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, galileoBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, galileoBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_4;
                 beenSet = true;
                 break;
             case USER_5:
                 this.consentsApi.setApiClient(newConsentsApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
-
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_5;
                 beenSet = true;
                 break;
             case PG_1:
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
                 break;
             case PG_2:
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
                 break;
+            case PG_3:
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, aldaMeriniBearerToken, userAgent));
+                this.bearerTokenSetted = BearerTokenType.PG_3;
+                beenSet = true;
+                break;
+            case PG_4:
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, mariaMontessoriBearerToken, userAgent));
+                this.bearerTokenSetted = BearerTokenType.PG_4;
+                beenSet = true;
+                break;
             case USER_SCADUTO:
-                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
-                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
-                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
-
+                this.addressesApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_SCADUTO;
                 beenSet = true;
                 break;
-
+            default:
+                throw new IllegalConfigurationException("Invalid token: " + bearerToken);
         }
         return beenSet;
     }
@@ -180,45 +184,98 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                           String consentAction,
                           ConsentAction version) ???
          */
-        this.consentsApi.consentAction(consentType, version, consentAction);
+        this.consentsApi.acceptTosPrivacyV2(List.of(new BffTosPrivacyActionBody()
+                .action(BffTosPrivacyActionBody.ActionEnum.fromValue(consentAction.getAction().getValue()))
+                .type(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType.fromValue(consentAction.getAction().getValue()))
+                .version(version)));
     }
 
     public Consent getConsentByType(ConsentType consentType, String version) throws RestClientException {
-        return this.consentsApi.getConsentByType(consentType, version);
+        List<BffConsent> bffConsents = this.consentsApi.getTosPrivacyV2(List.of(
+                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType.fromValue(consentType.getValue()))
+        );
+        return deepCopy(bffConsents.get(0), Consent.class);
     }
-
 
     public List<Consent> getConsents() throws RestClientException {
-        return this.consentsApi.getConsents();
+        return consentsApi.getTosPrivacyV2(Arrays.asList(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType.values()))
+                .stream().map(item -> deepCopy(item, Consent.class))
+                .toList();
     }
 
-    public UserAddresses getAddressesByRecipient() throws RestClientException {
-        return allApi.getAddressesByRecipient();
+    public UserAddresses getAddressesByRecipientOld() throws RestClientException {
+        List<LegalAndUnverifiedDigitalAddress> legal = new ArrayList<>();
+        List<CourtesyDigitalAddress> courtesy = new ArrayList<>();
+
+        UserAddresses userAddresses = new UserAddresses();
+        addressesApi.getAddressesV1()
+                .forEach(item -> {
+                    if ("LEGAL".equals(item.getAddressType())) {
+                        legal.add(deepCopy(item, LegalAndUnverifiedDigitalAddress.class));
+                    } else {
+                        courtesy.add(deepCopy(item, CourtesyDigitalAddress.class));
+                    }
+                });
+        userAddresses.legal(legal);
+        userAddresses.courtesy(courtesy);
+        return userAddresses;
     }
 
 
-    public void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException {
-        legalApi.deleteRecipientLegalAddress(senderId, channelType);
+    public RecipientWrapper getAddressesByRecipient() throws RestClientException {
+
+        List<BffUserAddress> bffUserAddress = addressesApi.getAddressesV1();
+        RecipientWrapper recipientWrapper = new RecipientWrapper();
+        recipientWrapper.setBffUserAddress(bffUserAddress);
+
+        return recipientWrapper;
     }
 
 
-    public List<LegalAndUnverifiedDigitalAddress> getLegalAddressByRecipient() throws RestClientException {
-        return legalApi.getLegalAddressByRecipient();
+    public void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
+        addressesApi.deleteAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
-    public void postRecipientLegalAddress(String senderId, LegalChannelType channelType, AddressVerification addressVerification) throws RestClientException {
-        legalApi.postRecipientLegalAddress(senderId, channelType, addressVerification);
+    public List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException {
+        return addressesApi.getAddressesV1().stream()
+                .filter(item -> "LEGAL".equals(item.getAddressType()))
+                .map(item -> deepCopy(item, LegalCourtesyAddressWrapper.class))
+                .toList();
     }
 
-    public void deleteRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType) throws RestClientException {
-        courtesyApiAddressBook.deleteRecipientCourtesyAddress(senderId, channelType);
+    public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+        BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
+                .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
+        addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
+    }
+
+    public void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
+        addressesApi.deleteAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
     public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
-        return courtesyApiAddressBook.getCourtesyAddressByRecipient();
+        return addressesApi.getAddressesV1().stream()
+                .filter(item -> "COURTESY".equals(item.getAddressType()))
+                .map(item -> deepCopy(item, CourtesyDigitalAddress.class))
+                .toList();
     }
 
-    public void postRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType, AddressVerification addressVerification) throws RestClientException {
-        courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, channelType, addressVerification);
+    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+        BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
+                .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
+        addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
+    }
+
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
+        ObjectMapper objMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
+        try {
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
+        }
     }
 }

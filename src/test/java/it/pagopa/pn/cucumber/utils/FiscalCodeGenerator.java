@@ -111,7 +111,7 @@ public class FiscalCodeGenerator {
         int _5Num = Long.valueOf((iter / (int) Math.pow(16, 4)) % 16).intValue();
         int _6Num = Long.valueOf((iter / (int) Math.pow(16, 5)) % 16).intValue();
 
-        char _1Char = HEX_TO_LETTER[_1Num];
+        char _1Char = 'X'; //Elemento essenziale per evitare che il mock di NR restituisca un valore.
         char _2Char = HEX_TO_LETTER[_2Num];
         char _3Char = HEX_TO_LETTER[_3Num];
         char _4Char = HEX_TO_LETTER[_4Num];

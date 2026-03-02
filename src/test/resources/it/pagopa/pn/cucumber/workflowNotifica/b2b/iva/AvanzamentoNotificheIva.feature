@@ -12,7 +12,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
@@ -29,7 +29,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "parziale" di una notifica "AR" del utente "0"
     And viene verificato il costo "totale" di una notifica "AR" del utente "0"
@@ -50,7 +50,7 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "parziale" di una notifica "RIR" del utente "0"
     And viene verificato il costo "totale" di una notifica "RIR" del utente "0"
@@ -65,7 +65,7 @@ Feature: controllo costo notifiche con IVA
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo "totale" di una notifica "RS" del utente "0"
 
@@ -85,7 +85,7 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_province     | Paris        |
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_address      | Via@ok_RIS   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo "totale" di una notifica "RIS" del utente "0"
 
@@ -114,6 +114,28 @@ Feature: controllo costo notifiche con IVA
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
+
+  @validation_pn_14837
+  Scenario: [HOTFIX_PN-14837] Rifiuto notifica con pagamento: verifica cancellazione IUV da tabella pn-NotificationsCost
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | feePolicy             | DELIVERY_MODE               |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+      | pagoPaIntMode         | ASYNC                       |
+      | vat                   | 10                          |
+      | paFee                 | 10                          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL        |
+      | physicalAddress_address | via@ok_890  |
+      | payment_creditorTaxId   | 77777777777 |
+      | payment_pagoPaForm      | SI          |
+      | payment_f24             | NULL        |
+      | apply_cost_pagopa       | SI          |
+      | payment_multy_number    | 1           |
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
+    When la notifica viene inviata tramite api b2b con sha256 differente dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @calcoloIva
   Scenario: [CALCOLO-IVA_CONTROLLO-COSTO_7] Invio notifica RS ASYNC con iva inclusa controllo costo
@@ -155,7 +177,7 @@ Feature: controllo costo notifiche con IVA
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
@@ -172,7 +194,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
@@ -215,7 +237,7 @@ Feature: controllo costo notifiche con IVA
       | payment_f24             | PAYMENT_F24_FLAT |
       | apply_cost_pagopa       | NO               |
       | payment_multy_number    | 1                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
   @calcoloIva
@@ -230,7 +252,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che il campo "vat" sia valorizzato a 22
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
@@ -247,7 +269,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che il campo "paFee" sia valorizzato a 100
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
@@ -264,7 +286,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
@@ -312,7 +334,7 @@ Feature: controllo costo notifiche con IVA
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
@@ -330,7 +352,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then "Mario Gherkin" legge la notifica ricevuta
@@ -352,7 +374,7 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
@@ -375,7 +397,7 @@ Feature: controllo costo notifiche con IVA
       | payment_pagoPaForm      | SI         |
       | apply_cost_pagopa       | SI         |
       | payment_multy_number    | 2          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
@@ -399,7 +421,7 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@FAIL-Discovery_890 |
       | payment_pagoPaForm      | SI                     |
       | apply_cost_pagopa       | SI                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 1
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"

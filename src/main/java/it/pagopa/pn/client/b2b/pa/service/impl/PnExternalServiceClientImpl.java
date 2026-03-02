@@ -40,7 +40,7 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
+import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 @Slf4j
 @Component
@@ -159,10 +159,11 @@ public class PnExternalServiceClientImpl {
         this.restTemplate.setRequestFactory(requestFactory);
     }
 
-    public OpenSearchResponse openSearchGetAudit(String audRetentionType,String auditLogType, int numberOfResult){
+    public OpenSearchResponse openSearchGetAudit(String audRetentionType, String auditLogType, int numberOfResult) {
         return openSearchGetAuditWithHttpInfo(audRetentionType, auditLogType, numberOfResult).getBody();
     }
-    private ResponseEntity<OpenSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType,String auditLogType, int numberOfResult) throws RestClientException {
+
+    private ResponseEntity<OpenSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType, String auditLogType, int numberOfResult) throws RestClientException {
 
         try {
             restTemplateAvoidSSlCertificate();
@@ -170,17 +171,16 @@ public class PnExternalServiceClientImpl {
             throw new RuntimeException(e);
         }
 
-        String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\""+auditLogType+"\"}}}},\"size\":"+numberOfResult+",\"sort\":[{\"@timestamp\": \"desc\"}]}";
+        String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\"" + auditLogType + "\"}}}},\"size\":" + numberOfResult + ",\"sort\":[{\"@timestamp\": \"desc\"}]}";
 
         final Map<String, Object> uriVariables = new HashMap<>();
 
         final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        //queryParams.add("format", "json");
 
         final HttpHeaders headerParams = new HttpHeaders();
 
-        String usernamePassword = openSearchUsername+":"+openSearchPassword;
-        headerParams.add("Authorization","Basic "+Base64.getEncoder().encodeToString(usernamePassword.getBytes()));
+        String usernamePassword = openSearchUsername + ":" + openSearchPassword;
+        headerParams.add("Authorization", "Basic " + Base64.getEncoder().encodeToString(usernamePassword.getBytes()));
 
         final String[] localVarAccepts = {
                 "application/json", "application/problem+json"
@@ -188,8 +188,9 @@ public class PnExternalServiceClientImpl {
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<OpenSearchResponse> returnType = new ParameterizedTypeReference<>() {};
-        return invokeAPI(openSearchBaseUrl, "/pn-logs"+audRetentionType+"/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        ParameterizedTypeReference<OpenSearchResponse> returnType = new ParameterizedTypeReference<>() {
+        };
+        return invokeAPI(openSearchBaseUrl, "/pn-logs" + audRetentionType + "/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
 
@@ -265,7 +266,7 @@ public class PnExternalServiceClientImpl {
 
         final HttpHeaders headerParams = new HttpHeaders();
 
-        headerParams.add("Authorization","Bearer "+bearerToken);
+        headerParams.add("Authorization", "Bearer " + bearerToken);
 
         final String[] localVarAccepts = {
                 "application/json", "application/problem+json"
@@ -293,8 +294,8 @@ public class PnExternalServiceClientImpl {
         final HttpHeaders headerParams = new HttpHeaders();
         headerParams.add("x-api-key", apiKey);
 
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
-            headerParams.add("Authorization","Bearer "+ interopTokenSingleton.getTokenInterop());
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
+            headerParams.add("Authorization", "Bearer " + interopTokenSingleton.getTokenInterop());
         }
 
         final String[] localVarAccepts = {
@@ -353,19 +354,20 @@ public class PnExternalServiceClientImpl {
         return invokeAPI(dataVaultBasePath, "/datavault-private/v1/recipients/external/{recipientType}", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    public static class SafeStorageResponse{
+    public static class SafeStorageResponse {
 
-            String key;
-            String versionId;
-            String documentType;
-            String documentStatus;
-            String contentType;
-            Integer contentLength;
-            String checksum;
-           String retentionUntil;
-           Download download;
+        String key;
+        String versionId;
+        String documentType;
+        String documentStatus;
+        String contentType;
+        Integer contentLength;
+        String checksum;
+        String retentionUntil;
+        Download download;
 
-           public SafeStorageResponse(){}
+        public SafeStorageResponse() {
+        }
 
         public String getKey() {
             return key;
@@ -454,9 +456,9 @@ public class PnExternalServiceClientImpl {
                     '}';
         }
 
-        public static class Download{
-               String url;
-               String retryAfter;
+        public static class Download {
+            String url;
+            String retryAfter;
 
             @Override
             public String toString() {
@@ -466,7 +468,8 @@ public class PnExternalServiceClientImpl {
                         '}';
             }
 
-            public Download(){}
+            public Download() {
+            }
 
             public String getUrl() {
                 return url;
@@ -505,7 +508,7 @@ public class PnExternalServiceClientImpl {
 
 
         final String[] localVarAccepts = {
-                "application/json", "application/problem+json","*/*"
+                "application/json", "application/problem+json", "*/*"
         };
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
@@ -534,7 +537,7 @@ public class PnExternalServiceClientImpl {
 
 
         final String[] localVarAccepts = {
-                "application/json", "application/problem+json","*/*"
+                "application/json", "application/problem+json", "*/*"
         };
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
@@ -602,7 +605,7 @@ public class PnExternalServiceClientImpl {
         StringBuilder queryBuilder = new StringBuilder();
         queryParams.forEach((name, values) -> {
             try {
-                final String encodedName = URLEncoder.encode(name.toString(), "UTF-8");
+                final String encodedName = URLEncoder.encode(name, "UTF-8");
                 if (CollectionUtils.isEmpty(values)) {
                     if (queryBuilder.length() != 0) {
                         queryBuilder.append('&');
@@ -631,10 +634,9 @@ public class PnExternalServiceClientImpl {
 
     }
 
-    private ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfo(
-            Map<String, String> mapInfo) {
+    private <T> ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfoAttach(Map<String, T> mapInfo) {
         Object postBody = null;
-        List<Map<String, String>> requestList = new ArrayList<>();
+        List<Map<String, T>> requestList = new ArrayList<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             requestList.add(mapInfo);
@@ -656,17 +658,16 @@ public class PnExternalServiceClientImpl {
                 StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
-        };
+        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {};
 
         return invokeAPI(dataVaultBasePath,
-                "/consolidatore-ingress/v1/push-progress-events/",
+                "/consolidatore-ingress/v1/push-progress-events",
                 HttpMethod.PUT, uriVariables, null, postBody,
                 headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    public String pushConsolidatoreNotification(Map<String, String> mapInfo) {
-        return pushConsolidatoreNotificationWithHttpInfo(mapInfo).getBody();
+    public <T> String pushConsolidatoreNotificationAttach(Map<String, T> mapInfo) {
+        return pushConsolidatoreNotificationWithHttpInfoAttach(mapInfo).getBody();
     }
 
     //OPEN SEARCH RESPONSE
@@ -684,8 +685,10 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class Shards{
-        public Shards() {}
+    public static class Shards {
+        public Shards() {
+        }
+
         private Integer total;
         private Integer successful;
         private Integer skipped;
@@ -697,7 +700,7 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class OuterHits{
+    public static class OuterHits {
         public OuterHits() {
         }
 
@@ -710,7 +713,7 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class InnerHits{
+    public static class InnerHits {
         public InnerHits() {
         }
 
@@ -721,8 +724,7 @@ public class PnExternalServiceClientImpl {
         private Source _source;
 
 
-
-        public class Source{
+        public class Source {
             @Override
             public String toString() {
                 return "Source{" +
@@ -933,9 +935,10 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class Total{
+    public static class Total {
         public Total() {
         }
+
         private Integer value;
         private String relation;
 

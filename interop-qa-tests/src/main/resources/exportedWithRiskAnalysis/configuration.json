@@ -1,0 +1,55 @@
+{
+  "name":"e-service 5203266",
+  "description":"Descrizione e-service",
+  "technology":"REST",
+  "mode":"RECEIVE",
+  "isConsumerDelegable":false,
+  "isClientAccessDelegable":false,
+  "descriptor":{
+    "interface":{
+      "prettyName":"Interfaccia",
+      "path":"interface.yaml"
+    },
+    "docs":[],
+    "audience":[
+      "pagopa.it"
+    ],
+    "voucherLifespan":60,
+    "dailyCallsPerConsumer":50,
+    "dailyCallsTotal":1000,
+    "agreementApprovalPolicy":"AUTOMATIC"
+  },
+  "riskAnalysis":[
+    {
+      "name":"finalità_test_1835718981",
+      "riskAnalysisForm":{
+        "version":"3.1",
+        "singleAnswers":[
+          {
+            "key":"institutionalPurpose",
+            "value":"prova prova prova"
+          },
+          {
+            "key":"purpose",
+            "value":"INSTITUTIONAL"
+          },
+          {
+            "key":"usesPersonalData",
+            "value":"NO"
+          },
+          {
+            "key":"usesThirdPartyPersonalData",
+            "value":"NO"
+          },
+          {
+            "key":"isRequestOnBehalfOfThirdParties",
+            "value":"NO"
+          }
+        ],
+        "multiAnswers":[
+
+        ]
+      }
+    }
+  ]
+}

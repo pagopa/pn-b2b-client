@@ -1,0 +1,115 @@
+package it.pagopa.interop.authorization.service.utils;
+
+import com.nimbusds.jose.jwk.KeyType;
+import it.pagopa.interop.authorization.domain.KeyPairPEM;
+import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.spec.ECGenParameterSpec;
+import java.util.Base64;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class KeyPairGeneratorUtil {
+
+    private KeyPairGeneratorUtil() {
+        throw new AssertionError("This class is an utility class and should not be instantiated");
+    }
+
+    public static String createBase64PublicKey(String keyType, int keyLength) {
+        return createBase64PublicKey(keyType, keyLength, true);
+    }
+
+    public static String createBase64PublicKey(String keyType, int keyLength, boolean withDelimitators) {
+        KeyPairPEM keyPairPEM = createKeyPairPEM(keyType, keyLength);
+        return keyToBase64(keyPairPEM.getPublicKey(), withDelimitators);
+    }
+
+    public static KeyPairPEM createKeyPairPEM(String keyType, int modulusLength) {
+        try {
+            KeyPair keyPair = createKeyPair(keyType, modulusLength);
+            return keyPairToPEM(keyPair);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("There was an error while crating the KeyPairPEM: " + e.getMessage(), e);
+        }
+    }
+
+    public static KeyPair createKeyPair(String keyType, int modulusLength) {
+        try {
+            KeyPairGenerator keyPairGenerator;
+            if ("RSA".equalsIgnoreCase(keyType)) {
+                keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+                keyPairGenerator.initialize(modulusLength);
+            } else if ("EC".equalsIgnoreCase(keyType)) {
+                keyPairGenerator = KeyPairGenerator.getInstance("EC");
+                keyPairGenerator.initialize(new ECGenParameterSpec("secp256r1")); // P-256
+            } else {
+                // Default fallback: Ed25519
+                keyPairGenerator = KeyPairGenerator.getInstance("Ed25519");
+                // throw new IllegalArgumentException("Unsupported key type: " + keyType);
+            }
+            return keyPairGenerator.generateKeyPair();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("There was an error while creating the %s".formatted(KeyPair.class.getName()), e);
+        }
+    }
+
+    public static KeyPairPEM keyPairToPEM(KeyPair keyPair) {
+        return new KeyPairPEM(keyToPEM(keyPair.getPrivate()), keyToPEM(keyPair.getPublic()));
+    }
+
+    private static String keyToPEM(Key key) {
+        String header = key instanceof PrivateKey
+                ? "-----BEGIN PRIVATE KEY-----"
+                : "-----BEGIN PUBLIC KEY-----";
+        String footer = key instanceof PrivateKey
+                ? "-----END PRIVATE KEY-----"
+                : "-----END PUBLIC KEY-----";
+
+        String encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
+        return String.format("%s%n%s%n%s", header, encodedKey, footer);
+    }
+
+    public static String keyToBase64(String key, boolean withDelimitators) {
+        if (withDelimitators) {
+            return Base64.getEncoder().encodeToString(key.getBytes());
+        } else {
+            String cleanedKey = key
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .trim();
+
+            return Base64.getEncoder().encodeToString(cleanedKey.getBytes());
+        }
+    }
+
+    public static List<KeySeed> createKeySeed(String key, KeyType keyType) {
+        return createKeySeed(key, getRandomInt(), keyType);
+    }
+
+    public static List<KeySeed> createKeySeed(String key, int firstId, KeyType keyType) {
+        String alg = switch (keyType.getValue()) {
+            case "RSA" -> "RS256";
+            case "EC" -> "ES256";
+            case "OKP" -> "EdDSA"; // per Ed25519
+            default -> throw new IllegalArgumentException("Unsupported key type: " + keyType.getValue());
+        };
+
+        KeySeed keySeed = new KeySeed();
+        keySeed.setUse(KeyUse.SIG);
+        keySeed.setAlg(alg);
+        keySeed.setName(String.format("key-%d-%d", firstId, getRandomInt()));
+        keySeed.setKey(key);
+
+        return List.of(keySeed);
+    }
+
+
+    private static int getRandomInt() {
+        return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+    }
+
+}

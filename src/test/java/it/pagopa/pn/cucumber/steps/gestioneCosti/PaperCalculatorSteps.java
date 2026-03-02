@@ -99,7 +99,7 @@ public class PaperCalculatorSteps {
                     Optional.ofNullable(calculateResponseResponseEntity)
                             .map(HttpEntity::getBody)
                             .map(ShipmentCalculateResponse::getCost)
-                            .ifPresentOrElse((value) -> checkIfEquals(x, value),
+                            .ifPresentOrElse(value -> checkIfEquals(x, value),
                                     () -> errorList.add(formatSingleErrorMessage(x, AssertionFailureBuilder.assertionFailure().message("errore nel recuperare il costo").build())));
                 });
         Assertions.assertTrue(errorList.isEmpty(), createGeneralErrorMessage(errorList));
@@ -120,7 +120,7 @@ public class PaperCalculatorSteps {
     }
 
     private String formatSingleErrorMessage(CalculateRequestParameter calculateRequestParameter, AssertionFailedError assertionFailedError) {
-        return String.format("%s;%s;%d;%d;%d;%b;%s;%s;%d %s\n",
+        return String.format("%s;%s;%d;%d;%d;%b;%s;%s;%d %s%n",
                 calculateRequestParameter.getGeokey(), calculateRequestParameter.getProduct().getValue(), calculateRequestParameter.getPageWeight(),
                 calculateRequestParameter.getPageNumber(), calculateRequestParameter.getNumSides(),
                 calculateRequestParameter.getIsReversePrinter(), calculateRequestParameter.getCost(), calculateRequestParameter.getCostPlusEuroDigital(),
