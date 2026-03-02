@@ -154,7 +154,7 @@ public class DelegationCreateStep {
     }
 
     private void authAndConsumerDelegation(String delegatorTenant, String delegateTenant, DelegationProxy delegationProxy) {
-        String delegatingTenantToken = identityService.getToken(delegatorTenant, null);
+        String delegatingTenantToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(delegatingTenantToken);
         createDelegate(delegatorTenant, delegateTenant, consumerDelegationsApiClient::createConsumerDelegation, delegationProxy);
     }
