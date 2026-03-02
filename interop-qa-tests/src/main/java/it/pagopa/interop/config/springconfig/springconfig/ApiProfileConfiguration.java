@@ -13,7 +13,7 @@ public class ApiProfileConfiguration {
     public ApiProfile apiProfile(Environment env) {
         ApiProfile profile = ApiProfile.from(
                 env.getProperty("api.mode", "RIGHT_FIT"),
-                env.getProperty("api.m2m.version", "V3"),
+                env.getProperty("api.m2m.version", "V2"),
                 env.getProperty("api.bff.version", "V1"),
                 env.getProperty("api.set", "M2M")
         );
