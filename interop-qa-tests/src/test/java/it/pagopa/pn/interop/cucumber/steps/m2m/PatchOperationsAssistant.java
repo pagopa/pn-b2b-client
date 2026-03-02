@@ -126,8 +126,10 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
             }
         } catch (JsonParseException e) {
             Auth auth = sharedStepsContext.getAuth();
-            auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
-            tokenConfigurator.setAuth(auth);
+            if (auth != null) { // auth == null al momento succede solo se il test non è eseguito per API v3
+                auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
+                tokenConfigurator.setAuth(auth);
+            }
         }
     }
 
@@ -148,7 +150,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
 
             return new TokenAuthInfo(tenant, clientId);
         } catch (JsonParseException e) {
-            // Al momento siamo in questo caso SOLO se passiamo un token deliberatamente non valido
+            // Al momento siamo in questo caso se passiamo un token deliberatamente non valido, oppure non di tipo m2m
             throw e;
         }
     }
