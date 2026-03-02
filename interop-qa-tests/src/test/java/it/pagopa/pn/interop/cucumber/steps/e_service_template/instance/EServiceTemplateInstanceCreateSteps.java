@@ -25,11 +25,13 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import java.util.Optional;
 import java.util.UUID;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
 @Data
+@Slf4j(topic = "EServiceTemplateInstanceCreateSteps")
 public class EServiceTemplateInstanceCreateSteps {
     private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -64,6 +66,13 @@ public class EServiceTemplateInstanceCreateSteps {
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpec() {
         InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
+    }
+
+    @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
+    public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
+        InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class)
+            .instanceLabel(suffix);
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
@@ -200,6 +209,26 @@ public class EServiceTemplateInstanceCreateSteps {
         } catch (IllegalArgumentException e) {
             fail("Il nuovo e-service non è stato creato correttamente");
         }
+    }
+
+    @Then("il suffisso {string} è stato utilizzato correttamente nell'e-service")
+    public void checkEServiceName(String suffix) {
+        String templateEServiceDefaultName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
+        ).getBody().getEserviceTemplate().getName();
+
+        String eServiceCreatedName = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate();
+
+        String expectedEServiceCreatedName = templateEServiceDefaultName + (
+            (suffix == null || suffix.isEmpty()) ? "" : " - " + suffix.trim()
+        );
+
+        assertSoftly(softly -> {
+            softly.assertThat(eServiceCreatedName)
+                    .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
+                    .isEqualTo(expectedEServiceCreatedName);
+        });
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
