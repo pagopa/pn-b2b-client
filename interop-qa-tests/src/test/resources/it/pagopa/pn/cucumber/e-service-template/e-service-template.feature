@@ -3034,6 +3034,7 @@ Feature: Test API of e-service template
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-8743
   @e-service-template-instance-upgrade
   Scenario Outline: [INTEROP-EST-208] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
