@@ -129,7 +129,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         resourceContext.setExpectedResource(expectedPatchedResource);
 
         // Auth m2m
-        m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
+        if(patchTenant != null && role != null ) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
 
