@@ -16,6 +16,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
@@ -79,12 +80,26 @@ public class EServiceTemplateInstanceUpdateSteps {
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
 
-    @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con {string}")
-    public void editEServiceInstanceInstanceLabelField(String instanceLabel) {
+    @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato {string} con {string}")
+    public void editEServiceInstanceInstanceLabelField(String eServiceState, String instanceLabel) {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
-                .instanceLabel(instanceLabel);
-        editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
+        switch (eServiceState) {
+            case "DRAFT":
+                lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
+                        .instanceLabel(instanceLabel);
+                editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
+                break;
+            case "PUBLISHED":
+                EServiceInstanceLabelUpdateSeed seed = new EServiceInstanceLabelUpdateSeed()
+                        .instanceLabel(instanceLabel);
+                editEServiceInstanceInstanceLabel(eServiceId, seed);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
+                    EServiceDescriptorState.class.getSimpleName(),
+                    eServiceState)
+                );
+        }
     }
 
     @When("l'utente tenta la modifica dei campi di un'istanza inesistente dell'e-service template")
@@ -225,5 +240,17 @@ public class EServiceTemplateInstanceUpdateSteps {
                 eServiceId,
                 seed),
             ResponseEntity::getStatusCode);
+    }
+
+    private void editEServiceInstanceInstanceLabel(UUID eServiceId, EServiceInstanceLabelUpdateSeed seed) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceClient.updateEServiceInstanceLabelAfterPublicationWithHttpInfo(
+                eServiceId,
+                seed
+            ),
+            ResponseEntity::getStatusCode
+        );
     }
 }

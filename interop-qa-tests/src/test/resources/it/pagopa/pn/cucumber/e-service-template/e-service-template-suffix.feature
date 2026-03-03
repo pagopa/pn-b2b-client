@@ -118,7 +118,7 @@ Feature: Test API of e-service template suffix
     And l'utente tenta la creazione di un nuovo e-service con suffisso "<initialSuffix>" a partire dal template indicando tutte le specifiche
     And si ottiene response status code 200
     And il nuovo e-service è stato creato correttamente in stato DRAFT
-    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con "<suffix>"
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato "DRAFT" con "<suffix>"
     Then si ottiene response status code <statusCode>
     And il suffisso "" è stato utilizzato correttamente nell'e-service
 
@@ -138,5 +138,5 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     And il nuovo e-service è stato creato correttamente in stato DRAFT
     And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
-    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con "suffisso2"
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato "DRAFT" con "suffisso2"
     Then si ottiene response status code 400
