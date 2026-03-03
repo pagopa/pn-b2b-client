@@ -521,8 +521,7 @@ public class PurposesSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
     public void patchReversePurposeUsing(String tenant, M2MRole m2mRole) {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        reversePurposePatchAssistant.patchResource(request, token);
+        reversePurposePatchAssistant.patchResourceWith(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa con token non valido")

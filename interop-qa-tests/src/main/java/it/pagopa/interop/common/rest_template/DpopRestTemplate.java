@@ -57,18 +57,22 @@ public class DpopRestTemplate {
     }
 
     public void setAuth(Auth auth) {
-        dpopInterceptor.setKeyPair(auth.getKeyPair());
-        DpopHeaderPolicy incoming = auth.getDpopHeaderPolicy();
+        if (auth != null) { // = a null quando il test non viene avviato in modalità M2M v3
+            dpopInterceptor.setKeyPair(auth.getKeyPair());
+            DpopHeaderPolicy incoming = auth.getDpopHeaderPolicy();
 
-        if (incoming != null) {
-            dpopHeaderPolicy.setMode(incoming.getMode());
-            dpopHeaderPolicy.setInvalidAccessToken(incoming.getInvalidAccessToken());
-            dpopHeaderPolicy.setInvalidDpopProof(incoming.getInvalidDpopProof());
+            if (incoming != null) {
+                dpopHeaderPolicy.setMode(incoming.getMode());
+                dpopHeaderPolicy.setInvalidAccessToken(incoming.getInvalidAccessToken());
+                dpopHeaderPolicy.setInvalidDpopProof(incoming.getInvalidDpopProof());
+            } else {
+                dpopHeaderPolicy.setMode(DpopHeaderPolicy.Mode.NORMAL);
+            }
+
+            dpopAccessTokenSupplier.setAuth(auth);
         } else {
-            dpopHeaderPolicy.setMode(DpopHeaderPolicy.Mode.NORMAL);
+            log.warn("Autenticazione M2M v3 non settata.");
         }
-
-        dpopAccessTokenSupplier.setAuth(auth);
     }
 }
 
