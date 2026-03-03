@@ -100,6 +100,7 @@ public class ProducerKeychainsSteps {
 
             ProducerKey key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
             producerKeychainsContext.setProducerKey(key);
+            producerKeychainsContext.setActualKeySeed(keySeed);
 
             httpCallExecutor.snapshot();
             String kid = key.getJwk().getKid();
