@@ -280,8 +280,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service")
     public void patchEService(String tenant, M2MRole m2mRole) {
         EServicePatchRequest request = this.eServicePatchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        eServicePatchAssistant.patchResource(request, token);
+        eServicePatchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service con token non valido")

@@ -1,12 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import it.pagopa.interop.authorization.domain.Auth;
-import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.authorization.enums.M2MRole;
-import it.pagopa.interop.authorization.service.DPoPTokenService;
-import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.common.JsonParseException;
 import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -16,17 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE_ID> {
-    record TokenAuthInfo(String tenant, UUID cliendId) {};
 
     private final ResourceMapper<PATCH_REQUEST, RESOURCE> resourceMapper;
     private final IHttpExecutor httpExecutor;
@@ -36,8 +27,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     private final String resourceSimpleName;
 
     /* DEV. NOTE 25 02 2026: in controtendenza rispetto alla best practice, si opta per la tecnica field injection
-    * invece che di constructor injection, per evitare di dover aggiornare tutte le classi concrete, nell'ottica
-    * che questo sistema sarà migliorato con refactor futuri */
+     * invece che di constructor injection, per evitare di dover aggiornare tutte le classi concrete, nell'ottica
+     * che questo sistema sarà migliorato con refactor futuri */
     @Autowired
     private SharedStepsContext sharedStepsContext;
 
@@ -53,70 +44,16 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         patchResource(this.buildDefaultPatchRequest());
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica parziale di ..." */
-    public void patchResource(String patchToken) {
-        patchResource(this.buildDefaultPatchRequest(), patchToken);
-    }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica parziale di ..." */
     public void patchResource(PATCH_REQUEST patchRequest) {
-        String actualToken = tokenConfigurator.getLastToken();
-        this.patchResource(patchRequest, actualToken, actualToken);
+        this.patchResource(patchRequest, null, null);
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica di ... con token non valido" */
-    public void patchResourceWithInvalidToken() {
-        this.patchResource(this.buildDefaultPatchRequest(), M2MAuthSteps.INVALID_AUTH_TOKEN);
+    public void patchResource(String patchTenant, M2MRole m2mRole) {
+        this.patchResource(this.buildDefaultPatchRequest(), patchTenant, m2mRole);
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica di ... con token non valido" */
-    public void patchResourceWithInvalidToken(PATCH_REQUEST patchRequest) {
-        this.patchResource(patchRequest, M2MAuthSteps.INVALID_AUTH_TOKEN);
-    }
-
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica parziale di ..." */
-    public void patchResource(PATCH_REQUEST patchRequest, String patchToken) {
-        String actualToken = tokenConfigurator.getLastToken();
-        this.patchResource(patchRequest, actualToken, patchToken);
-    }
-
-    /**
-     * Perform a PATCH operation and set the context for future checks.
-     * To do this, a GET operation is first performed on the current version of the
-     * resource.
-     * @param patchRequest parameters needed to perform the PATCH request
-     * @param getToken auth token used in GET operation
-     * @param patchToken auth token used in PATCH operation
-     */
-    public void patchResource(PATCH_REQUEST patchRequest, String getToken, String patchToken) {
-        String previousAuthToken = tokenConfigurator.getLastToken();
-
-        RESOURCE_ID resourceId = this.getResourceId();
-
-        tokenConfigurator.setBearerToken(getToken);
-        eventuallySetAuth(getToken);
-        RESOURCE originalResource = this.getResource(resourceId);
-        resourceContext.setOriginalResource(originalResource);
-
-        RESOURCE expectedPatchedResource = this.resourceMapper.copyResource(originalResource);
-        this.resourceMapper.copyPatchRequestToResource(patchRequest, expectedPatchedResource);
-        resourceContext.setExpectedResource(expectedPatchedResource);
-
-        tokenConfigurator.setBearerToken(patchToken);
-        eventuallySetAuth(patchToken);
-        httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
-        this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
-
-        tokenConfigurator.setBearerToken(previousAuthToken);
-        eventuallySetAuth(previousAuthToken);
-    }
-
-    public void patchResourceWith(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
+    public void patchResource(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
         String previousBearerToken = tokenConfigurator.getLastToken();
         Auth previuousAuth = sharedStepsContext.getAuth();
 
@@ -129,7 +66,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         resourceContext.setExpectedResource(expectedPatchedResource);
 
         // Auth m2m
-        if(patchTenant != null && role != null ) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
+        if (patchTenant != null && role != null) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
 
@@ -138,54 +75,14 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         sharedStepsContext.setAuth(previuousAuth);
     }
 
-    private void eventuallySetAuth(String token) {
-        try {
-            TokenAuthInfo authInfo = extractTokenAuthInfo(token);
-            if (ApiProfile.ApiM2MVersion.V3.equals(apiProfile.getApiM2MVersion()) && authInfo != null) {
-
-                DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getIdentityService().getPreparedClient(authInfo.cliendId());
-                sharedStepsContext.getClientCommonContext().addClient(preparedClient);
-
-                Auth auth = Auth.of(DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL), authInfo.cliendId().toString(), authInfo.tenant(), "ADMIN", preparedClient.keyPair().getKeyPair());
-                tokenConfigurator.setAuth(auth);
-                sharedStepsContext.setAuth(auth);
-            }
-        } catch (JsonParseException e) {
-            Auth auth = sharedStepsContext.getAuth();
-            if (auth != null) { // auth == null al momento succede solo se il test non è eseguito per API v3
-                auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
-                tokenConfigurator.setAuth(auth);
-            }
-        }
+    public void patchResourceWithInvalidToken(PATCH_REQUEST patchRequest) {
+        m2mAuthSteps.setExpiredM2MAuth();
+        this.patchResource(patchRequest);
     }
 
-    @Nullable
-    private TokenAuthInfo extractTokenAuthInfo(String token) {
-        try {
-            Map<String, Object> jwtPayload = JWTUtils.decodeJwtPayload(token);
-            Object oClientId = getValue(jwtPayload, "client_id");
-            if(oClientId == null) {
-                return null;
-            }
-
-            UUID clientId = UUID.fromString(oClientId.toString());
-
-            Object oOrganizationId = getValue(jwtPayload, "organizationId");
-            UUID organizationId = UUID.fromString(oOrganizationId.toString());
-            String tenant = sharedStepsContext.getIdentityService().getTenant(organizationId);
-
-            return new TokenAuthInfo(tenant, clientId);
-        } catch (JsonParseException e) {
-            // Al momento siamo in questo caso se passiamo un token deliberatamente non valido, oppure non di tipo m2m
-            throw e;
-        }
-    }
-
-    @Nullable
-    private static Object getValue(Map<String, Object> jwtPayload, String fieldKey) {
-        Object oClientId = jwtPayload.get(fieldKey);
-        //requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(fieldKey));
-        return oClientId;
+    public void patchResourceWithInvalidToken() {
+        m2mAuthSteps.setExpiredM2MAuth();
+        this.patchResource();
     }
 
     /* di solito associato a step del tipo
@@ -214,9 +111,9 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     public void checkPatchOperationResult() {
         delayService.delay();
         assertImpl(
-            resourceContext.getReturnedResource(),
-            resourceContext.getExpectedResource(),
-            "Verifica che il risultato restituito dall'API PATCH su '%s' sia coerente con le modifiche effettuate".formatted(this.resourceSimpleName));
+                resourceContext.getReturnedResource(),
+                resourceContext.getExpectedResource(),
+                "Verifica che il risultato restituito dall'API PATCH su '%s' sia coerente con le modifiche effettuate".formatted(this.resourceSimpleName));
     }
 
     /* di solito associato a step del tipo
@@ -226,9 +123,9 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertImpl(
-            actualPatchedResource,
-            resourceContext.getExpectedResource(),
-            "Verifica che le modifiche apportate a '%s' con l'API PATCH siano state apportate correttamente".formatted(this.resourceSimpleName));
+                actualPatchedResource,
+                resourceContext.getExpectedResource(),
+                "Verifica che le modifiche apportate a '%s' con l'API PATCH siano state apportate correttamente".formatted(this.resourceSimpleName));
     }
 
     protected void assertImpl(RESOURCE actual, RESOURCE expected, String assertDescription) {
@@ -242,8 +139,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertThat(actualPatchedResource)
-            .as("Verifica che non siano state apportate modifiche a '%s'", this.resourceSimpleName)
-            .isEqualTo(resourceContext.getOriginalResource());
+                .as("Verifica che non siano state apportate modifiche a '%s'", this.resourceSimpleName)
+                .isEqualTo(resourceContext.getOriginalResource());
     }
 
     protected abstract RESOURCE_ID getResourceId();

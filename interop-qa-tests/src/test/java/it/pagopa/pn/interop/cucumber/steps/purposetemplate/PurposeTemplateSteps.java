@@ -1197,9 +1197,7 @@ public class PurposeTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")
     public void patchEService(String tenant, M2MRole m2mRole) {
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
-        String readToken = clientTokenConfigurator.getLastToken();
-        String patchToken = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        patchAssistant.patchResource(request, readToken, patchToken);
+        patchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del purpose template specificando un sottoinsieme di informazioni")
