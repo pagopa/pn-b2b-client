@@ -67,8 +67,8 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     And si ottiene response status code 200
     And l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
-      | key    | name   | alg    | use    | keychainId |
-      | %valid | %valid | %valid | %valid | %actual    |
+      | key     | name    | alg     | use     | keychainId |
+      | %actual | %actual | %actual | %actual | %actual    |
     Then si ottiene response status code 409
 
   Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_5] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore

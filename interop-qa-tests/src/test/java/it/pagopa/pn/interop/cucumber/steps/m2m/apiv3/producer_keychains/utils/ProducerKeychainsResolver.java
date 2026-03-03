@@ -35,12 +35,52 @@ public class ProducerKeychainsResolver extends AbstractResolver {
         String nUse = StepParser.nullOrValue(use);
 
         KeySeed keySeed = new KeySeed();
-        keySeed.setKey(nKey != null ? bffKeySeed.getKey() : null);
-        keySeed.setName(nName != null ? bffKeySeed.getName() : null);
-        keySeed.setAlg(nAlg != null ? bffKeySeed.getAlg() : null);
-        keySeed.setUse(nUse != null ? KeyUse.valueOf(bffKeySeed.getUse().getValue()) : null);
+        keySeed.setKey(resolveKey(isValidToken(nKey) ? bffKeySeed.getKey() : nKey));
+        keySeed.setName(resolveName(isValidToken(nName) ? bffKeySeed.getName() : nName));
+        keySeed.setAlg(resolveAlg(isValidToken(nAlg) ? bffKeySeed.getAlg() : nAlg));
+        keySeed.setUse(resolveUse(isValidToken(nUse) ? bffKeySeed.getUse().getValue() : nUse));
 
         return keySeed;
+    }
+
+    private boolean isValidToken(String raw){
+        final String VALID_TOKEN = "%valid";
+        return raw != null && raw.equals(VALID_TOKEN);
+    }
+    private String resolveKey(String raw){
+        return resolveOrParse(
+                raw,
+                (value) -> value,
+                () -> context.getActualKeySeed().getKey(),
+                () -> context.getActualKeySeed().getKey()
+        );
+    }
+
+    private String resolveName(String raw){
+        return resolveOrParse(
+                raw,
+                (value) -> value,
+                () -> context.getActualKeySeed().getName(),
+                () -> context.getActualKeySeed().getName()
+        );
+    }
+
+    private String resolveAlg(String raw){
+        return resolveOrParse(
+                raw,
+                (value) -> value,
+                () -> context.getActualKeySeed().getAlg(),
+                () -> context.getActualKeySeed().getAlg()
+        );
+    }
+
+    private KeyUse resolveUse(String raw){
+        return resolveOrParse(
+                raw,
+                (value) -> value != null ? KeyUse.valueOf(value) : null,
+                () -> context.getActualKeySeed().getUse(),
+                () -> context.getActualKeySeed().getUse()
+        );
     }
 
     public UUID resolveKeychain(String raw) {
