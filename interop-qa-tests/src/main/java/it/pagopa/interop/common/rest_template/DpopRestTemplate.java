@@ -70,8 +70,6 @@ public class DpopRestTemplate {
             }
 
             dpopAccessTokenSupplier.setAuth(auth);
-        } else {
-            log.warn("Autenticazione M2M v3 non settata.");
         }
     }
 }

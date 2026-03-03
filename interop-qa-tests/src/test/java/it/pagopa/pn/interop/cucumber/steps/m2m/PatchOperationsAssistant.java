@@ -54,6 +54,13 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     }
 
     public void patchResource(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
+        Runnable authProcedure = () ->  {
+            if (patchTenant != null && role != null) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
+        };
+        this.patchResource(patchRequest, authProcedure);
+    }
+
+    public void patchResource(PATCH_REQUEST patchRequest, Runnable patchAuth) {
         String previousBearerToken = tokenConfigurator.getLastToken();
         Auth previuousAuth = sharedStepsContext.getAuth();
 
@@ -66,7 +73,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         resourceContext.setExpectedResource(expectedPatchedResource);
 
         // Auth m2m
-        if (patchTenant != null && role != null) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
+        patchAuth.run();
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
 
@@ -76,13 +83,11 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     }
 
     public void patchResourceWithInvalidToken(PATCH_REQUEST patchRequest) {
-        m2mAuthSteps.setExpiredM2MAuth();
-        this.patchResource(patchRequest);
+        this.patchResource(patchRequest, () -> m2mAuthSteps.setExpiredM2MAuth());
     }
 
     public void patchResourceWithInvalidToken() {
-        m2mAuthSteps.setExpiredM2MAuth();
-        this.patchResource();
+        this.patchResource(this.buildDefaultPatchRequest(), () -> m2mAuthSteps.setExpiredM2MAuth());
     }
 
     /* di solito associato a step del tipo
