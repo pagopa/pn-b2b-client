@@ -269,6 +269,13 @@ public class PurposeTemplateSteps {
         getPurposeTemplateById(ptId, exists);
     }
 
+    @When("si effettua la get del purpose template")
+    public void getPurposeTemplate() {
+        boolean exists = createdPurposeTemplate.getId() != null;
+        UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
+    }
+
     @When("si effettua la get by creator di tutti i purpose template in stato {string}")
     public void getAllPurposeTemplatesByCreator(String status) {
         List<PurposeTemplateState> state;
