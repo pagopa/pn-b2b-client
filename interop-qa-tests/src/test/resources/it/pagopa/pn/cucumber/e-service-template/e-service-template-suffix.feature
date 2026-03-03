@@ -5,7 +5,7 @@ Feature: Test API of e-service template suffix
   # @happy-path
   # @e-service-template-create
   # @e-service-suffix  <-- usiamo questo?
-  Scenario: [ESERVICE_SUFFIX_1] La creazione di un'istanza e-service da un template privo di instanceLabel genera un'istanza valida
+  Scenario: [ESERVICE_SUFFIX_NRT_1] La creazione di un'istanza e-service da un template privo di instanceLabel genera un'istanza valida
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And si ottiene response status code 200
@@ -17,7 +17,7 @@ Feature: Test API of e-service template suffix
     And il suffisso "" è stato utilizzato correttamente nell'e-service
 
   @nrt-minimal
-  Scenario: [ESERVICE_SUFFIX_2] La modifica di un'istanza e-service creata da un template priva di instanceLabel va a buon fine
+  Scenario: [ESERVICE_SUFFIX_NRT_2] La modifica di un'istanza e-service creata da un template priva di instanceLabel va a buon fine
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And si ottiene response status code 200
@@ -29,3 +29,33 @@ Feature: Test API of e-service template suffix
     And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 200
     And il suffisso "" è stato utilizzato correttamente nell'e-service
+
+  Scenario Outline: [ESERVICE_SUFFIX_AVAILABILITY_1] Nella creazione di un e-service da template il nome completo di quest’ultimo deve essere disponibile
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - OK"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    When l'utente è un "admin" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | suffix | statusCode |
+      | OK_2   | 200        |
+      | OK     | 400        |
+      | ok     | 400        |
+
+  Scenario Outline: [ESERVICE_SUFFIX_AVAILABILITY_2] Nella creazione di un e-service da template il nome completo di quest’ultimo deve essere disponibile
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - Label1"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    When l'utente è un "admin" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | suffix  | statusCode |
+      | Label_2 | 200        |
+      | Label_1 | 400        |

@@ -21,6 +21,7 @@ import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 
@@ -89,6 +90,28 @@ public class EServiceTemplateCreateSteps {
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastTemplateManaged();
+        if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
+            testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
+        }
+        testAssistant.mutateLastVersionState(desiredState);
+    }
+
+    @Given("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} con nome {string}")
+    public void createEServiceTemplateWithName(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, String name) {
+
+        EServiceTemplateSeed templateSeed = getEServiceTemplateSeed(eServiceMode, null);
+
+        EServiceTemplateStepContext ctx = sharedStepsContext.getEServiceTemplateStepContext();
+        String seed = ctx.getLastUsedEServiceTemplateNameSeed();
+        if (seed == null) {
+            seed = templateSeed.getName();
+            ctx.setLastUsedEServiceTemplateNameSeed(seed);
+        }
+        templateSeed.name(seed + name);
+
+        createEServiceTemplate(templateSeed);
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
                 .getLastTemplateManaged();
         if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {

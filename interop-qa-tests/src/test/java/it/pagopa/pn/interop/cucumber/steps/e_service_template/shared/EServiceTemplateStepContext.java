@@ -48,6 +48,7 @@ public class EServiceTemplateStepContext {
 
     private DescriptorAttributesSeed lastDescriptorAttributesSeed;
     private String lastEServiceNameCreatedFromTemplate;
+    private String lastUsedEServiceTemplateNameSeed;
 
     private final EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
         .seed(123L)
