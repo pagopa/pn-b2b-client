@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
@@ -273,6 +274,14 @@ public class EServiceApiClientImpl implements IEServiceClient {
         UpdateEServiceTemplateInstanceSeed updateEServiceTemplateInstanceSeed
     ) {
         return this.eservicesApi.updateEServiceTemplateInstanceByIdWithHttpInfo(eServiceId, updateEServiceTemplateInstanceSeed);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> updateEServiceInstanceLabelAfterPublicationWithHttpInfo(
+            UUID eServiceId,
+            EServiceInstanceLabelUpdateSeed eServiceInstanceLabelUpdateSeed
+    ) {
+        return this.eservicesApi.updateEServiceInstanceLabelAfterPublicationWithHttpInfo(eServiceId, eServiceInstanceLabelUpdateSeed);
     }
 
     @Override

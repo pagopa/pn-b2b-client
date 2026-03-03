@@ -62,6 +62,11 @@ public interface IEServiceClient extends SettableBearerToken {
         UpdateEServiceTemplateInstanceSeed updateEServiceTemplateInstanceSeed
     );
 
+    ResponseEntity<CreatedResource> updateEServiceInstanceLabelAfterPublicationWithHttpInfo(
+        UUID eServiceId,
+        EServiceInstanceLabelUpdateSeed eServiceInstanceLabelUpdateSeed
+    );
+
     ResponseEntity<CreatedResource> updateDraftDescriptorTemplateInstanceWithHttpInfo(
         UUID eServiceId,
         UUID descriptorId,
