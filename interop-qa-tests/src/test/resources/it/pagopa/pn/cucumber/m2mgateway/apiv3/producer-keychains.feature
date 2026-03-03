@@ -131,7 +131,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "<kid>"
     And si ottiene response status code <statusCode>
 
-    #TODO: da implementare -> 401, 429
     Examples:
       | kid     | statusCode |
      # Happy path
@@ -211,7 +210,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene eliminata la producer-key con keychainId "<keychainId>", kid "<kid>"
     And si ottiene http status code <statusCode>
 
-    #TODO: da implementare -> 401, 429
     Examples:
       | kid     | keychainId | tenant | statusCode |
     # Happy path
@@ -223,7 +221,7 @@ Feature: Gestione dei producer keychains - API v3
      # Kid/Keychain invalido
       | %random | %actual    | PA1    | 404        |
       | %null   | %actual    | PA1    | 400        |
-      | %actual | %random    | PA1    | 400        |
+      | %actual | %random    | PA1    | 404        |
       | %actual | %null      | PA1    | 400        |
 
     #BUG: https://pagopa.atlassian.net/browse/PIN-9358
@@ -242,7 +240,6 @@ Feature: Gestione dei producer keychains - API v3
     And viene impostato per l'utente un token m2m non valido
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
     And si ottiene response status code 401
-    #TODO: da implementare -> 429
 
   #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [DELETE_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
@@ -260,7 +257,6 @@ Feature: Gestione dei producer keychains - API v3
     And viene rimosso l'header di autenticazione DPoP
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
     And si ottiene response status code 400
-    #TODO: da implementare -> 429
 
   #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [DELETE_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
@@ -278,7 +274,6 @@ Feature: Gestione dei producer keychains - API v3
     And viene rimosso l'header DPoP proof
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
     And si ottiene response status code 400
-    #TODO: da implementare -> 429
 
   Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
