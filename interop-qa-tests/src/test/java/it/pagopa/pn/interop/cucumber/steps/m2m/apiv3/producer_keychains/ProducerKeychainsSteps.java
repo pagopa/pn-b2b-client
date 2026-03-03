@@ -99,17 +99,26 @@ public class ProducerKeychainsSteps {
             KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
 
             ProducerKey key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
-
             producerKeychainsContext.setProducerKey(key);
+            producerKeychainsContext.setActualKeySeed(keySeed);
 
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && key != null) {
-                httpCallExecutor.snapshot();
-                String kid = String.valueOf(key.getProducerKeychainId());
-                PollingService.makePolling(() -> producerKeychainsClient.getProducerKey(kid), createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && kid.equals(String.valueOf(createdKey.getProducerKeychainId())), "La chiave non risulta creata correttamente dopo la creazione", 30, 1_000L);
-                httpCallExecutor.resetFormSnapshot();
-            }
-
-
+            httpCallExecutor.snapshot();
+            String kid = key.getJwk().getKid();
+            PollingService.makePolling(
+                    () -> {
+                        try {
+                            return producerKeychainsClient.getProducerKey(kid);
+                        } catch (IllegalStateException e) {
+                            log.warn(e.getMessage());
+                            return null;
+                        }
+                    },
+                    createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && createdKey.getJwk().equals(key.getJwk()),
+                    "La chiave non risulta creata correttamente dopo la creazione",
+                    30,
+                    1_000L);
+            httpCallExecutor.resetFormSnapshot();
+            
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
