@@ -33,8 +33,13 @@ Feature: Test API of e-service template suffix
   Scenario Outline: [ESERVICE_SUFFIX_AVAILABILITY_1] Nella creazione di un e-service da template il nome completo di quest’ultimo deve essere disponibile
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - OK"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     And l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code <statusCode>
@@ -48,9 +53,14 @@ Feature: Test API of e-service template suffix
   Scenario Outline: [ESERVICE_SUFFIX_AVAILABILITY_2] Nella creazione di un e-service da template il nome completo di quest’ultimo deve essere disponibile
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - Label1"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     And l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
     And l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code <statusCode>
@@ -64,8 +74,10 @@ Feature: Test API of e-service template suffix
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code <statusCode>
     And il suffisso "<suffix>" è stato utilizzato correttamente nell'e-service
@@ -82,6 +94,7 @@ Feature: Test API of e-service template suffix
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
     And l'utente tenta la creazione di un nuovo e-service con suffisso "%null" a partire dal template indicando tutte le specifiche
     And si ottiene response status code 200
     When l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
