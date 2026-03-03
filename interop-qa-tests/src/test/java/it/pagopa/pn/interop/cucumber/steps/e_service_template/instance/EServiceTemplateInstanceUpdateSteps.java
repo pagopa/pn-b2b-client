@@ -2,8 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.*;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -77,6 +76,14 @@ public class EServiceTemplateInstanceUpdateSteps {
             .isClientAccessDelegable(true)
             .isConsumerDelegable(true)
             .isSignalHubEnabled(true);
+        editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
+    }
+
+    @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con {string}")
+    public void editEServiceInstanceInstanceLabelField(String instanceLabel) {
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
+                .instanceLabel(instanceLabel);
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
 

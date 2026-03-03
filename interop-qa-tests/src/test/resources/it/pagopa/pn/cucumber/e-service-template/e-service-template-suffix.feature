@@ -2,9 +2,6 @@
 Feature: Test API of e-service template suffix
 
   @nrt-minimal
-  # @happy-path
-  # @e-service-template-create
-  # @e-service-suffix  <-- usiamo questo?
   Scenario: [ESERVICE_SUFFIX_NRT_1] La creazione di un'istanza e-service da un template privo di instanceLabel genera un'istanza valida
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -112,3 +109,34 @@ Feature: Test API of e-service template suffix
       | suffix        | statusCode |
       | 123456789012  | 200        |
       | 1234567890123 | 400        |
+
+  Scenario Outline: [ESERVICE_SUFFIX_DRAFT_UPDATE_1] Verifica che l'istanza dell'e-service sia modificabile quando si trova in stato DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "<initialSuffix>" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con "<suffix>"
+    Then si ottiene response status code <statusCode>
+    And il suffisso "" è stato utilizzato correttamente nell'e-service
+
+    Examples:
+      | initialSuffix | suffix     | statusCode |
+      | suffisso 1    |            | 200        |
+      | suffisso 1    | suffisso 2 | 200        |
+      |               | suffisso 2 | 200        |
+      | suffisso 1    | suffisso 1 | 400        |
+
+  Scenario: [ESERVICE_SUFFIX_DRAFT_UPDATE_2] Verifica che l'istanza dell'e-service non sia modificabile quando si trova in stato PUBLISHED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso1" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con "suffisso2"
+    Then si ottiene response status code 400
