@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -42,6 +43,9 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
 
     @Autowired
     private ApiProfile apiProfile;
+
+    @Autowired
+    private M2MAuthSteps m2mAuthSteps;
 
     /* di solito associato a step del tipo
      * "l'utente tenta di effettuare la modifica parziale di ..." */
@@ -110,6 +114,28 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
 
         tokenConfigurator.setBearerToken(previousAuthToken);
         eventuallySetAuth(previousAuthToken);
+    }
+
+    public void patchResourceWith(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
+        String previousBearerToken = tokenConfigurator.getLastToken();
+        Auth previuousAuth = sharedStepsContext.getAuth();
+
+        RESOURCE_ID resourceId = this.getResourceId();
+        RESOURCE originalResource = this.getResource(resourceId);
+        resourceContext.setOriginalResource(originalResource);
+
+        RESOURCE expectedPatchedResource = this.resourceMapper.copyResource(originalResource);
+        this.resourceMapper.copyPatchRequestToResource(patchRequest, expectedPatchedResource);
+        resourceContext.setExpectedResource(expectedPatchedResource);
+
+        // Auth m2m
+        m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
+        httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+        this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
+
+        tokenConfigurator.setBearerToken(previousBearerToken);
+        tokenConfigurator.setAuth(previuousAuth);
+        sharedStepsContext.setAuth(previuousAuth);
     }
 
     private void eventuallySetAuth(String token) {
