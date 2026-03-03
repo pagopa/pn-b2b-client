@@ -101,7 +101,7 @@ public class EServiceTemplateCreateSteps {
     @Given("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} con nome {string}")
     public void createEServiceTemplateWithName(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, String name) {
 
-        EServiceTemplateSeed templateSeed = getEServiceTemplateSeed(eServiceMode, null);
+        EServiceTemplateSeed templateSeed = getEServiceTemplateSeed(eServiceMode, true);
 
         EServiceTemplateStepContext ctx = sharedStepsContext.getEServiceTemplateStepContext();
         String seed = ctx.getLastUsedEServiceTemplateNameSeed();

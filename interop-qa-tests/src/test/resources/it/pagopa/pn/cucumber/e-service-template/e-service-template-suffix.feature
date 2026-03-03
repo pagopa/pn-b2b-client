@@ -59,3 +59,30 @@ Feature: Test API of e-service template suffix
       | suffix  | statusCode |
       | Label_2 | 200        |
       | Label_1 | 400        |
+
+  Scenario Outline: [ESERVICE_SUFFIX_CREATION_1] Verifica che il suffisso sia utilizzato correttamente a seguito della creazione dell'istanza e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And si ottiene response status code 200
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code <statusCode>
+    And il suffisso "<suffix>" è stato utilizzato correttamente nell'e-service
+
+    Examples:
+      | suffix  | statusCode |
+      | %null   | 200        |
+      | %space  | 200        |
+      |         | 200        |
+      | ABC     | 200        |
+      | 123     | 200        |
+
+  Scenario: [ESERVICE_SUFFIX_CREATION_2] Verifica che il suffisso sia utilizzato correttamente a seguito della creazione dell'istanza e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "%null" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 400

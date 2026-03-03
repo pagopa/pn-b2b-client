@@ -71,6 +71,13 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
+
+        if (suffix.equals("%null")) {
+            suffix = null;
+        } else if (suffix.equals("%space")) {
+            suffix = " ";
+        }
+
         InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class)
             .instanceLabel(suffix);
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
