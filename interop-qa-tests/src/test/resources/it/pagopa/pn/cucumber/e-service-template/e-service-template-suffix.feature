@@ -99,3 +99,16 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     When l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code 400
+
+  Scenario Outline: [ESERVICE_SUFFIX_MAX_LENGTH] Verifica che il suffisso rispetti la lunghezza massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | suffix        | statusCode |
+      | 123456789012  | 200        |
+      | 1234567890123 | 400        |
