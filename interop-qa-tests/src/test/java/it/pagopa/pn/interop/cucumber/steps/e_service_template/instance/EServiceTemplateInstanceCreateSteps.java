@@ -219,22 +219,41 @@ public class EServiceTemplateInstanceCreateSteps {
         }
     }
 
-    @Then("il suffisso {string} è stato utilizzato correttamente nell'e-service")
+    @Then("il suffisso {string} è utilizzato correttamente nell'e-service")
     public void checkEServiceName(String suffix) {
-        String templateEServiceDefaultName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+        String templateEServiceName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
              sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
              sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
         ).getBody().getEserviceTemplate().getName();
 
         String eServiceCreatedName = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate();
 
-        String expectedEServiceCreatedName = templateEServiceDefaultName + (
+        String expectedEServiceCreatedName = templateEServiceName + (
             (suffix == null || suffix.isEmpty()) ? "" : " - " + suffix.trim()
         );
 
         Assertions.assertThat(eServiceCreatedName)
             .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
             .isEqualTo(expectedEServiceCreatedName);
+    }
+
+    @Then("il nome del nuovo e-service è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso {string}")
+    public void checkEServiceNameUpdated(String suffix) {
+        String templateEServiceName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
+        ).getBody().getEserviceTemplate().getName();
+
+        String eServiceInstanceName = this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
+                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()
+        ).getBody().getName();
+
+        String expectedEServiceInstanceName = templateEServiceName + (
+                suffix == null || suffix.isEmpty() ? "" : " - " + suffix.trim()
+        );
+
+        Assertions.assertThat(eServiceInstanceName)
+                        .isEqualTo(expectedEServiceInstanceName);
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
