@@ -80,16 +80,16 @@ public class EServiceTemplateInstanceUpdateSteps {
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
 
-    @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato {string} con {string}")
-    public void editEServiceInstanceInstanceLabelField(String eServiceState, String instanceLabel) {
+    @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato {eServiceDescriptorState} con {string}")
+    public void editEServiceInstanceInstanceLabelField(EServiceDescriptorState eServiceState, String instanceLabel) {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         switch (eServiceState) {
-            case "DRAFT":
+            case DRAFT:
                 lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
                         .instanceLabel(instanceLabel);
                 editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
                 break;
-            case "PUBLISHED":
+            case PUBLISHED:
                 EServiceInstanceLabelUpdateSeed seed = new EServiceInstanceLabelUpdateSeed()
                         .instanceLabel(instanceLabel);
                 editEServiceInstanceInstanceLabel(eServiceId, seed);
