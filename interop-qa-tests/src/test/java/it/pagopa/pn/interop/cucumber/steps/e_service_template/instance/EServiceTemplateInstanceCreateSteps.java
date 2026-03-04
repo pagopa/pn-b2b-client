@@ -27,6 +27,7 @@ import java.util.UUID;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.random.EasyRandom;
+import org.assertj.core.api.Assertions;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
@@ -231,11 +232,9 @@ public class EServiceTemplateInstanceCreateSteps {
             (suffix == null || suffix.isEmpty()) ? "" : " - " + suffix.trim()
         );
 
-        assertSoftly(softly -> {
-            softly.assertThat(eServiceCreatedName)
-                    .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
-                    .isEqualTo(expectedEServiceCreatedName);
-        });
+        Assertions.assertThat(eServiceCreatedName)
+            .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
+            .isEqualTo(expectedEServiceCreatedName);
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
