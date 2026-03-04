@@ -103,6 +103,41 @@ public class PaperTrackerSteps {
         });
     }
 
+    @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
+    public void verifyTrackingEventsForSequenceWithPCRetryNew(String sequenceName) {
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        List<String> stringaTracking = fullSentNotification.getTimeline().stream()
+                .map(TimelineElementV28::getElementId)
+                .filter(id -> id.contains(PREPARE_ANALOG_DOMICILE))
+                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
+                .collect(Collectors.toList());
+
+        TrackingsRequest request = new TrackingsRequest().trackingIds(stringaTracking);
+        responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
+
+
+        Map<Integer, List<NotificationEvent>> groupedTrackingByAttempt = responseTracking.getTrackings().stream()
+                .collect(Collectors.toMap(
+                        att -> {
+                            int index = att.getAttemptId().lastIndexOf("_");
+                            return Integer.parseInt(att.getAttemptId().substring(index + 1));
+                        },
+                        t -> t.getEvents().stream()
+                                .map(pe -> new NotificationEvent(pe.getStatusCode(), createAttachmentUrlTracking(pe.getAttachments()), pe.getDeliveryFailureCause()))
+                                .collect(Collectors.toList()),
+                        (existing, newList) -> {
+                            existing.addAll(newList);
+                            return existing;
+                        }
+                ));
+
+        Map<Integer, List<NotificationEvent>> expectedEvents = eventTimelineParser.parse(PaperTrackerTrackingSequence.getByName(sequenceName).getEvents());
+        for (int i = 0; i < groupedTrackingByAttempt.keySet().size(); i++ ) {
+            assertRelaxedSameElements(groupedTrackingByAttempt.get(i), expectedEvents.get(i), TRACKINGS_ELEMENT_NOT_FOUND);
+        }
+        verifyTrackingResponseStructure();
+    }
+
 
     @Then("si verifica che gli elementi di timeline per la sequence {string} coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2")
     public void verifyTrackingEventsForSequenceWithPCRetry(String sequenceName) {

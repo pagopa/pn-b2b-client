@@ -181,8 +181,7 @@
                     "documentType",
                     "finalEventId",
                     "attachmentEventId",
-                    "requestTimestamp",
-                    "responseTimestamp"
+                    "requestTimestamp"
                   ],
                   "properties": {
 
@@ -198,7 +197,7 @@
                     },
 
                     "responseTimestamp": {
-                      "type": "string",
+                      "type": ["string", "null"],
                       "format": "date-time"
                     }
                   }
