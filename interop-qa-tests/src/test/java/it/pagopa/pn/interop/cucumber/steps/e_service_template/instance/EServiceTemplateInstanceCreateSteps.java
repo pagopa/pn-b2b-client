@@ -228,13 +228,11 @@ public class EServiceTemplateInstanceCreateSteps {
 
         String eServiceCreatedName = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate();
 
-        String expectedEServiceCreatedName = templateEServiceName + (
-            (suffix == null || suffix.isEmpty()) ? "" : " - " + suffix.trim()
-        );
+        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
 
         Assertions.assertThat(eServiceCreatedName)
             .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
-            .isEqualTo(expectedEServiceCreatedName);
+            .isEqualTo(expectedEServiceInstanceName);
     }
 
     @Then("il nome del nuovo e-service è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso {string}")
@@ -248,9 +246,7 @@ public class EServiceTemplateInstanceCreateSteps {
                 sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()
         ).getBody().getName();
 
-        String expectedEServiceInstanceName = templateEServiceName + (
-                suffix == null || suffix.isEmpty() ? "" : " - " + suffix.trim()
-        );
+        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
 
         Assertions.assertThat(eServiceInstanceName)
                         .isEqualTo(expectedEServiceInstanceName);
@@ -293,5 +289,11 @@ public class EServiceTemplateInstanceCreateSteps {
                 id,
                 seed),
             ResponseEntity::getStatusCode);
+    }
+
+    private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
+        return templateEServiceName + (
+            suffix == null || suffix.isEmpty() ? "" : " - " + suffix.trim()
+        );
     }
 }
