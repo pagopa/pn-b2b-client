@@ -21,8 +21,7 @@
           "state",
           "businessState",
           "createdAt",
-          "updatedAt",
-          "processingMode"
+          "updatedAt"
         ],
         "properties": {
           "trackingId": { "type": "string" },
@@ -156,7 +155,11 @@
                 "type": "string",
                 "enum": ["RUN", "DRY", "DISABLED"]
               },
-              "strictFinalValidationStock890": { "type": "boolean" }
+              "strictFinalValidationStock890": { "type": "boolean" },
+              "sendOcrAttachmentsFinalValidation": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
             }
           },
 
@@ -247,8 +250,8 @@
           },
 
           "processingMode": {
-            "type": "string",
-            "enum": ["RUN", "DRY"]
+            "type": ["string", "null"],
+            "enum": ["RUN", "DRY", null]
           }
         }
       }

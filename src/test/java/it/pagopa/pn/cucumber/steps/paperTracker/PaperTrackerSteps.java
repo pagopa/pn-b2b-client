@@ -206,6 +206,7 @@ public class PaperTrackerSteps {
     private void verifyTrackingResponseStructure() {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.valueToTree(responseTracking);
+        SchemaValidator schemaValidator = new SchemaValidator(new OcrConditionalValidator());
         schemaValidator.validate(jsonNode, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json");
     }
 
