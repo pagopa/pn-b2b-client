@@ -215,6 +215,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: NOT_RETRYABLE_EVENT_ERROR, flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" per la sequence: "Via@FAIL_CON996_PCRETRY_AR" e pcRetry: "1"
 
+  # ---------------- RUN MODE ----------------
+
   @paperTrackerARRunMode @ocrEnabled
   Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline prodotto in caso di OCR attivo siano quelli previsti per la sequence OK_AR_OCR_FAIL e che si sia verificato un errore
     Given viene generata una nuova notifica
@@ -229,6 +231,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK_AR_OCR_FAIL_WITH_OCR_ENABLED"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: OCR_VALIDATION, flowThrow: "DEMAT_VALIDATION" per la sequence: "Via@OK_AR_OCR_FAIL" e pcRetry: "0"
 
   @paperTrackerARRunMode @ocrEnabled
@@ -245,6 +248,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_PENDING_WITH_OCR_ENABLED"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK_AR_OCR_PENDING_WITH_OCR_ENABLED"
 
   @paperTrackerARRunMode @ocrDisabled
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti aspettando l'evento CON020
@@ -260,6 +264,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequence>"
     Examples:
       | sequence          | physicalAddress       | waitUntil               |
       | OK_AR_OCR_FAIL    | Via@OK_AR_OCR_FAIL    | ANALOG_SUCCESS_WORKFLOW |
@@ -280,6 +285,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequence>"
     Examples:
       | sequence                      | physicalAddress                   | waitUntil               |
       | OK_AR                         | Via@ok_AR                         | ANALOG_SUCCESS_WORKFLOW |
@@ -324,6 +330,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequence>"
     Examples:
       | sequence                        | physicalAddress                     | waitUntil                          |
       | OK-M_AR                         | Via@OK-M_AR                         | ANALOG_SUCCESS_WORKFLOW            |
@@ -332,7 +339,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL_DECEDUTO_AR                | Via@FAIL_DECEDUTO_AR                | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
       | FAIL-CON996_PCRETRY_DECEDUTO-AR | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
 
-  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4_RIR]
     Given viene generata una nuova notifica
@@ -348,6 +354,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequence>"
     Examples:
       | sequence           | physicalAddress        | waitUntil               |
       | OK_RIR             | Via@OK_RIR             | ANALOG_SUCCESS_WORKFLOW |
@@ -358,7 +365,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 #      | OK_PCRETRY_CON996_RIR         | Via@OK_PCRETRY_CON996_RIR         | ANALOG_SUCCESS_WORKFLOW |
 
 
-  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
   Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_5] Si verifica che per la sequence OK_AR_BLOCKED si arrivi al deliveryDetailCode CON020
     Given viene generata una nuova notifica
@@ -372,9 +378,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     Then si controlla che non ci siano eventi duplicati
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_BLOCKED"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK_AR_BLOCKED"
 
 
-  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5] Si verifica che per le sequence AR in cui è previsto un errore, l'errore sia effettivamente presente
     Given viene generata una nuova notifica
@@ -388,6 +394,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
     Then si controlla che non ci siano eventi duplicati
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequence>"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "<pcRetry>"
     Examples:
       | sequence                       | physicalAddress                    | deliveryDetailCode | category                  | flowThrow                   | pcRetry |
@@ -399,7 +406,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_TIMESTAMP_ERR            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
 
 
-  #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5_RIR] Si verifica che per le sequence RIR in cui è previsto un errore, l'errore sia effettivamente presente
     Given viene generata una nuova notifica
@@ -415,13 +421,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
     Then si controlla che non ci siano eventi duplicati
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta trackings sia uguale a quella attesa "<sequence>"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
       | sequence                | physicalAddress             | deliveryDetailCode | category   | flowThrow           |
       | OK_RIR_INVALID_DATETIME | Via@OK_RIR_INVALID_DATETIME | RECRI003B          | DATE_ERROR | SEQUENCE_VALIDATION |
       | OK_RIR_TIMESTAMP_ERR    | Via@OK_RIR_TIMESTAMP_ERR    | RECRI003B          | DATE_ERROR | SEQUENCE_VALIDATION |
 
-      #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
   Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_5.1_RIR] Si verifica che per la sequence OK_RIR_NO_DEMAT si arrivi al deliveryDetailCode RECRI003A
     Given viene generata una nuova notifica
@@ -438,6 +444,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
     Then si controlla che non ci siano eventi duplicati
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_RIR_NO_DEMAT"
+    And si verifica che la risposta trackings sia uguale a quella attesa "OK_RIR_NO_DEMAT"
 
 
   @paperTrackerARRunMode
@@ -472,5 +479,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECRN002A |
       | details_sentAttemptMade    | 0         |
+    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-WO_AR"
 
 
