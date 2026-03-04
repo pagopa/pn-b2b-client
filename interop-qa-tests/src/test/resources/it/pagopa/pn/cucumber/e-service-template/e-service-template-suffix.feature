@@ -181,6 +181,19 @@ Feature: Test API of e-service template suffix
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso 1"
     Then si ottiene response status code 400
 
+  Scenario: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_3] Verifica che non sia possibile modificare il suffisso di un'istanza di e-service PUBLISHED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente è un "admin" di "PA2"
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso 2"
+    Then si ottiene response status code 403
+
   Scenario: [ESERVICE_SUFFIX_NAME_UPDATED] Verifica che la modifica del nome di un template e-service venga riportata correttamente nel nome delle relative istanze e-service
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
