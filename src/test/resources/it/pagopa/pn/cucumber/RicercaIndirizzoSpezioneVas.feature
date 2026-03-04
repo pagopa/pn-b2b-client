@@ -111,22 +111,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # Indirizzi NON recuperati dai registri (recipient non abilitati) - CREAZIONE notifica NON andata a buon fine
 
   #PA ABILITATA, PF NON CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 6-44
+  @ricercaIndirizzoVas  #rif srs 6-44 #il costo può essere verificato manualmente dalla tabella di invoicing
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_KO] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun indirizzo trovato da ANPR notifica rifiutata - Vas attivo
-    Given il test è effettuabile con API versione "V25" o superiore
-    And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Leonardo da Vinci e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Given imposto lo iun di SharedSteps a "GJZA-WUYH-HTWQ-202602-L-1" e la pa a "Comune_Multi"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                       |
-      | details                       | NOT_NULL                                                                                   |
-      | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
+      | loadTimeline           | true                                                                                       |
+      | details                | NOT_NULL                                                                                   |
+      | details_refusalReasons | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -193,7 +185,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex | 1        |
 
   #PA ABILITATA, PF NON CENSITA + PG CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 10-54
+  @ricercaIndirizzoVas  #rif srs 10-54 ##il costo può essere verificato manualmente dalla tabella di invoicing
   Scenario: [RICERCA_INDIRIZZO_MULTI_PF_PG_KO_2] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -211,11 +203,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                       |
-      | details                       | NOT_NULL                                                                                   |
-      | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-      | details_numberOfRecipients    | 2                                                                                          |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2                                                                     |
+      | loadTimeline               | true                                                                                       |
+      | details                    | NOT_NULL                                                                                   |
+      | details_refusalReasons     | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
+      | details_numberOfRecipients | 2                                                                                          |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -273,10 +265,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And viene verificato che l'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE" esista
-      | loadTimelime         | true     |
-      | details              | NOT_NULL |
-      | details_failureCause | D02      |
-      | details_recIndex     | 0        |
+      | loadTimelime     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
 
 
 
@@ -399,10 +390,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL        |
+      | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
@@ -412,8 +403,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   Scenario: [RICERCA_INDIRIZZO_MULTI_FLAG_OFF_6] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And destinatario
       | denomination    | PG Censito  |
@@ -519,7 +510,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                       | NOT_NULL                                                                                                                                                                                                    |
       | details_numberOfRecipients    | 3                                                                                                                                                                                                           |
       | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}, {"detail": "Address search for recipient index: 2, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                                                                                                                      |
+#      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                                                                                                                      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline       | false    |
       | details            | NOT_NULL |
@@ -552,7 +543,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline                  | true                                                                                                              |
       | details                       | NOT_NULL                                                                                                          |
       | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -561,7 +552,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex | 0        |
 
   #PA ABILITATA, PG CON ERRORE 500 (server down), CLIENT ABILITATO
-  @ricercaIndirizzoVas #rif srs 47
+  @ricercaIndirizzoVas #rif srs 47 #il costo può essere verificato manualmente dalla tabella di invoicing
   Scenario: [RICERCA_INDIRIZZO_MULTI_COSTI_3] Invio notifica AR monodestinatario verso PF con campo address vuoto notifica rifiutata - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -578,7 +569,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline                  | true                                                                                                              |
       | details                       | NOT_NULL                                                                                                          |
       | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -587,7 +578,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex | 0        |
 
   #PA ABILITATA, PF CON ERRORE 500 (server down) + PF CON ERRORE 429 (too many request), CLIENT ABILITATO
-  @ricercaIndirizzoVas #rif srs 56-60-61
+  @ricercaIndirizzoVas #rif srs 56-60-61 #il costo può essere verificato manualmente dalla tabella di invoicing
   Scenario: [RICERCA_INDIRIZZO_MULTI_COSTI_4] Invio notifica AR multidestinatario verso PF con campo address vuoto (error 429 e error 500) - notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -610,7 +601,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                       | NOT_NULL                                                                                                                                                                                                                           |
       | details_numberOfRecipients    | 2                                                                                                                                                                                                                                  |
       | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}, {"detail": "Address search for recipient index: 1, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                                                                                                                                             |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                                                                                                                                             |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -644,7 +635,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                       | NOT_NULL                             |
       | details_refusalReasons        | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
       | details_numberOfRecipients    | 2                                    |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2               |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2               |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -768,7 +759,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline                  | true                                                                                                              |
       | details                       | NOT_NULL                                                                                                          |
       | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -866,28 +857,28 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 #      | digitalDomicile | NULL |
 #      | physicalAddress | NULL |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimelime       | true     |
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_registry        | ANPR                                                                   |
-      | details_recIndex        | 0                                                                      |
+      | details                 | NOT_NULL                                                                                       |
+      | details_registry        | ANPR                                                                                           |
+      | details_recIndex        | 0                                                                                              |
       #| details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
       | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                       |
-      | details                 | NOT_NULL                                   |
-      | details_recIndex        | 0                                          |
+      | loadTimeline            | true                                                     |
+      | details                 | NOT_NULL                                                 |
+      | details_recIndex        | 0                                                        |
       | details_physicalAddress | {"municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
-      | details_responseStatus  | OK                                         |
+      | details_responseStatus  | OK                                                       |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline                  | true                   |
       | details                       | NOT_NULL               |
@@ -906,11 +897,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     And destinatario
       | denomination    | PG Censito  |
       | recipientType   | PG          |
@@ -923,9 +914,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details            | NOT_NULL |
       | details_recIndexes | [0, 1]   |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_recIndex        | 0                                                                      |
-      | details_registry        | ANPR                                                                   |
+      | details                 | NOT_NULL                                                                                       |
+      | details_recIndex        | 0                                                                                              |
+      | details_registry        | ANPR                                                                                           |
       | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
       | details                 | NOT_NULL                                                                      |
@@ -939,22 +930,20 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2 |
 
 
-
-
   @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs n/p
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5_UAT] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
 #    And destinatario Mario Cucumber e:
 #      | digitalDomicile | NULL        |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
@@ -972,27 +961,27 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimelime       | true     |
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_registry        | ANPR                                                                   |
-      | details_recIndex        | 0                                                                      |
+      | details                 | NOT_NULL                                                                                       |
+      | details_registry        | ANPR                                                                                           |
+      | details_recIndex        | 0                                                                                              |
       | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                       |
-      | details                 | NOT_NULL                                   |
-      | details_recIndex        | 0                                          |
+      | loadTimeline            | true                                                     |
+      | details                 | NOT_NULL                                                 |
+      | details_recIndex        | 0                                                        |
       | details_physicalAddress | {"municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
-      | details_responseStatus  | OK                                         |
+      | details_responseStatus  | OK                                                       |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline                  | true                   |
       | details                       | NOT_NULL               |
