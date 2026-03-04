@@ -234,3 +234,18 @@ Feature: Test API of e-service template suffix
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso 1"
     Then si ottiene response status code 200
     And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+
+  Scenario: [ESERVICE_SUFFIX_DIFFERENT_TENANT_CREATION_1] Verifica che sia possibile creare un e-service in stato DRAFT con lo stesso suffisso di un altro e-service appartenente ad un tenant differente
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
