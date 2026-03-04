@@ -80,12 +80,12 @@ Feature: Test API of e-service template suffix
     And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
 
     Examples:
-      | suffix  | statusCode |
-      | %null   | 200        |
-      | %space  | 200        |
-      |         | 200        |
-      | ABC     | 200        |
-      | 123     | 200        |
+      | suffix | statusCode |
+      | %null  | 200        |
+      | %space | 200        |
+      |        | 200        |
+      | ABC    | 200        |
+      | 123    | 200        |
 
   Scenario: [ESERVICE_SUFFIX_CREATION_2] Verifica che il suffisso sia utilizzato correttamente a seguito della creazione dell'istanza e-service
     Given l'utente è un "admin" di "PA1"
@@ -193,3 +193,20 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     And la modifica del nome dell'e-service template è stata effettuata correttamente
     Then il nome del nuovo e-service è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso "suffisso 1"
+
+  Scenario: [ESERVICE_SUFFIX_DIFFERENT_TEMPLATE_CREATION_1] Verifica che sia possibile creare un'istanza di e-service in stato DRAFT con suffisso già utilizzato in e-service appartenenti ad un altro template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service1"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service2"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
