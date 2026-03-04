@@ -1,11 +1,12 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
 import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.NotificationApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.OperationApi;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.OperationV2Api;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.api.ApiKeysApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.api.NotificationAndMessageApi;
@@ -14,11 +15,8 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegrat
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -27,10 +25,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Component
-public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
+public class PnServiceDeskClientImpl implements IPServiceDeskClient {
     //Call Center Evoluto....
     private final NotificationApi notification;
     private final OperationApi operation;
+    private final OperationV2Api operationV2;
     private final OperationApi operationApiWithInvalidApiKey;
     //Integration Cruscotto Assistenza....
     private final ApiKeysApi apiKeysApi;
@@ -46,6 +45,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         //Call Center Evoluto....
         this.notification = new NotificationApi(newApiClient(restTemplate, deliveryBasePath, apiKeyBase));
         this.operation = new OperationApi(newApiClient(restTemplate, deliveryBasePath, apiKeyBase));
+        this.operationV2 = new OperationV2Api(newApiClient(restTemplate, deliveryBasePath, apiKeyBase));
         this.operationApiWithInvalidApiKey = new OperationApi(newApiClient(restTemplate, deliveryBasePath, "invalid-api-key"));
         //Integration Cruscotto Assistenza....
         this.apiKeysApi = new ApiKeysApi(newApiClientIntegration(restTemplate, deliveryBasePath, apiKeyBase));
@@ -163,6 +163,16 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         return notificationAndMessageApi.getNotificationRecipientDetail(xPagopaPnUid, iun, notificationRecipientDetailRequest);
     }
 
+    @Override
+    public CreateOperationsResponseV2 createActOperationV2(CreateActOperationRequestV2 createActOperationRequestV2) throws RestClientException {
+        return operationV2.createActOperationV2(operatorId, createActOperationRequestV2);
+    }
+
+    @Override
+    public ApiResult<CreateOperationsResponseV2> createActOperationV2WithHttpInfo(CreateActOperationRequestV2 createActOperationRequestV2) throws RestClientException {
+        return ApiCallHelper.call(() -> operationV2.createActOperationV2WithHttpInfo(operatorId, createActOperationRequestV2));
+    }
+
     private HttpHeaders safeHeaders(RestClientResponseException ex) {
         HttpHeaders h = ex.getResponseHeaders();
         return (h != null) ? h : new HttpHeaders();
@@ -175,8 +185,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
 
     private String safeBodyString(RestClientResponseException ex) {
         try {
-            String s = ex.getResponseBodyAsString();
-            return (s != null) ? s : "";
+            return ex.getResponseBodyAsString();
         } catch (Exception e) {
             return "";
         }

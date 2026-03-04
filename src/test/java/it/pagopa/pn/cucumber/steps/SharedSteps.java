@@ -49,6 +49,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
@@ -175,6 +176,14 @@ public class SharedSteps {
     @Getter
     private String notificationIun;
 
+    /**
+     * Lo IUN delle notifiche che vengono create (nei rari casi di più notifiche create simultaneamente) viene salvato in questa variabile.
+     * Tramite essi è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B.
+     */
+    @Setter
+    @Getter
+    private List<String> notificationIunList = new ArrayList<>();
+
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
@@ -278,6 +287,24 @@ public class SharedSteps {
     public void impostoIunAndPaForTestPurposes(String iun, String paName) {
         notificationIun = iun;
         setPA(paName);
+        /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
+        e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
+        notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
+        getNotificationStepInterface().prepareNotificationRequest(Map.of(
+                "subject", "MOCKED NOTIFICATION",
+                "senderDenomination", "Comune di Palermo"));
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+    }
+
+    /**
+     * Metodo a soli fine di debugging, da non essere utilizzato in nessuno scenario.
+     * Se si hanno già pronte più notifiche, anziché crearla da zero, aspettare che arrivino in ACCEPTED, etc
+     * si impostano gli IUN qua e la PA e si può procedere con il resto dei metodi.
+     */
+    @Given("imposto la pa a {string} e gli iun di SharedSteps")
+    public void setMultipleIunAndPAForTestPurposes(String paName, Map<String, String> iunMap) {
+        setPA(paName);
+        notificationIunList = iunMap.values().stream().toList();
         /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
         e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
         notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
@@ -1282,4 +1309,47 @@ public class SharedSteps {
         return qrCode;
     }
 
+    @Given("vengono inviate {int} nuove notifiche tramite api b2b dal {string} con destinatario {destinatario} e si aspetta che raggiungano l'elemento di timeline {string}")
+    public void sendMultipleNotifications(int notificationNumber, String paName, Destinatario destinatario, String timelineElement, Map<String, String> data) throws IOException, InterruptedException {
+        if (notificationIunList.isEmpty()) {
+            for (int i = 0; i < notificationNumber; i++) {
+                prepareNotificationRequestWithVersion(MOST_RECENT, data);
+                setPaAndSenderTaxId(paName);
+                getNotificationStepInterface().addRecipientToNotification(destinatario, data);
+                getNotificationStepInterface().uploadNotification(null);
+                assertThat(notificationIun).as("Lo IUN della notifica inviata non dev'essere null").isNotNull();
+                notificationIunList.add(notificationIun);
+                threadWait(getWorkFlowWait());
+                log.info("Notifica {} inviata", i + 1);
+            }
+        }
+        log.info("Elenco IUN delle {} notifiche caricate: {}", notificationNumber, notificationIunList);
+        TimeUnit.MINUTES.sleep(5);
+
+        List<String> remainingIuns = new ArrayList<>(notificationIunList); // lista di quelli da processare
+        List<String> failedIuns = new ArrayList<>();
+
+        while (!remainingIuns.isEmpty()) {
+            failedIuns.clear();
+            for (String iun : remainingIuns) {
+                setNotificationIun(iun);
+                try {
+                    getNotificationStepInterface().waitForTimelineElement(timelineElement, 33);
+                } catch (HttpClientErrorException.NotFound e) {
+                    failedIuns.add(iun);
+                }
+            }
+
+            // prepariamo la prossima iterazione solo con quelli che hanno fallito
+            remainingIuns = new ArrayList<>(failedIuns);
+
+            // opzionale: piccolo ritardo tra i tentativi per non saturare il sistema
+            if (!remainingIuns.isEmpty()) {
+                try {
+                    TimeUnit.SECONDS.sleep(30);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+    }
 }
