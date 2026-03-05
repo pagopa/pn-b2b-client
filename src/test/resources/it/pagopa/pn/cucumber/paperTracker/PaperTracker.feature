@@ -12,7 +12,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName             |
@@ -48,7 +48,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And si verifica che la risposta trackings sia uguale a quella attesa "<sequenceName>"
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName            |
@@ -72,7 +72,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
-    And si verifica che la risposta trackings sia uguale a quella attesa "OK_RIR_NO_DEMAT"
+    And si verifica che la risposta tracking per la sequence "OK_RIR_NO_DEMAT" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT"
 
   @paperTrackerAR
@@ -87,7 +87,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL-DiscoveryIrreperibile_AR"
+    And si verifica che la risposta tracking per la sequence "DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
 
   @paperTrackerAR
@@ -114,7 +114,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_sentAttemptMade    | 1         |
       | details_deliveryDetailCode | RECRN001C |
       | details_responseStatus     | OK        |
-    And si verifica che la risposta trackings sia uguale a quella attesa "FAIL_IndirizzoInesistenteAR"
+    And si verifica che la risposta tracking per la sequence "FAIL_IndirizzoInesistenteAR" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR"
 
   @paperTrackerAR
@@ -282,40 +282,40 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
-      | sequence                      | physicalAddress                   | waitUntil               |
-      | OK_AR                         | Via@ok_AR                         | ANALOG_SUCCESS_WORKFLOW |
-      | OK-Retry_AR                   | Via@OK-Retry_AR                   | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-Discovery_AR             | Via@fail-Discovery_AR             | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL_AR                       | Via@fail_AR                       | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-Irreperibile_AR          | Via@FAIL-IRREPERIBILE_AR          | ANALOG_SUCCESS_WORKFLOW |
-      | OK-Giacenza_AR                | Via@OK-Giacenza_AR                | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-Giacenza_AR              | Via@FAIL-Giacenza_AR              | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-CompiutaGiacenza_AR      | Via@FAIL-CompiutaGiacenza_AR      | ANALOG_SUCCESS_WORKFLOW |
-      | OK-NonRendicontabile_AR       | Via@OK-NonRendicontabile_AR       | ANALOG_SUCCESS_WORKFLOW |
-      | OK-CausaForzaMaggiore_AR      | Via@OK-CausaForzaMaggiore_AR      | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR_NOT_ORDERED             | Via@OK_AR_NOT_ORDERED             | ANALOG_SUCCESS_WORKFLOW |
-      | OK_GIACENZA_AR_2              | Via@OK_GIACENZA_AR_2              | ANALOG_SUCCESS_WORKFLOW |
-      | OK_GIACENZA_AR_3              | Via@OK_GIACENZA_AR_3              | ANALOG_SUCCESS_WORKFLOW |
-      | OK_GIACENZA_AR_4              | Via@OK_GIACENZA_AR_4              | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR_BAD_EVENT               | Via@OK_AR_BAD_EVENT               | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL_IndirizzoInesistenteAR   | Via@FAIL_IndirizzoInesistenteAR   | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-DiscoveryIrreperibile_AR | Via@FAIL-DiscoveryIrreperibile_AR | ANALOG_FAILURE_WORKFLOW |
-      | OK-WO-Giacenza_AR             | Via@OK-WO-Giacenza_AR             | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL-Irreperibile_AR_SLOW     | Via@FAIL-Irreperibile_AR_SLOW     | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR-CON020-7Z1P             | Via@OK_AR-CON020-7Z1P             | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR-CON020-ZIP1P            | Via@OK_AR-CON020-ZIP1P            | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR-CON020-7Z2P             | Via@OK_AR-CON020-7Z2P             | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR-CON020-ZIP2P            | Via@OK_AR-CON020-ZIP2P            | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR-CON020-7Z3P             | Via@OK_AR-CON020-7Z3P             | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR-CON020-ZIP3P            | Via@OK_AR-CON020-ZIP3P            | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL_CON996_PCRETRY_FURTO_AR  | Via@FAIL_CON996_PCRETRY_FURTO_AR  | ANALOG_SUCCESS_WORKFLOW |
-      | OK_PCRETRY_CON996_AR          | Via@OK_PCRETRY_CON996_AR          | ANALOG_SUCCESS_WORKFLOW |
-      | OK_AR_ALL_CON                 | Via@OK_AR_ALL_CON                 | ANALOG_SUCCESS_WORKFLOW |
+      | sequence                      | physicalAddress                   |
+      | OK_AR                         | Via@ok_AR                         |
+      | OK-Retry_AR                   | Via@OK-Retry_AR                   |
+      | FAIL-Discovery_AR             | Via@fail-Discovery_AR             |
+      | FAIL_AR                       | Via@fail_AR                       |
+      | FAIL-Irreperibile_AR          | Via@FAIL-IRREPERIBILE_AR          |
+      | OK-Giacenza_AR                | Via@OK-Giacenza_AR                |
+      | FAIL-Giacenza_AR              | Via@FAIL-Giacenza_AR              |
+      | FAIL-CompiutaGiacenza_AR      | Via@FAIL-CompiutaGiacenza_AR      |
+      | OK-NonRendicontabile_AR       | Via@OK-NonRendicontabile_AR       |
+      | OK-CausaForzaMaggiore_AR      | Via@OK-CausaForzaMaggiore_AR      |
+      | OK_AR_NOT_ORDERED             | Via@OK_AR_NOT_ORDERED             |
+      | OK_GIACENZA_AR_2              | Via@OK_GIACENZA_AR_2              |
+      | OK_GIACENZA_AR_3              | Via@OK_GIACENZA_AR_3              |
+      | OK_GIACENZA_AR_4              | Via@OK_GIACENZA_AR_4              |
+      | OK_AR_BAD_EVENT               | Via@OK_AR_BAD_EVENT               |
+      | FAIL_IndirizzoInesistenteAR   | Via@FAIL_IndirizzoInesistenteAR   |
+      | FAIL-DiscoveryIrreperibile_AR | Via@FAIL-DiscoveryIrreperibile_AR |
+      | OK-WO-Giacenza_AR             | Via@OK-WO-Giacenza_AR             |
+      | FAIL-Irreperibile_AR_SLOW     | Via@FAIL-Irreperibile_AR_SLOW     |
+      | OK_AR-CON020-7Z1P             | Via@OK_AR-CON020-7Z1P             |
+      | OK_AR-CON020-ZIP1P            | Via@OK_AR-CON020-ZIP1P            |
+      | OK_AR-CON020-7Z2P             | Via@OK_AR-CON020-7Z2P             |
+      | OK_AR-CON020-ZIP2P            | Via@OK_AR-CON020-ZIP2P            |
+      | OK_AR-CON020-7Z3P             | Via@OK_AR-CON020-7Z3P             |
+      | OK_AR-CON020-ZIP3P            | Via@OK_AR-CON020-ZIP3P            |
+      | FAIL_CON996_PCRETRY_FURTO_AR  | Via@FAIL_CON996_PCRETRY_FURTO_AR  |
+      | OK_PCRETRY_CON996_AR          | Via@OK_PCRETRY_CON996_AR          |
+      | OK_AR_ALL_CON                 | Via@OK_AR_ALL_CON                 |
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti per le sequence in cui non è previsto l'evento CON020
@@ -351,18 +351,18 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | physicalAddress_State   | MESSICO           |
       | physicalAddress_zip     | ZONE_2            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
-      | sequence           | physicalAddress        | waitUntil               |
-      | OK_RIR             | Via@OK_RIR             | ANALOG_SUCCESS_WORKFLOW |
-      | FAIL_RIR           | Via@FAIL_RIR           | ANALOG_SUCCESS_WORKFLOW |
-      | OK-Retry_RIR       | Via@OK-Retry_RIR       | ANALOG_SUCCESS_WORKFLOW |
-      | OK_RIR_NOT_ORDERED | Via@OK_RIR_NOT_ORDERED | ANALOG_SUCCESS_WORKFLOW |
-#      | FAIL_CON996_PCRETRY_FURTO_RIR | Via@FAIL_CON996_PCRETRY_FURTO_RIR | ANALOG_SUCCESS_WORKFLOW |
-#      | OK_PCRETRY_CON996_RIR         | Via@OK_PCRETRY_CON996_RIR         | ANALOG_SUCCESS_WORKFLOW |
+      | sequence           | physicalAddress        |
+      | OK_RIR             | Via@OK_RIR             |
+      | FAIL_RIR           | Via@FAIL_RIR           |
+      | OK-Retry_RIR       | Via@OK-Retry_RIR       |
+      | OK_RIR_NOT_ORDERED | Via@OK_RIR_NOT_ORDERED |
+#      | FAIL_CON996_PCRETRY_FURTO_RIR | Via@FAIL_CON996_PCRETRY_FURTO_RIR |
+#      | OK_PCRETRY_CON996_RIR         | Via@OK_PCRETRY_CON996_RIR         |
 
 
   @paperTrackerARRunMode
