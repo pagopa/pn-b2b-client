@@ -382,3 +382,12 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     And l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
+
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_7] Verifica non sia possibile accedere ad un e-service template in stato DRAFT appartenente ad un tenant differente
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di DRAFT
+    When l'utente è un "admin" di "PA2"
+    And l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
+    Then si ottiene response status code 403
