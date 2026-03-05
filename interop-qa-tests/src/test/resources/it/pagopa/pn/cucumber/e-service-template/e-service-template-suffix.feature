@@ -194,6 +194,8 @@ Feature: Test API of e-service template suffix
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso 2"
     Then si ottiene response status code 403
 
+  # TODO 6.1
+  # Dovremmo creare più istanze di e-service template
   Scenario: [ESERVICE_SUFFIX_NAME_UPDATED] Verifica che la modifica del nome di un template e-service venga riportata correttamente nel nome delle relative istanze e-service
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
@@ -282,3 +284,41 @@ Feature: Test API of e-service template suffix
     Then il nuovo e-service è stato creato correttamente in stato PUBLISHED
     And si ottiene response status code 200
     And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_1] Verifica che sia possibile recuperare le istanze e-service template in DRAFT appartenenti all'ente chiamante
+    Given l'utente è un "admin" di "GSP"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente è un "admin" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+    And l'utente è un "admin" di "PA2"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 2" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 2" è utilizzato correttamente nell'e-service
+    When l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
+    Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
+
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_2] Verifica che sia possibile recuperare le istanze e-service template in PUBLISHED appartenenti all'ente chiamante
+    Given l'utente è un "admin" di "GSP"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    And l'utente è un "admin" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 2" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "suffisso 2" è utilizzato correttamente nell'e-service
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
+    Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template

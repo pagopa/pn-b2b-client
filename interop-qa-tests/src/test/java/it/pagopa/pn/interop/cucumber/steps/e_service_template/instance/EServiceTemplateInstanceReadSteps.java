@@ -18,6 +18,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.springframework.http.ResponseEntity;
 
@@ -30,6 +31,7 @@ public class EServiceTemplateInstanceReadSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final IEServiceClient eServiceClient;
+    private List<EServiceTemplateInstance> eServiceTemplateInstances;
 
     public EServiceTemplateInstanceReadSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext
@@ -83,6 +85,29 @@ public class EServiceTemplateInstanceReadSteps {
     public void checkEmptyEServiceTemplateInstances() {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
         assertThat(response).isEmpty();
+    }
+
+    @When("l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato")
+    public void getMyEServiceTemplateInstances() {
+        UUID templateEServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        httpCallExecutor.performCall(
+                () -> eServiceClient.getMyEServiceTemplateInstancesWithHttpInfo(
+                        templateEServiceId, 0, 50
+                ),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful()) {
+                        this.eServiceTemplateInstances = res.getBody().getResults();
+                    }
+                    return res.getStatusCode();
+                }
+        );
+    }
+
+    @When("ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template")
+    public void checkMyEServiceTemplateInstances() {
+        assertThat(this.eServiceTemplateInstances).hasSize(1);
+        UUID eServiceTemplateInstanceId = this.sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().getId();
+        Assertions.assertThat(this.eServiceTemplateInstances.get(0).getId()).isEqualTo(eServiceTemplateInstanceId);
     }
 
     private void getEserviceTemplateInstances(UUID templateId) {
