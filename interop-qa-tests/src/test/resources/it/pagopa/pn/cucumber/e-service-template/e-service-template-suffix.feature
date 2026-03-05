@@ -72,9 +72,6 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And si ottiene response status code 200
-    And l'e-service template è in stato di PUBLISHED
     When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code <statusCode>
     And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
@@ -104,6 +101,7 @@ Feature: Test API of e-service template suffix
     And l'e-service template è in stato di PUBLISHED
     When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code <statusCode>
+    And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
 
     Examples:
       | suffix        | statusCode |
@@ -323,7 +321,7 @@ Feature: Test API of e-service template suffix
     When l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
 
-  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_3] Verifica che sia possibile recuperare le istanze e-service template in DRAFT in delega dall'istanziatore
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_3] Verifica che sia possibile recuperare le istanze e-service template in DRAFT in delega dal delegato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
@@ -338,7 +336,7 @@ Feature: Test API of e-service template suffix
     And l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
 
-  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_4] Verifica che sia possibile recuperare le istanze e-service template in PUBLISHED in delega dall'istanziatore
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_4] Verifica che sia possibile recuperare le istanze e-service template in PUBLISHED in delega dal delegato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
@@ -354,7 +352,7 @@ Feature: Test API of e-service template suffix
     And l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
 
-  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_5] Verifica che sia possibile recuperare le istanze e-service template in DRAFT dal delegato
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_5] Verifica che sia possibile recuperare le istanze e-service template in DRAFT dall'istanziatore
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
@@ -368,7 +366,7 @@ Feature: Test API of e-service template suffix
     And l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
 
-  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_6] Verifica che sia possibile recuperare le istanze e-service template in PUBLISHED dal delegato
+  Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_6] Verifica che sia possibile recuperare le istanze e-service template in PUBLISHED dall'istanziatore
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
