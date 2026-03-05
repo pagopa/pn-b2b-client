@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +41,9 @@ public class EServiceTemplateStepContext {
 
     // TODO si somigliano troppo, sceglierne uno
     private UUID lastEServiceIdCreatedFromTemplate;
-    private CreatedResource lastEServiceCreatedFromTemplate;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private List<CreatedResource> eServiceCreatedFromTemplates = new ArrayList<>();
 
     // TODO si somigliano troppo, sceglierne uno
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
@@ -98,6 +101,19 @@ public class EServiceTemplateStepContext {
         }
 
         return map;
+    }
+
+    public CreatedResource getLastEServiceCreatedFromTemplate() {
+        return lastOf(eServiceCreatedFromTemplates);
+    }
+
+    public void setLastEServiceCreatedFromTemplate(CreatedResource eServiceCreatedFromTemplate) {
+        this.eServiceCreatedFromTemplates.add(eServiceCreatedFromTemplate);
+    }
+
+    public CreatedResource getEServiceCreatedFromTemplateWithIndex(int indexFromLast) {
+        if (this.eServiceCreatedFromTemplates.size() < indexFromLast) return null;
+        return this.eServiceCreatedFromTemplates.get(this.eServiceCreatedFromTemplates.size() - indexFromLast);
     }
 
     public int incrementLastAddedRiskAnalysisIndex() {
