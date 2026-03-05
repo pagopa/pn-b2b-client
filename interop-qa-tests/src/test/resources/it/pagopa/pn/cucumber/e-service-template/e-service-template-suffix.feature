@@ -192,8 +192,6 @@ Feature: Test API of e-service template suffix
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso 2"
     Then si ottiene response status code 403
 
-  # TODO 6.1
-  # Dovremmo creare più istanze di e-service template
   Scenario: [ESERVICE_SUFFIX_NAME_UPDATED] Verifica che la modifica del nome di un template e-service venga riportata correttamente nel nome delle relative istanze e-service
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
@@ -202,10 +200,14 @@ Feature: Test API of e-service template suffix
     And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
     And si ottiene response status code 200
     And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 2" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
     When l'utente tenta la modifica del nome dell'e-service template
     And si ottiene response status code 200
     And la modifica del nome dell'e-service template è stata effettuata correttamente
-    Then il nome del nuovo e-service è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso "suffisso 1"
+    Then il nome del "penultimo" e-service creato è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso "suffisso 1"
+    And il nome del "ultimo" e-service creato è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso "suffisso 2"
 
   Scenario: [ESERVICE_SUFFIX_DIFFERENT_TEMPLATE_CREATION_1] Verifica che sia possibile creare un'istanza di e-service in stato DRAFT con suffisso già utilizzato in e-service appartenenti ad un altro template
     Given l'utente è un "admin" di "PA1"

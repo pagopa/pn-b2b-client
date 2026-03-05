@@ -235,21 +235,28 @@ public class EServiceTemplateInstanceCreateSteps {
             .isEqualTo(expectedEServiceInstanceName);
     }
 
-    @Then("il nome del nuovo e-service è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso {string}")
-    public void checkEServiceNameUpdated(String suffix) {
+    @Then("il nome del {string} e-service creato è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso {string}")
+    public void checkEServiceNameUpdated(String position, String suffix) {
+
         String templateEServiceName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
              sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
              sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
         ).getBody().getEserviceTemplate().getName();
 
-        String eServiceInstanceName = this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
-                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()
+        int index = switch (position.toLowerCase()) {
+            case "ultimo" -> 0;
+            case "penultimo" -> 1;
+            default -> throw new IllegalArgumentException("Invalid position: " + position);
+        };
+
+        String lastEServiceInstanceName = this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
+                sharedStepsContext.getEServiceTemplateStepContext().getEServiceCreatedFromTemplateWithIndex(index).getId()
         ).getBody().getName();
 
         String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
 
-        Assertions.assertThat(eServiceInstanceName)
-                        .isEqualTo(expectedEServiceInstanceName);
+        Assertions.assertThat(lastEServiceInstanceName)
+                .isEqualTo(expectedEServiceInstanceName);
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
