@@ -139,7 +139,7 @@ public class PaperTrackerSteps {
         for (int i = 0; i < groupedTrackingByAttempt.keySet().size(); i++ ) {
             assertRelaxedSameElements(groupedTrackingByAttempt.get(i), expectedEvents.get(i), TRACKINGS_ELEMENT_NOT_FOUND);
         }
-        verifyTrackingResponseStructure();
+        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", new OcrConditionalValidator());
     }
 
 
@@ -203,7 +203,7 @@ public class PaperTrackerSteps {
     @And("genera la key da utilizzare per invocare l'API per il prodotto: {string}")
     public void generateTrackingIdForProduct(String productType) {
         String key = productType.equals("RS") ? PREPARE_SIMPLE_REGISTERED_LETTER : PREPARE_ANALOG_DOMICILE;
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
         trackingKeys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
                 .filter(e -> e.contains(key))
@@ -372,11 +372,11 @@ public class PaperTrackerSteps {
 //        }
 //    }
 
-    private void verifyTrackingResponseStructure() {
+    private <T> void verifyTrackingResponseStructure(T response, String schemaPath, CustomConditionalValidator... customConditionalValidators) {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.valueToTree(responseTracking);
-        SchemaValidator schemaValidator = new SchemaValidator(new OcrConditionalValidator());
-        schemaValidator.validate(jsonNode, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json");
+        JsonNode jsonNode = mapper.valueToTree(response);
+        SchemaValidator schemaValidator = new SchemaValidator(customConditionalValidators);
+        schemaValidator.validate(jsonNode, schemaPath);
     }
 
 //    @And("si verifica che la risposta trackings sia uguale a quella attesa {string}")
@@ -503,10 +503,19 @@ public class PaperTrackerSteps {
         assertThat(expected.at("/details/cause")).isEqualTo(actual.at("/details/cause"));
         assertThat(expected.at("/details/message")).isEqualTo(actual.at("/details/message"));
 
+        //details.affectedEvents
+        JsonNode expectedAdditionalDetails = expected.at("/details/additionalDetails");
+        if (!expectedAdditionalDetails.isMissingNode()) {
+            new AffectedEventsValidator().validate(actual.at("/details/additionalDetails"), expectedAdditionalDetails);
+
+
+        }
+
         assertThat(expected.get("flowThrow").asText()).isEqualTo(actual.get("flowThrow").asText());
         assertThat(expected.get("eventThrow").asText()).isEqualTo(actual.get("eventThrow").asText());
+        assertThat(actual.get("eventIdThrow").asText()).isNotNull();
         assertThat(expected.get("productType").asText()).isEqualTo(actual.get("productType").asText());
-//        assertThat(expected.get("type").asText()).isEqualTo(actual.get("type").asText());
+        assertThat(expected.get("type").asText()).isEqualTo(actual.get("type").asText());
     }
 
 
