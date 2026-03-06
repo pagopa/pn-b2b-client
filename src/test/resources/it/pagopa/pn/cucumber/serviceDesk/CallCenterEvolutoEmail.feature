@@ -271,9 +271,9 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con <statusCodeGet>
     And se la chiamata al servizio ha avuto successo
-#    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969X"
-#    And viene invocato il servizio SEARCH
-#    Then Il servizio SEARCH risponde con esito positivo
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969X"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
     When viene invocata l'API v2 GET operations passando "<getOperationIdType>"
     Then il servizio risponde con <statusCodePost>
     And se la chiamata al servizio ha avuto successo
@@ -307,7 +307,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | addressValue      | <addressValue> |
       | ticketDate        | <ticketDate>   |
       | vrDate            | <vrDate>       |
-    And viene invocata l'api "CREATE_ACT_OPERATION"
+    And viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con <statusCode>
     Examples:
       | ticketId | taxId            | addressType | addressValue | ticketDate | vrDate | statusCode |
@@ -341,32 +341,3 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     Then il servizio risponde con 200
     And se la chiamata al servizio ha avuto successo
     Then il campo operationStatus della response è valorizzato con "OK"
-
-
-  @CallCenterEvolutoViaMail
-  Scenario Outline: [TODO_MATTEO_LAZY]
-    Given imposto la pa a "Comune_Multi" e gli iun di SharedSteps
-      | iun1 | HZGZ-GKZW-GKWX-202603-W-1 |
-      | iun2 | RZYL-HYNT-URXP-202603-Y-1 |
-      | iun3 | PYAU-ZQRL-ZGWG-202603-X-1 |
-#    Given vengono inviate <notificationNumber> nuove notifiche tramite api b2b dal "Comune_Multi" con destinatario Mario Gherkin e si aspetta che raggiungano l'elemento di timeline "REQUEST_ACCEPTED"
-#      | subject                 | notifica analogica con cucumber |
-#      | senderDenomination      | Comune di palermo               |
-#      | digitalDomicile         | NULL                            |
-#      | physicalAddress_address | Via@ok_890                      |
-    And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
-      | ticketId          | auto             |
-      | iun               | auto             |
-      | ticketOperationId | auto             |
-      | taxId             | CLMCST42R12D969X |
-      | addressType       | EMAIL            |
-      | addressValue      | test@test.it     |
-      | ticketDate        | auto             |
-      | vrDate            | auto             |
-      | iunListType       | <iunListType>    |
-    When viene invocata l'api "CREATE_ACT_OPERATION V2"
-    And il servizio risponde con <statusCode>
-    Given se la chiamata al servizio ha avuto successo
-    Examples:
-      | notificationNumber | iunListType | statusCode | operationStatus |
-      | 3                  | DATI VALIDI | 200        | OK              |

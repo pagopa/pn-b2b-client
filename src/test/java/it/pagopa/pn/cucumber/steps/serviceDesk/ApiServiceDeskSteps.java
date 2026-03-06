@@ -1817,4 +1817,10 @@ public class ApiServiceDeskSteps {
         }
         //TODO. aggiungere chiamata al metodo getOperationV2 non appena api sarà disponibile
     }
+
+    @Then("il campo operationStatus della response è valorizzato con {string}")
+    public void checkStatusFieldOfGetOperationResponse(String status) {
+        //TODO: non appena aggiungono il DTO response, aggiungere controllo su status
+        assertThat("TODO DTO").as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
+    }
 }
