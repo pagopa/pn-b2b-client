@@ -8,10 +8,10 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
     When l'utente è un "admin" di "PA1"
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "%null" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code 200
     And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And il suffisso "" è utilizzato correttamente nell'e-service
+    And il suffisso "%null" è utilizzato correttamente nell'e-service
 
   Scenario: [ESERVICE_SUFFIX_NRT_2] La modifica di un'istanza e-service creata da un template priva di instanceLabel va a buon fine
     Given l'utente è un "admin" di "PA1"

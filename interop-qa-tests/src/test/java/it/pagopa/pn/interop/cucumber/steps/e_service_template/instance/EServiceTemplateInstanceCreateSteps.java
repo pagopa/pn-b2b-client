@@ -84,13 +84,7 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
-
-        if (suffix.equals("%null")) {
-            instanceLabel = null;
-        } else if (suffix.equals("%space")) {
-            instanceLabel = " ";
-        }
-
+        instanceLabel = this.parseSuffix(suffix);
         InstanceEServiceSeed seed = new InstanceEServiceSeed()
             .isClientAccessDelegable(true)
             .isConsumerDelegable(true)
@@ -314,9 +308,22 @@ public class EServiceTemplateInstanceCreateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    private String parseSuffix(String suffix) {
+        String instanceLabel;
+        if (suffix == null || suffix.equals("%null")) {
+            instanceLabel = null;
+        } else if (suffix.equals("%space")) {
+            instanceLabel = " ";
+        } else {
+            instanceLabel = suffix;
+        }
+        return instanceLabel;
+    }
+
     private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
+        String parsedSuffix = this.parseSuffix(suffix);
         return templateEServiceName + (
-            suffix == null || suffix.isEmpty() ? "" : " - " + suffix.trim()
+            parsedSuffix == null || parsedSuffix.isEmpty() ? "" : " - " + parsedSuffix.trim()
         );
     }
 }
