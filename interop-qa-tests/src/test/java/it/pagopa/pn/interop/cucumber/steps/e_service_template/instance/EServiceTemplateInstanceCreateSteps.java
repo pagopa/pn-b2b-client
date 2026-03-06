@@ -1,9 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
-import static java.util.Objects.nonNull;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,24 +7,23 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstance;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.jeasy.random.EasyRandom;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
+import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 /** Cucumber steps involving quotas of E-service templates */
 @Data
@@ -44,6 +39,7 @@ public class EServiceTemplateInstanceCreateSteps {
     private final IEServiceClient eServiceClient;
 
     private InstanceEServiceSeed lastEServiceCreatedFromTemplateSeed;
+    private String instanceLabel;
 
     public EServiceTemplateInstanceCreateSteps(BFFDataPreparationService dataPreparationService,
         ClientTokenConfigurator clientTokenConfigurator,
@@ -66,7 +62,12 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpec() {
-        InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class);
+        instanceLabel = RandomStringUtils.insecure().nextAlphanumeric(12);
+        InstanceEServiceSeed seed = new InstanceEServiceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(false)
+            .instanceLabel(instanceLabel);
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
@@ -79,7 +80,10 @@ public class EServiceTemplateInstanceCreateSteps {
             suffix = " ";
         }
 
-        InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class)
+        InstanceEServiceSeed seed = new InstanceEServiceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(false)
             .instanceLabel(suffix);
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
@@ -192,7 +196,8 @@ public class EServiceTemplateInstanceCreateSteps {
                         .isEqualTo(EServiceDescriptorState.DRAFT);
                 }
 
-                String instanceDefaultName = eServiceSourceTemplate.getEserviceTemplate().getName();
+                String templateName = eServiceSourceTemplate.getEserviceTemplate().getName();
+                String instanceDefaultName = expectedEServiceInstanceName(templateName, instanceLabel);
                 softly.assertThat(eServiceCreatedFromTemplate)
                     .get()
                     .extracting(EServiceTemplateInstance::getName)
