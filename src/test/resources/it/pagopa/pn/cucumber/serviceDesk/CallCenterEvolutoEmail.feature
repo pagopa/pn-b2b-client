@@ -262,7 +262,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | ticketId          | auto             |
       | iun               | auto             |
       | ticketOperationId | auto             |
-      | taxId             | CLMCST42R12D969X |
+      | taxId             | CLMCST42R12D969Z |
       | addressType       | EMAIL            |
       | addressValue      | test@test.it     |
       | ticketDate        | auto             |
