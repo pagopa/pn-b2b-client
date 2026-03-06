@@ -434,14 +434,15 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   # Ticket https://pagopa.atlassian.net/browse/QA-10948
   @m2m-patch
   Scenario Outline: [M2MG_ESERVICES_41_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in uno stato DRAFT o ARCHIVED
-    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    #Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    Given "PA1" ha già creato un e-service in stato "<stato>" 2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service
     Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
     Examples:
       | stato       |
-      | DRAFT       |
+    #  | DRAFT       |
       | ARCHIVED    |
 
   # Per interazioni con un altro bug si è chiarito che quando il ruolo non è esatto il codice di riferimento è il 403

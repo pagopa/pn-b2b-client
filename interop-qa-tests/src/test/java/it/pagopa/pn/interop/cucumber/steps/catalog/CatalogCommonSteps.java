@@ -3,21 +3,22 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.agreement.service.IEServiceClient;
+import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
-import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.UUID;
 
 public class CatalogCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -45,6 +46,82 @@ public class CatalogCommonSteps {
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string}")
     public void createEserviceWithDescriptor(String tenantType, String descriptorState) {
+        createEServiceWithDescriptorInState(tenantType, descriptorState);
+    }
+
+    @Given("{string} ha già creato un e-service in stato {string}")
+    public void createEservice(String tenantType, String descriptorState) {
+        if(descriptorState.equals(EServiceDescriptorState.ARCHIVED.getValue())) {
+            // creazione e pubblicazione e-service
+            createEServiceWithDescriptorInState(tenantType, "PUBLISHED");
+            UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+            UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+            // creazione e archiviazione di una richiesta di fruizione
+            dataPreparationService.createAgreementWithGivenState(
+                    AgreementState.fromValue("ARCHIVED"),
+                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                    sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                    null,
+                    null);
+
+            // sospensione dell'unico descriptor
+            IEServiceClient eServiceClient = clientTokenConfigurator.getEServiceClient();
+            eServiceClient.suspendDescriptor(eserviceId, descriptorId);
+
+            // polling su stato ARCHIVED del descriptor
+            EServiceDescriptorState descriptorStateEn = EServiceDescriptorState.valueOf(descriptorState);
+            PollingService pollingService = sharedStepsContext.getPollingService();
+            IProducerClient producerClient = clientTokenConfigurator.getProducerClient();
+            pollingService.makePolling(
+                    () -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId),
+                    res -> res.getState() == descriptorStateEn,
+                    "Non è stato possibile recuperare un descriptor in stato ARCHIVED"
+            );
+        } else {
+            createEServiceWithDescriptorInState(tenantType, descriptorState);
+        }
+    }
+
+    // TODO seconda versione dello step precedente a seguito di suggerimento di https://pagopaspa.slack.com/archives/C069AP16WG7/p1772813454835609?thread_ts=1772711595.778549&cid=C069AP16WG7 . Fare ordine appena possibile.
+    @Given("{string} ha già creato un e-service in stato {string} 2")
+    public void createEservice2(String tenantType, String descriptorState) {
+        if(descriptorState.equals(EServiceDescriptorState.ARCHIVED.getValue())) {
+            // creazione e pubblicazione e-service
+            createEServiceWithDescriptorInState(tenantType, "PUBLISHED");
+            UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+            UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+            // creazione agreement
+            UUID agreementId = dataPreparationService.createAgreementWithGivenState(
+                    AgreementState.fromValue("ACTIVE"),
+                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                    sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                    null,
+                    null);
+
+            // sospensione dell'unico descriptor
+            IEServiceClient eServiceClient = clientTokenConfigurator.getEServiceClient();
+            eServiceClient.suspendDescriptor(eserviceId, descriptorId);
+
+            // archiviazione agreement
+            dataPreparationService.archiveAgreement(agreementId);
+
+            // polling su stato ARCHIVED del descriptor
+            EServiceDescriptorState descriptorStateEn = EServiceDescriptorState.valueOf(descriptorState);
+            PollingService pollingService = sharedStepsContext.getPollingService();
+            IProducerClient producerClient = clientTokenConfigurator.getProducerClient();
+            pollingService.makePolling(
+                    () -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId),
+                    res -> res.getState() == descriptorStateEn,
+                    "Non è stato possibile recuperare un descriptor in stato ARCHIVED"
+            );
+        } else {
+            createEServiceWithDescriptorInState(tenantType, descriptorState);
+        }
+    }
+
+    private void createEServiceWithDescriptorInState(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         createEServiceWithDescriptor(descriptorState, dataPreparationService,
             sharedStepsContext.getEServicesCommonContext());
