@@ -71,20 +71,31 @@ public class EServiceTemplateInstanceCreateSteps {
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
+    @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando specifiche non permesse")
+    public void createEServiceFromTemplateWrongSpec() {
+        instanceLabel = RandomStringUtils.insecure().nextAlphanumeric(12);
+        InstanceEServiceSeed seed = new InstanceEServiceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(false)
+            .isSignalHubEnabled(false)
+            .instanceLabel(instanceLabel);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
+    }
+
     @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
 
         if (suffix.equals("%null")) {
-            suffix = null;
+            instanceLabel = null;
         } else if (suffix.equals("%space")) {
-            suffix = " ";
+            instanceLabel = " ";
         }
 
         InstanceEServiceSeed seed = new InstanceEServiceSeed()
             .isClientAccessDelegable(true)
             .isConsumerDelegable(true)
             .isSignalHubEnabled(false)
-            .instanceLabel(suffix);
+            .instanceLabel(instanceLabel);
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 

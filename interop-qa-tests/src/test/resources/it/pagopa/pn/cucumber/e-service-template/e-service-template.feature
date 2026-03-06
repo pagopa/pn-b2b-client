@@ -2266,22 +2266,14 @@ Feature: Test API of e-service template
       | api          | ricezione  |
       | api,security | ricezione  |
 
-  @sad-path
+  @happy-path
   @e-service-template-instance-create
-  Scenario Outline: [INTEROP-EST-157-B] La creazione di più di un e-service a partire da un template attivo non può essere effettuata
+  Scenario: [INTEROP-EST-157-C] La creazione di un nuovo e-service a partire da un template indicando valori non permessi non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
-    And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
-    When l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche
-    Then si ottiene response status code 409
-    Examples:
-      | modo        |
-      | erogazione  |
-
-    @e-service-template-receive-bff
-    Examples:
-      | modo        |
-      | ricezione   |
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "admin" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando specifiche non permesse
+    Then si ottiene response status code 400
 
   @sad-path
   @e-service-template-instance-create
