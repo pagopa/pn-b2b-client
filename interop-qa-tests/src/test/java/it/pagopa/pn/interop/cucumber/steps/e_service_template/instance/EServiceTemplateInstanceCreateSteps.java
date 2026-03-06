@@ -88,8 +88,11 @@ public class EServiceTemplateInstanceCreateSteps {
         InstanceEServiceSeed seed = new InstanceEServiceSeed()
             .isClientAccessDelegable(true)
             .isConsumerDelegable(true)
-            .isSignalHubEnabled(false)
-            .instanceLabel(instanceLabel);
+            .isSignalHubEnabled(false);
+        // If instanceLabel is empty, it should not be used
+        if ((instanceLabel == null) || !instanceLabel.isEmpty()) {
+            seed.instanceLabel(instanceLabel);
+        }
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
