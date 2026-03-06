@@ -24,7 +24,7 @@ Feature: Test API of e-service template suffix
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 200
-    And il suffisso "" è utilizzato correttamente nell'e-service
+    And il suffisso "%null" è utilizzato correttamente nell'e-service
 
   Scenario Outline: [ESERVICE_SUFFIX_AVAILABILITY_1] Nella creazione di un e-service da template il nome completo di quest’ultimo deve essere disponibile
     Given l'utente è un "admin" di "PA1"
@@ -51,7 +51,7 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - Label1"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "%null" a partire dal template indicando tutte le specifiche
     And si ottiene response status code 200
     And l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
