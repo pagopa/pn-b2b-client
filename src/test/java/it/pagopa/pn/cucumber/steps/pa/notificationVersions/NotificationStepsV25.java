@@ -39,6 +39,8 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     private final NotificationVersion version;
     private final NotificationUtilsV25 utils;
 
+    private String cachedCasualCf;
+
     public NotificationStepsV25(SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
         b2bClient = sharedSteps.getB2bClient();
@@ -121,8 +123,10 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
         }
         if (destinatario != null) {
             notificationRecipient.setDenomination(destinatario.getDenomination());
+//            notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
+//                    FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
-                    FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
+                    getOrCreateCasualCf() : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV24.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
             /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
              * (recipientType veniva spesso passato null, ma in quei casi subentrava il valore di default PG)
@@ -138,6 +142,12 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
             }
         }
         notificationRequest.addRecipientsItem(notificationRecipient);
+    }
+    private String getOrCreateCasualCf() {
+        if (cachedCasualCf == null) {
+            cachedCasualCf = FiscalCodeGenerator.generateCF(System.nanoTime());
+        }
+        return cachedCasualCf;
     }
 
     @Override

@@ -18,6 +18,9 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -785,6 +788,36 @@ public class RaddAltSteps {
                 attachmentId);
         Assertions.assertNotNull(download);
         B2bUtils.stampaPdfTramiteByte(download, "target/classes/frontespizio" + generateRandomNumber() + ".pdf");
+    }
+
+    @And("Si verifica per l' operazione {string} che il frontespizio abbia riportato {string} come numero esatto di pagine")
+    public void downloadFrontespizioAndCheck(String operationType, String numberOfPage) {
+
+        byte[] download = raddAltClient.documentDownload(
+                operationType.toUpperCase(),
+                this.operationId,
+                null);
+
+        Assertions.assertNotNull(download);
+        String pdfText = extractTextFromPdf(download);
+        System.out.println(pdfText);
+        if (numberOfPage.equals("0")) {
+            Assertions.assertFalse(pdfText.contains("Totale pagine:"));
+        } else {
+            Assertions.assertAll(
+                    () -> Assertions.assertTrue(pdfText.contains(operationId)),
+                    () -> Assertions.assertTrue(pdfText.contains("Totale pagine: " + numberOfPage))
+            );
+        }
+    }
+
+    public static String extractTextFromPdf(byte[] pdfBytes) {
+        try (PDDocument document = Loader.loadPDF(pdfBytes)) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            return stripper.getText(document);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore lettura PDF", e);
+        }
     }
 
     public void creazioneZip() throws IOException {
