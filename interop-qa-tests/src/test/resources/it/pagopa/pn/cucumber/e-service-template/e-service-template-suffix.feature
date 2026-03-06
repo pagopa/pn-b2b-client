@@ -1,7 +1,7 @@
 @e-service-template
+@e-service-template-instances-suffix
 Feature: Test API of e-service template suffix
 
-  @nrt-minimal
   Scenario: [ESERVICE_SUFFIX_NRT_1] La creazione di un'istanza e-service da un template privo di instanceLabel genera un'istanza valida
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -13,7 +13,6 @@ Feature: Test API of e-service template suffix
     And il nuovo e-service è stato creato correttamente in stato DRAFT
     And il suffisso "" è utilizzato correttamente nell'e-service
 
-  @nrt-minimal
   Scenario: [ESERVICE_SUFFIX_NRT_2] La modifica di un'istanza e-service creata da un template priva di instanceLabel va a buon fine
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
