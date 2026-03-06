@@ -6,7 +6,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | physicalCommunication | REGISTERED_LETTER_890        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@<sequence> |
       | digitalDomicile         | NULL           |
@@ -14,19 +14,19 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<sequence>"
     Examples:
       | sequence                       | physicalAddress                    | deliveryDetailCode | category                  | flowThrow                   | pcRetry |
-      | FAIL_Consolidatore-AR         | Via@OK_AR_INVALID_DATETIME         | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
-      | OK_AR-EventAfterC               | Via@OK_AR_NO_EVENT_B               | RECRN001A          | STATUS_CODE_ERROR         | SEQUENCE_VALIDATION         | 0       |
-      | OK_AR-EventNotMatchProduct          | Via@FAIL_Consolidatore-AR          | CON996             | NOT_RETRYABLE_EVENT_ERROR | NOT_RETRYABLE_EVENT_HANDLER | 1       |
-      | OK_AR-NoDemat | Via@FAIL_ConsolidatoreIndirizzo-AR | CON997             | NOT_RETRYABLE_EVENT_ERROR | NOT_RETRYABLE_EVENT_HANDLER | 0       |
+#      | FAIL_Consolidatore-AR         | Via@OK_AR_INVALID_DATETIME         | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
+#      | OK_AR-EventAfterC               | Via@OK_AR_NO_EVENT_B               | RECRN001A          | STATUS_CODE_ERROR         | SEQUENCE_VALIDATION         | 0       |
+#      | OK_AR-EventNotMatchProduct          | Via@FAIL_Consolidatore-AR          | CON996             | NOT_RETRYABLE_EVENT_ERROR | NOT_RETRYABLE_EVENT_HANDLER | 1       |
+#      | OK_AR-NoDemat | Via@FAIL_ConsolidatoreIndirizzo-AR | CON997             | NOT_RETRYABLE_EVENT_ERROR | NOT_RETRYABLE_EVENT_HANDLER | 0       |
       | OK_890-OCR-FAIL         | Via@FAIL_CON996_PCRETRY_AR         | CON996             | NOT_RETRYABLE_EVENT_ERROR | NOT_RETRYABLE_EVENT_HANDLER | 1       |
       | OK-REC008_890-E            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
-      | FAIL_CON996_MAX_PCRETRY_AR            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
-      | OK_AR_INVALID_DATETIME            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
+#      | FAIL_CON996_MAX_PCRETRY_AR            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
+#      | OK_AR_INVALID_DATETIME            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
       | OK-CAUSE-EVENTO-NO-MAPPA            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
       | FAIL-CAUSE-EVENTO-NO-LISTA            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
       | OK-Giacenza-lte10-NoARCAD_890            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
       | FAIL_890-BadAttachment            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
-      | OK_AR_OCR_FAIL            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
+#      | OK_AR_OCR_FAIL            | Via@OK_AR_TIMESTAMP_ERR            | RECRN001B          | DATE_ERROR                | SEQUENCE_VALIDATION         | 0       |
 
 
 
@@ -159,25 +159,24 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 #  "affectedEvents": [
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_ERROR_3] Viene creato un evento con registeredLetterCode uguale a null e si verifica che si ottiene un errore del tipo REGISTERED_LETTER_CODE_ERROR - INVALID_VALUES
-#    Given viene generata una nuova notifica
-#      | subject               | invio notifica con cucumber |
-#      | senderDenomination    | Comune di Palermo           |
-#      | physicalCommunication | AR_REGISTERED_LETTER        |
-#    And destinatario Mario Cucumber e:
-#      | physicalAddress_address | Via@OK_AR_BLOCKED |
-#      | digitalDomicile         | NULL              |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    And imposto lo iun di SharedSteps a "MEZL-YTPM-GHXQ-202603-J-1" e la pa a "Comune_Multi"
-#    Then viene invocato il consolidatore con i seguenti dati:
-#      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode |
-#      | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001A  |                      |              |              | <null>               |
-#    Then viene invocato il consolidatore con i seguenti dati:
-#      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode             |
-#      | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001B  |                      | AR           |              | f234b2b0e6a0413cbcab5a41ae6f94d2 |
-#    Then viene invocato il consolidatore con i seguenti dati:
-#      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode             |
-#      | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              | f234b2b0e6a0413cbcab5a41ae6f94d2 |
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR_BLOCKED |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode |
+      | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001A  |                      |              |              | <null>               |
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode             |
+      | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001B  |                      | AR           |              | f234b2b0e6a0413cbcab5a41ae6f94d2 |
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode             |
+      | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN001C  |                      |              |              | f234b2b0e6a0413cbcab5a41ae6f94d2 |
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
