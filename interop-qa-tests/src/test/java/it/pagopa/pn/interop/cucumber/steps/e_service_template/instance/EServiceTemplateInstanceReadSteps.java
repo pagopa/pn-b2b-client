@@ -7,9 +7,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstance;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
@@ -17,19 +15,15 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.UUID;
-import lombok.Data;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
-@Data
 public class EServiceTemplateInstanceReadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final IEServiceTemplateClient eServiceTemplateClient;
     private final IHttpExecutor httpCallExecutor;
-    private final PollingService pollingService;
     private final IEServiceClient eServiceClient;
     private List<EServiceTemplateInstance> eServiceTemplateInstances;
 
@@ -38,9 +32,7 @@ public class EServiceTemplateInstanceReadSteps {
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.pollingService = sharedStepsContext.getPollingService();
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
 
