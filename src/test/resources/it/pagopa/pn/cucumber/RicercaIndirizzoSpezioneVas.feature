@@ -399,10 +399,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL        |
+      | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
@@ -412,8 +412,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   Scenario: [RICERCA_INDIRIZZO_MULTI_FLAG_OFF_6] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And destinatario
       | denomination    | PG Censito  |
@@ -866,28 +866,28 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 #      | digitalDomicile | NULL |
 #      | physicalAddress | NULL |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimelime       | true     |
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_registry        | ANPR                                                                   |
-      | details_recIndex        | 0                                                                      |
+      | details                 | NOT_NULL                                                                                       |
+      | details_registry        | ANPR                                                                                           |
+      | details_recIndex        | 0                                                                                              |
       #| details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
       | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                       |
-      | details                 | NOT_NULL                                   |
-      | details_recIndex        | 0                                          |
+      | loadTimeline            | true                                                     |
+      | details                 | NOT_NULL                                                 |
+      | details_recIndex        | 0                                                        |
       | details_physicalAddress | {"municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
-      | details_responseStatus  | OK                                         |
+      | details_responseStatus  | OK                                                       |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline                  | true                   |
       | details                       | NOT_NULL               |
@@ -906,11 +906,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     And destinatario
       | denomination    | PG Censito  |
       | recipientType   | PG          |
@@ -923,9 +923,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details            | NOT_NULL |
       | details_recIndexes | [0, 1]   |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_recIndex        | 0                                                                      |
-      | details_registry        | ANPR                                                                   |
+      | details                 | NOT_NULL                                                                                       |
+      | details_recIndex        | 0                                                                                              |
+      | details_registry        | ANPR                                                                                           |
       | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
       | details                 | NOT_NULL                                                                      |
@@ -939,22 +939,20 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2 |
 
 
-
-
   @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs n/p
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5_UAT] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
 #    And destinatario Mario Cucumber e:
 #      | digitalDomicile | NULL        |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
@@ -972,30 +970,129 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
-      | denomination    | PF Censito  |
-      | recipientType   | PF          |
+      | denomination    | PF Censito       |
+      | recipientType   | PF               |
       | taxId           | STTSGT90A01H501J |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimelime       | true     |
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_registry        | ANPR                                                                   |
-      | details_recIndex        | 0                                                                      |
+      | details                 | NOT_NULL                                                                                       |
+      | details_registry        | ANPR                                                                                           |
+      | details_recIndex        | 0                                                                                              |
       | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                       |
-      | details                 | NOT_NULL                                   |
-      | details_recIndex        | 0                                          |
+      | loadTimeline            | true                                                     |
+      | details                 | NOT_NULL                                                 |
+      | details_recIndex        | 0                                                        |
       | details_physicalAddress | {"municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
-      | details_responseStatus  | OK                                         |
+      | details_responseStatus  | OK                                                       |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline                  | true                   |
       | details                       | NOT_NULL               |
       | details_numberOfRecipients    | 1                      |
       | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
       | details_recIndex              | 0                      |
+
+  @AdeguamentoIndirizzoANPR_Old
+  Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_OLD] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo OLD
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination    | "<denomination>" |
+      | taxId           | "<taxId>"        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimeline       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL            |
+      | details_registry        | ANPR                |
+      | details_recIndex        | 0                   |
+      | details_physicalAddress | "<expectedAddress>" |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" esista
+      | details                 | NOT_NULL            |
+      | details_registry        | ANPR                |
+      | details_recIndex        | 0                   |
+      | details_physicalAddress | "<expectedAddress>" |
+    Examples:
+      | denomination    | taxId       | expectedAddress |
+      | TODO_casistica1 | TODO_taxID1 | TODO_address1   |
+      | TODO_casistica2 | TODO_taxID2 | TODO_address2   |
+      | TODO_casistica3 | TODO_taxID3 | TODO_address3   |
+
+  @AdeguamentoIndirizzoANPR_Minimal
+  Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_MINIMAL] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo MINIMAL
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination    | "<denomination>" |
+      | taxId           | "<taxId>"        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimeline       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL            |
+      | details_registry        | ANPR                |
+      | details_recIndex        | 0                   |
+      | details_physicalAddress | "<expectedAddress>" |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" esista
+      | details                 | NOT_NULL            |
+      | details_registry        | ANPR                |
+      | details_recIndex        | 0                   |
+      | details_physicalAddress | "<expectedAddress>" |
+    Examples:
+      | denomination    | taxId       | expectedAddress |
+      | TODO_casistica1 | TODO_taxID1 | TODO_address1   |
+      | TODO_casistica2 | TODO_taxID2 | TODO_address2   |
+      | TODO_casistica3 | TODO_taxID3 | TODO_address3   |
+
+  @AdeguamentoIndirizzoANPR_Full
+  Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_FULL] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo FULL
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination    | "<denomination>" |
+      | taxId           | "<taxId>"        |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimeline       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL            |
+      | details_registry        | ANPR                |
+      | details_recIndex        | 0                   |
+      | details_physicalAddress | "<expectedAddress>" |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" esista
+      | details                 | NOT_NULL            |
+      | details_registry        | ANPR                |
+      | details_recIndex        | 0                   |
+      | details_physicalAddress | "<expectedAddress>" |
+    Examples:
+      | denomination    | taxId       | expectedAddress |
+      | TODO_casistica1 | TODO_taxID1 | TODO_address1   |
+      | TODO_casistica2 | TODO_taxID2 | TODO_address2   |
+      | TODO_casistica3 | TODO_taxID3 | TODO_address3   |
