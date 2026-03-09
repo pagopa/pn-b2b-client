@@ -43,8 +43,8 @@ Feature: Test API of e-service template suffix
     Examples:
       | suffix | statusCode |
       | OK_2   | 200        |
-      | OK     | 400        |
-      | ok     | 400        |
+      | OK     | 409        |
+      | ok     | 409        |
 
   Scenario Outline: [ESERVICE_SUFFIX_AVAILABILITY_2] Nella creazione di un e-service da template il nome completo di quest’ultimo deve essere disponibile
     Given l'utente è un "admin" di "PA1"
@@ -64,7 +64,7 @@ Feature: Test API of e-service template suffix
     Examples:
       | suffix | statusCode |
       | Label2 | 200        |
-      | Label1 | 400        |
+      | Label1 | 409        |
 
   Scenario Outline: [ESERVICE_SUFFIX_CREATION_1] Verifica che il suffisso sia utilizzato correttamente a seguito della creazione dell'istanza e-service
     Given l'utente è un "admin" di "PA1"
@@ -73,13 +73,14 @@ Feature: Test API of e-service template suffix
     And l'e-service template è in stato di PUBLISHED
     When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code <statusCode>
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
     And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
 
     Examples:
       | suffix | statusCode |
       | %null  | 200        |
+      # il trim non viene eseguito sul server per cui il nome dell'istanza non è quello aspettato
       | %space | 200        |
-      |        | 200        |
       | ABC    | 200        |
       | 123    | 200        |
 
@@ -88,24 +89,38 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "%null" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
     When l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
     Then si ottiene response status code 400
 
-  Scenario Outline: [ESERVICE_SUFFIX_MAX_LENGTH] Verifica che il suffisso rispetti la lunghezza massima consentita
+  Scenario: [ESERVICE_SUFFIX_CREATION_3] Verifica che il suffisso sia utilizzato correttamente a seguito della creazione dell'istanza e-service
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    When l'utente tenta la creazione di un nuovo e-service con suffisso "<suffix>" a partire dal template indicando tutte le specifiche
-    Then si ottiene response status code <statusCode>
-    And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
+    And l'utente tenta la creazione di un nuovo e-service con suffisso "%null" a partire dal template indicando tutte le specifiche
+    And si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "%null" è utilizzato correttamente nell'e-service
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 400
 
-    Examples:
-      | suffix        | statusCode |
-      | 123456789012  | 200        |
-      | 1234567890123 | 400        |
+  Scenario: [ESERVICE_SUFFIX_MAX_LENGTH_1] Verifica che il suffisso rispetti la lunghezza massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "123456789012" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And il suffisso "123456789012" è utilizzato correttamente nell'e-service
+
+  Scenario: [ESERVICE_SUFFIX_MAX_LENGTH_2] Verifica che il suffisso rispetti la lunghezza massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And si ottiene response status code 200
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente tenta la creazione di un nuovo e-service con suffisso "1234567890123" a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 400
 
   Scenario Outline: [ESERVICE_SUFFIX_DRAFT_UPDATE_1] Verifica che l'istanza dell'e-service sia modificabile quando si trova in stato DRAFT
     Given l'utente è un "admin" di "PA1"
