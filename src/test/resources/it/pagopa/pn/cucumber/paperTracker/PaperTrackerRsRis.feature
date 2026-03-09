@@ -66,8 +66,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
-    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
       | sequenceName                       |
       | OK_RS                              |
@@ -98,8 +98,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
-    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
       | sequenceName |
       | OK_RIS       |
