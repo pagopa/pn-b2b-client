@@ -4,6 +4,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -13,12 +14,17 @@ public class PollingService {
     private final InteropClientConfigs interopClientConfigs;
 
     public <T> T makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage) {
+        return makePolling(promise, shouldStop, res -> errorMessage);
+    }
+
+    public <T> T makePolling(Supplier<T> promise, Predicate<T> shouldStop, Function<T, String> errorMessageMaker) {
+        T response = null;
         try {
             for (int i = 0; i < interopClientConfigs.getMaxPollingTry(); i++) {
                 Thread.sleep(interopClientConfigs.getMaxPollingSleep());
 
                 // Execute the provided function and obtain the result
-                T response = promise.get();
+                response = promise.get();
 
                 boolean shouldStopPolling = shouldStop.test(response);
                 if (shouldStopPolling) {
@@ -32,7 +38,7 @@ public class PollingService {
             throw new IllegalArgumentException("Error during polling: " + e.getMessage());
         }
 
-        throw new PollingPredicateException("Eventual consistency error: " + errorMessage);
+        throw new PollingPredicateException("Eventual consistency error: " + errorMessageMaker.apply(response));
     }
 
     public static <T> T makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage, int maxTries, long pollingFrequencyMillis) {

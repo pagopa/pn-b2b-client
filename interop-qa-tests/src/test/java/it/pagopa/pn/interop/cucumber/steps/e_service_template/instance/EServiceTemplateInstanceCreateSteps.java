@@ -115,18 +115,28 @@ public class EServiceTemplateInstanceCreateSteps {
     @Given("l'utente effettua la creazione di un nuovo e-service in stato {eServiceDescriptorState} a partire dal template con successo indicando solo le specifiche strettamente necessarie")
     public void createEServiceFromTemplateMinimalSpecSuccessfully(EServiceDescriptorState expectedState) {
         createEServiceFromTemplateMinimalSpec();
+        checkEServiceAndMutateState(expectedState);
+    }
+
+    @Given("l'utente effettua la creazione di un nuovo e-service in stato {eServiceDescriptorState} con suffisso {string} a partire dal template con successo indicando tutte le specifiche")
+    public void createEServiceFromTemplateWithSuffixSuccessfully(EServiceDescriptorState expectedState, String suffix) {
+        createEServiceFromTemplateFullSpecWithSuffix(suffix);
+        checkEServiceAndMutateState(expectedState);
+    }
+
+    private void checkEServiceAndMutateState(EServiceDescriptorState expectedState) {
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
         UUID lastEServiceIdCreatedFromTemplate = sharedStepsContext.getEServiceTemplateStepContext()
-            .getLastEServiceIdCreatedFromTemplate();
+                .getLastEServiceIdCreatedFromTemplate();
         UUID descriptorId = getDescriptorId(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate(),
-            EServiceDescriptorState.DRAFT);
+                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate(),
+                EServiceDescriptorState.DRAFT);
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(descriptorId);
         this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
-            lastEServiceIdCreatedFromTemplate,
-            descriptorId,
-            expectedState,
-            false);
+                lastEServiceIdCreatedFromTemplate,
+                descriptorId,
+                expectedState,
+                false);
     }
 
     private UUID getDescriptorId(String eServiceName, EServiceDescriptorState state) {
@@ -236,7 +246,13 @@ public class EServiceTemplateInstanceCreateSteps {
              sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
         ).getBody().getEserviceTemplate().getName();
 
-        String eServiceCreatedName = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+
+        String eServiceCreatedName = pollingService.makePolling(
+                () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId),
+                res -> nonNull(res.getBody()) && res.getBody().getName().endsWith(suffix),
+                res -> "Il suffisso dell'istanza non è stato aggiornato correttamente: atteso suffisso '%s', ma il nome completo ottenuto è '%s'".formatted(suffix, res.getBody().getName())
+        ).getBody().getName();
 
         String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
 

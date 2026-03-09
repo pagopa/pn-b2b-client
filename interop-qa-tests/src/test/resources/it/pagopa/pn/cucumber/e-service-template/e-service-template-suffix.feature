@@ -158,11 +158,7 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "<initialSuffix>" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And l'utente effettua l'aggiunta di una versione in stato <eServiceState> all'e-service con successo
-    And il nuovo e-service è stato creato correttamente in stato <eServiceState>
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceState> con suffisso "<initialSuffix>" a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "<suffix>"
     Then si ottiene response status code <statusCode>
     And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
