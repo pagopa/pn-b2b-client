@@ -55,4 +55,8 @@ public interface IPServiceDeskClient {
     CreateOperationsResponseV2 createActOperationV2(CreateActOperationRequestV2 createActOperationRequestV2) throws RestClientException;
 
     ApiResult<CreateOperationsResponseV2> createActOperationV2WithHttpInfo(CreateActOperationRequestV2 createActOperationRequestV2) throws RestClientException;
+
+    GetOperationsResponseV2 getOperationV2(String operationId) throws RestClientException;
+
+    ApiResult<GetOperationsResponseV2> getOperationV2WithHttpInfo(String operationId) throws RestClientException;
 }

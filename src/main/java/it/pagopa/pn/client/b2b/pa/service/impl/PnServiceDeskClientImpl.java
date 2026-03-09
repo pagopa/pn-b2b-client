@@ -173,6 +173,16 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClient {
         return ApiCallHelper.call(() -> operationV2.createActOperationV2WithHttpInfo(operatorId, createActOperationRequestV2));
     }
 
+    @Override
+    public GetOperationsResponseV2 getOperationV2(String operationId) throws RestClientException {
+        return operationV2.getOperationV2(operationId);
+    }
+
+    @Override
+    public ApiResult<GetOperationsResponseV2> getOperationV2WithHttpInfo(String operationId) throws RestClientException {
+        return ApiCallHelper.call(() -> operationV2.getOperationV2WithHttpInfo(operationId));
+    }
+
     private HttpHeaders safeHeaders(RestClientResponseException ex) {
         HttpHeaders h = ex.getResponseHeaders();
         return (h != null) ? h : new HttpHeaders();
