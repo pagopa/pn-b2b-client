@@ -7,11 +7,14 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalprivate.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bPrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
@@ -52,6 +55,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber
 public class RaddAltSteps {
     private final PnRaddAlternativeClientImpl raddAltClient;
     private final PnExternalServiceClientImpl externalServiceClient;
+    private final IPnPaB2bPrivateClient internalPrivateClient;
     private final SharedSteps sharedSteps;
     private String qrCode;
     private String iun;
@@ -78,13 +82,40 @@ public class RaddAltSteps {
     private HttpStatusCodeException documentUploadError;
     private HttpStatusCodeException expectedStartTransactionException;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
+    private NotificationAttachmentDownloadMetadataResponse notificationAttachmentDownloadMetadataResponse;
+    private final PnExternalServiceClientImpl externalClient;
+    private LegalFactDownloadMetadataWithContentTypeResponse legalFactDownloadMetadataWithContentTypeResponse;
 
     @Autowired
-    public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps) {
+    public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps, IPnPaB2bPrivateClient internalPrivateClient) {
         this.raddAltClient = raddAltClient;
         this.externalServiceClient = externalServiceClient;
         this.sharedSteps = sharedSteps;
+        this.internalPrivateClient = internalPrivateClient;
+        this.externalClient = sharedSteps.getPnExternalServiceClient();
+    }
+
+    //todo t frontespizio
+    @When("Effettuo la chimata di download con Api interna privata")
+    public void getInternalPrivateRespons() {
+
+        String iun = sharedSteps.getNotificationIun();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        String recipientInternalId = externalClient.getInternalIdFromTaxId("PG", fullSentNotification.getRecipients().get(0).getTaxId());
+
+
+        notificationAttachmentDownloadMetadataResponse = internalPrivateClient.getReceivedNotificationDocumentPrivate(
+                iun,
+                0,
+                recipientInternalId,
+                null
+        );
+
+        String legalFactId= "PN_LEGAL_FACTS-26be2099cd074943880540199c158f46.pdf";
+
+
+        legalFactDownloadMetadataWithContentTypeResponse = internalPrivateClient.getLegalFactByIdPrivate(recipientInternalId, iun, legalFactId, null, null, null);
+
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
@@ -184,17 +215,17 @@ public class RaddAltSteps {
         ActInquiryResponseStatus.CodeEnum error = getErrorCodeRaddAlternative(errorCode);
         switch (errorType) {
             case "qrcode non valido",
-                    "cf non valido" -> {
+                 "cf non valido" -> {
                 Assertions.assertEquals(false, actInquiryResponse.getResult());
                 Assertions.assertNotNull(actInquiryResponse.getStatus());
                 Assertions.assertEquals(error, actInquiryResponse.getStatus().getCode());
             }
             case "stampa già eseguita",
-                    "questa notifica è stata annullata dall’ente mittente",
-                    "documenti non più disponibili",
-                    "ko generico",
-                    "input non valido",
-                    "limite di 10 stampe superato" -> {
+                 "questa notifica è stata annullata dall’ente mittente",
+                 "documenti non più disponibili",
+                 "ko generico",
+                 "input non valido",
+                 "limite di 10 stampe superato" -> {
                 Assertions.assertEquals(false, actInquiryResponse.getResult());
                 Assertions.assertNotNull(actInquiryResponse.getStatus());
                 Assertions.assertNotNull(actInquiryResponse.getStatus().getMessage());
@@ -713,6 +744,15 @@ public class RaddAltSteps {
             default -> throw new IllegalArgumentException();
         }
     }
+
+    @Given("Il cittadino {string} come destinatario {int} mostra il QRCode")
+    public void ilCittadinoMostraIlQRCode(String destinatario, Integer recipientIndex) {
+        this.currentUserCf = destinatario;
+        this.recipientType = "PF";
+        vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), recipientIndex);
+//todo t forntespizio, da testare
+    }
+
 
     @Given("viene richiesto il codice QR per lo IUN {string} per il destinatario {int} su radd alternative")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {

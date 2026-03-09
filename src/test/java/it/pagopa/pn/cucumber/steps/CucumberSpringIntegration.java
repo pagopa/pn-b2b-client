@@ -21,6 +21,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bPrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
@@ -199,6 +200,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ReworkTimelineClientImpl.class,
         LambdaInvoker.class,
         TemplateEngineConfigBean.class,
+        PnPaB2bInternalPrivateClientImpl.class,
+        IPnPaB2bPrivateClient.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
