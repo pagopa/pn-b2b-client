@@ -15,11 +15,16 @@ public class AffectedEventsValidator {
                 JsonNode actualEvent = affectEventsNode.get(i);
                 JsonNode expectedEvent = expectedNode.get("affectedEvents").get(i);
 
-                // Validate eventId
+                // valida statusCode
                 assertThat(actualEvent.get("statusCode").textValue()).isEqualTo(expectedEvent.get("statusCode").textValue());
 
-                // Validate timestamp
+                // valida timestamp
                 assertThat(actualEvent.get("statusTimestamp").asText()).isNotNull().satisfies(OffsetDateTime::parse);
+
+                // valida deliveryFailureCause se presente negli expectedEvent
+                if (expectedEvent.has("deliveryFailureCause")) {
+                    assertThat(actualEvent.get("deliveryFailureCause").textValue()).isEqualTo(expectedEvent.get("deliveryFailureCause").textValue());
+                }
             }
         }
         else {

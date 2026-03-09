@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,6 +52,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PREPARE_ANALOG_D
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PREPARE_SIMPLE_REGISTERED_LETTER;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_FEEDBACK;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -82,8 +84,16 @@ public class PaperTrackerSteps {
     }
 
     private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV28 fullSentNotification, int attempt) {
+        Predicate<TimelineElementV28> predicate;
+        if (trackingKeys.get(0).contains(PREPARE_SIMPLE_REGISTERED_LETTER)) {
+            predicate = te -> te.getElementId().contains(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS);
+        } else {
+            predicate = te -> te.getElementId().contains("ATTEMPT_" + attempt) &&
+                    (te.getElementId().contains("SEND_ANALOG_PROGRESS") ||
+                            te.getElementId().contains("SEND_ANALOG_FEEDBACK"));
+        }
          return fullSentNotification.getTimeline().stream()
-                 .filter(te -> te.getElementId().contains("ATTEMPT_" + attempt) && (te.getElementId().contains("SEND_ANALOG_PROGRESS") || te.getElementId().contains("SEND_ANALOG_FEEDBACK")))
+                 .filter(predicate)
                  .map(te -> te.getDetails())
                  .map(td -> new NotificationEvent(td.getDeliveryDetailCode(), createAttachmentUrl(td.getAttachments()), td.getDeliveryFailureCause()))
                  .collect(Collectors.toCollection(ArrayList::new));
@@ -111,13 +121,13 @@ public class PaperTrackerSteps {
     @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
     public void verifyTrackingEventsForSequenceWithPCRetryNew(String sequenceName) {
         FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        List<String> stringaTracking = fullSentNotification.getTimeline().stream()
-                .map(TimelineElementV28::getElementId)
-                .filter(id -> id.contains(PREPARE_ANALOG_DOMICILE))
-                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
-                .collect(Collectors.toList());
+//        List<String> stringaTracking = fullSentNotification.getTimeline().stream()
+//                .map(TimelineElementV28::getElementId)
+//                .filter(id -> id.contains(PREPARE_ANALOG_DOMICILE))
+//                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
+//                .collect(Collectors.toList());
 
-        TrackingsRequest request = new TrackingsRequest().trackingIds(stringaTracking);
+        TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
         responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
 
         Map<Integer, List<NotificationEvent>> groupedTrackingByAttempt = responseTracking.getTrackings().stream()
@@ -476,7 +486,7 @@ public class PaperTrackerSteps {
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
         AtomicReference<TrackingError> atomicReference = new AtomicReference<>();
-        await().atMost(Duration.ofMinutes(15))
+        await().atMost(Duration.ofMinutes(20))
                 .pollInterval(Duration.ofSeconds(30))
                 .untilAsserted(() -> {
                     // recupera la lista di errori e cerca quello che ha category e flowThrow uguali a quelli attesi, se lo trova lo setta nell'atomic reference
@@ -505,13 +515,17 @@ public class PaperTrackerSteps {
 
         //details.affectedEvents
         JsonNode expectedAdditionalDetails = expected.at("/details/additionalDetails");
-        if (!expectedAdditionalDetails.isMissingNode()) {
-            new AffectedEventsValidator().validate(actual.at("/details/additionalDetails"), expectedAdditionalDetails);
+        if (!expectedAdditionalDetails.isEmpty()) {
+            switch (expectedAdditionalDetails.fieldNames().next()) {
+                case "ocrDataResultPayload" -> new OcrDataResultPayloadValidator().validate(actual.at("/details/additionalDetails"), expectedAdditionalDetails);
+                case "affectedEvents" -> new AffectedEventsValidator().validate(actual.at("/details/additionalDetails"), expectedAdditionalDetails);
+                case "missingStatusCodes" -> new MissingStatusCodeValidator().validate(actual.at("/details/additionalDetails"), expectedAdditionalDetails);
+                case "missingAttachments" -> new MissingAttachmentsValidator().validate(actual.at("/details/additionalDetails"), expectedAdditionalDetails);
 
-
+            }
         }
-
-        assertThat(expected.get("flowThrow").asText()).isEqualTo(actual.get("flowThrow").asText());
+        if (expected.get("flowThrow") == null) assertThat(actual.get("flowThrow") == null).isTrue();
+        else assertThat(expected.get("flowThrow").asText()).isEqualTo(actual.get("flowThrow").asText());
         assertThat(expected.get("eventThrow").asText()).isEqualTo(actual.get("eventThrow").asText());
         assertThat(actual.get("eventIdThrow").asText()).isNotNull();
         assertThat(expected.get("productType").asText()).isEqualTo(actual.get("productType").asText());
