@@ -13,13 +13,17 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIns
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+
 import java.util.List;
 import java.util.UUID;
+
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.springframework.http.ResponseEntity;
 
-/** Cucumber steps involving quotas of E-service templates */
+/**
+ * Cucumber steps involving quotas of E-service templates
+ */
 public class EServiceTemplateInstanceReadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -28,7 +32,7 @@ public class EServiceTemplateInstanceReadSteps {
     private List<EServiceTemplateInstance> eServiceTemplateInstances;
 
     public EServiceTemplateInstanceReadSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext
+                                             SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -51,17 +55,17 @@ public class EServiceTemplateInstanceReadSteps {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
         assertSoftly(softly -> {
             softly.assertThat(response)
-                .areExactly(
-                    draftCount,
-                    instanceInState(EServiceDescriptorState.DRAFT));
+                    .areExactly(
+                            draftCount,
+                            instanceInState(EServiceDescriptorState.DRAFT));
             softly.assertThat(response)
-                .areExactly(
-                    publishedCount,
-                    instanceInState(EServiceDescriptorState.PUBLISHED));
+                    .areExactly(
+                            publishedCount,
+                            instanceInState(EServiceDescriptorState.PUBLISHED));
             softly.assertThat(response)
-                .areExactly(
-                    suspendedCount,
-                    instanceInState(EServiceDescriptorState.SUSPENDED));
+                    .areExactly(
+                            suspendedCount,
+                            instanceInState(EServiceDescriptorState.SUSPENDED));
         });
     }
 
@@ -69,8 +73,8 @@ public class EServiceTemplateInstanceReadSteps {
     public void checkEServiceTemplateInstancesCount(int instanceCount, EServiceDescriptorState expectedState) {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
         assertThat(response)
-            .hasSize(instanceCount)
-            .are(instanceInState(expectedState));
+                .hasSize(instanceCount)
+                .are(instanceInState(expectedState));
     }
 
     @Then("l'elenco delle istanze dell'e-service template è vuoto")
@@ -79,15 +83,15 @@ public class EServiceTemplateInstanceReadSteps {
         assertThat(response).isEmpty();
     }
 
-    @When("l'utente recupera le proprie istanze e-service template create dall'ultimo e-service template utilizzato")
-    public void getMyEServiceTemplateInstances() {
-        UUID templateEServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+    @When("l'utente recupera le proprie istanze e-service template create dall'e-service template {string}")
+    public void getMyEServiceTemplateInstances(String eServiceTemplateId) {
+        UUID templateEServiceId = resolveEServiceTemplateId(eServiceTemplateId);
         httpCallExecutor.performCall(
                 () -> eServiceClient.getMyEServiceTemplateInstancesWithHttpInfo(
                         templateEServiceId, 0, 50
                 ),
                 res -> {
-                    if(res.getStatusCode().is2xxSuccessful()) {
+                    if (res.getStatusCode().is2xxSuccessful()) {
                         this.eServiceTemplateInstances = res.getBody().getResults();
                     }
                     return res.getStatusCode();
@@ -106,10 +110,10 @@ public class EServiceTemplateInstanceReadSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                templateId
-            ),
-            ResponseEntity::getStatusCode);
+                () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
+                        templateId
+                ),
+                ResponseEntity::getStatusCode);
     }
 
     // 28/03/2025 Versione precedente
@@ -135,13 +139,24 @@ public class EServiceTemplateInstanceReadSteps {
 
     private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
         return new Condition<>(
-            instance -> {
-                if (isEmpty(instance.getDescriptors())) {
-                    return state == EServiceDescriptorState.DRAFT;
-                } else {
-                    return instance.getLatestDescriptor().getState().equals(state);
-                }
-            },
-            "instances in state %s", state);
+                instance -> {
+                    if (isEmpty(instance.getDescriptors())) {
+                        return state == EServiceDescriptorState.DRAFT;
+                    } else {
+                        return instance.getLatestDescriptor().getState().equals(state);
+                    }
+                },
+                "instances in state %s", state);
+    }
+
+    public UUID resolveEServiceTemplateId(String eServiceTemplateId) {
+        if (eServiceTemplateId == null || eServiceTemplateId.equals("%null")) {
+            return null;
+        } else if (eServiceTemplateId.equals("%actual")) {
+            return sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        } else if (eServiceTemplateId.equals("%random")) {
+            return UUID.randomUUID();
+        }
+        throw new IllegalArgumentException("Unrecognized eServiceTemplateId placeholder: " + eServiceTemplateId);
     }
 }
