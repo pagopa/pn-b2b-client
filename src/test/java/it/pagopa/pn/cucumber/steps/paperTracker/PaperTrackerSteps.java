@@ -630,7 +630,9 @@ public class PaperTrackerSteps {
         data.put("details_recIndex", "0");
         data.put("details", "NOT_NULL");
         data.put("details_deliveryDetailCode", deliveryDetailCode);
-        data.put("eventCategory", TimelineSequence.isFeedback(deliveryDetailCode) ? SEND_ANALOG_FEEDBACK : SEND_ANALOG_PROGRESS);
+        String eventCatetgory = trackingKeys.get(0).contains(PREPARE_SIMPLE_REGISTERED_LETTER) ? SEND_SIMPLE_REGISTERED_LETTER_PROGRESS
+                : TimelineSequence.isFeedback(deliveryDetailCode) ? SEND_ANALOG_FEEDBACK : SEND_ANALOG_PROGRESS;
+        data.put("eventCategory", eventCatetgory);
         if (failureCause != null) {
             data.put("details_failureCause", failureCause);
         }
