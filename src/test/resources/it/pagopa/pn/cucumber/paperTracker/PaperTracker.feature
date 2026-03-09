@@ -12,6 +12,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
@@ -48,6 +49,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
@@ -72,6 +74,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK_RIR_NO_DEMAT" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT"
 
@@ -87,6 +90,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
 
@@ -114,6 +118,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_sentAttemptMade    | 1         |
       | details_deliveryDetailCode | RECRN001C |
       | details_responseStatus     | OK        |
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "FAIL_IndirizzoInesistenteAR" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR"
 
@@ -130,7 +135,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                 |
@@ -154,7 +161,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                  |
@@ -231,6 +240,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore con category: OCR_VALIDATION, flowThrow: "DEMAT_VALIDATION" per la sequence: "Via@OK_AR_OCR_FAIL" e pcRetry: "0"
 
@@ -247,6 +257,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_PENDING_WITH_OCR_ENABLED"
     And si verifica che la risposta tracking per la sequence "OK_AR_OCR_PENDING_WITH_OCR_ENABLED" contenga tutti gli elementi attesi e che sia strutturalmente valida
 
@@ -263,6 +274,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
@@ -285,6 +297,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
       | sequence                      | physicalAddress                   |
@@ -329,6 +342,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
@@ -353,6 +367,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
@@ -377,6 +392,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_BLOCKED"
     And si verifica che la risposta tracking per la sequence "OK_AR_BLOCKED" contenga tutti gli elementi attesi e che sia strutturalmente valida
 
@@ -393,6 +409,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "<pcRetry>"
@@ -420,6 +437,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
@@ -443,6 +461,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_RIR_NO_DEMAT"
     And si verifica che la risposta tracking per la sequence "OK_RIR_NO_DEMAT" contenga tutti gli elementi attesi e che sia strutturalmente valida
 
@@ -479,5 +498,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECRN002A |
       | details_sentAttemptMade    | 0         |
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "FAIL-WO_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
 
