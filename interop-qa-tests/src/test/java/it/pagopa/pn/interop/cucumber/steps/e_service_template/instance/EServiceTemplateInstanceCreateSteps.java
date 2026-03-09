@@ -248,9 +248,12 @@ public class EServiceTemplateInstanceCreateSteps {
 
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
 
+        String parsedSuffix = this.parseSuffix(suffix);
         String eServiceCreatedName = pollingService.makePolling(
                 () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId),
-                res -> nonNull(res.getBody()) && res.getBody().getName().endsWith(this.parseSuffix(suffix)),
+                res -> nonNull(res.getBody()) && res.getBody().getName().endsWith(
+                        parsedSuffix == null ? "" : parsedSuffix
+                ),
                 res -> "Il suffisso dell'istanza non è stato aggiornato correttamente: atteso suffisso '%s', ma il nome completo ottenuto è '%s'".formatted(suffix, res.getBody().getName())
         ).getBody().getName();
 
