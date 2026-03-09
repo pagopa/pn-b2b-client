@@ -323,7 +323,7 @@ public class EServiceTemplateInstanceCreateSteps {
     private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
         String parsedSuffix = this.parseSuffix(suffix);
         return templateEServiceName + (
-            parsedSuffix == null || parsedSuffix.isEmpty() ? "" : " - " + parsedSuffix.trim()
+            parsedSuffix == null || parsedSuffix.trim().isEmpty() ? "" : " - " + parsedSuffix.trim()
         );
     }
 }
