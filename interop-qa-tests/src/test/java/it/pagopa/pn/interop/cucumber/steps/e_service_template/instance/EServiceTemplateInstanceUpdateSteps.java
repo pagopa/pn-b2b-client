@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
+import static it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceUtility.parseSuffix;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.assertj.core.api.Assertions.*;
@@ -82,16 +83,17 @@ public class EServiceTemplateInstanceUpdateSteps {
 
     @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato {eServiceDescriptorState} con {string}")
     public void editEServiceInstanceInstanceLabelField(EServiceDescriptorState eServiceState, String instanceLabel) {
+        String parsedSuffix = parseSuffix(instanceLabel);
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         switch (eServiceState) {
             case DRAFT:
                 lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
-                        .instanceLabel(instanceLabel);
+                        .instanceLabel(parsedSuffix);
                 editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
                 break;
             case PUBLISHED:
                 EServiceInstanceLabelUpdateSeed seed = new EServiceInstanceLabelUpdateSeed()
-                        .instanceLabel(instanceLabel);
+                        .instanceLabel(parsedSuffix);
                 editEServiceInstanceInstanceLabel(eServiceId, seed);
                 break;
             default:

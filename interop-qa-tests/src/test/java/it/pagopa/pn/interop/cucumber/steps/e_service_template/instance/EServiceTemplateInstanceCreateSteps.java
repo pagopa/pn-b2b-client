@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 import java.util.UUID;
 
+import static it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceUtility.parseSuffix;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -84,7 +85,7 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
-        instanceLabel = this.parseSuffix(suffix);
+        instanceLabel = parseSuffix(suffix);
         InstanceEServiceSeed seed = new InstanceEServiceSeed()
             .isClientAccessDelegable(true)
             .isConsumerDelegable(true)
@@ -248,16 +249,15 @@ public class EServiceTemplateInstanceCreateSteps {
 
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
 
-        String parsedSuffix = this.parseSuffix(suffix);
+        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
+
         String eServiceCreatedName = pollingService.makePolling(
                 () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId),
-                res -> nonNull(res.getBody()) && res.getBody().getName().endsWith(
-                        parsedSuffix == null ? "" : parsedSuffix
-                ),
+                res -> nonNull(res.getBody()) && res.getBody().getName().equals(expectedEServiceInstanceName),
                 res -> "Il suffisso dell'istanza non è stato aggiornato correttamente: atteso suffisso '%s', ma il nome completo ottenuto è '%s'".formatted(suffix, res.getBody().getName())
         ).getBody().getName();
 
-        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
+
 
         Assertions.assertThat(eServiceCreatedName)
             .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
@@ -327,20 +327,8 @@ public class EServiceTemplateInstanceCreateSteps {
             ResponseEntity::getStatusCode);
     }
 
-    private String parseSuffix(String suffix) {
-        String instanceLabel;
-        if (suffix == null || suffix.equals("%null")) {
-            instanceLabel = null;
-        } else if (suffix.equals("%space")) {
-            instanceLabel = " ";
-        } else {
-            instanceLabel = suffix;
-        }
-        return instanceLabel;
-    }
-
     private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
-        String parsedSuffix = this.parseSuffix(suffix);
+        String parsedSuffix = parseSuffix(suffix);
         return templateEServiceName + (
             parsedSuffix == null || parsedSuffix.trim().isEmpty() ? "" : " - " + parsedSuffix.trim()
         );
