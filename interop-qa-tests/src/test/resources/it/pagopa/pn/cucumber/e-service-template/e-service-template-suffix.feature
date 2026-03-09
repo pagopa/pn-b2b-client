@@ -143,6 +143,7 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso1" a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso2"
     Then si ottiene response status code 400
 
