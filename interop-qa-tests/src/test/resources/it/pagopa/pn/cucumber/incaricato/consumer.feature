@@ -444,7 +444,6 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-#    And l'utente è un "admin" dell'ente delegante
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" dell'ente delegato
     And il delegato ha già creato 1 client "CONSUMER"
@@ -686,7 +685,7 @@ Feature: Test API Availability in Use of E-Service
       And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
       And l'utente è un "admin" dell'ente delegante
       When l'ente delegante con ruolo "admin" revoca la delega in fruizione
-      And il delegato controlla che la finalità sia stata archiviata
+      And il delegante controlla che la finalità sia stata archiviata
 
   @happy-path @deleghe1
   Scenario Outline: [TC_INCARICATO_77] Richiamare l’API di visualizzazione finalità precedentemente creata da parte del delegante, a seguito di revoca della delega - lato delegante
@@ -735,7 +734,7 @@ Feature: Test API Availability in Use of E-Service
     #lato delegante
     And il delegante controlla che la richiesta di fruizione sia stata archiviata
     #lato delegato
-    And il delegato controlla che la richiesta di fruizione sia stata archiviata
+    And il delegante controlla che la richiesta di fruizione sia stata archiviata
 
   @happy-path @deleghe2
   Scenario Outline: [TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante
