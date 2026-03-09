@@ -350,16 +350,9 @@ Feature: Test API of e-service template suffix
   Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_3] Verifica che sia possibile recuperare le istanze e-service template in DRAFT in delega dal delegato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
-    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
-    And l'utente accetta la delega
-    And si ottiene response status code 200
-    When l'utente è un "admin" di "PA2"
-    And l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
+    And l'ente "PA1" ha una delega attiva verso l'ente "PA2" per l'istanza dell'e-service template
+    When l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
 
   Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_4] Verifica che sia possibile recuperare le istanze e-service template in PUBLISHED in delega dal delegato
