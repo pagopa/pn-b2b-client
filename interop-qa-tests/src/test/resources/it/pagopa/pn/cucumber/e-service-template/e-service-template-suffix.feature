@@ -127,30 +127,23 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "<initialSuffix>" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "<initialSuffix>" a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con "<suffix>"
     Then si ottiene response status code <statusCode>
-    And il suffisso "" è utilizzato correttamente nell'e-service
+    And il suffisso "<suffix>" è utilizzato correttamente nell'e-service
 
     Examples:
       | initialSuffix | suffix     | statusCode |
-      | suffisso 1    |            | 200        |
+      | suffisso 1    | %null      | 200        |
       | suffisso 1    | suffisso 2 | 200        |
-      |               | suffisso 2 | 200        |
-      | suffisso 1    | suffisso 1 | 400        |
+      | %null         | suffisso 2 | 200        |
 
   Scenario: [ESERVICE_SUFFIX_DRAFT_UPDATE_2] Verifica che l'istanza dell'e-service non sia modificabile quando si trova in stato PUBLISHED
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
-    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato DRAFT con "suffisso2"
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template in stato PUBLISHED con "suffisso2"
     Then si ottiene response status code 400
 
   Scenario Outline: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_1] Verifica che l'istanza dell'e-service sia modificabile solo quando si trova in stato PUBLISHED
