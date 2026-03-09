@@ -3,12 +3,12 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
-import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
@@ -52,70 +52,10 @@ public class CatalogCommonSteps {
     @Given("{string} ha già creato un e-service in stato {string}")
     public void createEservice(String tenantType, String descriptorState) {
         if(descriptorState.equals(EServiceDescriptorState.ARCHIVED.getValue())) {
-            // creazione e pubblicazione e-service
-            createEServiceWithDescriptorInState(tenantType, "PUBLISHED");
-            UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-            UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-
-            // creazione e archiviazione di una richiesta di fruizione
-            dataPreparationService.createAgreementWithGivenState(
-                    AgreementState.fromValue("ARCHIVED"),
-                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                    sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-                    null,
-                    null);
-
-            // sospensione dell'unico descriptor
-            IEServiceClient eServiceClient = clientTokenConfigurator.getEServiceClient();
-            eServiceClient.suspendDescriptor(eserviceId, descriptorId);
-
-            // polling su stato ARCHIVED del descriptor
-            EServiceDescriptorState descriptorStateEn = EServiceDescriptorState.valueOf(descriptorState);
-            PollingService pollingService = sharedStepsContext.getPollingService();
-            IProducerClient producerClient = clientTokenConfigurator.getProducerClient();
-            pollingService.makePolling(
-                    () -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId),
-                    res -> res.getState() == descriptorStateEn,
-                    "Non è stato possibile recuperare un descriptor in stato ARCHIVED"
-            );
-        } else {
-            createEServiceWithDescriptorInState(tenantType, descriptorState);
-        }
-    }
-
-    // TODO seconda versione dello step precedente a seguito di suggerimento di https://pagopaspa.slack.com/archives/C069AP16WG7/p1772813454835609?thread_ts=1772711595.778549&cid=C069AP16WG7 . Fare ordine appena possibile.
-    @Given("{string} ha già creato un e-service in stato {string} 2")
-    public void createEservice2(String tenantType, String descriptorState) {
-        if(descriptorState.equals(EServiceDescriptorState.ARCHIVED.getValue())) {
-            // creazione e pubblicazione e-service
-            createEServiceWithDescriptorInState(tenantType, "PUBLISHED");
-            UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-            UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-
-            // creazione agreement
-            UUID agreementId = dataPreparationService.createAgreementWithGivenState(
-                    AgreementState.fromValue("ACTIVE"),
-                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                    sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-                    null,
-                    null);
-
-            // sospensione dell'unico descriptor
-            IEServiceClient eServiceClient = clientTokenConfigurator.getEServiceClient();
-            eServiceClient.suspendDescriptor(eserviceId, descriptorId);
-
-            // archiviazione agreement
-            dataPreparationService.archiveAgreement(agreementId);
-
-            // polling su stato ARCHIVED del descriptor
-            EServiceDescriptorState descriptorStateEn = EServiceDescriptorState.valueOf(descriptorState);
-            PollingService pollingService = sharedStepsContext.getPollingService();
-            IProducerClient producerClient = clientTokenConfigurator.getProducerClient();
-            pollingService.makePolling(
-                    () -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId),
-                    res -> res.getState() == descriptorStateEn,
-                    "Non è stato possibile recuperare un descriptor in stato ARCHIVED"
-            );
+            /* NOTE 09/03/2026: il passaggio dell'e-service (non di un suo descriptor, dell'intero e-service)
+            * in stato ARCHIVED non è al momento supportato (rif. https://pagopaspa.slack.com/archives/C06D24MANNN/p1772816415479329).
+            * Quando sarà supportato, si prevede di sostituire il lancio dell'eccezione con l'implementazione effettiva.  */
+            throw new UnsupportedOperationException("L'archiviazione di un e-service nella sua interezza non è al momento supportata dalla piattaforma Interop");
         } else {
             createEServiceWithDescriptorInState(tenantType, descriptorState);
         }
