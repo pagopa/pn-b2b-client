@@ -1,8 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,18 +8,10 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceDelegationPatchRequest;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceDescriptionPatchRequest;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceInterfaceUploadRequest;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServiceNamePatchRequest;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient.EServicePatchRequest;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient.*;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -34,6 +23,12 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchO
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.assertj.core.api.Assertions;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -41,10 +36,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.RandomUtils;
-import org.assertj.core.api.Assertions;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final SharedStepsContext sharedStepsContext;
@@ -291,10 +285,10 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceSubset() {
-        UUID uuid = UUID.randomUUID();
+        String id = RandomStringUtils.insecure().nextAlphanumeric(5);
         EServicePatchRequest request = EServicePatchRequest.builder()
-            .name("some patched name - " + uuid)
-            .description("some patched description - " + uuid)
+            .name("some patched name - " + id)
+            .description("some patched description - " + id)
             .technology(EServiceTechnology.REST)
             .build();
         eServicePatchAssistant.patchResource(request);
@@ -360,7 +354,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service")
     public void patchEServiceName() {
         EServiceNamePatchRequest request = EServiceNamePatchRequest.builder()
-                .name("patched name - " + UUID.randomUUID())
+                .name("patched name - " + RandomStringUtils.insecure().nextAlphanumeric(5))
                 .build();
         eServiceNamePatchAssistant.patchResource(request);
     }
@@ -368,7 +362,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare la modifica parziale del nome dell'e-service con un token non valido")
     public void patchEServiceNameWithNotValidToken() {
         EServiceNamePatchRequest request = EServiceNamePatchRequest.builder()
-                .name("patched name - " + UUID.randomUUID())
+                .name("patched name - " + RandomStringUtils.insecure().nextAlphanumeric(5))
                 .build();
         eServiceNamePatchAssistant.patchResourceWithInvalidToken(request);
     }
