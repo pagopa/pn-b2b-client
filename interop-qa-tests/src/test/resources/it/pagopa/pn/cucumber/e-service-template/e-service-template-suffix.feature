@@ -344,19 +344,15 @@ Feature: Test API of e-service template suffix
       | DRAFT     | PA1       |
       | PUBLISHED | PA1       |
 
-  Scenario Outline: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_8] Verifica non sia possibile accedere ad un e-service template in stato DRAFT appartenente ad un tenant differente
+  # DEV. NOTE 10/03/2026:
+  Scenario Outline: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_8] Verifica non sia possibile accedere alle istanze di un e-service template indicando un id non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
-    And si ottiene response status code 200
-    And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
     And l'utente recupera le proprie istanze e-service template create dall'e-service template "<eServiceTemplateId>"
-    Then si ottiene response status code 404
+    Then si ottiene response status code <statusCode>
 
     Examples:
-      | eServiceTemplateId |
-      | %null              |
-      | %random            |
+      | eServiceTemplateId | statusCode |
+      | %null              | 400        |
+      | %random            | 404        |
