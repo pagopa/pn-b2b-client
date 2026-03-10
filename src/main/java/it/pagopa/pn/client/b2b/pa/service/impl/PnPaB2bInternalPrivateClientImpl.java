@@ -37,7 +37,8 @@ public class PnPaB2bInternalPrivateClientImpl implements IPnPaB2bPrivateClient {
 
     public PnPaB2bInternalPrivateClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.internal.delivery-base-url}") String deliveryBasePath,
+            //@Value("${pn.internal.delivery-base-url}") String deliveryBasePath,
+            @Value("${pn.delivery.base-url}") String deliveryBasePath,
             @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath) {
 
         this.groups = Collections.emptyList();

@@ -110,7 +110,8 @@ public class RaddAltSteps {
                 recipientInternalId,
                 null
         );
-        System.out.println("Number of pages: " + notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
+        System.out.println("***** Number of pages: " + notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
+        log.info("***** Number of pages: " + notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
         Assertions.assertNotNull(notificationAttachmentDownloadMetadataResponse);
         Assertions.assertNotNull(notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
         Assertions.assertEquals(
@@ -136,7 +137,8 @@ public class RaddAltSteps {
         String recipientInternalId = externalClient.getInternalIdFromTaxId("PF", fullSentNotification.getRecipients().get(0).getTaxId());
         legalFactDownloadMetadataWithContentTypeResponse = internalPrivateClient.getLegalFactByIdPrivate(recipientInternalId, iun, legalFactId, null, null, null);
 
-        System.out.println("Number of pages: " + legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
+        System.out.println("***** Number of pages: " + legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
+        log.info("***** Number of pages: " + legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
         Assertions.assertNotNull(legalFactDownloadMetadataWithContentTypeResponse);
         Assertions.assertNotNull(legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
         Assertions.assertEquals(
@@ -867,7 +869,8 @@ public class RaddAltSteps {
 
         Assertions.assertNotNull(download);
         String pdfText = extractTextFromPdf(download);
-        System.out.println(pdfText);
+        System.out.println("***** Frontespizio ***** "+pdfText);
+        log.info("***** Frontespizio ***** "+pdfText+" **********");
         if (numberOfPage.equals("0")) {
             Assertions.assertFalse(pdfText.contains("Totale pagine:"));
         } else {

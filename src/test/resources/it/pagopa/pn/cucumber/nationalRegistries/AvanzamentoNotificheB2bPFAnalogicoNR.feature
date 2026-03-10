@@ -169,3 +169,20 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
+
+  @workflowAnalogico @mockNR
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_1]  Invio notifica con validazione sulla deduplica al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | XXX         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@XXX |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE"
+
+
