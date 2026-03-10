@@ -1,7 +1,7 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
-import it.pagopa.interop.authorization.service.DataPreparationService;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.DataPreparationService;
 import it.pagopa.interop.authorization.service.M2MTokenService;
 import it.pagopa.interop.authorization.service.factory.InteropTokenFactory;
 import it.pagopa.interop.authorization.service.factory.TracingTokenFactory;
@@ -13,6 +13,7 @@ import it.pagopa.interop.authorization.service.utils.DpopProofService;
 import it.pagopa.interop.authorization.service.utils.voucher.DPoPVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -109,11 +110,11 @@ public class JwtTokenServiceConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DPoPTokenService m2mDpopTokenService(
             @Qualifier("interopSelfcareIdentityService") IdentityService identityService,
-            DataPreparationService dataPreparationService,
             DPoPVoucherService dPopVoucherService,
-            DpopProofService dpopProofService
+            DpopProofService dpopProofService,
+            HttpCallExecutor httpCallExecutor
     ) {
-        return new DPoPTokenService(identityService, dataPreparationService, dPopVoucherService, dpopProofService);
+        return new DPoPTokenService(identityService, dPopVoucherService, dpopProofService, httpCallExecutor);
     }
 
 }

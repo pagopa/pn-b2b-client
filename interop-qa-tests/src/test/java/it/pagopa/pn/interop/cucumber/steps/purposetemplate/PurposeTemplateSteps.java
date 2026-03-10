@@ -269,6 +269,13 @@ public class PurposeTemplateSteps {
         getPurposeTemplateById(ptId, exists);
     }
 
+    @When("si effettua la get del purpose template")
+    public void getPurposeTemplate() {
+        boolean exists = createdPurposeTemplate.getId() != null;
+        UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
+    }
+
     @When("si effettua la get by creator di tutti i purpose template in stato {string}")
     public void getAllPurposeTemplatesByCreator(String status) {
         List<PurposeTemplateState> state;
@@ -1197,9 +1204,7 @@ public class PurposeTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")
     public void patchEService(String tenant, M2MRole m2mRole) {
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
-        String readToken = clientTokenConfigurator.getLastToken();
-        String patchToken = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        patchAssistant.patchResource(request, readToken, patchToken);
+        patchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del purpose template specificando un sottoinsieme di informazioni")

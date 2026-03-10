@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.client;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IM2MClientsClient;
-import it.pagopa.interop.agreement.service.impl.M2MClientsClientImpl;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
@@ -13,7 +12,6 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.client.utils.ClientResolver;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
-import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
@@ -39,7 +37,7 @@ public class ClientSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.clientsApis = clientTokenConfigurator.getM2MClientsClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        ((M2MClientsClientImpl) clientsApis).setHttpCallExecutor(httpCallExecutor);
+        clientsApis.setHttpCallExecutor(httpCallExecutor);
         clientResolver = new ClientResolver(sharedStepsContext);
     }
 

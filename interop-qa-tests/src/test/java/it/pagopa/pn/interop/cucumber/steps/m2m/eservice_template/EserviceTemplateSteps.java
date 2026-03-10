@@ -183,8 +183,7 @@ public class EserviceTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service template")
     public void patchEService(String tenant, M2MRole m2mRole) {
         EServiceTemplatePatchRequest request = this.patchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        patchAssistant.patchResource(request, token);
+        patchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service template specificando un sottoinsieme di informazioni")
@@ -233,8 +232,7 @@ public class EserviceTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template")
     public void patchEServiceTemplateVersion(String tenant, M2MRole m2mRole) {
         EServiceTemplateVersionPatchRequest request = this.versionPatchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        versionPatchAssistant.patchResource(request, token);
+        versionPatchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template specificando un sottoinsieme di informazioni")

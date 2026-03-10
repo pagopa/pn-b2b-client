@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Primary
 public class M2MClientsClientImpl extends AbstractClient implements IM2MClientsClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;

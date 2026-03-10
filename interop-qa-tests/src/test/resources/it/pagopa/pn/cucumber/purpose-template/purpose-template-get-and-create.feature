@@ -101,8 +101,14 @@ Feature: finalità agevolata, purpose template GET
       | admin    | 200        |
       | api      | 200        |
       | support  | 200        |
-      # gli operatori security non possono fare la getById dei purposeTemplate in DRAFT
-      | security | 403        |
+
+  @purposeTemplate @purposeTemplateGet
+  Scenario: [PURPOSE_TEMPLATE_GET_BY_ID_B] Recupero di una finalità agevolata (OK)
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    When l'utente è un "security" di "PA1"
+    And si effettua la get del purpose template
+    Then si ottiene lo status code 404
 
   #9(KO)
   @purposeTemplate @purposeTemplateGet

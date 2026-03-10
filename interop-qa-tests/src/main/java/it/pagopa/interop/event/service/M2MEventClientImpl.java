@@ -7,6 +7,7 @@ import it.pagopa.interop.event.domain.M2MEvents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EventsApi;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Primary
 public class M2MEventClientImpl implements IM2MEventClient {
     private final EventsApi eventsApi;
     private final RestTemplate restTemplate;

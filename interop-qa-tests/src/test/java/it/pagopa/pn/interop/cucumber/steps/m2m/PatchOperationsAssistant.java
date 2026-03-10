@@ -1,18 +1,24 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import it.pagopa.interop.authorization.domain.Auth;
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE_ID> {
+
     private final ResourceMapper<PATCH_REQUEST, RESOURCE> resourceMapper;
     private final IHttpExecutor httpExecutor;
     private final DelayService delayService;
@@ -20,58 +26,45 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     private final ClientTokenConfigurator tokenConfigurator;
     private final String resourceSimpleName;
 
+    /* DEV. NOTE 25 02 2026: in controtendenza rispetto alla best practice, si opta per la tecnica field injection
+     * invece che di constructor injection, per evitare di dover aggiornare tutte le classi concrete, nell'ottica
+     * che questo sistema sarà migliorato con refactor futuri */
+    @Autowired
+    private SharedStepsContext sharedStepsContext;
+
+    @Autowired
+    private ApiProfile apiProfile;
+
+    @Autowired
+    private M2MAuthSteps m2mAuthSteps;
+
     /* di solito associato a step del tipo
      * "l'utente tenta di effettuare la modifica parziale di ..." */
     public void patchResource() {
         patchResource(this.buildDefaultPatchRequest());
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica parziale di ..." */
-    public void patchResource(String patchToken) {
-        patchResource(this.buildDefaultPatchRequest(), patchToken);
-    }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica parziale di ..." */
     public void patchResource(PATCH_REQUEST patchRequest) {
-        String actualToken = tokenConfigurator.getLastToken();
-        this.patchResource(patchRequest, actualToken, actualToken);
+        this.patchResource(patchRequest, null, null);
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica di ... con token non valido" */
-    public void patchResourceWithInvalidToken() {
-        this.patchResource(this.buildDefaultPatchRequest(), M2MAuthSteps.INVALID_AUTH_TOKEN);
+    public void patchResource(String patchTenant, M2MRole m2mRole) {
+        this.patchResource(this.buildDefaultPatchRequest(), patchTenant, m2mRole);
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica di ... con token non valido" */
-    public void patchResourceWithInvalidToken(PATCH_REQUEST patchRequest) {
-        this.patchResource(patchRequest, M2MAuthSteps.INVALID_AUTH_TOKEN);
+    public void patchResource(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
+        Runnable authProcedure = () ->  {
+            if (patchTenant != null && role != null) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
+        };
+        this.patchResource(patchRequest, authProcedure);
     }
 
-    /* di solito associato a step del tipo
-     * "l'utente tenta di effettuare la modifica parziale di ..." */
-    public void patchResource(PATCH_REQUEST patchRequest, String patchToken) {
-        String actualToken = tokenConfigurator.getLastToken();
-        this.patchResource(patchRequest, actualToken, patchToken);
-    }
-
-    /**
-     * Perform a PATCH operation and set the context for future checks.
-     * To do this, a GET operation is first performed on the current version of the
-     * resource.
-     * @param patchRequest parameters needed to perform the PATCH request
-     * @param getToken auth token used in GET operation
-     * @param patchToken auth token used in PATCH operation
-     */
-    public void patchResource(PATCH_REQUEST patchRequest, String getToken, String patchToken) {
-        String previousAuthToken = tokenConfigurator.getLastToken();
+    public void patchResource(PATCH_REQUEST patchRequest, Runnable patchAuth) {
+        String previousBearerToken = tokenConfigurator.getLastToken();
+        Auth previuousAuth = sharedStepsContext.getAuth();
 
         RESOURCE_ID resourceId = this.getResourceId();
-
-        tokenConfigurator.setBearerToken(getToken);
         RESOURCE originalResource = this.getResource(resourceId);
         resourceContext.setOriginalResource(originalResource);
 
@@ -79,11 +72,22 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         this.resourceMapper.copyPatchRequestToResource(patchRequest, expectedPatchedResource);
         resourceContext.setExpectedResource(expectedPatchedResource);
 
-        tokenConfigurator.setBearerToken(patchToken);
+        // Auth m2m
+        patchAuth.run();
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
         this.resourceContext.setReturnedResource((RESOURCE) httpExecutor.getResponse());
 
-        tokenConfigurator.setBearerToken(previousAuthToken);
+        tokenConfigurator.setBearerToken(previousBearerToken);
+        tokenConfigurator.setAuth(previuousAuth);
+        sharedStepsContext.setAuth(previuousAuth);
+    }
+
+    public void patchResourceWithInvalidToken(PATCH_REQUEST patchRequest) {
+        this.patchResource(patchRequest, () -> m2mAuthSteps.setExpiredM2MAuth());
+    }
+
+    public void patchResourceWithInvalidToken() {
+        this.patchResource(this.buildDefaultPatchRequest(), () -> m2mAuthSteps.setExpiredM2MAuth());
     }
 
     /* di solito associato a step del tipo
@@ -112,9 +116,9 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     public void checkPatchOperationResult() {
         delayService.delay();
         assertImpl(
-            resourceContext.getReturnedResource(),
-            resourceContext.getExpectedResource(),
-            "Verifica che il risultato restituito dall'API PATCH su '%s' sia coerente con le modifiche effettuate".formatted(this.resourceSimpleName));
+                resourceContext.getReturnedResource(),
+                resourceContext.getExpectedResource(),
+                "Verifica che il risultato restituito dall'API PATCH su '%s' sia coerente con le modifiche effettuate".formatted(this.resourceSimpleName));
     }
 
     /* di solito associato a step del tipo
@@ -124,9 +128,9 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertImpl(
-            actualPatchedResource,
-            resourceContext.getExpectedResource(),
-            "Verifica che le modifiche apportate a '%s' con l'API PATCH siano state apportate correttamente".formatted(this.resourceSimpleName));
+                actualPatchedResource,
+                resourceContext.getExpectedResource(),
+                "Verifica che le modifiche apportate a '%s' con l'API PATCH siano state apportate correttamente".formatted(this.resourceSimpleName));
     }
 
     protected void assertImpl(RESOURCE actual, RESOURCE expected, String assertDescription) {
@@ -140,8 +144,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
         RESOURCE_ID resourceId = this.getResourceId();
         RESOURCE actualPatchedResource = this.getResource(resourceId);
         assertThat(actualPatchedResource)
-            .as("Verifica che non siano state apportate modifiche a '%s'", this.resourceSimpleName)
-            .isEqualTo(resourceContext.getOriginalResource());
+                .as("Verifica che non siano state apportate modifiche a '%s'", this.resourceSimpleName)
+                .isEqualTo(resourceContext.getOriginalResource());
     }
 
     protected abstract RESOURCE_ID getResourceId();

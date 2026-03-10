@@ -6,7 +6,6 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
@@ -60,7 +59,7 @@ public class TenantRequesterCertifiedAttributesSteps {
     public void verifyStatusCodeAndAttributeList(String tenantType) {
         Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         UUID tenantId = identityService.getOrganizationId(tenantType);
-        Assertions.assertTrue(((RequesterCertifiedAttributes) httpCallExecutor.getResponse()).getResults()
+        Assertions.assertTrue(results
                         .stream().anyMatch(attr -> attr.getAttributeId().equals(sharedStepsContext.getAttributeCommonContext().getAttributeId())
                         && attr.getTenantId().equals(tenantId)),
                 "L'attributo assegnato non è presente nella lista degli attributi certificati");

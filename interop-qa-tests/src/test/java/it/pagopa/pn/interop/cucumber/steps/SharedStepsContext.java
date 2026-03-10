@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -44,6 +45,7 @@ public class SharedStepsContext {
     private String tenantType;
     private Role role;
     private String userToken;
+    private Auth auth;
     private UUID agreementId;
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;

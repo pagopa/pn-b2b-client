@@ -4,13 +4,14 @@ import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ToString
@@ -66,6 +67,17 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
             .findAny()
             .map(UUID::fromString)
             .orElse(null);
+    }
+
+    @Override
+    public String getTenant(UUID organizationId) {
+        for(Tenant tenant : tenantList) {
+            if(tenant.getOrganizationId().containsValue(organizationId.toString())) {
+                return tenant.getName();
+            }
+        }
+
+        throw new IllegalArgumentException("Organization id not found");
     }
 
     @Override

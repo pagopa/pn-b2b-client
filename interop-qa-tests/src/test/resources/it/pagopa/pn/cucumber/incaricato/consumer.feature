@@ -50,8 +50,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
-    And l'utente è un "<ruolo>" dell'ente delegante
-    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'ente delegante con ruolo "<ruolo>" ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
 
     @happy-path

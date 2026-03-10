@@ -16,12 +16,14 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.UpdateDraftP
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Primary
 public class M2MPurposeClientImpl implements IM2MPurposeClient {
     private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
