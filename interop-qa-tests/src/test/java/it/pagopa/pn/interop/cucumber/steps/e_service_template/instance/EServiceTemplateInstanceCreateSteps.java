@@ -1,9 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
-import static java.util.Objects.nonNull;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,25 +7,26 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstance;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Assertions;
 import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+import java.util.UUID;
+import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 /** Cucumber steps involving quotas of E-service templates */
 @Data
+@Slf4j(topic = "EServiceTemplateInstanceCreateSteps")
 public class EServiceTemplateInstanceCreateSteps {
     private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -39,8 +36,9 @@ public class EServiceTemplateInstanceCreateSteps {
     private final PollingService pollingService;
     private final EasyRandom easyRandom;
     private final IEServiceClient eServiceClient;
-
+    private final EServiceTemplateInstanceUtility eServiceTemplateInstanceUtility;
     private InstanceEServiceSeed lastEServiceCreatedFromTemplateSeed;
+    private String instanceLabel;
 
     public EServiceTemplateInstanceCreateSteps(BFFDataPreparationService dataPreparationService,
         ClientTokenConfigurator clientTokenConfigurator,
@@ -54,6 +52,7 @@ public class EServiceTemplateInstanceCreateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.eServiceTemplateInstanceUtility = new EServiceTemplateInstanceUtility(this.sharedStepsContext);
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie")
@@ -63,7 +62,34 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpec() {
-        InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class);
+        instanceLabel = RandomStringUtils.insecure().nextAlphanumeric(12);
+        InstanceEServiceSeed seed = new InstanceEServiceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(false)
+            .instanceLabel(instanceLabel);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
+    }
+
+    @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando specifiche non permesse")
+    public void createEServiceFromTemplateWrongSpec() {
+        instanceLabel = RandomStringUtils.insecure().nextAlphanumeric(12);
+        InstanceEServiceSeed seed = new InstanceEServiceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(false)
+            .isSignalHubEnabled(false)
+            .instanceLabel(instanceLabel);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
+    }
+
+    @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
+    public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
+        instanceLabel = eServiceTemplateInstanceUtility.parseSuffix(suffix);
+        InstanceEServiceSeed seed = new InstanceEServiceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(false)
+            .instanceLabel(instanceLabel);
         createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
@@ -89,18 +115,28 @@ public class EServiceTemplateInstanceCreateSteps {
     @Given("l'utente effettua la creazione di un nuovo e-service in stato {eServiceDescriptorState} a partire dal template con successo indicando solo le specifiche strettamente necessarie")
     public void createEServiceFromTemplateMinimalSpecSuccessfully(EServiceDescriptorState expectedState) {
         createEServiceFromTemplateMinimalSpec();
+        checkEServiceAndMutateState(expectedState);
+    }
+
+    @Given("l'utente effettua la creazione di un nuovo e-service in stato {eServiceDescriptorState} con suffisso {string} a partire dal template con successo indicando tutte le specifiche")
+    public void createEServiceFromTemplateWithSuffixSuccessfully(EServiceDescriptorState expectedState, String suffix) {
+        createEServiceFromTemplateFullSpecWithSuffix(suffix);
+        checkEServiceAndMutateState(expectedState);
+    }
+
+    private void checkEServiceAndMutateState(EServiceDescriptorState expectedState) {
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
         UUID lastEServiceIdCreatedFromTemplate = sharedStepsContext.getEServiceTemplateStepContext()
-            .getLastEServiceIdCreatedFromTemplate();
+                .getLastEServiceIdCreatedFromTemplate();
         UUID descriptorId = getDescriptorId(
-            sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate(),
-            EServiceDescriptorState.DRAFT);
+                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceNameCreatedFromTemplate(),
+                EServiceDescriptorState.DRAFT);
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(descriptorId);
         this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
-            lastEServiceIdCreatedFromTemplate,
-            descriptorId,
-            expectedState,
-            false);
+                lastEServiceIdCreatedFromTemplate,
+                descriptorId,
+                expectedState,
+                false);
     }
 
     private UUID getDescriptorId(String eServiceName, EServiceDescriptorState state) {
@@ -175,7 +211,8 @@ public class EServiceTemplateInstanceCreateSteps {
                         .isEqualTo(EServiceDescriptorState.DRAFT);
                 }
 
-                String instanceDefaultName = eServiceSourceTemplate.getEserviceTemplate().getName();
+                String templateName = eServiceSourceTemplate.getEserviceTemplate().getName();
+                String instanceDefaultName = expectedEServiceInstanceName(templateName, instanceLabel);
                 softly.assertThat(eServiceCreatedFromTemplate)
                     .get()
                     .extracting(EServiceTemplateInstance::getName)
@@ -200,6 +237,54 @@ public class EServiceTemplateInstanceCreateSteps {
         } catch (IllegalArgumentException e) {
             fail("Il nuovo e-service non è stato creato correttamente");
         }
+    }
+
+    @Then("il suffisso {string} è utilizzato correttamente nell'e-service")
+    public void checkEServiceName(String suffix) {
+        String templateEServiceName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
+        ).getBody().getEserviceTemplate().getName();
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+
+        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
+
+        String eServiceCreatedName = pollingService.makePolling(
+                () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId),
+                res -> nonNull(res.getBody()) && res.getBody().getName().equals(expectedEServiceInstanceName),
+                res -> "Il suffisso dell'istanza non è stato aggiornato correttamente: atteso suffisso '%s', ma il nome completo ottenuto è '%s'".formatted(suffix, res.getBody().getName())
+        ).getBody().getName();
+
+
+
+        Assertions.assertThat(eServiceCreatedName)
+            .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
+            .isEqualTo(expectedEServiceInstanceName);
+    }
+
+    @Then("il nome del {string} e-service creato è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso {string}")
+    public void checkEServiceNameUpdated(String position, String suffix) {
+
+        String templateEServiceName = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId()
+        ).getBody().getEserviceTemplate().getName();
+
+        int index = switch (position.toLowerCase()) {
+            case "ultimo" -> 0;
+            case "penultimo" -> 1;
+            default -> throw new IllegalArgumentException("Invalid position: " + position);
+        };
+
+        String lastEServiceInstanceName = this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
+                sharedStepsContext.getEServiceTemplateStepContext().getEServiceCreatedFromTemplateWithIndex(index).getId()
+        ).getBody().getName();
+
+        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
+
+        Assertions.assertThat(lastEServiceInstanceName)
+                .isEqualTo(expectedEServiceInstanceName);
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
@@ -239,5 +324,12 @@ public class EServiceTemplateInstanceCreateSteps {
                 id,
                 seed),
             ResponseEntity::getStatusCode);
+    }
+
+    private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
+        String parsedSuffix = eServiceTemplateInstanceUtility.parseSuffix(suffix);
+        return templateEServiceName + (
+            parsedSuffix == null || parsedSuffix.trim().isEmpty() ? "" : " - " + parsedSuffix.trim()
+        );
     }
 }
