@@ -333,7 +333,6 @@ Feature: Test API of e-service template suffix
       | DRAFT     | PA1       |
       | PUBLISHED | PA1       |
 
-  # DEV. NOTE 10/03/2026:
   Scenario Outline: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_8] Verifica non sia possibile accedere alle istanze di un e-service template indicando un id non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
