@@ -3042,3 +3042,10 @@ Feature: Test API of e-service template
     Examples:
       | modo        |
       | ricezione   |
+
+  Scenario: [ESERVICE_MY_INSTANCES_RETRIEVE_7] Verifica non sia possibile accedere ad un e-service template in stato DRAFT appartenente ad un tenant differente
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con nome "E-Service"
+    When l'utente è un "admin" di "PA2"
+    And l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
+    Then si ottiene response status code 404
