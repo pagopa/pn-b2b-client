@@ -79,7 +79,6 @@ Feature: Test API of e-service template suffix
     Examples:
       | suffix | statusCode |
       | %null  | 200        |
-      # il trim non viene eseguito sul server per cui il nome dell'istanza non è quello aspettato
       | %space | 200        |
       | ABC    | 200        |
       | 123    | 200        |
