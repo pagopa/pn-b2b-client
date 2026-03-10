@@ -1,4 +1,4 @@
-@e-service-template
+# @e-service-template
 @e-service-template-instances-suffix
 Feature: Test API of e-service template suffix
 
@@ -164,25 +164,29 @@ Feature: Test API of e-service template suffix
       | %actual                    | PUBLISHED     | %null         | Test@ - 123  | 200        |
       | %actual                    | PUBLISHED     | suffisso1     | %null        | 200        |
       | %actual                    | PUBLISHED     | suffisso1     | suffisso2    | 200        |
-      | %actual                    | DRAFT         | %null         | %null        | 400        |
-      | %random                    | PUBLISHED     | suffisso1     | suffisso2    | 404        |
-      | %null                      | PUBLISHED     | suffisso1     | suffisso2    | 404        |
 
-  Scenario: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_2] Verifica che nella modifica di un'istanza di e-service PUBLISHED il nuovo suffisso non sia stato già utilizzato in un'altra istanza
+  Scenario Outline: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_1.2] Verifica che l'istanza dell'e-service sia modificabile solo quando si trova in stato PUBLISHED
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 2" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceState> con suffisso "<initialSuffix>" a partire dal template con successo indicando tutte le specifiche
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "<idEserviceTemplateInstance>" in stato PUBLISHED con "<suffix>"
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | idEserviceTemplateInstance | eServiceState | initialSuffix | suffix       | statusCode |
+      | %actual                    | DRAFT         | %null         | %null        | 409        |
+      | %random                    | PUBLISHED     | suffisso1     | suffisso2    | 404        |
+      | %null                      | PUBLISHED     | suffisso1     | suffisso2    | 400        |
+
+  Scenario: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_2] Verifica che nella modifica di un'istanza di e-service PUBLISHED il nuovo suffisso non sia stato già utilizzato in un'altra istanza
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso 2" a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" in stato PUBLISHED con "suffisso 1"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
 
   Scenario: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_3] Verifica che non sia possibile modificare il suffisso di un'istanza di e-service PUBLISHED appartenente ad un ente differente dal chiamante
     Given l'utente è un "admin" di "PA1"
