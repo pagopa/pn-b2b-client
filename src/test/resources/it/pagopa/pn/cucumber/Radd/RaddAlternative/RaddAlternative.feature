@@ -1823,6 +1823,73 @@ Feature: Radd Alternative
     And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
+  @raddAlt @raddAltPagineFrontespizio @raddAltPagineFrontespizioFlagOff #rif 3.2
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_9] Verifica response di Delivery e Delivery-push e campo numero di pagine valorizzato.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario CucumberSpa
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Effettuo la chiamata di download con Api privata di Delivery e verifico che la response abbia il numero di pagine valorizzato con 2
+    Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 2 pagine nella response
+
+  @raddAltPagineFrontespizioFlagOff
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_10] Verifica assenza numero totale di pagine con flag off operazione ACT
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario CucumberSpa
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+
+  @raddAltPagineFrontespizioFlagOff
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_11] Verifica assenza numero totale di pagine con flag off operazione AOR
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Signor Casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "aor"
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   Scenario: [RADD-ALT_TEST] PF -
     Given imposto lo iun di SharedSteps a "ZMRH-HWEH-HYXM-202603-D-1" e la pa a "Comune_Multi"
@@ -1836,5 +1903,8 @@ Feature: Radd Alternative
     And Si verifica per l' operazione "act" che il frontespizio abbia riportato "3" come numero esatto di pagine
 
   Scenario: [RADD-ALT_TEST2] PF -
-    Given imposto lo iun di SharedSteps a "ZMRH-HWEH-HYXM-202603-D-1" e la pa a "Comune_Multi"
-    Then Effettuo la chimata di download con Api interna privata
+    Given imposto lo iun di SharedSteps a "RZAE-RKRH-GYWJ-202603-U-1" e la pa a "Comune_Multi"
+
+
+    And Effettuo la chiamata di download con Api privata di Delivery e verifico che la response abbia il numero di pagine valorizzato con 2
+    Then Effettuo la chimata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 2 pagine nella response

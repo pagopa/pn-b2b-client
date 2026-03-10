@@ -10,9 +10,9 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.Ne
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalprivate.api.InternalOnlyApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalprivate.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bPrivateClient;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v26.LegalFactsPrivateApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.CxTypeAuthFleet;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v27.LegalFactsPrivateApi;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v27.CxTypeAuthFleet;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v27.LegalFactDownloadMetadataWithContentTypeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

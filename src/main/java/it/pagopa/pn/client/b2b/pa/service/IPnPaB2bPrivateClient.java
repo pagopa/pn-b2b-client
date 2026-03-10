@@ -2,8 +2,8 @@ package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalprivate.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.CxTypeAuthFleet;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v27.CxTypeAuthFleet;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v27.LegalFactDownloadMetadataWithContentTypeResponse;
 
 import java.util.List;
 

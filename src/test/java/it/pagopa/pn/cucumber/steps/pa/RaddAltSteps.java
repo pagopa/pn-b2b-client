@@ -7,6 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalprivate.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bPrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -14,7 +15,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v27.LegalFactDownloadMetadataWithContentTypeResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
@@ -96,13 +97,12 @@ public class RaddAltSteps {
     }
 
     //todo t frontespizio
-    @When("Effettuo la chimata di download con Api interna privata")
-    public void getInternalPrivateRespons() {
+    @When("Effettuo la chiamata di download con Api privata di Delivery e verifico che la response abbia il numero di pagine valorizzato con {int}")
+    public void getInternalPrivateDeliveryRespons(Integer numberOfPages) {
 
         String iun = sharedSteps.getNotificationIun();
         FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        String recipientInternalId = externalClient.getInternalIdFromTaxId("PG", fullSentNotification.getRecipients().get(0).getTaxId());
-
+        String recipientInternalId = externalClient.getInternalIdFromTaxId("PF", fullSentNotification.getRecipients().get(0).getTaxId());
 
         notificationAttachmentDownloadMetadataResponse = internalPrivateClient.getReceivedNotificationDocumentPrivate(
                 iun,
@@ -110,13 +110,40 @@ public class RaddAltSteps {
                 recipientInternalId,
                 null
         );
+        System.out.println("Number of pages: " + notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
+        Assertions.assertNotNull(notificationAttachmentDownloadMetadataResponse);
+        Assertions.assertNotNull(notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
+        Assertions.assertEquals(
+                numberOfPages,
+                notificationAttachmentDownloadMetadataResponse.getNumberOfPages());
+    }
 
-        String legalFactId= "PN_LEGAL_FACTS-26be2099cd074943880540199c158f46.pdf";
+    //todo t frontespizio
+    @When("Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento {string} riporti {int} pagine nella response")
+    public void getInternalPrivateDeliveryRespons(String elementCategory, Integer numberOfPages) {
 
-
+        String iun = sharedSteps.getNotificationIun();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        TimelineElementV28 timelineElement = fullSentNotification.getTimeline().stream().filter(t -> t.getCategory() != null && t.getCategory().getValue().equals(elementCategory)).findFirst().orElse(null);
+        String legalFactId = null;
+        if (timelineElement.getLegalFactsIds() != null && !timelineElement.getLegalFactsIds().isEmpty()) {
+            legalFactId = timelineElement
+                    .getLegalFactsIds()
+                    .get(0)
+                    .getKey()
+                    .replace("safestorage://", "");
+        }
+        String recipientInternalId = externalClient.getInternalIdFromTaxId("PF", fullSentNotification.getRecipients().get(0).getTaxId());
         legalFactDownloadMetadataWithContentTypeResponse = internalPrivateClient.getLegalFactByIdPrivate(recipientInternalId, iun, legalFactId, null, null, null);
 
+        System.out.println("Number of pages: " + legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
+        Assertions.assertNotNull(legalFactDownloadMetadataWithContentTypeResponse);
+        Assertions.assertNotNull(legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
+        Assertions.assertEquals(
+                numberOfPages,
+                legalFactDownloadMetadataWithContentTypeResponse.getNumberOfPages());
     }
+
 
     @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
     public void lOperatoreScansioneIlQrCodePerRecuperareGliAttiAlternative(Destinatario destinatario) {
