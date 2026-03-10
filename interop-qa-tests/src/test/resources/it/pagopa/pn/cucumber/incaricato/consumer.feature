@@ -670,7 +670,7 @@ Feature: Test API Availability in Use of E-Service
 
     # Ticket aperto https://pagopa.atlassian.net/browse/QA-9270
     @happy-path @deleghe2
-    Scenario: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
+    Scenario Outline: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
       Given l'utente è un "admin" di "GSP"
       And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
       Given l'ente delegato "PA2"
@@ -685,7 +685,13 @@ Feature: Test API Availability in Use of E-Service
       And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
       And l'utente è un "admin" dell'ente delegante
       When l'ente delegante con ruolo "admin" revoca la delega in fruizione
-      And il delegante controlla che la finalità sia stata archiviata
+      And il <subject> controlla che la finalità sia stata archiviata
+      Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | subject   | statusCode |
+      | delegato  | 403        |
+      | delegante | 200        |
 
   @happy-path @deleghe1
   Scenario Outline: [TC_INCARICATO_77] Richiamare l’API di visualizzazione finalità precedentemente creata da parte del delegante, a seguito di revoca della delega - lato delegante
@@ -732,8 +738,6 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegante
     When l'ente delegante con ruolo "admin" revoca la delega in fruizione
     #lato delegante
-    And il delegante controlla che la richiesta di fruizione sia stata archiviata
-    #lato delegato
     And il delegante controlla che la richiesta di fruizione sia stata archiviata
 
   @happy-path @deleghe2
