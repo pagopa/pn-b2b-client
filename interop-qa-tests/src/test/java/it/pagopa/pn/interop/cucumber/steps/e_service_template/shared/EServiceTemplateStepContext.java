@@ -113,7 +113,7 @@ public class EServiceTemplateStepContext {
 
     public CreatedResource getEServiceCreatedFromTemplateWithIndex(int indexFromLast) {
         if (this.eServiceCreatedFromTemplates.size() < indexFromLast) return null;
-        return this.eServiceCreatedFromTemplates.get(this.eServiceCreatedFromTemplates.size() - indexFromLast);
+        return this.eServiceCreatedFromTemplates.get(this.eServiceCreatedFromTemplates.size() - (indexFromLast + 1));
     }
 
     public int incrementLastAddedRiskAnalysisIndex() {
