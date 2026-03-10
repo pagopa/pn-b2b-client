@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
-import static it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceUtility.parseSuffix;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.assertj.core.api.Assertions.*;
@@ -53,7 +52,7 @@ public class EServiceTemplateInstanceUpdateSteps {
     private final IM2MEserviceClient m2mEServiceClient;
     private final BlobFileCreator blobService;
     private final IdentityService identityService;
-
+    private final EServiceTemplateInstanceUtility eServiceTemplateInstanceUtility;
     private UpdateEServiceTemplateInstanceSeed lastUpdateEServiceTemplateInstanceSeed;
     private String previousInterface;
 
@@ -73,6 +72,7 @@ public class EServiceTemplateInstanceUpdateSteps {
         this.blobService = blobService;
         this.identityService = sharedStepsContext.getIdentityService();
         this.m2mEServiceClient = clientTokenConfigurator.getM2meServiceClient();
+        this.eServiceTemplateInstanceUtility = new EServiceTemplateInstanceUtility(this.sharedStepsContext);
     }
 
     @When("l'utente tenta la modifica dei campi dell'istanza dell'e-service template")
@@ -88,8 +88,8 @@ public class EServiceTemplateInstanceUpdateSteps {
     @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template {string} usando l'endpoint di update per lo stato {eServiceDescriptorState} con {string}")
     @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template {string} in stato {eServiceDescriptorState} con {string}")
     public void editEServiceInstanceInstanceLabelField(String eServiceTemplateInstanceId, EServiceDescriptorState eServiceState, String instanceLabel) {
-        String parsedSuffix = parseSuffix(instanceLabel);
-        UUID eServiceId = resolveEServiceTemplateInstanceId(eServiceTemplateInstanceId);
+        String parsedSuffix = eServiceTemplateInstanceUtility.parseSuffix(instanceLabel);
+        UUID eServiceId = eServiceTemplateInstanceUtility.resolveEServiceTemplateInstanceId(eServiceTemplateInstanceId);
         switch (eServiceState) {
             case DRAFT:
                 lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()

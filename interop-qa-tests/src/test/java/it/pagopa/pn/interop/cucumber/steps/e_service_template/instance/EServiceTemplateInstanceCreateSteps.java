@@ -20,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import static it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceUtility.parseSuffix;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -38,7 +36,7 @@ public class EServiceTemplateInstanceCreateSteps {
     private final PollingService pollingService;
     private final EasyRandom easyRandom;
     private final IEServiceClient eServiceClient;
-
+    private final EServiceTemplateInstanceUtility eServiceTemplateInstanceUtility;
     private InstanceEServiceSeed lastEServiceCreatedFromTemplateSeed;
     private String instanceLabel;
 
@@ -54,6 +52,7 @@ public class EServiceTemplateInstanceCreateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.eServiceTemplateInstanceUtility = new EServiceTemplateInstanceUtility(this.sharedStepsContext);
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie")
@@ -85,7 +84,7 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @When("l'utente tenta la creazione di un nuovo e-service con suffisso {string} a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpecWithSuffix(String suffix) {
-        instanceLabel = parseSuffix(suffix);
+        instanceLabel = eServiceTemplateInstanceUtility.parseSuffix(suffix);
         InstanceEServiceSeed seed = new InstanceEServiceSeed()
             .isClientAccessDelegable(true)
             .isConsumerDelegable(true)
@@ -328,7 +327,7 @@ public class EServiceTemplateInstanceCreateSteps {
     }
 
     private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
-        String parsedSuffix = parseSuffix(suffix);
+        String parsedSuffix = eServiceTemplateInstanceUtility.parseSuffix(suffix);
         return templateEServiceName + (
             parsedSuffix == null || parsedSuffix.trim().isEmpty() ? "" : " - " + parsedSuffix.trim()
         );

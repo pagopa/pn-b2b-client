@@ -30,6 +30,7 @@ public class EServiceTemplateInstanceReadSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IEServiceClient eServiceClient;
     private List<EServiceTemplateInstance> eServiceTemplateInstances;
+    private final EServiceTemplateInstanceUtility eServiceTemplateInstanceUtility;
 
     public EServiceTemplateInstanceReadSteps(ClientTokenConfigurator clientTokenConfigurator,
                                              SharedStepsContext sharedStepsContext
@@ -38,6 +39,7 @@ public class EServiceTemplateInstanceReadSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.eServiceTemplateInstanceUtility = new EServiceTemplateInstanceUtility(sharedStepsContext);
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template")
@@ -85,7 +87,7 @@ public class EServiceTemplateInstanceReadSteps {
 
     @When("l'utente recupera le proprie istanze e-service template create dall'e-service template {string}")
     public void getMyEServiceTemplateInstances(String eServiceTemplateId) {
-        UUID templateEServiceId = resolveEServiceTemplateId(eServiceTemplateId);
+        UUID templateEServiceId = eServiceTemplateInstanceUtility.resolveEServiceTemplateId(eServiceTemplateId);
         httpCallExecutor.performCall(
                 () -> eServiceClient.getMyEServiceTemplateInstancesWithHttpInfo(
                         templateEServiceId, 0, 50

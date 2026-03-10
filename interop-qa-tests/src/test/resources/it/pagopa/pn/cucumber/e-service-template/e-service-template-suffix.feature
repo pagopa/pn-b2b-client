@@ -79,7 +79,7 @@ Feature: Test API of e-service template suffix
     Examples:
       | suffix | statusCode |
       | %null  | 200        |
-      | %space | 200        |
+      | %blank | 200        |
       | ABC    | 200        |
       | 123    | 200        |
 
