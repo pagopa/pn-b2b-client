@@ -261,15 +261,5 @@ public class EServiceTemplateInstanceUpdateSteps {
         );
     }
 
-    public UUID resolveEServiceTemplateInstanceId(String eServiceTemplateInstanceId) {
-        if (eServiceTemplateInstanceId == null || eServiceTemplateInstanceId.equals("%null")) {
-            return null;
-        } else if (eServiceTemplateInstanceId.equals("%actual")) {
-            return sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        } else if (eServiceTemplateInstanceId.equals("%random")) {
-            return UUID.randomUUID();
-        }
-        throw new IllegalArgumentException("Unrecognized eServiceTemplateInstanceId placeholder: " + eServiceTemplateInstanceId);
-    }
 
 }

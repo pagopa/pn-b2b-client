@@ -149,14 +149,4 @@ public class EServiceTemplateInstanceReadSteps {
                 "instances in state %s", state);
     }
 
-    public UUID resolveEServiceTemplateId(String eServiceTemplateId) {
-        if (eServiceTemplateId == null || eServiceTemplateId.equals("%null")) {
-            return null;
-        } else if (eServiceTemplateId.equals("%actual")) {
-            return sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
-        } else if (eServiceTemplateId.equals("%random")) {
-            return UUID.randomUUID();
-        }
-        throw new IllegalArgumentException("Unrecognized eServiceTemplateId placeholder: " + eServiceTemplateId);
-    }
 }
