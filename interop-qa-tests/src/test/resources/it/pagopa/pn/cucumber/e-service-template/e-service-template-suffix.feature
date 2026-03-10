@@ -228,16 +228,12 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service1"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
     And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service2"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    When l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    Then si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
     And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
 
   Scenario: [ESERVICE_SUFFIX_DIFFERENT_TEMPLATE_CREATION_2] Verifica che sia possibile modificare un'istanza di e-service in stato PUBLISHED con suffisso già utilizzato in e-service appartenenti ad un altro template
