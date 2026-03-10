@@ -322,7 +322,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
-                            .equals(TimelineElementCategoryV23.valueOf(timelineElementCategory).getValue()))
+                            .equals(TimelineElementCategoryV28.valueOf(timelineElementCategory).getValue()))
                     .findAny().orElse(null);
             if (timelineElement != null) {
                 break;

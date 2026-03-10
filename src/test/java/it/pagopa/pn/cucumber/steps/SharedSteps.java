@@ -16,13 +16,26 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -49,6 +62,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
@@ -56,15 +70,90 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMPLETELY_UNREACHABLE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.EXTENSION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_NOTFOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_PDF_INVALID_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_SHA_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_CANCELLED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ALLEGATO_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_NO_PRELOAD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_VALID_ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVERSIZE_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVER_15_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULING_DELTA_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SHA_256;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TAXID_NOT_VALID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAITING_GPD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_EXTRA_RAPID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.DENOMINATION;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.DIGITAL_DOMICILE;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_ADDRESS;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_COMMUNICATION_TYPE;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.SENDER_DENOMINATION;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.SUBJECT;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -397,6 +486,57 @@ public class SharedSteps {
         Assertions.assertTrue(completed);
         Assertions.assertEquals(numberOfNotification, notificationsCounter.get());
     }
+
+    @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
+    public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
+        List<String> iunlist = new ArrayList<>();
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
+        for (int i = 0; i < notificationNumber; i++) {
+//            Map<String, String> data = Map.of("subject", "invio notifica con cucumber",
+//                    "senderDenomination", "Comune di palermo",
+//                    "feePolicy", "DELIVERY_MODE");
+            prepareNotificationRequestWithVersion(MOST_RECENT, data);
+            setPaAndSenderTaxId(pa);
+            getNotificationStepInterface().addRecipientToNotification(destinatario, data);
+//            notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+            getNotificationStepInterface().uploadNotification(null);
+            String iun = getNotificationIun();
+            iunlist.add(iun);
+            TimeUnit.SECONDS.sleep(1);
+
+        }
+        TimeUnit.MINUTES.sleep(10);
+        List<String> remainingIuns = new ArrayList<>(iunlist); // lista di quelli da processare
+        List<String> failedIuns = new ArrayList<>();
+
+        while (!remainingIuns.isEmpty()) {
+            failedIuns.clear();
+            for (String iun : remainingIuns) {
+                setNotificationIun(iun);
+                try {
+                    notificationStepsInterface.waitForTimelineElement(timelineEvent, 1000);
+                } catch (HttpClientErrorException.NotFound e) {
+                    failedIuns.add(iun);
+                }
+            }
+
+            // prepariamo la prossima iterazione solo con quelli che hanno fallito
+            remainingIuns = new ArrayList<>(failedIuns);
+
+            // opzionale: piccolo ritardo tra i tentativi per non saturare il sistema
+            if (!remainingIuns.isEmpty()) {
+                try {
+                    TimeUnit.SECONDS.sleep(30);
+                } catch (InterruptedException ignored) {}
+            }
+        }
+
+    }
+
+
+
+
+
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {

@@ -309,7 +309,11 @@ Feature: Radd fsu
 
 #  @radd
   Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+#    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+    Given vengono create 49 notifiche per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino
