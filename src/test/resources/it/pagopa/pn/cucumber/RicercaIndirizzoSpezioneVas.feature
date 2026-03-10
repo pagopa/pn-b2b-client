@@ -1006,10 +1006,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
-      | denomination    | "<denomination>" |
-      | taxId           | "<taxId>"        |
-      | digitalDomicile | NULL             |
-      | physicalAddress | NULL             |
+      | denomination    | <denomination> |
+      | taxId           | <taxId>        |
+      | recipientType   | PF             |
+      | digitalDomicile | NULL           |
+      | physicalAddress | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline       | true     |
@@ -1026,10 +1027,16 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex        | 0                   |
       | details_physicalAddress | "<expectedAddress>" |
     Examples:
-      | denomination    | taxId       | expectedAddress |
-      | TODO_casistica1 | TODO_taxID1 | TODO_address1   |
-      | TODO_casistica2 | TODO_taxID2 | TODO_address2   |
-      | TODO_casistica3 | TODO_taxID3 | TODO_address3   |
+      | denomination  | taxId            | expectedAddress |
+      #1) ha numero, lettera, esponente1, colore e interno2/espInterno2
+      | Mario Uno     | VRSVLR80A01L781H | TODO_address1   |
+      #2) ha progSNC, colore, numero lettera esponente per l'address e nel civicoInterno ci sono entrambi gli interni (interno1/2 ed espInterno1/2)
+      | Mario Due     | RNCRNL00A03F205C | TODO_address2   |
+      #3) Ha solamente metrico colore e civico interno 1
+      | Mario Tre     | DLRPQL89P09D612E | TODO_address3   |
+      #4) Ha tutti i campi tranne i due interni/espInterno e la scalaEsterna
+      | Mario Quattro | PRSNBL81R08H501T | TODO_address4   |
+
 
   @AdeguamentoIndirizzoANPR_Minimal
   Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_MINIMAL] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo MINIMAL
@@ -1041,6 +1048,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And destinatario
       | denomination    | "<denomination>" |
       | taxId           | "<taxId>"        |
+      | recipientType   | PF               |
       | digitalDomicile | NULL             |
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -1059,10 +1067,12 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex        | 0                   |
       | details_physicalAddress | "<expectedAddress>" |
     Examples:
-      | denomination    | taxId       | expectedAddress |
-      | TODO_casistica1 | TODO_taxID1 | TODO_address1   |
-      | TODO_casistica2 | TODO_taxID2 | TODO_address2   |
-      | TODO_casistica3 | TODO_taxID3 | TODO_address3   |
+      | denomination                                                     | taxId            | expectedAddress |
+      | Valerio NumEspUnoColoreInternoDueEspInternoDue                   | VRSVLR80A01L781H | TODO_address1   |
+      | Mario ProgSncColoreNumeroLetteraEspInternoUnoDueEspInternoUnoDue | RNCRNL00A03F205C | TODO_address2   |
+      | Pasquale MetricoColoreCivicoInternoUno                           | DLRPQL89P09D612E | TODO_address3   |
+      | Annibale TuttiCampiTranneInterniEspInterniAndScalaEsterna        | PRSNBL81R08H501T | TODO_address4   |
+
 
   @AdeguamentoIndirizzoANPR_Full
   Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_FULL] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo FULL
@@ -1074,6 +1084,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And destinatario
       | denomination    | "<denomination>" |
       | taxId           | "<taxId>"        |
+      | recipientType   | PF               |
       | digitalDomicile | NULL             |
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -1092,7 +1103,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex        | 0                   |
       | details_physicalAddress | "<expectedAddress>" |
     Examples:
-      | denomination    | taxId       | expectedAddress |
-      | TODO_casistica1 | TODO_taxID1 | TODO_address1   |
-      | TODO_casistica2 | TODO_taxID2 | TODO_address2   |
-      | TODO_casistica3 | TODO_taxID3 | TODO_address3   |
+      | denomination                                                     | taxId            | expectedAddress |
+      | Valerio NumEspUnoColoreInternoDueEspInternoDue                   | VRSVLR80A01L781H | TODO_address1   |
+      | Mario ProgSncColoreNumeroLetteraEspInternoUnoDueEspInternoUnoDue | RNCRNL00A03F205C | TODO_address2   |
+      | Pasquale MetricoColoreCivicoInternoUno                           | DLRPQL89P09D612E | TODO_address3   |
+      | Annibale TuttiCampiTranneInterniEspInterniAndScalaEsterna        | PRSNBL81R08H501T | TODO_address4   |
