@@ -144,7 +144,7 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso1" a partire dal template con successo indicando tutte le specifiche
-    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" in stato PUBLISHED con "suffisso2"
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" usando l'endpoint di update per lo stato DRAFT con "suffisso2"
     Then si ottiene response status code 400
 
   Scenario Outline: [ESERVICE_SUFFIX_PUBLISHED_UPDATE_1] Verifica che l'istanza dell'e-service sia modificabile solo quando si trova in stato PUBLISHED

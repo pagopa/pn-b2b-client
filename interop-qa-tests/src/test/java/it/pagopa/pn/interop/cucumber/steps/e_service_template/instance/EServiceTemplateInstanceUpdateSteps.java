@@ -85,6 +85,7 @@ public class EServiceTemplateInstanceUpdateSteps {
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
 
+    @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template {string} usando l'endpoint di update per lo stato {eServiceDescriptorState} con {string}")
     @When("l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template {string} in stato {eServiceDescriptorState} con {string}")
     public void editEServiceInstanceInstanceLabelField(String eServiceTemplateInstanceId, EServiceDescriptorState eServiceState, String instanceLabel) {
         String parsedSuffix = parseSuffix(instanceLabel);
