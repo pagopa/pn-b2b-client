@@ -272,21 +272,16 @@ Feature: Test API of e-service template suffix
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
     And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
-    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
     And il nuovo e-service è stato creato correttamente in stato PUBLISHED
     And l'utente è un "admin" di "PA2"
-    When l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso 2" a partire dal template con successo indicando tutte le specifiche
     And il suffisso "suffisso 2" è utilizzato correttamente nell'e-service
-    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
-    Then il nuovo e-service è stato creato correttamente in stato PUBLISHED
+    And il nuovo e-service è stato creato correttamente in stato PUBLISHED
     And si ottiene response status code 200
-    And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
+    When l'utente tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" in stato PUBLISHED con "suffisso 1"
+    Then il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
 
   Scenario: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_1] Verifica che sia possibile recuperare le istanze e-service template in DRAFT appartenenti all'ente chiamante
     Given l'utente è un "admin" di "GSP"
