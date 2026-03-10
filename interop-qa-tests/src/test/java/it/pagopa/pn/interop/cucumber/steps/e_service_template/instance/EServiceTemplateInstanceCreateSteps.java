@@ -250,17 +250,11 @@ public class EServiceTemplateInstanceCreateSteps {
 
         String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
 
-        String eServiceCreatedName = pollingService.makePolling(
+        pollingService.makePolling(
                 () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId),
                 res -> nonNull(res.getBody()) && res.getBody().getName().equals(expectedEServiceInstanceName),
                 res -> "Il suffisso dell'istanza non è stato aggiornato correttamente: atteso suffisso '%s', ma il nome completo ottenuto è '%s'".formatted(suffix, res.getBody().getName())
         ).getBody().getName();
-
-
-
-        Assertions.assertThat(eServiceCreatedName)
-            .as("Check correttezza dell'uso del suffisso nel nome dell'istanza e-service creata")
-            .isEqualTo(expectedEServiceInstanceName);
     }
 
     @Then("il nome del {string} e-service creato è stato aggiornato correttamente con il nome dell'e-service template e con il suffisso {string}")
@@ -277,14 +271,14 @@ public class EServiceTemplateInstanceCreateSteps {
             default -> throw new IllegalArgumentException("Invalid position: " + position);
         };
 
-        String lastEServiceInstanceName = this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
-                sharedStepsContext.getEServiceTemplateStepContext().getEServiceCreatedFromTemplateWithIndex(index).getId()
-        ).getBody().getName();
-
         String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
-
-        Assertions.assertThat(lastEServiceInstanceName)
-                .isEqualTo(expectedEServiceInstanceName);
+        pollingService.makePolling(
+            () -> this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
+                    sharedStepsContext.getEServiceTemplateStepContext().getEServiceCreatedFromTemplateWithIndex(index).getId()
+            ),
+            res -> nonNull(res.getBody()) && res.getBody().getName().equals(expectedEServiceInstanceName),
+            res -> "Il suffisso dell'istanza non è stato aggiornato correttamente: atteso suffisso '%s', ma il nome completo ottenuto è '%s'".formatted(suffix, res.getBody().getName())
+        ).getBody().getName();
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
