@@ -149,17 +149,50 @@
           },
           "validationConfig": {
             "type": "object",
-            "required": ["ocrEnabled", "strictFinalValidationStock890"],
+            "required": [
+              "ocrEnabled",
+              "ocrFileTypes",
+              "ocrFilterTemporal",
+              "ocrFilterUnifiedDeliveryDriver",
+              "requiredAttachmentsRefinementStock890",
+              "sendOcrAttachmentsFinalValidation",
+              "sendOcrAttachmentsFinalValidationStock890",
+              "sendOcrAttachmentsRefinementStock890",
+              "strictDeliveryFailureCause",
+              "strictFinalValidationStock890"
+            ],
             "properties": {
               "ocrEnabled": {
                 "type": "string",
                 "enum": ["RUN", "DRY", "DISABLED"]
               },
-              "strictFinalValidationStock890": { "type": "boolean" },
+              "ocrFileTypes": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "ocrFilterTemporal": { "type": "string" },
+              "ocrFilterUnifiedDeliveryDriver": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "requiredAttachmentsRefinementStock890": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
               "sendOcrAttachmentsFinalValidation": {
                 "type": "array",
                 "items": { "type": "string" }
-              }
+              },
+              "sendOcrAttachmentsFinalValidationStock890": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "sendOcrAttachmentsRefinementStock890": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "strictDeliveryFailureCause": { "type": "boolean" },
+              "strictFinalValidationStock890": { "type": "boolean" }
             }
           },
 
@@ -178,27 +211,30 @@
                 "items": {
                   "type": "object",
                   "required": [
+                    "attachmentEventId",
                     "documentType",
                     "finalEventId",
-                    "attachmentEventId",
                     "requestTimestamp"
                   ],
                   "properties": {
-
-                    "documentType": { "type": "string" },
-
-                    "finalEventId": { "type": "string" },
-
                     "attachmentEventId": { "type": "string" },
-
+                    "documentType": { "type": "string" },
+                    "finalEventId": { "type": "string" },
                     "requestTimestamp": {
                       "type": "string",
                       "format": "date-time"
                     },
-
+                    "responseStatus": {
+                      "type": ["string", "null"],
+                      "enum": ["OK", "KO", "PENDING"]
+                    },
                     "responseTimestamp": {
                       "type": ["string", "null"],
                       "format": "date-time"
+                    },
+                    "uri": {
+                      "type": ["string", "null"],
+                      "format": "string"
                     }
                   }
                 }

@@ -5,17 +5,16 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_890] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
     Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890       |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890     |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@<sequenceName> |
-      | digitalDomicile         | NULL               |
+      | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName                     |
@@ -85,21 +84,21 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
-#    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
-    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+#    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
-#      | physicalAddress           | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-#      | Via@FAIL-Irreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
-#      | Via@FAIL-Giacenza-lte10_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
-#      | Via@OK-REC008_890-E | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
-#      | Via@FAIL-DiscoveryIrreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
-#      | Via@OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
-      | physicalAddress                    | category                     | flowThrow           |
-      | Via@FAIL-Irreperibile_890          | ATTACHMENTS_ERROR            | SEQUENCE_VALIDATION |
-      | Via@FAIL-Giacenza-lte10_890        | INCONSISTENT_STATE           | SEQUENCE_VALIDATION |
-      | Via@OK-REC008_890-E                | INCONSISTENT_STATE           | SEQUENCE_VALIDATION |
-      | Via@FAIL-DiscoveryIrreperibile_890 | ATTACHMENTS_ERROR            | SEQUENCE_VALIDATION |
-      | Via@OK-CAUSE-EVENTO-NO-MAPPA       | DELIVERY_FAILURE_CAUSE_ERROR | SEQUENCE_VALIDATION |
+      | physicalAddress           | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+      | Via@FAIL-Irreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
+      | Via@FAIL-Giacenza-lte10_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
+      | Via@OK-REC008_890-E | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
+      | Via@FAIL-DiscoveryIrreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
+      | Via@OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
+#      | physicalAddress                    | category                     | flowThrow           |
+#      | Via@FAIL-Irreperibile_890          | ATTACHMENTS_ERROR            | SEQUENCE_VALIDATION |
+#      | Via@FAIL-Giacenza-lte10_890        | INCONSISTENT_STATE           | SEQUENCE_VALIDATION |
+#      | Via@OK-REC008_890-E                | INCONSISTENT_STATE           | SEQUENCE_VALIDATION |
+#      | Via@FAIL-DiscoveryIrreperibile_890 | ATTACHMENTS_ERROR            | SEQUENCE_VALIDATION |
+#      | Via@OK-CAUSE-EVENTO-NO-MAPPA       | DELIVERY_FAILURE_CAUSE_ERROR | SEQUENCE_VALIDATION |
 
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_4_890] Si verifica la correttezza della risposta di /trackings per le sequence che generano un errore
@@ -137,7 +136,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
-    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
+    And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+#    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
     Examples:
       | sequenceName             |
       | OK-Retry_890             |
@@ -568,7 +569,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 # Test da lanciare in modalità RUN con filtro ec: DISATTIVO
   @paperTrackerRunMode890
-  Scenario Outline: [PAPER_TRACKER_RUN_MODE_890_8] Si verifica che gli elementi di timeline attesi siano generati correttamente nella modalità RUN
+  Scenario Outline: [PAPER_TRACKER_RUN_890_1] Si verifica che gli elementi di timeline attesi siano generati correttamente nella modalità RUN
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
