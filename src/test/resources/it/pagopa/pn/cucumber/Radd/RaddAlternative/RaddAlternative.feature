@@ -65,6 +65,35 @@ Feature: Radd Alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 7 documenti
 
+  @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_ACT-551] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via @ok_890                   |
+      | payment_pagoPaForm      | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | SI                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Gherkin
+    Then la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 7 documenti
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-56] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
@@ -116,6 +145,31 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+
+  @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_ACT-801] PF - Stampa documenti disponibili associati a QR code esistente conCF corretto su notifica analogica 890: verifica restituzione link e elemento di timeline contenente la ricevuta di postalizzazione in formato zip
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL           |
+      | physicalAddress_address | Via@OK_890_ZIP |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
+    And viene effettuato un controllo sul type zip attachment di "ATTACHMENTS" per l'elemento di timeline "SEND_ANALOG_PROGRESS" con DOC "23L"
+      | loadTimeline               | true      |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG001B |
+    When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
     And l'operazione di download degli atti si conclude correttamente su radd alternative
 
   #[RADD-ALT_ACT-84]
@@ -324,6 +378,35 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 6 documenti
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+  @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_ACT-601] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario CucumberSpa e:
+      | payment_pagoPaForm   | SI                   |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_PG      |
+      | apply_cost_pagopa    | SI                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 6 documenti
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -795,6 +878,28 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
+  @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_AOR-231] PF - Visualizzazione link AAR disponibili con consegna documenti al cittadino successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Signor Casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "aor"
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+
   @raddAlt @authFleet
   Scenario: [RADD-ALT_AOR-64] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
     Given viene generata una nuova notifica
@@ -818,6 +923,34 @@ Feature: Radd Alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
     And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 2 aar su radd alternative
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+  @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_AOR-641] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Signor Casuale e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR      |
+      | payment_pagoPaForm      | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | SI                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 2 aar su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "aor"
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -1019,6 +1152,34 @@ Feature: Radd Alternative
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+
+  @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_AOR-681] PG - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | payment_pagoPaForm      | SI                                           |
+      | payment_f24             | PAYMENT_F24_STANDARD                         |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z                |
+      | apply_cost_pagopa       | SI                                           |
+      | apply_cost_f24          | SI                                           |
+      | payment_multy_number    | 1                                            |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+    Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "aor"
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -1404,7 +1565,7 @@ Feature: Radd Alternative
 
     # test sul frontespizio
 
-  @raddAlt @raddAltPagineFrontespizio #rif 2.1
+  #@raddAlt @raddAltPagineFrontespizio #rif 2.1
   Scenario: [RADD-ALT_PAGE_ATTACHMENT_1] Download frontespizio per operazione AOR
 #  | subject            | invio notifica con cucumber radd alternative |
 #  | senderDenomination | Comune di Palermo                            |
