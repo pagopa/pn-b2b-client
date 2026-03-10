@@ -260,18 +260,18 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 #      | physicalAddress_address | Via@ok_890                      |
     Given imposto la pa a "Comune_Multi" e gli iun di SharedSteps
       | IUN1 | AGQU-WHWX-AHPD-202603-D-1 |
-#    And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
-#      | ticketId          | auto             |
-#      | iun               | auto             |
-#      | ticketOperationId | auto             |
-#      | taxId             | CLMCST42R12D969Z |
-#      | addressType       | EMAIL            |
-#      | addressValue      | test@test.it     |
-#      | ticketDate        | auto             |
-#      | vrDate            | auto             |
-#      | iunListType       | <iunListType>    |
+    And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
+      | ticketId          | auto             |
+      | iun               | auto             |
+      | ticketOperationId | auto             |
+      | taxId             | CLMCST42R12D969Z |
+      | addressType       | EMAIL            |
+      | addressValue      | test@test.it     |
+      | ticketDate        | auto             |
+      | vrDate            | auto             |
+      | iunListType       | <iunListType>    |
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
-    Then il servizio risponde con <statusCodeGet>
+    Then il servizio risponde con <statusCodePost>
     And se la chiamata al servizio ha avuto successo
 #    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969X"
 #    And viene invocato il servizio SEARCH
@@ -279,40 +279,39 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'API v2 GET operations passando "VALID OP. ID"
     Then il servizio risponde con 200
     And il campo operationStatus della response è valorizzato con "CREATING"
-
     When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
     And il video viene caricato su SafeStorage
-
     When viene invocata l'API v2 GET operations passando "<getOperationIdType>"
+    Then il servizio risponde con <statusCodeGet>
     And se la chiamata al servizio ha avuto successo
     Then il campo operationStatus della response è valorizzato con "<operationStatus>"
     Examples:
-      | notificationNumber | iunListType | statusCodePost | getOperationIdType | statusCodeGet | operationStatus |
-      | 1                  | DATI VALIDI | 200            | VALID OP. ID       | 200           | OK              |
+      | notificationNumber | iunListType           | statusCodePost | getOperationIdType | statusCodeGet | operationStatus |
+      | 1                  | DATI VALIDI           | 200            | VALID OP. ID       | 200           | OK              |
 #      | 5                  | DATI VALIDI           | 200            | VALID OP. ID       | 200           | OK              |
-#      | 2                  | UNO IUN INESISTENTE   | 200            | VALID OP. ID       | 200           | WARNING         |
-#      | 1                  | TUTTI IUN INESISTENTI | 200            | VALID OP. ID       | 200           | KO              |
-#      | 1                  | DATI VALIDI           | 200            | INEXISTENT OP. ID  | 404           | NULL            |
-#      | 1                  | DATI VALIDI           | 200            | INVALID OP. ID     | 400           | NULL            |
-#      | 1                  | DATI VALIDI           | 200            | OP. ID WITH IUN    | 400           | NULL            |
-#      | 6                  | DATI VALIDI           | 400            | NULL               | 400           | NULL            |
-#      | 1                  | LISTA IUN VUOTA       | 400            | NULL               | 400           | NULL            |
-#      | 2                  | IUN RIPETUTO          | 400            | NULL               | 400           | NULL            |
+      | 2                  | UNO IUN INESISTENTE   | 200            | VALID OP. ID       | 200           | WARNING         |
+      | 1                  | TUTTI IUN INESISTENTI | 200            | VALID OP. ID       | 200           | KO              |
+      | 1                  | DATI VALIDI           | 200            | INEXISTENT OP. ID  | 404           | NULL            |
+      | 1                  | DATI VALIDI           | 200            | INVALID OP. ID     | 400           | NULL            |
+      | 1                  | DATI VALIDI           | 200            | OP. ID WITH IUN    | 404           | NULL            |
+#      | 6                  | DATI VALIDI           | 400            | NULL               | NULL           | NULL            |
+      | 1                  | LISTA IUN VUOTA       | 400            | NULL               | NULL          | NULL            |
+      | 2                  | IUN RIPETUTO          | 400            | NULL               | NULL          | NULL            |
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario Outline: [CREATE_ACT_OPERATION_V2_KO] Chiamata createActOperation (controllo validazione campi)
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    Given imposto la pa a "Comune_Multi" e gli iun di SharedSteps
-#      | IUN1 | AGQU-WHWX-AHPD-202603-D-1 |
+#    Given viene generata una nuova notifica
+#      | subject            | notifica analogica con cucumber |
+#      | senderDenomination | Comune di palermo               |
+#    And destinatario Mario Gherkin e:
+#      | digitalDomicile         | NULL       |
+#      | physicalAddress_address | Via@ok_890 |
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given imposto la pa a "Comune_Multi" e gli iun di SharedSteps
+      | IUN1 | AGQU-WHWX-AHPD-202603-D-1 |
     When viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | <ticketId>     |
       | ticketOperationId | auto           |
@@ -335,13 +334,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [ACT_OPERATION_V2_LEGACY]
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    Given viene generata una nuova notifica
+#      | subject            | notifica analogica con cucumber |
+#      | senderDenomination | Comune di palermo               |
+#    And destinatario Mario Gherkin e:
+#      | digitalDomicile         | NULL       |
+#      | physicalAddress_address | Via@ok_890 |
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given imposto lo iun di SharedSteps a "AGQU-WHWX-AHPD-202603-D-1" e la pa a "Comune_Multi"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
       | ticketId          | auto             |
       | iun               | auto             |
@@ -353,7 +353,11 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | vrDate            | auto             |
     And viene invocata l'api "CREATE_ACT_OPERATION"
     Then il servizio risponde con 201
-    When viene invocata l'API v2 GET operations passando "VALID OP. ID"
+    When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 200
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    When viene invocata l'API v2 GET operations passando "VALID OP. ID V1"
     Then il servizio risponde con 200
-    And se la chiamata al servizio ha avuto successo
-    Then il campo operationStatus della response è valorizzato con "OK"
+    And il campo operationStatus della response è valorizzato con "OK"

@@ -43,6 +43,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -144,10 +145,10 @@ public class ApiServiceDeskSteps {
         }
     }
 
-     @And("si verifica che lo stato della notifica recuperata sia: {string}")
-     public void verifyNotificationStatus(String expectedStatus) {
+    @And("si verifica che lo stato della notifica recuperata sia: {string}")
+    public void verifyNotificationStatus(String expectedStatus) {
         Assertions.assertEquals(timelineResponse.getIunStatus().getValue(), expectedStatus);
-     }
+    }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
     public void createVerifyUnreachableRequest(String cf) {
@@ -457,16 +458,6 @@ public class ApiServiceDeskSteps {
         Assertions.assertNotNull(lista);
         log.info("SEARCH " + searchResponse.getOperations().toString());
         checkOperationResponseList(lista, operationIdToSearch, status, true, iun);
-    }
-
-    @Then("Il servizio SEARCH risponde con esito positivo con uncompleted iun lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatusAndUncompletedIun(String status) {
-        String operationIdToSearch = operationsResponseV1.getOperationId();
-        log.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
-        List<OperationResponse> lista = searchResponse.getOperations();
-        Assertions.assertNotNull(lista);
-        log.info("SEARCH " + searchResponse.getOperations().toString());
-        checkOperationResponseList(lista, operationIdToSearch, status, false, null);
     }
 
     @Then("Il servizio SEARCH risponde con lista vuota")
@@ -1457,7 +1448,9 @@ public class ApiServiceDeskSteps {
 
     public String setPaID(String paId) {
         String paIDSearch;
-        if (paId == null) return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();;
+        if (paId == null)
+            return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();
+        ;
         return switch (paId.toUpperCase()) {
             case "VUOTO" -> "";
             case "NO_SET" -> {
@@ -1765,18 +1758,19 @@ public class ApiServiceDeskSteps {
                 LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) : ticketDate);
 
         String iunListType = getValue(data, "iunListType");
+        log.info("TIPOLOGIA IUN UTILIZZATA: {}", iunListType.toUpperCase());
         switch (iunListType.toUpperCase()) {
             case "DATI VALIDI" -> createActOperationRequestV2.setIun(sharedSteps.getNotificationIunList());
-            case "UNO IUN INESISTENTE" -> {
-                createActOperationRequestV2.setIun(sharedSteps.getNotificationIunList());
-                createActOperationRequestV2.getIun().add(IUN_ERRATO);
-            }
-            case "TUTTI IUN INESISTENTI" -> createActOperationRequestV2.setIun(List.of(IUN_ERRATO));
             case "LISTA IUN VUOTA" -> createActOperationRequestV2.setIun(new ArrayList<>());
-            case "IUN RIPETUTO" -> {
-                createActOperationRequestV2.setIun(sharedSteps.getNotificationIunList());
-                createActOperationRequestV2.getIun().add(sharedSteps.getNotificationIunList().get(0));
-            }
+            case "TUTTI IUN INESISTENTI" -> createActOperationRequestV2.setIun(List.of(IUN_ERRATO));
+            case "IUN RIPETUTO" -> createActOperationRequestV2.setIun(Stream.concat(
+                            sharedSteps.getNotificationIunList().stream(),
+                            Stream.of(sharedSteps.getNotificationIunList().get(0)))
+                    .toList());
+            case "UNO IUN INESISTENTE" -> createActOperationRequestV2.setIun(Stream.concat(
+                            sharedSteps.getNotificationIunList().stream(),
+                            Stream.of(IUN_ERRATO))
+                    .toList());
             default -> throw new IllegalArgumentException("Invalid iunListType: " + iunListType);
 
         }
@@ -1808,10 +1802,11 @@ public class ApiServiceDeskSteps {
     public void callGetOperationsV2(String operationIdType) {
         String opIdParam;
         switch (operationIdType.toUpperCase()) {
-            case "VALID OP. ID" -> opIdParam = operationId;
-            case "INEXISTENT OP. ID" -> opIdParam = "TODO 1";
-            case "INVALID OP. ID" -> opIdParam = "invalid";
-            case "OP. ID WITH IUN" -> opIdParam = operationId + "#" + sharedSteps.getNotificationIun();
+            case "VALID OP. ID", "VALID OP. ID V1" -> opIdParam = operationId;
+            case "INEXISTENT OP. ID" -> opIdParam = "404_operationId";
+            case "INVALID OP. ID" -> opIdParam = "x".repeat(33);
+            case "OP. ID WITH IUN" ->
+                    opIdParam = "SUB#" + operationId + "#" + sharedSteps.getNotificationIunList().get(0);
             default -> throw new IllegalArgumentException("Invalid value for operationIdType: " + operationIdType);
         }
         this.httpResponse = ipServiceDeskClient.getOperationV2WithHttpInfo(opIdParam);
@@ -1819,17 +1814,26 @@ public class ApiServiceDeskSteps {
         log.info("Response of GET operations V2: {}", getOperationsResponseV2);
 
         if (getOperationsResponseV2 != null) {
-            assertThat(getOperationsResponseV2.getSubOperations().size()).as("").isEqualTo(createActOperationRequestV2.getIun().size());
-            getOperationsResponseV2.getSubOperations().forEach(op -> {
-                assertThat(createActOperationRequestV2.getIun()).asList().as("La response della get non contiene lo IUN: " + op.getIun()).contains(op.getIun());
-            });
-            operationId = operationsResponseV2.getOperationId();
-            log.info("Operation id V2:" + operationId);
+            if (!operationIdType.equalsIgnoreCase("VALID OP. ID V1")) {
+                assertThat(getOperationsResponseV2.getSubOperations().size()).as("").isEqualTo(createActOperationRequestV2.getIun().size());
+                getOperationsResponseV2.getSubOperations().forEach(op -> {
+                    assertThat(createActOperationRequestV2.getIun()).asList().as("La response della get non contiene lo IUN: " + op.getIun()).contains(op.getIun());
+                });
+            }
+            log.info("Operation id della GET V2:" + operationId);
         }
     }
 
     @Then("il campo operationStatus della response è valorizzato con {string}")
-    public void checkStatusFieldOfGetOperationResponse(String status) {
+    public void checkStatusFieldOfGetOperationResponse(String status) throws InterruptedException {
         assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
+//        try {
+//            assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
+//        } catch (AssertionError ae) {
+//            log.info("Waiting 2 minutes for status to get updated");
+//            Thread.sleep(120000L);
+//            callGetOperationsV2("VALID OP. ID");
+//            assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
+//        }
     }
 }
