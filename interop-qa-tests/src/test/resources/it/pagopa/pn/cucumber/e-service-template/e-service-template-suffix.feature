@@ -294,14 +294,10 @@ Feature: Test API of e-service template suffix
     And si ottiene response status code 200
     And l'e-service template è in stato di PUBLISHED
     And l'utente è un "admin" di "PA1"
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 1" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
     And il suffisso "suffisso 1" è utilizzato correttamente nell'e-service
     And l'utente è un "admin" di "PA2"
-    And l'utente tenta la creazione di un nuovo e-service con suffisso "suffisso 2" a partire dal template indicando tutte le specifiche
-    And si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT con suffisso "suffisso 2" a partire dal template con successo indicando tutte le specifiche
     And il suffisso "suffisso 2" è utilizzato correttamente nell'e-service
     When l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
