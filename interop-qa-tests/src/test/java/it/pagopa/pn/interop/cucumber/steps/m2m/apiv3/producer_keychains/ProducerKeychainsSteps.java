@@ -59,13 +59,17 @@ public class ProducerKeychainsSteps {
             }
 
             producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser);
+            httpCallExecutor.snapshot();
 
+            PollingService.makePolling(
+                        () -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0),
+                        users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())),
+                        "L'utente non risulta associato alla producer keychain dopo la creazione",
+                        30,
+                        1_000L
+            );
 
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
-                httpCallExecutor.snapshot();
-                PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())), "L'utente non risulta associato alla producer keychain dopo la creazione", 30, 1_000L);
-                httpCallExecutor.resetFormSnapshot();
-            }
+            httpCallExecutor.resetFormSnapshot();
 
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -163,12 +167,22 @@ public class ProducerKeychainsSteps {
     @And("viene recuperata la producer-key con kid {string}")
     public void getProducerKey(String rawKid) {
         String kid = resolver.resolveKid(rawKid);
-        try {
-            ProducerKey pKey = producerKeychainsClient.getProducerKey(kid);
-            producerKeychainsContext.setProducerKey(pKey);
-        } catch (IllegalStateException e) {
-            log.warn(e.getMessage());
-        }
+        ProducerKey pKey = PollingService.makePolling(
+                () -> {
+                    try {
+                        return producerKeychainsClient.getProducerKey(kid);
+                    }catch (IllegalStateException e) {
+                        log.warn(httpCallExecutor.getErrorMessage());
+                        return null;
+                    }
+                },
+                res -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && res != null,
+                "",
+                30,
+                1_000
+        );
+
+        producerKeychainsContext.setProducerKey(pKey);
     }
 
     @And("viene eliminata la producer-key con keychainId {string}, kid {string}")

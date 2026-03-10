@@ -113,8 +113,6 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     Then si ottiene response status code 400
 
-
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario Outline: [GET_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -140,7 +138,6 @@ Feature: Gestione dei producer keychains - API v3
       | %random | 404        |
       | %null   | 400        |
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [GET_PRODUCER_KEY_2] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -158,7 +155,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "%actual"
     And si ottiene response status code 401
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [GET_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -176,7 +172,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "%actual"
     And si ottiene response status code 400
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [GET_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
