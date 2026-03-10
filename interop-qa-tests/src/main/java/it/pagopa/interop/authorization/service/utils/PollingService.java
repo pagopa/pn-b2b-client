@@ -38,7 +38,8 @@ public class PollingService {
             throw new IllegalArgumentException("Error during polling: " + e.getMessage());
         }
 
-        throw new PollingPredicateException("Eventual consistency error: " + errorMessageMaker.apply(response));
+        String errorMsg = errorMessageMaker!=null ? errorMessageMaker.apply(response) : "unknown";
+        throw new PollingPredicateException("Eventual consistency error: " + errorMsg);
     }
 
     public static <T> T makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage, int maxTries, long pollingFrequencyMillis) {
