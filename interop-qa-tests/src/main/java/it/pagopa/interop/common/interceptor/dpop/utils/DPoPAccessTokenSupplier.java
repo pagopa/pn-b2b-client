@@ -41,16 +41,17 @@ public class DPoPAccessTokenSupplier implements Supplier<String> {
         }
     }
 
-    private volatile Snapshot snapshot = new Snapshot(null, null);
+    private final ThreadLocal<Snapshot> snapshot =
+            ThreadLocal.withInitial(() -> new Snapshot(null, null));
 
-    public synchronized void setAuth(Auth newAuth) {
+    public void setAuth(Auth newAuth) {
         Objects.requireNonNull(newAuth, "Auth must not be null");
-        snapshot = new Snapshot(newAuth, null);
+        snapshot.set(new Snapshot(newAuth, null));
     }
 
     @Override
     public String get() {
-        Snapshot snap = snapshot;
+        Snapshot snap = snapshot.get();
         Auth auth = snap.auth;
 
         if (auth == null) {
@@ -66,7 +67,7 @@ public class DPoPAccessTokenSupplier implements Supplier<String> {
         }
 
         synchronized (this) {
-            snap = snapshot;
+            snap = snapshot.get();
             auth = snap.auth;
 
             if (auth == null) {
@@ -106,7 +107,7 @@ public class DPoPAccessTokenSupplier implements Supplier<String> {
             TokenState newState = new TokenState(newToken, newExpiresAt);
 
             // salva il token solo se l'auth corrente è ancora quella letta sotto lock
-            snapshot = new Snapshot(auth, newState);
+            snapshot.set(new Snapshot(auth, newState));
 
             return newToken;
         }

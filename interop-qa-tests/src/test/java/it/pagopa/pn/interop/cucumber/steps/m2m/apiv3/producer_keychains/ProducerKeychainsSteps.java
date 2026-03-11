@@ -17,6 +17,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -55,37 +56,62 @@ public class ProducerKeychainsSteps {
 
             PollingService.makePolling(
                     () -> {
-                        final int limit = 50;
-                        int offset = 0;
-                        List<User> allUsers = new ArrayList<>();
-                        Users usersPage;
+                        try {
 
-                        do {
-                            usersPage = producerKeychainsClient.getProducerKeychainUsers(
-                                    producerKeychainValue,
-                                    limit,
-                                    offset
-                            );
+                            final int limit = 50;
+                            int offset = 0;
+                            List<User> allUsers = new ArrayList<>();
+                            Users usersPage;
 
-                            if (!httpCallExecutor.getResponseStatus().is2xxSuccessful() || usersPage == null) {
+                            do {
+                                usersPage = producerKeychainsClient.getProducerKeychainUsers(
+                                        producerKeychainValue,
+                                        limit,
+                                        offset
+                                );
+
+                                if (!httpCallExecutor.getResponseStatus().is2xxSuccessful() || usersPage == null) {
+                                    return null;
+                                }
+
+                                List<User> pageResults = usersPage.getResults();
+                                if (pageResults.isEmpty()) {
+                                    break;
+                                }
+
+                                allUsers.addAll(pageResults);
+                                offset += limit;
+
+                            } while (usersPage.getResults().size() == limit);
+
+                            Users aggregatedUsers = new Users();
+                            aggregatedUsers.setResults(allUsers);
+                            return aggregatedUsers;
+
+                        } catch (IllegalStateException e) {
+
+                            HttpStatus status = httpCallExecutor.getResponseStatus();
+
+                            if (status == null) {
                                 return null;
                             }
 
-                            List<User> pageResults = usersPage.getResults();
-                            if (pageResults.isEmpty()) {
-                                break;
+                            // retry per inconsistenza temporanea
+                            if (status == HttpStatus.NOT_FOUND || status.is5xxServerError()) {
+                                log.warn("Retry getProducerKeychainUsers: {}", httpCallExecutor.getErrorMessage());
+                                return null;
                             }
 
-                            allUsers.addAll(pageResults);
-                            offset += limit;
-
-                        } while (usersPage.getResults().size() == limit);
-
-                        Users aggregatedUsers = new Users();
-                        aggregatedUsers.setResults(allUsers);
-                        return aggregatedUsers;
+                            // sad path: lascia propagare
+                            throw e;
+                        }
                     },
-                    users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())),
+                    users ->
+                            httpCallExecutor.getResponseStatus() != null
+                                    && httpCallExecutor.getResponseStatus().is2xxSuccessful()
+                                    && users != null
+                                    && users.getResults().stream()
+                                    .anyMatch(user -> userIdValue.equals(user.getUserId())),
                     "L'utente non risulta associato alla producer keychain dopo la creazione",
                     5,
                     1_000L
@@ -119,52 +145,75 @@ public class ProducerKeychainsSteps {
     public void createKey(String keyType, DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps();
 
+        Map<String, String> seed = rows.get(0);
+        UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
+        KeySeed keySeed = resolver.resolveKeySeed(
+                keyType,
+                seed.get("key"),
+                seed.get("name"),
+                seed.get("alg"),
+                seed.get("use")
+        );
+
+        ProducerKey key;
+
         try {
-            Map<String, String> seed = rows.get(0);
-            UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
-            KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
+            key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+        } catch (IllegalStateException e) {
+            // qualsiasi errore -> esco lasciando lo status per il Then.
+            // Attenzione: questa post potrebbe soffrire di eventual consistency e beccare 404 nonostante la creazione
+            // se si ritenta la creazione dopo il 404 si va in 409
+            log.warn(httpCallExecutor.getErrorMessage());
+            return;
+        }
 
-            // Polling necessario per evitare l'errore di eventual consistency 404 Producer JWK not found
-            ProducerKey key = PollingService.makePolling(
-                    () -> {
-                        try {
-                            return producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
-                        } catch (IllegalStateException e){
-                            log.warn(httpCallExecutor.getErrorMessage());
-                            return null;
-                        }
-                    },
-                    createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null,
-                    "",
-                    5,
-                    1_000);
+        producerKeychainsContext.setProducerKey(key);
+        producerKeychainsContext.setActualKeySeed(keySeed);
 
-            producerKeychainsContext.setProducerKey(key);
-            producerKeychainsContext.setActualKeySeed(keySeed);
-
-            httpCallExecutor.snapshot();
+        httpCallExecutor.snapshot();
+        try {
             String kid = key.getJwk().getKid();
+
+            ProducerKey finalKey = key;
             PollingService.makePolling(
                     () -> {
                         try {
                             return producerKeychainsClient.getProducerKey(kid);
                         } catch (IllegalStateException e) {
-                            log.warn(httpCallExecutor.getErrorMessage());
+                            HttpStatus status = httpCallExecutor.getResponseStatus();
+
+                            if (HttpStatus.NOT_FOUND.equals(status)) {
+                                log.warn("Get key retryable failure: {}", httpCallExecutor.getErrorMessage());
+                                return null;
+                            }
+
                             return null;
                         }
                     },
-                    createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && createdKey.getJwk().equals(key.getJwk()),
+                    fetchedKey ->
+                            httpCallExecutor.getResponseStatus() != null
+                                    && httpCallExecutor.getResponseStatus().is2xxSuccessful()
+                                    && fetchedKey != null
+                                    && fetchedKey.getJwk().equals(finalKey.getJwk()),
                     "La chiave non risulta creata correttamente dopo la creazione",
                     5,
-                    1_000L);
-            httpCallExecutor.resetFormSnapshot();
-
-        }
-        catch (PollingPredicateException | IllegalStateException e) {
+                    1_000L
+            );
+        } catch (PollingPredicateException e) {
             log.warn(httpCallExecutor.getErrorMessage());
+        } finally {
+            httpCallExecutor.resetFormSnapshot();
         }
     }
 
+    private void sleepSeconds(long seconds) {
+        try {
+            TimeUnit.SECONDS.sleep(seconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Thread interrotto durante l'attesa", e);
+        }
+    }
 
     @When("si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante")
     public void verifyUsersPresence() {

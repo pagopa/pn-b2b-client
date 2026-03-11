@@ -11,28 +11,41 @@ import org.springframework.http.client.*;
 
 import java.io.IOException;
 import java.security.KeyPair;
+import java.util.function.Supplier;
 
 public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
-    private final DPoPTokenService dpopService;
-    private final java.util.function.Supplier<String> tokenSupplier;
 
-    @Setter private DpopHeaderPolicy policy;
+    private final DPoPTokenService dpopService;
+    private final Supplier<String> tokenSupplier;
 
     @Setter
-    private volatile KeyPair keyPair;
+    private DpopHeaderPolicy policy;
 
-    public DPoPAuthInterceptor(DPoPTokenService dpopService,
-                               java.util.function.Supplier<String> tokenSupplier,
-                               DpopHeaderPolicy policy,
-                               KeyPair keyPair) {
+    // KeyPair isolata per thread (fix del problema di concorrenza)
+    private final ThreadLocal<KeyPair> keyPair = new ThreadLocal<>();
+
+    public DPoPAuthInterceptor(
+            DPoPTokenService dpopService,
+            Supplier<String> tokenSupplier,
+            DpopHeaderPolicy policy,
+            KeyPair keyPair
+    ) {
         this.dpopService = dpopService;
         this.tokenSupplier = tokenSupplier;
         this.policy = policy;
-        this.keyPair = keyPair;
+        this.keyPair.set(keyPair);
+    }
+
+    public void setKeyPair(KeyPair keyPair) {
+        this.keyPair.set(keyPair);
     }
 
     @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public ClientHttpResponse intercept(
+            HttpRequest request,
+            byte[] body,
+            ClientHttpRequestExecution execution
+    ) throws IOException {
 
         DpopHeaderPolicy.Mode mode = policy.getMode();
 
@@ -46,10 +59,13 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
             return execution.execute(request, body);
         }
 
-        KeyPair kp = this.keyPair;
-        if (kp == null) throw new IllegalStateException("DPoPInterceptor: keyPair non impostata");
+        KeyPair kp = keyPair.get();
+        if (kp == null) {
+            throw new IllegalStateException("DPoPInterceptor: keyPair non impostata");
+        }
 
-        String token = tokenSupplier.get(); // access token in chiaro
+        String token = tokenSupplier.get(); // access token
+
         URI uri = request.getURI();
         String dpop = dpopService.buildProofWithAth(
                 kp,
@@ -68,7 +84,10 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
         try {
             return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Errore nella generazione del claim 'htu': l'URI utilizzato non risulta scomponibile nelle sue parti fondamentali", e);
+            throw new IllegalArgumentException(
+                    "Errore nella generazione del claim 'htu': l'URI utilizzato non risulta scomponibile nelle sue parti fondamentali",
+                    e
+            );
         }
     }
 }
