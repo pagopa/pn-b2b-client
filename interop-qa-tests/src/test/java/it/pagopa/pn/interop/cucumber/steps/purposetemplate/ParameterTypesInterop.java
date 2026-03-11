@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ParameterTypesInterop {
+    public enum ResourceState { VISIBLE, NOT_EXISTS, NOT_VISIBLE }
 
     @ParameterType("true|false|null")
     public static Boolean bool(String value) {
@@ -29,10 +30,22 @@ public class ParameterTypesInterop {
         return value.equals("contiene");
     }
 
-    @ParameterType("creato|creata|esistente|sospeso|archiviato|inesistente|invisibile")
+    @ParameterType("creato|creata|esistente|sospeso|archiviato|inesistente")
     public static boolean exists(String value) {
         List<String> valid = Arrays.asList("creato", "creata", "esistente");
         return valid.contains(value);
+    }
+
+    @ParameterType("creato|creata|esistente|sospeso|archiviato|inesistente|invisibile")
+    public static ResourceState isVisible(String value) {
+        // TODO migliorare usando un'istruzione switch OPPURE un costum static method nella classe ResourceState che faccia il parsing
+        if(value.equals("inesistente")) {
+            return ResourceState.NOT_EXISTS;
+        } else if(value.equals("invisibile")) {
+            return ResourceState.NOT_VISIBLE;
+        } else {
+            return ResourceState.VISIBLE;
+        }
     }
 
     /**
