@@ -73,19 +73,16 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ADDRESS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALLEGATO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMPLETELY_UNREACHABLE;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1_TAX_ID;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
@@ -146,14 +143,6 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DENOMINATION;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DIGITAL_DOMICILE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_ADDRESS;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_COMMUNICATION_TYPE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.SENDER_DENOMINATION;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.SUBJECT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -427,63 +416,6 @@ public class SharedSteps {
     public void destinatarioAddIuvGPD(Integer posizione) {
         String iuvGPD = getIuvGPD(posizione);
         getNotificationStepInterface().setIuvToRecipient(posizione, iuvGPD);
-    }
-
-    /**
-     * Invio massivo di notifiche irreperibili utili per i test radd
-     * TODO -> test refattorizzato per poter essere eseguito con qualsiasi versione, ma comunque ampiamente migliorabile, magari anche riscrivendo gli step
-     */
-    @Given("vengono inviate {int} notifiche per l'utente {destinatario} con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
-    public void sendManyNotificationsForUserAndWaitUntilCompletelyUnreachable(int numberOfNotification, Destinatario destinatario, String paName) {
-
-        String taxId = destinatario.equals(Destinatario.DESTINATARIO_SIGNOR_CASUALE) ? generateCF(System.nanoTime()) : destinatario.getTaxId();
-
-        Map<String, String> notificationRequestMap = Map.ofEntries(
-                Map.entry(SUBJECT.key, "notificaAnalogica con Cucumber"),
-                Map.entry(SENDER_DENOMINATION.key, "Comune di Palermo"),
-                Map.entry(PHYSICAL_COMMUNICATION_TYPE.key, "AR_REGISTERED_LETTER"));
-
-        Map<String, String> notificationRecipientMap = Map.ofEntries(
-                Map.entry(DENOMINATION.key, destinatario.getDenomination()),
-                Map.entry(TAX_ID.key, taxId),
-                Map.entry(DIGITAL_DOMICILE.key, "NULL"),
-                Map.entry(PHYSICAL_ADDRESS_ADDRESS.key, "Via NationalRegistries @fail-Irreperibile_AR"));
-
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        notificationStepsInterface.prepareNotificationRequest(notificationRequestMap);
-        notificationStepsInterface.addRecipientToNotification(Destinatario.DESTINATARIO_SIGNOR_CASUALE, notificationRecipientMap);
-        setPaAndSenderTaxId(paName);
-
-        List<Thread> threadList = new LinkedList<>();
-        AtomicInteger notificationsCounter = new AtomicInteger();
-        for (int i = 0; i < numberOfNotification; i++) {
-            Thread t = new Thread(() -> {
-                notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-                notificationStepsInterface.waitForTimelineElement(COMPLETELY_UNREACHABLE, 33);
-                notificationsCounter.getAndIncrement();
-            });
-            threadList.add(t);
-            t.start();
-        }
-
-        int attempts = 0;
-        boolean completed = false;
-
-        while (attempts < 50) {
-            threadWait(getWorkFlowWait());
-            int counter = 0;
-            for (Thread thread : threadList) {
-                if (!thread.isAlive()) counter++;
-            }
-            if (counter == threadList.size()) {
-                completed = true;
-                break;
-            } else {
-                attempts++;
-            }
-        }
-        Assertions.assertTrue(completed);
-        Assertions.assertEquals(numberOfNotification, notificationsCounter.get());
     }
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
