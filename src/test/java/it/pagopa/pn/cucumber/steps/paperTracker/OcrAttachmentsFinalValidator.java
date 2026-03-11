@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Slf4j
-public class OcrConditionalValidator implements CustomConditionalValidator {
+public class OcrAttachmentsFinalValidator implements CustomConditionalValidator {
     List<String> errors = new ArrayList<>();
 
     private static final String VALIDATION_MESSAGE = "If documentType in events.attachments is present in validationConfig.sendOcrAttachmentsFinalValidation, then validationFlow.ocrRequests must not be empty";

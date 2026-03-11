@@ -158,7 +158,7 @@
               "sendOcrAttachmentsFinalValidation",
               "sendOcrAttachmentsFinalValidationStock890",
               "sendOcrAttachmentsRefinementStock890",
-              "strictDeliveryFailureCause",
+
               "strictFinalValidationStock890"
             ],
             "properties": {

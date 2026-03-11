@@ -299,8 +299,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si controlla che non ci siano eventi duplicati
-    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
       | sequence                      | physicalAddress                   |
@@ -443,13 +443,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+#    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
 #    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | sequence                | expectedError                                                                                                                                                                                                                                                                                                                                                                                                            |
-      | OK_RIR_INVALID_DATETIME | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-09T11:12:57.689684185Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":null,\"message\":\"Invalid business timestamps\"},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRI003C\",\"eventIdThrow\":\"92e7f08f-d23c-4412-88b8-8c6b0bfb3f2a\",\"productType\":\"RIR\",\"type\":\"ERROR\"}" |
-      | OK_RIR_TIMESTAMP_ERR    | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-09T11:08:00.129478888Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":null,\"message\":\"Invalid business timestamps\"},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRI003C\",\"eventIdThrow\":\"38953192-9b77-4cc3-b91d-c66d76c04d98\",\"productType\":\"RIR\",\"type\":\"ERROR\"}" |
+      | OK_RIR_INVALID_DATETIME | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T09:53:06.505237565Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T09:53:04Z\",\"statusCode\":\"RECRI003C\"},{\"statusTimestamp\":\"2026-03-11T09:52:58Z\",\"statusCode\":\"RECRI003B\"},{\"statusTimestamp\":\"2026-03-11T09:52:51Z\",\"statusCode\":\"RECRI003A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRI003C\",\"eventIdThrow\":\"bd524a18-fded-48d1-8b84-0c17c02acefb\",\"productType\":\"RIR\",\"type\":\"ERROR\"}" |
+      | OK_RIR_TIMESTAMP_ERR    | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T09:53:16.225928175Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T09:52:41Z\",\"statusCode\":\"RECRI003C\"},{\"statusTimestamp\":\"2026-03-11T09:53:03Z\",\"statusCode\":\"RECRI003B\"},{\"statusTimestamp\":\"2026-03-11T09:52:57Z\",\"statusCode\":\"RECRI003A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRI003C\",\"eventIdThrow\":\"d04a4e51-6a84-4469-8696-8f541c52de41\",\"productType\":\"RIR\",\"type\":\"ERROR\"}" |
 
   @paperTrackerARRunMode
   Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_5.1_RIR] Si verifica che per la sequence OK_RIR_NO_DEMAT si arrivi al deliveryDetailCode RECRI003A

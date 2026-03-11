@@ -580,6 +580,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     Examples:
       | sequence                         |

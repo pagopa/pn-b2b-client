@@ -8,6 +8,7 @@ import com.networknt.schema.ValidationMessage;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class SchemaValidator {
             JsonSchema schema = factory.getSchema(schemaStream);
 
             // Validate the JSON node
-            Set<ValidationMessage> errors = schema.validate(jsonNode);
+            Set<ValidationMessage> errors = new HashSet<>(schema.validate(jsonNode));
 
             for (CustomConditionalValidator customConditionalValidator : customValidators) {
                 List<String> customErrors = customConditionalValidator.validate(jsonNode);

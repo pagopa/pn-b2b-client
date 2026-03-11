@@ -149,7 +149,7 @@ public class PaperTrackerSteps {
         for (int i = 0; i < groupedTrackingByAttempt.keySet().size(); i++ ) {
             assertRelaxedSameElements(groupedTrackingByAttempt.get(i), expectedEvents.get(i), TRACKINGS_ELEMENT_NOT_FOUND);
         }
-        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", new OcrConditionalValidator(), new EventsTimestampValidator());
+        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", new OcrAttachmentsFinalValidator(), new EventsTimestampValidator());
     }
 
 
