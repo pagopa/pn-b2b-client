@@ -8,10 +8,12 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTech
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceMapper;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -29,10 +31,10 @@ public class EServicePatchOperationsAssistant extends EServiceGenericPatchOperat
 
     @Override
     public EServicePatchRequest buildDefaultPatchRequest() {
-        UUID uuid = UUID.randomUUID();
+        String id = RandomStringUtils.insecure().nextAlphanumeric(5);
         return EServicePatchRequest.builder()
-            .name("some patched name - " + uuid)
-            .description("some patched description - " + uuid)
+            .name("some patched name - " + id)
+            .description("some patched description - " + id)
             .technology(EServiceTechnology.SOAP)
             .mode(EServiceMode.RECEIVE)
             .isClientAccessDelegable(true)

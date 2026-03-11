@@ -12,7 +12,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -28,6 +27,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationAcceptStep.approveProducerDelegation;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.consumerStrategyUsing;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole.DELEGATE;
@@ -44,6 +44,7 @@ public class DelegationCreateStep {
     private final PollingService pollingService;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
+    private boolean isEServiceTemplateInstance;
 
     @Value
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -247,6 +248,25 @@ public class DelegationCreateStep {
         checkDelegation();
     }
 
+    @And("l'ente {string} ha una delega attiva verso l'ente {string} per l'istanza dell'e-service template")
+    @And("l'ente {string} ha una delega in erogazione attiva verso l'ente {string} per l'istanza dell'e-service template")
+    public void createAndActivateDelegateForInstanceSuccessfully(String delegatorTenantType, String tenantType) {
+        this.isEServiceTemplateInstance = true;
+        tenantGrantsProducerDelegationAvailability(tenantType);
+        createDelegateSuccessfully(delegatorTenantType, tenantType);
+
+        String lastToken = clientTokenConfigurator.getLastToken();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        approveProducerDelegation(
+                httpCallExecutor,
+                producerDelegationsApiClient,
+                delegationApiClient,
+                sharedStepsContext.getDelegationCommonContext(),
+                pollingService
+        );
+        clientTokenConfigurator.setBearerToken(lastToken);
+    }
+
     private void checkDelegation() {
         if (httpCallExecutor.getResponseStatus().isError()) {
             throw new IllegalStateException("La richiesta di delega non è stata eseguita correttamente: " + httpCallExecutor.getErrorMessage());
@@ -287,6 +307,9 @@ public class DelegationCreateStep {
         String delegateTenantType,
         Function<DelegationSeed, CreatedResource> delegationCreator,
         DelegationProxy delegationProxy) {
+        UUID eServiceId = this.isEServiceTemplateInstance
+                ? sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()
+                : sharedStepsContext.getEServicesCommonContext().getEserviceId();
         createDelegate(
             delegatorTenantType,
             delegateTenantType,
@@ -294,7 +317,7 @@ public class DelegationCreateStep {
             delegationProxy,
             identityService,
             httpCallExecutor,
-            sharedStepsContext.getEServicesCommonContext(),
+            eServiceId,
             pollingService,
             delegationApiClient
         );
@@ -307,7 +330,7 @@ public class DelegationCreateStep {
         DelegationProxy delegationProxy,
         IdentityService identityService,
         IHttpExecutor httpExecutor,
-        EServicesCommonContext context,
+        UUID eServiceId,
         PollingService pollingService,
         IDelegationApiClient client
     ) {
@@ -315,7 +338,7 @@ public class DelegationCreateStep {
         UUID delegatorOrganizationId = identityService.getOrganizationId(delegatorTenantType);
 
         httpExecutor.performCall(() -> delegationCreator.apply(
-            new DelegationSeed().eserviceId(context.getEserviceId()).delegateId(delegateOrganizationId)));
+            new DelegationSeed().eserviceId(eServiceId).delegateId(delegateOrganizationId)));
         if (httpExecutor.getResponseStatus() == HttpStatus.OK) {
             delegationProxy.setDelegateId(delegateOrganizationId);
             delegationProxy.setDelegatorId(delegatorOrganizationId);
