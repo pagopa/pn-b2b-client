@@ -273,12 +273,12 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con <statusCodePost>
     And se la chiamata al servizio ha avuto successo
-#    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969X"
-#    And viene invocato il servizio SEARCH
-#    Then Il servizio SEARCH risponde con esito positivo
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
     When viene invocata l'API v2 GET operations passando "VALID OP. ID"
     Then il servizio risponde con 200
-    And il campo operationStatus della response è valorizzato con "CREATING"
+    And il campo operationStatus della response è valorizzato con "<operationStatusPreVideoUpload>"
     When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
     And viene invocata l'api "UPLOAD_VIDEO"
     And il servizio risponde con 200
@@ -289,17 +289,17 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And se la chiamata al servizio ha avuto successo
     Then il campo operationStatus della response è valorizzato con "<operationStatus>"
     Examples:
-      | notificationNumber | iunListType           | statusCodePost | getOperationIdType | statusCodeGet | operationStatus |
-      | 1                  | DATI VALIDI           | 200            | VALID OP. ID       | 200           | OK              |
-#      | 5                  | DATI VALIDI           | 200            | VALID OP. ID       | 200           | OK              |
-      | 2                  | UNO IUN INESISTENTE   | 200            | VALID OP. ID       | 200           | WARNING         |
-      | 1                  | TUTTI IUN INESISTENTI | 200            | VALID OP. ID       | 200           | KO              |
-      | 1                  | DATI VALIDI           | 200            | INEXISTENT OP. ID  | 404           | NULL            |
-      | 1                  | DATI VALIDI           | 200            | INVALID OP. ID     | 400           | NULL            |
-      | 1                  | DATI VALIDI           | 200            | OP. ID WITH IUN    | 404           | NULL            |
-#      | 6                  | DATI VALIDI           | 400            | NULL               | NULL           | NULL            |
-      | 1                  | LISTA IUN VUOTA       | 400            | NULL               | NULL          | NULL            |
-      | 2                  | IUN RIPETUTO          | 400            | NULL               | NULL          | NULL            |
+      | notificationNumber | iunListType           | statusCodePost | operationStatusPreVideoUpload | getOperationIdType | statusCodeGet | operationStatus |
+      | 1                  | DATI VALIDI           | 200            | CREATING                      | VALID OP. ID       | 200           | OK              |
+#      | 5                  | DATI VALIDI           | 200            | CREATING                      | VALID OP. ID       | 200           | OK              |
+      | 2                  | UNO IUN INESISTENTE   | 200            | CREATING                      | VALID OP. ID       | 200           | WARNING         |
+      | 1                  | TUTTI IUN INESISTENTI | 200            | KO                            | VALID OP. ID       | 200           | KO              |
+      | 1                  | DATI VALIDI           | 200            | CREATING                      | INEXISTENT OP. ID  | 404           | NULL            |
+      | 1                  | DATI VALIDI           | 200            | CREATING                      | INVALID OP. ID     | 400           | NULL            |
+      | 1                  | DATI VALIDI           | 200            | CREATING                      | OP. ID WITH IUN    | 400           | NULL            |
+#      | 6                  | DATI VALIDI           | 400            | NULL                          | NULL               | NULL          | NULL            |
+      | 1                  | LISTA IUN VUOTA       | 400            | NULL                          | NULL               | NULL          | NULL            |
+      | 2                  | IUN RIPETUTO          | 400            | NULL                          | NULL               | NULL          | NULL            |
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario Outline: [CREATE_ACT_OPERATION_V2_KO] Chiamata createActOperation (controllo validazione campi)
