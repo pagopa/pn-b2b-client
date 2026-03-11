@@ -43,25 +43,21 @@ Feature: avanzamento notifiche webhook b2b V24
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV24 @precondition @cleanWebhook @webhook1
-  Scenario: [B2B-STREAM_ES1.3_127ssssss] Consumo di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica con cucumber |
-#      | senderDenomination | Comune di milano            |
-#    And destinatario Mario Gherkin
+  #https://pagopa.atlassian.net/browse/PN-18519
+  @webhookV24 @precondition @cleanWebhook @webhook4
+  Scenario: [B2B_STREAM_V24_STATUS_NOT_PRESENT] Si creano delle notifiche che hanno uno status che non è presente nella versione V24 e si verifica che lo stream possa essere consumato correttamente senza problemi
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V24"
-    And Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    And Viene creata una nuova apiKey per il comune "Comune_Son" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V24" per il "Comune_1" con un gruppo disponibile "FIRST"
-    Given vengono create 3 notifiche con destinatario Mario Gherkin per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    When si crea il nuovo stream per il "Comune_Son" con versione "V24" e filtro status "DELIVERING"
+    Given vengono create 49 notifiche con destinatario Mario Gherkin per la pa "Comune_Son" e si aspetta che raggiungano l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
       | subject                 | invio notifica con cucumber |
       | senderDenomination      | Comune di Palermo           |
       | physicalCommunication   | REGISTERED_LETTER_890       |
       | physicalAddress_address | @FAIL_DECEDUTO_890          |
       | digitalDomicile         | NULL                        |
-#    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "V24"
+    And vengono letti gli eventi dello stream che contenga 49 eventi con la versione "V24"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

@@ -158,7 +158,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -505,7 +504,7 @@ public class SharedSteps {
             TimeUnit.SECONDS.sleep(1);
 
         }
-        TimeUnit.MINUTES.sleep(10);
+        TimeUnit.MINUTES.sleep(5);
         List<String> remainingIuns = new ArrayList<>(iunlist); // lista di quelli da processare
         List<String> failedIuns = new ArrayList<>();
 
@@ -514,7 +513,7 @@ public class SharedSteps {
             for (String iun : remainingIuns) {
                 setNotificationIun(iun);
                 try {
-                    notificationStepsInterface.waitForTimelineElement(timelineEvent, 1000);
+                    notificationStepsInterface.waitForTimelineElement(timelineEvent, 30);
                 } catch (HttpClientErrorException.NotFound e) {
                     failedIuns.add(iun);
                 }
@@ -522,13 +521,6 @@ public class SharedSteps {
 
             // prepariamo la prossima iterazione solo con quelli che hanno fallito
             remainingIuns = new ArrayList<>(failedIuns);
-
-            // opzionale: piccolo ritardo tra i tentativi per non saturare il sistema
-            if (!remainingIuns.isEmpty()) {
-                try {
-                    TimeUnit.SECONDS.sleep(30);
-                } catch (InterruptedException ignored) {}
-            }
         }
 
     }
@@ -1407,10 +1399,12 @@ public class SharedSteps {
 
     public static void threadWait(int wait) {
         try {
-            await().atMost(wait, TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS.sleep(wait);
         } catch (RuntimeException exception) {
             log.error("Await error exception");
             throw exception;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
