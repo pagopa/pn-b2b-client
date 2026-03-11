@@ -113,7 +113,15 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   #PA ABILITATA, PF NON CENSITA, CLIENT ABILITATO
   @ricercaIndirizzoVas  #rif srs 6-44 #il costo può essere verificato manualmente dalla tabella di invoicing
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_KO] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun indirizzo trovato da ANPR notifica rifiutata - Vas attivo
-    Given imposto lo iun di SharedSteps a "GJZA-WUYH-HTWQ-202602-L-1" e la pa a "Comune_Multi"
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline           | true                                                                                       |
       | details                | NOT_NULL                                                                                   |
