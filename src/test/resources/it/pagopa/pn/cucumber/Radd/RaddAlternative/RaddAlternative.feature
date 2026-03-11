@@ -1646,10 +1646,11 @@ Feature: Radd Alternative
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.2
   Scenario: [RADD-ALT_PAGE_ATTACHMENT_3] Download frontespizio operazione ACT 2 pagine e F24 assente    Given viene generata una nuova notifica
-  | subject            | invio notifica con cucumber radd alternative |
-  | senderDenomination | Comune di Palermo                            |
-  | feePolicy          | DELIVERY_MODE                  |
-  | document           | DOC_2_PG;                      |
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | document           | DOC_5_PG;                                    |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
@@ -1681,7 +1682,34 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+
+  @raddAlt @raddAltPagineFrontespizio
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_3C] Download frontespizio operazione ACT 2 pagine e F24 assente
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | physicalCommunication | REGISTERED_LETTER_890                         |
+      | feePolicy             | DELIVERY_MODE                                 |
+      | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
+        And destinatario CucumberSpa e:
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+
+
 
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.2
