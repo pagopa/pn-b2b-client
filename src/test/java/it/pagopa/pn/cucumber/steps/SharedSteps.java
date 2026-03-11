@@ -423,18 +423,13 @@ public class SharedSteps {
         List<String> iunlist = new ArrayList<>();
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
-//            Map<String, String> data = Map.of("subject", "invio notifica con cucumber",
-//                    "senderDenomination", "Comune di palermo",
-//                    "feePolicy", "DELIVERY_MODE");
             prepareNotificationRequestWithVersion(MOST_RECENT, data);
             setPaAndSenderTaxId(pa);
             getNotificationStepInterface().addRecipientToNotification(destinatario, data);
-//            notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
             getNotificationStepInterface().uploadNotification(null);
             String iun = getNotificationIun();
             iunlist.add(iun);
             TimeUnit.SECONDS.sleep(1);
-
         }
         TimeUnit.MINUTES.sleep(5);
         List<String> remainingIuns = new ArrayList<>(iunlist); // lista di quelli da processare
