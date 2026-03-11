@@ -238,7 +238,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 
   @paperTrackerARRunMode @trackerErrors @alwaysRun
-  Scenario Outline: [PAPER_TRACKER_ERROR_4] Vengono creati eventi RECRI004B con deliveryFailureCause uguale a M01, M03, M04, M06, M07, M08, M09 e si verifica che si ottiene un SEND_ANALOG_FEEDBACK con responseStatus uguale a KO
+  Scenario Outline: [PAPER_TRACKER_ERROR_4.A] Vengono creati eventi RECRI004B con deliveryFailureCause uguale a M01, M03, M04, M06, M07, M08, M09 e si verifica che si ottiene un SEND_ANALOG_FEEDBACK con responseStatus uguale a KO
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -257,8 +257,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002   |                      |              |              |
     Then viene invocato il consolidatore con i seguenti dati:
-      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004A  |                      |              |              |
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause   | attachment_1 | attachment_2 |
+      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004A  | <deliveryFailureCause> |              |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause   | attachment_1 | attachment_2 |
       | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004B  | <deliveryFailureCause> | Plico        |              |
@@ -283,7 +283,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | M09                  |
 
   @paperTrackerARRunMode @trackerErrors @alwaysRun
-  Scenario Outline: [PAPER_TRACKER_ERROR_4] Vengono creati eventi RECRI004B con deliveryFailureCause uguale a M02, M05 e si verifica che si ottiene un SEND_ANALOG_FEEDBACK con responseStatus uguale a OK
+  Scenario Outline: [PAPER_TRACKER_ERROR_4.B] Vengono creati eventi RECRI004B con deliveryFailureCause uguale a M02, M05 e si verifica che si ottiene un SEND_ANALOG_FEEDBACK con responseStatus uguale a OK
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -302,8 +302,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI002   |                      |              |              |
     Then viene invocato il consolidatore con i seguenti dati:
-      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004A  |                      |              |              |
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause   | attachment_1 | attachment_2 |
+      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004A  | <deliveryFailureCause> |              |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause   | attachment_1 | attachment_2 |
       | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004B  | <deliveryFailureCause> | Plico        |              |
