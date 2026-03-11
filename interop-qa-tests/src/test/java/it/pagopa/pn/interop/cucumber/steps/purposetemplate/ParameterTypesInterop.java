@@ -29,7 +29,7 @@ public class ParameterTypesInterop {
         return value.equals("contiene");
     }
 
-    @ParameterType("creato|creata|esistente|sospeso|archiviato|inesistente")
+    @ParameterType("creato|creata|esistente|sospeso|archiviato|inesistente|invisibile")
     public static boolean exists(String value) {
         List<String> valid = Arrays.asList("creato", "creata", "esistente");
         return valid.contains(value);

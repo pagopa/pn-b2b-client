@@ -329,7 +329,7 @@ public class PurposeTemplateSteps {
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest)),
                 res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
-                "Failed to retrieve the client!"
+                "Failed to retrieve the purpose template!"
         );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
