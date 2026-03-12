@@ -24,7 +24,6 @@ import java.util.UUID;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ProducerKeychainClientImpl extends AbstractClient implements ProducerKeychainClient {
-    private static final int RESULTS_LIMIT = 30;
 
     private final ProducerKeychainApi producerKeychainApi;
     private final RestTemplate restTemplate;

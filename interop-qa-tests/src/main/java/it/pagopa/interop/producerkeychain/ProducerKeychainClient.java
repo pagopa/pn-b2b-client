@@ -1,5 +1,6 @@
 package it.pagopa.interop.producerkeychain;
 
+import it.pagopa.interop.common.SettableHttpCallExecutor;
 import it.pagopa.interop.common.client.IClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
@@ -8,7 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSee
 import java.util.List;
 import java.util.UUID;
 
-public interface ProducerKeychainClient extends IClient<ProducerKeychain, UUID> {
+public interface ProducerKeychainClient extends IClient<ProducerKeychain, UUID>, SettableHttpCallExecutor {
     UUID create(ProducerKeychainSeed seed);
 
     void linkEService(UUID producerKeychainId, EServiceAdditionDetailsSeed seed);
