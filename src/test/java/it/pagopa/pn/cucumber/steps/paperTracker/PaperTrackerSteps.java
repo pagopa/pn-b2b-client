@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -472,6 +473,33 @@ public class PaperTrackerSteps {
         assertTrue(flowThrows.contains(flowThrow), String.format("FlowThrow non trovato:\n%s\nFlowThrow presenti:\n%s", flowThrow, flowThrows));
     }
 
+    @And("si verifica che non ci siano {word} per i trackingId richiesti")
+    public void checkNoDataGeneric(String type) {
+        TrackingsRequest request = new TrackingsRequest();
+        request.setTrackingIds(trackingKeys);
+        switch (type.toLowerCase()) {
+            case "errori" -> {
+                TrackingErrorsResponse errorsResponse = paperTrackerClient.retrieveTrackerErrors(request);
+                assertNoData(errorsResponse.getResults(), res -> res.getErrors(),
+                        "Non ci devono essere errori per i trackingId richiesti");
+            }
+            case "outputs" -> {
+                PaperTrackerOutputsResponse outputsResponse = paperTrackerClient.retrieveTrackerOutputs(request);
+                assertNoData(outputsResponse.getResults(), res -> res.getOutputs(),
+                        "Non ci devono essere dati per i trackingId richiesti");
+            }
+            default -> throw new IllegalArgumentException("Tipo sconosciuto: " + type);
+        }
+    }
+
+    private <T, R> void assertNoData(List<T> results, Function<T, List<R>> extractor, String message) {
+        boolean hasData = results.stream()
+                .map(extractor)
+                .filter(Objects::nonNull)
+                .anyMatch(list -> !list.isEmpty());
+
+        assertThat(hasData).as(message).isFalse();
+    }
 
     @Then("si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: {string}")
     public void checkTrackingErrorsNew(String expectedError) throws JsonProcessingException {

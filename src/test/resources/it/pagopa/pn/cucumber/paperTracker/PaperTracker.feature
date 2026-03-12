@@ -15,6 +15,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName             |
       | ok_AR                    |
@@ -52,6 +53,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName            |
       | OK_RIR                  |
@@ -265,7 +267,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che la risposta tracking per la sequence "OK_AR_OCR_PENDING_WITH_OCR_ENABLED" contenga tutti gli elementi attesi e che sia strutturalmente valida
 
   @paperTrackerARRunMode @ocrDisabled
-  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti aspettando l'evento CON020
+  Scenario Outline: [PAPER_TRACKER_AR_OCR_DRY] Viene verificato che gli elementi di timeline sono presenti aspettando l'evento CON020
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -302,6 +304,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che non ci siano errori per i trackingId richiesti
+    And si verifica che non ci siano outputs per i trackingId richiesti
     Examples:
       | sequence                      | physicalAddress                   |
       | OK_AR                         | Via@ok_AR                         |
@@ -373,6 +377,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che non ci siano errori per i trackingId richiesti
+    And si verifica che non ci siano outputs per i trackingId richiesti
     Examples:
       | sequence                      | physicalAddress                   |
       | OK_RIR                        | Via@OK_RIR                        |
@@ -401,7 +407,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   @paperTrackerARRunMode
-  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_5] Si verifica che per le sequence AR in cui è previsto un errore, l'errore sia effettivamente presente
+  Scenario Outline: [PAPER_TRACKER_ERROR_5] Si verifica che per le sequence AR in cui è previsto un errore, l'errore sia effettivamente presente
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
