@@ -14,6 +14,7 @@ import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
+import it.pagopa.interop.common.interceptor.dpop.utils.DpopThreadLocalCleaner;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.ApiProfileConfiguration;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
@@ -212,6 +213,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ProducerKeychainsClient.class,
         IPurposeTemplateClient.class,
         ProbingClient.class,
+        DpopThreadLocalCleaner.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
