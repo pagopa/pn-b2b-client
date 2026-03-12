@@ -112,4 +112,8 @@ public class DPoPAccessTokenSupplier implements Supplier<String> {
             return newToken;
         }
     }
+
+    public void clear() {
+        snapshot.remove();
+    }
 }

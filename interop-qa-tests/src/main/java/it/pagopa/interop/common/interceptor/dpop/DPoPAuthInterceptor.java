@@ -2,14 +2,16 @@ package it.pagopa.interop.common.interceptor.dpop;
 
 import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import javax.annotation.Nonnull;
-import lombok.Setter;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.client.*;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.util.function.Supplier;
 
@@ -18,10 +20,9 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
     private final DPoPTokenService dpopService;
     private final Supplier<String> tokenSupplier;
 
-    @Setter
-    private DpopHeaderPolicy policy;
+    private final ThreadLocal<DpopHeaderPolicy> policy =
+            ThreadLocal.withInitial(DpopHeaderPolicy::new);
 
-    // KeyPair isolata per thread (fix del problema di concorrenza)
     private final ThreadLocal<KeyPair> keyPair = new ThreadLocal<>();
 
     public DPoPAuthInterceptor(
@@ -32,8 +33,12 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
     ) {
         this.dpopService = dpopService;
         this.tokenSupplier = tokenSupplier;
-        this.policy = policy;
+        this.policy.set(policy);
         this.keyPair.set(keyPair);
+    }
+
+    public void setPolicy(DpopHeaderPolicy policy) {
+        this.policy.set(policy);
     }
 
     public void setKeyPair(KeyPair keyPair) {
@@ -47,7 +52,8 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
             ClientHttpRequestExecution execution
     ) throws IOException {
 
-        DpopHeaderPolicy.Mode mode = policy.getMode();
+        DpopHeaderPolicy currentPolicy = policy.get();
+        DpopHeaderPolicy.Mode mode = currentPolicy.getMode();
 
         if (mode == DpopHeaderPolicy.Mode.MISSING_DPOP) {
             request.getHeaders().remove("DPoP");
@@ -55,7 +61,7 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
         }
 
         if (mode == DpopHeaderPolicy.Mode.INVALID_DPOP) {
-            request.getHeaders().set("DPoP", policy.getInvalidDpopProof());
+            request.getHeaders().set("DPoP", currentPolicy.getInvalidDpopProof());
             return execution.execute(request, body);
         }
 
@@ -64,7 +70,7 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
             throw new IllegalStateException("DPoPInterceptor: keyPair non impostata");
         }
 
-        String token = tokenSupplier.get(); // access token
+        String token = tokenSupplier.get();
 
         URI uri = request.getURI();
         String dpop = dpopService.buildProofWithAth(
@@ -89,5 +95,10 @@ public class DPoPAuthInterceptor implements ClientHttpRequestInterceptor {
                     e
             );
         }
+    }
+
+    public void clear() {
+        keyPair.remove();
+        policy.remove();
     }
 }
