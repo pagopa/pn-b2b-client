@@ -116,4 +116,9 @@ public class DPoPAccessTokenSupplier implements Supplier<String> {
     public void clear() {
         snapshot.remove();
     }
+
+    public Auth getCurrentAuth() {
+        Snapshot snap = snapshot.get();
+        return snap.auth;
+    }
 }

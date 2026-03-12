@@ -2,6 +2,7 @@ package it.pagopa.interop.common.interceptor.dpop;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.authorization.domain.Auth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
+import java.util.function.Supplier;
 
 @Slf4j
 public class IntegrityValidationInterceptor implements ClientHttpRequestInterceptor {
@@ -24,20 +26,24 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
     private static final String DIGEST_HEADER = "Digest";
     private static final String AGID_JWT_SIGNATURE_HEADER = "Agid-JWT-Signature";
+    private static final String X_CORRELATION_ID_HEADER = "X-Correlation-Id";
     private static final String ALG_PREFIX = "SHA-256=";
 
     private final boolean failOnMissingDigest;
     private final boolean failOnMissingAgidJwtSignature;
-    private final boolean treatMissingResponseHeaderAsEmptyString; // per match signed_headers
+    private final boolean treatMissingResponseHeaderAsEmptyString;
+    private final Supplier<Auth> authSupplier;
 
     public IntegrityValidationInterceptor(
             boolean failOnMissingDigest,
             boolean failOnMissingAgidJwtSignature,
-            boolean treatMissingResponseHeaderAsEmptyString
+            boolean treatMissingResponseHeaderAsEmptyString,
+            Supplier<Auth> authSupplier
     ) {
         this.failOnMissingDigest = failOnMissingDigest;
         this.failOnMissingAgidJwtSignature = failOnMissingAgidJwtSignature;
         this.treatMissingResponseHeaderAsEmptyString = treatMissingResponseHeaderAsEmptyString;
+        this.authSupplier = authSupplier;
     }
 
     @Override
@@ -49,23 +55,16 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
         ClientHttpResponse response = execution.execute(request, requestBody);
 
-        // bufferizza body (consuma lo stream)
         byte[] responseBody = StreamUtils.copyToByteArray(response.getBody());
 
         try {
-            // 1) Digest check
             validateDigestIfPresentOrRequired(request, response, responseBody);
-
-            // 2) Agid-JWT-Signature checks (structure + signed_headers match)
             validateAgidJwtSignatureIfPresentOrRequired(request, response);
-
         } catch (IntegrityValidationException ex) {
-            // logga sempre la response "così com'è arrivata"
             logIntegrityFailure(request, response, responseBody, ex);
             throw ex;
         }
 
-        // ritorna response con body riutilizzabile
         return new CachedBodyClientHttpResponse(response, responseBody);
     }
 
@@ -79,10 +78,7 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
             HttpStatus status = response.getStatusCode();
             HttpHeaders headers = response.getHeaders();
 
-            // body preview (max 2KB)
             String bodyPreview = previewBody(responseBody, 2048);
-
-            // headers redatti
             Map<String, List<String>> safeHeaders = redactHeaders(headers);
 
             log.error(
@@ -97,9 +93,13 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
                     ex.getMessage()
             );
         } catch (Exception logEx) {
-            // se per qualche motivo non riesce a loggare, non bloccare l'eccezione originale
-            log.error("Integrity validation FAILED for {} {} (unable to log response details). Cause={}",
-                    request.getMethod(), request.getURI(), ex.getMessage(), logEx);
+            log.error(
+                    "Integrity validation FAILED for {} {} (unable to log response details). Cause={}",
+                    request.getMethod(),
+                    request.getURI(),
+                    ex.getMessage(),
+                    logEx
+            );
         }
     }
 
@@ -137,7 +137,9 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
         if (digestHeader == null || digestHeader.isBlank()) {
             if (failOnMissingDigest) {
-                throw new IntegrityValidationException("Missing Digest header for " + request.getMethod() + " " + request.getURI());
+                throw new IntegrityValidationException(
+                        "Missing Digest header for " + request.getMethod() + " " + request.getURI()
+                );
             }
             log.debug("Digest header missing for {} {}", request.getMethod(), request.getURI());
             return;
@@ -160,14 +162,14 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
     private void validateAgidJwtSignatureIfPresentOrRequired(
             org.springframework.http.HttpRequest request,
             ClientHttpResponse response
-    ) {
+    ) throws IOException {
         String agidJwt = firstHeaderValue(response.getHeaders(), AGID_JWT_SIGNATURE_HEADER);
 
         if (agidJwt == null || agidJwt.isBlank()) {
             if (failOnMissingAgidJwtSignature) {
                 throw new IntegrityValidationException(
-                        "Missing Agid-JWT-Signature header for "
-                                + request.getMethod() + " " + request.getURI());
+                        "Missing Agid-JWT-Signature header for " + request.getMethod() + " " + request.getURI()
+                );
             }
             log.debug("Agid-JWT-Signature missing for {} {}", request.getMethod(), request.getURI());
             return;
@@ -181,28 +183,55 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         JsonNode jwtHeader = readJsonB64Url(parts[0]);
         JsonNode jwtPayload = readJsonB64Url(parts[1]);
 
-        // alg must be RS256
         String alg = optText(jwtHeader, "alg");
         if (!"RS256".equals(alg)) {
             throw new IntegrityValidationException("Agid-JWT-Signature alg is not RS256: " + alg);
         }
 
-        // required claims
         require(jwtPayload, "iat");
         require(jwtPayload, "exp");
         require(jwtPayload, "iss");
-        require(jwtPayload, "aud");
-        require(jwtPayload, "sub");
         require(jwtPayload, "jti");
         require(jwtPayload, "signed_headers");
+
+        // NON devono esserci
+        requireAbsent(jwtPayload, "aud");
+        requireAbsent(jwtPayload, "sub");
+        requireAbsent(jwtPayload, "nbf");
+
+        // Se non è 401, clientId deve esserci e combaciare con Auth
+        if (response.getRawStatusCode() != HttpStatus.UNAUTHORIZED.value()) {
+            require(jwtPayload, "clientId");
+
+            String tokenClientId = optText(jwtPayload, "clientId");
+            Auth auth = authSupplier != null ? authSupplier.get() : null;
+            String expectedClientId = auth != null ? auth.getClientId() : null;
+
+            if (expectedClientId == null || expectedClientId.isBlank()) {
+                throw new IntegrityValidationException("Auth/clientId non disponibile per validare il claim clientId");
+            }
+
+            if (!expectedClientId.equals(tokenClientId)) {
+                throw new IntegrityValidationException(
+                        "clientId mismatch expected='" + expectedClientId + "' actual='" + tokenClientId + "'"
+                );
+            }
+        }
 
         JsonNode signedHeaders = jwtPayload.get("signed_headers");
         if (!signedHeaders.isArray()) {
             throw new IntegrityValidationException("signed_headers claim is not an array");
         }
 
-        for (JsonNode headerObject : signedHeaders) {
+        // X-Correlation-Id deve esserci sempre in response
+        String correlationId = firstHeaderValue(response.getHeaders(), X_CORRELATION_ID_HEADER);
+        if (correlationId == null || correlationId.isBlank()) {
+            throw new IntegrityValidationException("Missing X-Correlation-Id header in response");
+        }
 
+        boolean correlationIdFoundInSignedHeaders = false;
+
+        for (JsonNode headerObject : signedHeaders) {
             if (!headerObject.isObject() || headerObject.size() != 1) {
                 throw new IntegrityValidationException(
                         "Each signed_headers element must contain exactly one header entry"
@@ -211,10 +240,10 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
             Map.Entry<String, JsonNode> entry = headerObject.fields().next();
 
-            String headerName = entry.getKey(); // es. "digest" / "content-type"
+            String headerName = entry.getKey();
             String expectedValue = entry.getValue().asText();
 
-            String actualValue = response.getHeaders().getFirst(headerName); // case-insensitive
+            String actualValue = response.getHeaders().getFirst(headerName);
 
             if (actualValue == null) {
                 actualValue = treatMissingResponseHeaderAsEmptyString ? "" : null;
@@ -227,6 +256,20 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
                                 "' actual='" + actualValue + "'"
                 );
             }
+
+            if (headerName.equalsIgnoreCase(X_CORRELATION_ID_HEADER)) {
+                correlationIdFoundInSignedHeaders = true;
+                if (!correlationId.equals(expectedValue)) {
+                    throw new IntegrityValidationException(
+                            "X-Correlation-Id mismatch between response header and signed_headers " +
+                                    "expected='" + expectedValue + "' actual='" + correlationId + "'"
+                    );
+                }
+            }
+        }
+
+        if (!correlationIdFoundInSignedHeaders) {
+            throw new IntegrityValidationException("signed_headers does not contain X-Correlation-Id");
         }
     }
 
@@ -274,7 +317,15 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
     }
 
     private static void require(JsonNode payload, String field) {
-        if (!payload.has(field)) throw new IntegrityValidationException("Missing claim: " + field);
+        if (!payload.has(field)) {
+            throw new IntegrityValidationException("Missing claim: " + field);
+        }
+    }
+
+    private static void requireAbsent(JsonNode payload, String field) {
+        if (payload.has(field)) {
+            throw new IntegrityValidationException("Claim must be absent: " + field);
+        }
     }
 
     private static String optText(JsonNode node, String field) {

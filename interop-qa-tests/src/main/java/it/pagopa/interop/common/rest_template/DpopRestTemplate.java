@@ -56,7 +56,12 @@ public class DpopRestTemplate {
 
         interceptors.add(0, dpopInterceptor);
         interceptors.add(0, dpopTokenInterceptor);
-        interceptors.add(new IntegrityValidationInterceptor(true, true, true));
+        interceptors.add(new IntegrityValidationInterceptor(
+                true,
+                true,
+                true,
+                dpopAccessTokenSupplier::getCurrentAuth
+        ));
 
         restTemplate.setInterceptors(interceptors);
     }
@@ -82,5 +87,11 @@ public class DpopRestTemplate {
         dpopTokenInterceptor.setPolicy(effectivePolicy);
 
         dpopAccessTokenSupplier.setAuth(auth);
+    }
+
+    public void clearThreadLocals() {
+        dpopAccessTokenSupplier.clear();
+        dpopInterceptor.clear();
+        dpopTokenInterceptor.clear();
     }
 }
