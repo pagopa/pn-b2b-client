@@ -251,15 +251,13 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario Outline: [ACT_OPERATION_V2] Creazione di un'act operation. Nei casi di POST invocata con successo, verifica tramite GET della corretta valorizzazione dell'operationStatus
-#    Given vengono inviate <notificationNumber> nuove notifiche tramite api b2b dal "Comune_Multi" con destinatario Mario Gherkin e si aspetta che raggiungano l'elemento di timeline "REQUEST_ACCEPTED"
-#      #campi notifica
-#      | subject                 | notifica analogica con cucumber |
-#      | senderDenomination      | Comune di palermo               |
-#      #campi destinatario
-#      | digitalDomicile         | NULL                            |
-#      | physicalAddress_address | Via@ok_890                      |
-    Given imposto la pa a "Comune_Multi" e gli iun di SharedSteps
-      | IUN1 | AGQU-WHWX-AHPD-202603-D-1 |
+    Given vengono inviate <notificationNumber> nuove notifiche tramite api b2b dal "Comune_Multi" con destinatario Mario Gherkin e si aspetta che raggiungano l'elemento di timeline "REQUEST_ACCEPTED"
+      #campi notifica
+      | subject                 | notifica analogica con cucumber |
+      | senderDenomination      | Comune di palermo               |
+      #campi destinatario
+      | digitalDomicile         | NULL                            |
+      | physicalAddress_address | Via@ok_890                      |
     And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | auto             |
       | iun               | auto             |
@@ -291,27 +289,25 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     Examples:
       | notificationNumber | iunListType           | statusCodePost | operationStatusPreVideoUpload | getOperationIdType | statusCodeGet | operationStatus |
       | 1                  | DATI VALIDI           | 200            | CREATING                      | VALID OP. ID       | 200           | OK              |
-#      | 5                  | DATI VALIDI           | 200            | CREATING                      | VALID OP. ID       | 200           | OK              |
+      | 5                  | DATI VALIDI           | 200            | CREATING                      | VALID OP. ID       | 200           | OK              |
       | 2                  | UNO IUN INESISTENTE   | 200            | CREATING                      | VALID OP. ID       | 200           | WARNING         |
       | 1                  | TUTTI IUN INESISTENTI | 200            | KO                            | VALID OP. ID       | 200           | KO              |
       | 1                  | DATI VALIDI           | 200            | CREATING                      | INEXISTENT OP. ID  | 404           | NULL            |
       | 1                  | DATI VALIDI           | 200            | CREATING                      | INVALID OP. ID     | 400           | NULL            |
       | 1                  | DATI VALIDI           | 200            | CREATING                      | OP. ID WITH IUN    | 400           | NULL            |
-#      | 6                  | DATI VALIDI           | 400            | NULL                          | NULL               | NULL          | NULL            |
+      | 6                  | DATI VALIDI           | 400            | NULL                          | NULL               | NULL          | NULL            |
       | 1                  | LISTA IUN VUOTA       | 400            | NULL                          | NULL               | NULL          | NULL            |
       | 2                  | IUN RIPETUTO          | 400            | NULL                          | NULL               | NULL          | NULL            |
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
-  Scenario Outline: [CREATE_ACT_OPERATION_V2_KO] Chiamata createActOperation (controllo validazione campi)
-#    Given viene generata una nuova notifica
-#      | subject            | notifica analogica con cucumber |
-#      | senderDenomination | Comune di palermo               |
-#    And destinatario Mario Gherkin e:
-#      | digitalDomicile         | NULL       |
-#      | physicalAddress_address | Via@ok_890 |
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Given imposto la pa a "Comune_Multi" e gli iun di SharedSteps
-      | IUN1 | AGQU-WHWX-AHPD-202603-D-1 |
+  Scenario Outline: [CREATE_ACT_OPERATION_V2_KO] Chiamata createActOperation V2 (controllo validazione campi)
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | <ticketId>     |
       | ticketOperationId | auto           |
@@ -333,15 +329,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | auto     | CLMCST42R12D969Z | EMAIL       | test@test.it | auto       | null   | 400        |
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
-  Scenario: [ACT_OPERATION_V2_LEGACY]
-#    Given viene generata una nuova notifica
-#      | subject            | notifica analogica con cucumber |
-#      | senderDenomination | Comune di palermo               |
-#    And destinatario Mario Gherkin e:
-#      | digitalDomicile         | NULL       |
-#      | physicalAddress_address | Via@ok_890 |
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Given imposto lo iun di SharedSteps a "AGQU-WHWX-AHPD-202603-D-1" e la pa a "Comune_Multi"
+  Scenario: [ACT_OPERATION_V2_LEGACY] Creazione di un actOperation con API v1 ed esecuzione della GET tramite api V2
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
       | ticketId          | auto             |
       | iun               | auto             |

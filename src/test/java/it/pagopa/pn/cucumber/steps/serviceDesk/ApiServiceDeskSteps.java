@@ -1827,13 +1827,13 @@ public class ApiServiceDeskSteps {
     @Then("il campo operationStatus della response è valorizzato con {string}")
     public void checkStatusFieldOfGetOperationResponse(String status) throws InterruptedException {
         assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
-//        try {
-//            assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
-//        } catch (AssertionError ae) {
-//            log.info("Waiting 2 minutes for status to get updated");
-//            Thread.sleep(120000L);
-//            callGetOperationsV2("VALID OP. ID");
-//            assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
-//        }
+        try {
+            assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
+        } catch (AssertionError ae) {
+            log.info("Waiting 3 minutes for status to get updated");
+            Thread.sleep(120000L);
+            callGetOperationsV2("VALID OP. ID");
+            assertThat(getOperationsResponseV2.getStatus()).as("Dopo 3 minuti di attesa, lo status della GetOperationResponse non coincide ancora con quanto atteso").isEqualTo(status);
+        }
     }
 }

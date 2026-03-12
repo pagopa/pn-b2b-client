@@ -446,7 +446,6 @@ public class SharedSteps {
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
     public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
-        List<String> iunlist = new ArrayList<>();
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
             prepareNotificationRequestWithVersion(MOST_RECENT, data);
@@ -454,11 +453,11 @@ public class SharedSteps {
             getNotificationStepInterface().addRecipientToNotification(destinatario, data);
             getNotificationStepInterface().uploadNotification(null);
             String iun = getNotificationIun();
-            iunlist.add(iun);
+            notificationIunList.add(iun);
             TimeUnit.SECONDS.sleep(1);
         }
         TimeUnit.MINUTES.sleep(5);
-        List<String> remainingIuns = new ArrayList<>(iunlist); // lista di quelli da processare
+        List<String> remainingIuns = new ArrayList<>(notificationIunList); // lista di quelli da processare
         List<String> failedIuns = new ArrayList<>();
 
         while (!remainingIuns.isEmpty()) {
@@ -471,17 +470,10 @@ public class SharedSteps {
                     failedIuns.add(iun);
                 }
             }
-
             // prepariamo la prossima iterazione solo con quelli che hanno fallito
             remainingIuns = new ArrayList<>(failedIuns);
         }
-
     }
-
-
-
-
-
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {
