@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeTags({"paperTracker890", "paperTrackerRSDryRunMode", "paperTrackerRISDryRunMode", "ocrDry", "ocrDisabled"})
 @ExcludeTags({"ocrEnabled", "ocrRun", "strictFinalValidationFalse",
         "strictFinalValidationTrue", "paperTrackerARRunMode",
-        "paperTrackerAR", "paperTrackerRunMode890", "paperTrackerRunMode890", "paperTrackerRSRunMode", "alwaysRun"})
+        "paperTrackerAR", "paperTrackerRunMode890", "paperTrackerRunMode890", "paperTrackerRSRunMode"})
 public class PaperTrackerDryWithOCRDryTest {
 
 }

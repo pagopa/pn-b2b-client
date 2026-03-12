@@ -32,7 +32,7 @@ public class EventsTimestampValidator implements CustomConditionalValidator {
             JsonNode statusCode = event.get("statusCode");
             if (statusCode != null && statusCode.isTextual()) {
                 String statusCodeValue = statusCode.asText();
-                if (List.of('A', 'B', 'C').contains(statusCodeValue.charAt(statusCodeValue.length() - 1))) {
+                if (List.of('A', 'B', 'C').contains(statusCodeValue.charAt(statusCodeValue.length() - 1)) && !statusCodeValue.equals("RECAG011A")) {
                     JsonNode timestamp = event.get("statusTimestamp");
                     if (timestamp != null && timestamp.isTextual()) {
                         finalEventsTimestamp.add(timestamp.asText());
