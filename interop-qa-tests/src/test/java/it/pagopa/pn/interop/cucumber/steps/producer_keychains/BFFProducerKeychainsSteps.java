@@ -5,7 +5,8 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
-import it.pagopa.interop.producer_keychains.service.ProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.IProducerKeychainsClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import lombok.extern.slf4j.Slf4j;
@@ -15,17 +16,17 @@ import java.util.List;
 
 @Slf4j
 public class BFFProducerKeychainsSteps {
-    private final ProducerKeychainsClient producerKeychainsClient;
+    private final IProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final SharedStepsContext sharedStepsContext;
 
-    public BFFProducerKeychainsSteps(ProducerKeychainsClient producerKeychainsClient,
+    public BFFProducerKeychainsSteps(ClientTokenConfigurator clientTokenConfigurator,
                                      SharedStepsContext sharedStepsContext,
                                      ProducerKeychainsContext producerKeychainsContext) {
 
         this.producerKeychainsContext = producerKeychainsContext;
-        this.producerKeychainsClient = producerKeychainsClient;
+        this.producerKeychainsClient = clientTokenConfigurator.getBffProducerKeychainsClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.producerKeychainsClient.setHttpCallExecutor(this.httpCallExecutor);
