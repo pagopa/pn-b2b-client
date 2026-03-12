@@ -77,6 +77,24 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  #https://pagopa.atlassian.net/browse/PN-18519
+  @webhookV23 @precondition @cleanWebhook @webhook4
+  Scenario: [B2B_STREAM_V23_STATUS_NOT_PRESENT] Si creano delle notifiche che hanno uno status che non è presente nella versione V23 e si verifica che lo stream possa essere consumato correttamente senza problemi
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
+    And Viene creata una nuova apiKey per il comune "Comune_Son" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream per il "Comune_Son" con versione "V23" e filtro status "DELIVERING"
+    Given vengono create 49 notifiche con destinatario Mario Gherkin per la pa "Comune_Son" e si aspetta che raggiungano l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | subject                 | invio notifica con cucumber |
+      | senderDenomination      | Comune di Palermo           |
+      | physicalCommunication   | REGISTERED_LETTER_890       |
+      | physicalAddress_address | @FAIL_DECEDUTO_890          |
+      | digitalDomicile         | NULL                        |
+    And vengono letti gli eventi dello stream che contenga 49 eventi con la versione "V23"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
   @webhookV23 @precondition @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_ES1.3_127] Consumo di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given viene generata una nuova notifica

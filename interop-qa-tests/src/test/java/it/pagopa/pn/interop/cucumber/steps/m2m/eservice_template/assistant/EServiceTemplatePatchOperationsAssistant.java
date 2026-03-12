@@ -8,10 +8,12 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemp
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapper;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -30,13 +32,13 @@ public class EServiceTemplatePatchOperationsAssistant extends
 
     @Override
     public EServiceTemplatePatchRequest buildDefaultPatchRequest() {
-        UUID uuid = UUID.randomUUID();
+        String id = RandomStringUtils.insecure().nextAlphanumeric(5);
         return EServiceTemplatePatchRequest.builder()
-            .name("some patched name - " + uuid)
-            .description("some patched description - " + uuid)
+            .name("some patched name - " + id)
+            .description("some patched description - " + id)
             .technology(EServiceTechnology.SOAP)
             .mode(EServiceMode.DELIVER)
-            .intendedTarget("some patched intended target - " + uuid)
+            .intendedTarget("some patched intended target - " + id)
             .isSignalHubEnabled(true)
             .build();
     }

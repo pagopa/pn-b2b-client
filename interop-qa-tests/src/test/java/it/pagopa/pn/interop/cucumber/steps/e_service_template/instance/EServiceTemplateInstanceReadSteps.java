@@ -7,39 +7,39 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstance;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+
 import java.util.List;
 import java.util.UUID;
-import lombok.Data;
+
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.springframework.http.ResponseEntity;
 
-/** Cucumber steps involving quotas of E-service templates */
-@Data
+/**
+ * Cucumber steps involving quotas of E-service templates
+ */
 public class EServiceTemplateInstanceReadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final IEServiceTemplateClient eServiceTemplateClient;
     private final IHttpExecutor httpCallExecutor;
-    private final PollingService pollingService;
     private final IEServiceClient eServiceClient;
+    private List<EServiceTemplateInstance> eServiceTemplateInstances;
+    private final EServiceTemplateInstanceUtility eServiceTemplateInstanceUtility;
 
     public EServiceTemplateInstanceReadSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext
+                                             SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.pollingService = sharedStepsContext.getPollingService();
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.eServiceTemplateInstanceUtility = new EServiceTemplateInstanceUtility(sharedStepsContext);
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template")
@@ -57,17 +57,17 @@ public class EServiceTemplateInstanceReadSteps {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
         assertSoftly(softly -> {
             softly.assertThat(response)
-                .areExactly(
-                    draftCount,
-                    instanceInState(EServiceDescriptorState.DRAFT));
+                    .areExactly(
+                            draftCount,
+                            instanceInState(EServiceDescriptorState.DRAFT));
             softly.assertThat(response)
-                .areExactly(
-                    publishedCount,
-                    instanceInState(EServiceDescriptorState.PUBLISHED));
+                    .areExactly(
+                            publishedCount,
+                            instanceInState(EServiceDescriptorState.PUBLISHED));
             softly.assertThat(response)
-                .areExactly(
-                    suspendedCount,
-                    instanceInState(EServiceDescriptorState.SUSPENDED));
+                    .areExactly(
+                            suspendedCount,
+                            instanceInState(EServiceDescriptorState.SUSPENDED));
         });
     }
 
@@ -75,8 +75,8 @@ public class EServiceTemplateInstanceReadSteps {
     public void checkEServiceTemplateInstancesCount(int instanceCount, EServiceDescriptorState expectedState) {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
         assertThat(response)
-            .hasSize(instanceCount)
-            .are(instanceInState(expectedState));
+                .hasSize(instanceCount)
+                .are(instanceInState(expectedState));
     }
 
     @Then("l'elenco delle istanze dell'e-service template è vuoto")
@@ -85,14 +85,37 @@ public class EServiceTemplateInstanceReadSteps {
         assertThat(response).isEmpty();
     }
 
+    @When("l'utente recupera le proprie istanze e-service template create dall'e-service template {string}")
+    public void getMyEServiceTemplateInstances(String eServiceTemplateId) {
+        UUID templateEServiceId = eServiceTemplateInstanceUtility.resolveEServiceTemplateId(eServiceTemplateId);
+        httpCallExecutor.performCall(
+                () -> eServiceClient.getMyEServiceTemplateInstancesWithHttpInfo(
+                        templateEServiceId, 0, 50
+                ),
+                res -> {
+                    if (res.getStatusCode().is2xxSuccessful()) {
+                        this.eServiceTemplateInstances = res.getBody().getResults();
+                    }
+                    return res.getStatusCode();
+                }
+        );
+    }
+
+    @When("ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template")
+    public void checkMyEServiceTemplateInstances() {
+        assertThat(this.eServiceTemplateInstances).hasSize(1);
+        UUID eServiceTemplateInstanceId = this.sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().getId();
+        Assertions.assertThat(this.eServiceTemplateInstances.get(0).getId()).isEqualTo(eServiceTemplateInstanceId);
+    }
+
     private void getEserviceTemplateInstances(UUID templateId) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                templateId
-            ),
-            ResponseEntity::getStatusCode);
+                () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
+                        templateId
+                ),
+                ResponseEntity::getStatusCode);
     }
 
     // 28/03/2025 Versione precedente
@@ -118,13 +141,14 @@ public class EServiceTemplateInstanceReadSteps {
 
     private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
         return new Condition<>(
-            instance -> {
-                if (isEmpty(instance.getDescriptors())) {
-                    return state == EServiceDescriptorState.DRAFT;
-                } else {
-                    return instance.getLatestDescriptor().getState().equals(state);
-                }
-            },
-            "instances in state %s", state);
+                instance -> {
+                    if (isEmpty(instance.getDescriptors())) {
+                        return state == EServiceDescriptorState.DRAFT;
+                    } else {
+                        return instance.getLatestDescriptor().getState().equals(state);
+                    }
+                },
+                "instances in state %s", state);
     }
+
 }
