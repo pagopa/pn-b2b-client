@@ -67,7 +67,7 @@ Feature: recupero notifiche tramite api AppIO b2b
 #    [TC_5]
     And a seguito della scansione del QR Code, la notifica può essere recuperata da: Mario Cucumber tramite AppIO
     # SI VERIFICA CHE UN UTENTE CHE NON è DESTINATARIO O DELEGATO NON POSSA LEGGERE IL QRCODE
-    And l'utente Signor Generato scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
+    And l'utente Galileo Galilei scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
     And si verifica che la chiamata abbia ritornato uno status code: 403
 
     #[TC_3] SI PROVA A RIACCEDERE ALLA NOTIFICA SCANSIONANDO UN QR CODE NON VALIDO
