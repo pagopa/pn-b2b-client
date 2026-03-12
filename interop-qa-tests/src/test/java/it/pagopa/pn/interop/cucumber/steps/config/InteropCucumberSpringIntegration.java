@@ -33,7 +33,6 @@ import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.probing.config.ProbingClientConfigs;
 import it.pagopa.interop.probing.service.impl.ProbingClient;
 import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
-import it.pagopa.interop.producer_keychains.service.ProducerKeychainsClient;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
@@ -209,7 +208,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3PurposeTemplateClientImpl.class,
         M2MV3ProducerKeychainsClient.class,
         M2MV3UsersClient.class,
-        ProducerKeychainsClient.class,
         IPurposeTemplateClient.class,
         ProbingClient.class,
 })

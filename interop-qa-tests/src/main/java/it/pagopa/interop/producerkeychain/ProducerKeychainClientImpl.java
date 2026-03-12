@@ -2,6 +2,7 @@ package it.pagopa.interop.producerkeychain;
 
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
+import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
@@ -24,7 +25,6 @@ import java.util.UUID;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ProducerKeychainClientImpl extends AbstractClient implements ProducerKeychainClient {
-    private static final int RESULTS_LIMIT = 30;
 
     private final ProducerKeychainApi producerKeychainApi;
     private final RestTemplate restTemplate;
@@ -71,6 +71,21 @@ public class ProducerKeychainClientImpl extends AbstractClient implements Produc
         Optional<CreatedResource> createdResource = performOperation(
             () -> producerKeychainApi.createProducerKeychainWithHttpInfo(seed));
         return createdResource.orElseThrow(() -> new RuntimeException("Il portachiavi erogatore non è stato generato correttamente")).getId();
+    }
+
+    @Override
+    public CreatedResource createProducerKeychain(ProducerKeychainSeed producerKeychainSeed) {
+        return performOperation(SimpleOperation.of(() -> producerKeychainApi.createProducerKeychain(producerKeychainSeed), res -> res)).orElseThrow(() -> new IllegalStateException("Errore nella creazione del producer keychain (response non 2xx o body nullo)"));
+    }
+
+    @Override
+    public ProducerKeychain getProducerKeychain(UUID producerKeychainId) {
+        return performOperation(SimpleOperation.of(() -> producerKeychainApi.getProducerKeychain(producerKeychainId), res -> res)).orElseThrow(() -> new IllegalStateException("Errore nel recupero del producer keychain (response non 2xx o body nullo)"));
+    }
+
+    @Override
+    public void createProducerKeychainKey(UUID producerKeychainId, KeySeed keySeed) {
+        performOperation(() -> producerKeychainApi.createProducerKeyWithHttpInfo(producerKeychainId, keySeed));
     }
 
     @Override

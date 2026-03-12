@@ -317,15 +317,16 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     public void waitForTimelineElement(String timelineElementCategory, Integer attempts) {
         TimelineElementV28 timelineElement = null;
         for (int i = 0; i < attempts; i++) {
-            threadWait(sharedSteps.getWorkFlowWait());
             FullSentNotificationV28 fsn = getFullSentNotificationVersioned();
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
-                            .equals(TimelineElementCategoryV23.valueOf(timelineElementCategory).getValue()))
+                            .equals(TimelineElementCategoryV28.valueOf(timelineElementCategory).getValue()))
                     .findAny().orElse(null);
             if (timelineElement != null) {
                 break;
+            } else {
+                threadWait(sharedSteps.getWorkFlowWait());
             }
         }
         assertThat(timelineElement).as("Il timeline element restituito non dev'essere null").isNotNull();
