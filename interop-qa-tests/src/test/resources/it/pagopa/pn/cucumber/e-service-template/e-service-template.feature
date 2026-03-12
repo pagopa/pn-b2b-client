@@ -14,9 +14,9 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo       |
-      | security | ricezione  |
-      | support  | ricezione  |
+      | ruolo    | modo      |
+      | security | ricezione |
+      | support  | ricezione |
 
   @happy-path
   @e-service-template-create
@@ -32,9 +32,9 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo | modo       |
-      | admin | ricezione  |
-      | api   | ricezione  |
+      | ruolo | modo      |
+      | admin | ricezione |
+      | api   | ricezione |
 
   @sad-path
   @e-service-template-receive-bff
@@ -1108,9 +1108,9 @@ Feature: Test API of e-service template
     When l'utente tenta la pubblicazione della versione dell'e-service template
     Then si ottiene response status code 404
     Examples:
-      | modo        |
-      | erogazione  |
-      | ricezione   |
+      | modo       |
+      | erogazione |
+      | ricezione  |
 
   @sad-path
   @e-service-template-version-publish
@@ -2219,10 +2219,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo        | modo       |
-      | admin        | ricezione  |
-      | api          | ricezione  |
-      | api,security | ricezione  |
+      | ruolo        | modo      |
+      | admin        | ricezione |
+      | api          | ricezione |
+      | api,security | ricezione |
 
   @sad-path
   @e-service-template-instance-create
@@ -2233,15 +2233,15 @@ Feature: Test API of e-service template
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 403
     Examples:
-      | ruolo     | modo        |
-      | security  | erogazione  |
-      | support   | erogazione  |
+      | ruolo    | modo       |
+      | security | erogazione |
+      | support  | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo     | modo        |
-      | security  | ricezione   |
-      | support   | ricezione   |
+      | ruolo    | modo      |
+      | security | ricezione |
+      | support  | ricezione |
 
   # NOTA 16/04/2025: non mappato in SRS https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1429864566/SRS+Template+e-service
   @happy-path
@@ -2261,10 +2261,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo        | modo       |
-      | admin        | ricezione  |
-      | api          | ricezione  |
-      | api,security | ricezione  |
+      | ruolo        | modo      |
+      | admin        | ricezione |
+      | api          | ricezione |
+      | api,security | ricezione |
 
   @happy-path
   @e-service-template-instance-create
@@ -2283,15 +2283,15 @@ Feature: Test API of e-service template
     When l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 400
     Examples:
-      | stato     | modo        |
-      | DRAFT     | erogazione  |
-      | SUSPENDED | erogazione  |
+      | stato     | modo       |
+      | DRAFT     | erogazione |
+      | SUSPENDED | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | stato     | modo        |
-      | DRAFT     | ricezione   |
-      | SUSPENDED | ricezione   |
+      | stato     | modo      |
+      | DRAFT     | ricezione |
+      | SUSPENDED | ricezione |
 
   @sad-path
   @e-service-template-instance-create
@@ -2301,13 +2301,13 @@ Feature: Test API of e-service template
     When l'utente tenta la creazione di un nuovo e-service indicando un template inesistente
     Then si ottiene response status code 404
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   # NOTA: un e-service creato a partire da un template è anche detto "istanza" del template
   @happy-path
@@ -2328,7 +2328,7 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo        | modo       |
+      | ruolo        | modo      |
       | admin        | ricezione |
       | api          | ricezione |
       | api,security | ricezione |
@@ -2349,13 +2349,13 @@ Feature: Test API of e-service template
     And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     Then si ottiene response status code 403
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-upgrade
@@ -2373,13 +2373,13 @@ Feature: Test API of e-service template
     When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     Then si ottiene response status code 400
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-upgrade
@@ -2641,10 +2641,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo        | modo       |
-      | admin        | ricezione  |
-      | api          | ricezione  |
-      | api,security | ricezione  |
+      | ruolo        | modo      |
+      | admin        | ricezione |
+      | api          | ricezione |
+      | api,security | ricezione |
 
   @sad-path
   @e-service-template-instance-update
@@ -2662,9 +2662,9 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo       |
-      | security | ricezione  |
-      | support  | ricezione  |
+      | ruolo    | modo      |
+      | security | ricezione |
+      | support  | ricezione |
 
   @sad-path
   @e-service-template-instance-update
@@ -2675,15 +2675,15 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 400
     Examples:
-      | stato     | modo        |
-      | PUBLISHED | erogazione  |
-      | SUSPENDED | erogazione  |
+      | stato     | modo       |
+      | PUBLISHED | erogazione |
+      | SUSPENDED | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | stato     | modo        |
-      | PUBLISHED | ricezione   |
-      | SUSPENDED | ricezione   |
+      | stato     | modo      |
+      | PUBLISHED | ricezione |
+      | SUSPENDED | ricezione |
 
   @sad-path
   @e-service-template-instance-update @e-service-template-instance-update-concurrent-tag
@@ -2695,13 +2695,13 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 400
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-update
@@ -2722,13 +2722,13 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template indicando una specifica vuota
     Then si ottiene response status code 200
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-update
@@ -2740,13 +2740,13 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @happy-path
   @e-service-template-instance-descriptor-update
@@ -2766,10 +2766,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo        | modo       |
-      | admin        | ricezione  |
-      | api          | ricezione  |
-      | api,security | ricezione  |
+      | ruolo        | modo      |
+      | admin        | ricezione |
+      | api          | ricezione |
+      | api,security | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2787,9 +2787,9 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo       |
-      | security | ricezione  |
-      | support  | ricezione  |
+      | ruolo    | modo      |
+      | security | ricezione |
+      | support  | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2806,9 +2806,9 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | stato     | modo       |
-      | PUBLISHED | ricezione  |
-      | SUSPENDED | ricezione  |
+      | stato     | modo      |
+      | PUBLISHED | ricezione |
+      | SUSPENDED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2819,13 +2819,13 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica di un descriptor in stato DRAFT inesistente dell'istanza dell'e-service template
     Then si ottiene response status code 404
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2836,13 +2836,13 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template indicando una specifica vuota
     Then si ottiene response status code 400
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2854,13 +2854,13 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @happy-path
   @e-service-template-instance-descriptor-update
@@ -2873,29 +2873,29 @@ Feature: Test API of e-service template
     Then si ottiene response status code 200
     And il descriptor dell'istanza dell'e-service template è stato modificato correttamente
     Examples:
-      | ruolo        | stato      | modo        |
-      | admin        | PUBLISHED  | erogazione  |
-      | api          | PUBLISHED  | erogazione  |
-      | api,security | PUBLISHED  | erogazione  |
-      | admin        | SUSPENDED  | erogazione  |
-      | api          | SUSPENDED  | erogazione  |
-      | api,security | SUSPENDED  | erogazione  |
-      | admin        | DEPRECATED | erogazione  |
-      | api          | DEPRECATED | erogazione  |
-      | api,security | DEPRECATED | erogazione  |
+      | ruolo        | stato      | modo       |
+      | admin        | PUBLISHED  | erogazione |
+      | api          | PUBLISHED  | erogazione |
+      | api,security | PUBLISHED  | erogazione |
+      | admin        | SUSPENDED  | erogazione |
+      | api          | SUSPENDED  | erogazione |
+      | api,security | SUSPENDED  | erogazione |
+      | admin        | DEPRECATED | erogazione |
+      | api          | DEPRECATED | erogazione |
+      | api,security | DEPRECATED | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo        | stato      | modo        |
-      | admin        | PUBLISHED  | ricezione   |
-      | api          | PUBLISHED  | ricezione   |
-      | api,security | PUBLISHED  | ricezione   |
-      | admin        | SUSPENDED  | ricezione   |
-      | api          | SUSPENDED  | ricezione   |
-      | api,security | SUSPENDED  | ricezione   |
-      | admin        | DEPRECATED | ricezione   |
-      | api          | DEPRECATED | ricezione   |
-      | api,security | DEPRECATED | ricezione   |
+      | ruolo        | stato      | modo      |
+      | admin        | PUBLISHED  | ricezione |
+      | api          | PUBLISHED  | ricezione |
+      | api,security | PUBLISHED  | ricezione |
+      | admin        | SUSPENDED  | ricezione |
+      | api          | SUSPENDED  | ricezione |
+      | api,security | SUSPENDED  | ricezione |
+      | admin        | DEPRECATED | ricezione |
+      | api          | DEPRECATED | ricezione |
+      | api,security | DEPRECATED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2907,23 +2907,23 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato      | modo        |
-      | security | PUBLISHED  | erogazione  |
-      | support  | PUBLISHED  | erogazione  |
-      | security | SUSPENDED  | erogazione  |
-      | support  | SUSPENDED  | erogazione  |
-      | security | DEPRECATED | erogazione  |
-      | support  | DEPRECATED | erogazione  |
+      | ruolo    | stato      | modo       |
+      | security | PUBLISHED  | erogazione |
+      | support  | PUBLISHED  | erogazione |
+      | security | SUSPENDED  | erogazione |
+      | support  | SUSPENDED  | erogazione |
+      | security | DEPRECATED | erogazione |
+      | support  | DEPRECATED | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | stato      | modo        |
-      | security | PUBLISHED  | ricezione  |
-      | support  | PUBLISHED  | ricezione  |
-      | security | SUSPENDED  | ricezione  |
-      | support  | SUSPENDED  | ricezione  |
-      | security | DEPRECATED | ricezione  |
-      | support  | DEPRECATED | ricezione  |
+      | ruolo    | stato      | modo      |
+      | security | PUBLISHED  | ricezione |
+      | support  | PUBLISHED  | ricezione |
+      | security | SUSPENDED  | ricezione |
+      | support  | SUSPENDED  | ricezione |
+      | security | DEPRECATED | ricezione |
+      | support  | DEPRECATED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2934,13 +2934,13 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
     Then si ottiene response status code 400
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2958,10 +2958,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | stato      | modo       |
-      | PUBLISHED  | ricezione  |
-      | SUSPENDED  | ricezione  |
-      | DEPRECATED | ricezione  |
+      | stato      | modo      |
+      | PUBLISHED  | ricezione |
+      | SUSPENDED  | ricezione |
+      | DEPRECATED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2980,10 +2980,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | stato      | modo       |
-      | PUBLISHED  | ricezione  |
-      | SUSPENDED  | ricezione  |
-      | DEPRECATED | ricezione  |
+      | stato      | modo      |
+      | PUBLISHED  | ricezione |
+      | SUSPENDED  | ricezione |
+      | DEPRECATED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2994,13 +2994,13 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template
     Then si ottiene response status code 404
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -3018,10 +3018,10 @@ Feature: Test API of e-service template
 
     @e-service-template-receive-bff
     Examples:
-      | stato      | modo       |
-      | PUBLISHED  | ricezione  |
-      | SUSPENDED  | ricezione  |
-      | DEPRECATED | ricezione  |
+      | stato      | modo      |
+      | PUBLISHED  | ricezione |
+      | SUSPENDED  | ricezione |
+      | DEPRECATED | ricezione |
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-8743
   @e-service-template-instance-upgrade
@@ -3035,13 +3035,41 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
     And l'interfaccia dell'istanza dell'e-service template non ha subito mutamenti
     Examples:
-      | modo        |
-      | erogazione  |
+      | modo       |
+      | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | modo        |
-      | ricezione   |
+      | modo      |
+      | ricezione |
+
+  @happy-path
+  @e-service-template-instance-read
+  Scenario: [INTEROP-EST-209] La visualizzazione dell'elenco delle istanze di un e-service template restituisce una lista vuota nel caso in cui il filtro producerName contenga un tenant che non ha instanziato il template in questione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "GSP"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "admin" di "PA1"
+    And l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset 0, limit 10 e producerName "PagoPA S.p.A."
+    Then si ottiene response status code 200
+    And l'elenco delle istanze e-service template restituite contiene l'ultimo e-service template istanziato
+
+  @happy-path
+  @e-service-template-instance-read
+  Scenario: [INTEROP-EST-210] La visualizzazione dell'elenco delle istanze di un e-service template restituisce una lista vuota nel caso in cui il filtro producerName contenga un tenant che non ha instanziato il template in questione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente è un "admin" di "GSP"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "admin" di "PA1"
+    And l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset 0, limit 10 e producerName "SOGECAP"
+    Then si ottiene response status code 200
+    And l'elenco delle istanze dell'e-service template è vuoto
 
   Scenario: [ESERVICE_MY_INSTANCES_RETRIEVE_7] Verifica non sia possibile accedere ad un e-service template in stato DRAFT appartenente ad un tenant differente
     Given l'utente è un "admin" di "PA1"
