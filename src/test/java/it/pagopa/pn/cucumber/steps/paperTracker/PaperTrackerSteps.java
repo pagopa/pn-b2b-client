@@ -25,6 +25,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.paperTracker.domain.NotificationEvent;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
+import it.pagopa.pn.cucumber.steps.paperTracker.proxy.SchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PaperTrackerErrorCategory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PaperTrackerTrackingSequence;
 import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineSequence;
@@ -67,20 +68,21 @@ public class PaperTrackerSteps {
     private final AvanzamentoNotificheB2bSteps b2bSteps;
     private final SharedSteps sharedSteps;
     private final IPnPaperTrackerClient paperTrackerClient;
-    private final SchemaValidator schemaValidator;
+    private final SchemaValidatorProxy schemaValidatorProxy;
     private TrackingsResponse responseTracking;
     private List<String> trackingKeys;
+
 
     @Autowired
     public PaperTrackerSteps(EventTimelineParser eventTimelineParser,
                              AvanzamentoNotificheB2bSteps b2bSteps,
                              IPnPaperTrackerClient paperTrackerClient,
-                             SchemaValidator schemaValidator) {
+                             SchemaValidatorProxy schemaValidatorProxy) {
         this.eventTimelineParser = eventTimelineParser;
         this.b2bSteps = b2bSteps;
         this.sharedSteps = b2bSteps.getSharedSteps();
         this.paperTrackerClient = paperTrackerClient;
-        this.schemaValidator  = schemaValidator;
+        this.schemaValidatorProxy = schemaValidatorProxy;
     }
 
     private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV28 fullSentNotification, int attempt) {
@@ -120,13 +122,6 @@ public class PaperTrackerSteps {
 
     @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
     public void verifyTrackingEventsForSequenceWithPCRetryNew(String sequenceName) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-//        List<String> stringaTracking = fullSentNotification.getTimeline().stream()
-//                .map(TimelineElementV28::getElementId)
-//                .filter(id -> id.contains(PREPARE_ANALOG_DOMICILE))
-//                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
-//                .collect(Collectors.toList());
-
         TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
         responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
 
@@ -149,7 +144,7 @@ public class PaperTrackerSteps {
         for (int i = 0; i < groupedTrackingByAttempt.keySet().size(); i++ ) {
             assertRelaxedSameElements(groupedTrackingByAttempt.get(i), expectedEvents.get(i), TRACKINGS_ELEMENT_NOT_FOUND);
         }
-        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", new OcrAttachmentsFinalValidator(), new EventsTimestampValidator());
+        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", sequenceName);
     }
 
 
@@ -217,7 +212,7 @@ public class PaperTrackerSteps {
         trackingKeys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
                 .filter(e -> e.contains(key))
-                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
+                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3", prepare + ".PCRETRY_4"))
                 .toList();
     }
 
@@ -382,11 +377,12 @@ public class PaperTrackerSteps {
 //        }
 //    }
 
-    private <T> void verifyTrackingResponseStructure(T response, String schemaPath, CustomConditionalValidator... customConditionalValidators) {
+    private <T> void verifyTrackingResponseStructure(T response, String schemaPath, String sequenceName) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.valueToTree(response);
-        SchemaValidator schemaValidator = new SchemaValidator(customConditionalValidators);
-        schemaValidator.validate(jsonNode, schemaPath);
+        schemaValidatorProxy.provide(sequenceName).validate(jsonNode, schemaPath);
+//        SchemaValidator schemaValidator = new SchemaValidator(customConditionalValidators);
+//        schemaValidator.validate(jsonNode, schemaPath);
     }
 
 //    @And("si verifica che la risposta trackings sia uguale a quella attesa {string}")
@@ -511,7 +507,12 @@ public class PaperTrackerSteps {
 
         //details
         assertThat(expected.at("/details/cause")).isEqualTo(actual.at("/details/cause"));
-        assertThat(expected.at("/details/message")).isEqualTo(actual.at("/details/message"));
+        JsonNode expectedMessageNode = expected.at("/details/message");
+        if (!expectedMessageNode.isMissingNode()) {
+            String expectedMessage = expectedMessageNode.asText().replaceAll("<iun>", sharedSteps.getNotificationIun());
+            String actualMessage = actual.at("/details/message").asText().replaceAll("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z", "<date>");
+            assertThat(expectedMessage).isEqualTo(actualMessage);
+        }
 
         //details.affectedEvents
         JsonNode expectedAdditionalDetails = expected.at("/details/additionalDetails");

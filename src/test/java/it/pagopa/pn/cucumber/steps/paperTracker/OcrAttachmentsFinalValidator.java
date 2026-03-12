@@ -93,5 +93,15 @@ public class OcrAttachmentsFinalValidator implements CustomConditionalValidator 
         if (!ocrRequestDocumentTypes.equals(eventsDocumentType)) {
             errors.add(String.format("ocrRequests non contiene tutti gli elementi desiderati, actual size: %d - expected: %d", ocrRequests.size(), eventsDocumentType.size()));
         }
+        verifyFinalEventDematValidationTimestamp(validationFlow, ocrRequests);
+    }
+
+    private void verifyFinalEventDematValidationTimestamp(JsonNode validationFlow, JsonNode ocrRequests) {
+        boolean isOcrOk = StreamSupport.stream(ocrRequests.spliterator(), false)
+                .map(responseStatus -> responseStatus.path("responseStatus").asText(null))
+                .anyMatch("OK"::equalsIgnoreCase);
+        if (isOcrOk && validationFlow.path("finalEventDematValidationTimestamp").asText(null) == null) {
+            errors.add("finalEventDematValidationTimestamp è null nonostante ci sia almeno un ocrRequest con responseStatus OK");
+        }
     }
 }

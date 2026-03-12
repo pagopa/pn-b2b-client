@@ -85,7 +85,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
-#    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
       | physicalAddress           | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
       | Via@FAIL-Irreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
@@ -93,12 +92,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | Via@OK-REC008_890-E | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
       | Via@FAIL-DiscoveryIrreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
       | Via@OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}" |
-#      | physicalAddress                    | category                     | flowThrow           |
-#      | Via@FAIL-Irreperibile_890          | ATTACHMENTS_ERROR            | SEQUENCE_VALIDATION |
-#      | Via@FAIL-Giacenza-lte10_890        | INCONSISTENT_STATE           | SEQUENCE_VALIDATION |
-#      | Via@OK-REC008_890-E                | INCONSISTENT_STATE           | SEQUENCE_VALIDATION |
-#      | Via@FAIL-DiscoveryIrreperibile_890 | ATTACHMENTS_ERROR            | SEQUENCE_VALIDATION |
-#      | Via@OK-CAUSE-EVENTO-NO-MAPPA       | DELIVERY_FAILURE_CAUSE_ERROR | SEQUENCE_VALIDATION |
 
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_4_890] Si verifica la correttezza della risposta di /trackings per le sequence che generano un errore
@@ -138,7 +131,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
-#    Then si verifica che gli elementi di timeline per la sequence "<sequenceName>" coincidono con quelli su PnPaperTracker, PnPaperTrackerDryRunOutputs con PCRETRY 0, 1, 2
     Examples:
       | sequenceName             |
       | OK-Retry_890             |
