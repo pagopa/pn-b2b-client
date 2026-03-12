@@ -162,7 +162,7 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
     private void validateAgidJwtSignatureIfPresentOrRequired(
             org.springframework.http.HttpRequest request,
             ClientHttpResponse response
-    ) throws IOException {
+    ) {
         String agidJwt = firstHeaderValue(response.getHeaders(), AGID_JWT_SIGNATURE_HEADER);
 
         if (agidJwt == null || agidJwt.isBlank()) {
@@ -194,26 +194,27 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         require(jwtPayload, "jti");
         require(jwtPayload, "signed_headers");
 
-        // NON devono esserci
         requireAbsent(jwtPayload, "aud");
         requireAbsent(jwtPayload, "sub");
         requireAbsent(jwtPayload, "nbf");
 
-        // Se non è 401, clientId deve esserci e combaciare con Auth
-        if (response.getRawStatusCode() != HttpStatus.UNAUTHORIZED.value()) {
-            require(jwtPayload, "clientId");
+        boolean hasAuthorizationHeader = hasNonBlankHeader(request.getHeaders(), HttpHeaders.AUTHORIZATION);
+        boolean hasDpopHeader = hasNonBlankHeader(request.getHeaders(), "DPoP");
 
-            String tokenClientId = optText(jwtPayload, "clientId");
+        if (hasAuthorizationHeader && hasDpopHeader) {
+            require(jwtPayload, "client_id");
+
+            String tokenClientId = optText(jwtPayload, "client_id");
             Auth auth = authSupplier != null ? authSupplier.get() : null;
             String expectedClientId = auth != null ? auth.getClientId() : null;
 
             if (expectedClientId == null || expectedClientId.isBlank()) {
-                throw new IntegrityValidationException("Auth/clientId non disponibile per validare il claim clientId");
+                throw new IntegrityValidationException("Auth/clientId non disponibile per validare il claim client_id");
             }
 
             if (!expectedClientId.equals(tokenClientId)) {
                 throw new IntegrityValidationException(
-                        "clientId mismatch expected='" + expectedClientId + "' actual='" + tokenClientId + "'"
+                        "client_id mismatch expected='" + expectedClientId + "' actual='" + tokenClientId + "'"
                 );
             }
         }
@@ -223,7 +224,6 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
             throw new IntegrityValidationException("signed_headers claim is not an array");
         }
 
-        // X-Correlation-Id deve esserci sempre in response
         String correlationId = firstHeaderValue(response.getHeaders(), X_CORRELATION_ID_HEADER);
         if (correlationId == null || correlationId.isBlank()) {
             throw new IntegrityValidationException("Missing X-Correlation-Id header in response");
@@ -271,6 +271,11 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         if (!correlationIdFoundInSignedHeaders) {
             throw new IntegrityValidationException("signed_headers does not contain X-Correlation-Id");
         }
+    }
+
+    private static boolean hasNonBlankHeader(HttpHeaders headers, String name) {
+        String value = firstHeaderValue(headers, name);
+        return value != null && !value.isBlank();
     }
 
     private static String firstHeaderValue(HttpHeaders headers, String name) {
