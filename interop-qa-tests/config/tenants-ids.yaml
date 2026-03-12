@@ -13,6 +13,10 @@ userRoles:
   security: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
   "api,security": ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
   support: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
+tenantName:
+  dev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  refactorDev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  qa: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
 kind: "GSP"
 ---
 name: "GSP2"
@@ -30,6 +34,10 @@ userRoles:
     security: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
     "api,security": ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
     support: ["e0477bcc-3baf-4755-aa31-375c051acb44"]
+tenantName:
+  dev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  refactorDev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  qa: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
 kind: "GSP"
 ---
 name: "PA1"
@@ -47,6 +55,10 @@ userRoles:
     security: ["17a84b7b-dce6-4b8f-a1ae-85926c55f02e"]
     "api,security": ["e0477bcc-3baf-4755-aa31-375c051acb44"]
     support: ["17a84b7b-dce6-4b8f-a1ae-85926c55f02e"]
+tenantName:
+  dev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  refactorDev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  qa: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
 kind: "PA"
 ---
 name: "PA2"
@@ -64,6 +76,10 @@ userRoles:
     security: ["78b9aa62-a472-4c87-8173-3f73bb2e04b5"]
     "api,security": ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
     support: ["78b9aa62-a472-4c87-8173-3f73bb2e04b5"]
+tenantName:
+  dev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  refactorDev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  qa: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
 kind: "PA"
 ---
 name: "Privato"
@@ -81,4 +97,8 @@ userRoles:
     security: ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
     "api,security": ["17a84b7b-dce6-4b8f-a1ae-85926c55f02e"]
     support: ["e490f02e-9429-4b38-bb11-ddb8a561fb62"]
+tenantName:
+  dev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  refactorDev: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
+  qa: "69e2865e-65ab-4e48-a638-2037a9ee2ee7"
 kind: "PRIVATE"
