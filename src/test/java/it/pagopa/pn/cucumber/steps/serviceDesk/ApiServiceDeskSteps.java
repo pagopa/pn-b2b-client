@@ -1814,7 +1814,7 @@ public class ApiServiceDeskSteps {
         log.info("Response of GET operations V2: {}", getOperationsResponseV2);
 
         if (getOperationsResponseV2 != null) {
-            if (!operationIdType.equalsIgnoreCase("VALID OP. ID V1")) {
+            if (!operationIdType.equalsIgnoreCase("VALID OP. ID V1") && createActOperationRequestV2 != null) {
                 assertThat(getOperationsResponseV2.getSubOperations().size()).as("").isEqualTo(createActOperationRequestV2.getIun().size());
                 getOperationsResponseV2.getSubOperations().forEach(op -> {
                     assertThat(createActOperationRequestV2.getIun()).asList().as("La response della get non contiene lo IUN: " + op.getIun()).contains(op.getIun());

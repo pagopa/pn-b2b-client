@@ -5,14 +5,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
   Scenario: [UTILS_TEST_MANUALE_1] Verifica allegati di una notifica perfezionata da oltre 120 giorni (Scenario 13)
     Given imposto lo iun di SharedSteps a "UTGP-ZRHR-XDNQ-202505-Q-1" e la pa a "Comune_Multi"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
-      | ticketId          | auto                        |
-      | iun               | UTGP-ZRHR-XDNQ-202505-Q-1   |
-      | ticketOperationId | auto                        |
-      | taxId             | CLMCST42R12D969Z            |
-      | addressType       | EMAIL                       |
-      | addressValue      | stefano.netti@grupposcai.it |
-      | ticketDate        | auto                        |
-      | vrDate            | auto                        |
+      | ticketId          | auto                      |
+      | iun               | UTGP-ZRHR-XDNQ-202505-Q-1 |
+      | ticketOperationId | auto                      |
+      | taxId             | CLMCST42R12D969Z          |
+      | addressType       | EMAIL                     |
+      | addressValue      | chiara.tomei@pagopa.it    |
+      | ticketDate        | auto                      |
+      | vrDate            | auto                      |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
@@ -109,14 +109,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
-      | ticketId          | auto                        |
-      | iun               | auto                        |
-      | ticketOperationId | auto                        |
-      | taxId             | CLMCST42R12D969Z            |
-      | addressType       | EMAIL                       |
-      | addressValue      | stefano.netti@grupposcai.it |
-      | ticketDate        | auto                        |
-      | vrDate            | auto                        |
+      | ticketId          | auto                   |
+      | iun               | auto                   |
+      | ticketOperationId | auto                   |
+      | taxId             | CLMCST42R12D969Z       |
+      | addressType       | EMAIL                  |
+      | addressValue      | chiara.tomei@pagopa.it |
+      | ticketDate        | auto                   |
+      | vrDate            | auto                   |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
@@ -135,14 +135,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
-      | ticketId          | auto                        |
-      | iun               | auto                        |
-      | ticketOperationId | auto                        |
-      | taxId             | CLMCST42R12D969Z            |
-      | addressType       | EMAIL                       |
-      | addressValue      | stefano.netti@grupposcai.it |
-      | ticketDate        | auto                        |
-      | vrDate            | auto                        |
+      | ticketId          | auto                   |
+      | iun               | auto                   |
+      | ticketOperationId | auto                   |
+      | taxId             | CLMCST42R12D969Z       |
+      | addressType       | EMAIL                  |
+      | addressValue      | chiara.tomei@pagopa.it |
+      | ticketDate        | auto                   |
+      | vrDate            | auto                   |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene atteso lo stato "CREATING" dell'operazione
@@ -229,14 +229,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
-      | ticketId          | auto                        |
-      | iun               | auto                        |
-      | ticketOperationId | auto                        |
-      | taxId             | CLMCST42R12D969Z            |
-      | addressType       | EMAIL                       |
-      | addressValue      | stefano.netti@grupposcai.it |
-      | ticketDate        | auto                        |
-      | vrDate            | auto                        |
+      | ticketId          | auto                   |
+      | iun               | auto                   |
+      | ticketOperationId | auto                   |
+      | taxId             | CLMCST42R12D969Z       |
+      | addressType       | EMAIL                  |
+      | addressValue      | chiara.tomei@pagopa.it |
+      | ticketDate        | auto                   |
+      | vrDate            | auto                   |
     When viene invocata l'api "CREATE_ACT_OPERATION"
     And il servizio risponde con 201
     And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
@@ -259,15 +259,15 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via@ok_890                      |
     And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
-      | ticketId          | auto             |
-      | iun               | auto             |
-      | ticketOperationId | auto             |
-      | taxId             | CLMCST42R12D969Z |
-      | addressType       | EMAIL            |
-      | addressValue      | test@test.it     |
-      | ticketDate        | auto             |
-      | vrDate            | auto             |
-      | iunListType       | <iunListType>    |
+      | ticketId          | auto                   |
+      | iun               | auto                   |
+      | ticketOperationId | auto                   |
+      | taxId             | CLMCST42R12D969Z       |
+      | addressType       | EMAIL                  |
+      | addressValue      | chiara.tomei@pagopa.it |
+      | ticketDate        | auto                   |
+      | vrDate            | auto                   |
+      | iunListType       | <iunListType>          |
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con <statusCodePost>
     And se la chiamata al servizio ha avuto successo
@@ -320,13 +320,13 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con <statusCode>
     Examples:
-      | ticketId | taxId            | addressType | addressValue | ticketDate | vrDate | statusCode |
-      | null     | CLMCST42R12D969Z | EMAIL       | test@test.it | auto       | auto   | 400        |
-      | auto     | null             | EMAIL       | test@test.it | auto       | auto   | 400        |
-      | auto     | CLMCST42R12D969Z | null        | test@test.it | auto       | auto   | 400        |
-      | auto     | CLMCST42R12D969Z | EMAIL       | null         | auto       | auto   | 400        |
-      | auto     | CLMCST42R12D969Z | EMAIL       | test@test.it | null       | auto   | 400        |
-      | auto     | CLMCST42R12D969Z | EMAIL       | test@test.it | auto       | null   | 400        |
+      | ticketId | taxId            | addressType | addressValue           | ticketDate | vrDate | statusCode |
+      | null     | CLMCST42R12D969Z | EMAIL       | chiara.tomei@pagopa.it | auto       | auto   | 400        |
+      | auto     | null             | EMAIL       | chiara.tomei@pagopa.it | auto       | auto   | 400        |
+      | auto     | CLMCST42R12D969Z | null        | chiara.tomei@pagopa.it | auto       | auto   | 400        |
+      | auto     | CLMCST42R12D969Z | EMAIL       | null                   | auto       | auto   | 400        |
+      | auto     | CLMCST42R12D969Z | EMAIL       | chiara.tomei@pagopa.it | null       | auto   | 400        |
+      | auto     | CLMCST42R12D969Z | EMAIL       | chiara.tomei@pagopa.it | auto       | null   | 400        |
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [ACT_OPERATION_V2_LEGACY] Creazione di un actOperation con API v1 ed esecuzione della GET tramite api V2
@@ -338,14 +338,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
-      | ticketId          | auto             |
-      | iun               | auto             |
-      | ticketOperationId | auto             |
-      | taxId             | CLMCST42R12D969Z |
-      | addressType       | EMAIL            |
-      | addressValue      | test@test.it     |
-      | ticketDate        | auto             |
-      | vrDate            | auto             |
+      | ticketId          | auto                   |
+      | iun               | auto                   |
+      | ticketOperationId | auto                   |
+      | taxId             | CLMCST42R12D969Z       |
+      | addressType       | EMAIL                  |
+      | addressValue      | chiara.tomei@pagopa.it |
+      | ticketDate        | auto                   |
+      | vrDate            | auto                   |
     And viene invocata l'api "CREATE_ACT_OPERATION"
     Then il servizio risponde con 201
     When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
