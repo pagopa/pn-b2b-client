@@ -1709,7 +1709,29 @@ Feature: Radd Alternative
     And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-
+  @raddAltPagineFrontespizio @raddAltPagineFrontespizioFlagOff
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_3D] Download frontespizio operazione ACT 2 pagine e F24 assente
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | physicalCommunication | REGISTERED_LETTER_890                         |
+      | feePolicy             | DELIVERY_MODE                                 |
+      | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
+    And destinatario CucumberSpa e:
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.2
@@ -1820,7 +1842,7 @@ Feature: Radd Alternative
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.5
   Scenario: [RADD-ALT_PAGE_ATTACHMENT_7] Download frontespizio operazione act notifica precedente alla modifica
-    Given imposto lo iun di SharedSteps a "JDUM-YJKX-LMRT-202603-Z-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "WTLK-ZNWY-LUDU-202603-J-1" e la pa a "Comune_Multi"
     When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
@@ -1831,7 +1853,7 @@ Feature: Radd Alternative
     And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-  @raddAlt @raddAltPagineFrontespizio #rif 2.5 #taxId":"XGRRCS20T25A944R"
+  @raddAlt @raddAltPagineFrontespizio #rif 2.5
   Scenario: [RADD-ALT_PAGE_ATTACHMENT_8] Download frontespizio operazione aor notifica precedente alla modifica
     Given imposto lo iun di SharedSteps a "AENW-VXYJ-MZHJ-202603-G-1" e la pa a "Comune_Multi"
     When Il cittadino "XLVLVS20T25A944X" come destinatario 0 mostra il QRCode
@@ -1853,7 +1875,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 2 pagine nella response
+    Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 1 pagine nella response
 
   @raddAlt @raddAltPagineFrontespizio @raddAltPagineFrontespizioFlagOff #rif 3.2
   Scenario: [RADD-ALT_PAGE_ATTACHMENT_9B] Verifica response di Delivery e Delivery-push e campo numero di pagine valorizzato.
@@ -1908,7 +1930,8 @@ Feature: Radd Alternative
 
 
   Scenario: [RADD-ALT_TEST] PF -
-    Given imposto lo iun di SharedSteps a "ZMRH-HWEH-HYXM-202603-D-1" e la pa a "Comune_Multi"
+    #Given imposto lo iun di SharedSteps a "DAZX-YJAJ-UKMZ-202603-X-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "ELRA-XYVL-XYLA-202603-J-1" e la pa a "Comune_Multi"
     When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
@@ -1916,9 +1939,15 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "3" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
 
-  Scenario: [RADD-ALT_TEST2] PF -
-    Given imposto lo iun di SharedSteps a "WTLK-ZNWY-LUDU-202603-J-1" e la pa a "Comune_Multi"
-    And Effettuo la chiamata di download con Api privata di Delivery e verifico che la response abbia il numero di pagine valorizzato con 0
-    Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 0 pagine nella response
+    #"ELRA-XYVL-XYLA-202603-J-1" 9
+  #DJDV-HEXV-KRGX-202603-G-1 9B
+
+  Scenario: [RADD-ALT_TEST29] PG - push
+    Given imposto lo iun di SharedSteps a "ELRA-XYVL-XYLA-202603-J-1" e la pa a "Comune_Multi"
+    Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 1 pagine nella response
+
+  Scenario: [RADD-ALT_TEST219B] PG - delivery
+    Given imposto lo iun di SharedSteps a "DJDV-HEXV-KRGX-202603-G-1" e la pa a "Comune_Multi"
+           And Effettuo la chiamata di download con Api privata di Delivery e verifico che la response abbia il numero di pagine valorizzato con 2

@@ -13,6 +13,4 @@ public interface IPnPaB2bPrivateClient extends SettableApiKey {
     LegalFactDownloadMetadataWithContentTypeResponse getLegalFactByIdPrivate(String recipientInternalId, String iun, String legalFactId, String mandateId, CxTypeAuthFleet xPagopaPnCxType, List<String> xPagopaPnCxGroups);
     //delivery-private todo t frontespizio
     NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocumentPrivate(String iun, Integer docIdx, String recipientInternalId, String mandateId);
-    //delivery-private todo t frontespizio
-    NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachmentPrivate(String iun, String attachmentName, String recipientInternalId, String mandateId, Integer attachmentIdx);
-}
+  }

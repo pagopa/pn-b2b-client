@@ -2,8 +2,6 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -88,7 +86,6 @@ public class RaddAltSteps {
     private NotificationAttachmentDownloadMetadataResponse notificationAttachmentDownloadMetadataResponse;
     private final PnExternalServiceClientImpl externalClient;
     private LegalFactDownloadMetadataWithContentTypeResponse legalFactDownloadMetadataWithContentTypeResponse;
-    private Scenario scenario;
 
     @Autowired
     public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps, IPnPaB2bPrivateClient internalPrivateClient) {
@@ -98,20 +95,6 @@ public class RaddAltSteps {
         this.internalPrivateClient = internalPrivateClient;
         this.externalClient = sharedSteps.getPnExternalServiceClient();
     }
-
-    @Before("@raddAltPagineFrontespizio")
-    public void beforeScenario(Scenario scenario) {
-        this.scenario = scenario;
-        scenario.log("START SCENARIO: " + scenario.getName());
-        System.out.println("*****START SCENARIO: " + scenario.getName());
-    }
-
-    @After("@raddAltPagineFrontespizio")
-    public void afterScenario(Scenario scenario) {
-        scenario.log("END SCENARIO: " + scenario.getName());
-        System.out.println("*****END SCENARIO: " + scenario.getName());
-    }
-
 
 
     //todo t frontespizio
@@ -295,9 +278,8 @@ public class RaddAltSteps {
     public void vengonoCaricatiIDocumentoDiIdentitaDelCittadino() {
         this.versionToken = "string";
         this.operationId = generateRandomNumber();
-        scenario.log("*****Response: ");
-        System.out.println("***** OperationID: "+this.operationId);
-        log.info("***** OperationID: "+this.operationId);
+        System.out.println("***** OperationID: " + this.operationId);
+        log.info("***** OperationID: " + this.operationId);
         uploadDocumentRaddAlternative(true);
         this.fileKey = this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null;
     }
@@ -890,7 +872,7 @@ public class RaddAltSteps {
 
         Assertions.assertNotNull(download);
         String pdfText = extractTextFromPdf(download);
-        System.out.println("***** Frontespizio ***** "+pdfText);
+        System.out.println("***** Frontespizio ***** " + pdfText);
         log.info("PDF FRONTESPIZIO TEXT: {}", pdfText.replaceAll("\\s+", " "));
         if (numberOfPage.equals("0")) {
             Assertions.assertFalse(pdfText.contains("Totale pagine:"));
