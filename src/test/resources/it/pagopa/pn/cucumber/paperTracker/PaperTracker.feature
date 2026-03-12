@@ -186,6 +186,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
       | physicalAddress         | category          | flowThrow           |
@@ -206,6 +207,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
     Examples:
       | physicalAddress             | category          | flowThrow           |
@@ -224,6 +226,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore con category: NOT_RETRYABLE_EVENT_ERROR, flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" per la sequence: "Via@FAIL_CON996_PCRETRY_AR" e pcRetry: "1"
 
   # ---------------- RUN MODE ----------------
@@ -241,8 +244,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
-    And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED"
     And si verifica che la risposta tracking per la sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:

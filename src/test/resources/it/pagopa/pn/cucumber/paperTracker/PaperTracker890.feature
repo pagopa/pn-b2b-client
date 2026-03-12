@@ -14,6 +14,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -201,6 +202,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_deliveryDetailCode | RECAG012 |
       | details_sentAttemptMade    | 0        |
       | details_responseStatus     | OK       |
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che non ci siano errori per i trackingId richiesti
     And si verifica che non ci siano outputs per i trackingId richiesti
 
@@ -574,8 +576,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     Examples:
       | sequence                         |

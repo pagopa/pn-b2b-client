@@ -33,6 +33,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
@@ -52,6 +53,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
@@ -71,6 +73,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
@@ -136,14 +139,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
-    And imposto lo iun di SharedSteps a "<iun>" e la pa a "Comune_Multi"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | iun                       | sequence        | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+      | sequence        | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 # non genera errore atteso      |UXYH-DVDX-TPEN-202603-K-1| FAIL-CAUSE-EVENTO-NO-LISTA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:16:35.386693107Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Product type mismatch for trackingId PREPARE_ANALOG_DOMICILE.IUN_PZKT-HGWT-GYWT-202603-Z-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0: expected AR, but got 890\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-06T15:16:33Z\",\"statusCode\":\"RECAG001A\"}]}},\"eventThrow\":\"RECAG001A\",\"eventIdThrow\":\"c61d4935-339a-4626-8e91-901b2919e4cb\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
-      | YLNU-LVPE-DMQN-202603-W-1 | OK-REC008_890-E | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:42.533203161Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-06T15:56:30Z\",\"statusCode\":\"RECAG008C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG008C\",\"eventIdThrow\":\"a91b4acc-51d6-4a52-8c91-b8b21cdd6223\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
+      | OK-REC008_890-E | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:42.533203161Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-06T15:56:30Z\",\"statusCode\":\"RECAG008C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG008C\",\"eventIdThrow\":\"a91b4acc-51d6-4a52-8c91-b8b21cdd6223\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
 
 # --------------- Si testano gli errori per prodotto 890 che CAMBIANO il tipo in base a STRICTFINALVALIDATIONSTOCK890 == FALSE --------------
