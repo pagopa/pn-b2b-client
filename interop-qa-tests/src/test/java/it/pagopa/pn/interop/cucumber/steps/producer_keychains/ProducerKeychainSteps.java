@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.producerkeychain;
+package it.pagopa.pn.interop.cucumber.steps.producer_keychains;
 
 import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.And;
