@@ -7,7 +7,8 @@ import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
-import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
+import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
@@ -23,15 +24,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class ProducerKeychainsSteps {
-    private final M2MV3ProducerKeychainsClient producerKeychainsClient;
+    private final IM2MV3ProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsResolver resolver;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final TenantContext tenantContext;
 
-    public ProducerKeychainsSteps(M2MV3ProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
+    public ProducerKeychainsSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
 
-        this.producerKeychainsClient = producerKeychainsClient;
+        this.producerKeychainsClient = clientTokenConfigurator.getM2mV3ProducerKeychainsClient();
         this.tenantContext = tenantContext;
         this.producerKeychainsContext = producerKeychainsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
