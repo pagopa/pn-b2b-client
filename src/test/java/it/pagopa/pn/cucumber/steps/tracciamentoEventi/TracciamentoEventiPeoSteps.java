@@ -3,7 +3,7 @@ package it.pagopa.pn.cucumber.steps.tracciamentoEventi;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class TracciamentoEventiPeoSteps {
 
     private final String safeStorageBaseUrl;
-    private final SharedSteps sharedSteps;
     private String requestId;
 
     @Autowired
-    public TracciamentoEventiPeoSteps(@Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl, SharedSteps sharedSteps) {
+    public TracciamentoEventiPeoSteps(@Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
         this.safeStorageBaseUrl = safeStorageBaseUrl;
-        this.sharedSteps = sharedSteps;
     }
 
     @Given("viene inviata una mail tramite PEO all'indirizzo {string} con allegato {string}")
@@ -101,8 +99,8 @@ public class TracciamentoEventiPeoSteps {
         if (response.statusCode() != 200) {
             throw new RuntimeException("Errore nella chiamata GET: " + response.statusCode() + " - " + response.body());
         }
-        logPrettyResponse(response.body());
-        checkResponseFields(response.body(), statusCode, status);
+        String prettyJson = B2bUtils.logPrettyResponse(response.body());
+        checkResponseFields(prettyJson, statusCode, status);
     }
 
     private void checkResponseFields(String json, String statusCode, String status) {
@@ -117,16 +115,6 @@ public class TracciamentoEventiPeoSteps {
         assertThat(filteredEvents)
                 .as("L'eventsList dovrebbe contenere un evento con statusCode '%s' e status '%s'", statusCode, status)
                 .asList().isNotEmpty();
-    }
-
-    private void logPrettyResponse(String rawJson) {
-        try {
-            Object jsonObject = sharedSteps.getObjMapper().readValue(rawJson, Object.class);
-            String prettyJson = sharedSteps.getObjMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
-            log.info("GET response body formattato:\n{}", prettyJson);
-        } catch (Exception e) {
-            log.warn("Impossibile formattare il JSON, stampo l'originale: {}", rawJson);
-        }
     }
 
     private void sleep() {
