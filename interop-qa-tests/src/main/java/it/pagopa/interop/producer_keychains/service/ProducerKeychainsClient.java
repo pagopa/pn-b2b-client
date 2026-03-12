@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 @ToString
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ProducerKeychainsClient extends AbstractClient implements IProducerKeychainsClient {
 
     private final ProducerKeychainApi producerKeychainApi;
