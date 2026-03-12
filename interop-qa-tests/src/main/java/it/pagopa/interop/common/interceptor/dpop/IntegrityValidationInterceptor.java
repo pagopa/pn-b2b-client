@@ -3,6 +3,7 @@ package it.pagopa.interop.common.interceptor.dpop;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.authorization.domain.Auth;
+import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -198,14 +199,16 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         requireAbsent(jwtPayload, "sub");
         requireAbsent(jwtPayload, "nbf");
 
-        boolean hasAuthorizationHeader = hasNonBlankHeader(request.getHeaders(), HttpHeaders.AUTHORIZATION);
-        boolean hasDpopHeader = hasNonBlankHeader(request.getHeaders(), "DPoP");
+        Auth auth = authSupplier != null ? authSupplier.get() : null;
+        DpopHeaderPolicy.Mode mode = auth != null && auth.getDpopHeaderPolicy() != null
+                ? auth.getDpopHeaderPolicy().getMode()
+                : DpopHeaderPolicy.Mode.NORMAL;
 
-        if (hasAuthorizationHeader && hasDpopHeader) {
+        // client_id obbligatorio solo nel flusso standard
+        if (mode == DpopHeaderPolicy.Mode.NORMAL) {
             require(jwtPayload, "client_id");
 
             String tokenClientId = optText(jwtPayload, "client_id");
-            Auth auth = authSupplier != null ? authSupplier.get() : null;
             String expectedClientId = auth != null ? auth.getClientId() : null;
 
             if (expectedClientId == null || expectedClientId.isBlank()) {
@@ -271,11 +274,6 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         if (!correlationIdFoundInSignedHeaders) {
             throw new IntegrityValidationException("signed_headers does not contain X-Correlation-Id");
         }
-    }
-
-    private static boolean hasNonBlankHeader(HttpHeaders headers, String name) {
-        String value = firstHeaderValue(headers, name);
-        return value != null && !value.isBlank();
     }
 
     private static String firstHeaderValue(HttpHeaders headers, String name) {
