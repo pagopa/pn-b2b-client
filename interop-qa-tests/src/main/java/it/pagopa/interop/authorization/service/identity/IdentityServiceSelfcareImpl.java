@@ -7,6 +7,7 @@ import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,9 @@ import java.util.UUID;
 public class IdentityServiceSelfcareImpl implements IdentityService {
     private final SessionTokenFactory sessionTokenFactory;
     private final List<Tenant> tenantList;
+
+    @Value("${spring.profiles.active}")
+    private String runProfile;
 
     public IdentityServiceSelfcareImpl(SessionTokenFactory sessionTokenFactory,
                                        ConfigFileReader configFileReader) {
@@ -63,7 +67,7 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
         return tenantList.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
                 .map(Tenant::getOrganizationId)
-                .map(o -> o.get("dev"))
+                .map(o -> o.get(this.runProfile))
                 .findAny()
                 .map(UUID::fromString)
                 .orElse(null);
@@ -74,7 +78,7 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
         return tenantList.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
                 .map(Tenant::getTenantName)
-                .map(t -> t.get("qa"))
+                .map(t -> t.get(this.runProfile))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Tenant name not found"));
     }
