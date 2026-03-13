@@ -8,7 +8,6 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -74,15 +73,6 @@ public class EServiceCloneSteps {
         eServicesCommonContext.setName(response.getEservice().getName());
         eServicesCommonContext.setEserviceId(eserviceId);
         eServicesCommonContext.setDescriptorId(descriptorId);
-    }
-
-    @Then("il nome del nuovo e-service clonato non supera i {int} caratteri")
-    public void verifyEServiceNameLengthLessThanOrEqualTo(int maxLength) {
-        String eServiceName = eServicesCommonContext.getName();
-
-        Assertions.assertThat(eServiceName.length())
-                .as("Il nome del nuovo e-service clonato supera i %d caratteri", maxLength)
-                .isLessThanOrEqualTo(maxLength);
     }
 
     @Then("il nome del nuovo e-service contiene {string} seguito dalla data e ora della clonazione")

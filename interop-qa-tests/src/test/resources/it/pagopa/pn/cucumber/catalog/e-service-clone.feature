@@ -40,5 +40,5 @@ Feature: Clonazione di un e-service
     And l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri
     When l'utente clona quell'e-service
     Then si ottiene status code 200
-    And il nome del nuovo e-service clonato non supera i 60 caratteri
+    And il nome del nuovo e-service non supera i 60 caratteri
     And il nome del nuovo e-service contiene " - clone - " seguito dalla data e ora della clonazione
