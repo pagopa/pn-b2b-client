@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Slf4j
 public class EventsTimestampValidator implements CustomConditionalValidator {
-    List<String> errors = new ArrayList<>();
+    List<String> errors;
 
     private static final String VALIDATION_MESSAGE = "Gli eventi per le triplette A/B/C non cointengono lo stesso timestamp";
 
@@ -22,6 +22,7 @@ public class EventsTimestampValidator implements CustomConditionalValidator {
      * @return una lista di messaggi di errore (vuota se valido)
      */
     public List<String> validate(JsonNode trackingNode) {
+        errors = new ArrayList<>();
         trackingNode = trackingNode.get("trackings").get(0);
         JsonNode events = trackingNode.get("events");
         if (events == null || !events.isArray()) {
@@ -32,7 +33,7 @@ public class EventsTimestampValidator implements CustomConditionalValidator {
             JsonNode statusCode = event.get("statusCode");
             if (statusCode != null && statusCode.isTextual()) {
                 String statusCodeValue = statusCode.asText();
-                if (List.of('A', 'B', 'C').contains(statusCodeValue.charAt(statusCodeValue.length() - 1)) && !statusCodeValue.equals("RECAG011A")) {
+                if (List.of('A', 'B', 'C').contains(statusCodeValue.charAt(statusCodeValue.length() - 1)) && !statusCodeValue.contains("RECAG011")) {
                     JsonNode timestamp = event.get("statusTimestamp");
                     if (timestamp != null && timestamp.isTextual()) {
                         finalEventsTimestamp.add(timestamp.asText());

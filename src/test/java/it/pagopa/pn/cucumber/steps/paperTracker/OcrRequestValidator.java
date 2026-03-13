@@ -3,12 +3,11 @@ package it.pagopa.pn.cucumber.steps.paperTracker;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class OcrRequestValidator implements CustomConditionalValidator {
-    List<String> errors = new ArrayList<>();
+    List<String> errors;
 
     /**
      * Valida la regola cross-field relativa agli OCR.
@@ -21,6 +20,7 @@ public class OcrRequestValidator implements CustomConditionalValidator {
      * @return una lista di errori, vuota se la validazione è passata senza problemi
      */
     public List<String> validate(JsonNode trackingNode) {
+        errors = new java.util.ArrayList<>();
         trackingNode = trackingNode.get("trackings").get(0);
 
         JsonNode validationFlow = trackingNode.get("validationFlow");

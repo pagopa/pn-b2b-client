@@ -88,12 +88,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | physicalAddress                    | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-      | Via@FAIL-Irreperibile_890          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}"       |
-      | Via@FAIL-Giacenza-lte10_890        | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}"       |
-      | Via@OK-REC008_890-E                | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-12T13:18:09.075689686Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-12T13:17:55Z\",\"statusCode\":\"RECAG008C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG008C\",\"eventIdThrow\":\"7b800b45-e404-41b3-b111-7fd6a6e6d86e\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
-      | Via@FAIL-DiscoveryIrreperibile_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}"       |
-      | Via@OK-CAUSE-EVENTO-NO-MAPPA       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-05T11:57:28.720084096Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_DRY_RUN_MODE\",\"message\":\"CommandId: PREPARE_ANALOG_DOMICILE.IUN_XETQ-TLHY-YVMH-202603-V-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0#a9d6b6e1-336f-466d-a52b-a231237ec7cc#Plico\",\"additionalDetails\":{}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECAG003F\",\"eventIdThrow\":\"a9d6b6e1-336f-466d-a52b-a231237ec7cc\",\"productType\":\"890\",\"type\":null}"       |
+      | physicalAddress             | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+      | Via@FAIL-Giacenza-lte10_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-12T17:57:32.481465576Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-12T17:56:48Z\",\"statusCode\":\"RECAG007C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG007C\",\"eventIdThrow\":\"32b076c0-748f-4c30-9150-28e8ae2c4ba8\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
+      | Via@OK-REC008_890-E         | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-12T13:18:09.075689686Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-12T13:17:55Z\",\"statusCode\":\"RECAG008C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG008C\",\"eventIdThrow\":\"7b800b45-e404-41b3-b111-7fd6a6e6d86e\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_4_890] Si verifica la correttezza della risposta di /trackings per le sequence che generano un errore
@@ -461,109 +458,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_sentAttemptMade    | 0                           |
       | details_attachments        | [{"documentType": "Plico"}] |
 
-  @paperTrackerRunMode890
-  Scenario: [PAPER_TRACKER_RUN_MODE_890_6] Viene verificato che tutti gli elementi desiderati per la sequence FAIL-DiscoveryIrreperibile_890 siano generati
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_890 |
-      | digitalDomicile         | NULL                               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E"
-    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON080   |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON020   |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG003D |
-      | details_sentAttemptMade    | 0         |
-      | details_failureCause       | M03       |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                       |
-      | details_recIndex           | 0                              |
-      | details_deliveryDetailCode | RECAG003E                      |
-      | details_sentAttemptMade    | 0                              |
-      | details_attachments        | [{"documentType": "Indagine"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                    |
-      | details_recIndex           | 0                           |
-      | details_deliveryDetailCode | RECAG003E                   |
-      | details_sentAttemptMade    | 0                           |
-      | details_attachments        | [{"documentType": "Plico"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG003F |
-      | details_sentAttemptMade    | 0         |
-      | details_failureCause       | M03       |
-    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON080   |
-      | details_sentAttemptMade    | 1        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON020   |
-      | details_sentAttemptMade    | 1        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG003D |
-      | details_sentAttemptMade    | 1         |
-      | details_failureCause       | M03       |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                    |
-      | details_recIndex           | 0                           |
-      | details_deliveryDetailCode | RECAG003E                   |
-      | details_sentAttemptMade    | 1                           |
-      | details_attachments        | [{"documentType": "Plico"}] |
-
-  @paperTrackerRunMode890
-  Scenario: [PAPER_TRACKER_RUN_MODE_890_7] Viene verificato che tutti gli elementi desiderati per la sequence FAIL-Irreperibile_890 siano generati
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-      | digitalDomicile         | NULL                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E"
-    Then viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON080   |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON020   |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG003D |
-      | details_sentAttemptMade    | 0         |
-      | details_failureCause       | M03       |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                    |
-      | details_recIndex           | 0                           |
-      | details_deliveryDetailCode | RECAG003E                   |
-      | details_sentAttemptMade    | 0                           |
-      | details_attachments        | [{"documentType": "Plico"}] |
-
-
 # Test da lanciare in modalità RUN con filtro ec: DISATTIVO
   @paperTrackerRunMode890
   Scenario Outline: [PAPER_TRACKER_RUN_890_1] Si verifica che gli elementi di timeline attesi siano generati correttamente nella modalità RUN
@@ -598,6 +492,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-Giacenza-gt10_890_ZIP         |
       | OK_890_ZIP                       |
       | OK-GiacenzaCAD-lte10_890         |
+      | FAIL-Irreperibile_890            |
+      | FAIL-DiscoveryIrreperibile_890   |
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_RUN_MODE_890_9] Viene verificato che tutti gli elementi desiderati per la sequence FAIL-EVENTO-INESISTENTE siano generati

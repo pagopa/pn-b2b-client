@@ -9,7 +9,6 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Attachment;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperEvent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperTrackerOutputsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperTrackerOutputsResponseResultsInner;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Tracking;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingError;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingErrorsResponse;
@@ -265,17 +264,22 @@ public class PaperTrackerSteps {
      * @return
      */
     private Map<Integer, List<NotificationEvent>> buildOutputEventsMap(PaperTrackerOutputsResponse responseOutput) {
-        Map<Integer, List<NotificationEvent>> map = new HashMap<>();
-        responseOutput.getResults().sort(Comparator.comparing(PaperTrackerOutputsResponseResultsInner::getTrackingId));
-        for (int j = 0; j < responseOutput.getResults().size(); j++) {
-            List<NotificationEvent> events = responseOutput.getResults().get(j).getOutputs().stream()
-                    .map(output -> new NotificationEvent(
-                            output.getStatusDetail(),
-                            createAttachmentUrlTracking(output.getAttachments()),
-                            output.getDeliveryFailureCause()))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            map.put(j, events);
-        }
+        Map<Integer, List<NotificationEvent>> map = responseOutput.getResults().stream().collect(Collectors.groupingBy(
+                r -> {
+                    Pattern pattern = Pattern.compile("ATTEMPT_(\\d+)");
+                    Matcher matcher = pattern.matcher(r.getTrackingId());
+                    matcher.find();
+                    return Integer.parseInt(matcher.group(1));
+
+                }, Collectors.flatMapping(
+                        r -> r.getOutputs().stream()
+                                .map(output -> new NotificationEvent(
+                                        output.getStatusDetail(),
+                                        createAttachmentUrlTracking(output.getAttachments()),
+                                        output.getDeliveryFailureCause()
+                                )), Collectors.toList()
+                )
+        ));
         return map;
     }
 

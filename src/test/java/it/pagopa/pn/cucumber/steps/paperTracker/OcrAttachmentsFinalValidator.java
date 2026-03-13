@@ -9,7 +9,7 @@ import java.util.stream.StreamSupport;
 
 @Slf4j
 public class OcrAttachmentsFinalValidator implements CustomConditionalValidator {
-    List<String> errors = new ArrayList<>();
+    List<String> errors;
 
     private static final String VALIDATION_MESSAGE = "If documentType in events.attachments is present in validationConfig.sendOcrAttachmentsFinalValidation, then validationFlow.ocrRequests must not be empty";
 
@@ -26,7 +26,7 @@ public class OcrAttachmentsFinalValidator implements CustomConditionalValidator 
      * @return a list of validation error messages (empty if valid)
      */
     public List<String> validate(JsonNode trackingNode) {
-
+        errors = new ArrayList<>();
         // Get validationConfig.sendOcrAttachmentsFinalValidation list
         trackingNode = trackingNode.get("trackings").get(0);
 
