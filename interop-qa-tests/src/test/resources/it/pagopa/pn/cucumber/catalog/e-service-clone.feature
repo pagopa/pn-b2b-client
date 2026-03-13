@@ -14,22 +14,31 @@ Feature: Clonazione di un e-service
     @happy-path
     Examples: # Test sui ruoli
       | ente | ruolo        | statoDescrittore | risultato |
-      | GSP  | admin        | PUBLISHED        |       200 |
-      | GSP  | api          | PUBLISHED        |       200 |
-      | GSP  | api,security | PUBLISHED        |       200 |
-      | PA1  | admin        | PUBLISHED        |       200 |
-      | PA1  | api          | PUBLISHED        |       200 |
-      | PA1  | api,security | PUBLISHED        |       200 |
+      | GSP  | admin        | PUBLISHED        | 200       |
+      | GSP  | api          | PUBLISHED        | 200       |
+      | GSP  | api,security | PUBLISHED        | 200       |
+      | PA1  | admin        | PUBLISHED        | 200       |
+      | PA1  | api          | PUBLISHED        | 200       |
+      | PA1  | api,security | PUBLISHED        | 200       |
 
     @sad-path
     Examples: # Test sui ruoli
-      | ente | ruolo        | statoDescrittore | risultato |
-      | GSP  | security     | PUBLISHED        |       403 |
-      | GSP  | support      | PUBLISHED        |       403 |
-      | PA1  | security     | PUBLISHED        |       403 |
-      | PA1  | support      | PUBLISHED        |       403 |
+      | ente | ruolo    | statoDescrittore | risultato |
+      | GSP  | security | PUBLISHED        | 403       |
+      | GSP  | support  | PUBLISHED        | 403       |
+      | PA1  | security | PUBLISHED        | 403       |
+      | PA1  | support  | PUBLISHED        | 403       |
 
     @happy-path
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
-      | PA1  | admin | SUSPENDED       |       200 |
+      | PA1  | admin | SUSPENDED        | 200       |
+
+  Scenario: [ESERVICE_CLONING_2] La clonazione di un e-service con un nome di lunghezza massima (60 caratteri) genera un nuovo e-service con un nome che non supera i 60 caratteri, aggiungendo al nome originale " - clone - " seguito dalla data e ora della clonazione;
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri
+    When l'utente clona quell'e-service
+    Then si ottiene status code 200
+    And il nome del nuovo e-service clonato non supera i 60 caratteri
+    And il nome del nuovo e-service contiene " - clone - " seguito dalla data e ora della clonazione
