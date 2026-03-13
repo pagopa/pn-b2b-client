@@ -183,6 +183,7 @@ public class BFFDataPreparationService {
 
         this.mainDataPrepService = mainDataPrepService;
         this.mainDataPrepService.setAuthorizationClient(this.authorizationClient);
+        this.mainDataPrepService.setHttpCallExecutor(httpCallExecutor);
 
         this.template = new DataPreparationServiceTemplate(
             this.httpCallExecutor,
