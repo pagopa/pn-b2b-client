@@ -6,14 +6,26 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "OLD"
     Examples:
       | taxId            |
-      #1) ha numero, lettera, esponente1, colore e interno2/espInterno2
-      | VRSVLR80A01L781H |
-      #2) ha progSNC, colore, numero lettera esponente per l'address e nel civicoInterno ci sono entrambi gli interni (interno1/2 ed espInterno1/2)
-      | RNCRNL00A03F205C |
-      #3) Ha solamente metrico colore e civico interno 1
-      | DLRPQL89P09D612E |
-      #4) Ha tutti i campi tranne i due interni/espInterno e la scalaEsterna
-      | PRSNBL81R08H501T |
+      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
+      | GNVGCM97E04L781N |
+      #toponimo!=null;numeroCivico=null
+      | MRNMRZ04D07L781J |
+      #toponimo=null;numeroCivico=null;
+      | VNNVNN99T16L781L |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
+      | PRZPLA89E02L781K |
+      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
+      | BRNBNN92S02L781R |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1!=null
+      | LNNLNZ02L27L781Z |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2=""
+      | QDRQMD99C20L781Y |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null
+      | JRIJNN05A01L781M |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null
+      | RZORNZ95C11L781S |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
+      | RGHLVC01H09H501K |
 
   @AdeguamentoIndirizzoANPR_Minimal
   Scenario Outline: [DIRECT_CALL_TO_ANPR_MINIMAL]
@@ -21,10 +33,27 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "MINIMAL"
     Examples:
       | taxId            |
-      | VRSVLR80A01L781H |
-      | RNCRNL00A03F205C |
-      | DLRPQL89P09D612E |
-      | PRSNBL81R08H501T |
+      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
+      | GNVGCM97E04L781N |
+      #toponimo!=null;numeroCivico=null
+      | MRNMRZ04D07L781J |
+      #toponimo=null;numeroCivico=null;
+      | VNNVNN99T16L781L |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
+      | PRZPLA89E02L781K |
+      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
+      | BRNBNN92S02L781R |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1!=null
+      | LNNLNZ02L27L781Z |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2=""
+      | QDRQMD99C20L781Y |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null
+      | JRIJNN05A01L781M |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null
+      | RZORNZ95C11L781S |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
+      | RGHLVC01H09H501K |
+
 
   @AdeguamentoIndirizzoANPR_Full
   Scenario Outline: [DIRECT_CALL_TO_ANPR_FULL]
@@ -32,10 +61,27 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "FULL"
     Examples:
       | taxId            |
-      | VRSVLR80A01L781H |
-      | RNCRNL00A03F205C |
-      | DLRPQL89P09D612E |
-      | PRSNBL81R08H501T |
+      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
+      | GNVGCM97E04L781N |
+      #toponimo!=null;numeroCivico=null
+      | MRNMRZ04D07L781J |
+      #toponimo=null;numeroCivico=null;
+      | VNNVNN99T16L781L |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
+      | PRZPLA89E02L781K |
+      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
+      | BRNBNN92S02L781R |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1!=null
+      | LNNLNZ02L27L781Z |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2=""
+      | QDRQMD99C20L781Y |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null
+      | JRIJNN05A01L781M |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null
+      | RZORNZ95C11L781S |
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
+      | RGHLVC01H09H501K |
+
 
   @AdeguamentoIndirizzoANPR_Old
   Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_OLD] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo OLD
