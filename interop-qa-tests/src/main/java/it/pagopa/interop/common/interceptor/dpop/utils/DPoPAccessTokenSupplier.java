@@ -7,65 +7,89 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRespo
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 @RequiredArgsConstructor
-public class DPoPAccessTokenSupplier implements java.util.function.Supplier<String> {
+public class DPoPAccessTokenSupplier implements Supplier<String> {
 
     private final DPoPTokenService tokenService;
-    private volatile Auth auth;
+
+    private static final long EXPIRY_SKEW_MS = 10_000;
+    private static final long DEFAULT_EXPIRES_MS = 240_000;
 
     private static final class TokenState {
         final String token;
         final long expiresAtMs;
+
         TokenState(String token, long expiresAtMs) {
             this.token = token;
             this.expiresAtMs = expiresAtMs;
         }
+
+        boolean isValid(long now) {
+            return now < (expiresAtMs - EXPIRY_SKEW_MS);
+        }
     }
 
-    private volatile TokenState state;
+    private static final class Snapshot {
+        final Auth auth;
+        final TokenState tokenState;
 
-    public synchronized void setAuth(Auth newAuth) {
-        if (Objects.equals(this.auth, newAuth)) {
-            return;
+        Snapshot(Auth auth, TokenState tokenState) {
+            this.auth = auth;
+            this.tokenState = tokenState;
         }
-        this.auth = newAuth;
-        this.state = null;
+    }
+
+    private final ThreadLocal<Snapshot> snapshot =
+            ThreadLocal.withInitial(() -> new Snapshot(null, null));
+
+    public void setAuth(Auth newAuth) {
+        Objects.requireNonNull(newAuth, "Auth must not be null");
+        snapshot.set(new Snapshot(newAuth, null));
     }
 
     @Override
     public String get() {
-        Auth a = this.auth;
-        if (a == null) {
-            throw new IllegalStateException("DPoPAccessTokenSupplier: auth non impostata. Chiama setAuth(Auth) prima di usare il client.");
+        Snapshot snap = snapshot.get();
+        Auth auth = snap.auth;
+
+        if (auth == null) {
+            throw new IllegalArgumentException(
+                    "DPoPAccessTokenSupplier: auth non impostata. Chiama setAuth(Auth) prima di usare il client."
+            );
         }
 
         long now = System.currentTimeMillis();
-        TokenState s = this.state;
-        if (s != null && now < (s.expiresAtMs - 10_000)) {
-            return s.token;
+        TokenState cached = snap.tokenState;
+        if (cached != null && cached.isValid(now)) {
+            return cached.token;
         }
 
         synchronized (this) {
-            a = this.auth;
-            if (a == null) {
-                throw new IllegalStateException("DPoPAccessTokenSupplier: auth non impostata. Chiama setAuth(Auth) prima di usare il client.");
+            snap = snapshot.get();
+            auth = snap.auth;
+
+            if (auth == null) {
+                throw new IllegalStateException(
+                        "DPoPAccessTokenSupplier: auth non impostata. Chiama setAuth(Auth) prima di usare il client."
+                );
             }
 
             now = System.currentTimeMillis();
-            s = this.state;
-            if (s != null && now < (s.expiresAtMs - 10_000)) {
-                return s.token;
+            cached = snap.tokenState;
+            if (cached != null && cached.isValid(now)) {
+                return cached.token;
             }
 
-            String dpopForTokenEndpoint = tokenService.buildDpopProof(a.getKeyPair());
+            String dpopForTokenEndpoint = tokenService.buildDpopProof(auth.getKeyPair());
 
             var pair = tokenService.getAccessTokenWithoutCache(
                     dpopForTokenEndpoint,
-                    a.getClientId(),
-                    a.getKeyPair(),
+                    auth.getClientId(),
+                    auth.getKeyPair(),
                     ClientAssertionOptions.ClientType.API,
-                    a.getTenantType(),
+                    auth.getTenantType(),
                     null
             );
 
@@ -78,12 +102,18 @@ public class DPoPAccessTokenSupplier implements java.util.function.Supplier<Stri
             Long expiresIn = vr.getExpiresIn();
             long newExpiresAt = (expiresIn != null)
                     ? System.currentTimeMillis() + expiresIn * 1000
-                    : System.currentTimeMillis() + 240_000;
+                    : System.currentTimeMillis() + DEFAULT_EXPIRES_MS;
 
-            this.state = new TokenState(newToken, newExpiresAt);
+            TokenState newState = new TokenState(newToken, newExpiresAt);
+
+            // salva il token solo se l'auth corrente è ancora quella letta sotto lock
+            snapshot.set(new Snapshot(auth, newState));
+
             return newToken;
         }
     }
+
+    public void clear() {
+        snapshot.remove();
+    }
 }
-
-

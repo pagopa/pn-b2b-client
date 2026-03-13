@@ -62,7 +62,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     When l'utente è un "admin" di "GSP"
-    And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
+    And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione invisibile
     Then si ottiene lo status code 404
 
   #90 (KO)

@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -87,6 +88,7 @@ public class InvioNotificheB2bSteps {
     private List<ReceivedMessage> documentiPec;
     private final JavaMailSender emailSender;
     private List<String> blackListTaxIds;
+    private RequestStatus cancellationResponse;
 
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
@@ -692,10 +694,22 @@ public class InvioNotificheB2bSteps {
     @And("la notifica non può essere annullata dal sistema tramite codice IUN")
     public void notificationCaNotBeCanceledWithIUN() {
         try {
-            sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun());
+            cancellationResponse = sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
+    }
+
+    @And("si verifica che l'annullamento della notifica abbia prodotto una risposta con i seguenti dati")
+    public void verifyCancellationResponse(DataTable dataTable) {
+        assertThat(cancellationResponse).as("La risposta alla cancellazione della notifica non dovrebbe essere nulla").isNotNull();
+        Map<String, String> inputParams = dataTable.asMap();
+        List<StatusDetail> statusDetails = cancellationResponse.getDetails();
+        assertThat(statusDetails).isNotNull();
+        assertThat(cancellationResponse.getStatus()).isEqualTo(inputParams.get("status"));
+        assertThat(statusDetails.get(0).getCode()).isEqualTo(inputParams.get("code"));
+        assertThat(statusDetails.get(0).getLevel()).isEqualTo(inputParams.get("level"));
+        assertThat(statusDetails.get(0).getDetail()).isEqualTo(inputParams.get("detail"));
     }
 
     //Annullamento Notifica

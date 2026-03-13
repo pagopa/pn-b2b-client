@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @ToString
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements IM2MV3ProducerKeychainsClient {
 
     private final ProducerKeychainsApi producerKeychainsApi;
