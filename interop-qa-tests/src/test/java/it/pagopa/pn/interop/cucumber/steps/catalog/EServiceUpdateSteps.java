@@ -1,13 +1,17 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.time.OffsetDateTime;
 
 public class EServiceUpdateSteps {
@@ -34,6 +38,34 @@ public class EServiceUpdateSteps {
         userUpdateEServiceImpl();
     }
 
+    @And("l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri")
+    public void eServiceNameUpdate() {
+        final String prefix = "e-service-";
+        final int totalLength = 60;
+        String nameToUpdate = prefix + RandomStringUtils.insecure().nextNumeric(totalLength - prefix.length());
+
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateEServiceName(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        new EServiceNameUpdateSeed().name(nameToUpdate)
+                )
+        );
+
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
+                            sharedStepsContext.getEServicesCommonContext().getEserviceId()
+                    ),
+                    res -> res != null && nameToUpdate.equals(res.getName()),
+                    "Il nome dell'e-service non è stato aggiornato correttamente"
+            );
+
+            sharedStepsContext.getEServicesCommonContext().setName(nameToUpdate);
+            sharedStepsContext.getEServicesCommonContext().setEServiceEditTimestamp(OffsetDateTime.now());
+        }
+    }
+
     private void userUpdateEServiceImpl() {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         httpCallExecutor.performCall(
@@ -46,7 +78,7 @@ public class EServiceUpdateSteps {
                                 .technology(EServiceTechnology.SOAP)
                 )
         );
-        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getEServicesCommonContext().setEServiceEditTimestamp(OffsetDateTime.now());
         }
     }
