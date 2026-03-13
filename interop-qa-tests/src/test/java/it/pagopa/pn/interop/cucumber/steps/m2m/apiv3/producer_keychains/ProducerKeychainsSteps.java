@@ -3,29 +3,21 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -59,16 +51,50 @@ public class ProducerKeychainsSteps {
             }
 
             producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser);
+            httpCallExecutor.snapshot();
 
+            PollingService.makePolling(
+                    () -> {
+                        final int limit = 50;
+                        int offset = 0;
+                        List<User> allUsers = new ArrayList<>();
+                        Users usersPage;
 
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
-                httpCallExecutor.snapshot();
-                PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())), "L'utente non risulta associato alla producer keychain dopo la creazione", 30, 1_000L);
-                httpCallExecutor.resetFormSnapshot();
-            }
+                        do {
+                            usersPage = producerKeychainsClient.getProducerKeychainUsers(
+                                    producerKeychainValue,
+                                    limit,
+                                    offset
+                            );
+
+                            if (!httpCallExecutor.getResponseStatus().is2xxSuccessful() || usersPage == null) {
+                                return null;
+                            }
+
+                            List<User> pageResults = usersPage.getResults();
+                            if (pageResults.isEmpty()) {
+                                break;
+                            }
+
+                            allUsers.addAll(pageResults);
+                            offset += limit;
+
+                        } while (usersPage.getResults().size() == limit);
+
+                        Users aggregatedUsers = new Users();
+                        aggregatedUsers.setResults(allUsers);
+                        return aggregatedUsers;
+                    },
+                    users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())),
+                    "L'utente non risulta associato alla producer keychain dopo la creazione",
+                    5,
+                    1_000L
+            );
+
+            httpCallExecutor.resetFormSnapshot();
 
         } catch (IllegalStateException e) {
-            log.warn(e.getMessage());
+            log.warn(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -98,7 +124,21 @@ public class ProducerKeychainsSteps {
             UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
             KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
 
-            ProducerKey key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+            // Polling necessario per evitare l'errore di eventual consistency 404 Producer JWK not found
+            ProducerKey key = PollingService.makePolling(
+                    () -> {
+                        try {
+                            return producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
+                        } catch (IllegalStateException e){
+                            log.warn(httpCallExecutor.getErrorMessage());
+                            return null;
+                        }
+                    },
+                    createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null,
+                    "",
+                    5,
+                    1_000);
+
             producerKeychainsContext.setProducerKey(key);
             producerKeychainsContext.setActualKeySeed(keySeed);
 
@@ -109,18 +149,19 @@ public class ProducerKeychainsSteps {
                         try {
                             return producerKeychainsClient.getProducerKey(kid);
                         } catch (IllegalStateException e) {
-                            log.warn(e.getMessage());
+                            log.warn(httpCallExecutor.getErrorMessage());
                             return null;
                         }
                     },
                     createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && createdKey.getJwk().equals(key.getJwk()),
                     "La chiave non risulta creata correttamente dopo la creazione",
-                    30,
+                    5,
                     1_000L);
             httpCallExecutor.resetFormSnapshot();
-            
-        } catch (IllegalStateException e) {
-            log.warn(e.getMessage());
+
+        }
+        catch (PollingPredicateException | IllegalStateException e) {
+            log.warn(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -164,9 +205,22 @@ public class ProducerKeychainsSteps {
     public void getProducerKey(String rawKid) {
         String kid = resolver.resolveKid(rawKid);
         try {
-            ProducerKey pKey = producerKeychainsClient.getProducerKey(kid);
+            ProducerKey pKey = PollingService.makePolling(
+                    () -> {
+                        try {
+                            return producerKeychainsClient.getProducerKey(kid);
+                        } catch (IllegalStateException e) {
+                            log.warn(httpCallExecutor.getErrorMessage());
+                            return null;
+                        }
+                    },
+                    res -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && res != null,
+                    "",
+                    5,
+                    1_000
+            );
             producerKeychainsContext.setProducerKey(pKey);
-        } catch (IllegalStateException e) {
+        } catch (PollingPredicateException e) {
             log.warn(e.getMessage());
         }
     }

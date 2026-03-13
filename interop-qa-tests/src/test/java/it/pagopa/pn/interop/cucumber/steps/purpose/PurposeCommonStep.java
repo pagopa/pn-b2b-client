@@ -5,16 +5,19 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.llgg.AdeguamentoLineeGuidaSteps;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +29,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 public class PurposeCommonStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IdentityService identityService;
@@ -33,7 +37,7 @@ public class PurposeCommonStep {
     private final SharedStepsContext sharedStepsContext;
     private final IPurposeApiClient purposeApiClient;
     private final PollingService pollingService;
-
+    private final IHttpExecutor httpCallExecutor;
 
     public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                              @Qualifier("interopIdentityService") IdentityService identityService,
@@ -45,6 +49,7 @@ public class PurposeCommonStep {
         this.sharedStepsContext = sharedStepsContext;
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.pollingService = sharedStepsContext.getPollingService();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @Given("il {delegationRole} ha già creato {int} finalità in stato {string} per quell'eservice")
@@ -263,11 +268,20 @@ public class PurposeCommonStep {
     public void purposeIsArchived(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        pollingService.makePolling(
-                () -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
-                res -> Optional.ofNullable(res).map(Purpose::getCurrentVersion).map(PurposeVersion::getState).filter(state -> state.equals(PurposeVersionState.ARCHIVED)).isPresent(),
-                "The purpose was not archived"
-        );
+        try {
+            pollingService.makePolling(
+                    () -> {
+                        httpCallExecutor.performCall(
+                                () -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()))
+                        );
+                        return (Purpose) httpCallExecutor.getResponse(); // Return the actual body for the predicate
+                    },
+                    res -> Optional.ofNullable(res).map(Purpose::getCurrentVersion).map(PurposeVersion::getState).filter(state -> state.equals(PurposeVersionState.ARCHIVED)).isPresent(),
+                    "The purpose was not archived"
+            );
+        } catch (IllegalArgumentException e) {
+            log.warn("The purpose was not archived: {}", e.getMessage());
+        }
     }
 
     @Then("si ottiene status code {int} e il template in versione {string}")
