@@ -3045,7 +3045,7 @@ Feature: Test API of e-service template
 
   @happy-path
   @e-service-template-instance-read
-  Scenario: [INTEROP-EST-209] La visualizzazione dell'elenco delle istanze di un e-service template restituisce una lista vuota nel caso in cui il filtro producerName contenga un tenant che non ha instanziato il template in questione
+  Scenario: [INTEROP-EST-209] La visualizzazione dell'elenco delle istanze di un e-service template restituisce le istanze filtrate correttamente in base al producerName
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente è un "admin" di "PA2"
@@ -3053,13 +3053,13 @@ Feature: Test API of e-service template
     And l'utente è un "admin" di "GSP"
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente è un "admin" di "PA1"
-    And l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset 0, limit 10 e producerName "PagoPA S.p.A."
+    And l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset 0, limit 10 e producerName "GSP"
     Then si ottiene response status code 200
     And l'elenco delle istanze e-service template restituite contiene l'ultimo e-service template istanziato
 
   @happy-path
   @e-service-template-instance-read
-  Scenario: [INTEROP-EST-210] La visualizzazione dell'elenco delle istanze di un e-service template restituisce una lista vuota nel caso in cui il filtro producerName contenga un tenant che non ha instanziato il template in questione
+  Scenario Outline: [INTEROP-EST-210] La visualizzazione dell'elenco delle istanze di un e-service template restituisce una lista vuota nel caso in cui il filtro producerName contenga un tenant che non ha instanziato il template in questione
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente è un "admin" di "GSP"
@@ -3067,9 +3067,14 @@ Feature: Test API of e-service template
     And l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente è un "admin" di "PA1"
-    And l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset 0, limit 10 e producerName "SOGECAP"
+    And l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset 0, limit 10 e producerName "<ente>"
     Then si ottiene response status code 200
     And l'elenco delle istanze dell'e-service template è vuoto
+
+    Examples:
+      | ente    |
+      | Privato |
+      | %random |
 
   Scenario: [ESERVICE_MY_INSTANCES_RETRIEVE_7] Verifica non sia possibile accedere ad un e-service template in stato DRAFT appartenente ad un tenant differente
     Given l'utente è un "admin" di "PA1"

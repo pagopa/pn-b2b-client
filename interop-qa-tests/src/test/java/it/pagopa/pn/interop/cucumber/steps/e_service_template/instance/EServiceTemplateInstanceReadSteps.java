@@ -55,7 +55,8 @@ public class EServiceTemplateInstanceReadSteps {
     @When("l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset {int}, limit {int} e producerName {string}")
     public void getEServiceTemplateInstancesWithProducerNameFilter(int offset, int limit, String producerName) {
         UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
-        getEserviceTemplateInstancesWithFilters(templateId, offset, limit, producerName, null);
+        String tenantName = eServiceTemplateInstanceUtility.resolveTenantName(producerName);
+        getEserviceTemplateInstancesWithFilters(templateId, offset, limit, tenantName, null);
     }
 
     @Then("sono state visualizzate {int} istanza in stato DRAFT, {int} in stato PUBLISHED e {int} in stato SUSPENDED")
@@ -97,6 +98,7 @@ public class EServiceTemplateInstanceReadSteps {
         UUID lastCreatedId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().getId();
         assertThat(response)
                 .extracting(EServiceTemplateInstance::getId)
+                .as(String.format("L'elenco delle istanze non contiene l'e-service template istanziato con id '%s'", lastCreatedId))
                 .containsExactly(lastCreatedId);
     }
 

@@ -21,7 +21,7 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     private final List<Tenant> tenantList;
 
     public IdentityServiceSelfcareImpl(SessionTokenFactory sessionTokenFactory,
-                           ConfigFileReader configFileReader) {
+                                       ConfigFileReader configFileReader) {
         this.sessionTokenFactory = sessionTokenFactory;
         this.tenantList = configFileReader.getTenantList();
     }
@@ -34,11 +34,11 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     @Override
     public String getToken(String tenantType, String role, int userIndex) {
         return Optional.ofNullable(sessionTokenFactory.loadToken())
-            .map(m -> m.get(tenantType))
-            .map(m -> (role == null) ? m.get("admin") : m.get(role))
-            .map(m -> m.get(userIndex))
-            .filter(Objects::nonNull)
-            .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
+                .map(m -> m.get(tenantType))
+                .map(m -> (role == null) ? m.get("admin") : m.get(role))
+                .map(m -> m.get(userIndex))
+                .filter(Objects::nonNull)
+                .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
     }
 
     @Override
@@ -49,30 +49,40 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     @Override
     public UUID getUserId(String tenantType, String role, int userIndex) {
         return tenantList.stream()
-            .filter(tenant -> tenantType.equals(tenant.getName()))
-            .map(Tenant::getUserRoles)
-            .map(userRole -> userRole.get(role))
-            .map(user -> user.get(userIndex))
-            .findFirst()
-            .map(UUID::fromString)
-            .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getUserRoles)
+                .map(userRole -> userRole.get(role))
+                .map(user -> user.get(userIndex))
+                .findFirst()
+                .map(UUID::fromString)
+                .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));
     }
 
     @Override
     public UUID getOrganizationId(String tenantType) {
         return tenantList.stream()
-            .filter(tenant -> tenantType.equals(tenant.getName()))
-            .map(Tenant::getOrganizationId)
-            .map(o -> o.get("dev"))
-            .findAny()
-            .map(UUID::fromString)
-            .orElse(null);
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getOrganizationId)
+                .map(o -> o.get("dev"))
+                .findAny()
+                .map(UUID::fromString)
+                .orElse(null);
+    }
+
+    @Override
+    public String getTenantName(String tenantType) {
+        return tenantList.stream()
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getTenantName)
+                .map(t -> t.get("qa"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Tenant name not found"));
     }
 
     @Override
     public String getTenant(UUID organizationId) {
-        for(Tenant tenant : tenantList) {
-            if(tenant.getOrganizationId().containsValue(organizationId.toString())) {
+        for (Tenant tenant : tenantList) {
+            if (tenant.getOrganizationId().containsValue(organizationId.toString())) {
                 return tenant.getName();
             }
         }
@@ -83,10 +93,10 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     @Override
     public String getKind(String tenantType) {
         return tenantList.stream()
-            .filter(tenant -> tenantType.equals(tenant.getName()))
-            .map(Tenant::getKind)
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getKind)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
     }
 
     @Override
