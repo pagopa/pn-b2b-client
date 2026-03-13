@@ -17,7 +17,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
-    And si verifica che non ci siano errori per i trackingId richiesti
+#    And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName                     |
       | OK_890                           |

@@ -268,9 +268,7 @@ public class PaperTrackerSteps {
                 r -> {
                     Pattern pattern = Pattern.compile("ATTEMPT_(\\d+)");
                     Matcher matcher = pattern.matcher(r.getTrackingId());
-                    matcher.find();
-                    return Integer.parseInt(matcher.group(1));
-
+                    return (matcher.find()) ? Integer.parseInt(matcher.group(1)) : 0;
                 }, Collectors.flatMapping(
                         r -> r.getOutputs().stream()
                                 .map(output -> new NotificationEvent(

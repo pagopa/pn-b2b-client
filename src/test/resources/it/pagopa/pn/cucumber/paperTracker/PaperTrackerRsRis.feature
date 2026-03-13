@@ -27,6 +27,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | FAIL_RS_MANCATA_CONSEGNA_PGIACENZA |
       | OK_RS_COMPIUTA_GIACENZA            |
       | OK_RS_CONSEGNA_PGIACENZA           |
+      | OK-NonRendicontabile_RS            |
+      | OK-CausaForzaMaggiore_RS           |
 
   @paperTrackerRISDryRunMode
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
@@ -83,6 +85,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | FAIL_RS_MANCATA_CONSEGNA_PGIACENZA |
       | OK_RS_COMPIUTA_GIACENZA            |
       | OK_RS_CONSEGNA_PGIACENZA           |
+      | OK-NonRendicontabile_RS            |
+      | OK-CausaForzaMaggiore_RS           |
 
   @paperTrackerRISRunMode
   Scenario Outline: [PAPER_TRACKER_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS

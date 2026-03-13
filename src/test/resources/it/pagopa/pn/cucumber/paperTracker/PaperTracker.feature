@@ -339,6 +339,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL_CON996_PCRETRY_FURTO_AR  | Via@FAIL_CON996_PCRETRY_FURTO_AR  |
       | OK_PCRETRY_CON996_AR          | Via@OK_PCRETRY_CON996_AR          |
       | OK_AR_ALL_CON                 | Via@OK_AR_ALL_CON                 |
+      | OK-GiacenzaCorrected_AR       | Via@OK-GiacenzaCorrected_AR       |
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti per le sequence in cui non è previsto l'evento CON020
@@ -513,3 +514,21 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "FAIL-WO_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
 
+
+  @paperTrackerARRunMode
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_6_FAIL] Si verifica che per la sequence OK-TimestampCorrected_AR vienga generato un errore di tipo DATE_ERROR con cause VALUES_NOT_MATCHING e che non ci siano eventi duplicati
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-TimestampCorrected_AR |
+      | digitalDomicile         | NULL                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-13T15:12:56.837741793Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-13T15:12:54Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-13T15:12:49Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-13T15:12:44Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"d6117f58-950e-4e9c-8b8c-acdb90a8aec5\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
