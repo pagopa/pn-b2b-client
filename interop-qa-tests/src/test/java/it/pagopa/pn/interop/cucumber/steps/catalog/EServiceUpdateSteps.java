@@ -38,6 +38,7 @@ public class EServiceUpdateSteps {
         userUpdateEServiceImpl();
     }
 
+    //60 è il limite di caratteri da rispettare per il nome di un e-service
     @And("l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri")
     public void eServiceNameUpdate() {
         final String prefix = "e-service-";
