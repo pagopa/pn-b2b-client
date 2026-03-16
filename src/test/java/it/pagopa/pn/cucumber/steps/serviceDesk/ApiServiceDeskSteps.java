@@ -10,7 +10,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
-import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
@@ -20,6 +20,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -60,13 +63,14 @@ public class ApiServiceDeskSteps {
 
     public static final String IUN_ERRATO = "JRDT-XAPH-JQYW-202312-J-1";
     private final SharedSteps sharedSteps;
-    private final IPServiceDeskClientImpl ipServiceDeskClient;
+    private final IPServiceDeskClient ipServiceDeskClient;
     private final PnExternalServiceClientImpl safeStorageClient;
     private final RestTemplate restTemplate;
     private final NotificationRequest notificationRequest;
     private final AnalogAddress analogAddress;
     private final CreateOperationRequest createOperationRequest;
-    private CreateActOperationRequest createActOperationRequest;
+    private CreateActOperationRequest createActOperationRequestV1;
+    private CreateActOperationRequestV2 createActOperationRequestV2;
     private final VideoUploadRequest videoUploadRequest;
     private final SearchNotificationRequest searchNotificationRequest;
     private final ApplicationContext ctx;
@@ -99,12 +103,13 @@ public class ApiServiceDeskSteps {
     private DocumentsResponse documentsResponse;
     private ResponseApiKeys responseApiKeys;
     private NotificationsUnreachableResponse notificationsUnreachableResponse;
-    private OperationsResponse operationsResponse;
+    private OperationsResponse operationsResponseV1;
+    private CreateOperationsResponseV2 operationsResponseV2;
     private VideoUploadResponse videoUploadResponse;
     private NotificationDocument notificationDocument;
     private SearchResponse searchResponse;
-
     private String operationId;
+    private GetOperationsResponseV2 getOperationsResponseV2;
     private ApiResult httpResponse;
     private String statusOperationResponse;
 
@@ -120,7 +125,7 @@ public class ApiServiceDeskSteps {
         this.notificationRequest = new NotificationRequest();
         this.analogAddress = new AnalogAddress();
         this.createOperationRequest = new CreateOperationRequest();
-        this.createActOperationRequest = new CreateActOperationRequest();
+        this.createActOperationRequestV1 = new CreateActOperationRequest();
         this.videoUploadRequest = new VideoUploadRequest();
         this.searchNotificationRequest = new SearchNotificationRequest();
     }
@@ -140,10 +145,10 @@ public class ApiServiceDeskSteps {
         }
     }
 
-     @And("si verifica che lo stato della notifica recuperata sia: {string}")
-     public void verifyNotificationStatus(String expectedStatus) {
+    @And("si verifica che lo stato della notifica recuperata sia: {string}")
+    public void verifyNotificationStatus(String expectedStatus) {
         Assertions.assertEquals(timelineResponse.getIunStatus().getValue(), expectedStatus);
-     }
+    }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
     public void createVerifyUnreachableRequest(String cf) {
@@ -251,20 +256,20 @@ public class ApiServiceDeskSteps {
     public void createOperationResponse() {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                operationsResponse = ipServiceDeskClient.createOperation(createOperationRequest);
+                operationsResponseV1 = ipServiceDeskClient.createOperation(createOperationRequest);
             });
             threadWait(getWorkFlowWait());
-            Assertions.assertNotNull(operationsResponse);
+            Assertions.assertNotNull(operationsResponseV1);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{Id operation " + (operationsResponse == null ? "NULL" : operationsResponse.getOperationId()) + " }";
+                    "{Id operation " + (operationsResponseV1 == null ? "NULL" : operationsResponseV1.getOperationId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
     @Then("la risposta del servizio CREATE_OPERATION risponde con esito positivo")
     public void verifyCreateOperationResponse() {
-        String idOperation = operationsResponse.getOperationId();
+        String idOperation = operationsResponseV1.getOperationId();
         Assertions.assertNotNull(idOperation);
         this.operationId = idOperation;
         log.info("L'operation di creato per il CF:" + createOperationRequest.getTaxId() + " " + idOperation);
@@ -284,7 +289,7 @@ public class ApiServiceDeskSteps {
     public void preUploadVideoResponse() {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(), videoUploadRequest);
+                videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponseV1.getOperationId(), videoUploadRequest);
             });
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
@@ -314,8 +319,8 @@ public class ApiServiceDeskSteps {
     @When("viene invocato il servizio UPLOAD VIDEO con errore")
     public void preUploadVideoResponseWithError() {
         try {
-            log.error("Operation id:" + operationsResponse.getOperationId());
-            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(), videoUploadRequest);
+            log.error("Operation id:" + operationsResponseV1.getOperationId());
+            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponseV1.getOperationId(), videoUploadRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
         } catch (HttpStatusCodeException exception) {
@@ -397,11 +402,16 @@ public class ApiServiceDeskSteps {
             checkOperationResponse(element);
             log.info("STATO NOTIFICA " + lista.get(0).getNotificationStatus().getStatus().getValue());
         }
+        if (operationId != null) {
+            assertThat(searchResponse.getOperations().stream().map(op -> op.getOperationId()).collect(Collectors.toList())).asList()
+                    .as("La searchResponse deve contenere l'operation appena creata")
+                    .contains(operationId);
+        }
     }
 
     @Then("Il servizio SEARCH risponde con esito positivo e lo stato della consegna è {string}")
     public void verifySearchResponseWithStatus(String status) {
-        String operationIdToSearch = operationsResponse.getOperationId();
+        String operationIdToSearch = operationsResponseV1.getOperationId();
         log.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
         List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
@@ -412,7 +422,7 @@ public class ApiServiceDeskSteps {
     @Then("Il servizio SEARCH risponde con esito positivo con spedizione multipla e lo stato della consegna è {string}")
     public void verifySearchResponseWithStatusSplitNotify(String status) {
         boolean multiOperation = false;
-        String operationIdToSearch = operationsResponse.getOperationId();
+        String operationIdToSearch = operationsResponseV1.getOperationId();
         log.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
         List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
@@ -441,13 +451,13 @@ public class ApiServiceDeskSteps {
     }
 
     @Then("Il servizio SEARCH risponde con esito positivo con uncompleted iun lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatusAndUncompletedIun(String status) {
-        String operationIdToSearch = operationsResponse.getOperationId();
+    public void verifySearchResponseWithStatusAndIun(String iun, String status) {
+        String operationIdToSearch = operationsResponseV1.getOperationId();
         log.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
         List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
         log.info("SEARCH " + searchResponse.getOperations().toString());
-        checkOperationResponseList(lista, operationIdToSearch, status, false, null);
+        checkOperationResponseList(lista, operationIdToSearch, status, true, iun);
     }
 
     @Then("Il servizio SEARCH risponde con lista vuota")
@@ -1123,36 +1133,6 @@ public class ApiServiceDeskSteps {
         createOperationRequest.setAddress(analogAddress);
     }
 
-    private CreateActOperationRequest createActOperationRequestSteps(String cf) {
-        final CreateActOperationRequest createActOperationRequest = new CreateActOperationRequest();
-        log.info("CF:" + cf);
-        createActOperationRequest.setTaxId(cf);
-
-        String ticketId = getPrefixedRandomAlphaNumeric(12);
-        log.info("ticketId:" + ticketId);
-        createActOperationRequest.setTicketId(ticketId);
-
-        String ticketOperationId = getPrefixedRandomAlphaNumeric(7);
-        log.info("ticketOperationId:" + ticketOperationId);
-        createActOperationRequest.setTicketOperationId(ticketOperationId);
-
-        createActOperationRequest.setAddress(new ActDigitalAddress().address("test@test.it").type("COURTESY"));
-
-        String ticketDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
-        createActOperationRequest.setTicketDate(ticketDate);
-        log.info("ticketDate:" + ticketDate);
-
-        String vrDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
-        createActOperationRequest.setVrDate(vrDate);
-        log.info("vrDate:" + vrDate);
-
-        String iun = sharedSteps.getNotificationIun();
-        createActOperationRequest.setIun(iun);
-        log.info("iun:" + iun);
-
-        return createActOperationRequest;
-    }
-
     private void createPreUploadVideoRequestDocumentSteps() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
@@ -1165,7 +1145,7 @@ public class ApiServiceDeskSteps {
     }
 
     private void createPreUploadVideoRequestDocumentSteps(String name) throws Exception {
-        notificationDocument = newDocument("classpath:/"+name);
+        notificationDocument = newDocument("classpath:/" + name);
         String resourceName = notificationDocument.getRef().getKey();
         log.info("Resource name:" + resourceName);
         String sha256 = B2bUtils.computeSha256(ctx, resourceName);
@@ -1194,7 +1174,7 @@ public class ApiServiceDeskSteps {
 
     private void createOperationResponseWithErrorSteps() {
         try {
-            operationsResponse = ipServiceDeskClient.createOperation(createOperationRequest);
+            operationsResponseV1 = ipServiceDeskClient.createOperation(createOperationRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(notificationsUnreachableResponse);
         } catch (HttpStatusCodeException exception) {
@@ -1468,7 +1448,9 @@ public class ApiServiceDeskSteps {
 
     public String setPaID(String paId) {
         String paIDSearch;
-        if (paId == null) return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();;
+        if (paId == null)
+            return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();
+        ;
         return switch (paId.toUpperCase()) {
             case "VUOTO" -> "";
             case "NO_SET" -> {
@@ -1575,7 +1557,6 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(address.getCreated());
             Assertions.assertNotNull(address.getLastModified());
             Assertions.assertEquals(verificationType.equals("uguali"), address.getCreated().equals(address.getLastModified()), "i timestamp non sono " + verificationType + " come previsto dallo scenario del test");
-
         }
     }
 
@@ -1595,75 +1576,51 @@ public class ApiServiceDeskSteps {
 
 
     // Call center evoluto nuovo sviluppo
-
     @Then("il servizio risponde con {int}")
     public void verifyCreateOperationResponse(Integer expected) {
         Assertions.assertNotNull(httpResponse);
-        Integer statusCode = this.httpResponse.status().value();
+        Integer statusCode = httpResponse.status().value();
         Assertions.assertEquals(expected, statusCode);
     }
 
-    @Given("viene popolata una richiesta di creazione Act operation con i seguenti dati")
-    public void costruisciRichiestaDaMappa(Map<String, String> data) {
-        String taxId = getValue(data, "taxId");
-        final CreateActOperationRequest precompiled = createActOperationRequestSteps(taxId);
-        CreateActOperationRequest request = new CreateActOperationRequest();
 
-        // Obbligatori
-        // Automatizzabili
-        String ticketId = getValue(data, "ticketId");
-        request.setTicketId(ticketId != null && ticketId.equalsIgnoreCase("auto") ? precompiled.getTicketId() : ticketId);
-
-        String vrDate = getValue(data, "vrDate");
-        request.setVrDate(vrDate != null && vrDate.equalsIgnoreCase("auto") ? precompiled.getVrDate() : vrDate);
-
-        String ticketDate = getValue(data, "ticketDate");
-        request.setTicketDate(ticketDate != null && ticketDate.equalsIgnoreCase("auto") ? precompiled.getTicketDate() : ticketDate);
-
-        String iun = getValue(data, "iun");
-        request.setIun(iun != null && iun.equalsIgnoreCase("auto") ? precompiled.getIun() : iun);
-
-        // Non automatizzabili
-        request.setTaxId(getValue(data, "taxId"));
-        String addressType = getValue(data, "addressType");
-        String addressValue = getValue(data, "addressValue");
-
-        // Opzionali
-        // Automatizzabili
-        String ticketOpId = getValue(data, "ticketOperationId");
-        request.setTicketOperationId(ticketOpId != null && ticketOpId.equalsIgnoreCase("auto") ? precompiled.getTicketOperationId() : ticketOpId);
-
-        if (addressType != null && addressValue != null) {
-            ActDigitalAddress address = new ActDigitalAddress();
-            address.setType(addressType);
-            address.setAddress(addressValue);
-            request.setAddress(address);
-        } else {
-            request.setAddress(null);
+    @Given("viene popolata una richiesta di creazione Act operation {string} con i seguenti dati")
+    public void costruisciRichiestaDaMappa(String version, Map<String, String> data) {
+        switch (version.toUpperCase()) {
+            case "V1" -> createActOperationRequestV1(data);
+            case "V2" -> createActOperationRequestV2(data);
+            default -> throw new IllegalArgumentException("Invalid version: " + version);
         }
-        createActOperationRequest = request;
-
     }
 
     public static String getValue(Map<String, String> data, String key) {
         if (data.containsKey(key)) {
             return "null".equalsIgnoreCase(data.get(key)) ? null : data.get(key);
-        } else {
-            return null;
         }
+        return null;
     }
 
     @When("viene invocata l'api {string}")
     public void invokeApi(String api) {
         switch (api.toUpperCase()) {
             case "CREATE_ACT_OPERATION" -> {
-                this.httpResponse = ipServiceDeskClient.createActOperationWithHttpInfo(createActOperationRequest);
-                operationsResponse = maybeBody(httpResponse.body(), OperationsResponse.class).orElse(null);
+                this.httpResponse = ipServiceDeskClient.createActOperationWithHttpInfo(createActOperationRequestV1);
+                operationsResponseV1 = maybeBody(httpResponse.body(), OperationsResponse.class).orElse(null);
 
-                if(operationsResponse != null ){
-                    Assertions.assertNotNull(operationsResponse.getOperationId(), "OperationId nullo nella response di CREATE_ACT_OPERATION");
-                    operationId = operationsResponse.getOperationId();
-                    log.info("Operation id:" + operationId);
+                if (operationsResponseV1 != null) {
+                    Assertions.assertNotNull(operationsResponseV1.getOperationId(), "OperationId nullo nella response di CREATE_ACT_OPERATION V1");
+                    operationId = operationsResponseV1.getOperationId();
+                    log.info("Operation id V1:" + operationId);
+                }
+            }
+            case "CREATE_ACT_OPERATION V2" -> {
+                this.httpResponse = ipServiceDeskClient.createActOperationV2WithHttpInfo(createActOperationRequestV2);
+                operationsResponseV2 = maybeBody(httpResponse.body(), CreateOperationsResponseV2.class).orElse(null);
+
+                if (operationsResponseV2 != null) {
+                    Assertions.assertNotNull(operationsResponseV2.getOperationId(), "OperationId nullo nella response di CREATE_ACT_OPERATION V2");
+                    operationId = operationsResponseV2.getOperationId();
+                    log.info("Operation id V2:" + operationId);
                 }
             }
             case "GET_ACT_OPERATION_STATUS" -> {
@@ -1675,14 +1632,12 @@ public class ApiServiceDeskSteps {
                 statusOperationResponse = maybeBody(httpResponse.body(), String.class).orElse("");
             }
             case "UPLOAD_VIDEO" -> {
-                String opId = (operationsResponse != null) ? operationsResponse.getOperationId() : operationId;
-                this.httpResponse = ipServiceDeskClient.presignedUrlVideoUploadWithHttpInfo(opId, videoUploadRequest);
+                this.httpResponse = ipServiceDeskClient.presignedUrlVideoUploadWithHttpInfo(operationId, videoUploadRequest);
                 videoUploadResponse = maybeBody(httpResponse.body(), VideoUploadResponse.class).orElse(null);
                 //Assertions.assertNotNull(videoUploadResponse.getUrl(), "UploadUrl nullo nella response di UPLOAD_VIDEO");
             }
             default -> Assertions.fail("Invalid operation");
         }
-
     }
 
     private <T> Optional<T> maybeBody(Object body, Class<T> expectedType) {
@@ -1706,7 +1661,7 @@ public class ApiServiceDeskSteps {
 
     public void sendNotification() {
         String iun = sharedSteps.getNotificationIun();
-        if(iun != null) return;
+        if (iun != null) return;
 
         // viene generata una nuova notifica
         Map<String, String> data = new HashMap<>();
@@ -1735,10 +1690,149 @@ public class ApiServiceDeskSteps {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             invokeApi("GET_ACT_OPERATION_STATUS");
             System.out.println("Stato attuale: " + statusOperationResponse.toUpperCase());
-            if(status.equalsIgnoreCase(statusOperationResponse.toUpperCase())) return;
+            if (status.equalsIgnoreCase(statusOperationResponse.toUpperCase())) return;
             Thread.sleep(sleepMillis);
         }
-
         log.debug("Polling esaurito per operationId {}", operationId);
+    }
+
+    private void createActOperationRequestV1(Map<String, String> data) {
+        createActOperationRequestV1 = new CreateActOperationRequest();
+
+        createActOperationRequestV1.setTaxId(getValue(data, "taxId"));
+
+        // Obbligatori
+        // Automatizzabili
+        String ticketId = getValue(data, "ticketId");
+        createActOperationRequestV1.setTicketId(ticketId != null && ticketId.equalsIgnoreCase("auto") ?
+                getPrefixedRandomAlphaNumeric(12) : ticketId);
+
+        String vrDate = getValue(data, "vrDate");
+        createActOperationRequestV1.setVrDate(vrDate != null && vrDate.equalsIgnoreCase("auto") ?
+                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) : vrDate);
+
+        String ticketDate = getValue(data, "ticketDate");
+        createActOperationRequestV1.setTicketDate(ticketDate != null && ticketDate.equalsIgnoreCase("auto") ?
+                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) : ticketDate);
+
+        String iun = getValue(data, "iun");
+        createActOperationRequestV1.setIun(iun != null && iun.equalsIgnoreCase("auto") ?
+                sharedSteps.getNotificationIun() : iun);
+
+        // Opzionali
+        // Automatizzabili
+        String ticketOperationId = getValue(data, "ticketOperationId");
+        createActOperationRequestV1.setTicketOperationId(ticketOperationId != null && ticketOperationId.equalsIgnoreCase("auto") ?
+                getPrefixedRandomAlphaNumeric(7) : ticketOperationId);
+
+        // Non automatizzabili
+        String addressType = getValue(data, "addressType");
+        String addressValue = getValue(data, "addressValue");
+
+        if (addressType != null && addressValue != null) {
+            ActDigitalAddress address = new ActDigitalAddress().address(addressValue).type(ActDigitalAddress.TypeEnum.valueOf(addressType));
+            createActOperationRequestV1.setAddress(address);
+        } else {
+            createActOperationRequestV1.setAddress(null);
+        }
+        log.info("CreateActOperationRequest V1: {}", createActOperationRequestV1);
+    }
+
+    private void createActOperationRequestV2(Map<String, String> data) {
+        createActOperationRequestV2 = new CreateActOperationRequestV2();
+
+        createActOperationRequestV2.setTaxId(getValue(data, "taxId"));
+
+        // Obbligatori
+        // Automatizzabili
+        String ticketId = getValue(data, "ticketId");
+        createActOperationRequestV2.setTicketId(ticketId != null && ticketId.equalsIgnoreCase("auto") ?
+                getPrefixedRandomAlphaNumeric(12) : ticketId);
+
+        String vrDate = getValue(data, "vrDate");
+        createActOperationRequestV2.setVrDate(vrDate != null && vrDate.equalsIgnoreCase("auto") ?
+                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) : vrDate);
+
+        String ticketDate = getValue(data, "ticketDate");
+        createActOperationRequestV2.setTicketDate(ticketDate != null && ticketDate.equalsIgnoreCase("auto") ?
+                LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) : ticketDate);
+
+        String iunListType = getValue(data, "iunListType");
+        log.info("TIPOLOGIA IUN UTILIZZATA: {}", iunListType.toUpperCase());
+        switch (iunListType.toUpperCase()) {
+            case "DATI VALIDI" -> createActOperationRequestV2.setIun(sharedSteps.getNotificationIunList());
+            case "LISTA IUN VUOTA" -> createActOperationRequestV2.setIun(new ArrayList<>());
+            case "TUTTI IUN INESISTENTI" -> createActOperationRequestV2.setIun(List.of(IUN_ERRATO));
+            case "IUN RIPETUTO" -> createActOperationRequestV2.setIun(Stream.concat(
+                            sharedSteps.getNotificationIunList().stream(),
+                            Stream.of(sharedSteps.getNotificationIunList().get(0)))
+                    .toList());
+            case "UNO IUN INESISTENTE" -> createActOperationRequestV2.setIun(Stream.concat(
+                            sharedSteps.getNotificationIunList().stream(),
+                            Stream.of(IUN_ERRATO))
+                    .toList());
+            default -> throw new IllegalArgumentException("Invalid iunListType: " + iunListType);
+
+        }
+        // Opzionali
+        // Automatizzabili
+        String ticketOperationId = getValue(data, "ticketOperationId");
+        createActOperationRequestV2.setTicketOperationId(ticketOperationId != null && ticketOperationId.equalsIgnoreCase("auto") ?
+                getPrefixedRandomAlphaNumeric(7) : ticketOperationId);
+
+        // Non automatizzabili
+        String addressType = getValue(data, "addressType");
+        String addressValue = getValue(data, "addressValue");
+
+        if (addressType != null && addressValue != null) {
+            ActDigitalAddress address = new ActDigitalAddress().address(addressValue).type(ActDigitalAddress.TypeEnum.valueOf(addressType));
+            createActOperationRequestV2.setAddress(address);
+        } else {
+            createActOperationRequestV2.setAddress(null);
+        }
+        log.info("CreateActOperationRequest V2: {}", createActOperationRequestV2);
+    }
+
+    @Given("se la chiamata al servizio ha avuto successo")
+    public void assumeResponseIsSuccessful() {
+        Assumptions.assumeTrue(httpResponse.is2xx(), "Gli step successivi verranno ignorati, in quanto valevoli solo quando la chiamata precedente risponde status 2XX");
+    }
+
+    @When("viene invocata l'API v2 GET operations passando {string}")
+    public void callGetOperationsV2(String operationIdType) {
+        String opIdParam;
+        switch (operationIdType.toUpperCase()) {
+            case "VALID OP. ID", "VALID OP. ID V1" -> opIdParam = operationId;
+            case "INEXISTENT OP. ID" -> opIdParam = "404_operationId";
+            case "INVALID OP. ID" -> opIdParam = "x".repeat(33);
+            case "OP. ID WITH IUN" ->
+                    opIdParam = "SUB#" + operationId + "#" + sharedSteps.getNotificationIunList().get(0);
+            default -> throw new IllegalArgumentException("Invalid value for operationIdType: " + operationIdType);
+        }
+        this.httpResponse = ipServiceDeskClient.getOperationV2WithHttpInfo(opIdParam);
+        getOperationsResponseV2 = maybeBody(httpResponse.body(), GetOperationsResponseV2.class).orElse(null);
+        log.info("Response of GET operations V2: {}", getOperationsResponseV2);
+
+        if (getOperationsResponseV2 != null) {
+            if (!operationIdType.equalsIgnoreCase("VALID OP. ID V1") && createActOperationRequestV2 != null) {
+                assertThat(getOperationsResponseV2.getSubOperations().size()).as("").isEqualTo(createActOperationRequestV2.getIun().size());
+                getOperationsResponseV2.getSubOperations().forEach(op -> {
+                    assertThat(createActOperationRequestV2.getIun()).asList().as("La response della get non contiene lo IUN: " + op.getIun()).contains(op.getIun());
+                });
+            }
+            log.info("Operation id della GET V2:" + operationId);
+        }
+    }
+
+    @Then("il campo operationStatus della response è valorizzato con {string}")
+    public void checkStatusFieldOfGetOperationResponse(String status) throws InterruptedException {
+        try {
+            assertThat(getOperationsResponseV2.getStatus()).as("Lo status della GetOperationResponse non coincide con quanto atteso").isEqualTo(status);
+        } catch (AssertionError ae) {
+            log.info("Waiting 3 minutes for status to get updated");
+            Thread.sleep(180000L);
+            callGetOperationsV2("VALID OP. ID");
+            assertThat(getOperationsResponseV2.getStatus()).as("Dopo 3 minuti di attesa, lo status della GetOperationResponse non coincide ancora con quanto atteso").isEqualTo(status);
+        }
     }
 }

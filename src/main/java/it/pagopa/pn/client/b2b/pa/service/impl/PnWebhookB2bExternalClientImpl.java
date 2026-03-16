@@ -31,6 +31,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
+    private final String apiKeySon;
     private ApiKeyType apiKeyInUse;
     private final String devBasePath;
     private String bearerTokenInterop;
@@ -43,11 +44,13 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                                           @Value("${pn.external.api-key}") String apiKeyMvp1,
                                           @Value("${pn.external.api-key-2}") String apiKeyMvp2,
                                           @Value("${pn.external.api-key-GA}") String apiKeyGa,
+                                          @Value("${pn.external.api-key-SON}") String apiKeySon,
                                           @Value("${pn.interop.enable}") String enableInterop) {
         this.restTemplate = restTemplate;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
+        this.apiKeySon = apiKeySon;
         this.enableInterop = enableInterop;
         if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
@@ -478,6 +481,13 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                 if (this.apiKeyInUse != ApiKeyType.GA) {
                     setApiKey(apiKeyGa);
                     this.apiKeyInUse = ApiKeyType.GA;
+                }
+                beenSet = true;
+            }
+            case SON -> {
+                if (this.apiKeyInUse != ApiKeyType.SON) {
+                    setApiKey(apiKeySon);
+                    this.apiKeyInUse = ApiKeyType.SON;
                 }
                 beenSet = true;
             }
