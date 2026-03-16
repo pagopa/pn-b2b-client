@@ -169,43 +169,39 @@ public class AdeguamentoAnprSteps {
         switch (taxId) {
             case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("ROSSO Scala 2");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("ROSSO Corte 1 Scala 2 Scala est. SCAL 2");
             });
-            case "MRNMRZ04D07L781J" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO2");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
-            }
-            case "VNNVNN99T16L781L" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO3");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> {
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
             }
             case "PRZPLA89E02L781K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO4");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico KM 50");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
             }
             case "BRNBNN92S02L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO5");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Elena da Persico A SNC");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("BLU Scala 5");
             }
             case "LNNLNZ02L27L781Z" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO6");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A CAD");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
             }
             case "QDRQMD99C20L781Y" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO7");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("BLU Interno 5 A");
             }
             case "JRIJNN05A01L781M" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO8");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("Non res. Interno 42 D");
             }
             case "RZORNZ95C11L781S" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO9");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("ROSSO Primo interno 5 A Secondo interno 42 D");
             }
             case "RGHLVC01H09H501K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("TODO10");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO");
+                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("Res. Isolato 33");
             }
             default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
         }
