@@ -16,11 +16,10 @@ public class TenantDeclaredAttributesListingSteps {
     private final IdentityService identityService;
 
     public TenantDeclaredAttributesListingSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                                SharedStepsContext sharedStepsContext,
-                                                IdentityService identityService) {
+                                                SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = identityService;
+        this.identityService = this.sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente richiede una operazione di listing degli attributi dichiarati posseduti da {string}")

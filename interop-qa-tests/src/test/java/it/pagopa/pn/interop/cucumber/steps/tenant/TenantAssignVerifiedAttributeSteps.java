@@ -15,11 +15,10 @@ public class TenantAssignVerifiedAttributeSteps {
     private final IdentityService identityService;
 
     public TenantAssignVerifiedAttributeSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                               SharedStepsContext sharedStepsContext,
-                                               IdentityService identityService) {
+                                               SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = identityService;
+        this.identityService = this.sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente assegna a {string} l'attributo verificato precedentemente creato")
