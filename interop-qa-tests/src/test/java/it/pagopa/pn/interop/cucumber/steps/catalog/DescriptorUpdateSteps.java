@@ -67,9 +67,17 @@ public class DescriptorUpdateSteps {
 
     @When("l'utente modifica dailyCallsPerConsumer con {int} per l'attributo certificato appena creato")
     public void updateLastCreatedDailyCallsPerConsumer(int dailyCallsPerConsumer) {
+        updateLastCreatedDailyCallsPerConsumer(dailyCallsPerConsumer, null);
+    }
+
+    @When("l'utente modifica dailyCallsPerConsumer con {int} per l'{int}-esimo attributo certificato creato")
+    public void updateLastCreatedDailyCallsPerConsumer(int dailyCallsPerConsumer, Integer attributeIndex) {
 
         List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
-        UUID lastAttributeId = requiredCertifiedAttributes.get(requiredCertifiedAttributes.size() - 1).get(0);
+
+        UUID attributeId =(attributeIndex != null) ?
+            requiredCertifiedAttributes.get(attributeIndex).get(0) :
+            requiredCertifiedAttributes.get(requiredCertifiedAttributes.size() - 1).get(0);
 
         var eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
@@ -79,7 +87,7 @@ public class DescriptorUpdateSteps {
         List<List<DescriptorAttributeSeed>> certifiedAttributes = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
         for (List<DescriptorAttributeSeed> group : certifiedAttributes) {
             for (DescriptorAttributeSeed attr : group) {
-                if (attr.getId().equals(lastAttributeId)) {
+                if (attr.getId().equals(attributeId)) {
                     // TODO Threshold
                     // attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
                 }
@@ -124,12 +132,12 @@ public class DescriptorUpdateSteps {
         Optional<DescriptorAttribute> certAttr = producerEServiceDescriptor.getAttributes()
                 .getCertified()
                 .stream()
-                .filter(attrList -> attrList.stream().anyMatch(attr -> attr.getId().equals(lastAttributeId)))
+                .filter(attrList -> attrList.stream().anyMatch(attr -> attr.getId().equals(attributeId)))
                 .map(attrList -> attrList.get(0))
                 .findFirst();
 
         Assertions.assertTrue(certAttr.isPresent());
-        Assertions.assertEquals(lastAttributeId, certAttr.get().getId());
+        Assertions.assertEquals(attributeId, certAttr.get().getId());
         // TODO Threshold
         // Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
     }
