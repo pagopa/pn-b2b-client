@@ -92,7 +92,7 @@ Feature: Radd Alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 7 documenti
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "15" come numero esatto di pagine
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-56] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
@@ -169,7 +169,7 @@ Feature: Radd Alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "7" come numero esatto di pagine
     And l'operazione di download degli atti si conclude correttamente su radd alternative
 
   #[RADD-ALT_ACT-84]
@@ -406,7 +406,7 @@ Feature: Radd Alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 6 documenti
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "13" come numero esatto di pagine
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -895,7 +895,7 @@ Feature: Radd Alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "aor"
-    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "3" come numero esatto di pagine
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -1581,7 +1581,7 @@ Feature: Radd Alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "aor"
-    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "3" come numero esatto di pagine
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -1611,7 +1611,7 @@ Feature: Radd Alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "aor"
-    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "aor" che il frontespizio abbia riportato "5" come numero esatto di pagine
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -1662,7 +1662,7 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "10" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.2
@@ -1706,7 +1706,7 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "41" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
   @raddAltPagineFrontespizio @raddAltPagineFrontespizioFlagOff
@@ -1782,7 +1782,7 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "11" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.3
@@ -1814,7 +1814,7 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "8" come numero esatto di pagine
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
   @raddAlt @raddAltPagineFrontespizio #rif 2.4
@@ -1825,6 +1825,50 @@ Feature: Radd Alternative
       | physicalCommunication | AR_REGISTERED_LETTER           |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | ALLEGATO_CORROTTO              |
+    And destinatario CucumberSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+
+  @raddAlt @raddAltPagineFrontespizio #rif 2.4
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_6B] Download frontespizio operazione ACT 3 pagine e F24 presente
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica filtro base |
+      | senderDenomination    | Comune di palermo              |
+      | physicalCommunication | AR_REGISTERED_LETTER           |
+      | feePolicy             | DELIVERY_MODE                  |
+      | document              | ALLEGATO_CORROTTO;DOC_8_PG;              |
+    And destinatario CucumberSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+
+  @raddAlt @raddAltPagineFrontespizio #rif 2.4
+  Scenario: [RADD-ALT_PAGE_ATTACHMENT_6C] Download frontespizio operazione ACT 3 pagine e F24 presente
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica filtro base |
+      | senderDenomination    | Comune di palermo              |
+      | physicalCommunication | AR_REGISTERED_LETTER           |
+      | feePolicy             | DELIVERY_MODE                  |
+      | document              | DOC_3_PG;DOC_8_PG;ALLEGATO_CORROTTO;              |
     And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
@@ -1876,6 +1920,8 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 1 pagine nella response
+    Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "DIGITAL_SUCCESS_WORKFLOW" riporti 1 pagine nella response
+
 
   @raddAlt @raddAltPagineFrontespizio @raddAltPagineFrontespizioFlagOff #rif 3.2
   Scenario: [RADD-ALT_PAGE_ATTACHMENT_9B] Verifica response di Delivery e Delivery-push e campo numero di pagine valorizzato.
@@ -1931,7 +1977,7 @@ Feature: Radd Alternative
 
   Scenario: [RADD-ALT_TEST] PF -
     #Given imposto lo iun di SharedSteps a "DAZX-YJAJ-UKMZ-202603-X-1" e la pa a "Comune_Multi"
-    Given imposto lo iun di SharedSteps a "ELRA-XYVL-XYLA-202603-J-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "WUXW-ZWXJ-RQWQ-202603-V-1" e la pa a "Comune_Multi"
     When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
@@ -1939,13 +1985,13 @@ Feature: Radd Alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
-    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "0" come numero esatto di pagine
+    And Si verifica per l' operazione "act" che il frontespizio abbia riportato "41" come numero esatto di pagine
 
     #"ELRA-XYVL-XYLA-202603-J-1" 9
   #DJDV-HEXV-KRGX-202603-G-1 9B
 
   Scenario: [RADD-ALT_TEST29] PG - push
-    Given imposto lo iun di SharedSteps a "ELRA-XYVL-XYLA-202603-J-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "TMXM-WZRU-DXZY-202603-L-1" e la pa a "Comune_Multi"
     Then Effettuo la chiamata di download con Api privata di Delivery-push e verifico che l'elemento "REQUEST_ACCEPTED" riporti 1 pagine nella response
 
   Scenario: [RADD-ALT_TEST219B] PG - delivery

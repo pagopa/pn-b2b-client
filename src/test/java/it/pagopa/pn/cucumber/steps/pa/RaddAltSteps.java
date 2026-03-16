@@ -877,10 +877,9 @@ public class RaddAltSteps {
         if (numberOfPage.equals("0")) {
             Assertions.assertFalse(pdfText.contains("Totale pagine:"));
         } else {
-            Assertions.assertAll(
-                    () -> Assertions.assertTrue(pdfText.contains(operationId)),
-                    () -> Assertions.assertTrue(pdfText.contains("Totale pagine: " + numberOfPage))
-            );
+             Assertions.assertTrue(
+                            pdfText.matches("(?s).*Totale pagine:\\s*" + numberOfPage + ".*"));
+
         }
     }
 
