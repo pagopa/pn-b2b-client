@@ -20,11 +20,10 @@ public class TenantEServiceConsumerListingSteps {
 
     public TenantEServiceConsumerListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                               SharedStepsContext sharedStepsContext,
-                                              IdentityService identityService,
                                               CommonUtils commonUtils) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = identityService;
+        this.identityService = this.sharedStepsContext.getIdentityService();
         this.commonUtils = commonUtils;
     }
 

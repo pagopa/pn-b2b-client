@@ -14,11 +14,10 @@ public class TenantAssignCertifiedAttributeSteps {
     private final IdentityService identityService;
 
     public TenantAssignCertifiedAttributeSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                               SharedStepsContext sharedStepsContext,
-                                               IdentityService identityService) {
+                                               SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = identityService;
+        this.identityService = this.sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente assegna a {string} l'attributo certificato precedentemente creato")
