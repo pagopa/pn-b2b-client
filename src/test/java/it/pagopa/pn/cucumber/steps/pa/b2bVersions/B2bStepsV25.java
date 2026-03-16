@@ -960,16 +960,10 @@ public class B2bStepsV25 implements B2bStepsInterface {
         FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV28> timelineElementList = fullSentNotification.getTimeline();
         String timelineEventId = dataTest.getTimelineEventId(timelineEventCategory, iun);
-        int actualNumber;
-
-        if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {
-            TimelineElementDetailsV28 timelineElementDetails = dataTest.getTimelineElement().getDetails();
-            actualNumber = (int) timelineElementList.stream().filter(x ->
-                    x.getElementId().startsWith(timelineEventId)
-                            && x.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).count();
-        } else {
-            actualNumber = (int) timelineElementList.stream().filter(x -> x.getElementId().startsWith(timelineEventId)).count();
-        }
+        TimelineElementDetailsV28 timelineElementDetails = dataTest.getTimelineElement().getDetails();
+        int actualNumber = (int) timelineElementList.stream().filter(x ->
+                x.getElementId().startsWith(timelineEventId)
+                        && x.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).count();
         assertThat(actualNumber)
                 .as("Il numero di elementi di timeline che corrispondono al dato passato in input non coincide con quanto atteso: \n " + dataTest.getTimelineElement())
                 .isEqualTo(size);

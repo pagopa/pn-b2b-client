@@ -232,27 +232,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
   # ---------------- RUN MODE ----------------
 
   @paperTrackerARRunMode @ocrEnabled
-  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline prodotto in caso di OCR attivo siano quelli previsti per la sequence OK_AR_OCR_FAIL e che si sia verificato un errore
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK_AR_OCR_FAIL |
-      | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
-    Then si controlla che non ci siano eventi duplicati
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED"
-    And si verifica che la risposta tracking per la sequence "OK_AR_OCR_FAIL_WITH_OCR_ENABLED" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
-    Examples:
-      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                              |
-      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_WQNQ-JDYQ-GXTH-202603-H-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-09T11:12:45.795847982Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_KO\",\"message\":\"validazione fallita\"},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"0fa002e9-5af0-467d-bc6f-450d47c25d9d\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
-
-  @paperTrackerARRunMode @ocrEnabled
   Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline prodotto in caso di OCR attivo siano quelli previsti per la sequence OK_AR_OCR_PENDING
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -411,7 +390,58 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   @paperTrackerARRunMode
-  Scenario Outline: [PAPER_TRACKER_ERROR_5] Si verifica che per le sequence AR in cui è previsto un errore, l'errore sia effettivamente presente
+  Scenario Outline: [PAPER_TRACKER_ERROR_5.A] Si verifica che per le sequence AR in cui è previsto un errore, l'errore sia effettivamente presente
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequence> |
+      | digitalDomicile         | NULL           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | sequence               | deliveryDetailCode | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+      | OK_AR_INVALID_DATETIME | RECRN001B          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:15:58.311224640Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T12:15:55Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-11T12:15:48Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-11T12:15:42Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"2b19530f-24c1-4fd0-bee3-cce25e79dd8a\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
+      | OK_AR_NO_EVENT_B       | RECRN001A          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:20:00.946408401Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"VALUES_NOT_FOUND\",\"message\":\"Necessary status code not found in events: [RECRN001B]\",\"additionalDetails\":{\"missingStatusCodes\":\"RECRN001B\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"1362dc88-08d0-4a1e-84d6-7575db2cd6cb\",\"productType\":\"AR\",\"type\":\"ERROR\"}"                                                                                                                                                                                     |
+      | OK_AR_TIMESTAMP_ERR    | RECRN001B          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:22:42.320116250Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T12:21:53Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-11T12:22:27Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-11T12:22:21Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"831da040-af67-47bc-a364-39220d116b3f\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
+
+  @paperTrackerARRunMode
+  Scenario Outline: [PAPER_TRACKER_ERROR_5.B] Si verifica che per le sequence AR in cui sono previsti dei CON996 si sia verificato un errore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequence> |
+      | digitalDomicile         | NULL           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | loadTimeline               | true     |
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON996   |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+      | progressIndex              | 2        |
+    Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | sequence               | deliveryDetailCode | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                              |
+      | FAIL_Consolidatore-AR  | CON996             | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_1\",\"created\":\"2026-03-11T12:25:03.346403708Z\",\"errorCategory\":\"NOT_RETRYABLE_EVENT_ERROR\",\"details\":{\"message\":\"Scartato PDF\",\"additionalDetails\":null},\"flowThrow\":\"NOT_RETRYABLE_EVENT_HANDLER\",\"eventThrow\":\"CON996\",\"eventIdThrow\":\"f7e8fb6c-58ab-4e03-a1a3-a7a6581f6305\",\"productType\":\"AR\",\"type\":\"WARNING\"}" |
+      | FAIL_CON996_PCRETRY_AR | CON996             | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_1\",\"created\":\"2026-03-11T12:21:04.944109655Z\",\"errorCategory\":\"NOT_RETRYABLE_EVENT_ERROR\",\"details\":{\"message\":\"Scartato PDF\",\"additionalDetails\":null},\"flowThrow\":\"NOT_RETRYABLE_EVENT_HANDLER\",\"eventThrow\":\"CON996\",\"eventIdThrow\":\"7067b370-3487-4381-b80e-c0ebad9f9242\",\"productType\":\"AR\",\"type\":\"WARNING\"}" |
+
+  @paperTrackerARRunMode
+  Scenario Outline: [PAPER_TRACKER_ERROR_5.C] Si verifica che per le sequence FAIL_ConsolidatoreIndirizzo-AR in cui è previsto un errore, l'errore sia effettivamente presente
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -427,13 +457,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | sequence                       | deliveryDetailCode | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-      | OK_AR_INVALID_DATETIME         | RECRN001B          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:15:58.311224640Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T12:15:55Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-11T12:15:48Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-11T12:15:42Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"2b19530f-24c1-4fd0-bee3-cce25e79dd8a\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
-      | OK_AR_NO_EVENT_B               | RECRN001A          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:20:00.946408401Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"VALUES_NOT_FOUND\",\"message\":\"Necessary status code not found in events: [RECRN001B]\",\"additionalDetails\":{\"missingStatusCodes\":\"RECRN001B\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"1362dc88-08d0-4a1e-84d6-7575db2cd6cb\",\"productType\":\"AR\",\"type\":\"ERROR\"}"                                                                                                                                                                                     |
-      | FAIL_Consolidatore-AR          | CON996             | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_1\",\"created\":\"2026-03-11T12:25:03.346403708Z\",\"errorCategory\":\"NOT_RETRYABLE_EVENT_ERROR\",\"details\":{\"message\":\"Scartato PDF\",\"additionalDetails\":null},\"flowThrow\":\"NOT_RETRYABLE_EVENT_HANDLER\",\"eventThrow\":\"CON996\",\"eventIdThrow\":\"f7e8fb6c-58ab-4e03-a1a3-a7a6581f6305\",\"productType\":\"AR\",\"type\":\"WARNING\"}"                                                                                                                                                                                                                                                                                  |
-      | FAIL_ConsolidatoreIndirizzo-AR | CON997             | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:20:02.696448004Z\",\"errorCategory\":\"NOT_RETRYABLE_EVENT_ERROR\",\"details\":{\"message\":\"Scartato CAP/INTERNAZIONALE\",\"additionalDetails\":null},\"flowThrow\":\"NOT_RETRYABLE_EVENT_HANDLER\",\"eventThrow\":\"CON997\",\"eventIdThrow\":\"75737710-8caf-40b6-a361-2e4f53b75ce6\",\"productType\":\"AR\",\"type\":\"WARNING\"}"                                                                                                                                                                                                                                                                   |
-      | FAIL_CON996_PCRETRY_AR         | CON996             | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_1\",\"created\":\"2026-03-11T12:21:04.944109655Z\",\"errorCategory\":\"NOT_RETRYABLE_EVENT_ERROR\",\"details\":{\"message\":\"Scartato PDF\",\"additionalDetails\":null},\"flowThrow\":\"NOT_RETRYABLE_EVENT_HANDLER\",\"eventThrow\":\"CON996\",\"eventIdThrow\":\"7067b370-3487-4381-b80e-c0ebad9f9242\",\"productType\":\"AR\",\"type\":\"WARNING\"}"                                                                                                                                                                                                                                                                                  |
-      | OK_AR_TIMESTAMP_ERR            | RECRN001B          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:22:42.320116250Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T12:21:53Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-11T12:22:27Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-11T12:22:21Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"831da040-af67-47bc-a364-39220d116b3f\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
+      | sequence                       | deliveryDetailCode | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+      | FAIL_ConsolidatoreIndirizzo-AR | CON997             | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:20:02.696448004Z\",\"errorCategory\":\"NOT_RETRYABLE_EVENT_ERROR\",\"details\":{\"message\":\"Scartato CAP/INTERNAZIONALE\",\"additionalDetails\":null},\"flowThrow\":\"NOT_RETRYABLE_EVENT_HANDLER\",\"eventThrow\":\"CON997\",\"eventIdThrow\":\"75737710-8caf-40b6-a361-2e4f53b75ce6\",\"productType\":\"AR\",\"type\":\"WARNING\"}" |
 
 
   @paperTrackerARRunMode
@@ -525,7 +550,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | physicalAddress_address | Via@OK-TimestampCorrected_AR |
       | digitalDomicile         | NULL                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>

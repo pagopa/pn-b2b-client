@@ -162,7 +162,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
-    And imposto lo iun di SharedSteps a "<iun>" e la pa a "Comune_Multi"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
