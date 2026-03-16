@@ -9,9 +9,9 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
       #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
       | GNVGCM97E04L781N |
       #toponimo!=null;numeroCivico=null
-      | MRNMRZ04D07L781J |
+      | JNOFBN86B05L781H |
       #toponimo=null;numeroCivico=null;
-      | VNNVNN99T16L781L |
+      | BLLBBR95D46L781R |
       #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
       | PRZPLA89E02L781K |
       #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
@@ -36,9 +36,9 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
       #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
       | GNVGCM97E04L781N |
       #toponimo!=null;numeroCivico=null
-      | MRNMRZ04D07L781J |
+      | JNOFBN86B05L781H |
       #toponimo=null;numeroCivico=null;
-      | VNNVNN99T16L781L |
+      | BLLBBR95D46L781R |
       #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
       | PRZPLA89E02L781K |
       #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
@@ -64,9 +64,9 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
       #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
       | GNVGCM97E04L781N |
       #toponimo!=null;numeroCivico=null
-      | MRNMRZ04D07L781J |
+      | JNOFBN86B05L781H |
       #toponimo=null;numeroCivico=null;
-      | VNNVNN99T16L781L |
+      | BLLBBR95D46L781R |
       #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
       | PRZPLA89E02L781K |
       #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
@@ -96,86 +96,6 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
       | recipientType   | PF             |
       | digitalDomicile | NULL           |
       | physicalAddress | NULL           |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | loadTimeline       | true     |
-      | details            | NOT_NULL |
-      | details_recIndexes | [0]      |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL            |
-      | details_registry        | ANPR                |
-      | details_recIndex        | 0                   |
-      | details_physicalAddress | "<expectedAddress>" |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" esista
-      | details                 | NOT_NULL            |
-      | details_registry        | ANPR                |
-      | details_recIndex        | 0                   |
-      | details_physicalAddress | "<expectedAddress>" |
-    Examples:
-      | denomination  | taxId            | expectedAddress |
-      #1) ha numero, lettera, esponente1, colore e interno2/espInterno2
-      | Mario Uno     | VRSVLR80A01L781H | TODO_address1   |
-      #2) ha progSNC, colore, numero lettera esponente per l'address e nel civicoInterno ci sono entrambi gli interni (interno1/2 ed espInterno1/2)
-      | Mario Due     | RNCRNL00A03F205C | TODO_address2   |
-      #3) Ha solamente metrico colore e civico interno 1
-      | Mario Tre     | DLRPQL89P09D612E | TODO_address3   |
-      #4) Ha tutti i campi tranne i due interni/espInterno e la scalaEsterna
-      | Mario Quattro | PRSNBL81R08H501T | TODO_address4   |
-
-
-  @AdeguamentoIndirizzoANPR_Minimal
-  Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_MINIMAL] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo MINIMAL
-    Given il test è effettuabile con API versione "V25" o superiore
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario
-      | denomination    | "<denomination>" |
-      | taxId           | "<taxId>"        |
-      | recipientType   | PF               |
-      | digitalDomicile | NULL             |
-      | physicalAddress | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | loadTimeline       | true     |
-      | details            | NOT_NULL |
-      | details_recIndexes | [0]      |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL            |
-      | details_registry        | ANPR                |
-      | details_recIndex        | 0                   |
-      | details_physicalAddress | "<expectedAddress>" |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" esista
-      | details                 | NOT_NULL            |
-      | details_registry        | ANPR                |
-      | details_recIndex        | 0                   |
-      | details_physicalAddress | "<expectedAddress>" |
-    Examples:
-      | denomination  | taxId            | expectedAddress |
-      #1) ha numero, lettera, esponente1, colore e interno2/espInterno2
-      | Mario Uno     | VRSVLR80A01L781H | TODO_address1   |
-      #2) ha progSNC, colore, numero lettera esponente per l'address e nel civicoInterno ci sono entrambi gli interni (interno1/2 ed espInterno1/2)
-      | Mario Due     | RNCRNL00A03F205C | TODO_address2   |
-      #3) Ha solamente metrico colore e civico interno 1
-      | Mario Tre     | DLRPQL89P09D612E | TODO_address3   |
-      #4) Ha tutti i campi tranne i due interni/espInterno e la scalaEsterna
-      | Mario Quattro | PRSNBL81R08H501T | TODO_address4   |
-
-
-  @AdeguamentoIndirizzoANPR_Full
-  Scenario Outline: [RICERCA_INDIRIZZO_ANPR_ALGORITMO_FULL] Verifica costruzione indirizzo ANPR secondo le logiche dell'algoritmo FULL
-    Given il test è effettuabile con API versione "V25" o superiore
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario
-      | denomination    | "<denomination>" |
-      | taxId           | "<taxId>"        |
-      | recipientType   | PF               |
-      | digitalDomicile | NULL             |
-      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline       | true     |

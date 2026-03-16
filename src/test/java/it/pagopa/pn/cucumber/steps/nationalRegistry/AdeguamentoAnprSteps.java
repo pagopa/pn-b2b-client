@@ -129,11 +129,7 @@ public class AdeguamentoAnprSteps {
                 softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("");
                 softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("ROSSO Scala 2");
             });
-            case "MRNMRZ04D07L781J" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("");
-            }
-            case "VNNVNN99T16L781L" -> {
+            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> {
                 assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("");
                 assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("");
             }
