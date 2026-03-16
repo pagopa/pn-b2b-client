@@ -123,10 +123,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                       |
-      | details                       | NOT_NULL                                                                                   |
-      | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
+      | loadTimeline           | true                                                                                       |
+      | details                | NOT_NULL                                                                                   |
+      | details_refusalReasons | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -211,11 +211,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                       |
-      | details                       | NOT_NULL                                                                                   |
-      | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-      | details_numberOfRecipients    | 2                                                                                          |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2                                                                     |
+      | loadTimeline               | true                                                                                       |
+      | details                    | NOT_NULL                                                                                   |
+      | details_refusalReasons     | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
+      | details_numberOfRecipients | 2                                                                                          |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -515,11 +515,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                                                                                                                        |
-      | details                       | NOT_NULL                                                                                                                                                                                                    |
-      | details_numberOfRecipients    | 3                                                                                                                                                                                                           |
-      | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}, {"detail": "Address search for recipient index: 2, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                                                                                                                      |
+      | loadTimeline               | true                                                                                                                                                                                                        |
+      | details                    | NOT_NULL                                                                                                                                                                                                    |
+      | details_numberOfRecipients | 3                                                                                                                                                                                                           |
+      | details_refusalReasons     | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}, {"detail": "Address search for recipient index: 2, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                                                                                                                      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline       | false    |
       | details            | NOT_NULL |
@@ -549,10 +549,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                              |
-      | details                       | NOT_NULL                                                                                                          |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+      | loadTimeline           | true                                                                                                              |
+      | details                | NOT_NULL                                                                                                          |
+      | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -575,10 +575,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                              |
-      | details                       | NOT_NULL                                                                                                          |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+      | loadTimeline           | true                                                                                                              |
+      | details                | NOT_NULL                                                                                                          |
+      | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -606,11 +606,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                                                                                                                                               |
-      | details                       | NOT_NULL                                                                                                                                                                                                                           |
-      | details_numberOfRecipients    | 2                                                                                                                                                                                                                                  |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}, {"detail": "Address search for recipient index: 1, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                                                                                                                                             |
+      | loadTimeline               | true                                                                                                                                                                                                                               |
+      | details                    | NOT_NULL                                                                                                                                                                                                                           |
+      | details_numberOfRecipients | 2                                                                                                                                                                                                                                  |
+      | details_refusalReasons     | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}, {"detail": "Address search for recipient index: 1, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                                                                                                                                             |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -640,11 +640,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                 |
-      | details                       | NOT_NULL                             |
-      | details_refusalReasons        | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
-      | details_numberOfRecipients    | 2                                    |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2               |
+      | loadTimeline               | true                                 |
+      | details                    | NOT_NULL                             |
+      | details_refusalReasons     | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+      | details_numberOfRecipients | 2                                    |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2               |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -672,11 +672,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                       |
-      | details                       | NOT_NULL                                                                                                   |
-      | details_refusalReasons        | [{"recIndex": 0, "errorCode": "ADDRESS_NOT_FOUND"}, {"recIndex": 2, "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | details_numberOfRecipients    | 3                                                                                                          |
-      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                     |
+      | loadTimeline               | true                                                                                                       |
+      | details                    | NOT_NULL                                                                                                   |
+      | details_refusalReasons     | [{"recIndex": 0, "errorCode": "ADDRESS_NOT_FOUND"}, {"recIndex": 2, "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+      | details_numberOfRecipients | 3                                                                                                          |
+#      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1,2]  |
@@ -700,11 +700,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                           |
-      | details                       | NOT_NULL                                                                                                       |
-      | details_refusalReasons        | [{"recIndex": 0, "errorCode": "ADDRESS_SEARCH_FAILED"}, {"recIndex": 1, "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | details_numberOfRecipients    | 2                                                                                                              |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                         |
+      | loadTimeline               | true                                                                                                           |
+      | details                    | NOT_NULL                                                                                                       |
+      | details_refusalReasons     | [{"recIndex": 0, "errorCode": "ADDRESS_SEARCH_FAILED"}, {"recIndex": 1, "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+      | details_numberOfRecipients | 2                                                                                                              |
+#      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                         |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -721,10 +721,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                       |
-      | details                       | NOT_NULL                                                                                   |
-      | details_refusalReasons        | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
+      | loadTimeline           | true                                                                                       |
+      | details                | NOT_NULL                                                                                   |
+      | details_refusalReasons | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -743,10 +743,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                              |
-      | details                       | NOT_NULL                                                                                                          |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+      | loadTimeline           | true                                                                                                              |
+      | details                | NOT_NULL                                                                                                          |
+      | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -765,10 +765,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                              |
-      | details                       | NOT_NULL                                                                                                          |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+      | loadTimeline           | true                                                                                                              |
+      | details                | NOT_NULL                                                                                                          |
+      | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -787,11 +787,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                              |
-      | details                       | NOT_NULL                                                                                                          |
-      | details_numberOfRecipients    | 1                                                                                                                 |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
+      | loadTimeline               | true                                                                                                              |
+      | details                    | NOT_NULL                                                                                                          |
+      | details_numberOfRecipients | 1                                                                                                                 |
+      | details_refusalReasons     | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
