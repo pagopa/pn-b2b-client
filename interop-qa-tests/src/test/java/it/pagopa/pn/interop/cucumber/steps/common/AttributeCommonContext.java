@@ -1,6 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
@@ -59,5 +61,24 @@ public class AttributeCommonContext {
 
     private <T> T lastOf(List<T> list) {
         return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
+    }
+
+    //--Helpers--
+    public List<List<DescriptorAttributeSeed>> mapAttributes(List<List<DescriptorAttribute>> attributes) {
+        if (attributes == null) {
+            return new ArrayList<>();
+        }
+        List<List<DescriptorAttributeSeed>> seeds = new ArrayList<>();
+        for (List<DescriptorAttribute> group : attributes) {
+            List<DescriptorAttributeSeed> groupSeed = new ArrayList<>();
+            for (DescriptorAttribute attr : group) {
+                DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
+                        .id(attr.getId())
+                        .explicitAttributeVerification(attr.getExplicitAttributeVerification());
+                groupSeed.add(seed);
+            }
+            seeds.add(groupSeed);
+        }
+        return seeds;
     }
 }

@@ -43,3 +43,21 @@ Feature: Aggiornamento di un descrittore in bozza
       | SUSPENDED     |
       | DEPRECATED    |
       | ARCHIVED      |
+
+  @dailyCallsThreshold
+  Scenario Outline: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD] Per un e-service in stato DRAFT è possibile modificare dailyCallsPerConsumer all'interno degli attributi certificati
+    Given l'utente è un "admin" di "PA2"
+    And PA2 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    And si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
+    When l'utente modifica dailyCallsPerConsumer con <dailyCallsPerConsumer> per l'attributo certificato appena creato
+    Then si ottiene status code <statusCode>
+
+    Examples:
+      | dailyCallsPerConsumer | statusCode |
+      | 100                   | 200        |
+      | 0                     | 400        |
+      | 1000000000            | 200        |
+      | 1000000001            | 400        |
