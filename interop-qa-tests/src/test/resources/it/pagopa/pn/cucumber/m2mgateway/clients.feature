@@ -1,6 +1,13 @@
 @hotfix-2.15
 Feature: Gestione dei clients attraverso APIs M2M V2
 
+  Scenario: [M2M_CLIENTS_GET_1] Un client di tipo API non è recuperabile tramite API M2M
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato 1 client "API"
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di recuperare il client
+    Then si ottiene status code 404
+
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_CLIENTS_PURPOSES_1] Le finalità correlate ad un certo client possono essere visualizzate da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 28)
     Given l'utente è un "admin" di "PA1"
