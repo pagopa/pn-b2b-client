@@ -425,6 +425,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<deliveryDetailCode>"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | loadTimeline               | true     |
+      | pollingTime                | 40000    |
+      | numCheck                   | 20       |
       | details                    | NOT_NULL |
       | details_deliveryDetailCode | CON996   |
       | details_recIndex           | 0        |
