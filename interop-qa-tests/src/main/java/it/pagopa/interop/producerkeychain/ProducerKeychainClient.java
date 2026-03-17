@@ -1,14 +1,13 @@
 package it.pagopa.interop.producerkeychain;
 
+import it.pagopa.interop.common.SettableHttpCallExecutor;
 import it.pagopa.interop.common.client.IClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+
 import java.util.List;
 import java.util.UUID;
 
-public interface ProducerKeychainClient extends IClient<ProducerKeychain, UUID> {
+public interface ProducerKeychainClient extends IClient<ProducerKeychain, UUID>, SettableHttpCallExecutor {
     UUID create(ProducerKeychainSeed seed);
 
     void linkEService(UUID producerKeychainId, EServiceAdditionDetailsSeed seed);
@@ -22,4 +21,10 @@ public interface ProducerKeychainClient extends IClient<ProducerKeychain, UUID> 
     void removeUserFromKeychain(UUID keychainId, UUID userId);
 
     void addUserToProducerKeychain(UUID keychainId, UUID userId);
+
+    CreatedResource createProducerKeychain(ProducerKeychainSeed producerKeychainSeed);
+
+    ProducerKeychain getProducerKeychain(UUID producerKeychainId);
+
+    void createProducerKeychainKey(UUID producerKeychainId, KeySeed keySeed);
 }

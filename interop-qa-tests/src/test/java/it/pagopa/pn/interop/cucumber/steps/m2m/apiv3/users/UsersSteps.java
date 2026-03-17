@@ -5,7 +5,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
+import it.pagopa.interop.users.IM2MV3UsersClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.users.utils.UsersResolver;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
@@ -20,18 +22,15 @@ import org.assertj.core.api.Assertions;
 
 @Slf4j
 public class UsersSteps {
-    private final M2MV3UsersClient usersClient;
-    private final IHttpExecutor httpCallExecutor;
-    private final SharedStepsContext sharedStepsContext;
+    private final IM2MV3UsersClient usersClient;
     private final TenantContext tenantContext;
     private final UsersResolver resolver;
 
-    public UsersSteps(M2MV3UsersClient usersClient, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
-        this.usersClient = usersClient;
-        this.sharedStepsContext = sharedStepsContext;
+    public UsersSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext, TenantContext tenantContext) {
+        this.usersClient = clientTokenConfigurator.getM2mV3UsersClient();
         this.tenantContext = tenantContext;
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.usersClient.setHttpCallExecutor(this.httpCallExecutor);
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.usersClient.setHttpCallExecutor(httpCallExecutor);
         this.resolver = new UsersResolver(sharedStepsContext);
     }
 

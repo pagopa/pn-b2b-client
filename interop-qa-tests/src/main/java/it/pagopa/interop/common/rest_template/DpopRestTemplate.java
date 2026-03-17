@@ -22,8 +22,8 @@ public class DpopRestTemplate {
     @Getter
     private final RestTemplate restTemplate;
 
-    private final DpopHeaderPolicy dpopHeaderPolicy;
     private final DPoPAuthInterceptor dpopInterceptor;
+    private final DPoPTokenInterceptor dpopTokenInterceptor;
     private final DPoPAccessTokenSupplier dpopAccessTokenSupplier;
 
     public DpopRestTemplate(RestTemplate restTemplate,
@@ -34,43 +34,64 @@ public class DpopRestTemplate {
 
         this.restTemplate = restTemplate;
         this.dpopAccessTokenSupplier = dpopAccessTokenSupplier;
-        this.dpopHeaderPolicy = DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL);
 
-        DPoPTokenInterceptor dpopTokenInterceptor = new DPoPTokenInterceptor(dpopAccessTokenSupplier::get, dpopHeaderPolicy);
+        DpopHeaderPolicy initialPolicy = DpopHeaderPolicy.of(DpopHeaderPolicy.Mode.NORMAL);
+
+        this.dpopTokenInterceptor = new DPoPTokenInterceptor(
+                dpopAccessTokenSupplier::get,
+                initialPolicy
+        );
 
         this.dpopInterceptor = new DPoPAuthInterceptor(
                 dpopTokenService,
                 dpopAccessTokenSupplier,
-                dpopHeaderPolicy,
+                initialPolicy,
                 initialKeyPair
         );
 
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-        if (baseInterceptors != null) interceptors.addAll(baseInterceptors);
+        if (baseInterceptors != null) {
+            interceptors.addAll(baseInterceptors);
+        }
 
-        // ordine: token -> dpop -> logging
         interceptors.add(0, dpopInterceptor);
         interceptors.add(0, dpopTokenInterceptor);
-        interceptors.add(new IntegrityValidationInterceptor(true, true, true));
+        interceptors.add(new IntegrityValidationInterceptor(
+                true,
+                true,
+                true,
+                dpopAccessTokenSupplier::getCurrentAuth
+        ));
 
         restTemplate.setInterceptors(interceptors);
     }
 
     public void setAuth(Auth auth) {
-        if (auth != null) { // = a null quando il test non viene avviato in modalità M2M v3
-            dpopInterceptor.setKeyPair(auth.getKeyPair());
-            DpopHeaderPolicy incoming = auth.getDpopHeaderPolicy();
-
-            if (incoming != null) {
-                dpopHeaderPolicy.setMode(incoming.getMode());
-                dpopHeaderPolicy.setInvalidAccessToken(incoming.getInvalidAccessToken());
-                dpopHeaderPolicy.setInvalidDpopProof(incoming.getInvalidDpopProof());
-            } else {
-                dpopHeaderPolicy.setMode(DpopHeaderPolicy.Mode.NORMAL);
-            }
-
-            dpopAccessTokenSupplier.setAuth(auth);
+        if (auth == null) {
+            return;
         }
+
+        DpopHeaderPolicy incoming = auth.getDpopHeaderPolicy();
+        DpopHeaderPolicy effectivePolicy = new DpopHeaderPolicy();
+
+        if (incoming != null) {
+            effectivePolicy.setMode(incoming.getMode());
+            effectivePolicy.setInvalidAccessToken(incoming.getInvalidAccessToken());
+            effectivePolicy.setInvalidDpopProof(incoming.getInvalidDpopProof());
+        } else {
+            effectivePolicy.setMode(DpopHeaderPolicy.Mode.NORMAL);
+        }
+
+        dpopInterceptor.setKeyPair(auth.getKeyPair());
+        dpopInterceptor.setPolicy(effectivePolicy);
+        dpopTokenInterceptor.setPolicy(effectivePolicy);
+
+        dpopAccessTokenSupplier.setAuth(auth);
+    }
+
+    public void clearThreadLocals() {
+        dpopAccessTokenSupplier.clear();
+        dpopInterceptor.clear();
+        dpopTokenInterceptor.clear();
     }
 }
-

@@ -25,7 +25,9 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeTags({// M2M
     "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
     "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
-    "m2m-parte2-ottobre", "m2mEservices", "m2m-apiv3-users", "m2m-apiv3-producer-keychains"})
+    "m2m-parte2-ottobre", "m2mEservices", "m2m-apiv3-users", "m2m-apiv3-producer-keychains",
+    "m2m-apiv3-client-keychains"
+})
 public class M2MV3Test {
 
 }

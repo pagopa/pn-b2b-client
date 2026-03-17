@@ -1118,3 +1118,23 @@ Feature: annullamento notifiche b2b
     When si tenta il recupero della notifica dal sistema
     Then l'operazione ha prodotto un errore con status code "404"
 
+  @Annullamento @refused
+  Scenario: [B2B-PA-ANNULLAMENTO_4s] PA mittente: Annullamento notifica in stato “REFUSED” - PN-9065
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | ASYNC                       |
+      | paFee              | 10                          |
+    And destinatario Mario Gherkin e:
+      | payment | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    And imposto lo iun di SharedSteps a "LYUJ-WGWT-EXGQ-202603-P-1" e la pa a "Comune_Multi"
+    And la notifica non può essere annullata dal sistema tramite codice IUN
+    And si verifica che l'annullamento della notifica abbia prodotto una risposta con i seguenti dati
+      | status | OK                   |
+      | code   | NOTIFICATION_REFUSED |
+      | level  | WARN                 |
+      | detail | Notifica rifiutata   |
+    When si tenta il recupero della notifica dal sistema
+    Then l'operazione ha prodotto un errore con status code "404"

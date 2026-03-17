@@ -1,9 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.assertj.core.api.Assertions.*;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -24,17 +20,22 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import lombok.Data;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.jeasy.random.EasyRandom;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.UUID;
 
-import lombok.Data;
-import org.apache.commons.lang3.RandomUtils;
-import org.jeasy.random.EasyRandom;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Cucumber steps involving quotas of E-service templates
@@ -112,8 +113,11 @@ public class EServiceTemplateInstanceUpdateSteps {
     @When("l'utente tenta la modifica dei campi di un'istanza inesistente dell'e-service template")
     public void editNotExistentEServiceInstanceFields() {
         UUID eServiceId = UUID.randomUUID();
-        lastUpdateEServiceTemplateInstanceSeed = easyRandom.nextObject(
-                UpdateEServiceTemplateInstanceSeed.class);
+        lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
+                .instanceLabel(RandomStringUtils.insecure().nextAlphanumeric(5))
+                .isClientAccessDelegable(false)
+                .isConsumerDelegable(false)
+                .isSignalHubEnabled(false);
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
 
