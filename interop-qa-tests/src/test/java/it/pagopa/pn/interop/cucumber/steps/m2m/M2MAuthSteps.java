@@ -98,7 +98,11 @@ public class M2MAuthSteps {
 
         if (useDpop) {
             Auth auth = sharedStepsContext.getAuth();
-            auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
+
+            DpopHeaderPolicy policy = new DpopHeaderPolicy();
+            policy.setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
+
+            auth.setDpopHeaderPolicy(policy);
             clientTokenConfigurator.setAuth(auth);
         }
 
@@ -111,14 +115,22 @@ public class M2MAuthSteps {
     @Given("viene rimosso l'header di autenticazione DPoP")
     public void removeDpopAuthHeaders() {
         Auth auth = sharedStepsContext.getAuth();
-        auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_AUTH);
+
+        DpopHeaderPolicy policy = new DpopHeaderPolicy();
+        policy.setMode(DpopHeaderPolicy.Mode.MISSING_AUTH);
+
+        auth.setDpopHeaderPolicy(policy);
         clientTokenConfigurator.setAuth(auth);
     }
 
     @Given("viene rimosso l'header DPoP proof")
     public void removeDpopProofHeader() {
         Auth auth = sharedStepsContext.getAuth();
-        auth.getDpopHeaderPolicy().setMode(DpopHeaderPolicy.Mode.MISSING_DPOP);
+
+        DpopHeaderPolicy policy = new DpopHeaderPolicy();
+        policy.setMode(DpopHeaderPolicy.Mode.MISSING_DPOP);
+
+        auth.setDpopHeaderPolicy(policy);
         clientTokenConfigurator.setAuth(auth);
     }
 

@@ -8,6 +8,9 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ClientsApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.JWKs;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Key;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -76,5 +79,23 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.clientsApi.setApiClient(ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
+    }
+
+    @Override
+    public Key createClientKey(UUID clientId, KeySeed keySeed) {
+        return performOperation(
+                () -> clientsApi.createClientKeyWithHttpInfo(clientId, keySeed)
+        ).orElseThrow(
+                () -> new IllegalStateException("Errore durante la creazione della key per il client-keychain")
+        );
+    }
+
+    @Override
+    public JWKs getClientKeys(UUID clientId, Integer offset, Integer limit) {
+        return performOperation(
+                () -> clientsApi.getClientKeysWithHttpInfo(clientId, offset, limit)
+        ).orElseThrow(
+                () -> new IllegalStateException("Errore durante il recupero delle chiavi")
+        );
     }
 }

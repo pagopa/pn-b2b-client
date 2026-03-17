@@ -237,7 +237,7 @@ public class EserviceTemplateSteps {
     public void patchEServiceTemplateVersionSubset() {
         UUID uuid = UUID.randomUUID();
         EServiceTemplateVersionPatchRequest request = EServiceTemplateVersionPatchRequest.builder()
-            .voucherLifespan(new Random().nextInt(10, 10000))
+            .voucherLifespan(new Random().nextInt(60, 10000))
             .description("some minimal patched description - " + uuid)
             .build();
         versionPatchAssistant.patchResource(request);
