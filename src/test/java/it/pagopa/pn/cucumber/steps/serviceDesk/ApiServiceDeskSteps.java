@@ -1809,6 +1809,7 @@ public class ApiServiceDeskSteps {
                     opIdParam = "SUB#" + operationId + "#" + sharedSteps.getNotificationIunList().get(0);
             default -> throw new IllegalArgumentException("Invalid value for operationIdType: " + operationIdType);
         }
+        log.info("OperationId used for get v2: {}", opIdParam);
         this.httpResponse = ipServiceDeskClient.getOperationV2WithHttpInfo(opIdParam);
         getOperationsResponseV2 = maybeBody(httpResponse.body(), GetOperationsResponseV2.class).orElse(null);
         log.info("Response of GET operations V2: {}", getOperationsResponseV2);

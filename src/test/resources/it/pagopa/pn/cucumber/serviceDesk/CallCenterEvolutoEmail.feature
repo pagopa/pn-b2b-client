@@ -395,14 +395,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When viene popolata una richiesta di creazione Act operation "V1" con i seguenti dati
-      | ticketId          | auto                            |
-      | iun               | auto                            |
-      | ticketOperationId | auto                            |
-      | taxId             | CLMCST42R12D969Z                |
-      | addressType       | EMAIL                           |
-      | addressValue      | michele.scaramuzzino@dgsspa.com |
-      | ticketDate        | auto                            |
-      | vrDate            | auto                            |
+      | ticketId          | auto                      |
+      | iun               | auto                      |
+      | ticketOperationId | auto                      |
+      | taxId             | CLMCST42R12D969Z          |
+      | addressType       | EMAIL                     |
+      | addressValue      | matteo.sperati@dgsspa.com |
+      | ticketDate        | auto                      |
+      | vrDate            | auto                      |
     And viene invocata l'api "CREATE_ACT_OPERATION"
     Then il servizio risponde con 201
     When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
