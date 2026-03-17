@@ -19,6 +19,8 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
 
+    void updateDescriptorAttributes(UUID eServiceId, UUID descriptorId, DescriptorAttributesSeed descriptorAttributesSeed);
+
     CreatedResource updateDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorQuotas updateEServiceDescriptorQuotas);
 
     CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
