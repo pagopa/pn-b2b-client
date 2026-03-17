@@ -31,4 +31,20 @@ public class TenantAssignCertifiedAttributeSteps {
                 )
         );
     }
+
+    @When("l'utente assegna a {string} gli attributi certificati precedentemente creati")
+    public void assignCertifiedAttributes(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().forEach(attributeIDs -> {
+            attributeIDs.forEach(attributeId -> {
+                sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
+                                tenantId,
+                                new CertifiedTenantAttributeSeed().id(attributeId)
+                        )
+                );
+            });
+        });
+    }
 }
