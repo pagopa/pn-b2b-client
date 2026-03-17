@@ -35,6 +35,11 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
     public void createPurposeWithAllRequiredFields() {
+        createPurposeWithAllRequiredFields(49);
+    }
+
+    @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a {int}")
+    public void createPurposeWithAllRequiredFields(int dailyCalls) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         sharedStepsContext.getHttpCallExecutor().performCall(
@@ -46,7 +51,7 @@ public class PurposeCreationModeDeliverSteps {
                                 .description("description of the purpose - QA")
                                 .isFreeOfCharge(true)
                                 .freeOfChargeReason("free of charge - QA")
-                                .dailyCalls(49)
+                                .dailyCalls(dailyCalls)
                 )
         );
     }
