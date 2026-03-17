@@ -128,7 +128,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-Giacenza-lte10_890-OCR-FAIL | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-12T11:38:09.929062784Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-12T11:37:35Z\",\"statusCode\":\"RECAG005C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"80147f4e-bec7-4a49-a088-329b6e3d0fec\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
 
-  @paperTracker890 @alwaysRun @trackerErrors
+  @paperTrackerRunMode890 @alwaysRun @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_1]
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -148,7 +148,26 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:31.698620001Z\",\"errorCategory\":\"DELIVERY_FAILURE_CAUSE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid deliveryFailureCause: F01\",\"additionalDetails\":{\"affectedEvents\":[{\"deliveryFailureCause\":\"F01\",\"statusTimestamp\":\"2026-03-06T15:56:16Z\",\"statusCode\":\"RECAG001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                |
       | OK_890-NoAttachment      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:22:34.265292550Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":[\"23L\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"4c67f8a2-16be-4994-a109-43ec1a054fa3\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                                                                                               |
 
-  @paperTracker890 @alwaysRun @trackerErrors
+  @paperTrackerRunMode890 @alwaysRun @trackerErrors
+  Scenario Outline: [PAPER_TRACKER_ERROR_890_1.C]
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequence> |
+      | digitalDomicile         | NULL           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | sequence                 | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+      | OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:31.698620001Z\",\"errorCategory\":\"DELIVERY_FAILURE_CAUSE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid deliveryFailureCause: F01\",\"additionalDetails\":{\"affectedEvents\":[{\"deliveryFailureCause\":\"F01\",\"statusTimestamp\":\"2026-03-06T15:56:16Z\",\"statusCode\":\"RECAG001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                |
+      | OK_890-NoAttachment      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:22:34.265292550Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":[\"23L\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"4c67f8a2-16be-4994-a109-43ec1a054fa3\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                                                                                               |
+
+  @paperTrackerRunMode890 @alwaysRun @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_1.B] Si verifica che per la sequence OK_890_INVALID_DATETIME, in cui è previsto un errore di DATE_ERROR, l'errore sia effettivamente presente con type ERROR e con category DATE_ERROR
     non viene effettuata la validazione della risposta /trackings poiché non passerebbe a causa dell'errore di datetime, ma si verifica direttamente la presenza dell'errore in PaperTrackingsError
     Given viene generata una nuova notifica
@@ -159,7 +178,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@OK_890_INVALID_DATETIME |
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
