@@ -14,10 +14,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 // TODO riformulare così da rimuovere gli inutilizzati parametri "tenantType"
 public class AttributeCommonSteps {
@@ -43,19 +42,18 @@ public class AttributeCommonSteps {
     @Given("{tenantType} ha già creato {int} attribut(i)(o) {attributeKind}")
     public void createAttributes(TenantType tenantType, int count, AttributeKind attributeKind) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType.name(), null));
-        @SuppressWarnings("unchecked")
-        CompletableFuture<Attribute>[] futures = new CompletableFuture[count];
 
-        for(int i = 0; i < count; i++) {
-            int finalI = i;
-            futures[i] = CompletableFuture.supplyAsync(() -> dataPreparationService.createAttribute(
+        List<Attribute> createdAttributes = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            Attribute attribute = dataPreparationService.createAttribute(
                 attributeKind,
-                "attribute-%d-%d-%s".formatted(finalI, sharedStepsContext.getTestSeed(), attributeKind)));
+                "attribute-%d-%d-%s".formatted(i, sharedStepsContext.getTestSeed(), attributeKind));
+            createdAttributes.add(attribute);
         }
 
-        CompletableFuture.allOf(futures).join();
-        attributeCommonContext.setAttributeId(futures[0].join().getId());
-        List<Attribute> createdAttributes = Arrays.stream(futures).map(CompletableFuture::join).toList();
+        if (!createdAttributes.isEmpty()) {
+            attributeCommonContext.setAttributeId(createdAttributes.get(0).getId());
+        }
         attributeCommonContext.setCreatedAttributes(createdAttributes);
 
         List<UUID> attributeIds = createdAttributes.stream().map(Attribute::getId).toList();
