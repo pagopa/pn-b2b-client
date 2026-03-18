@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
@@ -16,7 +16,6 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
@@ -40,8 +39,7 @@ public class CatalogCommonSteps {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getResponseStatus());
         Assertions.assertEquals(eServiceNumber,
-                ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());
-
+                ((CatalogEServices) httpCallExecutor.getResponse()).getResults().size());
     }
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string}")
