@@ -84,7 +84,9 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" e:
       | dailyCallsPerConsumer | 10 |
       | dailyCallsTotal       | 10 |
-    When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo "certificato" 0-esimo creato
+    And PA2 ha già creato 1 attributo CERTIFIED
+    And l'utente associa l'attributo "certificato" 1-esimo creato all'eservice
+    When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo "certificato" 1-esimo creato
     Then si ottiene status code 400
 
   @dailyCallsThreshold
