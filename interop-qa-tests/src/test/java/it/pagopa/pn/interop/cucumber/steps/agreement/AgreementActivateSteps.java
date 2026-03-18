@@ -207,11 +207,12 @@ public class AgreementActivateSteps {
                 requiredAttributes.add(attributeGroup);
             }
         }
-        if ((attributeKind == AttributeKind.VERIFIED)) {
+        if (attributeKind == AttributeKind.VERIFIED)
             sharedStepsContext.getAttributeCommonContext().setRequiredVerifiedAttributes(requiredAttributes);
-        } else {
+        else if (attributeKind == AttributeKind.CERTIFIED)
+            sharedStepsContext.getAttributeCommonContext().setRequiredCertifiedAttributes(requiredAttributes);
+        else
             sharedStepsContext.getAttributeCommonContext().setRequiredDeclaredAttributes(requiredAttributes);
-        }
     }
 
     @Given("{string} crea due gruppi di due attributi verificati")
