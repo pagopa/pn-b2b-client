@@ -60,33 +60,49 @@ public class AgreementActivateSteps {
         dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
+
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy) {
+        tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, null, null);
+    }
+
+    @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int}")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal) {
+
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
         List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
         List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
 
-        EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed(),
-                new UpdateEServiceDescriptorSeed().attributes(new DescriptorAttributesSeed()
-                                .addCertifiedItem(
-                                        requiredCertifiedAttributes.stream()
-                                                .flatMap(group -> group.stream()
-                                                        .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                                .collect(Collectors.toList()))
-                                .addDeclaredItem(
-                                        requiredDeclaredAttributes.stream()
+        UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed = new UpdateEServiceDescriptorSeed()
+                .attributes(new DescriptorAttributesSeed()
+                        .addCertifiedItem(
+                                requiredCertifiedAttributes.stream()
                                         .flatMap(group -> group.stream()
                                                 .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
                                         .collect(Collectors.toList()))
-                                .addVerifiedItem(
-                                        requiredVerifiedAttributes.stream()
-                                                .flatMap(group -> group.stream()
-                                                        .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                                .collect(Collectors.toList())
-                                ))
-                        .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                        .addDeclaredItem(
+                                requiredDeclaredAttributes.stream()
+                                        .flatMap(group -> group.stream()
+                                                .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
+                                        .collect(Collectors.toList()))
+                        .addVerifiedItem(
+                                requiredVerifiedAttributes.stream()
+                                        .flatMap(group -> group.stream()
+                                                .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
+                                        .collect(Collectors.toList())
+                        ))
+                .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy));
+
+        if (dailyCallsPerConsumer != null) {
+            updateEServiceDescriptorSeed.dailyCallsPerConsumer(dailyCallsPerConsumer);
+        }
+        if (dailyCallsTotal != null) {
+            updateEServiceDescriptorSeed.dailyCallsTotal(dailyCallsTotal);
+        }
+
+        EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
+                new EServiceSeed(), updateEServiceDescriptorSeed
         );
         UUID eserviceId = result.getEServiceId();
         UUID descriptorId = result.getDescriptorId();

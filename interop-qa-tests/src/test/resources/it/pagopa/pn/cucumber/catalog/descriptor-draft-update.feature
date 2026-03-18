@@ -53,7 +53,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene status code 200
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
-    When l'utente modifica dailyCallsPerConsumer con <dailyCallsPerConsumer> per l'attributo certificato appena creato
+    When l'utente tenta di aggiungere una soglia differenziata di <dailyCallsPerConsumer> per l'attributo CERTIFIED 0-esimo creato
     Then si ottiene status code <statusCode>
 
     Examples:

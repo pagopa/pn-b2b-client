@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Getter
 @Setter
 @Component
@@ -80,5 +82,17 @@ public class AttributeCommonContext {
             seeds.add(groupSeed);
         }
         return seeds;
+    }
+
+    public void setDailyPerConsumer(List<List<DescriptorAttributeSeed>> attributesSeed, UUID attributeId, Integer dailyCallsPerConsumer) {
+        for (List<DescriptorAttributeSeed> group : attributesSeed) {
+            for (DescriptorAttributeSeed attr : group) {
+                if (attr.getId().equals(attributeId)) {
+                    // TODO Threshold
+                    log.info("Setting dailyCallsPerConsumer to {} attribute ID {}", dailyCallsPerConsumer, attributeId);
+                    // attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+                }
+            }
+        }
     }
 }

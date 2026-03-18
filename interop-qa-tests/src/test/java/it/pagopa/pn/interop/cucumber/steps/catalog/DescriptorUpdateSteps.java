@@ -68,68 +68,59 @@ public class DescriptorUpdateSteps {
         );
     }
 
-    @When("l'utente modifica dailyCallsPerConsumer con {int} per l'attributo certificato appena creato")
-    public void updateLastCreatedDailyCallsPerConsumer(int dailyCallsPerConsumer) {
-        updateLastCreatedDailyCallsPerConsumer(dailyCallsPerConsumer, null);
-    }
+    @When("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo creato")
+    public void updateDailyCallsPerConsumer(int dailyCallsPerConsumer, AttributeKind attributeType, int attributeIndex) {
 
-    @When("l'utente modifica dailyCallsPerConsumer con {int} per l'{int}-esimo attributo certificato creato")
-    public void updateLastCreatedDailyCallsPerConsumer(int dailyCallsPerConsumer, Integer attributeIndex) {
+        final int attributesGroup = 0;
 
         List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
-        List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
         List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
+        List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
 
-        UUID attributeId = (attributeIndex != null) ?
-            requiredCertifiedAttributes.get(attributeIndex).get(0) :
-            requiredCertifiedAttributes.get(requiredCertifiedAttributes.size() - 1).get(0);
-
-        // TODO Threshold: gestire anche attributi verificati e dichiarati
+        UUID attributeId = switch (attributeType) {
+            case CERTIFIED -> requiredCertifiedAttributes.get(attributesGroup).get(attributeIndex);
+            case DECLARED -> requiredDeclaredAttributes.get(attributesGroup).get(attributeIndex);
+            case VERIFIED -> requiredVerifiedAttributes.get(attributesGroup).get(attributeIndex);
+        };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        var eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
+        ProducerEServiceDescriptor eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
 
-        List<List<DescriptorAttributeSeed>> certifiedAttributes = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
-        for (List<DescriptorAttributeSeed> group : certifiedAttributes) {
-            for (DescriptorAttributeSeed attr : group) {
-                if (attr.getId().equals(attributeId)) {
-                    // TODO Threshold
-                    log.info("Setting dailyCallsPerConsumer to {} for attribute ID {}", dailyCallsPerConsumer, attributeId);
-                    // attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
-                }
-            }
+        List<List<DescriptorAttributeSeed>> certifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
+        List<List<DescriptorAttributeSeed>> declaredAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared());
+        List<List<DescriptorAttributeSeed>> verifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified());
+
+        switch (attributeType) {
+            case CERTIFIED -> sharedStepsContext.getAttributeCommonContext().setDailyPerConsumer(certifiedAttributesSeed, attributeId, dailyCallsPerConsumer);
+            case DECLARED -> sharedStepsContext.getAttributeCommonContext().setDailyPerConsumer(declaredAttributesSeed, attributeId, dailyCallsPerConsumer);
+            case VERIFIED -> sharedStepsContext.getAttributeCommonContext().setDailyPerConsumer(verifiedAttributesSeed, attributeId, dailyCallsPerConsumer);
         }
 
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
-            .certified(certifiedAttributes)
-            .declared(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared()))
-            .verified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified()));
-
-
-
-
-
-        // TODO THRESHOLD try / catch --> 400
+                .certified(certifiedAttributesSeed)
+                .declared(declaredAttributesSeed)
+                .verified(verifiedAttributesSeed);
 
         if (eServiceDescriptor.getState() == EServiceDescriptorState.PUBLISHED) {
             clientTokenConfigurator.getEServiceClient().updateDescriptorAttributes(
-                    eServiceId,
-                    descriptorId,
-                    attributesSeed
+                eServiceId,
+                descriptorId,
+                attributesSeed
             );
-        } else {
+        } else if (eServiceDescriptor.getState() == EServiceDescriptorState.DRAFT) {
             UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed()
-                    .description(eServiceDescriptor.getDescription())
-                    .audience(eServiceDescriptor.getAudience())
-                    .voucherLifespan(eServiceDescriptor.getVoucherLifespan())
-                    .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
-                    .dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
-                    .agreementApprovalPolicy(eServiceDescriptor.getAgreementApprovalPolicy())
-                    .attributes(attributesSeed);
-
+                .description(eServiceDescriptor.getDescription())
+                .audience(eServiceDescriptor.getAudience())
+                .voucherLifespan(eServiceDescriptor.getVoucherLifespan())
+                .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
+                .dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
+                .agreementApprovalPolicy(eServiceDescriptor.getAgreementApprovalPolicy())
+                .attributes(attributesSeed);
             clientTokenConfigurator.getEServiceClient().updateDraftDescriptor(eServiceId, descriptorId, seed);
+        } else {
+            throw new IllegalStateException("Stato dell'e-service non gestito: " + eServiceDescriptor.getState());
         }
 
         Optional<DescriptorAttribute> certAttr = getDescriptorAttribute(eServiceId, descriptorId, attributeId);

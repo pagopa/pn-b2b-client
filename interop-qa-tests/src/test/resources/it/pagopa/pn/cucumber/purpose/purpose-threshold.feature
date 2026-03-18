@@ -14,10 +14,8 @@ Feature: Verifica soglie differenziate
 
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
     # TODO Threshold
-    # And l'utente modifica dailyCallsPerConsumer con 100 per l'0-esimo attributo certificato creato
-    # And l'utente modifica dailyCallsPerConsumer con 50 per l'1-esimo attributo certificato creato
-
-    # Che differenza c'è tra "ha una richiesta di fruizione" e "ha già creato 1 finalità"?
+    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato
+    And l'utente tenta di aggiungere una soglia differenziata di 50 per l'attributo CERTIFIED 1-esimo creato
 
     # And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente è un "admin" di "PA1"
