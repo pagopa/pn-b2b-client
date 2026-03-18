@@ -44,13 +44,20 @@ public class AttributeCommonSteps {
 
     @Given("{tenantType} ha già creato {int} attribut(i)(o) {attributeKind}")
     public void createAttributes(TenantType tenantType, int count, AttributeKind attributeKind) {
+
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType.name(), null));
+
+        int size = switch (attributeKind) {
+            case CERTIFIED -> attributeCommonContext.getRequiredCertifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredCertifiedAttributes().get(0).size();
+            case DECLARED -> attributeCommonContext.getRequiredDeclaredAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredDeclaredAttributes().get(0).size();
+            case VERIFIED -> attributeCommonContext.getRequiredVerifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredVerifiedAttributes().get(0).size();
+        };
 
         List<Attribute> createdAttributes = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Attribute attribute = dataPreparationService.createAttribute(
                 attributeKind,
-                "attribute-%d-%d-%s".formatted(i, sharedStepsContext.getTestSeed(), attributeKind));
+                "attribute-%d-%d-%s".formatted((size + i), sharedStepsContext.getTestSeed(), attributeKind));
             createdAttributes.add(attribute);
         }
 
@@ -62,9 +69,27 @@ public class AttributeCommonSteps {
         List<UUID> attributeIds = createdAttributes.stream().map(Attribute::getId).toList();
 
         switch (attributeKind) {
-            case CERTIFIED -> attributeCommonContext.setRequiredCertifiedAttributes(List.of(attributeIds));
-            case DECLARED -> attributeCommonContext.setRequiredDeclaredAttributes(List.of(attributeIds));
-            case VERIFIED -> attributeCommonContext.setRequiredVerifiedAttributes(List.of(attributeIds));
+            case CERTIFIED -> {
+                if (attributeCommonContext.getRequiredCertifiedAttributes().isEmpty()) {
+                    attributeCommonContext.getRequiredCertifiedAttributes().add(new ArrayList<>(attributeIds));
+                } else {
+                    attributeCommonContext.getRequiredCertifiedAttributes().get(0).addAll(attributeIds);
+                }
+            }
+            case DECLARED -> {
+                if (attributeCommonContext.getRequiredDeclaredAttributes().isEmpty()) {
+                    attributeCommonContext.getRequiredDeclaredAttributes().add(new ArrayList<>(attributeIds));
+                } else {
+                    attributeCommonContext.getRequiredDeclaredAttributes().get(0).addAll(attributeIds);
+                }
+            }
+            case VERIFIED -> {
+                if (attributeCommonContext.getRequiredVerifiedAttributes().isEmpty()) {
+                    attributeCommonContext.getRequiredVerifiedAttributes().add(new ArrayList<>(attributeIds));
+                } else {
+                    attributeCommonContext.getRequiredVerifiedAttributes().get(0).addAll(attributeIds);
+                }
+            }
         }
     }
 
@@ -123,7 +148,7 @@ public class AttributeCommonSteps {
             httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateDescriptorAttributes(eServiceId, descriptorId, attributesSeed)
             );
-        } else {
+        } else if (eServiceDescriptor.getState() == EServiceDescriptorState.DRAFT) {
             UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed()
                 .description(eServiceDescriptor.getDescription())
                 .audience(eServiceDescriptor.getAudience())
@@ -135,6 +160,8 @@ public class AttributeCommonSteps {
             httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateDraftDescriptor(eServiceId, descriptorId, seed)
             );
+        } else {
+            throw new IllegalStateException("Stato dell'e-service non gestito: " + eServiceDescriptor.getState());
         }
 
         if (httpCallExecutor.getResponseStatus().isError()) {
@@ -162,7 +189,7 @@ public class AttributeCommonSteps {
                     };
                 }
 
-                return true;
+                return false;
             } ,
             String.format("Errore durante la verifica dell'associazione dell'attributo %s all'e-service %s", attributeType, eServiceId),
             5,
