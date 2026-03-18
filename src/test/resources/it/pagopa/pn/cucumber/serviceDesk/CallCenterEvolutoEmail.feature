@@ -299,14 +299,14 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [ACT_OPERATION_BUG_VALIDATION_18333] Creazione di un'act operation per una notifica senza allegati di pagamento e successiva invocazione della GET v2
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      | payment                 | NULL       |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given vengono inviate 1 nuove notifiche tramite api b2b dal "Comune_Multi" con destinatario Mario Gherkin e si aspetta che raggiungano l'elemento di timeline "REQUEST_ACCEPTED"
+      #campi notifica
+      | subject                 | notifica analogica con cucumber |
+      | senderDenomination      | Comune di palermo               |
+      #campi destinatario
+      | digitalDomicile         | NULL                            |
+      | physicalAddress_address | Via@ok_890                      |
+      | payment                 | NULL                            |
     And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | auto                      |
       | iun               | auto                      |
@@ -361,13 +361,13 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [GET_ACT_OPERATION_V2_WITH_SUBOPERATION_IUN] Creazione di un'act operation e successiva invocazione della get V2 passando un'idOperation contenente lo IUN di una specifica subOperation
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given vengono inviate 1 nuove notifiche tramite api b2b dal "Comune_Multi" con destinatario Mario Gherkin e si aspetta che raggiungano l'elemento di timeline "REQUEST_ACCEPTED"
+      #campi notifica
+      | subject                 | notifica analogica con cucumber |
+      | senderDenomination      | Comune di palermo               |
+      #campi destinatario
+      | digitalDomicile         | NULL                            |
+      | physicalAddress_address | Via@ok_890                      |
     And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | auto                      |
       | iun               | auto                      |
