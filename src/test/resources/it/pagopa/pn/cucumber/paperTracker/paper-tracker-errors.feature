@@ -2,7 +2,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 # da lanciare con OCR in DRY perché in questo caso gli errori con categoria OCR_VALIDATION
 #  vengono considerati warning e non error
-  @paperTrackerARRunMode @trackerErrors @ocrDRY
+  @paperTrackerAR @trackerErrors @ocrDRY
   Scenario Outline: [PAPER_TRACKER_ERROR_AR-DRY] In caso di OCR in modalità DRY, si verifica che per le sequence AR in cui è previsto un errore, l'errore sia effettivamente presente ma con type WARNING invece che ERROR
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -62,7 +62,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
   # da lanciare con OCR in RUN perché in questo caso gli errori con categoria OCR_VALIDATION
   # vengono considerati ERROR e non WARNING
-  @paperTracker890 @trackerErrors @ocrRun
+  @paperTrackerRunMode890 @trackerErrors @ocrRun
   Scenario Outline: [PAPER_TRACKER_ERROR_890-RUN] n caso di OCR in modalità RUN, si verifica che per le sequence 890 in cui è previsto un errore, l'errore sia effettivamente presente ma con type ERROR invece che WARNING
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -109,7 +109,41 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 # --------------- Si testano gli errori per prodotto 890 che non cambiano il tipo in base a STRICTFINALVALIDATIONSTOCK890 --------------
 
-  @paperTracker890 @trackerErrors @ocrRun
+  @paperTrackerARRunMode @trackerErrors @ocrRun
+  Scenario Outline: [PAPER_TRACKER_ERROR_AR_2_A] Viene verificato che in caso di errore INCONSISTENT_STATE - STOCK_890_REFINEMENT_ERROR se strictFinalValidationStock890 è true/false, venga generato un errore di tipo ERROR
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR_BLOCKED |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG010   |                      |              |              |
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011A  |                      |              |              |
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | 23L          |              | OCR_KO               |
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG012   |                      |              |              | OCR_KO               |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011B"
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 | registeredLetterCode |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG005C  |                      |              |              | OCR_KO               |
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                              |
+      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-17T18:03:26.527501319Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_ERROR\",\"message\":\"Refinement process reached KO state, cannot proceed with final event validation\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-17T17:59:18Z\",\"statusCode\":\"RECAG005C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"df67092f-5cc1-4d8c-a149-c2a35c260b2c\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
+
+  @paperTrackerRunMode890 @trackerErrors @ocrRun
   Scenario Outline: [PAPER_TRACKER_ERROR_890-RUN.2] In caso di OCR in modalità RUN, si verifica che per la sequence OK-Giacenza-lte10_890-OCR-FAIL si verifichi un errore con type ERROR con category INCONSISTENT_STATE e cause STOCK_890_REFINEMENT_MISSING
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -143,10 +177,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | sequence                 | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-      | OK-REC008_890-E          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:42.533203161Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-06T15:56:30Z\",\"statusCode\":\"RECAG008C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG008C\",\"eventIdThrow\":\"a91b4acc-51d6-4a52-8c91-b8b21cdd6223\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                                                           |
-      | OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:31.698620001Z\",\"errorCategory\":\"DELIVERY_FAILURE_CAUSE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid deliveryFailureCause: F01\",\"additionalDetails\":{\"affectedEvents\":[{\"deliveryFailureCause\":\"F01\",\"statusTimestamp\":\"2026-03-06T15:56:16Z\",\"statusCode\":\"RECAG001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                |
-      | OK_890-NoAttachment      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:22:34.265292550Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":[\"23L\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"4c67f8a2-16be-4994-a109-43ec1a054fa3\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                                                                                               |
+      | sequence                 | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+      | OK-REC008_890-E          | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:42.533203161Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_MISSING\",\"message\":\"invalid AWAITING_REFINEMENT state for stock 890\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-06T15:56:30Z\",\"statusCode\":\"RECAG008C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG008C\",\"eventIdThrow\":\"a91b4acc-51d6-4a52-8c91-b8b21cdd6223\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                            |
+      | OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:31.698620001Z\",\"errorCategory\":\"DELIVERY_FAILURE_CAUSE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid deliveryFailureCause: F01\",\"additionalDetails\":{\"affectedEvents\":[{\"deliveryFailureCause\":\"F01\",\"statusTimestamp\":\"2026-03-06T15:56:16Z\",\"statusCode\":\"RECAG001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
+      | OK_890-NoAttachment      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:22:34.265292550Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":[\"23L\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"4c67f8a2-16be-4994-a109-43ec1a054fa3\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                |
 
   @paperTrackerRunMode890 @alwaysRun @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_1.C]
@@ -163,20 +197,20 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | sequence                 | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-      | OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:31.698620001Z\",\"errorCategory\":\"DELIVERY_FAILURE_CAUSE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid deliveryFailureCause: F01\",\"additionalDetails\":{\"affectedEvents\":[{\"deliveryFailureCause\":\"F01\",\"statusTimestamp\":\"2026-03-06T15:56:16Z\",\"statusCode\":\"RECAG001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                |
-      | OK_890-NoAttachment      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:22:34.265292550Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":[\"23L\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"4c67f8a2-16be-4994-a109-43ec1a054fa3\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                                                                                               |
+      | sequence                 | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+      | OK-CAUSE-EVENTO-NO-MAPPA | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:56:31.698620001Z\",\"errorCategory\":\"DELIVERY_FAILURE_CAUSE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid deliveryFailureCause: F01\",\"additionalDetails\":{\"affectedEvents\":[{\"deliveryFailureCause\":\"F01\",\"statusTimestamp\":\"2026-03-06T15:56:16Z\",\"statusCode\":\"RECAG001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
+      | OK_890-NoAttachment      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:22:34.265292550Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":[\"23L\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"4c67f8a2-16be-4994-a109-43ec1a054fa3\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                |
 
   @paperTrackerRunMode890 @alwaysRun @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_1.B] Si verifica che per la sequence OK_890_INVALID_DATETIME, in cui è previsto un errore di DATE_ERROR, l'errore sia effettivamente presente con type ERROR e con category DATE_ERROR
-    non viene effettuata la validazione della risposta /trackings poiché non passerebbe a causa dell'errore di datetime, ma si verifica direttamente la presenza dell'errore in PaperTrackingsError
+  non viene effettuata la validazione della risposta /trackings poiché non passerebbe a causa dell'errore di datetime, ma si verifica direttamente la presenza dell'errore in PaperTrackingsError
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_890_INVALID_DATETIME |
-      | digitalDomicile         | NULL           |
+      | digitalDomicile         | NULL                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
@@ -214,13 +248,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK-Giacenza-INVALID_DATETIME_890 |
-      | digitalDomicile         | NULL           |
+      | digitalDomicile         | NULL                                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:28:12.401123047Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-16T11:28:09Z\",\"statusCode\":\"RECAG005C\"},{\"statusTimestamp\":\"2026-03-16T11:28:04Z\",\"statusCode\":\"RECAG005B\"},{\"statusTimestamp\":\"2026-03-16T11:27:58Z\",\"statusCode\":\"RECAG005A\"},{\"statusTimestamp\":\"2026-03-16T11:27:23Z\",\"statusCode\":\"RECAG011A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"f1ef2a9e-98b8-4d13-ac93-7f4055e98420\",\"productType\":\"890\",\"type\":\"WARNING\"}" |
 
   @paperTracker890 @strictFinalValidationFalse @trackerErrors
@@ -247,13 +281,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG012   |                      |              |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | 23L            |             |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | 23L          |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | AR            |             |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | AR           |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | ARCAD            |             |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | ARCAD        |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG005A  |                      |              |              |
@@ -262,7 +296,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG005C  |                      |              |              |
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T21:00:34.953135302Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"INVALID_VALUES\",\"message\":\"Event RECAG011B contains invalid attachments: [AR]\",\"additionalDetails\":{\"invalidAttachments\":[\"AR\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"f7266d4a-afef-4965-b8fb-dd69df1ab569\",\"productType\":\"890\",\"type\":\"WARNING\"}" |
 
 
@@ -283,8 +317,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | sequence                         | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-      | OK_890-NoAttachment              | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-09T11:08:10.482400710Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":\"23L\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"518d05f3-561b-4741-852b-07aec9038e44\",\"productType\":\"890\",\"type\":\"ERROR\"}"                                                                                                                                                                                 |
+      | sequence            | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+      | OK_890-NoAttachment | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-09T11:08:10.482400710Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [23L]\",\"additionalDetails\":{\"missingAttachments\":\"23L\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG001C\",\"eventIdThrow\":\"518d05f3-561b-4741-852b-07aec9038e44\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
   @paperTracker890 @strictFinalValidationTrue @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_3] Si verifica che con la sequence OK-Giacenza-INVALID_DATETIME_890 e avendo la property strictFinalValidation a true,
@@ -295,14 +329,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK-Giacenza-INVALID_DATETIME_890 |
-      | digitalDomicile         | NULL           |
+      | digitalDomicile         | NULL                                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-17T08:31:51.022386721Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-17T08:31:48Z\",\"statusCode\":\"RECAG005C\"},{\"statusTimestamp\":\"2026-03-17T08:31:43Z\",\"statusCode\":\"RECAG005B\"},{\"statusTimestamp\":\"2026-03-17T08:31:37Z\",\"statusCode\":\"RECAG005A\"},{\"statusTimestamp\":\"2026-03-17T08:31:02Z\",\"statusCode\":\"RECAG011A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"91fe5e8c-9740-4d81-8d34-ed36290b4cca\",\"productType\":\"890\",\"type\":\"ERROR\"}"|
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-17T08:31:51.022386721Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-17T08:31:48Z\",\"statusCode\":\"RECAG005C\"},{\"statusTimestamp\":\"2026-03-17T08:31:43Z\",\"statusCode\":\"RECAG005B\"},{\"statusTimestamp\":\"2026-03-17T08:31:37Z\",\"statusCode\":\"RECAG005A\"},{\"statusTimestamp\":\"2026-03-17T08:31:02Z\",\"statusCode\":\"RECAG011A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"91fe5e8c-9740-4d81-8d34-ed36290b4cca\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
 
   @paperTracker890 @strictFinalValidationTrue @trackerErrors
@@ -329,13 +363,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG012   |                      |              |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | 23L            |             |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | 23L          |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | AR            |             |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | AR           |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | ARCAD            |             |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG011B  |                      | ARCAD        |              |
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG005A  |                      |              |              |
@@ -475,8 +509,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause   | attachment_1 | attachment_2 |
       | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004B  | <deliveryFailureCause> | Plico        |              |
     Then viene invocato il consolidatore con i seguenti dati:
-      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004C  | <deliveryFailureCause>                     |              |              |
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause   | attachment_1 | attachment_2 |
+      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRI004C  | <deliveryFailureCause> |              |              |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | loadTimeline               | true      |
       | details                    | NOT_NULL  |

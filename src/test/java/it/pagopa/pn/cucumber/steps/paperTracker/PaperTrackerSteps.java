@@ -508,6 +508,7 @@ public class PaperTrackerSteps {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode expectedResult = (ObjectNode) objectMapper.readTree(expectedError);
         String trackingId = expectedResult.get("trackingId").asText().replace("<iun>", sharedSteps.getNotificationIun());
+        String expectedErrorCategory = expectedResult.get("errorCategory").asText();
 
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
@@ -521,6 +522,7 @@ public class PaperTrackerSteps {
                     errorsResponse.getResults().stream()
                                     .flatMap(r -> r.getErrors().stream())
                                     .filter(e -> e.getTrackingId().equals(trackingId))
+                                    .filter(e -> e.getErrorCategory().equals(expectedErrorCategory))
                                     .findFirst()
                                     .ifPresent(e -> atomicReference.set(e));
                     assertThat(atomicReference.get()).as("Non è stato trovato nessun errore per trackingId " + trackingId).isNotNull();
