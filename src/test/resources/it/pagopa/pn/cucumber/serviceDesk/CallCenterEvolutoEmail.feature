@@ -298,6 +298,45 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
       | 2                  | IUN RIPETUTO        | 400            | NULL                          | NULL               | NULL          | NULL            |
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
+  Scenario: [ACT_OPERATION_BUG_VALIDATION_18333] Creazione di un'act operation per una notifica senza allegati di pagamento e successiva invocazione della GET v2
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+      | payment                 | NULL       |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
+      | ticketId          | auto                      |
+      | iun               | auto                      |
+      | ticketOperationId | auto                      |
+      | taxId             | CLMCST42R12D969Z          |
+      | addressType       | EMAIL                     |
+      | addressValue      | matteo.sperati@dgsspa.com |
+      | ticketDate        | auto                      |
+      | vrDate            | auto                      |
+      | iunListType       | DATI VALIDI               |
+    When viene invocata l'api "CREATE_ACT_OPERATION V2"
+    Then il servizio risponde con 200
+    And se la chiamata al servizio ha avuto successo
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
+    When viene invocata l'API v2 GET operations passando "VALID OP. ID"
+    Then il servizio risponde con 200
+    And il campo operationStatus della response è valorizzato con "CREATING"
+    When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 200
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    When viene invocata l'API v2 GET operations passando "VALID OP. ID"
+    Then il servizio risponde con 200
+    And se la chiamata al servizio ha avuto successo
+    Then il campo operationStatus della response è valorizzato con "OK"
+
+  @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [ACT_OPERATION_V2_ONLY_INEXISTENT_IUNS] Creazione di un'act operation con soli IUN inesistenti. Tramite GET, verifica che abbia lo status impostato su KO
     Given viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | auto                      |
@@ -322,13 +361,13 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [GET_ACT_OPERATION_V2_WITH_SUBOPERATION_IUN] Creazione di un'act operation e successiva invocazione della get V2 passando un'idOperation contenente lo IUN di una specifica subOperation
-    Given vengono inviate 1 nuove notifiche tramite api b2b dal "Comune_Multi" con destinatario Mario Gherkin e si aspetta che raggiungano l'elemento di timeline "REQUEST_ACCEPTED"
-      #campi notifica
-      | subject                 | notifica analogica con cucumber |
-      | senderDenomination      | Comune di palermo               |
-      #campi destinatario
-      | digitalDomicile         | NULL                            |
-      | physicalAddress_address | Via@ok_890                      |
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene popolata una richiesta di creazione Act operation "V2" con i seguenti dati
       | ticketId          | auto                      |
       | iun               | auto                      |
