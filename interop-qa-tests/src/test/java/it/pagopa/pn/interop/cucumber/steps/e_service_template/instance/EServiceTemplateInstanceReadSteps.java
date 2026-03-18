@@ -52,6 +52,13 @@ public class EServiceTemplateInstanceReadSteps {
         getEserviceTemplateInstances(UUID.randomUUID());
     }
 
+    @When("l'utente tenta la visualizzazione dell'elenco delle istanze dell'e-service template filtrando per offset {int}, limit {int} e producerName {string}")
+    public void getEServiceTemplateInstancesWithProducerNameFilter(int offset, int limit, String producerName) {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        String tenantName = eServiceTemplateInstanceUtility.resolveTenantName(producerName);
+        getEserviceTemplateInstancesWithFilters(templateId, offset, limit, tenantName, null);
+    }
+
     @Then("sono state visualizzate {int} istanza in stato DRAFT, {int} in stato PUBLISHED e {int} in stato SUSPENDED")
     public void checkEServiceTemplateInstancesCount(int draftCount, int publishedCount, int suspendedCount) {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
@@ -85,6 +92,16 @@ public class EServiceTemplateInstanceReadSteps {
         assertThat(response).isEmpty();
     }
 
+    @Then("l'elenco delle istanze e-service template restituite contiene l'ultimo e-service template istanziato")
+    public void checkEServiceTemplateInstancesContainsLastCreated() {
+        List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
+        UUID lastCreatedId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().getId();
+        assertThat(response)
+                .extracting(EServiceTemplateInstance::getId)
+                .as(String.format("L'elenco delle istanze non contiene l'e-service template istanziato con id '%s'", lastCreatedId))
+                .containsExactly(lastCreatedId);
+    }
+
     @When("l'utente recupera le proprie istanze e-service template create dall'e-service template {string}")
     public void getMyEServiceTemplateInstances(String eServiceTemplateId) {
         UUID templateEServiceId = eServiceTemplateInstanceUtility.resolveEServiceTemplateId(eServiceTemplateId);
@@ -114,6 +131,20 @@ public class EServiceTemplateInstanceReadSteps {
         httpCallExecutor.performCall(
                 () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
                         templateId
+                ),
+                ResponseEntity::getStatusCode);
+    }
+
+    private void getEserviceTemplateInstancesWithFilters(UUID templateId, Integer offset, Integer limit, String producerName, List<EServiceDescriptorState> states) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+                () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
+                        templateId,
+                        offset,
+                        limit,
+                        producerName,
+                        states
                 ),
                 ResponseEntity::getStatusCode);
     }
