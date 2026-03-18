@@ -5,7 +5,7 @@ Feature: Lettura client singolo
   @nrt-minimal
   Scenario Outline: [CLIENT_READ_1] Tutti gli utenti possono leggere un client appartenente al proprio ente. La richiesta va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
-    Given "PA1" ha già creato 1 client "CONSUMER"
+    Given "<ente>" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code <statusCode>
 
