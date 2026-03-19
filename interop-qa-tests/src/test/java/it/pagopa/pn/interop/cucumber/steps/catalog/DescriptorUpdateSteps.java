@@ -8,6 +8,7 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
@@ -23,12 +24,14 @@ public class DescriptorUpdateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
+    private final EServiceDescriptorUtils eServiceDescriptorUtils;
 
     public DescriptorUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                      SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.eServiceDescriptorUtils = new EServiceDescriptorUtils(clientTokenConfigurator, sharedStepsContext);
     }
 
     @When("l'utente aggiorna alcuni parametri di quel descrittore")
@@ -103,53 +106,13 @@ public class DescriptorUpdateSteps {
                 .declared(declaredAttributesSeed)
                 .verified(verifiedAttributesSeed);
 
-        if (eServiceDescriptor.getState() == EServiceDescriptorState.PUBLISHED) {
-            clientTokenConfigurator.getEServiceClient().updateDescriptorAttributes(
-                eServiceId,
-                descriptorId,
-                attributesSeed
-            );
-        } else if (eServiceDescriptor.getState() == EServiceDescriptorState.DRAFT) {
-            UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed()
-                .description(eServiceDescriptor.getDescription())
-                .audience(eServiceDescriptor.getAudience())
-                .voucherLifespan(eServiceDescriptor.getVoucherLifespan())
-                .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
-                .dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
-                .agreementApprovalPolicy(eServiceDescriptor.getAgreementApprovalPolicy())
-                .attributes(attributesSeed);
-            clientTokenConfigurator.getEServiceClient().updateDraftDescriptor(eServiceId, descriptorId, seed);
-        } else {
-            throw new IllegalStateException("Stato dell'e-service non gestito: " + eServiceDescriptor.getState());
-        }
+        eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
 
-        Optional<DescriptorAttribute> certAttr = getDescriptorAttribute(eServiceId, descriptorId, attributeId);
+        Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorAttribute(eServiceId, descriptorId, attributeId);
 
         Assertions.assertTrue(certAttr.isPresent());
         Assertions.assertEquals(attributeId, certAttr.get().getId());
         // TODO Threshold
         // Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
-    }
-
-    @Nonnull
-    private Optional<DescriptorAttribute> getDescriptorAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId) {
-
-        httpCallExecutor.snapshot();
-
-        sharedStepsContext.getPollingService().makePolling(
-                () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId)),
-                res -> res != HttpStatus.NOT_FOUND,
-                BFFDataPreparationService.ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
-        );
-        ProducerEServiceDescriptor producerEServiceDescriptor = (ProducerEServiceDescriptor) httpCallExecutor.getResponse();
-
-        httpCallExecutor.resetFormSnapshot();
-
-        return producerEServiceDescriptor.getAttributes()
-                .getCertified()
-                .stream()
-                .filter(attrList -> attrList.stream().anyMatch(attr -> attr.getId().equals(attributeId)))
-                .map(attrList -> attrList.get(0))
-                .findFirst();
     }
 }

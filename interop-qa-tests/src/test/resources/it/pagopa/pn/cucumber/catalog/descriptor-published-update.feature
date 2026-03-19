@@ -71,7 +71,7 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And si ottiene status code 200
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
-    When l'utente tenta di dichiarare due volte lo stesso attributo certificato ognuna con un dailyCallsPerConsumer differente
+    When l'utente tenta di dichiarare due volte lo stesso attributo certificato ognuno con un dailyCallsPerConsumer differente
     Then si ottiene status code 400
 
   @dailyCallsThreshold
