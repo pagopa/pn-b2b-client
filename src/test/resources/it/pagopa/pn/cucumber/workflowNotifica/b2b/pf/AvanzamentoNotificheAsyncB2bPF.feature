@@ -266,11 +266,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
   Scenario: [B2B_ASYNC_14_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-      | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                          |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | feePolicy             | DELIVERY_MODE               |
+      | pagoPaIntMode         | ASYNC                       |
+      | paFee                 | 10                          |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | via@fail-Discovery_AR |

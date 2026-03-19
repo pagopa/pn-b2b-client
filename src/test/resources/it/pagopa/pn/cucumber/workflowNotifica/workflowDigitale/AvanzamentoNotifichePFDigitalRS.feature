@@ -70,11 +70,16 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
   @dev  @workflowDigitale
   Scenario: [B2B_TIMELINE_RIS_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@fail_RIS |
+      | physicalAddress_State        | FRANCIA      |
+      | physicalAddress_municipality | Parigi       |
+      | physicalAddress_zip          | ZONE_1       |
+      | physicalAddress_province     | Paris        |
+      | digitalDomicile_address      | test@fail.it |
+      | physicalAddress_address      | Via@fail_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI004B" e verifica tipo DOC "Plico"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI004C"
