@@ -1,8 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
 
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -10,11 +12,9 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -24,7 +24,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -32,67 +34,75 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    @Bean(name = "customRestTemplate")
-    @Primary
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        interceptors.add(new RequestAndTraceIdInterceptor());
-        return restTemplate;
-    }
+        @Bean
+        public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
+            PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
+            pooling.setMaxTotal(400);
+            pooling.setDefaultMaxPerRoute(400);
+            return pooling;
+        }
 
-    @Bean
-    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
-        PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(500);
-        pooling.setDefaultMaxPerRoute(50);
-        return pooling;
-    }
-
-    @Bean
-    public HttpRequestRetryHandler httpRequestRetryHandler() {
-        return (exception, executionCount, context) -> {
-            if (executionCount > 10) {
-                return false;
-            }
-            if (exception instanceof ConnectionPoolTimeoutException) {
-                long backoffTime = (long) Math.pow(2, executionCount) * 1000;
-                try {
-                    Thread.sleep(backoffTime);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+        @Bean
+        public HttpRequestRetryHandler httpRequestRetryHandler() {
+            return (exception, executionCount, context) -> {
+                if (exception instanceof ConnectionPoolTimeoutException) {
+                    return false;
                 }
-                return true;
-            }
-            return false;
-        };
-    }
 
+                if (executionCount > 2) {
+                    return false;
+                }
 
-    @Bean
-    public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, HttpRequestRetryHandler httpRequestRetryHandler) {
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(60000)
-                .setConnectTimeout(10000)
-                .setSocketTimeout(20000)
-                .build();
+                if (exception instanceof NoHttpResponseException ||
+                        exception instanceof ConnectTimeoutException) {
 
-        return HttpClients.custom()
-                .setConnectionManager(poolingHttpClientConnectionManager)
-                .setDefaultRequestConfig(requestConfig)
-                .setRetryHandler(httpRequestRetryHandler)
-                .build();
-    }
+                    try {
+                        Thread.sleep(200L * executionCount);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    return true;
+                }
 
-    @Bean(name = "defaultRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate defaultRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+                return false;
+            };
+        }
 
-        return restTemplate;
-    }
+        @Bean
+        public CloseableHttpClient httpClient(
+                PoolingHttpClientConnectionManager pooling,
+                HttpRequestRetryHandler retryHandler) {
+
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(10000)
+                    .setConnectTimeout(5000)
+                    .setSocketTimeout(30000)
+                    .build();
+
+            return HttpClients.custom()
+                    .setConnectionManager(pooling)
+                    .setDefaultRequestConfig(requestConfig)
+                    .setRetryHandler(retryHandler)
+                    .evictIdleConnections(30, TimeUnit.SECONDS)
+                    .build();
+        }
+
+        @Bean(name = "customRestTemplate")
+        @Primary
+        public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+
+            HttpComponentsClientHttpRequestFactory factory =
+                    new HttpComponentsClientHttpRequestFactory(httpClient);
+
+            RestTemplate restTemplate = new RestTemplate(factory);
+
+            List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+            interceptors.add(new RequestAndTraceIdInterceptor());
+            restTemplate.setInterceptors(interceptors);
+
+            return restTemplate;
+        }
+
 
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 
