@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -41,12 +42,13 @@ public class RestTemplateConfiguration {
     @Bean
     public HttpRequestRetryHandler httpRequestRetryHandler() {
         return (exception, executionCount, context) -> {
-            if (executionCount > 3) return false;
-            if (exception instanceof org.apache.http.NoHttpResponseException ||
-                    exception instanceof org.apache.http.conn.ConnectTimeoutException ||
-                    exception instanceof java.net.SocketException) {
+            if (executionCount > 10) {
+                return false;
+            }
+            if (exception instanceof ConnectionPoolTimeoutException) {
+                long backoffTime = (long) Math.pow(2, executionCount) * 1000;
                 try {
-                    Thread.sleep(500L * executionCount);
+                    Thread.sleep(backoffTime);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
