@@ -22,11 +22,9 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,8 +37,8 @@ public class RestTemplateConfiguration {
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(1000);
-        pooling.setDefaultMaxPerRoute(1000);
+        pooling.setMaxTotal(600);
+        pooling.setDefaultMaxPerRoute(600);
         return pooling;
     }
 
@@ -114,8 +112,7 @@ public class RestTemplateConfiguration {
         private void doLog(HttpRequest request, ClientHttpResponse response, long duration) {
             String scenarioName = MDC.get(CUCUMBER_SCENARIO_NAME_MDC_ENTRY);
             String traceId = "N/A";
-            String statusCode = "ERROR/TIMEOUT";
-            String responseBody = "EMPTY/NULL";
+            String statusCode = "UNKNOWN/ERROR";
 
             if (response != null) {
                 try {
@@ -124,20 +121,17 @@ public class RestTemplateConfiguration {
                     if (traceIds != null && !traceIds.isEmpty()) {
                         traceId = traceIds.get(0);
                     }
-                    String fullBody = StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8);
-                    if (fullBody != null && !fullBody.isEmpty()) {
-                        responseBody = fullBody.length() > 5000
-                                ? fullBody.substring(0, 5000) + "... [TRUNCATED]"
-                                : fullBody;
-                    }
-                } catch (IOException e) {
-                    responseBody = "COULD_NOT_READ_BODY: " + e.getMessage();
-                    log.warn("Error reading response for logging", e);
+                } catch (Exception e) {
+                    statusCode = "CONNECTION_LOST";
                 }
             }
-
-            log.info("HTTP {} | Status: {} | Time: {}ms | TraceId: {} | URL: {} | Scenario: {} | Response: {}",
-                    request.getMethod(), statusCode, duration, traceId, request.getURI(), scenarioName, responseBody);
+            log.info("HTTP {} | Status: {} | Time: {}ms | TraceId: {} | URL: {} | Scenario: {}",
+                    request.getMethod(),
+                    statusCode,
+                    duration,
+                    traceId,
+                    request.getURI(),
+                    scenarioName);
         }
     }
 }
