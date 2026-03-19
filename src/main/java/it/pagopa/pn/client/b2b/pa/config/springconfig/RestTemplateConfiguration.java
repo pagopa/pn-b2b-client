@@ -22,9 +22,11 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -113,6 +115,7 @@ public class RestTemplateConfiguration {
             String scenarioName = MDC.get(CUCUMBER_SCENARIO_NAME_MDC_ENTRY);
             String traceId = "N/A";
             String statusCode = "ERROR/TIMEOUT";
+            String responseBody = "EMPTY/NULL";
 
             if (response != null) {
                 try {
@@ -121,13 +124,20 @@ public class RestTemplateConfiguration {
                     if (traceIds != null && !traceIds.isEmpty()) {
                         traceId = traceIds.get(0);
                     }
+                    String fullBody = StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8);
+                    if (fullBody != null && !fullBody.isEmpty()) {
+                        responseBody = fullBody.length() > 5000
+                                ? fullBody.substring(0, 5000) + "... [TRUNCATED]"
+                                : fullBody;
+                    }
                 } catch (IOException e) {
-                    log.warn("Could not read response status/headers", e);
+                    responseBody = "COULD_NOT_READ_BODY: " + e.getMessage();
+                    log.warn("Error reading response for logging", e);
                 }
             }
 
-            log.info("HTTP {} | Status: {} | Time: {}ms | TraceId: {} | URL: {} | Scenario: {}",
-                    request.getMethod(), statusCode, duration, traceId, request.getURI(), scenarioName);
+            log.info("HTTP {} | Status: {} | Time: {}ms | TraceId: {} | URL: {} | Scenario: {} | Response: {}",
+                    request.getMethod(), statusCode, duration, traceId, request.getURI(), scenarioName, responseBody);
         }
     }
 }
