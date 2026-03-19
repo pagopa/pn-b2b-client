@@ -1,6 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -30,8 +32,8 @@ public class RestTemplateConfiguration {
     @Bean(destroyMethod = "shutdown")
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(200);
-        pooling.setDefaultMaxPerRoute(100);
+        pooling.setMaxTotal(500);
+        pooling.setDefaultMaxPerRoute(400);
         pooling.setValidateAfterInactivity(5000);
         return pooling;
     }
@@ -40,17 +42,38 @@ public class RestTemplateConfiguration {
     // HTTP CLIENT
     // =========================
     @Bean
-    public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager pooling) {
+    public HttpRequestRetryHandler httpRequestRetryHandler() {
+        return (exception, executionCount, context) -> {
+            // Retry solo se il pool è pieno
+            if (exception instanceof ConnectionPoolTimeoutException) {
+                if (executionCount <= 10) { // max 10 tentativi
+                    try {
+                        Thread.sleep(100L * executionCount);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
+    @Bean
+    public CloseableHttpClient httpClient(
+            PoolingHttpClientConnectionManager pooling,
+            HttpRequestRetryHandler retryHandler) {
+
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(3000)
+                .setConnectionRequestTimeout(60000)
                 .setConnectTimeout(5000)
-                .setSocketTimeout(30000)
+                .setSocketTimeout(10000)
                 .build();
 
         return HttpClients.custom()
                 .setConnectionManager(pooling)
                 .setDefaultRequestConfig(requestConfig)
-                .setRetryHandler((exception, executionCount, context) -> false)
+                .setRetryHandler(retryHandler)
                 .setConnectionManagerShared(false)
                 .evictIdleConnections(30, TimeUnit.SECONDS)
                 .evictExpiredConnections()
@@ -63,23 +86,18 @@ public class RestTemplateConfiguration {
     @Bean(name = "customRestTemplate")
     @Primary
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-
         HttpComponentsClientHttpRequestFactory factory =
                 new HttpComponentsClientHttpRequestFactory(httpClient);
-
-        factory.setBufferRequestBody(false); // ✅ evita uso RAM inutile
-
+        factory.setBufferRequestBody(false); // riduce memoria
         RestTemplate restTemplate = new RestTemplate(factory);
-
         restTemplate.setInterceptors(
                 Collections.singletonList(new RequestAndTraceIdInterceptor())
         );
-
         return restTemplate;
     }
 
     // =========================
-    // INTERCEPTOR
+    // INTERCEPTOR LOG
     // =========================
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 
@@ -111,11 +129,9 @@ public class RestTemplateConfiguration {
                 try {
                     statusCode = response.getStatusCode().toString();
                     List<String> traceIds = response.getHeaders().get(TRACE_ID_RESPONSE_HEADER_NAME);
-
                     if (traceIds != null && !traceIds.isEmpty()) {
                         traceId = traceIds.get(0);
                     }
-
                 } catch (Exception e) {
                     statusCode = "CONNECTION_LOST";
                 }
