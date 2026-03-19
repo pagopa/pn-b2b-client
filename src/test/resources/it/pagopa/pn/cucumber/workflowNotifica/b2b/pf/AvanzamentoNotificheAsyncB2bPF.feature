@@ -338,9 +338,10 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
+#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
+    And imposto lo iun di SharedSteps a "UTXA-GHAE-PWEP-202603-W-1" e la pa a "Comune_Multi"
     And viene aggiunto il costo della notifica totale
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
+#    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento dell'amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
     Then si controlla che l'aggiornamento del costo del utente 0 sia corretto

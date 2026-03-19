@@ -5,7 +5,6 @@ import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -17,8 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -26,8 +25,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -35,117 +35,106 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-        @Bean
-        public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
-            PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-            pooling.setMaxTotal(500);
-            pooling.setDefaultMaxPerRoute(200);
-            return pooling;
-        }
+    @Bean
+    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
+        PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
+        // Se hai molti test in parallelo che puntano allo stesso host (es. API Test),
+        // MaxTotal e DefaultMaxPerRoute devono essere alti e simili.
+        pooling.setMaxTotal(1000);
+        pooling.setDefaultMaxPerRoute(1000);
+        return pooling;
+    }
 
-        @Bean
-        public HttpRequestRetryHandler httpRequestRetryHandler() {
-            return (exception, executionCount, context) -> {
-                if (exception instanceof ConnectionPoolTimeoutException) {
-                    return false;
+    @Bean
+    public HttpRequestRetryHandler httpRequestRetryHandler() {
+        return (exception, executionCount, context) -> {
+            if (executionCount > 3) return false;
+            if (exception instanceof NoHttpResponseException || exception instanceof ConnectTimeoutException) {
+                try {
+                    Thread.sleep(500L * executionCount);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
+                return true;
+            }
+            return false;
+        };
+    }
 
-                if (executionCount > 2) {
-                    return false;
-                }
+    @Bean
+    public CloseableHttpClient httpClient(
+            PoolingHttpClientConnectionManager pooling,
+            HttpRequestRetryHandler retryHandler) {
 
-                if (exception instanceof NoHttpResponseException ||
-                        exception instanceof ConnectTimeoutException) {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(60000) // Tempo max attesa per avere una connessione dal pool
+                .setConnectTimeout(10000)
+                .setSocketTimeout(60000)
+                .build();
 
-                    try {
-                        Thread.sleep(200L * executionCount);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                    return true;
-                }
+        return HttpClients.custom()
+                .setConnectionManager(pooling)
+                .setDefaultRequestConfig(requestConfig)
+                .setRetryHandler(retryHandler) // RIATTIVATO
+                .evictIdleConnections(90, TimeUnit.SECONDS) // Pulisce connessioni morte
+                .build();
+    }
 
-                return false;
-            };
-        }
+    @Bean(name = "customRestTemplate")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Primary
+    public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+        HttpComponentsClientHttpRequestFactory baseFactory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
 
-        @Bean
-        public CloseableHttpClient httpClient(
-                PoolingHttpClientConnectionManager pooling,
-                HttpRequestRetryHandler retryHandler) {
+        // CRITICO: Il Buffering permette di leggere la risposta nell'intercettore
+        // SENZA chiudere la connessione per il resto del codice.
+        BufferingClientHttpRequestFactory bufferingFactory =
+                new BufferingClientHttpRequestFactory(baseFactory);
 
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectionRequestTimeout(60000)
-                    .setConnectTimeout(5000)
-                    .setSocketTimeout(60000)
-                    .build();
+        RestTemplate restTemplate = new RestTemplate(bufferingFactory);
+        restTemplate.setInterceptors(Collections.singletonList(new RequestAndTraceIdInterceptor()));
 
-            return HttpClients.custom()
-                    .setConnectionManager(pooling)
-                    .setDefaultRequestConfig(requestConfig)
-//                    .setRetryHandler(retryHandler)
-                    .disableAutomaticRetries()
-//                    .evictIdleConnections(30, TimeUnit.SECONDS)
-                    .build();
-        }
-
-        @Bean(name = "customRestTemplate")
-        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @Primary
-        public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-
-            HttpComponentsClientHttpRequestFactory factory =
-                    new HttpComponentsClientHttpRequestFactory(httpClient);
-
-            RestTemplate restTemplate = new RestTemplate(factory);
-
-            List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-            interceptors.add(new RequestAndTraceIdInterceptor());
-            restTemplate.setInterceptors(interceptors);
-
-            return restTemplate;
-        }
+        return restTemplate;
+    }
 
 
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
-
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
-
-        public final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
+        private static final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
 
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-
-            ClientHttpResponse response = execution.execute(request, body);
-
-            doLog(request, response);
-
-            return response;
-        }
-
-        private void doLog(HttpRequest request, ClientHttpResponse response) {
-            String httpMethod = request.getMethodValue();
-            String requestUrl = request.getURI().toString();
-            String traceId = getTraceIdFromHttpResponse(response);
-
-            String scenarioName = MDC.get(CUCUMBER_SCENARIO_NAME_MDC_ENTRY);
-            log.info("Request TraceId, method, url, scenario: [{}, {}, {}, {}]", traceId, httpMethod, requestUrl, scenarioName);
-        }
-
-        private String getTraceIdFromHttpResponse(ClientHttpResponse response) {
-            HttpHeaders responseHeaders = response.getHeaders();
-            List<String> traceIdHeaderValues = responseHeaders.get(TRACE_ID_RESPONSE_HEADER_NAME);
-            return getFirstOrNull(traceIdHeaderValues);
-        }
-
-        private String getFirstOrNull(List<String> list) {
-            String result;
-            if (list != null && !list.isEmpty()) {
-                result = list.get(0);
-            } else {
-                result = null;
+            long startTime = System.currentTimeMillis();
+            ClientHttpResponse response = null;
+            try {
+                response = execution.execute(request, body);
+                return response;
+            } finally {
+                // Logghiamo SEMPRE, sia in caso di successo che di eccezione
+                doLog(request, response, System.currentTimeMillis() - startTime);
             }
-            return result;
+        }
+
+        private void doLog(HttpRequest request, ClientHttpResponse response, long duration) {
+            String scenarioName = MDC.get(CUCUMBER_SCENARIO_NAME_MDC_ENTRY);
+            String traceId = "N/A";
+            String statusCode = "ERROR/TIMEOUT";
+
+            if (response != null) {
+                try {
+                    statusCode = response.getStatusCode().toString();
+                    List<String> traceIds = response.getHeaders().get(TRACE_ID_RESPONSE_HEADER_NAME);
+                    if (traceIds != null && !traceIds.isEmpty()) {
+                        traceId = traceIds.get(0);
+                    }
+                } catch (IOException e) {
+                    log.warn("Could not read response status/headers", e);
+                }
+            }
+
+            log.info("HTTP {} | Status: {} | Time: {}ms | TraceId: {} | URL: {} | Scenario: {}",
+                    request.getMethod(), statusCode, duration, traceId, request.getURI(), scenarioName);
         }
     }
 }
