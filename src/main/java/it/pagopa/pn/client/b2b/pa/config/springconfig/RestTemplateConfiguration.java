@@ -12,9 +12,11 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -26,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -37,8 +38,8 @@ public class RestTemplateConfiguration {
         @Bean
         public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
             PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-            pooling.setMaxTotal(400);
-            pooling.setDefaultMaxPerRoute(400);
+            pooling.setMaxTotal(500);
+            pooling.setDefaultMaxPerRoute(100);
             return pooling;
         }
 
@@ -76,18 +77,20 @@ public class RestTemplateConfiguration {
             RequestConfig requestConfig = RequestConfig.custom()
                     .setConnectionRequestTimeout(10000)
                     .setConnectTimeout(5000)
-                    .setSocketTimeout(30000)
+                    .setSocketTimeout(60000)
                     .build();
 
             return HttpClients.custom()
                     .setConnectionManager(pooling)
                     .setDefaultRequestConfig(requestConfig)
-                    .setRetryHandler(retryHandler)
-                    .evictIdleConnections(30, TimeUnit.SECONDS)
+//                    .setRetryHandler(retryHandler)
+                    .disableAutomaticRetries()
+//                    .evictIdleConnections(30, TimeUnit.SECONDS)
                     .build();
         }
 
         @Bean(name = "customRestTemplate")
+        @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @Primary
         public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
 
