@@ -39,7 +39,7 @@ public class RestTemplateConfiguration {
         public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
             PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
             pooling.setMaxTotal(500);
-            pooling.setDefaultMaxPerRoute(100);
+            pooling.setDefaultMaxPerRoute(200);
             return pooling;
         }
 
@@ -75,7 +75,7 @@ public class RestTemplateConfiguration {
                 HttpRequestRetryHandler retryHandler) {
 
             RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectionRequestTimeout(10000)
+                    .setConnectionRequestTimeout(60000)
                     .setConnectTimeout(5000)
                     .setSocketTimeout(60000)
                     .build();
