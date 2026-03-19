@@ -23,6 +23,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
@@ -141,8 +142,8 @@ public class DelegheTemporaneeSteps {
         }
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
-                    taxId, null, null, null, null,
-                    null, null, lollipopUserId, null, null,
+                    taxId, null, null, "PublicKey", null,
+                    null, "AuthJwt", lollipopUserId, null, null,
                     mandateCreationRequest);
             checkMandateCreation();
         } catch (HttpStatusCodeException e) {
@@ -151,7 +152,7 @@ public class DelegheTemporaneeSteps {
     }
 
     private void setQrCode(String inputParamsType) {
-        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        String environment = B2bUtils.getEnvironment(sharedSteps.getContext());
         String environmentPath;
         switch (environment) {
             case "dev" -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
@@ -222,10 +223,10 @@ public class DelegheTemporaneeSteps {
                     mandateId,
                     null,
                     null,
+                    "PublicKey",
                     null,
                     null,
-                    null,
-                    null,
+                    "AuthJwt",
                     lollipopUserId,
                     null,
                     null,

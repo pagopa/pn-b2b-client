@@ -140,10 +140,10 @@ public class ApiServiceDeskSteps {
         }
     }
 
-     @And("si verifica che lo stato della notifica recuperata sia: {string}")
-     public void verifyNotificationStatus(String expectedStatus) {
+    @And("si verifica che lo stato della notifica recuperata sia: {string}")
+    public void verifyNotificationStatus(String expectedStatus) {
         Assertions.assertEquals(timelineResponse.getIunStatus().getValue(), expectedStatus);
-     }
+    }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
     public void createVerifyUnreachableRequest(String cf) {
@@ -1136,7 +1136,7 @@ public class ApiServiceDeskSteps {
         log.info("ticketOperationId:" + ticketOperationId);
         createActOperationRequest.setTicketOperationId(ticketOperationId);
 
-        createActOperationRequest.setAddress(new ActDigitalAddress().address("test@test.it").type("COURTESY"));
+        createActOperationRequest.setAddress(new ActDigitalAddress().address("test@test.it").type(ActDigitalAddress.TypeEnum.valueOf("COURTESY")));
 
         String ticketDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
         createActOperationRequest.setTicketDate(ticketDate);
@@ -1165,7 +1165,7 @@ public class ApiServiceDeskSteps {
     }
 
     private void createPreUploadVideoRequestDocumentSteps(String name) throws Exception {
-        notificationDocument = newDocument("classpath:/"+name);
+        notificationDocument = newDocument("classpath:/" + name);
         String resourceName = notificationDocument.getRef().getKey();
         log.info("Resource name:" + resourceName);
         String sha256 = B2bUtils.computeSha256(ctx, resourceName);
@@ -1468,7 +1468,9 @@ public class ApiServiceDeskSteps {
 
     public String setPaID(String paId) {
         String paIDSearch;
-        if (paId == null) return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();;
+        if (paId == null)
+            return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();
+        ;
         return switch (paId.toUpperCase()) {
             case "VUOTO" -> "";
             case "NO_SET" -> {
@@ -1635,7 +1637,7 @@ public class ApiServiceDeskSteps {
 
         if (addressType != null && addressValue != null) {
             ActDigitalAddress address = new ActDigitalAddress();
-            address.setType(addressType);
+            address.setType(ActDigitalAddress.TypeEnum.valueOf(addressType));
             address.setAddress(addressValue);
             request.setAddress(address);
         } else {
@@ -1660,7 +1662,7 @@ public class ApiServiceDeskSteps {
                 this.httpResponse = ipServiceDeskClient.createActOperationWithHttpInfo(createActOperationRequest);
                 operationsResponse = maybeBody(httpResponse.body(), OperationsResponse.class).orElse(null);
 
-                if(operationsResponse != null ){
+                if (operationsResponse != null) {
                     Assertions.assertNotNull(operationsResponse.getOperationId(), "OperationId nullo nella response di CREATE_ACT_OPERATION");
                     operationId = operationsResponse.getOperationId();
                     log.info("Operation id:" + operationId);
@@ -1706,7 +1708,7 @@ public class ApiServiceDeskSteps {
 
     public void sendNotification() {
         String iun = sharedSteps.getNotificationIun();
-        if(iun != null) return;
+        if (iun != null) return;
 
         // viene generata una nuova notifica
         Map<String, String> data = new HashMap<>();
@@ -1735,7 +1737,7 @@ public class ApiServiceDeskSteps {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             invokeApi("GET_ACT_OPERATION_STATUS");
             System.out.println("Stato attuale: " + statusOperationResponse.toUpperCase());
-            if(status.equalsIgnoreCase(statusOperationResponse.toUpperCase())) return;
+            if (status.equalsIgnoreCase(statusOperationResponse.toUpperCase())) return;
             Thread.sleep(sleepMillis);
         }
 
