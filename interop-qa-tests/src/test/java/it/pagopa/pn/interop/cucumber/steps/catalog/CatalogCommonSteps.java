@@ -14,6 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 
@@ -47,16 +48,12 @@ public class CatalogCommonSteps {
         createEServiceWithDescriptorInState(tenantType, descriptorState);
     }
 
-    @Given("{string} ha già creato un e-service in stato {string}")
-    public void createEservice(String tenantType, String descriptorState) {
-        if(descriptorState.equals(EServiceDescriptorState.ARCHIVED.getValue())) {
-            /* NOTE 09/03/2026: il passaggio dell'e-service (non di un suo descriptor, dell'intero e-service)
-            * in stato ARCHIVED non è al momento supportato (rif. https://pagopaspa.slack.com/archives/C06D24MANNN/p1772816415479329).
-            * Quando sarà supportato, si prevede di sostituire il lancio dell'eccezione con l'implementazione effettiva.  */
-            throw new UnsupportedOperationException("L'archiviazione di un e-service nella sua interezza non è al momento supportata dalla piattaforma Interop");
-        } else {
-            createEServiceWithDescriptorInState(tenantType, descriptorState);
-        }
+    @Given("{string} ha già creato un e-service in stato {eServiceState}")
+    public void createEservice(String tenantType, EServiceState eServiceState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        EServiceDescriptor eServiceDescriptor = this.dataPreparationService.createEServiceInState(new EServiceSeed(), new UpdateEServiceDescriptorSeed(), eServiceState);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
 
     private void createEServiceWithDescriptorInState(String tenantType, String descriptorState) {
