@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.attribute;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.domain.TenantType;
@@ -13,12 +13,10 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
+import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.client.HttpClientErrorException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
+import java.util.*;
 
 // TODO riformulare così da rimuovere gli inutilizzati parametri "tenantType"
 @Slf4j
@@ -29,6 +27,7 @@ public class AttributeCommonSteps {
     private final BFFDataPreparationService dataPreparationService;
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
+    private final EServiceDescriptorUtils eServiceDescriptorUtils;
 
     public AttributeCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
@@ -40,6 +39,10 @@ public class AttributeCommonSteps {
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.identityService = sharedStepsContext.getIdentityService();
+        this.eServiceDescriptorUtils = new EServiceDescriptorUtils(
+            this.clientTokenConfigurator,
+            this.sharedStepsContext
+        );
     }
 
     @Given("{tenantType} ha già creato {int} attribut(i)(o) {attributeKind}")
@@ -125,7 +128,7 @@ public class AttributeCommonSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        var eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
+        ProducerEServiceDescriptor eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
 
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
             .certified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified()))
@@ -144,25 +147,7 @@ public class AttributeCommonSteps {
             );
         }
 
-        if (eServiceDescriptor.getState() == EServiceDescriptorState.PUBLISHED) {
-            httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateDescriptorAttributes(eServiceId, descriptorId, attributesSeed)
-            );
-        } else if (eServiceDescriptor.getState() == EServiceDescriptorState.DRAFT) {
-            UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed()
-                .description(eServiceDescriptor.getDescription())
-                .audience(eServiceDescriptor.getAudience())
-                .voucherLifespan(eServiceDescriptor.getVoucherLifespan())
-                .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
-                .dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
-                .agreementApprovalPolicy(eServiceDescriptor.getAgreementApprovalPolicy())
-                .attributes(attributesSeed);
-            httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateDraftDescriptor(eServiceId, descriptorId, seed)
-            );
-        } else {
-            throw new IllegalStateException("Stato dell'e-service non gestito: " + eServiceDescriptor.getState());
-        }
+        eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
 
         if (httpCallExecutor.getResponseStatus().isError()) {
             log.warn("Errore durante l'associazione dell'attributo {} all'e-service {}: {}", attributeType, eServiceId, httpCallExecutor.getResponse());
@@ -195,5 +180,134 @@ public class AttributeCommonSteps {
             5,
             2
         );
+    }
+
+    @Given("l'utente tenta di dichiarare due volte lo stesso attributo certificato ognuno con un dailyCallsPerConsumer differente")
+    public void duplicateCertifiedAttrWithDifferentDailyCallsPerConsumer() {
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        ProducerEServiceDescriptor eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
+
+        if ((eServiceDescriptor.getAttributes().getCertified().isEmpty()) || (eServiceDescriptor.getAttributes().getCertified().get(0).isEmpty())) {
+            throw new IllegalStateException("L'e-service non ha attributi certificati");
+        }
+        DescriptorAttribute existingCertifiedAttr = eServiceDescriptor.getAttributes().getCertified().get(0).get(0);
+
+        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
+            .certified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified()))
+            .declared(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared()))
+            .verified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified()));
+
+        // TODO Threshold
+        // int newDailyCallsPerConsumer = existingCertifiedAttr.getDailyCallsPerConsumer() == null ? 1 : existingCertifiedAttr.getDailyCallsPerConsumer() + 1;
+
+        attributesSeed.getCertified().get(0).add(
+            new DescriptorAttributeSeed()
+                .id(existingCertifiedAttr.getId())
+                .explicitAttributeVerification(existingCertifiedAttr.getExplicitAttributeVerification())
+                // TODO Threshold
+                // .dailyCallsPerConsumer(newDailyCallsPerConsumer)
+        );
+
+        eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
+    }
+
+    @Given("l'utente tenta di duplicare l'attributo {attributeKind} {int}-esimo nel gruppo {int}-esimo")
+    public void duplicateAttributeInGroup(AttributeKind attributeKind, int attributeIndex, int groupIndex) {
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        ProducerEServiceDescriptor eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
+
+        List<List<DescriptorAttribute>> existingAttributeGroups = switch (attributeKind) {
+            case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
+            case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
+            case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
+        };
+
+        if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(groupIndex).isEmpty())) {
+            throw new IllegalStateException("L'e-service non ha attributi per il gruppo");
+        }
+
+        DescriptorAttribute existingAttr = existingAttributeGroups.get(groupIndex).get(attributeIndex);
+
+        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
+            .certified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified()))
+            .declared(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared()))
+            .verified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified()));
+
+        DescriptorAttributeSeed attributeSeed = new DescriptorAttributeSeed()
+            .id(existingAttr.getId())
+            .explicitAttributeVerification(existingAttr.getExplicitAttributeVerification());
+
+        switch (attributeKind) {
+            case CERTIFIED -> {
+                attributesSeed.getCertified().get(groupIndex).add(attributeSeed);
+            }
+            case DECLARED -> {
+                attributesSeed.getDeclared().get(groupIndex).add(attributeSeed);
+            }
+            case VERIFIED -> {
+                attributesSeed.getVerified().get(groupIndex).add(attributeSeed);
+            }
+        }
+
+        eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
+    }
+
+    @Given("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo e il gruppo {int}-esimo creato")
+    public void addThresholdToCertifiedAttribute(int dailyCallsPerConsumer, AttributeKind attributeKind, int attributeIndex, int groupIndex) {
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        ProducerEServiceDescriptor eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
+
+        List<List<DescriptorAttribute>> existingAttributeGroups = switch (attributeKind) {
+            case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
+            case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
+            case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
+        };
+
+        DescriptorAttribute attr = existingAttributeGroups.get(groupIndex).get(attributeIndex);
+        // TODO Threshold
+        // attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+
+        List<List<DescriptorAttributeSeed>> certifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
+        List<List<DescriptorAttributeSeed>> declaredAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared());
+        List<List<DescriptorAttributeSeed>> verifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified());
+
+        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
+                .certified(certifiedAttributesSeed)
+                .declared(declaredAttributesSeed)
+                .verified(verifiedAttributesSeed);
+
+        eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
+
+        Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorAttribute(eServiceId, descriptorId, attr.getId());
+
+        Assertions.assertTrue(certAttr.isPresent());
+        Assertions.assertEquals(attr.getId(), certAttr.get().getId());
+        // TODO Threshold
+        // Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
+    }
+
+    @Given("i residui relativi alle dailyCalls associati alla finalità sono pari a:")
+    public void checkRemainingDailyCalls(DataTable table) {
+
+        Map<String, String> expectedData = table.asMap(String.class, String.class);
+        int expectedRemainingDailyCallsPerConsumer = Integer.parseInt(expectedData.get("remainingDailyCallsPerConsumer"));
+        int expectedRemainingDailyCallsTotals = Integer.parseInt(expectedData.get("remainingDailyCallsTotals"));
+
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+
+        // TODO Threshold
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeId)
+        );
+        RemainingDailyCallsResponse response = (RemainingDailyCallsResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
+
+        Assertions.assertEquals(expectedRemainingDailyCallsPerConsumer, response.getRemainingDailyCallsPerConsumer());
+        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
     }
 }
