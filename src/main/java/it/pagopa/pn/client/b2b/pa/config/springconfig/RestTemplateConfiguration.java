@@ -77,7 +77,7 @@ public class RestTemplateConfiguration {
     }
 
     @Bean(name = "customRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @Primary
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
         HttpComponentsClientHttpRequestFactory baseFactory =
