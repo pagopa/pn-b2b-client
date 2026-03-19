@@ -1,37 +1,12 @@
 package it.pagopa.interop.purpose.service.impl;
 
-import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
-import static java.util.Objects.isNull;
-
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposeTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatorPurposeTemplates;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorsPurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.LinkEServiceToPurposeTemplateRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.List;
-import java.util.UUID;
-import javax.annotation.Nullable;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -39,6 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+import static java.util.Objects.isNull;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -48,10 +33,12 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     private final it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposeTemplatesApi m2mPurposeTemplatesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
+    private final String m2mBasePath;
 
     public PurposeTemplateClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
+        this.m2mBasePath = interopClientConfigs.getM2mBaseUrl();
         this.purposesTemplateApi = new PurposeTemplatesApi(createApiClient("dummyBearer"));
         this.m2mPurposeTemplatesApi = new it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposeTemplatesApi(createM2MApiClient("dummyBearer"));
     }
@@ -65,7 +52,7 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
 
     private it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient createM2MApiClient(String bearerToken) {
         it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient apiClient = new it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient(restTemplate);
-        apiClient.setBasePath(basePath);
+        apiClient.setBasePath(m2mBasePath);
         apiClient.setBearerToken(bearerToken);
         return apiClient;
     }
@@ -73,6 +60,7 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     @Override
     public void setBearerToken(String bearerToken) {
         this.purposesTemplateApi.setApiClient(createApiClient(bearerToken));
+        this.m2mPurposeTemplatesApi.setApiClient(createM2MApiClient(bearerToken));
     }
 
     @Override
@@ -189,10 +177,6 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
 
     @Override
     public PurposeTemplates getPurposeTemplates(Integer offset, Integer limit, String purposeTitle, List<UUID> creatorIds, List<UUID> eserviceIds, List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> states, it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKind, Boolean handlesPersonalData) {
-        return performOperation(
-                () -> m2mPurposeTemplatesApi.getPurposeTemplatesWithHttpInfo(offset, limit, purposeTitle, creatorIds, eserviceIds, states, targetTenantKind, handlesPersonalData))
-                .orElseThrow(() -> new RuntimeException(
-                        "Errore nel recupero purpose templates (response non 2xx o body nullo)"
-                ));
+        return m2mPurposeTemplatesApi.getPurposeTemplates(offset, limit, purposeTitle, creatorIds, eserviceIds, states, targetTenantKind, handlesPersonalData);
     }
 }
