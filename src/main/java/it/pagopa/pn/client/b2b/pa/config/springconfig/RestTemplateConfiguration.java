@@ -27,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -38,8 +37,6 @@ public class RestTemplateConfiguration {
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        // Se hai molti test in parallelo che puntano allo stesso host (es. API Test),
-        // MaxTotal e DefaultMaxPerRoute devono essere alti e simili.
         pooling.setMaxTotal(1000);
         pooling.setDefaultMaxPerRoute(1000);
         return pooling;
@@ -75,8 +72,7 @@ public class RestTemplateConfiguration {
         return HttpClients.custom()
                 .setConnectionManager(pooling)
                 .setDefaultRequestConfig(requestConfig)
-                .setRetryHandler(retryHandler) // RIATTIVATO
-                .evictIdleConnections(90, TimeUnit.SECONDS) // Pulisce connessioni morte
+                .setRetryHandler(retryHandler)
                 .build();
     }
 
@@ -87,8 +83,6 @@ public class RestTemplateConfiguration {
         HttpComponentsClientHttpRequestFactory baseFactory =
                 new HttpComponentsClientHttpRequestFactory(httpClient);
 
-        // CRITICO: Il Buffering permette di leggere la risposta nell'intercettore
-        // SENZA chiudere la connessione per il resto del codice.
         BufferingClientHttpRequestFactory bufferingFactory =
                 new BufferingClientHttpRequestFactory(baseFactory);
 
@@ -111,7 +105,6 @@ public class RestTemplateConfiguration {
                 response = execution.execute(request, body);
                 return response;
             } finally {
-                // Logghiamo SEMPRE, sia in caso di successo che di eccezione
                 doLog(request, response, System.currentTimeMillis() - startTime);
             }
         }
