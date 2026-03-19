@@ -147,6 +147,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -1326,12 +1327,13 @@ public class SharedSteps {
 
     public static void threadWait(int wait) {
         try {
-            TimeUnit.MILLISECONDS.sleep(wait);
+            await().atMost(wait, TimeUnit.MILLISECONDS);
+//            TimeUnit.MILLISECONDS.sleep(wait);
         } catch (RuntimeException exception) {
             log.error("Await error exception");
             throw exception;
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
         }
     }
 
