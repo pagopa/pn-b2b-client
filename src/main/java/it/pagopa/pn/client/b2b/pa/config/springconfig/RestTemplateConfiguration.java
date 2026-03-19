@@ -1,23 +1,18 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
 
-import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -27,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -34,11 +30,11 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(600);
-        pooling.setDefaultMaxPerRoute(600);
+        pooling.setMaxTotal(500);
+        pooling.setDefaultMaxPerRoute(500);
         return pooling;
     }
 
@@ -46,7 +42,9 @@ public class RestTemplateConfiguration {
     public HttpRequestRetryHandler httpRequestRetryHandler() {
         return (exception, executionCount, context) -> {
             if (executionCount > 3) return false;
-            if (exception instanceof NoHttpResponseException || exception instanceof ConnectTimeoutException) {
+            if (exception instanceof org.apache.http.NoHttpResponseException ||
+                    exception instanceof org.apache.http.conn.ConnectTimeoutException ||
+                    exception instanceof java.net.SocketException) {
                 try {
                     Thread.sleep(500L * executionCount);
                 } catch (InterruptedException e) {
@@ -64,7 +62,7 @@ public class RestTemplateConfiguration {
             HttpRequestRetryHandler retryHandler) {
 
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(60000) // Tempo max attesa per avere una connessione dal pool
+                .setConnectionRequestTimeout(60000)
                 .setConnectTimeout(10000)
                 .setSocketTimeout(60000)
                 .build();
@@ -73,25 +71,23 @@ public class RestTemplateConfiguration {
                 .setConnectionManager(pooling)
                 .setDefaultRequestConfig(requestConfig)
                 .setRetryHandler(retryHandler)
+                // CRUCIALE: Libera RAM chiudendo connessioni inattive e gestendo il pool in esclusiva
+                .setConnectionManagerShared(false)
+                .evictIdleConnections(10, TimeUnit.SECONDS)
                 .build();
     }
 
     @Bean(name = "customRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     @Primary
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-        HttpComponentsClientHttpRequestFactory baseFactory =
+        HttpComponentsClientHttpRequestFactory factory =
                 new HttpComponentsClientHttpRequestFactory(httpClient);
 
-        BufferingClientHttpRequestFactory bufferingFactory =
-                new BufferingClientHttpRequestFactory(baseFactory);
-
-        RestTemplate restTemplate = new RestTemplate(bufferingFactory);
+        RestTemplate restTemplate = new RestTemplate(factory);
         restTemplate.setInterceptors(Collections.singletonList(new RequestAndTraceIdInterceptor()));
 
         return restTemplate;
     }
-
 
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
@@ -125,13 +121,9 @@ public class RestTemplateConfiguration {
                     statusCode = "CONNECTION_LOST";
                 }
             }
+
             log.info("HTTP {} | Status: {} | Time: {}ms | TraceId: {} | URL: {} | Scenario: {}",
-                    request.getMethod(),
-                    statusCode,
-                    duration,
-                    traceId,
-                    request.getURI(),
-                    scenarioName);
+                    request.getMethod(), statusCode, duration, traceId, request.getURI(), scenarioName);
         }
     }
 }
