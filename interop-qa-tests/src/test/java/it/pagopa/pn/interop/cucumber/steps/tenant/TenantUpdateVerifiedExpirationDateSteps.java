@@ -32,12 +32,14 @@ public class TenantUpdateVerifiedExpirationDateSteps {
 
     @Given("{string} ha già verificato l'attributo verificato a {string} con una data di scadenza nel futuro")
     public void verifiedTheVerifyAttributeWithFutureExpirationDate(String verifierTenantType, String targetTenantType) {
-        LocalDate date = LocalDate.now().plusDays(7);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(verifierTenantType, null));
+        OffsetDateTime date = OffsetDateTime.now().plusDays(7);
         UUID verifierId = identityService.getOrganizationId(verifierTenantType);
         UUID tenantId = identityService.getOrganizationId(targetTenantType);
 
         dataPreparationService.assignVerifiedAttributeToTenant(tenantId, verifierId,
                 sharedStepsContext.getAttributeCommonContext().getAttributeId(), sharedStepsContext.getAgreementId(), date.toString());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
     @When("l'utente richiede l'aggiornamento di quell'attributo di {string} con una data di scadenza nel futuro")
