@@ -39,10 +39,13 @@ public class RestTemplateConfiguration {
     @Bean
     public HttpRequestRetryHandler httpRequestRetryHandler() {
         return (exception, executionCount, context) -> {
-            if (executionCount > 3) return false;
+            if (executionCount > 10) return false;
+
             if (exception instanceof org.apache.http.NoHttpResponseException ||
                     exception instanceof org.apache.http.conn.ConnectTimeoutException ||
-                    exception instanceof java.net.SocketException) {
+                    exception instanceof java.net.SocketException ||
+                    exception instanceof org.apache.http.ConnectionClosedException ||
+                    exception instanceof java.io.EOFException) {
                 try {
                     Thread.sleep(500L * executionCount);
                 } catch (InterruptedException e) {
@@ -50,6 +53,7 @@ public class RestTemplateConfiguration {
                 }
                 return true;
             }
+
             return false;
         };
     }
@@ -60,9 +64,9 @@ public class RestTemplateConfiguration {
             HttpRequestRetryHandler retryHandler) {
 
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(60000)
-                .setConnectTimeout(10000)
-                .setSocketTimeout(60000)
+                .setConnectionRequestTimeout(120_000)
+                .setConnectTimeout(15_000)
+                .setSocketTimeout(120_000)
                 .build();
 
         return HttpClients.custom()
@@ -70,7 +74,7 @@ public class RestTemplateConfiguration {
                 .setDefaultRequestConfig(requestConfig)
                 .setRetryHandler(retryHandler)
                 .setConnectionManagerShared(false)
-                .evictIdleConnections(10, TimeUnit.SECONDS)
+                .evictIdleConnections(90, TimeUnit.SECONDS)
                 .build();
     }
 
