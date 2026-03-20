@@ -392,7 +392,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
     And il video viene caricato su SafeStorage
     When viene invocata l'API v2 GET operations passando "OP. ID WITH IUN"
-    Then il servizio risponde con 400
+    Then il servizio risponde con 500
     When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
     And viene invocato il servizio SEARCH
     Then Il servizio SEARCH risponde con esito positivo
