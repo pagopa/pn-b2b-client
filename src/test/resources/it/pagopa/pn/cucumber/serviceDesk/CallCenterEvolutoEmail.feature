@@ -271,9 +271,6 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con <statusCodePost>
     And se la chiamata al servizio ha avuto successo
-    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
-    And viene invocato il servizio SEARCH
-    Then Il servizio SEARCH risponde con esito positivo
     When viene invocata l'API v2 GET operations passando "VALID OP. ID"
     Then il servizio risponde con 200
     And il campo operationStatus della response è valorizzato con "<operationStatusPreVideoUpload>"
@@ -286,6 +283,10 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     Then il servizio risponde con <statusCodeGet>
     And se la chiamata al servizio ha avuto successo
     Then il campo operationStatus della response è valorizzato con "<operationStatus>"
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
+    And il campo "iuns" risulta popolato correttamente, e il campo senderPaDescription è "Comune di palermo"
     Examples:
       | notificationNumber | iunListType         | statusCodePost | operationStatusPreVideoUpload | getOperationIdType | statusCodeGet | operationStatus |
       | 1                  | DATI VALIDI         | 200            | CREATING                      | VALID OP. ID       | 200           | OK              |
@@ -320,9 +321,6 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con 200
     And se la chiamata al servizio ha avuto successo
-    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
-    And viene invocato il servizio SEARCH
-    Then Il servizio SEARCH risponde con esito positivo
     When viene invocata l'API v2 GET operations passando "VALID OP. ID"
     Then il servizio risponde con 200
     And il campo operationStatus della response è valorizzato con "CREATING"
@@ -335,6 +333,10 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     Then il servizio risponde con 200
     And se la chiamata al servizio ha avuto successo
     Then il campo operationStatus della response è valorizzato con "OK"
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
+    And il campo "iuns" risulta popolato correttamente, e il campo senderPaDescription è "Comune di palermo"
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [ACT_OPERATION_V2_ONLY_INEXISTENT_IUNS] Creazione di un'act operation con soli IUN inesistenti. Tramite GET, verifica che abbia lo status impostato su KO
@@ -351,13 +353,13 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con 200
     And se la chiamata al servizio ha avuto successo
-    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
-    And viene invocato il servizio SEARCH
-    Then Il servizio SEARCH risponde con esito positivo
     When viene invocata l'API v2 GET operations passando "VALID OP. ID"
     Then il servizio risponde con 200
     And se la chiamata al servizio ha avuto successo
     Then il campo operationStatus della response è valorizzato con "KO"
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario: [GET_ACT_OPERATION_V2_WITH_SUBOPERATION_IUN] Creazione di un'act operation e successiva invocazione della get V2 passando un'idOperation contenente lo IUN di una specifica subOperation
@@ -381,9 +383,6 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'api "CREATE_ACT_OPERATION V2"
     Then il servizio risponde con 200
     And se la chiamata al servizio ha avuto successo
-    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
-    And viene invocato il servizio SEARCH
-    Then Il servizio SEARCH risponde con esito positivo
     When viene invocata l'API v2 GET operations passando "VALID OP. ID"
     Then il servizio risponde con 200
     And il campo operationStatus della response è valorizzato con "CREATING"
@@ -394,6 +393,9 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     And il video viene caricato su SafeStorage
     When viene invocata l'API v2 GET operations passando "OP. ID WITH IUN"
     Then il servizio risponde con 400
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
 
   @CallCenterEvolutoViaMail @CallCenterEvolutoV2
   Scenario Outline: [CREATE_ACT_OPERATION_V2_KO] Chiamata createActOperation V2 (controllo validazione campi)
@@ -452,3 +454,51 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
     When viene invocata l'API v2 GET operations passando "VALID OP. ID V1"
     Then il servizio risponde con 200
     And il campo operationStatus della response è valorizzato con "OK"
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
+
+  @CallCenterEvolutoV2
+  Scenario Outline: [ACT_OPERATION_BUG_VALIDATION_14813] Creazione di un actOperation relativa a una notifica i cui documenti risultano non disponibili e verifica della popolazione del campo uncompletedIuns
+    Given "Comune_Multi" recupera lato web PA una notifica inviata tra 180 e 150 giorni fa con destinatario Mario Gherkin
+    When viene popolata una richiesta di creazione Act operation "<actOperationVersion>" con i seguenti dati
+      | ticketId          | auto                      |
+      | iun               | auto                      |
+      | ticketOperationId | auto                      |
+      | taxId             | CLMCST42R12D969Z          |
+      | addressType       | EMAIL                     |
+      | addressValue      | matteo.sperati@dgsspa.com |
+      | ticketDate        | auto                      |
+      | vrDate            | auto                      |
+      | iunListType       | DATI VALIDI               |
+    And viene invocata l'api "<api>"
+    Then il servizio risponde con <creationStatusCode>
+    When viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO per il video "video_vuoto.mp4"
+    And viene invocata l'api "UPLOAD_VIDEO"
+    And il servizio risponde con 200
+    And la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    And il video viene caricato su SafeStorage
+    When viene invocata l'API v2 GET operations passando "VALID OP. ID V1"
+    Then il servizio risponde con 200
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
+    And il campo "uncompletedIuns" risulta popolato correttamente, e il campo senderPaDescription è "NOT PagoPA"
+    Examples:
+      | api                     | creationStatusCode | actOperationVersion |
+      | CREATE_ACT_OPERATION    | 201                | V1                  |
+      | CREATE_ACT_OPERATION V2 | 200                | V2                  |
+
+  @CallCenterEvolutoV2
+  Scenario: [OPERATION_BUG_VALIDATION_14813] Creazione di un'operation per invio analogico e verifica della popolazione dei campi iuns e uncompletedIuns
+    Given viene comunicato il nuovo indirizzo con "Cristoforo Colombo" "SIGN." "Via@ok_RS" "INTERNO 2" "80100" "NAPOLI" "XXX" "NA" "ITALIA"
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "CLMCST42R12D969Z"
+    When viene invocato il servizio CREATE_OPERATION
+    Then la risposta del servizio CREATE_OPERATION risponde con esito positivo
+    Given viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    When viene invocato il servizio UPLOAD VIDEO
+    Then la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    Then il video viene caricato su SafeStorage
+    When viene creata una nuova richiesta per invocare il servizio SEARCH per il "CLMCST42R12D969Z"
+    And viene invocato il servizio SEARCH
+    Then Il servizio SEARCH risponde con esito positivo
