@@ -5,12 +5,12 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class TenantUpdateVerifiedExpirationDateSteps {
@@ -43,7 +43,7 @@ public class TenantUpdateVerifiedExpirationDateSteps {
     @When("l'utente richiede l'aggiornamento di quell'attributo di {string} con una data di scadenza nel futuro")
     public void updateAttributeWithFutureExpirationDate(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        LocalDate date = LocalDate.now().plusDays(7);
+        OffsetDateTime date = OffsetDateTime.now().plusDays(7);
         UUID tenantId = identityService.getOrganizationId(tenantType);
 
         httpCallExecutor.performCall(
