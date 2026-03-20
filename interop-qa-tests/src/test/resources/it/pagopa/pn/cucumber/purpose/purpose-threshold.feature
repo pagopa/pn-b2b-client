@@ -5,7 +5,7 @@ Feature: Verifica soglie differenziate
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_1] Per la creazione di una finalità il sistema attribuisce la soglia di default se il fruitore non possiede nessun attributo certificato associato ad una soglia
     Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 2 attributo CERTIFIED
+    And PA2 ha già creato 2 attributi CERTIFIED
     And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
     And si ottiene status code 200
     And l'utente è un "admin" di "PA1"
@@ -20,7 +20,7 @@ Feature: Verifica soglie differenziate
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_2] Per la creazione di una finalità il sistema attribuisce la soglia maggiore degli attributi certificati
     Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 2 attributo CERTIFIED
+    And PA2 ha già creato 2 attributi CERTIFIED
     And l'utente assegna a "PA1" gli attributi certificati precedentemente creati
     And si ottiene status code 200
     And l'utente è un "admin" di "PA1"

@@ -156,7 +156,7 @@ Feature: Aggiornamento di un descrittore in bozza
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_8] Per un e-service in stato DRAFT non è possibile specificare due gruppi di attributi certificati dove in almeno uno è presente un valore invalido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA2"
-    Given due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
+    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
@@ -169,7 +169,7 @@ Feature: Aggiornamento di un descrittore in bozza
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_9] Per un e-service in stato DRAFT è possibile specificare due gruppi di attributi certificati dove in ognuno è presente un valore valido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA2"
-    Given due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
+    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
@@ -182,7 +182,7 @@ Feature: Aggiornamento di un descrittore in bozza
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_10] Per un e-service in stato DRAFT non è possibile specificare due gruppi di attributi certificati dove in almeno uno è presente un valore invalido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA2"
-    Given due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
+    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
