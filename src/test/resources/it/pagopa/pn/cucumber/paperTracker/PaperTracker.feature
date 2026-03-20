@@ -543,7 +543,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
 
   @paperTrackerARRunMode
-  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_6_FAIL] Si verifica che per la sequence OK-TimestampCorrected_AR vienga generato un errore di tipo DATE_ERROR con cause VALUES_NOT_MATCHING e che non ci siano eventi duplicati
+  Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_6_FAIL] Si verifica che per la sequence OK-TimestampCorrected_AR venga generato un errore di tipo DATE_ERROR con cause VALUES_NOT_MATCHING e che non ci siano eventi duplicati
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -555,7 +555,25 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B"
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK-TimestampCorrected_AR"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-13T15:12:56.837741793Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-13T15:12:54Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-13T15:12:49Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-13T15:12:44Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"d6117f58-950e-4e9c-8b8c-acdb90a8aec5\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
+
+
+  @paperTrackerARRunMode
+  Scenario: [PAPER_TRACKER_VERIFY_TIMELINE_7] Si verifica che per la sequence FAIL_FailureCauseCorrected_890 la notifica vada correttamente in REFINEMENT
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL_FailureCauseCorrected_890 |
+      | digitalDomicile         | NULL                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "FAIL_FailureCauseCorrected_890"
+    And si verifica che non ci siano errori per i trackingId richiesti

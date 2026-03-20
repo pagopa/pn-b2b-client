@@ -252,6 +252,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK-Giacenza-INVALID_DATETIME_890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
