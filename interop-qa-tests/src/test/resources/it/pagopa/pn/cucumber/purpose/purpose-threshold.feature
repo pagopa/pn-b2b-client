@@ -82,7 +82,7 @@ Feature: Verifica soglie differenziate
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
     And si ottiene status code 200
-    And la finalità è in stato WAITING_FOR_APPROVAL
+    Then la finalità è in stato WAITING_FOR_APPROVAL
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_5] Una finalità in stato ACTIVE è indifferente ai nuovi cambiamenti delle soglie associate agli attributi certificati posseduti per la fruizione di un certo eservice
@@ -132,6 +132,45 @@ Feature: Verifica soglie differenziate
     And l'utente revoca l'attributo precedentemente creato e assegnato
     And si ottiene status code 200
     Then la finalità è in stato ACTIVE
-    Then i residui relativi alle dailyCalls associati alla finalità sono pari a:
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 95  |
       | remainingDailyCallsTotal       | 989 |
+
+  @dailyCallsThreshold
+  Scenario: [PURPOSE_THRESHOLD_7] Per la creazione di una finalità in stato ACTIVE il sistema attribuisce la soglia maggiore degli attributi certificati definiti in gruppi differenti
+    Given l'utente è un "admin" di "PA2"
+    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
+    And si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
+    And si ottiene status code 200
+    And l'utente tenta di aggiungere una soglia differenziata di 1000 per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo
+    And si ottiene status code 200
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 100
+    And si ottiene status code 200
+    Then la finalità è in stato ACTIVE
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 900 |
+      | remainingDailyCallsTotal       | 900 |
+
+  @dailyCallsThreshold
+  Scenario: [PURPOSE_THRESHOLD_8] Per la creazione di una finalità con una soglia superiore a quelle impostate negli attributi certificati contenuti in gruppi differenti, se la richiesta contiene un limite di soglia superiore, il sistema imposta lo stato della finalità a WAITING_FOR_APPROVAL e la soglia a quella richiesta
+    Given l'utente è un "admin" di "PA2"
+    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
+    And si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
+    And si ottiene status code 200
+    And l'utente tenta di aggiungere una soglia differenziata di 200 per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo
+    And si ottiene status code 200
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 300
+    And si ottiene status code 200
+    Then la finalità è in stato WAITING_FOR_APPROVAL
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 200  |
+      | remainingDailyCallsTotal       | 1000 |
+    And si ottiene status code 400
