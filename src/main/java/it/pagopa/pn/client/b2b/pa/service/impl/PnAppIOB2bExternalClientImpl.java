@@ -38,41 +38,41 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
     public PnAppIOB2bExternalClientImpl(RestTemplate restTemplate,
                                         @Value("${pn.appio.externa.base-url}") String devBasePath,
                                         @Value("${pn.external.appio.api-key}") String devApiKey) {
-        this.appIoPnDocumentsApi = new AppIoPnDocumentsApi( newApiClient( restTemplate, devBasePath, devApiKey) );
-        this.appIoPnNotificationApi = new AppIoPnNotificationApi( newApiClient( restTemplate, devBasePath, devApiKey) );
-        this.appIoPnPaymentsApi = new AppIoPnPaymentsApi( newApiClient( restTemplate, devBasePath, devApiKey) );
+        this.appIoPnDocumentsApi = new AppIoPnDocumentsApi(newApiClient(restTemplate, devBasePath, devApiKey));
+        this.appIoPnNotificationApi = new AppIoPnNotificationApi(newApiClient(restTemplate, devBasePath, devApiKey));
+        this.appIoPnPaymentsApi = new AppIoPnPaymentsApi(newApiClient(restTemplate, devBasePath, devApiKey));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.addDefaultHeader("Accept", "application/io+json" );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("x-api-key", apikey );
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.addDefaultHeader("Accept", "application/io+json");
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("x-api-key", apikey);
         return newApiClient;
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIdx, String xPagopaCxTaxid, UUID mandate) throws RestClientException {
-        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid, mandate,null, null, null,null,null,null,xPagopaCxTaxid,null,null,null);
+        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid, mandate, null, null, "PublicKey", null, null, "AuthJwt", xPagopaCxTaxid, null, null, null);
     }
 
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid, UUID mandateId) throws RestClientException {
-        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null,null, null, null,null,null,xPagopaCxTaxid,null,null, null);
+        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null, null, "PublicKey", null, null, "AuthJwt", xPagopaCxTaxid, null, null, null);
     }
 
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid, UUID mandateId, String xPagopaPnIoSrc) throws RestClientException {
-        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null,null, null, null,null,null,null,null,null, xPagopaPnIoSrc);
+        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, mandateId, null, null, "PublicKey", null, null, "AuthJwt", null, null, null, xPagopaPnIoSrc);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String xPagopaCxTaxid, Integer attachmentIdx, UUID mandateId) throws RestClientException {
-        return this.appIoPnPaymentsApi.getReceivedNotificationAttachment(iun, attachmentName, xPagopaCxTaxid, attachmentIdx, mandateId, null, null, null,  null, null, null, xPagopaCxTaxid, null, null, null);
+        return this.appIoPnPaymentsApi.getReceivedNotificationAttachment(iun, attachmentName, xPagopaCxTaxid, attachmentIdx, mandateId, null, null, "PublicKey", null, null, "AuthJwt", xPagopaCxTaxid, null, null, null);
     }
 
     public ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, String xPagopaLollipopUserId, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException {
-        return appIoPnNotificationApi.checkAarQrCodeIO(xPagopaCxTaxid, requestCheckQrMandateDto, null, null, null, null, null, null, xPagopaLollipopUserId, null, null, null);
+        return appIoPnNotificationApi.checkAarQrCodeIO(xPagopaCxTaxid, requestCheckQrMandateDto, null, null, "PublicKey", null, null, "AuthJwt", xPagopaLollipopUserId, null, null, null);
     }
 
     public ResponseCheckQrMandateDto checkAarQrCodeIO(String xPagopaCxTaxid, RequestCheckQrMandateDto requestCheckQrMandateDto) throws RestClientException {
-        return appIoPnNotificationApi.checkAarQrCodeIO(xPagopaCxTaxid, requestCheckQrMandateDto, null, null, null, null, null, null, null, null, null, null);
+        return appIoPnNotificationApi.checkAarQrCodeIO(xPagopaCxTaxid, requestCheckQrMandateDto, null, null, "PublicKey", null, null, "AuthJwt", null, null, null, null);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachmentByUrl(String url, String xPagopaCxTaxid) throws RestClientException {
@@ -95,12 +95,13 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
         headerParams.add("x-pagopa-cx-taxid", appIoPnPaymentsApi.getApiClient().parameterToString(xPagopaCxTaxid));
 
         final List<MediaType> localVarAccept = appIoPnPaymentsApi.getApiClient().selectHeaderAccept(localVarAccepts);
-        final String[] contentTypes = {  };
+        final String[] contentTypes = {};
         final MediaType localVarContentType = appIoPnPaymentsApi.getApiClient().selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { "ApiKeyAuth" };
+        String[] authNames = new String[]{"ApiKeyAuth"};
 
-        ParameterizedTypeReference<NotificationAttachmentDownloadMetadataResponse> returnType = new ParameterizedTypeReference<>() {};
+        ParameterizedTypeReference<NotificationAttachmentDownloadMetadataResponse> returnType = new ParameterizedTypeReference<>() {
+        };
         return appIoPnPaymentsApi.getApiClient().invokeAPI(url, HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, authNames, returnType).getBody();
-     }
+    }
 }
