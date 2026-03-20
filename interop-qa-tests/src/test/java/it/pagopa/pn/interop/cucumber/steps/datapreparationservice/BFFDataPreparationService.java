@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -1153,7 +1154,9 @@ public class BFFDataPreparationService {
     }
 
     public void addEmailToTenant(UUID tenantId, MailSeed mailSeed) {
-        httpCallExecutor.performCall(() -> tenantsApi.addTenantMail(tenantId, mailSeed.kind(MailKind.CONTACT_EMAIL)));
+        httpCallExecutor.performCall(
+                () -> tenantsApi.addTenantMailWithHttpInfo(tenantId, mailSeed.kind(MailKind.CONTACT_EMAIL)),
+                ResponseEntity::getStatusCode);
         assertValidResponse();
 
         pollingService.makePolling(
