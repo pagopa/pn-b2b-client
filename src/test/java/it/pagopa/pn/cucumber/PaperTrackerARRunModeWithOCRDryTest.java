@@ -1,9 +1,9 @@
 package it.pagopa.pn.cucumber;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.ExcludeTags;
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.IncludeTags;
-import org.junit.platform.suite.api.ExcludeTags;
 import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 
@@ -19,10 +19,11 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@IncludeTags({"paperTrackerARRunMode", "paperTrackerRunMode890", "paperTrackerRSRunMode",
-        "paperTrackerRISRunMode", "alwaysRun", "ocrDRY", "ocrDisabled"})
+@IncludeTags({"paperTrackerARRunMode", "alwaysRun", "ocrDRY", "ocrDisabled"})
 @ExcludeTags({"ocrEnabled", "ocrRun", "strictFinalValidationFalse", "strictFinalValidationTrue",
-        "paperTracker890", "paperTrackerRSDryRunMode", "paperTrackerRISDryRunMode"})
-public class PaperTrackerRunModeWithOCRDryTest {
+        "paperTracker890", "paperTrackerRSDryRunMode", "paperTrackerRISDryRunMode", "paperTrackerRunMode890",
+        "paperTrackerRSRunMode",  "paperTrackerRISRunMode"
+})
+public class PaperTrackerARRunModeWithOCRDryTest {
 
 }

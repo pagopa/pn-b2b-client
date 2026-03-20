@@ -21,7 +21,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @IncludeTags({"paperTrackerARRunMode", "paperTrackerRunMode890", "paperTrackerRSRunMode",
         "paperTrackerRISRunMode", "alwaysRun", "ocrRun", "ocrEnabled"})
-@ExcludeTags({"ocrDry", "ocrDisabled", "strictFinalValidationFalse", "strictFinalValidationTrue",
+@ExcludeTags({"ocrDRY", "ocrDisabled", "strictFinalValidationFalse", "strictFinalValidationTrue",
         "paperTracker890", "paperTrackerRSDryRunMode", "paperTrackerRISDryRunMode"})
 public class PaperTrackerRunModeWithOCRRunTest {
 

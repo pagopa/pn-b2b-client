@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Slf4j
-public class OcrConditionalValidator implements CustomConditionalValidator {
-    List<String> errors = new ArrayList<>();
+public class OcrAttachmentsFinalValidator implements CustomConditionalValidator {
+    List<String> errors;
 
     private static final String VALIDATION_MESSAGE = "If documentType in events.attachments is present in validationConfig.sendOcrAttachmentsFinalValidation, then validationFlow.ocrRequests must not be empty";
 
@@ -26,7 +26,7 @@ public class OcrConditionalValidator implements CustomConditionalValidator {
      * @return a list of validation error messages (empty if valid)
      */
     public List<String> validate(JsonNode trackingNode) {
-
+        errors = new ArrayList<>();
         // Get validationConfig.sendOcrAttachmentsFinalValidation list
         trackingNode = trackingNode.get("trackings").get(0);
 
@@ -92,6 +92,16 @@ public class OcrConditionalValidator implements CustomConditionalValidator {
                 .toList();
         if (!ocrRequestDocumentTypes.equals(eventsDocumentType)) {
             errors.add(String.format("ocrRequests non contiene tutti gli elementi desiderati, actual size: %d - expected: %d", ocrRequests.size(), eventsDocumentType.size()));
+        }
+        verifyFinalEventDematValidationTimestamp(validationFlow, ocrRequests);
+    }
+
+    private void verifyFinalEventDematValidationTimestamp(JsonNode validationFlow, JsonNode ocrRequests) {
+        boolean isOcrOk = StreamSupport.stream(ocrRequests.spliterator(), false)
+                .map(responseStatus -> responseStatus.path("responseStatus").asText(null))
+                .anyMatch("OK"::equalsIgnoreCase);
+        if (isOcrOk && validationFlow.path("finalEventDematValidationTimestamp").asText(null) == null) {
+            errors.add("finalEventDematValidationTimestamp è null nonostante ci sia almeno un ocrRequest con responseStatus OK");
         }
     }
 }

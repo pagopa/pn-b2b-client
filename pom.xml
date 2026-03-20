@@ -2392,7 +2392,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-paper-tracker/b6270c80aa5196d2a55e0b8a4ee7cb9c85ad56aa/docs/openapi/api-internal-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-paper-tracker/refs/tags/v1.4.0-RC.1/docs/openapi/api-internal-v1.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>

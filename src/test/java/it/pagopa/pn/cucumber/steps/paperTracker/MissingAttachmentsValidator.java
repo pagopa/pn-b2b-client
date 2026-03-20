@@ -15,7 +15,7 @@ public class MissingAttachmentsValidator {
             } else {
                     for (int i = 0; i < missingAttachments.size(); i++) {
                         String actualAttachment = missingAttachments.get(i).asText();
-                        String expectedAttachment = expectedNode.get("missingAttachments").get(i).asText();
+                        String expectedAttachment = missingAttachments.get(i).asText();
 
                         // valida missingAttachments
                         assertThat(actualAttachment).isEqualTo(expectedAttachment)

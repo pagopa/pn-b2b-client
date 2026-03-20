@@ -20,7 +20,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @IncludeTags({"paperTracker890", "paperTrackerRSDryRunMode", "paperTrackerRISDryRunMode", "ocrEnabled", "ocrRun"})
-@ExcludeTags({"ocrDry","ocrDisabled", "strictFinalValidationFalse",
+@ExcludeTags({"ocrDRY","ocrDisabled", "strictFinalValidationFalse",
         "strictFinalValidationTrue", "paperTrackerARRunMode",
         "paperTrackerAR", "paperTrackerRunMode890", "paperTrackerRunMode890", "paperTrackerRSRunMode", "alwaysRun"})
 public class PaperTrackerDryWithOCRRunTest {

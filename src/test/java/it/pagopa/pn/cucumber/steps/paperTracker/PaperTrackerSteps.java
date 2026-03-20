@@ -9,7 +9,6 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Attachment;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperEvent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperTrackerOutputsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperTrackerOutputsResponseResultsInner;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Tracking;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingError;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingErrorsResponse;
@@ -25,6 +24,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.paperTracker.domain.NotificationEvent;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
+import it.pagopa.pn.cucumber.steps.paperTracker.proxy.SchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PaperTrackerErrorCategory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PaperTrackerTrackingSequence;
 import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineSequence;
@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,20 +68,21 @@ public class PaperTrackerSteps {
     private final AvanzamentoNotificheB2bSteps b2bSteps;
     private final SharedSteps sharedSteps;
     private final IPnPaperTrackerClient paperTrackerClient;
-    private final SchemaValidator schemaValidator;
+    private final SchemaValidatorProxy schemaValidatorProxy;
     private TrackingsResponse responseTracking;
     private List<String> trackingKeys;
+
 
     @Autowired
     public PaperTrackerSteps(EventTimelineParser eventTimelineParser,
                              AvanzamentoNotificheB2bSteps b2bSteps,
                              IPnPaperTrackerClient paperTrackerClient,
-                             SchemaValidator schemaValidator) {
+                             SchemaValidatorProxy schemaValidatorProxy) {
         this.eventTimelineParser = eventTimelineParser;
         this.b2bSteps = b2bSteps;
         this.sharedSteps = b2bSteps.getSharedSteps();
         this.paperTrackerClient = paperTrackerClient;
-        this.schemaValidator  = schemaValidator;
+        this.schemaValidatorProxy = schemaValidatorProxy;
     }
 
     private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV28 fullSentNotification, int attempt) {
@@ -120,13 +122,6 @@ public class PaperTrackerSteps {
 
     @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
     public void verifyTrackingEventsForSequenceWithPCRetryNew(String sequenceName) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-//        List<String> stringaTracking = fullSentNotification.getTimeline().stream()
-//                .map(TimelineElementV28::getElementId)
-//                .filter(id -> id.contains(PREPARE_ANALOG_DOMICILE))
-//                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
-//                .collect(Collectors.toList());
-
         TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
         responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
 
@@ -149,7 +144,7 @@ public class PaperTrackerSteps {
         for (int i = 0; i < groupedTrackingByAttempt.keySet().size(); i++ ) {
             assertRelaxedSameElements(groupedTrackingByAttempt.get(i), expectedEvents.get(i), TRACKINGS_ELEMENT_NOT_FOUND);
         }
-        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", new OcrConditionalValidator(), new EventsTimestampValidator());
+        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", sequenceName);
     }
 
 
@@ -217,7 +212,7 @@ public class PaperTrackerSteps {
         trackingKeys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
                 .filter(e -> e.contains(key))
-                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3"))
+                .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3", prepare + ".PCRETRY_4"))
                 .toList();
     }
 
@@ -269,17 +264,20 @@ public class PaperTrackerSteps {
      * @return
      */
     private Map<Integer, List<NotificationEvent>> buildOutputEventsMap(PaperTrackerOutputsResponse responseOutput) {
-        Map<Integer, List<NotificationEvent>> map = new HashMap<>();
-        responseOutput.getResults().sort(Comparator.comparing(PaperTrackerOutputsResponseResultsInner::getTrackingId));
-        for (int j = 0; j < responseOutput.getResults().size(); j++) {
-            List<NotificationEvent> events = responseOutput.getResults().get(j).getOutputs().stream()
-                    .map(output -> new NotificationEvent(
-                            output.getStatusDetail(),
-                            createAttachmentUrlTracking(output.getAttachments()),
-                            output.getDeliveryFailureCause()))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            map.put(j, events);
-        }
+        Map<Integer, List<NotificationEvent>> map = responseOutput.getResults().stream().collect(Collectors.groupingBy(
+                r -> {
+                    Pattern pattern = Pattern.compile("ATTEMPT_(\\d+)");
+                    Matcher matcher = pattern.matcher(r.getTrackingId());
+                    return (matcher.find()) ? Integer.parseInt(matcher.group(1)) : 0;
+                }, Collectors.flatMapping(
+                        r -> r.getOutputs().stream()
+                                .map(output -> new NotificationEvent(
+                                        output.getStatusDetail(),
+                                        createAttachmentUrlTracking(output.getAttachments()),
+                                        output.getDeliveryFailureCause()
+                                )), Collectors.toList()
+                )
+        ));
         return map;
     }
 
@@ -382,11 +380,12 @@ public class PaperTrackerSteps {
 //        }
 //    }
 
-    private <T> void verifyTrackingResponseStructure(T response, String schemaPath, CustomConditionalValidator... customConditionalValidators) {
+    private <T> void verifyTrackingResponseStructure(T response, String schemaPath, String sequenceName) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.valueToTree(response);
-        SchemaValidator schemaValidator = new SchemaValidator(customConditionalValidators);
-        schemaValidator.validate(jsonNode, schemaPath);
+        schemaValidatorProxy.provide(sequenceName).validate(jsonNode, schemaPath);
+//        SchemaValidator schemaValidator = new SchemaValidator(customConditionalValidators);
+//        schemaValidator.validate(jsonNode, schemaPath);
     }
 
 //    @And("si verifica che la risposta trackings sia uguale a quella attesa {string}")
@@ -476,12 +475,40 @@ public class PaperTrackerSteps {
         assertTrue(flowThrows.contains(flowThrow), String.format("FlowThrow non trovato:\n%s\nFlowThrow presenti:\n%s", flowThrow, flowThrows));
     }
 
+    @And("si verifica che non ci siano {word} per i trackingId richiesti")
+    public void checkNoDataGeneric(String type) {
+        TrackingsRequest request = new TrackingsRequest();
+        request.setTrackingIds(trackingKeys);
+        switch (type.toLowerCase()) {
+            case "errori" -> {
+                TrackingErrorsResponse errorsResponse = paperTrackerClient.retrieveTrackerErrors(request);
+                assertNoData(errorsResponse.getResults(), res -> res.getErrors(),
+                        "Non ci devono essere errori per i trackingId richiesti");
+            }
+            case "outputs" -> {
+                PaperTrackerOutputsResponse outputsResponse = paperTrackerClient.retrieveTrackerOutputs(request);
+                assertNoData(outputsResponse.getResults(), res -> res.getOutputs(),
+                        "Non ci devono essere dati per i trackingId richiesti");
+            }
+            default -> throw new IllegalArgumentException("Tipo sconosciuto: " + type);
+        }
+    }
+
+    private <T, R> void assertNoData(List<T> results, Function<T, List<R>> extractor, String message) {
+        boolean hasData = results.stream()
+                .map(extractor)
+                .filter(Objects::nonNull)
+                .anyMatch(list -> !list.isEmpty());
+
+        assertThat(hasData).as(message).isFalse();
+    }
 
     @Then("si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: {string}")
     public void checkTrackingErrorsNew(String expectedError) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode expectedResult = (ObjectNode) objectMapper.readTree(expectedError);
         String trackingId = expectedResult.get("trackingId").asText().replace("<iun>", sharedSteps.getNotificationIun());
+        String expectedErrorCategory = expectedResult.get("errorCategory").asText();
 
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
@@ -495,6 +522,7 @@ public class PaperTrackerSteps {
                     errorsResponse.getResults().stream()
                                     .flatMap(r -> r.getErrors().stream())
                                     .filter(e -> e.getTrackingId().equals(trackingId))
+                                    .filter(e -> e.getErrorCategory().equals(expectedErrorCategory))
                                     .findFirst()
                                     .ifPresent(e -> atomicReference.set(e));
                     assertThat(atomicReference.get()).as("Non è stato trovato nessun errore per trackingId " + trackingId).isNotNull();
@@ -511,7 +539,12 @@ public class PaperTrackerSteps {
 
         //details
         assertThat(expected.at("/details/cause")).isEqualTo(actual.at("/details/cause"));
-        assertThat(expected.at("/details/message")).isEqualTo(actual.at("/details/message"));
+        JsonNode expectedMessageNode = expected.at("/details/message");
+        if (!expectedMessageNode.isMissingNode()) {
+            String expectedMessage = expectedMessageNode.asText().replaceAll("<iun>", sharedSteps.getNotificationIun());
+            String actualMessage = actual.at("/details/message").asText().replaceAll("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z", "<date>");
+            assertThat(expectedMessage).isEqualTo(actualMessage);
+        }
 
         //details.affectedEvents
         JsonNode expectedAdditionalDetails = expected.at("/details/additionalDetails");
