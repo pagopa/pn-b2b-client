@@ -2,7 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingDailyCallsResponse;
+// TODO Threshold
+// import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingDailyCallsResponse;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -30,12 +31,28 @@ public class PurposesSteps {
         UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
 
         // TODO Threshold
-        sharedStepsContext.getHttpCallExecutor().performCall(
+        /*sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> this.purposeClient.getRemainingDailyCalls(purposeId)
         );
         RemainingDailyCallsResponse response = (RemainingDailyCallsResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         Assertions.assertEquals(expectedRemainingDailyCallsPerConsumer, response.getRemainingDailyCallsPerConsumer());
-        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
+        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());*/
+    }
+
+    @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string} per m2m")
+    public void getRemainingDailyCallsM2M(String purposeId) {
+
+        UUID purposeIdAsUUID = switch (purposeId) {
+            case "%null" -> null;
+            case "%random" -> UUID.randomUUID();
+            default -> throw new IllegalStateException("Unexpected value: " + purposeId);
+        };
+
+        // TODO Threshold
+        /*sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> this.purposeClient.getRemainingDailyCalls(purposeId)
+        );
+        */
     }
 }

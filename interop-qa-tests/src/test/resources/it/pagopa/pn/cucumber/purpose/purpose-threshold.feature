@@ -174,3 +174,97 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsPerConsumer | 200  |
       | remainingDailyCallsTotal       | 1000 |
     And si ottiene status code 400
+
+  @dailyCallsThreshold
+  @security
+  Scenario Outline: [PURPOSE_THRESHOLD_9] Una richiesta con API BFF per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
+    Given l'utente è un "admin" di "PA2"
+    And PA2 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA1" gli attributi certificati precedentemente creati
+    And si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato
+    And si ottiene status code 200
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 1
+    And si ottiene status code 200
+    And la finalità è in stato ACTIVE
+    When l'utente è un "<ruolo>" di "PA2"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 9   |
+      | remainingDailyCallsTotal       | 999 |
+    And si ottiene status code <statusCode>
+
+    Examples:
+      | ruolo        | statusCode |
+      | admin        | 200        |
+      | api          | 403        |
+      | security     | 403        |
+      | support      | 403        |
+      | api,security | 403        |
+
+  @dailyCallsThreshold
+  @security
+  Scenario Outline: [PURPOSE_THRESHOLD_9b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
+    Given l'utente è un "admin" di "PA2"
+    And PA2 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA1" gli attributi certificati precedentemente creati
+    And si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato
+    And si ottiene status code 200
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 1
+    And si ottiene status code 200
+    And la finalità è in stato ACTIVE
+    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m-admin
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a per m2m:
+      | remainingDailyCallsPerConsumer | 9   |
+      | remainingDailyCallsTotal       | 999 |
+    And si ottiene status code <statusCode>
+
+    Examples:
+      | ruolo        | statusCode |
+      | admin        | 200        |
+      | api          | 403        |
+      | security     | 403        |
+      | support      | 403        |
+      | api,security | 403        |
+
+  @dailyCallsThreshold
+  @security
+  Scenario Outline: [PURPOSE_THRESHOLD_10] Una richiesta con API BFF per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
+    Given l'utente è un "admin" di "PA2"
+    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
+    Then si ottiene status code <statusCode>
+
+    Examples:
+      | purposeId | statusCode |
+      | %random   | 404        |
+      | %null     | 404        |
+
+  @dailyCallsThreshold
+  @security
+  Scenario Outline: [PURPOSE_THRESHOLD_10b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
+    Then si ottiene status code <statusCode>
+
+    Examples:
+      | purposeId | statusCode |
+      | %random   | 404        |
+      | %null     | 404        |
+
+  @dailyCallsThreshold
+  @security
+  Scenario: [PURPOSE_THRESHOLD_11] Una richiesta con API BFF per recuperare le soglie rimanenti effettuata senza autenticazione fallisce
+    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "%random"
+    Then si ottiene status code 401
+
+  @dailyCallsThreshold
+  @security
+  Scenario: [PURPOSE_THRESHOLD_11b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti effettuata senza autenticazione fallisce
+    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "%random" per m2m
+    Then si ottiene status code 401

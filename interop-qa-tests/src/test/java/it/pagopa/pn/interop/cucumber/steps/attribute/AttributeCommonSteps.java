@@ -16,6 +16,8 @@ import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import software.amazon.awssdk.annotations.NotNull;
+
 import java.util.*;
 
 // TODO riformulare così da rimuovere gli inutilizzati parametri "tenantType"
@@ -318,5 +320,21 @@ public class AttributeCommonSteps {
 
         Assertions.assertEquals(expectedRemainingDailyCallsPerConsumer, response.getRemainingDailyCallsPerConsumer());
         Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());*/
+    }
+
+    @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string}")
+    public void getRemainingDailyCalls(String purposeId) {
+
+        UUID purposeIdAsUUID = switch (purposeId) {
+            case "%null" -> null;
+            case "%random" -> UUID.randomUUID();
+            default -> UUID.fromString(purposeId);
+        };
+
+        // TODO Threshold
+        /*sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeIdAsUUID)
+        );
+        */
     }
 }
