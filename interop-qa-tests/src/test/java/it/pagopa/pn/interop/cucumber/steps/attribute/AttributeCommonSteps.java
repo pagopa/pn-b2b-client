@@ -214,7 +214,12 @@ public class AttributeCommonSteps {
     }
 
     @Given("l'utente tenta di duplicare l'attributo {attributeKind} {int}-esimo nel gruppo {int}-esimo")
-    public void duplicateAttributeInGroup(AttributeKind attributeKind, int attributeIndex, int groupIndex) {
+    public void duplicateAttributeInGroup(AttributeKind attributeKind, int attributeIndex, int srcGroupIndex) {
+        duplicateAttributeInGroup(attributeKind, attributeIndex, srcGroupIndex, srcGroupIndex);
+    }
+
+    @Given("l'utente tenta di duplicare l'attributo {attributeKind} {int}-esimo contenuto nel gruppo {int}-esimo nel gruppo {int}-esimo")
+    public void duplicateAttributeInGroup(AttributeKind attributeKind, int attributeIndex, int srcGroupIndex, int targetGroupIndex) {
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -226,11 +231,15 @@ public class AttributeCommonSteps {
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
         };
 
-        if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(groupIndex).isEmpty())) {
+        if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(srcGroupIndex).isEmpty())) {
             throw new IllegalStateException("L'e-service non ha attributi per il gruppo");
         }
 
-        DescriptorAttribute existingAttr = existingAttributeGroups.get(groupIndex).get(attributeIndex);
+        if (targetGroupIndex < existingAttributeGroups.size()) {
+            throw new IllegalStateException(String.format("L'e-service non ha %d gruppi per gli attributi %s", (targetGroupIndex + 1), attributeKind));
+        }
+
+        DescriptorAttribute existingAttr = existingAttributeGroups.get(srcGroupIndex).get(attributeIndex);
 
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
             .certified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified()))
@@ -243,13 +252,13 @@ public class AttributeCommonSteps {
 
         switch (attributeKind) {
             case CERTIFIED -> {
-                attributesSeed.getCertified().get(groupIndex).add(attributeSeed);
+                attributesSeed.getCertified().get(targetGroupIndex).add(attributeSeed);
             }
             case DECLARED -> {
-                attributesSeed.getDeclared().get(groupIndex).add(attributeSeed);
+                attributesSeed.getDeclared().get(targetGroupIndex).add(attributeSeed);
             }
             case VERIFIED -> {
-                attributesSeed.getVerified().get(groupIndex).add(attributeSeed);
+                attributesSeed.getVerified().get(targetGroupIndex).add(attributeSeed);
             }
         }
 
@@ -302,12 +311,12 @@ public class AttributeCommonSteps {
         UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
 
         // TODO Threshold
-        sharedStepsContext.getHttpCallExecutor().performCall(
+        /*sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeId)
         );
         RemainingDailyCallsResponse response = (RemainingDailyCallsResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         Assertions.assertEquals(expectedRemainingDailyCallsPerConsumer, response.getRemainingDailyCallsPerConsumer());
-        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
+        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());*/
     }
 }

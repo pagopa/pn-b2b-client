@@ -73,17 +73,20 @@ public class DescriptorUpdateSteps {
 
     @When("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo creato")
     public void updateDailyCallsPerConsumer(int dailyCallsPerConsumer, AttributeKind attributeType, int attributeIndex) {
+        updateDailyCallsPerConsumer(dailyCallsPerConsumer, attributeType, attributeIndex, 0);
+    }
 
-        final int attributesGroup = 0;
+    @When("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo creato nel gruppo {int}-esimo")
+    public void updateDailyCallsPerConsumer(int dailyCallsPerConsumer, AttributeKind attributeType, int attributeIndex, int groupIndex) {
 
         List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
         List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
         List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
 
         UUID attributeId = switch (attributeType) {
-            case CERTIFIED -> requiredCertifiedAttributes.get(attributesGroup).get(attributeIndex);
-            case DECLARED -> requiredDeclaredAttributes.get(attributesGroup).get(attributeIndex);
-            case VERIFIED -> requiredVerifiedAttributes.get(attributesGroup).get(attributeIndex);
+            case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
+            case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
+            case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
