@@ -130,7 +130,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     When l'utente è un "admin" di "GSP"
-    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
+    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta invisibile del purpose template
     Then si ottiene lo status code 404
 
   #79 (KO)

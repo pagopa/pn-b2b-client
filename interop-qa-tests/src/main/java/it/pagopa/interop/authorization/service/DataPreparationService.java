@@ -4,6 +4,8 @@ import static java.util.Objects.nonNull;
 
 import it.pagopa.interop.authorization.service.IAuthorizationClient.Users;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.common.SettableHttpCallExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -30,11 +32,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service("mainDataPreparationService")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DataPreparationService {
+public class DataPreparationService implements SettableHttpCallExecutor {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
     @Setter private IAuthorizationClient authorizationClient;
     private final PollingService pollingService;
-    private final HttpCallExecutor httpCallExecutor;
+    @Setter private IHttpExecutor httpCallExecutor;
 
     static {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
@@ -45,7 +47,7 @@ public class DataPreparationService {
     public DataPreparationService(
         IAuthorizationClient authorizationClient,
         PollingService pollingService,
-        HttpCallExecutor httpCallExecutor
+        IHttpExecutor httpCallExecutor
     ) {
         this.authorizationClient = authorizationClient;
         this.httpCallExecutor = httpCallExecutor;

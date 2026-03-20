@@ -754,6 +754,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  @m2m-patch
   @purpose-m2m-patch
   Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.1] - Casi negativi
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -791,6 +792,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     # UUID valido ma sicuramente inesistente
       | 00000000-0000-0000-0000-000000000000 | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
 
+  @m2m-patch
   @purpose-m2m-patch
   Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.2] - Risk analysis invalida
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -810,6 +812,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   # Aggiunto a posteriori della stesura degli scenari di test per verificare l'affermazione
   # "Il controllo completo della validità della RA viene applicato in fase di attivazione (da Draft a Active)."
   # in https://pagopa.atlassian.net/browse/PIN-9164?focusedCommentId=291410
+  @m2m-patch
   @purpose-m2m-patch
   Scenario: [M2M_PURPOSE_PUBLISH_INVALID_RA] - L'attivazione di una finalità contenente una risk analysis errata deve condurre ad un errore
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -836,6 +839,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
+  @m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_3] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità inesistente (Parte2#Scenario intorno a 130)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale di una finalità inesistente
@@ -906,6 +910,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  @m2m-patch
   Scenario Outline: [M2M_PATCH_REVERSE_PURPOSE_1.1] - Casi negativi (vincoli OpenAPI)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"

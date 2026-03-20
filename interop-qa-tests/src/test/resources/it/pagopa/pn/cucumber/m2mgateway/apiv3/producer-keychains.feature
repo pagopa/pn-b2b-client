@@ -1,7 +1,6 @@
 @m2m-apiv3-producer-keychains @m2m-v3-204-to-200
 Feature: Gestione dei producer keychains - API v3
 
-  #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_KEY_1] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -54,7 +53,6 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     Then si ottiene response status code 403
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_4] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -67,8 +65,8 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     And si ottiene response status code 200
     And l'utente crea una nuova chiave di tipo "RSA" all'interno del producer-keychains con:
-      | key    | name   | alg    | use    | keychainId |
-      | %valid | %valid | %valid | %valid | %actual    |
+      | key     | name    | alg     | use     | keychainId |
+      | %actual | %actual | %actual | %actual | %actual    |
     Then si ottiene response status code 409
 
   Scenario: [CREATE_PRODUCER_KEYCHAINS_KEY_5] Creazione nuova chiave pubblica all’interno di uno specifico portachiavi erogatore
@@ -113,8 +111,6 @@ Feature: Gestione dei producer keychains - API v3
       | %valid | %valid | %valid | %valid | %actual    |
     Then si ottiene response status code 400
 
-
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario Outline: [GET_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -131,7 +127,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "<kid>"
     And si ottiene response status code <statusCode>
 
-    #TODO: da implementare -> 401, 429
     Examples:
       | kid     | statusCode |
      # Happy path
@@ -141,7 +136,6 @@ Feature: Gestione dei producer keychains - API v3
       | %random | 404        |
       | %null   | 400        |
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [GET_PRODUCER_KEY_2] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -159,7 +153,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "%actual"
     And si ottiene response status code 401
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [GET_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -177,7 +170,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "%actual"
     And si ottiene response status code 400
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [GET_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -195,7 +187,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene recuperata la producer-key con kid "%actual"
     And si ottiene response status code 400
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario Outline: [DELETE_PRODUCER_KEY_1] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -211,7 +202,6 @@ Feature: Gestione dei producer keychains - API v3
     Then viene eliminata la producer-key con keychainId "<keychainId>", kid "<kid>"
     And si ottiene http status code <statusCode>
 
-    #TODO: da implementare -> 401, 429
     Examples:
       | kid     | keychainId | tenant | statusCode |
     # Happy path
@@ -223,10 +213,9 @@ Feature: Gestione dei producer keychains - API v3
      # Kid/Keychain invalido
       | %random | %actual    | PA1    | 404        |
       | %null   | %actual    | PA1    | 400        |
-      | %actual | %random    | PA1    | 400        |
+      | %actual | %random    | PA1    | 404        |
       | %actual | %null      | PA1    | 400        |
 
-    #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [DELETE_PRODUCER_KEY_2] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -242,9 +231,7 @@ Feature: Gestione dei producer keychains - API v3
     And viene impostato per l'utente un token m2m non valido
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
     And si ottiene response status code 401
-    #TODO: da implementare -> 429
 
-  #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [DELETE_PRODUCER_KEY_3] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -260,9 +247,7 @@ Feature: Gestione dei producer keychains - API v3
     And viene rimosso l'header di autenticazione DPoP
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
     And si ottiene response status code 400
-    #TODO: da implementare -> 429
 
-  #BUG: https://pagopa.atlassian.net/browse/PIN-9358
   Scenario: [DELETE_PRODUCER_KEY_4] Recupero della chiave pubblica di uno specifico portachiavi erogatore tramite il suo Key ID (kid)
     Given l'utente è un "admin" di "PA1"
     And esiste un producer keychain con nome "PKC1" e con descrizione "DESC_PKC1"
@@ -278,7 +263,6 @@ Feature: Gestione dei producer keychains - API v3
     And viene rimosso l'header DPoP proof
     Then viene eliminata la producer-key con keychainId "%actual", kid "%actual"
     And si ottiene response status code 400
-    #TODO: da implementare -> 429
 
   Scenario Outline: [M2M_V3_CREATE_PRODUCER_KEYCHAINS_USERS_ASSOCIATION_1] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"
@@ -332,7 +316,6 @@ Feature: Gestione dei producer keychains - API v3
     And viene rimosso l'header DPoP proof
     When viene associato l'utente "%actual" alla producer keychain "%actual"
     Then si ottiene response status code 400
-
 
   Scenario Outline: [M2M_V3_GET_PRODUCER_KEYCHAINS_USERS_1] Associazione utenze a producer keychain
     Given l'utente è un "admin" di "PA1"

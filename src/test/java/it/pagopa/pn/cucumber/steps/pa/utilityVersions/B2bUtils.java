@@ -548,4 +548,10 @@ public abstract class B2bUtils {
             default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
     }
+
+    public static String getEnvironment(ApplicationContext context) {
+        String env = context.getEnvironment().getActiveProfiles()[0];
+        log.info("Environment in use is: {}", env);
+        return env;
+    }
 }

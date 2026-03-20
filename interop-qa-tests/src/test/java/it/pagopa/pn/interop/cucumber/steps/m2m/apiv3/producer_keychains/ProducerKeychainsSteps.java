@@ -3,42 +3,36 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.User;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
-import it.pagopa.interop.producer_keychains.service.M2MV3ProducerKeychainsClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
+import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils.ProducerKeychainsResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 public class ProducerKeychainsSteps {
-    private final M2MV3ProducerKeychainsClient producerKeychainsClient;
+    private final IM2MV3ProducerKeychainsClient producerKeychainsClient;
     private final IHttpExecutor httpCallExecutor;
     private final ProducerKeychainsResolver resolver;
     private final ProducerKeychainsContext producerKeychainsContext;
     private final TenantContext tenantContext;
 
-    public ProducerKeychainsSteps(M2MV3ProducerKeychainsClient producerKeychainsClient, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
+    public ProducerKeychainsSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
 
-        this.producerKeychainsClient = producerKeychainsClient;
+        this.producerKeychainsClient = clientTokenConfigurator.getM2mV3ProducerKeychainsClient();
         this.tenantContext = tenantContext;
         this.producerKeychainsContext = producerKeychainsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -59,16 +53,75 @@ public class ProducerKeychainsSteps {
             }
 
             producerKeychainsClient.createProducerKeychainUserAssociation(producerKeychainValue, linkUser);
+            httpCallExecutor.snapshot();
 
+            PollingService.makePolling(
+                    () -> {
+                        try {
 
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && userIdValue != null && producerKeychainValue != null) {
-                httpCallExecutor.snapshot();
-                PollingService.makePolling(() -> producerKeychainsClient.getProducerKeychainUsers(producerKeychainValue, 50, 0), users -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && users != null && users.getResults() != null && users.getResults().stream().anyMatch(user -> userIdValue.equals(user.getUserId())), "L'utente non risulta associato alla producer keychain dopo la creazione", 30, 1_000L);
-                httpCallExecutor.resetFormSnapshot();
-            }
+                            final int limit = 50;
+                            int offset = 0;
+                            List<User> allUsers = new ArrayList<>();
+                            Users usersPage;
+
+                            do {
+                                usersPage = producerKeychainsClient.getProducerKeychainUsers(
+                                        producerKeychainValue,
+                                        limit,
+                                        offset
+                                );
+
+                                if (!httpCallExecutor.getResponseStatus().is2xxSuccessful() || usersPage == null) {
+                                    return null;
+                                }
+
+                                List<User> pageResults = usersPage.getResults();
+                                if (pageResults.isEmpty()) {
+                                    break;
+                                }
+
+                                allUsers.addAll(pageResults);
+                                offset += limit;
+
+                            } while (usersPage.getResults().size() == limit);
+
+                            Users aggregatedUsers = new Users();
+                            aggregatedUsers.setResults(allUsers);
+                            return aggregatedUsers;
+
+                        } catch (IllegalStateException e) {
+
+                            HttpStatus status = httpCallExecutor.getResponseStatus();
+
+                            if (status == null) {
+                                return null;
+                            }
+
+                            // retry per inconsistenza temporanea
+                            if (status == HttpStatus.NOT_FOUND || status.is5xxServerError()) {
+                                log.warn("Retry getProducerKeychainUsers: {}", httpCallExecutor.getErrorMessage());
+                                return null;
+                            }
+
+                            // sad path: lascia propagare
+                            throw e;
+                        }
+                    },
+                    users ->
+                            httpCallExecutor.getResponseStatus() != null
+                                    && httpCallExecutor.getResponseStatus().is2xxSuccessful()
+                                    && users != null
+                                    && users.getResults().stream()
+                                    .anyMatch(user -> userIdValue.equals(user.getUserId())),
+                    "L'utente non risulta associato alla producer keychain dopo la creazione",
+                    5,
+                    1_000L
+            );
+
+            httpCallExecutor.resetFormSnapshot();
 
         } catch (IllegalStateException e) {
-            log.warn(e.getMessage());
+            log.warn(httpCallExecutor.getErrorMessage());
         }
     }
 
@@ -93,28 +146,75 @@ public class ProducerKeychainsSteps {
     public void createKey(String keyType, DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps();
 
+        Map<String, String> seed = rows.get(0);
+        UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
+        KeySeed keySeed = resolver.resolveKeySeed(
+                keyType,
+                seed.get("key"),
+                seed.get("name"),
+                seed.get("alg"),
+                seed.get("use")
+        );
+
+        ProducerKey key;
+
         try {
-            Map<String, String> seed = rows.get(0);
-            UUID keychainId = resolver.resolveKeychain(seed.get("keychainId"));
-            KeySeed keySeed = resolver.resolveKeySeed(keyType, seed.get("key"), seed.get("name"), seed.get("alg"), seed.get("use"));
-
-            ProducerKey key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
-
-            producerKeychainsContext.setProducerKey(key);
-
-            if (httpCallExecutor.getResponseStatus().is2xxSuccessful() && key != null) {
-                httpCallExecutor.snapshot();
-                String kid = String.valueOf(key.getProducerKeychainId());
-                PollingService.makePolling(() -> producerKeychainsClient.getProducerKey(kid), createdKey -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && createdKey != null && kid.equals(String.valueOf(createdKey.getProducerKeychainId())), "La chiave non risulta creata correttamente dopo la creazione", 30, 1_000L);
-                httpCallExecutor.resetFormSnapshot();
-            }
-
-
+            key = producerKeychainsClient.createProducerKeychainKey(keychainId, keySeed);
         } catch (IllegalStateException e) {
-            log.warn(e.getMessage());
+            // qualsiasi errore -> esco lasciando lo status per il Then.
+            // Attenzione: questa post potrebbe soffrire di eventual consistency e beccare 404 nonostante la creazione
+            // se si ritenta la creazione dopo il 404 si va in 409
+            log.warn(httpCallExecutor.getErrorMessage());
+            return;
+        }
+
+        producerKeychainsContext.setProducerKey(key);
+        producerKeychainsContext.setActualKeySeed(keySeed);
+
+        httpCallExecutor.snapshot();
+        try {
+            String kid = key.getJwk().getKid();
+
+            ProducerKey finalKey = key;
+            PollingService.makePolling(
+                    () -> {
+                        try {
+                            return producerKeychainsClient.getProducerKey(kid);
+                        } catch (IllegalStateException e) {
+                            HttpStatus status = httpCallExecutor.getResponseStatus();
+
+                            if (HttpStatus.NOT_FOUND.equals(status)) {
+                                log.warn("Get key retryable failure: {}", httpCallExecutor.getErrorMessage());
+                                return null;
+                            }
+
+                            return null;
+                        }
+                    },
+                    fetchedKey ->
+                            httpCallExecutor.getResponseStatus() != null
+                                    && httpCallExecutor.getResponseStatus().is2xxSuccessful()
+                                    && fetchedKey != null
+                                    && fetchedKey.getJwk().equals(finalKey.getJwk()),
+                    "La chiave non risulta creata correttamente dopo la creazione",
+                    5,
+                    1_000L
+            );
+        } catch (PollingPredicateException e) {
+            log.warn(httpCallExecutor.getErrorMessage());
+        } finally {
+            httpCallExecutor.resetFormSnapshot();
         }
     }
 
+    private void sleepSeconds(long seconds) {
+        try {
+            TimeUnit.SECONDS.sleep(seconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Thread interrotto durante l'attesa", e);
+        }
+    }
 
     @When("si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante")
     public void verifyUsersPresence() {
@@ -155,9 +255,22 @@ public class ProducerKeychainsSteps {
     public void getProducerKey(String rawKid) {
         String kid = resolver.resolveKid(rawKid);
         try {
-            ProducerKey pKey = producerKeychainsClient.getProducerKey(kid);
+            ProducerKey pKey = PollingService.makePolling(
+                    () -> {
+                        try {
+                            return producerKeychainsClient.getProducerKey(kid);
+                        } catch (IllegalStateException e) {
+                            log.warn(httpCallExecutor.getErrorMessage());
+                            return null;
+                        }
+                    },
+                    res -> httpCallExecutor.getResponseStatus().is2xxSuccessful() && res != null,
+                    "",
+                    5,
+                    1_000
+            );
             producerKeychainsContext.setProducerKey(pKey);
-        } catch (IllegalStateException e) {
+        } catch (PollingPredicateException e) {
             log.warn(e.getMessage());
         }
     }

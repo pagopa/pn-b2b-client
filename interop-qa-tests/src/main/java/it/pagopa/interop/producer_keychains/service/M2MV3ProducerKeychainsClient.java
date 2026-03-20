@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @ToString
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements IM2MV3ProducerKeychainsClient {
 
     private final ProducerKeychainsApi producerKeychainsApi;
@@ -61,7 +61,9 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
     }
 
     public void createProducerKeychainUserAssociation(UUID producerKeychainId, LinkUser linkUser) {
-        performOperation(() -> producerKeychainsApi.addProducerKeychainUserWithHttpInfo(producerKeychainId, linkUser));
+        performOperation(
+                () -> producerKeychainsApi.addProducerKeychainUserWithHttpInfo(producerKeychainId, linkUser)
+        ).orElseThrow(() -> new IllegalStateException("Errore durante l'associazione dell'utente al producer keychains"));
     }
 
     public Users getProducerKeychainUsers(UUID producerKeychainId, Integer limit, Integer offset) {

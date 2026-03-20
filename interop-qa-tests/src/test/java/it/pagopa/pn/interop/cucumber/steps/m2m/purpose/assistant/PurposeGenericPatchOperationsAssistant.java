@@ -4,6 +4,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -56,9 +57,9 @@ public abstract class PurposeGenericPatchOperationsAssistant<PATCH_REQUEST> exte
     }
 
     @Override
-    public void patchResource(PATCH_REQUEST request, String getToken, String patchToken) {
+    public void patchResource(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
         this.context.setUpdateTime(OffsetDateTime.now());
-        super.patchResource(request, getToken, patchToken);
+        super.patchResource(patchRequest, patchTenant, role);
     }
 
     @Override
