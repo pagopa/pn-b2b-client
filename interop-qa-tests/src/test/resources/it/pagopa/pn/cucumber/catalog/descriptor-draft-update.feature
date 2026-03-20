@@ -192,7 +192,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene status code 200
 
   @dailyCallsThreshold
-  Scenario [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_11] Per un e-service in stato DRAFT non è possibile avere due attributi certificati in due gruppi differenti di cui uno con un valore invalido di dailyCallPerConsumer
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_11] Per un e-service in stato DRAFT non è possibile avere due attributi certificati in due gruppi differenti di cui uno con un valore invalido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA2"
     And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
     And l'utente è un "admin" di "PA1"
@@ -204,7 +204,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene status code 200
 
   @dailyCallsThreshold
-  Scenario [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_12] Per un e-service in stato DRAFT non è possibile avere lo stesso attributo certificato in due gruppi differenti con un valore valido di dailyCallPerConsumer
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_12] Per un e-service in stato DRAFT non è possibile avere lo stesso attributo certificato in due gruppi differenti con un valore valido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA2"
     And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
     And l'utente è un "admin" di "PA1"
@@ -218,7 +218,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene status code 200
 
   @dailyCallsThreshold
-  Scenario [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_13] Per un e-service in stato DRAFT è possibile avere due attributi certificati in due gruppi differenti tutti e due con un valore valido di dailyCallPerConsumer
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_13] Per un e-service in stato DRAFT è possibile avere due attributi certificati in due gruppi differenti tutti e due con un valore valido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA2"
     And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
     And l'utente è un "admin" di "PA1"
