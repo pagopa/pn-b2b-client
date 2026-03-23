@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface IM2MV3ProducerKeychainsClient extends Authenticable, SettableHttpCallExecutor {
     ProducerKeychain createProducerKeychain(ProducerKeychainSeed producerKeychainSeed);
+    void deleteProducerKeychain(UUID producerKeychainId);
+    ProducerKeychain getProducerKeychains(UUID producerKeychainId);
     ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed);
     void deleteProducerKeychainKeyByKid(UUID keychainId, String keyId);
     ProducerKey getProducerKey(String kid);

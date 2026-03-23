@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -18,7 +19,6 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -209,15 +209,6 @@ public class ProducerKeychainsSteps {
         }
     }
 
-    private void sleepSeconds(long seconds) {
-        try {
-            TimeUnit.SECONDS.sleep(seconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Thread interrotto durante l'attesa", e);
-        }
-    }
-
     @When("si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante")
     public void verifyUsersPresence() {
         List<User> m2mUsers = tenantContext.getM2mUsers();
@@ -341,5 +332,27 @@ public class ProducerKeychainsSteps {
             softly.assertThat(producerKeychainsContext.getActualName()).isEqualTo(producerKeychainsContext.getExpectedName());
             softly.assertThat(producerKeychainsContext.getActualDescription()).isEqualTo(producerKeychainsContext.getExpectedDescription());
         });
+    }
+
+    @Then("l'utente tenta l'eliminazione del portachiavi erogatore con id {string}")
+    public void deleteProducerKeychain(String rawKeychainId) {
+        final UUID resolvedKeychainId = resolver.resolveKeychain(rawKeychainId);
+
+        try{
+            producerKeychainsClient.deleteProducerKeychain(resolvedKeychainId);
+            httpCallExecutor.snapshot();
+
+            PollingService.makePolling(
+                    () -> producerKeychainsClient.getProducerKeychains(resolvedKeychainId),
+                    res -> httpCallExecutor.getResponseStatus().equals(HttpStatus.NOT_FOUND),
+                    "Producer keychain non eliminato!",
+                    5,
+                    1000
+            );
+
+            httpCallExecutor.resetFormSnapshot();
+        } catch (IllegalStateException e) {
+            log.warn(httpCallExecutor.getErrorMessage());
+        }
     }
 }

@@ -59,6 +59,25 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
                 );
     }
 
+    @Override
+    public void deleteProducerKeychain(UUID producerKeychainId) {
+        performOperation(
+                () -> producerKeychainsApi
+                        .deleteProducerKeychainWithHttpInfo(producerKeychainId)
+        );
+    }
+
+    @Override
+    public ProducerKeychain getProducerKeychains(UUID producerKeychainId) {
+        return performOperation(
+                () -> producerKeychainsApi
+                        .getProducerKeychainWithHttpInfo(producerKeychainId)
+        )
+                .orElseThrow(
+                        () -> new IllegalStateException("Errore nel recupero del portachiavi erogatore (response non 2xx o body nullo)")
+                );
+    }
+
     public ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed) {
         return performOperation(() -> producerKeychainsApi.createProducerKeychainKeyWithHttpInfo(keychainId, keySeed))
                 .orElseThrow(() -> new IllegalStateException("Errore nella creazione della chiave del producer keychain (response non 2xx o body nullo)"));
