@@ -81,7 +81,7 @@ public class ClientConsumerSteps {
         });
     }
 
-    @Then("l'utente tenta l'eliminazione del client {string} di tipo CONSUMER")
+    @Then("l'utente tenta l'eliminazione del client di tipo CONSUMER con id {string}")
     public void deleteClientConsumer(String rawClient) {
        final UUID resolvedClientId = resolver.resolveClientId(rawClient);
 
