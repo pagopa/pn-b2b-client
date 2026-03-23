@@ -59,6 +59,10 @@ public class ClientConsumerSteps {
         try {
             Client client = clientsApi.createClient(clientSeed);
 
+            clientConsumerContext.setExpectedName(client.getName());
+            clientConsumerContext.setExpectedDescription(client.getDescription());
+            clientConsumerContext.setExpectedMembers(resolvedMembers);
+
             clientConsumerContext.setActualClientId(client.getId());
             clientConsumerContext.setActualName(client.getName());
             clientConsumerContext.setActualDescription(client.getDescription());
