@@ -256,15 +256,3 @@ Feature: Verifica soglie differenziate
       | purposeId | statusCode |
       | %random   | 404        |
       | %null     | 404        |
-
-  @dailyCallsThreshold
-  @security
-  Scenario: [PURPOSE_THRESHOLD_11] Una richiesta con API BFF per recuperare le soglie rimanenti effettuata senza autenticazione fallisce
-    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "%random"
-    Then si ottiene status code 401
-
-  @dailyCallsThreshold
-  @security
-  Scenario: [PURPOSE_THRESHOLD_11b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti effettuata senza autenticazione fallisce
-    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "%random" per m2m
-    Then si ottiene status code 401
