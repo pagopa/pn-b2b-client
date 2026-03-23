@@ -514,7 +514,7 @@
                                  <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                              </typeMappings>
                              <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.15.1-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
+                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/PIN-8977_createClient_in_apiV3/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
                              <generatorName>java</generatorName>
                              <library>resttemplate</library>
                              <generateApiTests>false</generateApiTests>
