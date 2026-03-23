@@ -13,6 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -30,6 +31,7 @@ public class AttributeCommonSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final EServiceDescriptorUtils eServiceDescriptorUtils;
+    private final BaseResolver purposesResolver;
 
     public AttributeCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
@@ -45,6 +47,7 @@ public class AttributeCommonSteps {
             this.clientTokenConfigurator,
             this.sharedStepsContext
         );
+        this.purposesResolver = new BaseResolver(sharedStepsContext);
     }
 
     @Given("{tenantType} ha già creato {int} attribut(i)(o) {attributeKind}")
@@ -325,11 +328,14 @@ public class AttributeCommonSteps {
     @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string}")
     public void getRemainingDailyCalls(String purposeId) {
 
-        UUID purposeIdAsUUID = switch (purposeId) {
-            case "%null" -> null;
-            case "%random" -> UUID.randomUUID();
-            default -> UUID.fromString(purposeId);
-        };
+        UUID purposeIdAsUUID = this.purposesResolver.resolveOrParse(
+                purposeId,
+                null,
+                () -> this.sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+                null,
+                UUID::randomUUID,
+                null
+        );
 
         // TODO Threshold
         /*sharedStepsContext.getHttpCallExecutor().performCall(
