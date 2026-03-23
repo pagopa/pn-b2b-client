@@ -11,4 +11,5 @@ public interface IM2MV3ClientsClient extends IM2MClientsClient, SettableHeaders,
     Key createClientKey(UUID clientId, KeySeed keySeed);
     JWKs getClientKeys(UUID clientId, Integer offset, Integer limit);
     Client createClient(ClientSeed clientSeed);
+    void deleteClient(UUID clientId);
 }

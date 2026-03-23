@@ -1,9 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.client_consumer;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.service.IM2MV3ClientsClient;
+import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Client;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ClientSeed;
@@ -14,6 +18,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.client_consumer.utils.Clien
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -25,11 +30,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 public class ClientConsumerSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IM2MV3ClientsClient clientsApi;
+    private final IAuthorizationClient authorizationClient;
     private final ClientConsumerContext clientConsumerContext = new ClientConsumerContext();
     private final ClientConsumerResolver resolver;
 
     public ClientConsumerSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext, ProducerKeychainsContext producerKeychainsContext, TenantContext tenantContext) {
         clientsApi = clientTokenConfigurator.getM2mV3ClientsClient();
+        authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         clientsApi.setHttpCallExecutor(httpCallExecutor);
         resolver = new ClientConsumerResolver(sharedStepsContext, clientConsumerContext);
@@ -68,5 +75,27 @@ public class ClientConsumerSteps {
             softly.assertThat(clientConsumerContext.getActualName()).isEqualTo(clientConsumerContext.getExpectedName());
             softly.assertThat(clientConsumerContext.getActualDescription()).isEqualTo(clientConsumerContext.getExpectedDescription());
         });
+    }
+
+    @Then("l'utente tenta l'eliminazione del client {string} di tipo CONSUMER")
+    public void deleteClientConsumer(String rawClient) {
+       final UUID resolvedClientId = resolver.resolveClientId(rawClient);
+
+       try{
+            clientsApi.deleteClient(resolvedClientId);
+            httpCallExecutor.snapshot();
+
+            PollingService.makePolling(
+                   () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(resolvedClientId)),
+                   res -> res.equals(HttpStatus.NOT_FOUND),
+                   "Client non eliminato!",
+                   5,
+                   1000
+            );
+
+           httpCallExecutor.resetFormSnapshot();
+       } catch (IllegalStateException e) {
+           log.warn(httpCallExecutor.getErrorMessage());
+       }
     }
 }

@@ -105,4 +105,11 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
                 () -> new IllegalStateException("Errore durante la creazione del client")
         );
     }
+
+    @Override
+    public void deleteClient(UUID clientId) {
+        performOperation(
+                () -> clientsApi.deleteClientWithHttpInfo(clientId)
+        );
+    }
 }
