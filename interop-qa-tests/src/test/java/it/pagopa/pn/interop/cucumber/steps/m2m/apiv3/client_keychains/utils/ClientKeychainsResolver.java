@@ -7,14 +7,14 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeyUse;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.client_keychains.model.ClientKeychainsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
 import java.util.UUID;
 
 import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
-public class ClientKeychainsResolver extends AbstractResolver {
+public class ClientKeychainsResolver extends BaseResolver {
 
     private final ClientKeychainsContext context;
 

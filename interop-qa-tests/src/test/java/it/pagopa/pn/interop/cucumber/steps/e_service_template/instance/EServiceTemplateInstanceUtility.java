@@ -1,12 +1,12 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.UUID;
 
-public class EServiceTemplateInstanceUtility extends AbstractResolver {
+public class EServiceTemplateInstanceUtility extends BaseResolver {
 
     protected EServiceTemplateInstanceUtility(SharedStepsContext sharedStepsContext) {
         super(sharedStepsContext);

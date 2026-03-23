@@ -7,7 +7,7 @@ import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeyUse;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
-public class ProducerKeychainsResolver extends AbstractResolver {
+public class ProducerKeychainsResolver extends BaseResolver {
 
     private final ProducerKeychainsContext context;
 

@@ -1,12 +1,12 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.client.utils;
 
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
 import java.util.UUID;
 
-public class ClientResolver extends AbstractResolver {
+public class ClientResolver extends BaseResolver {
 
     private final SharedStepsContext sharedStepsContext;
 
