@@ -5,10 +5,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
@@ -17,6 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
@@ -35,12 +33,20 @@ public class CatalogCommonSteps {
         this.dataPreparationService = dataPreparationService;
     }
 
+    @Then("si ottiene status code {int} e la lista di {int} e-service(s) dal catalogo")
+    public void verifyReceivedCatalogResponse(int statusCode, int eServiceNumber) {
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getResponseStatus());
+        Assertions.assertEquals(eServiceNumber,
+                ((CatalogEServices) httpCallExecutor.getResponse()).getResults().size());
+    }
+
     @Then("si ottiene status code {int} e la lista di {int} e-service(s)")
     public void verifyReceivedResponse(int statusCode, int eServiceNumber) {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getResponseStatus());
         Assertions.assertEquals(eServiceNumber,
-                ((CatalogEServices) httpCallExecutor.getResponse()).getResults().size());
+                ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());
     }
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string}")
