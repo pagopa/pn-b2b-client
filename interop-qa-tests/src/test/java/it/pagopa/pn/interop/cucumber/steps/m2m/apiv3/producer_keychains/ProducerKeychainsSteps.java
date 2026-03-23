@@ -21,6 +21,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 
 @Slf4j
 public class ProducerKeychainsSteps {
@@ -300,5 +302,44 @@ public class ProducerKeychainsSteps {
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
+    }
+
+    @When("l'utente tenta di creare un portachiavi erogatore per il tenant {string} con:")
+    public void createProducerKeychains(String tenant, DataTable dataTable) {
+        Map<String, String> producerKeychainSeedMap = dataTable.asMap();
+
+        final String resolvedName = resolver.resolveProducerKeychainName(producerKeychainSeedMap.get("name"));
+        final String resolvedDescription = resolver.resolveDescription(producerKeychainSeedMap.get("description"));
+        final List<UUID> resolvedMembers = resolver.resolveMembers(producerKeychainSeedMap.get("members"), tenant);
+
+        ProducerKeychainSeed seed = new ProducerKeychainSeed();
+        seed.setName(resolvedName);
+        seed.setDescription(resolvedDescription);
+        seed.setMembers(resolvedMembers);
+
+        try {
+            ProducerKeychain keychain = producerKeychainsClient.createProducerKeychain(seed);
+
+            producerKeychainsContext.setExpectedName(resolvedName);
+            producerKeychainsContext.setExpectedDescription(resolvedDescription);
+            producerKeychainsContext.setExpectedMembers(resolvedMembers);
+
+            producerKeychainsContext.setActualName(keychain.getName());
+            producerKeychainsContext.setActualDescription(keychain.getDescription());
+            producerKeychainsContext.setProducerKeychainId(keychain.getId());
+        } catch (IllegalStateException e) {
+            log.warn(httpCallExecutor.getErrorMessage());
+        }
+
+    }
+
+    @And("l'oggetto ProducerKeychain restituito rispetta quanto atteso")
+    public void assertCreatedKeychain() {
+        // I membri del portachiavi non sono restituiti con l'oggetto ProducerKeychain e dovrà essere effettuata un ulteriore chiamata per la verifica
+        assertSoftly(softly -> {
+            softly.assertThat(producerKeychainsContext.getProducerKeychainId()).isNotNull();
+            softly.assertThat(producerKeychainsContext.getActualName()).isEqualTo(producerKeychainsContext.getExpectedName());
+            softly.assertThat(producerKeychainsContext.getActualDescription()).isEqualTo(producerKeychainsContext.getExpectedDescription());
+        });
     }
 }
