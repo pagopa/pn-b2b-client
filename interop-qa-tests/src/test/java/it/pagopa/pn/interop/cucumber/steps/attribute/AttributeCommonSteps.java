@@ -204,15 +204,13 @@ public class AttributeCommonSteps {
             .declared(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared()))
             .verified(sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified()));
 
-        // TODO Threshold
-        // int newDailyCallsPerConsumer = existingCertifiedAttr.getDailyCallsPerConsumer() == null ? 1 : existingCertifiedAttr.getDailyCallsPerConsumer() + 1;
+        int newDailyCallsPerConsumer = existingCertifiedAttr.getDailyCallsPerConsumer() == null ? 1 : existingCertifiedAttr.getDailyCallsPerConsumer() + 1;
 
         attributesSeed.getCertified().get(0).add(
             new DescriptorAttributeSeed()
                 .id(existingCertifiedAttr.getId())
                 .explicitAttributeVerification(existingCertifiedAttr.getExplicitAttributeVerification())
-                // TODO Threshold
-                // .dailyCallsPerConsumer(newDailyCallsPerConsumer)
+                .dailyCallsPerConsumer(newDailyCallsPerConsumer)
         );
 
         eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
@@ -284,8 +282,7 @@ public class AttributeCommonSteps {
         };
 
         DescriptorAttribute attr = existingAttributeGroups.get(groupIndex).get(attributeIndex);
-        // TODO Threshold
-        // attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+        attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
 
         List<List<DescriptorAttributeSeed>> certifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
         List<List<DescriptorAttributeSeed>> declaredAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared());
@@ -302,8 +299,7 @@ public class AttributeCommonSteps {
 
         Assertions.assertTrue(certAttr.isPresent());
         Assertions.assertEquals(attr.getId(), certAttr.get().getId());
-        // TODO Threshold
-        // Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
+        Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
     }
 
     @Given("i residui relativi alle dailyCalls associati alla finalità sono pari a:")
@@ -315,14 +311,13 @@ public class AttributeCommonSteps {
 
         UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
 
-        // TODO Threshold
-        /*sharedStepsContext.getHttpCallExecutor().performCall(
+        sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeId)
         );
         RemainingDailyCallsResponse response = (RemainingDailyCallsResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         Assertions.assertEquals(expectedRemainingDailyCallsPerConsumer, response.getRemainingDailyCallsPerConsumer());
-        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());*/
+        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
     }
 
     @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string}")
@@ -337,10 +332,8 @@ public class AttributeCommonSteps {
                 null
         );
 
-        // TODO Threshold
-        /*sharedStepsContext.getHttpCallExecutor().performCall(
+        sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeIdAsUUID)
         );
-        */
     }
 }

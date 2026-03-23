@@ -88,9 +88,7 @@ public class AttributeCommonContext {
         for (List<DescriptorAttributeSeed> group : attributesSeed) {
             for (DescriptorAttributeSeed attr : group) {
                 if (attr.getId().equals(attributeId)) {
-                    // TODO Threshold
-                    log.info("Setting dailyCallsPerConsumer to {} attribute ID {}", dailyCallsPerConsumer, attributeId);
-                    // attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+                    attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
                 }
             }
         }

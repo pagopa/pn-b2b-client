@@ -115,7 +115,6 @@ public class DescriptorUpdateSteps {
 
         Assertions.assertTrue(certAttr.isPresent());
         Assertions.assertEquals(attributeId, certAttr.get().getId());
-        // TODO Threshold
-        // Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
+        Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
     }
 }

@@ -2,13 +2,13 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
-// TODO Threshold
-// import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingDailyCallsResponse;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingDailyCallsResponse;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,8 +31,6 @@ public class PurposesSteps {
         int expectedRemainingDailyCallsPerConsumer = Integer.parseInt(expectedData.get("remainingDailyCallsPerConsumer"));
         int expectedRemainingDailyCallsTotals = Integer.parseInt(expectedData.get("remainingDailyCallsTotals"));
 
-        // UUID purposeId = this.sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
-
         UUID purposeId = this.purposesResolver.resolveOrParse(
                 ResolvableToken.ACTUAL.value(),
                 null,
@@ -42,14 +40,13 @@ public class PurposesSteps {
                 null
         );
 
-        // TODO Threshold
-        /*sharedStepsContext.getHttpCallExecutor().performCall(
+        sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> this.purposeClient.getRemainingDailyCalls(purposeId)
         );
         RemainingDailyCallsResponse response = (RemainingDailyCallsResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         Assertions.assertEquals(expectedRemainingDailyCallsPerConsumer, response.getRemainingDailyCallsPerConsumer());
-        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());*/
+        Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
     }
 
     @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string} per m2m")
@@ -64,10 +61,8 @@ public class PurposesSteps {
                 null
         );
 
-        // TODO Threshold
-        /*sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> this.purposeClient.getRemainingDailyCalls(purposeId)
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> this.purposeClient.getRemainingDailyCalls(purposeIdAsUUID)
         );
-        */
     }
 }
