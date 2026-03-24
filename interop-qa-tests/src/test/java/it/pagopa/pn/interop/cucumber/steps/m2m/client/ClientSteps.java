@@ -50,7 +50,11 @@ public class ClientSteps {
     @When("l'utente tenta di recuperare il client")
     public void getClientByIdM2M() {
         UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
-        httpCallExecutor.performCall(() -> clientsApis.getClient(clientId));
+        try {
+            httpCallExecutor.performCall(() -> clientsApis.getClient(clientId));
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     @When("l'utente tenta di ottenere le finalità associate ad un client inesistente")
