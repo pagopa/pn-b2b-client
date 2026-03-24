@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -45,7 +46,7 @@ public class RestTemplateConfiguration {
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(500);
+        pooling.setMaxTotal(400);
         pooling.setDefaultMaxPerRoute(50);
         return pooling;
     }
@@ -56,32 +57,44 @@ public class RestTemplateConfiguration {
             if (executionCount > 10) {
                 return false;
             }
+            // Retry su ConnectionPoolTimeoutException
             if (exception instanceof ConnectionPoolTimeoutException) {
-                long backoffTime = (long) Math.pow(2, executionCount) * 1000;
-                try {
-                    Thread.sleep(backoffTime);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                backoffSleep(executionCount);
                 return true;
             }
+            // Retry su NoHttpResponseException
+            if (exception instanceof org.apache.http.NoHttpResponseException) {
+                backoffSleep(executionCount);
+                return true;
+            }
+
             return false;
         };
+    }
+
+    private void backoffSleep(int executionCount) {
+        long backoffTime = (long) Math.pow(2, executionCount) * 1000;
+        try {
+            Thread.sleep(backoffTime);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 
     @Bean
     public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, HttpRequestRetryHandler httpRequestRetryHandler) {
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(60000)
-                .setConnectTimeout(10000)
-                .setSocketTimeout(20000)
+                .setConnectionRequestTimeout(120_000)
+                .setConnectTimeout(10_000)
+                .setSocketTimeout(20_000)
                 .build();
 
         return HttpClients.custom()
                 .setConnectionManager(poolingHttpClientConnectionManager)
                 .setDefaultRequestConfig(requestConfig)
                 .setRetryHandler(httpRequestRetryHandler)
+                .evictIdleConnections(1, TimeUnit.MINUTES)
                 .evictExpiredConnections()
                 .build();
     }
