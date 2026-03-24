@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -36,9 +35,10 @@ public class RestTemplateConfiguration {
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        interceptors.add(new RequestAndTraceIdInterceptor());
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setBufferRequestBody(false);
+        RestTemplate restTemplate = new RestTemplate(factory);
+        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
         return restTemplate;
     }
 
@@ -82,31 +82,28 @@ public class RestTemplateConfiguration {
                 .setConnectionManager(poolingHttpClientConnectionManager)
                 .setDefaultRequestConfig(requestConfig)
                 .setRetryHandler(httpRequestRetryHandler)
+                .evictExpiredConnections()
                 .build();
     }
 
-    @Bean(name = "defaultRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate defaultRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-
-        return restTemplate;
-    }
+//    @Bean(name = "defaultRestTemplate")
+//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+//    public RestTemplate defaultRestTemplate() {
+//        RestTemplate restTemplate = new RestTemplate();
+//        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+//
+//        return restTemplate;
+//    }
 
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
-
-        public final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
+        private final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
 
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-
             ClientHttpResponse response = execution.execute(request, body);
-
             doLog(request, response);
-
             return response;
         }
 
@@ -120,19 +117,8 @@ public class RestTemplateConfiguration {
         }
 
         private String getTraceIdFromHttpResponse(ClientHttpResponse response) {
-            HttpHeaders responseHeaders = response.getHeaders();
-            List<String> traceIdHeaderValues = responseHeaders.get(TRACE_ID_RESPONSE_HEADER_NAME);
-            return getFirstOrNull(traceIdHeaderValues);
-        }
-
-        private String getFirstOrNull(List<String> list) {
-            String result;
-            if (list != null && !list.isEmpty()) {
-                result = list.get(0);
-            } else {
-                result = null;
-            }
-            return result;
+            List<String> traceIdHeaderValues = response.getHeaders().get(TRACE_ID_RESPONSE_HEADER_NAME);
+            return (traceIdHeaderValues != null && !traceIdHeaderValues.isEmpty()) ? traceIdHeaderValues.get(0) : null;
         }
     }
 }
