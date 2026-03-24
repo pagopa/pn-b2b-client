@@ -7,7 +7,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.assertj.core.api.Assertions;
-
 import java.time.OffsetDateTime;
 
 public class EServiceUpdateSteps {
@@ -34,13 +33,20 @@ public class EServiceUpdateSteps {
         userUpdateEServiceImpl();
     }
 
-    @When("l'utente {string} la delega amministrativa e {string} la delega tecnica per la fruizione dell'e-service")
+    @When("l'utente imposta la delega amministrativa come {string} e la delega tecnica come {string} per la fruizione dell'e-service")
     public void updateEServiceDelegationAvailability(String consumerDelegationAction, String clientAccessDelegationAction) {
 
-        boolean isConsumerDelegable = this.getAction(consumerDelegationAction);
-        boolean isClientAccessDelegable = this.getAction(clientAccessDelegationAction);
+        Boolean isConsumerDelegable = this.getAction(consumerDelegationAction);
+        Boolean isClientAccessDelegable = this.getAction(clientAccessDelegationAction);
 
-        this.updateEServiceDelegationFlags(isConsumerDelegable, isClientAccessDelegable);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateEServiceDelegationFlags(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        new EServiceDelegationFlagsUpdateSeed()
+                                .isConsumerDelegable(isConsumerDelegable)
+                                .isClientAccessDelegable(isClientAccessDelegable)
+                )
+        );
     }
 
     @When("la delega amministrativa è {string} e la delega tecnica è {string} per la fruizione dell'e-service")
@@ -49,6 +55,7 @@ public class EServiceUpdateSteps {
         boolean isClientAccessDelegable = this.getAction(clientAccessDelegationAction);
 
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        httpCallExecutor.snapshot();
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(
                         () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
@@ -62,6 +69,7 @@ public class EServiceUpdateSteps {
                 },
                 "Impossibile aggiornare i flag di delega dell'e-service"
         );
+        httpCallExecutor.resetFormSnapshot();
 
         ProducerEServiceDetails eServiceDetails = (ProducerEServiceDetails) httpCallExecutor.getResponse();
         Assertions.assertThat(eServiceDetails.getIsConsumerDelegable()).isEqualTo(isConsumerDelegable);
@@ -70,8 +78,8 @@ public class EServiceUpdateSteps {
 
     private boolean getAction(String action) {
         return switch (action) {
-            case "abilita", "attiva" -> true;
-            case "disabilita", "disattiva" -> false;
+            case "abilita", "attiva", "true" -> true;
+            case "disabilita", "disattiva", "false" -> false;
             default -> throw new RuntimeException("Invalid action");
         };
     }
@@ -91,16 +99,5 @@ public class EServiceUpdateSteps {
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getEServicesCommonContext().setEServiceEditTimestamp(OffsetDateTime.now());
         }
-    }
-
-    private void updateEServiceDelegationFlags(boolean isConsumerDelegable, boolean isClientAccessDelegable) {
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateEServiceDelegationFlags(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        new EServiceDelegationFlagsUpdateSeed()
-                                .isConsumerDelegable(isConsumerDelegable)
-                                .isClientAccessDelegable(isClientAccessDelegable)
-                )
-        );
     }
 }
