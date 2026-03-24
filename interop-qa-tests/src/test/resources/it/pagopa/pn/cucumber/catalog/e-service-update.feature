@@ -52,3 +52,31 @@ Feature: Aggiornamento di un e-service non pubblicato
       | SUSPENDED        |
       | DEPRECATED       |
       | ARCHIVED         |
+
+  @eservice_published_delegation
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_01] Per un e-service precedentemente creato, il quale ha un solo descrittore in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), è possibile modificare i flag di delega
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    When l'utente imposta la delega amministrativa come "<consumerDelegableState>" e la delega tecnica come "<clientAccessDelegableState>" per la fruizione dell'e-service "<eServiceId>"
+    Then si ottiene status code <statusCode>
+    And la delega amministrativa è "<consumerDelegableState>" e la delega tecnica è "<clientAccessDelegableState>" per la fruizione dell'e-service
+
+    @happy-path
+    Examples:
+      | descriptorState | consumerDelegableState | clientAccessDelegableState | statusCode | eServiceId |
+      | PUBLISHED       | true                   | true                       | 200        | %actual    |
+      | PUBLISHED       | false                  | false                      | 200        | %actual    |
+      | PUBLISHED       | true                   | false                      | 200        | %actual    |
+      | SUSPENDED       | true                   | true                       | 200        | %actual    |
+      | SUSPENDED       | false                  | false                      | 200        | %actual    |
+      | SUSPENDED       | true                   | false                      | 200        | %actual    |
+      | DEPRECATED      | true                   | true                       | 200        | %actual    |
+      | DEPRECATED      | false                  | false                      | 200        | %actual    |
+      | DEPRECATED      | true                   | false                      | 200        | %actual    |
+
+    @sad-path
+    Examples:
+      | descriptorState | consumerDelegableState | clientAccessDelegableState | statusCode | eServiceId |
+      | PUBLISHED       | false                  | true                       | 400        | %actual    |
+      | SUSPENDED       | false                  | true                       | 400        | %actual    |
+      | DEPRECATED      | false                  | true                       | 400        | %actual    |
