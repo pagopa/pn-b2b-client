@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
-import static java.util.Objects.nonNull;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -9,13 +7,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -24,12 +16,13 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.UUID;
 
-import lombok.Data;
-import org.springframework.http.HttpStatus;
+import static java.util.Objects.nonNull;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
 
@@ -85,6 +78,15 @@ public class EServiceTemplateCreateSteps {
     @When("l'utente tenta la creazione di un e-service template indicando una specifica vuota")
     public void createUnspecifiedEServiceTemplate() {
         createEServiceTemplate(new EServiceTemplateSeed());
+    }
+
+    @When("l'ente {string} effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
+    public void createEServiceTemplate(String tenant, EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
+        String lastToken = sharedStepsContext.getUserToken();
+        sharedStepsContext.setUserToken(identityService.getToken(tenant, null)); // il set del token con ClientTokenConfigurator viene effettuato più in basso nello stack di chiamate
+        createEServiceTemplate(eServiceMode, desiredState);
+        sharedStepsContext.setUserToken(lastToken);
+        clientTokenConfigurator.setBearerToken(lastToken);
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
