@@ -100,3 +100,11 @@ Feature: Aggiornamento di un e-service non pubblicato
     #eService in stato DRAFT
       | DRAFT           | true                | false                   | false                       | false                           | 409        | %actual    |
 
+  @sad-path
+  @eservice_published_delegation
+  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_02] Per un e-service precedentemente creato con descrittore in stato NON DRAFT, la modifica dei flag di delega con token non valido restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And viene impostato per l'utente un token non valido
+    When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
+    Then si ottiene status code 401
