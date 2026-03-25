@@ -1,6 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
-
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
@@ -57,17 +56,11 @@ public class RestTemplateConfiguration {
             if (executionCount > 10) {
                 return false;
             }
-            // Retry su ConnectionPoolTimeoutException
-            if (exception instanceof ConnectionPoolTimeoutException) {
+            if (exception instanceof ConnectionPoolTimeoutException ||
+                    exception instanceof org.apache.http.NoHttpResponseException) {
                 backoffSleep(executionCount);
                 return true;
             }
-            // Retry su NoHttpResponseException
-            if (exception instanceof org.apache.http.NoHttpResponseException) {
-                backoffSleep(executionCount);
-                return true;
-            }
-
             return false;
         };
     }
@@ -81,7 +74,6 @@ public class RestTemplateConfiguration {
         }
     }
 
-
     @Bean
     public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, HttpRequestRetryHandler httpRequestRetryHandler) {
         RequestConfig requestConfig = RequestConfig.custom()
@@ -89,7 +81,6 @@ public class RestTemplateConfiguration {
                 .setConnectTimeout(10_000)
                 .setSocketTimeout(20_000)
                 .build();
-
         return HttpClients.custom()
                 .setConnectionManager(poolingHttpClientConnectionManager)
                 .setDefaultRequestConfig(requestConfig)
@@ -99,17 +90,7 @@ public class RestTemplateConfiguration {
                 .build();
     }
 
-//    @Bean(name = "defaultRestTemplate")
-//    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-//    public RestTemplate defaultRestTemplate() {
-//        RestTemplate restTemplate = new RestTemplate();
-//        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-//
-//        return restTemplate;
-//    }
-
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
-
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
         private final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
 
