@@ -4,30 +4,42 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.cucumber.java.*;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
@@ -47,12 +59,35 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.REFINEMENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULE_REFINEMENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
@@ -70,7 +105,7 @@ public class RicezioneNotificheWebSteps {
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
     private HttpStatusCodeException notificationError;
-    private BundleFullReceivedNotificationV26 fullReceivedNotification;
+    private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
@@ -185,7 +220,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(getTimelineElement(category, deliveryDetailCode));
     }
 
-    private TimelineElementV27 getTimelineElement(String category, String deliveryDetailCode) {
+    private TimelineElementV28 getTimelineElement(String category, String deliveryDetailCode) {
         fullReceivedNotification.getTimeline().forEach(x -> log.info(x.toString()));
         return fullReceivedNotification.getTimeline().stream()
                 .filter(x -> x.getCategory().getValue().equals(category) &&
@@ -196,7 +231,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("lato api l'elemento di timeline della notifica {string} {is} visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, boolean isVisibile) {
-        TimelineElementV27 timelineElement = getTimelineElement(category, null);
+        TimelineElementV28 timelineElement = getTimelineElement(category, null);
         if (isVisibile) {
             assertThat(timelineElement).as("Il timeline element " + category + " dovrebbe risultare visibile al destinatario").isNotNull();
         } else {
@@ -260,6 +295,20 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertTrue(dato.get().getHidden());
     }
 
+    @And("lato mittente da api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void latoMittenteDaApiElementoDiTimeline(String category, String deliveryDetailCode) {
+        Optional<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28> timelineElement = sharedSteps.getSentNotificationLastVersion()
+                .getTimeline()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(data ->
+                        data.getElementId().contains(category) && data.getDetails() != null &&
+                        data.getDetails().getDeliveryDetailCode() != null &&
+                        data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                .findFirst();
+        Assertions.assertTrue(timelineElement.isPresent(), "The searched category is not present in the timeline!");
+    }
+
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
     public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈPresente(String category, String deliveryDetailCode) {
         Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
@@ -315,7 +364,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return webRecipientClient.getReceivedNotificationDocument(
                 fullSentNotification.getIun(),
                 Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(fullSentNotification).getDocuments()).get(0).getDocIdx())),
@@ -454,10 +503,10 @@ public class RicezioneNotificheWebSteps {
             throw exc;
         }
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = null;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 timelineElement = null;
 
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 element : fullSentNotification.getTimeline()) {
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 element : fullSentNotification.getTimeline()) {
             if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
                 timelineElement = element;
                 break;
@@ -545,8 +594,8 @@ public class RicezioneNotificheWebSteps {
         String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
         String end = data.getOrDefault("endDate", null);
 
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        OffsetDateTime sentAt = Optional.ofNullable(fullSentNotification).map(FullSentNotificationV27::getSentAt).orElse(OffsetDateTime.now());
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        OffsetDateTime sentAt = Optional.ofNullable(fullSentNotification).map(FullSentNotificationV28::getSentAt).orElse(OffsetDateTime.now());
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
 
@@ -761,10 +810,10 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 timelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 newTimelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(Objects.requireNonNull(timelineElement.getLegalFactsIds()).size(), Objects.requireNonNull(newTimelineElement.getLegalFactsIds()).size());
@@ -1065,12 +1114,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("Viene verificato che non sia arrivato un evento di {string}")
     public void verificaAssenzaElementoTimeline(String categoryToFind) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         boolean isPresent = fullSentNotification.getTimeline()
                 .stream()
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27::getCategory)
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28::getCategory)
                 .filter(Objects::nonNull)
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27::toString)
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28::toString)
                 .anyMatch(category -> category.equals(categoryToFind));
         if (isPresent) {
             throw new AssertionFailedError("L'evento cercato è stato ritornato!");

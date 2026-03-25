@@ -40,13 +40,14 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | security |
 
   #70 (KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_NO_CREATOR] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata da parte di un utente che appartiene a una PA diversa da quella che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    Then si ottiene lo status code 403
+    Then si ottiene lo status code 404
 
   #71 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
@@ -122,14 +123,15 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | security |
 
   #78 (KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_NO_CREATOR] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     When l'utente è un "admin" di "GSP"
-    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
-    Then si ottiene lo status code 403
+    When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta invisibile del purpose template
+    Then si ottiene lo status code 404
 
   #79 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation

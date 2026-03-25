@@ -1,6 +1,6 @@
 Feature: Radd fsu
 
-  @radd @testSuiteDiProvaTemporanea
+  @radd
   Scenario: [B2B_RADD_DOC-UP-1] verifica document upload senza aver passato bundleId
     Given vengono caricati i documento di identità del cittadino senza "bundleId"
     Then il caricamento ha prodotto une errore http 400
@@ -251,7 +251,7 @@ Feature: Radd fsu
     Given Il cittadino "Signor Generato" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99
 
-  @radd @bugNoto
+#  @radd @bugNoto
   Scenario: [B2B_RADD_AOR-2] inquiry per cittadino con molte notifiche in stato irreperibile
     Given Il cittadino "DVNLRD52D15M059P" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
@@ -309,7 +309,12 @@ Feature: Radd fsu
 
   @radd
   Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+    Given vengono create 49 notifiche con destinatario Signor Casuale per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+      | subject                 | invio notifica con cucumber                  |
+      | senderDenomination      | Comune di Palermo                            |
+      | physicalCommunication   | AR_REGISTERED_LETTER                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | digitalDomicile         | NULL                                         |
     When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino

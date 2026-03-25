@@ -4,7 +4,7 @@ Feature: Download attestazione richiesta di fruizione sigillata
 
   @happy-path
   @agreement_download1a
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato ACTIVE, alla richiesta di download dell'attestazione della richiesta di fruizione da parte di un utente con sufficienti permessi, va a buon fine
+  Scenario Outline: [AGREEMENT_DOWNLOAD_1] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato ACTIVE, alla richiesta di download dell'attestazione della richiesta di fruizione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "<ente>" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service

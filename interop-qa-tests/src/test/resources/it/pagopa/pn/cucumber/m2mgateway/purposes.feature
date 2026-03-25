@@ -22,6 +22,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare una lista di 5 finalità create
     Then si ottiene status code 401
@@ -38,7 +39,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la nuova versione della finalità è stata creata correttamente
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -71,6 +71,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di visualizzare la lista delle versioni della finalità
     Then si ottiene status code 401
@@ -104,6 +105,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di visualizzare la nuova versione della finalità
     Then si ottiene status code 401
@@ -165,6 +167,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 401
@@ -250,6 +253,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 401
@@ -260,7 +264,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
     And la finalità è in stato ACTIVE
 
-  @m2m-false-negative
   # Ticket associati (a cui si deve l'eterogeneità dei codici di risposta previsti)
     # https://pagopa.atlassian.net/browse/PIN-6999
     # https://pagopa.atlassian.net/browse/PIN-7024
@@ -280,8 +283,8 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
     @happy-path
     Examples:
-      | state                | code |
-      | SUSPENDED            | 200  |
+      | state     | code |
+      | SUSPENDED | 200  |
 
     @sad-path
     Examples:
@@ -291,7 +294,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | ARCHIVED             | 400  |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2M_PURPOSES_SUSPEND_5_B] Una finalità in stato REJECTED NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -385,6 +387,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 401
@@ -396,7 +399,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità è in stato ACTIVE
 
   @sad-path
-  @m2m-false-negative
   Scenario Outline: [M2MG_PURPOSES_39_A] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -419,7 +421,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | WAITING_FOR_APPROVAL | 409  |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato REJECTED (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -457,7 +458,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | SUSPENDED |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_42] Approvazione negata per utente con ruolo M2M (Scenario 53)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -509,6 +509,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 401
@@ -518,7 +519,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità è in stato WAITING_FOR_APPROVAL
 
   @sad-path
-  @m2m-false-negative
   Scenario Outline: [M2MG_PURPOSES_48_A] Approvazione fallita di una finalità in stato non valido (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -539,7 +539,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | DRAFT     |
 
   @sad-path
-  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_48_B] Approvazione fallita di una finalità in stato REJECTED (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -620,6 +619,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 401
@@ -690,13 +690,14 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene status code 200
     And la richiesta di fruizione è stata correttamente visualizzata in stato "ACTIVE"
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_AGREEMENT_2] La richiesta di fruizione correlata a una finalità non può essere visualizzata specificando un token non valido (Parte2#Scenario 22)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere la richiesta di fruizione correlata a una finalità inesistente
     Then si ottiene status code 401
 
@@ -718,13 +719,14 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene status code 200
     And il file restituito non è vuoto
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_PURPOSES_DOCUMENT_2] Il documento dell'analisi del rischio correlato a una finalità non può essere visualizzato specificando un token non valido (Parte2#Scenario 26)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di ottenere il documento dell'analisi del rischio correlato a una finalità inesistente
     Then si ottiene status code 401
 
@@ -737,6 +739,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
+  @m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale di una finalità in stato DRAFT (Parte2#Scenario intorno a 127)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -751,9 +754,79 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  @m2m-patch
+  @purpose-m2m-patch
+  Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.1] - Casi negativi
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When viene aggiornato il draft purpose con purposeId "<purposeId>" e title "<title>", description "<description>", isFreeOfCharge "<isFreeOfCharge>", freeOfChargeReason "<freeOfChargeReason>", riskAnalysisForm "<riskAnalysisForm>", dailyCalls "<dailyCalls>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | purposeId | title                                                         | description                                                                                                                                                                                                                                                  | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+    # title troppo corto (< 5)
+      | %actual   | abcd                                                          | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 10         | 400        |
+
+    # title troppo lungo (> 60)
+      | %actual   | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 10         | 400        |
+
+    # description troppo corta (< 10)
+      | %actual   | titolo valido                                                 | short                                                                                                                                                                                                                                                        | true           | reason             | actual           | 10         | 400        |
+
+    # description troppo lunga (> 250)
+      | %actual   | titolo valido                                                 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | true           | reason             | actual           | 10         | 400        |
+
+    # dailyCalls < minimum (1)
+      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 0          | 400        |
+
+    # dailyCalls > maximum (1_000_000_000)
+      | %actual   | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                           | true           | reason             | actual           | 1000000001 | 400        |
+
+    Examples:
+      | purposeId                            | title         | description        | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+    # UUID valido ma non presente a sistema
+      | %random                              | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
+
+    # UUID valido ma sicuramente inesistente
+      | 00000000-0000-0000-0000-000000000000 | titolo valido | descrizione valida | true           | reason             | actual           | 10         | 404        |
+
+  @m2m-patch
+  @purpose-m2m-patch
+  Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.2] - Risk analysis invalida
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When viene aggiornato il draft purpose con purposeId "<purposeId>" e title "<title>", description "<description>", isFreeOfCharge "<isFreeOfCharge>", freeOfChargeReason "<freeOfChargeReason>", riskAnalysisForm "<riskAnalysisForm>", dailyCalls "<dailyCalls>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | purposeId | title         | description        | isFreeOfCharge | freeOfChargeReason | riskAnalysisForm | dailyCalls | statusCode |
+
+    # riskAnalysisForm semanticamente invalido
+      | %actual   | titolo valido | descrizione valida | true           | reason             | %invalid         | 10         | 200        |
+
+
+  # Aggiunto a posteriori della stesura degli scenari di test per verificare l'affermazione
+  # "Il controllo completo della validità della RA viene applicato in fase di attivazione (da Draft a Active)."
+  # in https://pagopa.atlassian.net/browse/PIN-9164?focusedCommentId=291410
+  @m2m-patch
+  @purpose-m2m-patch
+  Scenario: [M2M_PURPOSE_PUBLISH_INVALID_RA] - L'attivazione di una finalità contenente una risk analysis errata deve condurre ad un errore
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And viene aggiornato il draft purpose con purposeId "%actual" e title "titolo valido", description "descrizione valida", isFreeOfCharge "true", freeOfChargeReason "reason", riskAnalysisForm "%invalid", dailyCalls "10"
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene lo status code 400
+
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
+  @m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_2] Un utente con ruolo M2M NON può effettuare una modifica parziale di una finalità (Parte2#Scenario intorno a 129)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -766,6 +839,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
+  @m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_3] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità inesistente (Parte2#Scenario intorno a 130)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale di una finalità inesistente
@@ -774,6 +848,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
+  @m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_4] Un utente NON può effettuare una modifica parziale di una finalità indicando un token non valido (Parte2#Scenario intorno a 131)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -787,6 +862,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
+  @m2m-patch
   Scenario Outline: [M2M_PURPOSES_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità in stato diverso da DRAFT (Parte2#Scenario intorno a 132)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -796,17 +872,18 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 400
     And la finalità non ha subito modifiche
     Examples:
-      | stato                 |
-      | ACTIVE                |
-      | SUSPENDED             |
-      | REJECTED              |
-      | ARCHIVED              |
-      | WAITING_FOR_APPROVAL  |
+      | stato                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | REJECTED             |
+      | ARCHIVED             |
+      | WAITING_FOR_APPROVAL |
 
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
   @reversePurpose
+  @m2m-patch
   Scenario: [M2M_PURPOSES_PATCH_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità che non gli appartiene (Parte2#Scenario intorno a 133)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -816,6 +893,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 403
     And la finalità non ha subito modifiche
 
+  @m2m-patch
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_1] Un utente con ruolo M2M-ADMIN può effettuare la modifica parziale di una finalità associata ad un e-service ad erogazione inversa
     Given l'utente è un "admin" di "PA1"
@@ -832,6 +910,39 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  @m2m-patch
+  Scenario Outline: [M2M_PATCH_REVERSE_PURPOSE_1.1] - Casi negativi (vincoli OpenAPI)
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato una finalità in stato "DRAFT" per quell'eservice associando quell'analisi del rischio creata dall'erogatore
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And viene aggiornata la finalità ad erogazione inversa con purposeId "<purposeId>" e title "<title>", description "<description>", isFreeOfCharge "<isFreeOfCharge>", freeOfChargeReason "<freeOfChargeReason>", dailyCalls "<dailyCalls>"
+    Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | purposeId                            | title                                                         | description                                                                                                                                                                                                                                                 | isFreeOfCharge | freeOfChargeReason | dailyCalls | statusCode |
+    # title troppo corto (< 5)
+      | %actual                              | abcd                                                          | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 400        |
+    # title troppo lungo (> 60)
+      | %actual                              | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 400        |
+
+    # description troppo corta (< 10)
+      | %actual                              | titolo valido                                                 | short                                                                                                                                                                                                                                                       | true           | reason             | 10         | 400        |
+    # description troppo lunga (> 250)
+      | %actual                              | titolo valido                                                 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | true           | reason             | 10         | 400        |
+
+    # dailyCalls sotto minimo (< 1)
+      | %actual                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 0          | 400        |
+    # dailyCalls sopra massimo (> 1_000_000_000)
+      | %actual                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 1000000001 | 400        |
+
+    # purposeId inesistente (UUID valido ma non presente)
+      | %random                              | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 404        |
+    # purposeId sicuramente inesistente
+      | 00000000-0000-0000-0000-000000000000 | titolo valido                                                 | descrizione valida                                                                                                                                                                                                                                          | true           | reason             | 10         | 404        |
+
+  @m2m-patch
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_2] Un utente con ruolo M2M NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa
     Given l'utente è un "admin" di "PA1"
@@ -849,6 +960,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When l'utente tenta di effettuare la modifica parziale di una finalità ad erogazione inversa inesistente
     Then si ottiene lo status code 404
 
+  @m2m-patch
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_4] Un utente NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa indicando un token non valido
     Given l'utente è un "admin" di "PA1"
@@ -862,6 +974,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then la finalità non ha subito modifiche
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7808
+  @m2m-patch
   @m2m-parte2-settembre @reversePurpose
   Scenario Outline: [M2M_REVERSE_PURPOSE_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa in stato diverso da DRAFT
     Given l'utente è un "admin" di "PA1"
@@ -873,13 +986,14 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 400
     And la finalità non ha subito modifiche
     Examples:
-      | stato                 |
-      | ACTIVE                |
-      | SUSPENDED             |
-      | REJECTED              |
-      | ARCHIVED              |
-      | WAITING_FOR_APPROVAL  |
+      | stato                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | REJECTED             |
+      | ARCHIVED             |
+      | WAITING_FOR_APPROVAL |
 
+  @m2m-patch
   @m2m-parte2-settembre @reversePurpose
   Scenario: [M2M_REVERSE_PURPOSE_PATCH_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa che non gli appartiene
     Given l'utente è un "admin" di "PA1"

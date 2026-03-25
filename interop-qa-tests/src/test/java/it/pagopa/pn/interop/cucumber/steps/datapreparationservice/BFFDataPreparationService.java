@@ -183,6 +183,7 @@ public class BFFDataPreparationService {
 
         this.mainDataPrepService = mainDataPrepService;
         this.mainDataPrepService.setAuthorizationClient(this.authorizationClient);
+        this.mainDataPrepService.setHttpCallExecutor(httpCallExecutor);
 
         this.template = new DataPreparationServiceTemplate(
             this.httpCallExecutor,
@@ -1163,6 +1164,15 @@ public class BFFDataPreparationService {
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
                 res -> res.getState() == EServiceDescriptorState.PUBLISHED || res.getState() == EServiceDescriptorState.DEPRECATED,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+    }
+    public void waitRiskAnalysisDocument() {
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+                purpose -> purpose.getIsDocumentReady(),
+                "Risk analysis document is not ready",
+                30,
+                30_000
         );
     }
 

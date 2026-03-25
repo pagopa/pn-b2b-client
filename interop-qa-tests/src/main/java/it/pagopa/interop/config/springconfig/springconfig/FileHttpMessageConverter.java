@@ -32,9 +32,13 @@ public class FileHttpMessageConverter implements HttpMessageConverter<File> {
 
     @Override
     public File read(Class<? extends File> clazz, HttpInputMessage inputMessage) throws IOException {
-        Path tempFile = Files.createTempFile("downloaded", ".tmp");
+        Path tempFile = getOutputFilePath();
         Files.copy(inputMessage.getBody(), tempFile, StandardCopyOption.REPLACE_EXISTING);
         return tempFile.toFile();
+    }
+
+    public static Path getOutputFilePath() throws IOException {
+        return Files.createTempFile("downloaded", ".tmp");
     }
 
     @Override

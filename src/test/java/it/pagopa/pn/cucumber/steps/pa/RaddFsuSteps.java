@@ -4,7 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
@@ -84,7 +83,7 @@ public class RaddFsuSteps {
 
     //TODO c'è un metodo ad hoc per il taxId in SharedSteps
     private String getRecipientZeroTaxId() {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 

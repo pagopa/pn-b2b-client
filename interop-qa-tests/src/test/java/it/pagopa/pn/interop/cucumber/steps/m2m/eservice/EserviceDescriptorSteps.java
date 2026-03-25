@@ -69,8 +69,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del descriptor dell'e-service")
     public void patchEServiceDescriptorNotOwned(String tenant, M2MRole m2mRole) {
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        eServiceDescriptorPatchAssistant.patchResource(token);
+        eServiceDescriptorPatchAssistant.patchResource(tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del descriptor dell'e-service con token non valido")
@@ -138,8 +137,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service")
     public void patchEServiceDescriptorQuotasNotOwned(String tenant, M2MRole m2mRole) {
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        quotasPatchAssistant.patchResource(token);
+        quotasPatchAssistant.patchResource(tenant, m2mRole);
     }
 
     @Override

@@ -50,8 +50,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
-    And l'utente è un "<ruolo>" dell'ente delegante
-    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'ente delegante con ruolo "<ruolo>" ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
 
     @happy-path
@@ -431,27 +430,6 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 200
 
-    # Ticket aperto https://pagopa.atlassian.net/browse/QA-9269
-    @sad-path @deleghe1 @associa-finalita-client
-    Scenario: [TC_INCARICATO_64_BIS] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegante
-    Given l'utente è un "admin" di "GSP"
-    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    And l'ente delegato "PA1"
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
-    And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato accetta la delega in fruizione
-    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-#    And l'utente è un "admin" dell'ente delegante
-    And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" dell'ente delegato
-    And il delegato ha già creato 1 client "CONSUMER"
-    When l'utente richiede l'associazione della finalità al client
-    Then si ottiene status code 403
-
     @sad-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_65] Richiamare l’API di associazione di un client creato dal delegato NON avendo i permessi di associare un client da delegato all' e-service
     Given l'utente è un "admin" di "GSP"
@@ -672,7 +650,7 @@ Feature: Test API Availability in Use of E-Service
 
     # Ticket aperto https://pagopa.atlassian.net/browse/QA-9270
     @happy-path @deleghe2
-    Scenario: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
+    Scenario Outline: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
       Given l'utente è un "admin" di "GSP"
       And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
       Given l'ente delegato "PA2"
@@ -687,7 +665,13 @@ Feature: Test API Availability in Use of E-Service
       And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
       And l'utente è un "admin" dell'ente delegante
       When l'ente delegante con ruolo "admin" revoca la delega in fruizione
-      And il delegato controlla che la finalità sia stata archiviata
+      And il <subject> controlla che la finalità sia stata archiviata
+      Then si ottiene lo status code <statusCode>
+
+    Examples:
+      | subject   | statusCode |
+      | delegato  | 403        |
+      | delegante | 200        |
 
   @happy-path @deleghe1
   Scenario Outline: [TC_INCARICATO_77] Richiamare l’API di visualizzazione finalità precedentemente creata da parte del delegante, a seguito di revoca della delega - lato delegante
@@ -735,8 +719,6 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante con ruolo "admin" revoca la delega in fruizione
     #lato delegante
     And il delegante controlla che la richiesta di fruizione sia stata archiviata
-    #lato delegato
-    And il delegato controlla che la richiesta di fruizione sia stata archiviata
 
   @happy-path @deleghe2
   Scenario Outline: [TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante
@@ -834,3 +816,31 @@ Feature: Test API Availability in Use of E-Service
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA1"
     Then si ottiene status code 409
+
+  @hotfix-2.15
+  Scenario Outline: [TC_INCARICATO_91] Disponendo di una finalità propria verso un certo e-service E di una finalità in delega verso lo stesso e-service, la lettura di entrambe le finalità deve aver successo
+    Given "<ente>" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'utente è un "admin" di "PA1"
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+
+    When l'utente è un "admin" di "PA1"
+    And l'utente richiede la lettura della finalità numero 1
+    Then si ottiene status code 200
+
+    Given l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA1"
+    And l'ente "PA1" accetta la delega in fruizione con successo
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service in qualità di delegato
+    And per conto di "PA2", "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+
+    When l'utente è un "admin" di "PA1"
+    And l'utente richiede la lettura della finalità numero 1
+    Then si ottiene status code 200
+
+    When l'utente richiede la lettura della finalità numero 2
+    Then si ottiene status code 200
+    Examples:
+      | ente  |
+      | PA1   |
+      | GSP   |

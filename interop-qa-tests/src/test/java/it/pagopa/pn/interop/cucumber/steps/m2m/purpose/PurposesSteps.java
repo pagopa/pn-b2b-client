@@ -1,11 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,15 +8,7 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposePatchRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
@@ -35,11 +21,17 @@ import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
+import org.assertj.core.api.Assertions;
+import org.springframework.http.HttpStatus;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-import org.assertj.core.api.Assertions;
-import org.springframework.http.HttpStatus;
+
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class PurposesSteps {
     @ParameterType("ACTIVE|DRAFT|SUSPENDED|WAITING_FOR_APPROVAL|ARCHIVED|REJECTED")
@@ -59,9 +51,9 @@ public class PurposesSteps {
     private final ReversePurposePatchOperationsAssistant reversePurposePatchAssistant;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        PurposePatchOperationsAssistant purposePatchAssistant,
-        ReversePurposePatchOperationsAssistant reversePurposePatchAssistant) {
+                         SharedStepsContext sharedStepsContext,
+                         PurposePatchOperationsAssistant purposePatchAssistant,
+                         ReversePurposePatchOperationsAssistant reversePurposePatchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.purposeClient = clientTokenConfigurator.getM2mPurposeClient();
@@ -77,18 +69,18 @@ public class PurposesSteps {
     public void agreementsListAttempt(int agreementsQuantity) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         httpCallExecutor.performCall(() -> purposeClient.getPurposes(
-            PurposesListRequest.builder()
-                .offset(0)
-                .limit(agreementsQuantity)
-                .eservicesIds(List.of(eServiceId))
-                .build()
+                PurposesListRequest.builder()
+                        .offset(0)
+                        .limit(agreementsQuantity)
+                        .eservicesIds(List.of(eServiceId))
+                        .build()
         ));
     }
 
     @Then("sono state visualizzate correttamente {int} finalità create")
     public void purposesSuccessfullyGot(int expectedSize) {
         HttpStatus clientResponse = httpCallExecutor.getResponseStatus();
-        if(clientResponse.isError()) {
+        if (clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }
 
@@ -98,7 +90,7 @@ public class PurposesSteps {
         assertSoftly(softly -> {
             softly.assertThat(visualizedIds).hasSize(expectedSize);
             softly.assertThat(createdIds).containsAll(visualizedIds);
-        }) ;
+        });
     }
 
     @When("l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico")
@@ -107,13 +99,13 @@ public class PurposesSteps {
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         PurposeVersionSeed purposeVersionSeed = new PurposeVersionSeed().dailyCalls(newDailyCalls);
         httpCallExecutor.performCall(
-            () -> purposeClient.createPurposeVersion(
-                UUID.fromString(purposeCommonContext.getPurposeId()),
-                purposeVersionSeed
-            )
+                () -> purposeClient.createPurposeVersion(
+                        UUID.fromString(purposeCommonContext.getPurposeId()),
+                        purposeVersionSeed
+                )
         );
 
-        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             PurposeVersion createdVersion = (PurposeVersion) httpCallExecutor.getResponse();
             purposeCommonContext.addCurrentVersionId(createdVersion.getId());
         }
@@ -122,14 +114,14 @@ public class PurposesSteps {
     @Then("la nuova versione della finalità è stata creata correttamente")
     public void purposeVersionSuccessfullyCreated() {
         httpCallExecutor.performCall(() -> purposeClient.getVersion(
-            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
-            sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()));
+                sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+                sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()));
 
         assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
-            .as("Check GET created purpose response status")
-            .withFailMessage("Non è stato possibile reperire la purpose version creata. "
-                + "Visionare i log delle chiamate per maggiori dettagli.")
-            .isTrue();
+                .as("Check GET created purpose response status")
+                .withFailMessage("Non è stato possibile reperire la purpose version creata. "
+                        + "Visionare i log delle chiamate per maggiori dettagli.")
+                .isTrue();
 
         checkCreatedVersion();
     }
@@ -137,8 +129,8 @@ public class PurposesSteps {
     private void checkCreatedVersion() {
         PurposeVersion version = (PurposeVersion) httpCallExecutor.getResponse();
         assertThat(version.getDailyCalls())
-            .as("Check purpose version created")
-            .isEqualTo(this.newDailyCalls);
+                .as("Check purpose version created")
+                .isEqualTo(this.newDailyCalls);
     }
 
     @When("l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico")
@@ -155,7 +147,7 @@ public class PurposesSteps {
     @Then("sono state visualizzate correttamente {int} versioni della finalità")
     public void purposeVersionsSuccessfullyGot(int expectedSize) {
         HttpStatus clientResponse = httpCallExecutor.getResponseStatus();
-        if(clientResponse.isError()) {
+        if (clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }
 
@@ -166,7 +158,7 @@ public class PurposesSteps {
         assertSoftly(softly -> {
             softly.assertThat(visualizedIds).hasSize(expectedSize);
             softly.assertThat(createdIds).containsAll(visualizedIds);
-        }) ;
+        });
     }
 
     @When("l'utente tenta di visualizzare la lista delle versioni di una finalità inesistente")
@@ -176,19 +168,19 @@ public class PurposesSteps {
 
     private void listPurposeVersions(UUID purposeId) {
         httpCallExecutor.performCall(() -> purposeClient.getVersions(
-            PurposeVersionsListRequest.builder()
-                .offset(0)
-                .limit(20)
-                .purposeId(purposeId)
-                .build()
+                PurposeVersionsListRequest.builder()
+                        .offset(0)
+                        .limit(20)
+                        .purposeId(purposeId)
+                        .build()
         ));
     }
 
     @When("l'utente tenta di visualizzare la nuova versione della finalità")
     public void getPurposeVersionAttempt() {
         getPurposeVersion(
-            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
-            sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()
+                sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+                sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()
         );
 
     }
@@ -196,16 +188,16 @@ public class PurposesSteps {
     @When("l'utente tenta di visualizzare una versione inesistente di una finalità inesistente")
     public void nonExistentPurposeVersionGetAttempt() {
         getPurposeVersion(
-            UUID.randomUUID(),
-            UUID.randomUUID()
+                UUID.randomUUID(),
+                UUID.randomUUID()
         );
     }
 
     @When("l'utente tenta di visualizzare una versione inesistente della finalità esistente")
     public void purposeNonExistentVersionGetAttempt() {
         getPurposeVersion(
-            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
-            UUID.randomUUID()
+                sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+                UUID.randomUUID()
         );
     }
 
@@ -340,24 +332,24 @@ public class PurposesSteps {
     public void agreementPurposeVisualized(String agreementState) {
         if (httpCallExecutor.getResponseStatus().isError()) {
             fail("Il GET dell'agreement correlato alla purpose ha generato il "
-                + "seguente errore: %s. Consultare i log per maggiori dettagli.",
-                httpCallExecutor.getResponseStatus());
+                            + "seguente errore: %s. Consultare i log per maggiori dettagli.",
+                    httpCallExecutor.getResponseStatus());
         }
 
         Agreement returnedAgreement = (Agreement) httpCallExecutor.getResponse();
         assertSoftly(softly -> {
-           softly.assertThat(returnedAgreement.getState())
-               .as("Verifica stato dell'agreement restituito")
-               .isEqualTo(AgreementState.fromValue(agreementState));
-           softly.assertThat(returnedAgreement.getEserviceId())
-               .as("Verifica eServiceId dell'agreement restituito")
-               .isEqualTo(sharedStepsContext.getEServicesCommonContext().getEserviceId());
-           softly.assertThat(returnedAgreement.getDescriptorId())
-               .as("Verifica e-service descriptorId dell'agreement restituito")
-               .isEqualTo(sharedStepsContext.getEServicesCommonContext().getDescriptorId());
-           softly.assertThat(OffsetDateTime.parse(returnedAgreement.getCreatedAt()))
-               .as("Verifica data di creazione dell'agreement restituito")
-               .isCloseTo(sharedStepsContext.getAgreementCommonContext().getAgreementCreationTime(), within(10, SECONDS));
+            softly.assertThat(returnedAgreement.getState())
+                    .as("Verifica stato dell'agreement restituito")
+                    .isEqualTo(AgreementState.fromValue(agreementState));
+            softly.assertThat(returnedAgreement.getEserviceId())
+                    .as("Verifica eServiceId dell'agreement restituito")
+                    .isEqualTo(sharedStepsContext.getEServicesCommonContext().getEserviceId());
+            softly.assertThat(returnedAgreement.getDescriptorId())
+                    .as("Verifica e-service descriptorId dell'agreement restituito")
+                    .isEqualTo(sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+            softly.assertThat(OffsetDateTime.parse(returnedAgreement.getCreatedAt()))
+                    .as("Verifica data di creazione dell'agreement restituito")
+                    .isCloseTo(sharedStepsContext.getAgreementCommonContext().getAgreementCreationTime(), within(10, SECONDS));
         });
     }
 
@@ -401,13 +393,67 @@ public class PurposesSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità")
     public void patchPurpose(String tenant, M2MRole m2mRole) {
         PurposePatchRequest request = purposePatchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        purposePatchAssistant.patchResource(request, token);
+        purposePatchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità con token non valido")
     public void patchPurposeWithNotValidToken() {
         purposePatchAssistant.patchResourceWithInvalidToken(purposePatchAssistant.buildDefaultPatchRequest());
+    }
+
+    @When("viene aggiornato il draft purpose con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, riskAnalysisForm {string}, dailyCalls {string}")
+    public void patchDraftPurpose(
+            String purposeId,
+            String title,
+            String description,
+            String isFreeOfCharge,
+            String freeOfChargeReason,
+            String riskAnalysisForm,
+            String dailyCalls
+    ) {
+        UUID purposeIdValue = buildPurposeIdValue(purposeId);
+
+        // default valido (include un RiskAnalysisFormSeed valido)
+        PurposePatchRequest req = purposePatchAssistant.buildDefaultPatchRequest();
+
+        // override SEMPRE (anche a null)
+        req.setTitle(nullOrBlankOrValue(title));
+        req.setDescription(nullOrBlankOrValue(description));
+        req.setIsFreeOfCharge(nullableBoolean(isFreeOfCharge));
+
+        req.setFreeOfChargeReason(nullOrBlankOrValue(freeOfChargeReason));
+        req.setDailyCalls(nullableInteger(dailyCalls));
+
+        // riskAnalysisForm: token-based minimale
+        // - %null -> null
+        // - %actual -> lascia quello del default
+        // - %invalid -> riskAnalysis errata
+        String raf = nullOrBlankOrValue(riskAnalysisForm);
+        if (raf == null || raf.isBlank()) {
+            req.setRiskAnalysisForm(null);
+        } else if ("%actual".equalsIgnoreCase(raf) || "actual".equalsIgnoreCase(raf)) {
+            // non fare nulla: resta quello del default builder
+        } else if ("%invalid".equalsIgnoreCase(raf) || "invalid".equalsIgnoreCase(raf)) {
+            // se vuoi random vero, puoi richiamare buildDefaultPatchRequest() e prendere solo il RAF
+            req.setRiskAnalysisForm(purposePatchAssistant.buildDefaultPatchRequest(false).getRiskAnalysisForm());
+        } else {
+            req.setRiskAnalysisForm(null);
+        }
+
+        this.httpCallExecutor.performCall(
+                () -> purposeClient.patchPurpose(purposeIdValue, req)
+        );
+    }
+
+    private UUID buildPurposeIdValue(String purposeId) {
+        UUID purposeIdValue;
+        // FIXME logica da centralizzare in StepParser
+        if (purposeId.contains("actual")) {
+            purposeIdValue = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+        } else {
+            purposeIdValue = uuidOrRandomOrNull(purposeId);
+        }
+        return purposeIdValue;
     }
 
     @Then("la finalità è stata parzialmente modificata correttamente")
@@ -444,11 +490,36 @@ public class PurposesSteps {
         reversePurposePatchAssistant.patchResource(request);
     }
 
+    @When("viene aggiornata la finalità ad erogazione inversa con purposeId {string} e title {string}, description {string}, isFreeOfCharge {string}, freeOfChargeReason {string}, dailyCalls {string}")
+    public void patchReversePurposeDraft(
+            String purposeId,
+            String title,
+            String description,
+            String isFreeOfCharge,
+            String freeOfChargeReason,
+            String dailyCalls
+    ) {
+        UUID purposeIdValue = buildPurposeIdValue(purposeId);
+
+        // default valido
+        ReversePurposePatchRequest req = reversePurposePatchAssistant.buildDefaultPatchRequest();
+
+        // override SEMPRE (anche se null/blank/invalid -> diventa null e l'API può rispondere 400)
+        req.setTitle(nullOrBlankOrValue(title));
+        req.setDescription(nullOrBlankOrValue(description));
+        req.setIsFreeOfCharge(nullableBoolean(isFreeOfCharge));
+        req.setFreeOfChargeReason(nullOrBlankOrValue(freeOfChargeReason));
+        req.setDailyCalls(nullableInteger(dailyCalls));
+
+        // esegui chiamata
+        httpCallExecutor.performCall(() -> purposeClient.patchReversePurpose(purposeIdValue, req));
+    }
+
+
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa")
     public void patchReversePurposeUsing(String tenant, M2MRole m2mRole) {
         ReversePurposePatchRequest request = reversePurposePatchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        reversePurposePatchAssistant.patchResource(request, token);
+        reversePurposePatchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa con token non valido")
@@ -465,8 +536,8 @@ public class PurposesSteps {
     @When("l'utente tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa specificando un sottoinsieme di informazioni")
     public void patchReversePurposeSubset() {
         ReversePurposePatchRequest request = ReversePurposePatchRequest.builder()
-            .title("patched title - " + UUID.randomUUID())
-            .build();
+                .title("patched title - " + UUID.randomUUID())
+                .build();
         reversePurposePatchAssistant.patchResource(request);
     }
 
@@ -478,14 +549,15 @@ public class PurposesSteps {
                 case APPROVE -> out = purposeClient.approvePurpose(id);
                 case UNSUSPEND -> out = purposeClient.unsuspendPurpose(id);
                 case ARCHIVE -> out = purposeClient.archivePurpose(id);
-                default -> throw new UnsupportedOperationException("Not expected purpose action '%s'".formatted(action));
+                default ->
+                        throw new UnsupportedOperationException("Not expected purpose action '%s'".formatted(action));
             }
             return out;
         });
     }
 
     private UUID generateId(EntityIdType entityIdType) {
-        if(entityIdType == null) {
+        if (entityIdType == null) {
             var purposeContext = sharedStepsContext.getPurposeCommonContext();
             List<String> ids = purposeContext.getPurposesIds();
 
@@ -499,8 +571,10 @@ public class PurposesSteps {
 
         return switch (entityIdType) {
             case NULL_ID -> null;
-            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
+            case INVALID_ID ->
+                    UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
             case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
         };
     }
 }

@@ -36,7 +36,7 @@ public class ConsolidatoreSteps {
                 : Instant.now();
         Map<String, String> mapInfo = populateConsolidatoreMap(now);
         try {
-            sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotification(mapInfo);
+            sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -46,10 +46,10 @@ public class ConsolidatoreSteps {
     public void vieneInvocatoIlConsolidatoreDueVolte() throws InterruptedException {
         Map<String, String> mapInfo = populateConsolidatoreMap(Instant.now());
         try {
-            String response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotification(mapInfo);
+            String response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo);
             Assertions.assertTrue(response.contains("200.00"));
             Thread.sleep(2000);
-            response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotification(mapInfo);
+            response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo);
             Assertions.assertTrue(response.contains("400.02"));
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);

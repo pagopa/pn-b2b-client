@@ -52,13 +52,14 @@ Feature: finalità agevolata, purpose template UPDATE
       | security |
 
   #14(KO)
+  # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
   @purposeTemplate @purposeTemplateUpdate
-  Scenario: [UPDATE_PURPOSE_TEMPLATE_NO_CREATOR] Modifica di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
+  Scenario: [UPDATE_PURPOSE_TEMPLATE_NO_CREATOR] Modifica di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
-    And si aggiorna il purpose template creato
-    Then si ottiene lo status code 403
+    And si aggiorna il purpose template invisibile
+    Then si ottiene lo status code 404
 
   #15(KO)
   @purposeTemplate @purposeTemplateUpdate

@@ -5,12 +5,11 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import org.junit.jupiter.api.Assertions;
-
+import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
 
 public class PurposeReadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -31,6 +30,16 @@ public class PurposeReadSteps {
                 () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
                 )
+        );
+    }
+
+    @When("l'utente richiede la lettura della finalità numero {collectionIndex}")
+    public void userReadPurpose(int purposeIndex) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        List<UUID> purposesIds = sharedStepsContext.getPurposeCommonContext()
+            .getPurposesIdsAsUUID();
+        httpCallExecutor.performCall(
+            () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(purposesIds.get(purposeIndex))
         );
     }
 

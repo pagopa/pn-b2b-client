@@ -14,4 +14,5 @@ import java.util.UUID;
 @Component
 public class RiskAnalysisCommonContext {
     UUID riskAnalysisId;
+    Integer dailyCalls = 1;
 }

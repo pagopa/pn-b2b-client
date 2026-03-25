@@ -25,7 +25,8 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_04] Non può essere effettuato il caricamento di un'interfaccia di un e-service specificando un token non valido (Parte2#Scenario intorno a 51)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service inesistente
     Then si ottiene lo status code 401
 
@@ -37,13 +38,12 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
     Then si ottiene lo status code 409
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7748
   @m2m-parte2-agosto-rilascio1
   Scenario Outline: [M2MG_DOCUMENTS_07_A] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 54)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     Examples:
       | stato       |
       | SUSPENDED   |
@@ -56,7 +56,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare il caricamento dell'interfaccia dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_08] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di un e-service se non è il creatore dello stesso (Parte2#Scenario intorno a 55)
@@ -67,13 +67,14 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then non è presente alcuna interfaccia per l'e-service
 
+  @m2m-v3-204-to-200
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_09] Un utente con ruolo M2M-ADMIN può effettuare la cancellazione di un'interfaccia di un e-service in stato DRAFT (Parte2#Scenario intorno a 56)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente effettua il caricamento dell'interfaccia dell'e-service con successo
     When l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service
-    Then si ottiene lo status code 200
+    Then si ottiene http status code 200
     And non è presente alcuna interfaccia per l'e-service
 
   @m2m-parte2-agosto-rilascio1
@@ -96,7 +97,8 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_12] Non può essere effettuata la cancellazione di un'interfaccia di un e-service specificando un token non valido (Parte2#Scenario intorno a 60)
-    Given viene impostato per l'utente un token m2m non valido
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente
     Then si ottiene lo status code 401
 
@@ -164,6 +166,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio2
   Scenario: [M2MG_DOCUMENTS_18] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service in stato PUBLISHED usando un token non valido
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 2 documenti già caricati
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare i metadati dei documenti associati all'e-service
     Then si ottiene lo status code 401
@@ -205,6 +208,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
   Scenario Outline: [M2MG_DOCUMENTS_21] Un utente NON può reperire la lista dei metadati dei documenti associati ad un e-service template in stato PUBLISHED usando un token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente ha già creato un e-service template in modalità <mode>, stato PUBLISHED e 2 DOCUMENTI già caricati
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare i metadati dei documenti associati all'e-service template
     Then si ottiene lo status code 401

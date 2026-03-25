@@ -16,6 +16,7 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Primary
 public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient {
     private final EserviceTemplatesApi eserviceTemplatesApi;
     private final it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi bffEserviceTemplatesApi;

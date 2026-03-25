@@ -15,9 +15,9 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 //TODO: altri possibili candidati sono: i nomi delle PA, le versioni di webhook e notifica, le operazioni che si possono svolgere su un'apiKey (rotate, block, create...)
 public class ParameterTypes {
 
-    @ParameterType("esista|non esista")
+    @ParameterType("esiste|esista|non esiste|non esista|")
     public static boolean exists(String value) {
-        return value.equals("esista");
+        return !value.startsWith("non");
     }
 
     @ParameterType("abbia|non abbia")

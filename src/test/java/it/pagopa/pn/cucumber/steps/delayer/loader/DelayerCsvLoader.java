@@ -43,10 +43,16 @@ public class DelayerCsvLoader {
         }
     }
 
-    public void initializeExpectedDeliveryDate() {
+    public void initializeExpectedDeliveryDate(DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
         if (context.expectedDeliveryDate == null) {
-            LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
-            context.expectedDeliveryDate = monday.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            String deliveryDate = rows.get(0).getOrDefault("deliveryWeek", null);
+            if(deliveryDate != null) {
+                context.expectedDeliveryDate = deliveryDate.equalsIgnoreCase("NEXT_MONDAY")
+                        ? getNextMonday(1)
+                        : LocalDate.parse(deliveryDate).format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+            } else context.expectedDeliveryDate = getCurrentMonday();
         }
     }
 

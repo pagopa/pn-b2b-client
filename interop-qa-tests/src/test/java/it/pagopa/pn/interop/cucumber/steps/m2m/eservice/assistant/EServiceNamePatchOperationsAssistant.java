@@ -6,10 +6,12 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.EServiceNameMapper;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
@@ -28,7 +30,7 @@ public class EServiceNamePatchOperationsAssistant extends EServiceGenericPatchOp
     @Override
     protected EServiceNamePatchRequest buildDefaultPatchRequest() {
         return EServiceNamePatchRequest.builder()
-            .name("patched name - " + UUID.randomUUID())
+            .name("patched name - " + RandomStringUtils.insecure().nextAlphanumeric(5))
             .build();
     }
 

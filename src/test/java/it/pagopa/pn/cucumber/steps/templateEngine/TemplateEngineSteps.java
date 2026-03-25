@@ -57,20 +57,12 @@ public class TemplateEngineSteps {
         retrieveTemplate(templateTypeObject, language, body, "semplice", new HashMap<>());
     }
 
-    @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string} con recipient Type {string}")
-    public void recuperoIlTemplatePerInLinguaConIlBodyRecType(String templateType, String language, String body,String recipientType) {
-        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("context_recipientType", recipientType); // todo t mc.
-
-        retrieveTemplate(templateTypeObject, language, body, "semplice", parameters);
-    }
     @When("recupero (il template)(l'oggetto) per {string} di tipo {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String notificationType, String language) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         Map<String, String> parameters = new HashMap<>();
         parameters.put("context_recipientType", recipientType); // todo t mc.
+        parameters.put("recipient_recipientType", recipientType); // todo t mc.
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, notificationType, parameters);
     }
 
@@ -84,21 +76,13 @@ public class TemplateEngineSteps {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         Map<String, String> parameters = new HashMap<>();
         parameters.put("context_recipientType", recipientType); // todo t mc.
+        parameters.put("recipient_recipientType", recipientType); // todo t mc.
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
 
     @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:")
     public void recuperoIlTemplateConIValoriNelRequestBody(String templateType, Map<String, String> parameters) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
-    }
-
-    @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:con recipient Type {string}")
-    public void recuperoIlTemplateConIValoriNelRequestBodyRecType(String templateType, Map<String, String> parameters, String recipientType) {
-        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-
-        parameters.putIfAbsent("context_recipientType",recipientType ); // todo t rc
-
         retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
     }
 
@@ -109,18 +93,6 @@ public class TemplateEngineSteps {
                 .forEach(data -> {
                     Map<String, String> parameters = new HashMap<>();
                     parameters.put(data, "null");
-                    retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
-                });
-    }
-
-    @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body errati con recipient Type {string}")
-    public void recuperoIlTemplateConIValoriNelRequestBodyErratiRecType(String templateType, String recipientType) {
-        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        templateEngineObjectFields.get(templateTypeObject)
-                .forEach(data -> {
-                    Map<String, String> parameters = new HashMap<>();
-                    parameters.put(data, "null");
-                    parameters.putIfAbsent("context_recipientType", recipientType); //todo t rc.
                     retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, "semplice", parameters);
                 });
     }
@@ -208,11 +180,6 @@ public class TemplateEngineSteps {
         } else {
             throw new IllegalArgumentException("no valid file to check");
         }
-    }
-
-    @Then("verifico che il template è in formato {string} in lingua {string}")
-    public void verificoCheIlTemplateÈInFormatoInLingua(String fileType, String language) {
-        controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua("", fileType, language);
     }
 
     @And("controllo che per il template {string} il file {string} sia in lingua {string}")

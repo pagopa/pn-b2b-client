@@ -35,7 +35,7 @@ Feature: Attivazione di un descrittore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoDescrittore>"
     When l'utente attiva il descrittore di quell'e-service
-    Then si ottiene status code 400
+    Then si ottiene status code 409
 
     Examples: 
       | statoDescrittore |

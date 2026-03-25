@@ -31,6 +31,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
+    private final String apiKeySon;
     private ApiKeyType apiKeyInUse;
     private final String devBasePath;
     private String bearerTokenInterop;
@@ -43,11 +44,13 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                                           @Value("${pn.external.api-key}") String apiKeyMvp1,
                                           @Value("${pn.external.api-key-2}") String apiKeyMvp2,
                                           @Value("${pn.external.api-key-GA}") String apiKeyGa,
+                                          @Value("${pn.external.api-key-SON}") String apiKeySon,
                                           @Value("${pn.interop.enable}") String enableInterop) {
         this.restTemplate = restTemplate;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
+        this.apiKeySon = apiKeySon;
         this.enableInterop = enableInterop;
         if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
@@ -405,6 +408,57 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return eventsApi.consumeEventStreamV28WithHttpInfo(streamId, lastEventId);
     }
 
+    //V29
+    @Override
+    public StreamMetadataResponseV29 createEventStreamV29(StreamCreationRequestV29 streamCreationRequestV29) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.createEventStreamV29(streamCreationRequestV29);
+    }
+
+    @Override
+    public StreamMetadataResponseV29 disableEventStreamV29(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.disableEventStreamV29(streamId);
+    }
+
+    @Override
+    public List<StreamListElement> listEventStreamsV29() throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.listEventStreamsV29();
+    }
+
+    @Override
+    public void deleteEventStreamV29(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        streamsApi.removeEventStreamV29(streamId);
+    }
+
+    @Override
+    public StreamMetadataResponseV29 retrieveEventStreamV29(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.retrieveEventStreamV29(streamId);
+
+    }
+
+    @Override
+    public StreamMetadataResponseV29 updateEventStreamV29(UUID streamId, StreamRequestV29 streamRequestV29) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.updateEventStreamV29(streamId, streamRequestV29);
+    }
+
+    @Override
+    public List<ProgressResponseElementV29> consumeEventStreamV29(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV29(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV29>> consumeEventStreamHttpV29(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV29WithHttpInfo(streamId, lastEventId);
+    }
+
+
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
@@ -427,6 +481,13 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                 if (this.apiKeyInUse != ApiKeyType.GA) {
                     setApiKey(apiKeyGa);
                     this.apiKeyInUse = ApiKeyType.GA;
+                }
+                beenSet = true;
+            }
+            case SON -> {
+                if (this.apiKeyInUse != ApiKeyType.SON) {
+                    setApiKey(apiKeySon);
+                    this.apiKeyInUse = ApiKeyType.SON;
                 }
                 beenSet = true;
             }
