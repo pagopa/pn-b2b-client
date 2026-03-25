@@ -549,7 +549,7 @@ public class BFFDataPreparationService {
                 .voucherLifespan(descriptor.getVoucherLifespan());
 
         UpdateEServiceDescriptorSeed descriptorSeed = mergeDescriptorSeed(currentDescriptorSeed, partialDescriptorSeed)
-                .dailyCallsPerConsumer(50).dailyCallsTotal(1000).audience(List.of("pagopa.it"));
+            .audience(List.of("pagopa.it"));
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
@@ -1238,6 +1238,8 @@ public class BFFDataPreparationService {
         descriptorSeed.setAudience(useOrDefault(partialDescriptorSeed.getAudience(), defaultDescriptorSeed.getAudience()));
         descriptorSeed.setVoucherLifespan(useOrDefault(partialDescriptorSeed.getVoucherLifespan(), defaultDescriptorSeed.getVoucherLifespan()));
         descriptorSeed.setAgreementApprovalPolicy(useOrDefault(partialDescriptorSeed.getAgreementApprovalPolicy(), defaultDescriptorSeed.getAgreementApprovalPolicy()));
+        descriptorSeed.setDailyCallsTotal(useOrDefault(partialDescriptorSeed.getDailyCallsTotal(), defaultDescriptorSeed.getDailyCallsTotal()));
+        descriptorSeed.setDailyCallsPerConsumer(useOrDefault(partialDescriptorSeed.getDailyCallsPerConsumer(), defaultDescriptorSeed.getDailyCallsPerConsumer()));
         return descriptorSeed;
     }
 
