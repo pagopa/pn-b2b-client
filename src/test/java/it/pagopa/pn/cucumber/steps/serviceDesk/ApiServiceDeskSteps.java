@@ -42,7 +42,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -108,6 +107,7 @@ public class ApiServiceDeskSteps {
     private VideoUploadResponse videoUploadResponse;
     private NotificationDocument notificationDocument;
     private SearchResponse searchResponse;
+    private OperationResponse searchOperationResponse;
     private String operationId;
     private GetOperationsResponseV2 getOperationsResponseV2;
     private ApiResult httpResponse;
@@ -403,9 +403,9 @@ public class ApiServiceDeskSteps {
             log.info("STATO NOTIFICA " + lista.get(0).getNotificationStatus().getStatus().getValue());
         }
         if (operationId != null) {
-            assertThat(searchResponse.getOperations().stream().map(op -> op.getOperationId()).collect(Collectors.toList())).asList()
-                    .as("La searchResponse deve contenere l'operation appena creata")
-                    .contains(operationId);
+            searchOperationResponse = searchResponse.getOperations().stream().filter(op -> op.getOperationId().equals(operationId)).findFirst().orElse(null);
+            assertThat(searchOperationResponse).as("Nel risultato della search non figura l'operation " + operationId).isNotNull();
+            log.info("Operation response trovata nella search: {}", searchOperationResponse);
         }
     }
 
@@ -958,7 +958,7 @@ public class ApiServiceDeskSteps {
     public void retrieveNotificationsFromData(DataTable dataTable) {
         Map<String, String> inputParams = dataTable.asMap();
         String paId = Optional.ofNullable(inputParams.get("paId")).map(this::setPaID).orElse(null);
-        String searchNextPagesKey = Optional.ofNullable(inputParams.get("searchNextPagesKey")).orElse(null);
+        String searchNextPagesKey = inputParams.get("searchNextPagesKey");
         Integer searchPageSize = Integer.parseInt(Optional.ofNullable(inputParams.get("searchPageSize")).orElse("10"));
         OffsetDateTime startDate = Optional.ofNullable(inputParams.get("startDate")).map(this::getDate).orElse(null);
         OffsetDateTime endDate = Optional.ofNullable(inputParams.get("endDate")).map(this::getDate).orElse(null);
@@ -1450,7 +1450,6 @@ public class ApiServiceDeskSteps {
         String paIDSearch;
         if (paId == null)
             return sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun()).getSenderPaId();
-        ;
         return switch (paId.toUpperCase()) {
             case "VUOTO" -> "";
             case "NO_SET" -> {
@@ -1809,6 +1808,7 @@ public class ApiServiceDeskSteps {
                     opIdParam = "SUB#" + operationId + "#" + sharedSteps.getNotificationIunList().get(0);
             default -> throw new IllegalArgumentException("Invalid value for operationIdType: " + operationIdType);
         }
+        log.info("OperationId used for get v2: {}", opIdParam);
         this.httpResponse = ipServiceDeskClient.getOperationV2WithHttpInfo(opIdParam);
         getOperationsResponseV2 = maybeBody(httpResponse.body(), GetOperationsResponseV2.class).orElse(null);
         log.info("Response of GET operations V2: {}", getOperationsResponseV2);
@@ -1816,9 +1816,7 @@ public class ApiServiceDeskSteps {
         if (getOperationsResponseV2 != null) {
             if (!operationIdType.equalsIgnoreCase("VALID OP. ID V1") && createActOperationRequestV2 != null) {
                 assertThat(getOperationsResponseV2.getSubOperations().size()).as("").isEqualTo(createActOperationRequestV2.getIun().size());
-                getOperationsResponseV2.getSubOperations().forEach(op -> {
-                    assertThat(createActOperationRequestV2.getIun()).asList().as("La response della get non contiene lo IUN: " + op.getIun()).contains(op.getIun());
-                });
+                getOperationsResponseV2.getSubOperations().forEach(sub -> assertThat(createActOperationRequestV2.getIun()).asList().as("La response della get non contiene lo IUN: " + sub.getIun()).contains(sub.getIun()));
             }
             log.info("Operation id della GET V2:" + operationId);
         }
@@ -1834,5 +1832,18 @@ public class ApiServiceDeskSteps {
             callGetOperationsV2("VALID OP. ID");
             assertThat(getOperationsResponseV2.getStatus()).as("Dopo 3 minuti di attesa, lo status della GetOperationResponse non coincide ancora con quanto atteso").isEqualTo(status);
         }
+    }
+
+    @And("il campo {string} risulta popolato correttamente, e il campo senderPaDescription è {string}")
+    public void checkSearchResultFields(String fieldName, String senderPaDescription) {
+        List<SDNotificationSummary> fieldToCheck = fieldName.equals("iuns") ? searchOperationResponse.getIuns() : searchOperationResponse.getUncompletedIuns();
+        assertThat(fieldToCheck).asList().as("Il campo " + fieldName + "non dev'essere vuoto");
+        fieldToCheck.forEach(summary -> {
+            if (senderPaDescription.equals("NOT PagoPA")) {
+                assertThat(summary.getSenderPaDescription()).isNotEqualTo("PagoPA S.p.A.");
+            } else {
+                assertThat(summary.getSenderPaDescription()).isEqualTo(senderPaDescription);
+            }
+        });
     }
 }
