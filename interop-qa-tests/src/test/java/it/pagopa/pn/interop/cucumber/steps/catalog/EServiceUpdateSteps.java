@@ -11,6 +11,8 @@ import org.assertj.core.api.Assertions;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
+
 public class EServiceUpdateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -40,8 +42,8 @@ public class EServiceUpdateSteps {
     @When("l'utente imposta la delega amministrativa come {string} e la delega tecnica come {string} per la fruizione dell'e-service {string}")
     public void updateEServiceDelegationAvailability(String consumerDelegationAction, String clientAccessDelegationAction, String eServiceId) {
 
-        Boolean isConsumerDelegable = this.getAction(consumerDelegationAction);
-        Boolean isClientAccessDelegable = this.getAction(clientAccessDelegationAction);
+        Boolean isConsumerDelegable = nullableBoolean(consumerDelegationAction);
+        Boolean isClientAccessDelegable = nullableBoolean(clientAccessDelegationAction);
 
         UUID eServiceUuid = catalogResolver.resolveEServiceId(eServiceId);
 
@@ -57,8 +59,8 @@ public class EServiceUpdateSteps {
 
     @When("la delega amministrativa è {string} e la delega tecnica è {string} per la fruizione dell'e-service")
     public void checkEServiceDelegationAvailability(String consumerDelegationAction, String clientAccessDelegationAction) {
-        boolean isConsumerDelegable = this.getAction(consumerDelegationAction);
-        boolean isClientAccessDelegable = this.getAction(clientAccessDelegationAction);
+        Boolean isConsumerDelegable = nullableBoolean(consumerDelegationAction);
+        Boolean isClientAccessDelegable = nullableBoolean(clientAccessDelegationAction);
 
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         httpCallExecutor.snapshot();
@@ -81,14 +83,6 @@ public class EServiceUpdateSteps {
 
         Assertions.assertThat(eServiceDetails.getIsConsumerDelegable()).isEqualTo(isConsumerDelegable);
         Assertions.assertThat(eServiceDetails.getIsClientAccessDelegable()).isEqualTo(isClientAccessDelegable);
-    }
-
-    private boolean getAction(String action) {
-        return switch (action) {
-            case "abilita", "attiva", "true" -> true;
-            case "disabilita", "disattiva", "false" -> false;
-            default -> throw new RuntimeException("Invalid action");
-        };
     }
 
     private void userUpdateEServiceImpl() {
