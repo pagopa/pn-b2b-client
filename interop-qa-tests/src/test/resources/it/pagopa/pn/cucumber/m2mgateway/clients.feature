@@ -1,6 +1,7 @@
 @hotfix-2.15
 Feature: Gestione dei clients attraverso APIs M2M V2
 
+  @m2m-client
   Scenario Outline: [M2M_CLIENTS_GET_1] Un client di tipo API non è recuperabile tramite API M2M
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
