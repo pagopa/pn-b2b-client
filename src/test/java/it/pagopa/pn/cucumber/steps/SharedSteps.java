@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
@@ -153,7 +154,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -310,6 +310,11 @@ public class SharedSteps {
     public static void before_all() {
         log.debug("SHARED_GLUE START");
         //only for class activation
+    }
+
+    @After
+    public void afterScenario() {
+        MDC.clear();
     }
 
     @Before
@@ -1351,13 +1356,12 @@ public class SharedSteps {
 
     public static void threadWait(int wait) {
         try {
-            await().atMost(wait, TimeUnit.MILLISECONDS);
-//            TimeUnit.MILLISECONDS.sleep(wait);
+            TimeUnit.MILLISECONDS.sleep(wait);
         } catch (RuntimeException exception) {
             log.error("Await error exception");
             throw exception;
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
