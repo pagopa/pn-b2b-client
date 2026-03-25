@@ -424,6 +424,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED |
       | SUSPENDED  |
 
+  @eservice_published_delegation
   @m2m-parte2-agosto-rilascio2
   Scenario: [M2MG_ESERVICES_39] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service inesistente (Parte2#Scenario intorno a 88)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
