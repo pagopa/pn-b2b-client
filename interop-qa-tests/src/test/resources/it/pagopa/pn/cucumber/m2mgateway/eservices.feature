@@ -409,6 +409,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED | false               | %null                   |
       | DEPRECATED | %null               | false                   |
 
+  @eservice_published_delegation
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_38] Un utente con ruolo M2M NON può effettuare una modifica parziale della delega di un e-service (Parte2#Scenario intorno a 87)
@@ -429,6 +430,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di effettuare la modifica parziale della delega di un e-service inesistente
     Then si ottiene lo status code 404
 
+  @eservice_published_delegation
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_40] Un utente NON può effettuare una modifica parziale della delega di un e-service indicando un token non valido (Parte2#Scenario intorno a 89)
@@ -478,6 +480,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
+  @eservice_published_delegation
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service che non gli appartiene (Parte2#Scenario intorno a 90)
