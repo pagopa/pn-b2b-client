@@ -110,11 +110,30 @@ public class DescriptorUpdateSteps {
                 .verified(verifiedAttributesSeed);
 
         eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
+    }
+
+    @When("la soglia differenziata per l'attributo {attributeKind} {int}-esimo creato nel gruppo {int}-esimo è uguale a {string}")
+    public void checkDailyCallsPerConsumer(AttributeKind attributeType, Integer attributeIndex, Integer groupIndex, String dailyCallsPerConsumer) {
+
+        Integer expectedDailyCallsPerConsumer = dailyCallsPerConsumer.equals("%null") ? null : Integer.parseInt(dailyCallsPerConsumer);
+
+        List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
+        List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
+        List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
+
+        UUID attributeId = switch (attributeType) {
+            case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
+            case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
+            case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
+        };
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
         Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorAttribute(eServiceId, descriptorId, attributeId);
 
         Assertions.assertTrue(certAttr.isPresent());
         Assertions.assertEquals(attributeId, certAttr.get().getId());
-        Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
+        Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), expectedDailyCallsPerConsumer);
     }
 }
