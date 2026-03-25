@@ -51,18 +51,21 @@ Feature: Aggiornamento di un descrittore in bozza
     And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
     And si ottiene status code 200
     And l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
+    And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 1000000000 e dailyCallsTotal uguale a 1000000000
     When l'utente tenta di aggiungere una soglia differenziata di <dailyCallsPerConsumer> per l'attributo CERTIFIED 0-esimo creato
     Then si ottiene status code <statusCode>
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "<expectedDailyCallsPerConsumer>"
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'utente carica un documento di interfaccia di tipo "yaml"
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
     Examples:
-      | dailyCallsPerConsumer | statusCode |
-      | 100                   | 200        |
-      | 0                     | 400        |
-      | 1000000000            | 200        |
-      | 1000000001            | 400        |
+      | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
+      | 100                   | 200        | 100                           |
+      | 0                     | 400        | %null                         |
+      | 1000000000            | 200        | 1000000000                    |
+      | 1000000001            | 400        | %null                         |
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_2] Per un e-service in stato DRAFT non è possibile indicare soglie differenti per il medesimo attributo certificato
@@ -74,6 +77,8 @@ Feature: Aggiornamento di un descrittore in bozza
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di dichiarare due volte lo stesso attributo certificato ognuno con un dailyCallsPerConsumer differente
     Then si ottiene status code 400
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'utente carica un documento di interfaccia di tipo "yaml"
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
