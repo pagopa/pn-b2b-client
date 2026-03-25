@@ -375,6 +375,8 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'e-service non ha subito modifiche
 
   ## EService Patch Delegation
+  @eservice_published_delegation
+  @happy-path
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_37] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 85)
@@ -384,15 +386,28 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 200
     And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
-    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni
-    Then si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
-    And l'e-service è stato parzialmente modificato correttamente
     Examples:
       | stato      | isConsumerDelegable | isClientAccessDelegable |
       | PUBLISHED  | true                | true                    |
-      | DEPRECATED | true                | true                    |
+      | PUBLISHED  | false               | false                   |
+      | PUBLISHED  | true                | false                   |
+      | PUBLISHED  | true                | %null                   |
+      | PUBLISHED  | false               | %null                   |
+      | PUBLISHED  | %null               | false                   |
+
       | SUSPENDED  | true                | true                    |
+      | SUSPENDED  | false               | false                   |
+      | SUSPENDED  | true                | false                   |
+      | SUSPENDED  | true                | %null                   |
+      | SUSPENDED  | false               | %null                   |
+      | SUSPENDED  | %null               | false                   |
+
+      | DEPRECATED | true                | true                    |
+      | DEPRECATED | false               | false                   |
+      | DEPRECATED | true                | false                   |
+      | DEPRECATED | true                | %null                   |
+      | DEPRECATED | false               | %null                   |
+      | DEPRECATED | %null               | false                   |
 
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
