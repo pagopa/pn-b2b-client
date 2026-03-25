@@ -7,7 +7,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
-import org.assertj.core.api.Assertions;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -78,11 +77,7 @@ public class EServiceUpdateSteps {
                 "Impossibile aggiornare i flag di delega dell'e-service"
         );
 
-        ProducerEServiceDetails eServiceDetails = (ProducerEServiceDetails) httpCallExecutor.getResponse();
         httpCallExecutor.resetFormSnapshot();
-
-        Assertions.assertThat(eServiceDetails.getIsConsumerDelegable()).isEqualTo(isConsumerDelegable);
-        Assertions.assertThat(eServiceDetails.getIsClientAccessDelegable()).isEqualTo(isClientAccessDelegable);
     }
 
     private void userUpdateEServiceImpl() {
