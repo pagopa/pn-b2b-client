@@ -447,6 +447,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
 
     # Corretto 400 in 409
   # 09/03/2026 ticket https://pagopa.atlassian.net/browse/QA-10948: al momento non è possibile archiviare un e-service
+  @eservice_published_delegation
   @m2m-patch
   Scenario Outline: [M2MG_ESERVICES_41_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in uno stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service in stato "<stato>"
@@ -467,6 +468,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   #  When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
   #  Then si ottiene lo status code 400
   #  And l'e-service non ha subito modifiche
+  @eservice_published_delegation
   @deleghe2
   @m2m-patch
   Scenario: [M2MG_ESERVICES_41_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in stato WAITING_FOR_APPROVAL
