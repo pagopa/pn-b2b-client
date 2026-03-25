@@ -6,8 +6,8 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import org.springframework.http.HttpStatus;
-
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,7 +56,7 @@ public class EServiceDescriptorUtils {
     }
 
     @Nonnull
-    public Optional<DescriptorAttribute> getDescriptorAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId) {
+    public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId) {
 
         httpCallExecutor.snapshot();
 
@@ -72,8 +72,8 @@ public class EServiceDescriptorUtils {
         return producerEServiceDescriptor.getAttributes()
                 .getCertified()
                 .stream()
-                .filter(attrList -> attrList.stream().anyMatch(attr -> attr.getId().equals(attributeId)))
-                .map(attrList -> attrList.get(0))
+                .flatMap(Collection::stream)
+                .filter(attr -> attr.getId().equals(attributeId))
                 .findFirst();
     }
 }
