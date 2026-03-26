@@ -220,8 +220,10 @@ public class AgreementActivateSteps {
                 if (attrIdx % 2 == 0) {
                     consumerFunction.accept(tenantId, attributeId);
                 }
-                requiredAttributes.add(attributeGroup);
+
+                attributeGroup.add(attributeId);
             }
+            requiredAttributes.add(attributeGroup);
         }
         if (attributeKind == AttributeKind.VERIFIED)
             sharedStepsContext.getAttributeCommonContext().setRequiredVerifiedAttributes(requiredAttributes);
