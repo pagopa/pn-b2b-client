@@ -238,7 +238,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 # --------------- Si testano gli errori per prodotto 890 che CAMBIANO il tipo in base a STRICTFINALVALIDATIONSTOCK890 == FALSE --------------
 
-  @paperTracker890 @strictFinalValidationFalse @trackerErrors
+  @paperTrackerRunMode890 @strictFinalValidationFalse @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_2] Il tipo di errore ritornato contiene type WARNING invece che ERROR, a causa del fatto che strictFinalValidation è false
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -248,7 +248,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@<sequence> |
       | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
@@ -256,7 +256,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | sequence                      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
       | OK-Giacenza-lte10-NoARCAD_890 | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:23:14.636011832Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Missed required attachments for the sequence validation: [CAD, ARCAD]\",\"additionalDetails\":{\"missingAttachments\":[\"CAD\",\"ARCAD\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"179bffce-2e30-4042-8aa7-2c1accd3bee1\",\"productType\":\"890\",\"type\":\"WARNING\"}" |
 
-  @paperTracker890 @strictFinalValidationFalse @trackerErrors
+  @paperTrackerRunMode890 @strictFinalValidationFalse @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_2.B] Si verifica che per la sequence OK-Giacenza-INVALID_DATETIME_890, in cui è previsto un errore di DATE_ERROR,
   l'errore sia effettivamente presente con type WARNING e con category DATE_ERROR a causa del fatto che strictFinalValidation è false
     Given viene generata una nuova notifica
@@ -267,7 +267,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address | Via@OK-Giacenza-INVALID_DATETIME_890 |
       | digitalDomicile         | NULL                                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si controlla che siano presenti tutti gli eventi relativi alla sequence "OK-Giacenza-INVALID_DATETIME_890"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
@@ -275,7 +275,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T11:28:12.401123047Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-16T11:28:09Z\",\"statusCode\":\"RECAG005C\"},{\"statusTimestamp\":\"2026-03-16T11:28:04Z\",\"statusCode\":\"RECAG005B\"},{\"statusTimestamp\":\"2026-03-16T11:27:58Z\",\"statusCode\":\"RECAG005A\"},{\"statusTimestamp\":\"2026-03-16T11:27:23Z\",\"statusCode\":\"RECAG011A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"f1ef2a9e-98b8-4d13-ac93-7f4055e98420\",\"productType\":\"890\",\"type\":\"WARNING\"}" |
 
-  @paperTracker890 @strictFinalValidationFalse @trackerErrors
+  @paperTrackerRunMode890 @strictFinalValidationFalse @trackerErrors
   Scenario Outline: [PAPER_TRACKER_ERROR_890_2_A] Si verifica che andando a simulare una giacenza con attachment non validi si abbia un errore ATTACHMENTS_ERROR - INVALID_VALUES (FAIL_890-BadAttachment)
   ed un errore di tipo WARNING poiché strictFinalValidation è settato a false
     Given viene generata una nuova notifica
