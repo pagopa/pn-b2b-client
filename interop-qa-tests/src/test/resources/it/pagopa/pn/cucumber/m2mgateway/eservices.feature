@@ -920,3 +920,19 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
 
+  @eservice_published_delegation
+  @sad-path
+  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_4] Un utente NON può creare una delega in fruizione su un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
+    And si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
+    And l'e-service è stato parzialmente modificato correttamente
+    And l'ente delegante "PA2"
+    And l'ente delegato "GSP"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un m2m-admin dell'ente delegante
+    When l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
+    Then si ottiene lo status code 400
