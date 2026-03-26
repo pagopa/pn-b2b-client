@@ -10,14 +10,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.CIEValidationData;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateDto;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
@@ -37,8 +34,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +41,6 @@ import java.util.UUID;
 import java.util.Map;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeaders.*;
-import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @Slf4j
@@ -140,9 +134,13 @@ public class DelegheTemporaneeSteps {
         String taxId = delegate.getTaxId();
         String lollipopUserId = delegate.getTaxId();
         switch (inputParamsType.toUpperCase()) {
+            //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
+            case "QRCODE INESISTENTE" ->
+                    mandateCreationRequest.setAarQrCodeValue(getQRPathEnvironmentBased() + VALID_QRCODE_404);
+            case "QRCODE NON VALIDO" -> mandateCreationRequest.setAarQrCodeValue("invalid");
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> taxId = Costanti.GALILEO_GALILEI_TAX_ID;
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
         }
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
@@ -361,16 +359,15 @@ public class DelegheTemporaneeSteps {
     }
 
     //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
-    @When("{destinatario} viene temporaneamente delegato da {string} passando headers lollipop {lollipopHeadersError}")
-    public void creaDelegaTemporaneaWithHeaders(Destinatario delegate, String delegator, LollipopHeaders lollipopHeaderWithError) {
+    @When("{string} viene temporaneamente delegato da {string} passando headers lollipop {lollipopHeadersError}")
+    public void creaDelegaTemporaneaWithHeaders(String cfDelegato, String delegator, LollipopHeaders lollipopHeaderWithError) {
         qrCode = getQRPathEnvironmentBased() + "?aar=" +
                 (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0));
 
         MandateCreationRequest mandateCreationRequest = new MandateCreationRequest();
         mandateCreationRequest.setAarQrCodeValue(qrCode);
 
-        String taxId = delegate.getTaxId();
-        String lollipopUserId = delegate.getTaxId();
+        String taxId = cfDelegato;
 
         Map<LollipopHeaders, String> lollipopHeaders = getLollipopHeaders(lollipopHeaderWithError);
         String xPagopaLollipopOriginalUrl = lollipopHeaders.get(LOLLIPOP_ORIGINAL_URL);
@@ -379,8 +376,12 @@ public class DelegheTemporaneeSteps {
         String xPagopaLollipopAssertionRef = lollipopHeaders.get(LOLLIPOP_ASSERTION_REF);
         String xPagopaLollipopAssertionType = lollipopHeaders.get(LOLLIPOP_ASSERTION_TYPE);
         String xPagopaLollipopAuthJwt = lollipopHeaders.get(LOLLIPOP_AUTH_JWT);
+        String xPagoPaLollipopUserId = lollipopHeaders.get(LOLLIPOP_USER_ID);
         String signatureInput = lollipopHeaders.get(LOLLIPOP_SIGNATURE_INPUT);
         String signature = lollipopHeaders.get(LOLLIPOP_SIGNATURE);
+        if (!lollipopHeaderWithError.equals(LOLLIPOP_USER_ID)) {
+            xPagoPaLollipopUserId = cfDelegato;
+        }
 
         mandateCreationResponse = null;
         try {
@@ -392,7 +393,7 @@ public class DelegheTemporaneeSteps {
                     xPagopaLollipopAssertionRef,
                     xPagopaLollipopAssertionType,
                     xPagopaLollipopAuthJwt,
-                    lollipopUserId,
+                    xPagoPaLollipopUserId,
                     signatureInput,
                     signature,
                     mandateCreationRequest);
@@ -404,14 +405,14 @@ public class DelegheTemporaneeSteps {
 
     private Map<LollipopHeaders, String> getLollipopHeaders(LollipopHeaders lollipopHeaderWithError) {
         Map<LollipopHeaders, String> headersLollipop = new HashMap<>();
-        headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "TODO");
-        headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, "POST");
-        headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "TODO");
-        headersLollipop.put(LOLLIPOP_ASSERTION_REF, "TODO");
-        headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "TODO");
-        headersLollipop.put(LOLLIPOP_AUTH_JWT, "TODO");
-        headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "TODO");
-        headersLollipop.put(LOLLIPOP_SIGNATURE, "TODO");
+        headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "mandate");
+        headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, "GET");
+        headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "eyJ4IjoiQU9LVXhvUDlUdDdEL084WjlYWCtNaFJGaURKYVg3b1FlYmwvZEx5c3dRR20iLCJjcnYiOiJQLTI1NiIsInkiOiJFWldLNFI4TWx3TWxHcFVOcXBrU2krczhlUVBFOHgzN3lBWjI3ZHI2U0lNPSIsImt0eSI6IkVDIn0");
+        headersLollipop.put(LOLLIPOP_ASSERTION_REF, "sha256-BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ");
+        headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "SAML");
+        headersLollipop.put(LOLLIPOP_AUTH_JWT, "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3NlcnRpb25SZWYiOiJzaGEyNTYtQmpEN0JrWlJBWkl0U1c5SktMLUUtUG9wUkVCbTBWZTVxNXJTNk0tY19ZUSIsIm9wZXJhdGlvbklkIjoiYjdmNWUwYjQtNzIzZC00MmMyLWIxZDctN2M4OTA1OTAwMjAzIiwiaWF0IjoxNzc0NDQ3NzM2LCJleHAiOjE3NzQ0NDg2MzYsImlzcyI6ImFwaS5pby5wYWdvcGEuaXQiLCJqdGkiOiIwMUtNSk43REpTNThTMDE0SzdEVE5CM0dBRyJ9.Eq14IePo2q-kAPjx4Uf-xuC3ulY-5tMJLLZpjx5Rq-rUtdbN1YZRn42SkKKDv1_UE1E5AkyqPc9umGg9O0-PuP9--QsVPT3Pinl9-bOSy6E8ojLTSf6NgB7Ka9nsGngCt-23u2tsRSMo-FooXd9gA00TZq5G8wUQicrx9US2jXoyfxBzic2UQ_wbbS52p7bYef-98Wt5GFJTVbrGgFnW6ck_-4wsRpX7a2hQ9zlnav9zx3wbOfjHS3VnIvKxLkroBpTeT4LvKiw6e7RT3GRW4A8SCkim1oHOfh1eor3kqvOiKueRXTlJVtvWoh5Szjr6DLXV_KRFtlMLfZad7q8YUQ");
+        headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "sig1=(\"x-pagopa-lollipop-original-method\" \"x-pagopa-lollipop-original-url\");created=1774447735;nonce=\"b7f5e0b4-723d-42c2-b1d7-7c8905900203\";alg=\"ecdsa-p256-sha256\";keyid=\"BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ\"");
+        headersLollipop.put(LOLLIPOP_SIGNATURE, "sig1=:MEYCIQCnNETTQ1ZUb0ukBqBSl8+hORbMw0x1PCEejiqCucHzGQIhAOsoIH2I0hHmHLDkUYqsE+wr/YpMHOzJOaDPIx0RElrt:");
         if (lollipopHeaderWithError != null) {
             switch (lollipopHeaderWithError) {
                 case LOLLIPOP_ORIGINAL_URL -> headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "TODO_ERROR");
@@ -422,8 +423,19 @@ public class DelegheTemporaneeSteps {
                 case LOLLIPOP_AUTH_JWT -> headersLollipop.put(LOLLIPOP_AUTH_JWT, "TODO_ERROR");
                 case LOLLIPOP_SIGNATURE_INPUT -> headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "TODO_ERROR");
                 case LOLLIPOP_SIGNATURE -> headersLollipop.put(LOLLIPOP_SIGNATURE, "TODO_ERROR");
+                case LOLLIPOP_USER_ID -> headersLollipop.put(LOLLIPOP_USER_ID, Costanti.GALILEO_GALILEI_TAX_ID);
             }
         }
         return headersLollipop;
+    }
+
+    private String getQRPathEnvironmentBased() {
+        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        return switch (environment) {
+            case "dev" -> "http://cittadini.dev.notifichedigitali.it/io";
+            case "test" -> "http://cittadini.test.notifichedigitali.it/io";
+            case "uat" -> "https://cittadini.uat.notifichedigitali.it/io/";
+            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
+        };
     }
 }

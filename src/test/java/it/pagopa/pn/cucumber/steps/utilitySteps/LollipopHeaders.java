@@ -12,7 +12,8 @@ public enum LollipopHeaders {
     LOLLIPOP_ASSERTION_TYPE("xPagopaLollipopAssertionType"),
     LOLLIPOP_AUTH_JWT("xPagopaLollipopAuthJwt"),
     LOLLIPOP_SIGNATURE_INPUT("signatureInput"),
-    LOLLIPOP_SIGNATURE("signature");
+    LOLLIPOP_SIGNATURE("signature"),
+    LOLLIPOP_USER_ID("lollipopUserId");
 
     private final String headerName;
 

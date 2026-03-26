@@ -2,12 +2,13 @@ Feature: 15371 Refactoring Lollipop
 
   @lollipopLambdaFilterOn
   Scenario: [LOLLIPOP_HEADER_VALIDATION_LAMBDA_FILTER_ON_OK] Creazione con successo di una delega temporanea passando header lollipop validi quando la lambda è attiva
-    Given viene generata una nuova notifica
-      | subject            | invio notifica delega temporanea |
-      | senderDenomination | comune di Palermo                |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop tutti validi
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica delega temporanea |
+#      | senderDenomination | comune di Palermo                |
+#    And destinatario Mario Cucumber
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given imposto lo iun di SharedSteps a "VAGE-NYRY-EHTP-202603-Q-1" e la pa a "Comune_Multi"
+    When "TTNMRA63S21H501V" viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop tutti validi
     Then la delega temporanea è stata correttamente creata
 
   @lollipopLambdaFilterOn
@@ -17,7 +18,7 @@ Feature: 15371 Refactoring Lollipop
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" senza aspettare che diventi accepted
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop <headersLollipopErrorType>
+    When "TTNMRA63S21H501V" viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop <headersLollipopErrorType>
     Then l'operazione restituisce codice 403
     Examples:
       | headersLollipopErrorType             |
@@ -27,17 +28,19 @@ Feature: 15371 Refactoring Lollipop
       | xPagopaLollipopAssertionRef_errato   |
       | xPagopaLollipopAssertionType_errato  |
       | xPagopaLollipopAuthJwt_errato        |
+      | xPagopaLollipopUserId_errato         |
       | signatureInput_errato                |
       | signature_errato                     |
 
   @lollipopLambdaFilterOff
   Scenario: [LOLLIPOP_HEADER_VALIDATION_LAMBDA_FILTER_OFF_OK] Creazione con successo di una delega temporanea passando header lollipop validi quando la lambda è disattiva
-    Given viene generata una nuova notifica
-      | subject            | invio notifica delega temporanea |
-      | senderDenomination | comune di Palermo                |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop tutti validi
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica delega temporanea |
+#      | senderDenomination | comune di Palermo                |
+#    And destinatario Mario Cucumber
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given imposto lo iun di SharedSteps a "VAGE-NYRY-EHTP-202603-Q-1" e la pa a "Comune_Multi"
+    When "TTNMRA63S21H501V" viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop tutti validi
     Then la delega temporanea è stata correttamente creata
 
   @lollipopLambdaFilterOff
@@ -47,7 +50,7 @@ Feature: 15371 Refactoring Lollipop
       | senderDenomination | comune di Palermo                |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" senza aspettare che diventi accepted
-    When Mario Gherkin viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop <headersLollipopErrorType>
+    When "TTNMRA63S21H501V" viene temporaneamente delegato da "Mario Cucumber" passando headers lollipop <headersLollipopErrorType>
     Then l'operazione restituisce codice 400
     Examples:
       | headersLollipopErrorType             |
@@ -57,5 +60,6 @@ Feature: 15371 Refactoring Lollipop
       | xPagopaLollipopAssertionRef_errato   |
       | xPagopaLollipopAssertionType_errato  |
       | xPagopaLollipopAuthJwt_errato        |
+      | xPagopaLollipopUserId_errato         |
       | signatureInput_errato                |
       | signature_errato                     |

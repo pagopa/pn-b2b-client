@@ -109,6 +109,7 @@ public class ParameterTypes {
             "|xPagopaLollipopAssertionRef_errato" +
             "|xPagopaLollipopAssertionType_errato" +
             "|xPagopaLollipopAuthJwt_errato" +
+            "|xPagopaLollipopUserId_errato" +
             "|signatureInput_errato" +
             "|signature_errato")
     public static LollipopHeaders lollipopHeadersError(String value) {
@@ -120,6 +121,7 @@ public class ParameterTypes {
             case "xPagopaLollipopAssertionRef_errato" -> LollipopHeaders.LOLLIPOP_ASSERTION_REF;
             case "xPagopaLollipopAssertionType_errato" -> LollipopHeaders.LOLLIPOP_ASSERTION_TYPE;
             case "xPagopaLollipopAuthJwt_errato" -> LollipopHeaders.LOLLIPOP_AUTH_JWT;
+            case "xPagopaLollipopUserId_errato" -> LollipopHeaders.LOLLIPOP_USER_ID;
             case "signatureInput_errato" -> LollipopHeaders.LOLLIPOP_SIGNATURE_INPUT;
             case "signature_errato" -> LollipopHeaders.LOLLIPOP_SIGNATURE;
             default ->
