@@ -108,3 +108,55 @@ Feature: Aggiornamento di un e-service non pubblicato
     And viene impostato per l'utente un token non valido
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 401
+
+  @eservice_published_delegation
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_03] Per un e-service creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
+    Then si ottiene status code <statusCode>
+    And la delega amministrativa è "<expectedIsConsumerDelegable>" e la delega tecnica è "<expectedIsClientAccessDelegable>" per la fruizione dell'e-service
+
+    @happy-path
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | expectedIsConsumerDelegable | expectedIsClientAccessDelegable | statusCode | eServiceId |
+      | PUBLISHED       | true                | true                    | true                        | true                            | 200        | %actual    |
+      | PUBLISHED       | false               | false                   | false                       | false                           | 200        | %actual    |
+      | PUBLISHED       | true                | false                   | true                        | false                           | 200        | %actual    |
+      | SUSPENDED       | true                | true                    | true                        | true                            | 200        | %actual    |
+      | SUSPENDED       | false               | false                   | false                       | false                           | 200        | %actual    |
+      | SUSPENDED       | true                | false                   | true                        | false                           | 200        | %actual    |
+      | DEPRECATED      | true                | true                    | true                        | true                            | 200        | %actual    |
+      | DEPRECATED      | false               | false                   | false                       | false                           | 200        | %actual    |
+      | DEPRECATED      | true                | false                   | true                        | false                           | 200        | %actual    |
+
+    @sad-path
+    #in tal caso persistono i valori assegnati alla creazione (consumerDelegableState=false, clientAccessDelegableState=false)
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | expectedIsConsumerDelegable | expectedIsClientAccessDelegable | statusCode | eServiceId |
+    #casi in cui si tenta di violare l'invariante di dominio (consumerDelegableState=false, clientAccessDelegableState=true)
+      | PUBLISHED       | false               | true                    | false                       | false                           | 400        | %actual    |
+      | SUSPENDED       | false               | true                    | false                       | false                           | 400        | %actual    |
+      | DEPRECATED      | false               | true                    | false                       | false                           | 400        | %actual    |
+
+    #parametri mancanti
+      | PUBLISHED       | true                | false                   | false                       | false                           | 400        | %null      |
+      | SUSPENDED       | true                | false                   | false                       | false                           | 400        | %null      |
+      | DEPRECATED      | true                | false                   | false                       | false                           | 400        | %null      |
+      | PUBLISHED       | %null               | false                   | false                       | false                           | 400        | %actual    |
+      | SUSPENDED       | %null               | false                   | false                       | false                           | 400        | %actual    |
+      | DEPRECATED      | %null               | false                   | false                       | false                           | 400        | %actual    |
+      | PUBLISHED       | true                | %null                   | false                       | false                           | 400        | %actual    |
+      | SUSPENDED       | true                | %null                   | false                       | false                           | 400        | %actual    |
+      | DEPRECATED      | true                | %null                   | false                       | false                           | 400        | %actual    |
+    #eServiceId casuale
+      | PUBLISHED       | true                | false                   | false                       | false                           | 404        | %random    |
+      | SUSPENDED       | true                | false                   | false                       | false                           | 404        | %random    |
+      | DEPRECATED      | true                | false                   | false                       | false                           | 404        | %random    |
+    #eService in stato DRAFT
+      | DRAFT           | true                | false                   | false                       | false                           | 409        | %actual    |
