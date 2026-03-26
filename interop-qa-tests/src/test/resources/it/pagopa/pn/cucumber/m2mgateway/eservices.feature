@@ -375,11 +375,12 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'e-service non ha subito modifiche
 
   ## EService Patch Delegation
+  #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
   @happy-path
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
-  Scenario Outline: [M2MG_ESERVICES_37] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in uno degli stati permessi (Parte2#Scenario intorno a 85)
+  Scenario Outline: [M2MG_ESERVICES_37] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in uno degli stati permessi
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
@@ -409,10 +410,11 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED | false               | %null                   |
       | DEPRECATED | %null               | false                   |
 
+  #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
-  Scenario Outline: [M2MG_ESERVICES_38] Un utente con ruolo M2M NON può effettuare una modifica parziale della delega di un e-service (Parte2#Scenario intorno a 87)
+  Scenario Outline: [M2MG_ESERVICES_38] Un utente con ruolo M2M NON può effettuare una modifica parziale della delega di un e-service
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
@@ -450,6 +452,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
 
     # Corretto 400 in 409
   # 09/03/2026 ticket https://pagopa.atlassian.net/browse/QA-10948: al momento non è possibile archiviare un e-service
+  #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
   @m2m-patch
   Scenario Outline: [M2MG_ESERVICES_41_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in uno stato DRAFT o ARCHIVED
@@ -474,6 +477,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @eservice_published_delegation
   @deleghe2
   @m2m-patch
+  #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   Scenario: [M2MG_ESERVICES_41_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -481,10 +485,11 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
+  #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
-  Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service che non gli appartiene e per cui non possiede la delega in erogazione (Parte2#Scenario intorno a 90)
+  Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service che non gli appartiene e per cui non possiede la delega in erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
