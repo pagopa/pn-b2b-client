@@ -484,7 +484,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @eservice_published_delegation
   @m2m-patch
   @m2m-parte2-agosto-rilascio2
-  Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service che non gli appartiene (Parte2#Scenario intorno a 90)
+  Scenario Outline: [M2MG_ESERVICES_42] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service che non gli appartiene e per cui non possiede la delega in erogazione (Parte2#Scenario intorno a 90)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
