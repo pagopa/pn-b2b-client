@@ -81,3 +81,39 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
       | RZORNZ95C11L781S |
       #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
       | RGHLVC01H09H501K |
+
+  @AdeguamentoIndirizzoANPR_Old_UAT
+  Scenario Outline: [DIRECT_CALL_TO_ANPR_OLD_UAT] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a OLD, verificare la correttezza dei dati
+    When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "OLD"
+    Examples:
+      | taxId            |
+      | VRDLSM78B02F839R |
+      | RSSMSM85E15H501L |
+      | KPRSMP91H12F205O |
+      | KRSJSM88S03H501A |
+      | BSMGPR92R62F205X |
+
+  @AdeguamentoIndirizzoANPR_Minimal_UAT
+  Scenario Outline: [DIRECT_CALL_TO_ANPR_MINIMAL_UAT] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a MINIMAL, verificare la correttezza dei dati
+    When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "MINIMAL"
+    Examples:
+      | taxId            |
+      | VRDLSM78B02F839R |
+      | RSSMSM85E15H501L |
+      | KPRSMP91H12F205O |
+      | KRSJSM88S03H501A |
+      | BSMGPR92R62F205X |
+
+  @AdeguamentoIndirizzoANPR_Full_UAT
+  Scenario Outline: [DIRECT_CALL_TO_ANPR_FULL_UAT] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a FULL, verificare la correttezza dei dati
+    When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "FULL"
+    Examples:
+      | taxId            |
+      | VRDLSM78B02F839R |
+      | RSSMSM85E15H501L |
+      | KPRSMP91H12F205O |
+      | KRSJSM88S03H501A |
+      | BSMGPR92R62F205X |

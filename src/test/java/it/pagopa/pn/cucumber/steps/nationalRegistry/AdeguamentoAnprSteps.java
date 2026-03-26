@@ -78,107 +78,177 @@ public class AdeguamentoAnprSteps {
 
 
     private void checkAddressAlgorithmOld() {
+        String algorithm = "OLD";
         switch (taxId) {
+            //CF per ambienti inferiori a UAT censiti sul Mock NR
             case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "OLD", taxId)).isEqualTo("  ");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "OLD", taxId)).isEqualTo("2");
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("  ");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("2");
             });
-            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "OLD", taxId)).isEqualTo("");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "OLD", taxId)).isEqualTo("");
-            }
-            case "PRZPLA89E02L781K", "LNNLNZ02L27L781Z", "QDRQMD99C20L781Y", "JRIJNN05A01L781M", "RZORNZ95C11L781S", "RGHLVC01H09H501K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "OLD", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "OLD", taxId)).isEqualTo("");
-            }
-            case "BRNBNN92S02L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "OLD", taxId)).isEqualTo(" Elena da Persico A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "OLD", taxId)).isEqualTo("5");
-            }
+            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "PRZPLA89E02L781K", "LNNLNZ02L27L781Z", "QDRQMD99C20L781Y", "JRIJNN05A01L781M", "RZORNZ95C11L781S", "RGHLVC01H09H501K" ->
+                    SoftAssertions.assertSoftly(softly -> {
+                        softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                        softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+                    });
+            case "BRNBNN92S02L781R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo(" Elena da Persico A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("5");
+            });
+            //CF per ambiente UAT censiti su Real NR
+            case "VRDLSM78B02F839R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO1");
+            });
+            case "RSSMSM85E15H501L" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO2");
+            });
+            case "KPRSMP91H12F205O" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO3");
+            });
+            case "KRSJSM88S03H501A" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("TODO4");
+            });
+            case "BSMGPR92R62F205X" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO5");
+            });
             default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
         }
     }
 
     private void checkAddressAlgorithmMinimal() {
+        String algorithm = "MINIMAL";
         switch (taxId) {
+            //CF per ambienti inferiori a UAT censiti sul Mock NR
             case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("ROSSO Scala 2");
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Scala 2");
             });
-            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("");
-            }
-            case "PRZPLA89E02L781K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico 12/A KM 50");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("");
-            }
-            case "BRNBNN92S02L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Elena da Persico A SNC");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("BLU Scala 5");
-            }
-            case "LNNLNZ02L27L781Z" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("");
-            }
-            case "QDRQMD99C20L781Y" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("BLU");
-            }
-            case "JRIJNN05A01L781M" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("Non res.");
-            }
-            case "RZORNZ95C11L781S" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("ROSSO");
-            }
-            case "RGHLVC01H09H501K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "MINIMAL", taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "MINIMAL", taxId)).isEqualTo("Res.");
-            }
+            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "PRZPLA89E02L781K" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A KM 50");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "BRNBNN92S02L781R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Elena da Persico A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Scala 5");
+            });
+            case "LNNLNZ02L27L781Z" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "QDRQMD99C20L781Y" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU");
+            });
+            case "JRIJNN05A01L781M" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Non res.");
+            });
+            case "RZORNZ95C11L781S" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO");
+            });
+            case "RGHLVC01H09H501K" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res.");
+            });
+            //CF per ambiente UAT censiti su Real NR
+            case "VRDLSM78B02F839R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("CAVOUR 1 SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO");
+            });
+            case "RSSMSM85E15H501L" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Po KM 100");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Scala 2");
+            });
+            case "KPRSMP91H12F205O" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res. Scala 1");
+            });
+            case "KRSJSM88S03H501A" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("SOLO TOPONIMO");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
+            });
+            case "BSMGPR92R62F205X" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Fiume 1/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO");
+            });
             default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
         }
     }
 
     private void checkAddressAlgorithmFull() {
+        String algorithm = "FULL";
         switch (taxId) {
+            //CF per ambienti inferiori a UAT censiti sul Mock NR
             case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("ROSSO Corte 1 Scala 2 Scala est. SCAL 2");
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Corte 1 Scala 2 Scala est. SCAL 2");
             });
-            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
-            }
-            case "PRZPLA89E02L781K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico KM 50");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
-            }
-            case "BRNBNN92S02L781R" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Elena da Persico A SNC");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("BLU Scala 5");
-            }
-            case "LNNLNZ02L27L781Z" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A CAD");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
-            }
-            case "QDRQMD99C20L781Y" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("BLU Interno 5 A");
-            }
-            case "JRIJNN05A01L781M" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("Non res. Interno 42 D");
-            }
-            case "RZORNZ95C11L781S" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("ROSSO Primo interno 5 A Secondo interno 42 D");
-            }
-            case "RGHLVC01H09H501K" -> {
-                assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", "FULL", taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
-                assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("Res. Isolato 33");
-            }
+            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "PRZPLA89E02L781K" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico KM 50");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "BRNBNN92S02L781R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Elena da Persico A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Scala 5");
+            });
+            case "LNNLNZ02L27L781Z" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A CAD");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
+            });
+            case "QDRQMD99C20L781Y" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Interno 5 A");
+            });
+            case "JRIJNN05A01L781M" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Non res. Interno 42 D");
+            });
+            case "RZORNZ95C11L781S" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Primo interno 5 A Secondo interno 42 D");
+            });
+            case "RGHLVC01H09H501K" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res. Isolato 33");
+            });
+            //CF per ambiente UAT censiti su Real NR
+            case "VRDLSM78B02F839R" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO1");
+            });
+            case "RSSMSM85E15H501L" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO2");
+            });
+            case "KPRSMP91H12F205O" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO3");
+            });
+            case "KRSJSM88S03H501A" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO4");
+            });
+            case "BSMGPR92R62F205X" -> SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
+                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("TODO5");
+            });
             default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
         }
     }
