@@ -879,8 +879,25 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'e-service descriptor non ha subito modifiche
 
   @eservice_published_delegation
-  @m2m-parte2-agosto-rilascio2
-  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service inesistente (Parte2#Scenario intorno a 88)
+  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service se non specifica l'id dell'e-service
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service
     Then si ottiene lo status code 400
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service nello stato non permesso
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato      | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED  | false               | true                    |
+      | SUSPENDED  | false               | true                    |
+      | DEPRECATED | false               | true                    |
+      #considerando che lo stato delle flag alla creazione dell'e-service è isConsumerDelegable=false e isClientAccessDelegable=false
+      | PUBLISHED  | %null               | true                    |
+      | SUSPENDED  | %null               | true                    |
+      | DEPRECATED | %null               | true                    |
