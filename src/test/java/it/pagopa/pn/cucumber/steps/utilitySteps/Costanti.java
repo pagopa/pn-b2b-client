@@ -56,7 +56,7 @@ public class Costanti {
     public static final String STREAM_EVENT_TYPE_TIMELINE = "TIMELINE";
     public static final String STREAM_EVENT_TYPE_STATUS = "STATUS";
     // Tax ID
-    public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
+    public static String MARIO_CUCUMBER_TAX_ID = "STTSGT90A01H501J";
     public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
     public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
     public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
