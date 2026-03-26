@@ -160,3 +160,11 @@ Feature: Aggiornamento di un e-service non pubblicato
       | DEPRECATED      | true                | false                   | false                       | false                           | 404        | %random    |
     #eService in stato DRAFT
       | DRAFT           | true                | false                   | false                       | false                           | 409        | %actual    |
+
+  @eservice_published_delegation
+  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_04] La modifica del flag di delega di un e-service non è possibile da parte di un ente che non sia il proprietario dell'e-service e non sia delegato all'erogazione
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
+    Then si ottiene lo status code 403
