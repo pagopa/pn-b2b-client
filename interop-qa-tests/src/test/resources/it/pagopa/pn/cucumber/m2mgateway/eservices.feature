@@ -872,3 +872,10 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Then si ottiene lo status code 404
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'e-service descriptor non ha subito modifiche
+
+  @eservice_published_delegation
+  @m2m-parte2-agosto-rilascio2
+  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service inesistente (Parte2#Scenario intorno a 88)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service
+    Then si ottiene lo status code 400

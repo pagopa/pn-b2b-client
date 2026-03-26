@@ -330,6 +330,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         eServiceDelegationPatchAssistant.patchNonExistentResource();
     }
 
+    @When("l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service")
+    public void patchNonSpecifiedEServiceDelegation() {
+        eServiceDelegationPatchAssistant.patchNonSpecifiedResource();
+    }
+
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido")
     public void patchEServiceDelegationWithNotValidToken() {
         EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
