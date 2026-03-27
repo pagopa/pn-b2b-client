@@ -8,12 +8,12 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public class AgreementActivateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -70,28 +69,22 @@ public class AgreementActivateSteps {
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal) {
 
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
-        List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
-        List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
+
+        AttributeCommonContext attributeCommonContext = sharedStepsContext.getAttributeCommonContext();
+
+        DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
+        descriptorAttributesSeed.setCertified(
+                attributeCommonContext.mapAttributesWithDefaultValues(attributeCommonContext.getRequiredCertifiedAttributes())
+        );
+        descriptorAttributesSeed.setDeclared(
+                attributeCommonContext.mapAttributesWithDefaultValues(attributeCommonContext.getRequiredDeclaredAttributes())
+        );
+        descriptorAttributesSeed.setVerified(
+                attributeCommonContext.mapAttributesWithDefaultValues(attributeCommonContext.getRequiredVerifiedAttributes())
+        );
 
         UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed = new UpdateEServiceDescriptorSeed()
-                .attributes(new DescriptorAttributesSeed()
-                        .addCertifiedItem(
-                                requiredCertifiedAttributes.stream()
-                                        .flatMap(group -> group.stream()
-                                                .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                        .collect(Collectors.toList()))
-                        .addDeclaredItem(
-                                requiredDeclaredAttributes.stream()
-                                        .flatMap(group -> group.stream()
-                                                .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                        .collect(Collectors.toList()))
-                        .addVerifiedItem(
-                                requiredVerifiedAttributes.stream()
-                                        .flatMap(group -> group.stream()
-                                                .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                        .collect(Collectors.toList())
-                        ))
+                .attributes(descriptorAttributesSeed)
                 .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy));
 
         if (dailyCallsPerConsumer != null) {

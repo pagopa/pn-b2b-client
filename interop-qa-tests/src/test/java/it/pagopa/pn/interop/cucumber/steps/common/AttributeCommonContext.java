@@ -76,7 +76,26 @@ public class AttributeCommonContext {
             for (DescriptorAttribute attr : group) {
                 DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
                         .id(attr.getId())
-                        .explicitAttributeVerification(attr.getExplicitAttributeVerification());
+                        .explicitAttributeVerification(attr.getExplicitAttributeVerification())
+                        .dailyCallsPerConsumer(attr.getDailyCallsPerConsumer());
+                groupSeed.add(seed);
+            }
+            seeds.add(groupSeed);
+        }
+        return seeds;
+    }
+
+    public List<List<DescriptorAttributeSeed>> mapAttributesWithDefaultValues(List<List<UUID>> attributes) {
+        if (attributes == null) {
+            return new ArrayList<>();
+        }
+        List<List<DescriptorAttributeSeed>> seeds = new ArrayList<>();
+        for (List<UUID> group : attributes) {
+            List<DescriptorAttributeSeed> groupSeed = new ArrayList<>();
+            for (UUID attr : group) {
+                DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
+                        .id(attr)
+                        .explicitAttributeVerification(true);
                 groupSeed.add(seed);
             }
             seeds.add(groupSeed);
