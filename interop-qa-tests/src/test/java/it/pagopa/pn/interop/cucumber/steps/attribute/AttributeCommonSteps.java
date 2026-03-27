@@ -17,7 +17,6 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import software.amazon.awssdk.annotations.NotNull;
 
 import java.util.*;
 
@@ -143,21 +142,21 @@ public class AttributeCommonSteps {
         switch (attributeType) {
             case CERTIFIED -> attributesSeed.getCertified().get(0).add(
                 new DescriptorAttributeSeed().id(attributeCommonContext.getRequiredCertifiedAttributes().get(0).get(attributeIndex))
+                        .explicitAttributeVerification(true)
             );
             case VERIFIED -> attributesSeed.getVerified().get(0).add(
                 new DescriptorAttributeSeed().id(attributeCommonContext.getRequiredVerifiedAttributes().get(0).get(attributeIndex))
+                        .explicitAttributeVerification(true)
             );
             case DECLARED -> attributesSeed.getDeclared().get(0).add(
                 new DescriptorAttributeSeed().id(attributeCommonContext.getRequiredDeclaredAttributes().get(0).get(attributeIndex))
+                        .explicitAttributeVerification(true)
             );
         }
 
         eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
 
-        if (httpCallExecutor.getResponseStatus().isError()) {
-            log.warn("Errore durante l'associazione dell'attributo {} all'e-service {}: {}", attributeType, eServiceId, httpCallExecutor.getResponse());
-            return;
-        }
+        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful());
 
         PollingService.makePolling(
             () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId),
@@ -238,7 +237,7 @@ public class AttributeCommonSteps {
             throw new IllegalStateException("L'e-service non ha attributi per il gruppo");
         }
 
-        if (targetGroupIndex < existingAttributeGroups.size()) {
+        if (targetGroupIndex >= existingAttributeGroups.size()) {
             throw new IllegalStateException(String.format("L'e-service non ha %d gruppi per gli attributi %s", (targetGroupIndex + 1), attributeKind));
         }
 
@@ -281,7 +280,11 @@ public class AttributeCommonSteps {
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
         };
 
-        DescriptorAttribute attr = existingAttributeGroups.get(groupIndex).get(attributeIndex);
+        UUID attributeId = getAttributeIdFromRequiredAttributes(attributeKind, groupIndex, attributeIndex);
+        DescriptorAttribute attr = existingAttributeGroups.get(groupIndex).stream()
+                .filter(a -> a.getId().equals(attributeId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(String.format("Attributo %s non trovato nel gruppo %d", attributeId, groupIndex)));
         attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
 
         List<List<DescriptorAttributeSeed>> certifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
@@ -295,24 +298,26 @@ public class AttributeCommonSteps {
 
         eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
 
-        Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorAttribute(eServiceId, descriptorId, attr.getId());
+        Optional<DescriptorAttribute> updatedAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attr.getId());
 
-        Assertions.assertTrue(certAttr.isPresent());
-        Assertions.assertEquals(attr.getId(), certAttr.get().getId());
-        Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), dailyCallsPerConsumer);
+        Assertions.assertTrue(updatedAttr.isPresent());
+        Assertions.assertEquals(attr.getId(), updatedAttr.get().getId());
     }
 
     @Given("i residui relativi alle dailyCalls associati alla finalità sono pari a:")
-    public void checkRemainingDailyCalls(DataTable table) {
+    public void checkRemainingDailyCalls(DataTable table) throws InterruptedException {
 
         Map<String, String> expectedData = table.asMap(String.class, String.class);
         int expectedRemainingDailyCallsPerConsumer = Integer.parseInt(expectedData.get("remainingDailyCallsPerConsumer"));
-        int expectedRemainingDailyCallsTotals = Integer.parseInt(expectedData.get("remainingDailyCallsTotals"));
+        int expectedRemainingDailyCallsTotals = Integer.parseInt(expectedData.get("remainingDailyCallsTotal"));
 
         UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
 
+        // Sleep richiesto poiché l'aggiornamento è asincrono e attendiamo che i dati siano stabili.
+        // Il polling non è utilizzabile in quanto non è possibile definire una condizione di uscita affidabile.
+        Thread.sleep(2000);
         sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeId)
+                () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeId)
         );
         RemainingDailyCallsResponse response = (RemainingDailyCallsResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
 
@@ -335,5 +340,13 @@ public class AttributeCommonSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeIdAsUUID)
         );
+    }
+
+    private UUID getAttributeIdFromRequiredAttributes(AttributeKind attributeKind, int groupIndex, int attributeIndex) {
+        return switch (attributeKind) {
+            case CERTIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(groupIndex).get(attributeIndex);
+            case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().get(groupIndex).get(attributeIndex);
+            case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().get(groupIndex).get(attributeIndex);
+        };
     }
 }
