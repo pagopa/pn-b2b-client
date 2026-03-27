@@ -43,8 +43,9 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
   @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_1_2] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD Mock KO
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
       | denomination            | Test digitale ok         |
       | taxId                   | JPCRPP78D43F165N         |
