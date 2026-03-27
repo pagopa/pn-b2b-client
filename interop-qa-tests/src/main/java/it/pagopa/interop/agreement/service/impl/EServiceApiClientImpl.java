@@ -165,6 +165,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
         return eservicesApi.cloneEServiceByDescriptor(eServiceId, descriptorId);
     }
 
+    public void updateEServiceName(UUID eServiceId, EServiceNameUpdateSeed eserviceNameUpdateSeed) {
+        eservicesApi.updateEServiceName(eServiceId, eserviceNameUpdateSeed);
+    }
+
     public File getEServiceConsumers(UUID eServiceId) {
         try {
             Resource resourceResponse = eservicesApi.getEServiceConsumers(eServiceId);
