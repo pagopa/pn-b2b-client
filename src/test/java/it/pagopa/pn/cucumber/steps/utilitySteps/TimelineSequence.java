@@ -73,7 +73,7 @@ public enum TimelineSequence {
     OK_AR_BLOCKED("OK_AR_BLOCKED", List.of("CON080", "CON020[DOC:7ZIP;PAGES:3]")),
     OK_AR_ALL_CON("OK_AR_ALL_CON", List.of("CON080", "CON020[DOC:7ZIP;PAGES:3]","RECRN001A", "RECRN001B[DOC:AR]", "RECRN001C")),
     OK_GiacenzaCorrected_AR("OK-GiacenzaCorrected_AR", List.of("CON080", "CON020[DOC:7ZIP;PAGES:3]", "RECRN010", "RECRN011", "RECRN001A", "RECRN001B[DOC:AR]", "RECRN003A", "RECRN003B[DOC:AR]", "RECRN003C")),
-    OK_TimestampCorrected_AR("OK-TimestampCorrected_AR", List.of("CON080", "CON020[DOC:7ZIP;PAGES:3]", "RECRN001A", "RECRN001B[DOC:AR]", "RECRN001A", "RECRN001B[DOC:AR]", "RECRN001C")),
+    OK_TimestampCorrected_AR("OK-TimestampCorrected_AR", List.of("CON080", "CON020[DOC:7ZIP;PAGES:3]", "RECRN001A", "RECRN001B[DOC:AR]", "RECRN001A", "RECRN001B[DOC:AR]")),
 
 
     //890,
