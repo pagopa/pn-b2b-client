@@ -936,3 +936,40 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un m2m-admin dell'ente delegante
     When l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
     Then si ottiene lo status code 400
+
+  @eservice_published_delegation
+  @happy-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_5] Per un e-service template instance creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
+    And l'e-service è stato parzialmente modificato correttamente
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED       | true                | true                    |
+      | PUBLISHED       | false               | false                   |
+      | PUBLISHED       | true                | false                   |
+      | PUBLISHED       | true                | %null                   |
+      | PUBLISHED       | false               | %null                   |
+      | PUBLISHED       | %null               | false                   |
+
+      | SUSPENDED       | true                | true                    |
+      | SUSPENDED       | false               | false                   |
+      | SUSPENDED       | true                | false                   |
+      | SUSPENDED       | true                | %null                   |
+      | SUSPENDED       | false               | %null                   |
+      | SUSPENDED       | %null               | false                   |
+
+      | DEPRECATED      | true                | true                    |
+      | DEPRECATED      | false               | false                   |
+      | DEPRECATED      | true                | false                   |
+      | DEPRECATED      | true                | %null                   |
+      | DEPRECATED      | false               | %null                   |
+      | DEPRECATED      | %null               | false                   |
