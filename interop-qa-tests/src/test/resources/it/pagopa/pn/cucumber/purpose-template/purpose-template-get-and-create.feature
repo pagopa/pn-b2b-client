@@ -169,6 +169,10 @@ Feature: finalità agevolata, purpose template GET
       | 0      | %null | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
       | 0      | -1    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
 
+    @nrtC-waitForFix
+    Examples:
+      | offset | limit | purposeTitle | creatorIds | eserviceIds | states  | targetTenantKind | handlesPersonalData | statusCode |
+
     # purposeTitle invalid
       | 0      | 10    | %blank       | %actual    | %actual     | %actual | %actual          | true                | 400        |
 

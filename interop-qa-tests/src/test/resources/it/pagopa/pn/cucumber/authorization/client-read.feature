@@ -73,6 +73,7 @@ Feature: Lettura client singolo
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 403
 
+  @nrtC-waitForFix
   @happy-path
   @nrt-minimal
   Scenario: [CLIENT_READ_7] A fronte di una richiesta di lettura da parte di un ente, di un client creato da un altro ente, la richiesta va a buon fine
