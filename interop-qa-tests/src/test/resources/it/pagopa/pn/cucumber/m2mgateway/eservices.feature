@@ -880,7 +880,8 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
 
   @eservice_published_delegation
   Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service se non specifica l'id dell'e-service
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service
     Then si ottiene lo status code 400
 
@@ -973,3 +974,15 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED      | true                | %null                   |
       | DEPRECATED      | false               | %null                   |
       | DEPRECATED      | %null               | false                   |
+
+  @eservice_published_delegation
+  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_6] Per un e-service template instance creato dall'ente delegante,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione se non si specifica l'id dell'e-service
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service
+    Then si ottiene lo status code 400
