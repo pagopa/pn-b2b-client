@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 public class PurposeReadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -26,10 +27,15 @@ public class PurposeReadSteps {
     @When("l'utente richiede la lettura della finalità")
     public void userReadPurpose() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
-                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
-                )
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
+                                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
+                        )
+                ),
+                HttpStatus::is2xxSuccessful,
+                "Purpose not found"
         );
     }
 
