@@ -173,17 +173,22 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
 #  2. CF: XVRCSR87M15L781X  -> campo Città/Località non valorizzato;
 #  3. CF: XVRSFN76E31L781N  -> campi Via/Indirizzo e Città/Località non valorizzati.
 
+#indirizzi esteri:
+#  1. XXIFBN99A01D612K no address e municipality
+#  2. XVRLVC90A01H501P no address
+#  3. XVRGPL80A01L781A no municipality
+
   @workflowAnalogico @mockNR @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_1] AR-Validazione sulla deduplica al secondo tentativo con VIA non valorizzato-nazionale
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi              |
-      | taxId                   | XVRPLN98S16L781X          |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
+      | denomination            | Matteo Rossi             |
+      | taxId                   | XVRPLN98S16L781X         |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
@@ -193,14 +198,14 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
   @workflowAnalogico @mockNR @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_2] AR-Validazione sulla deduplica al secondo tentativo con citta non valorizzato-nazionale
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi              |
-      | taxId                   | XVRCSR87M15L781X          |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
+      | denomination            | Matteo Rossi             |
+      | taxId                   | XVRCSR87M15L781X         |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
@@ -210,15 +215,15 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
   @workflowAnalogico @mockNR @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_3] AR-Validazione sulla deduplica al secondo tentativo con citta e via non valorizzati-nazionale
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi              |
-      | taxId                   | XVRSFN76E31L781N          |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | denomination            | Matteo Rossi             |
+      | taxId                   | XVRSFN76E31L781N         |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
+      #| physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
@@ -247,13 +252,13 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
   @workflowAnalogico @mockNR @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_C] 890 - Validazione sulla deduplica al secondo tentativo con VIA non valorizzato
     Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
-         And destinatario
-      | denomination            | Matteo Rossi             |
-      | taxId                   | XVRPLN98S16L781X         |
-      | recipientType           | PF                       |
-      | digitalDomicile         | NULL                     |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | Matteo Rossi              |
+      | taxId                   | XVRPLN98S16L781X          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
@@ -318,13 +323,13 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalCommunication | REGISTERED_LETTER_AR        |
     And destinatario
       | denomination    | PF Censito campi-mancanti |
-      | taxId           | XVRPLN98S16L781X               |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | taxId           | XVRPLN98S16L781X          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                       |
-      | details                | NOT_NULL                                                                                   |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
   @validazioneDeduplica
@@ -335,13 +340,13 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalCommunication | REGISTERED_LETTER_AR        |
     And destinatario
       | denomination    | PF Censito campi-mancanti |
-      | taxId           | XVRCSR87M15L781X               |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | taxId           | XVRCSR87M15L781X          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                       |
-      | details                | NOT_NULL                                                                                   |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
   @validazioneDeduplica
@@ -352,13 +357,13 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalCommunication | REGISTERED_LETTER_AR        |
     And destinatario
       | denomination    | PF Censito campi-mancanti |
-      | taxId           | XVRSFN76E31L781N               |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | taxId           | XVRSFN76E31L781N          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                       |
-      | details                | NOT_NULL                                                                                   |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
   #@validazioneDeduplica
@@ -369,13 +374,13 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalCommunication | REGISTERED_LETTER_AR        |
     And destinatario
       | denomination    | PF Censito campi-mancanti |
-      | taxId           | XVRGPL80A01L781A               |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | taxId           | XVRGPL80A01L781A          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                       |
-      | details                | NOT_NULL                                                                                   |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
   #@validazioneDeduplica
@@ -386,13 +391,13 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalCommunication | REGISTERED_LETTER_AR        |
     And destinatario
       | denomination    | PF Censito campi-mancanti |
-      | taxId           | XVRLVC90A01H501P               |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | taxId           | XVRLVC90A01H501P          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                       |
-      | details                | NOT_NULL                                                                                   |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
   #@validazioneDeduplica
@@ -403,12 +408,32 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalCommunication | REGISTERED_LETTER_AR        |
     And destinatario
       | denomination    | PF Censito campi-mancanti |
-      | taxId           | XXIFBN99A01D612K               |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+      | taxId           | XXIFBN99A01D612K          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                       |
-      | details                | NOT_NULL                                                                                   |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+
+#  seguono test sulla deduplica su ANPR reale - solo ambiente UAT
+
+  @validazioneDeduplicaUAT @realNR
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_IT_NAD_UAT] Validazione sulla deduplica al secondo tentativo con citta non valorizzato-estero-ANPR reale
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | Matteo Rossi              |
+      | taxId                   | KRSJSM88S03H501A          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+
 
