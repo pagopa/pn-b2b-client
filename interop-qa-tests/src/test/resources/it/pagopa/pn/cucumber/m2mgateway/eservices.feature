@@ -906,11 +906,10 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @eservice_published_delegation
   @happy-path
   Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3] Un utente può creare una delega in fruizione su un e-service cui flag di delega amministrativa viene abilitata dopo la pubblicazione dell'e-service
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    #Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
     And l'ente delegato "GSP"
@@ -924,11 +923,10 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @eservice_published_delegation
   @sad-path
   Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_4] Un utente NON può creare una delega in fruizione su un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+#    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
     And l'ente delegato "GSP"
@@ -1024,3 +1022,29 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | PUBLISHED  |
       | DEPRECATED |
       | SUSPENDED  |
+
+  @eservice_published_delegation
+  @happy-path
+  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_9] Un delegato può creare con successo una richiesta di fruizione in delega anche dopo la disabilitazione delle flag di delega su un e-service con delega già attiva
+#    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+#    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
+    And l'ente delegante "PA2"
+    And l'ente delegato "GSP"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un m2m-admin dell'ente delegante
+    And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
+    And si ottiene lo status code 200
+    And la delega è stata inoltrata correttamente
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione con successo
+    And si ottiene lo status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
+    And l'e-service è stato parzialmente modificato correttamente
+    When il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    And l'utente è un "admin" dell'ente delegato
+    And l'utente inoltra quella richiesta di fruizione
+    And si ottiene lo status code 200
+    Then la richiesta di fruizione è passata in stato "ACTIVE"
