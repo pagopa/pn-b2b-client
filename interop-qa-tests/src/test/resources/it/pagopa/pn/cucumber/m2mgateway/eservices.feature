@@ -976,6 +976,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED      | %null               | false                   |
 
   @eservice_published_delegation
+  @sad-path
   Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_6] Per un e-service template instance creato dall'ente delegante,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione se non si specifica l'id dell'e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -986,3 +987,26 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service
     Then si ottiene lo status code 400
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_7] Un utente con ruolo M2M-ADMIN, delegato all'erogazione, NON può modificare le flag di delega di un e-service template instance nello stato non permesso
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED       | false               | true                    |
+      | SUSPENDED       | false               | true                    |
+      | DEPRECATED      | false               | true                    |
+      #considerando che lo stato delle flag alla creazione dell'e-service è isConsumerDelegable=false e isClientAccessDelegable=false
+      | PUBLISHED       | %null               | true                    |
+      | SUSPENDED       | %null               | true                    |
+      | DEPRECATED      | %null               | true                    |
