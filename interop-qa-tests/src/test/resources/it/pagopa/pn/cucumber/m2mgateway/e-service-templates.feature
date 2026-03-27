@@ -740,13 +740,17 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @sad-path
-  Scenario: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Disabilitando le flag di delega amministrativa di un e-service template instance, viene disabilitata in automatico anche la delega amministrativa
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance che non gli appartiene e per cui non possiede la delega in erogazione
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
-    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT partire dal template e impostando delega amministrativa a "true" e delega tecnica a "true"
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "%null"
-    Then si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
-    And l'e-service è stato parzialmente modificato correttamente
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And il nuovo e-service è stato creato correttamente in stato <eServiceDescriptorState>
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | eServiceDescriptorState |
+      | PUBLISHED               |
+      | SUSPENDED               |
+      | DEPRECATED              |
