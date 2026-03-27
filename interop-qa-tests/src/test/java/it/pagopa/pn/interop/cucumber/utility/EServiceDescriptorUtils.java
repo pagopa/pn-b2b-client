@@ -57,12 +57,32 @@ public class EServiceDescriptorUtils {
 
     @Nonnull
     public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId) {
+        return getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, null);
+    }
+
+    @Nonnull
+    public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId, Integer dailyCallsPerConsumer) {
 
         httpCallExecutor.snapshot();
 
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId)),
-                res -> res != HttpStatus.NOT_FOUND,
+                res -> {
+                    boolean found = res != HttpStatus.NOT_FOUND;
+                    if (!found || dailyCallsPerConsumer == null) {
+                        return found;
+                    }
+
+                    return ((ProducerEServiceDescriptor) httpCallExecutor.getResponse()).getAttributes()
+                                .getCertified()
+                                .stream()
+                                .flatMap(Collection::stream)
+                                .filter(attr -> attr.getId().equals(attributeId))
+                                .findFirst()
+                                .map(attr ->
+                                        (attr.getDailyCallsPerConsumer() != null) && attr.getDailyCallsPerConsumer().equals(dailyCallsPerConsumer)
+                                ).orElse(false);
+                },
                 BFFDataPreparationService.ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
         ProducerEServiceDescriptor producerEServiceDescriptor = (ProducerEServiceDescriptor) httpCallExecutor.getResponse();
