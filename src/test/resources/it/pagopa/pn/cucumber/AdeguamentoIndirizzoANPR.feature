@@ -88,10 +88,13 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "OLD"
     Examples:
       | taxId            |
+      #toponimo.denominazione=CAVOUR;toponimo.specie=null;numero=1;lettera=null;metrico=0;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno2=4;isolato=7
       | VRDLSM78B02F839R |
+      #toponimo.denominazione=Po;toponimo.specie=VIA;numero=1;lettera=A;metrico=100;progSnc=10;corte=2;scala=2;colore=3;scalaEsterna=3;interno1=4;interno2=5
       | RSSMSM85E15H501L |
       | KPRSMP91H12F205O |
       | KRSJSM88S03H501A |
+      #toponimo.denominazione=Fiume;toponimo.specie=Via;numero=1;lettera=A;metrico=null;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno1=4;isolato=6
       | BSMGPR92R62F205X |
 
   @AdeguamentoIndirizzoANPR_Minimal_UAT
@@ -100,10 +103,13 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "MINIMAL"
     Examples:
       | taxId            |
+      #toponimo.denominazione=CAVOUR;toponimo.specie=null;numero=1;lettera=null;metrico=0;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno2=4;isolato=7
       | VRDLSM78B02F839R |
+      #toponimo.denominazione=Po;toponimo.specie=VIA;numero=1;lettera=A;metrico=100;progSnc=10;corte=2;scala=2;colore=3;scalaEsterna=3;interno1=4;interno2=5
       | RSSMSM85E15H501L |
       | KPRSMP91H12F205O |
       | KRSJSM88S03H501A |
+      #toponimo.denominazione=Fiume;toponimo.specie=Via;numero=1;lettera=A;metrico=null;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno1=4;isolato=6
       | BSMGPR92R62F205X |
 
   @AdeguamentoIndirizzoANPR_Full_UAT
@@ -112,8 +118,11 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "FULL"
     Examples:
       | taxId            |
+      #toponimo.denominazione=CAVOUR;toponimo.specie=null;numero=1;lettera=null;metrico=0;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno2=4;isolato=7
       | VRDLSM78B02F839R |
+      #toponimo.denominazione=Po;toponimo.specie=VIA;numero=1;lettera=A;metrico=100;progSnc=10;corte=2;scala=2;colore=3;scalaEsterna=3;interno1=4;interno2=5
       | RSSMSM85E15H501L |
       | KPRSMP91H12F205O |
       | KRSJSM88S03H501A |
+      #toponimo.denominazione=Fiume;toponimo.specie=Via;numero=1;lettera=A;metrico=null;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno1=4;isolato=6
       | BSMGPR92R62F205X |
