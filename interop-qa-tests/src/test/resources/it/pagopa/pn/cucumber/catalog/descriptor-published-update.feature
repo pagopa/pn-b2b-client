@@ -55,13 +55,14 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di <dailyCallsPerConsumer> per l'attributo CERTIFIED 0-esimo creato
     Then si ottiene status code <statusCode>
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "<expectedDailyCallsPerConsumer>"
 
     Examples:
-      | dailyCallsPerConsumer | statusCode |
-      | 100                   | 200        |
-      | 0                     | 400        |
-      | 1000000000            | 200        |
-      | 1000000001            | 400        |
+      | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
+      | 100                   | 200        | 100                           |
+      | 0                     | 400        | %null                         |
+      | 1000000000            | 200        | 1000000000                    |
+      | 1000000001            | 400        | %null                         |
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_2] Per un e-service in stato PUBLISHED non è possibile indicare soglie differenti per il medesimo attributo certificato
@@ -73,6 +74,7 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di dichiarare due volte lo stesso attributo certificato ognuno con un dailyCallsPerConsumer differente
     Then si ottiene status code 400
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "%null"
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_3] Per un e-service in stato PUBLISHED non è possibile indicare una soglia il cui limite è superiore al limite di chiamate totali giornaliero
@@ -83,34 +85,37 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     And PA2 ha già creato 1 attributo CERTIFIED
-    Given l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA1"
     And l'utente associa l'attributo CERTIFIED 1-esimo creato all'eservice
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 1-esimo creato
-    Then si ottiene status code 400
+    Then si ottiene status code 409
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "%null"
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "%null"
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_4] Per un e-service in stato PUBLISHED non è possibile indicare una soglia associata ad un attributo verificato
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And PA2 ha già creato 1 attributo VERIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    When l'utente assegna a "PA1" l'attributo verificato precedentemente creato
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And PA1 ha già creato 1 attributo VERIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
     And si ottiene status code 200
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA1" ha già verificato l'attributo verificato a "PA2"
+    And "PA1" ha già approvato quella richiesta di fruizione
+    And si ottiene status code 200
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo VERIFIED 0-esimo creato
     Then si ottiene status code 400
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_5] Per un e-service in stato PUBLISHED non è possibile indicare una soglia associata ad un attributo dichiarato
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And "PA2" ha creato un attributo dichiarato e lo ha assegnato a "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And PA1 ha già creato 1 attributo DECLARED
     And si ottiene status code 200
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
     And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo DECLARED 0-esimo creato
     Then si ottiene status code 400
@@ -125,10 +130,13 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
-    When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 1-esimo creato
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
+    And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 1-esimo creato
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "10"
     Then l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 2-esimo creato
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 2-esimo creato nel gruppo 0-esimo è uguale a "10"
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_7] Per un e-service in stato PUBLISHED non è possibile indicare N soglie di cui almeno una esplicita un limite superiore al limite di chiamate totali giornaliero
@@ -140,7 +148,7 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
-    When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 1-esimo creato
+    And l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 1-esimo creato
     And si ottiene status code 200
     Then l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 2-esimo creato
     And si ottiene status code 200
