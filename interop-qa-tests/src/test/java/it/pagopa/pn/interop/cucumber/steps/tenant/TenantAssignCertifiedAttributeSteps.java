@@ -24,10 +24,13 @@ public class TenantAssignCertifiedAttributeSteps {
     public void assignCertifiedAttribute(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
+                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
+        );
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
                         tenantId,
-                        new CertifiedTenantAttributeSeed().id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
+                        new CertifiedTenantAttributeSeed().id(lastAttributeId)
                 )
         );
     }
