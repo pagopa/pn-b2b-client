@@ -318,6 +318,13 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a {string} e quella tecnica a {string}")
     public void patchEServiceDelegation(String isConsumerDelegable, String isClientAccessDelegable) {
+        if (sharedStepsContext.getEServicesCommonContext().getEserviceId() == null) {
+            UUID templateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+            if (templateInstanceId != null) {
+                sharedStepsContext.getEServicesCommonContext().setEserviceId(templateInstanceId);
+            }
+        }
+
         EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
                 .isConsumerDelegable(nullableBoolean(isConsumerDelegable))
                 .isClientAccessDelegable(nullableBoolean(isClientAccessDelegable))
@@ -337,6 +344,13 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido")
     public void patchEServiceDelegationWithNotValidToken() {
+        if (sharedStepsContext.getEServicesCommonContext().getEserviceId() == null) {
+            UUID templateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+            if (templateInstanceId != null) {
+                sharedStepsContext.getEServicesCommonContext().setEserviceId(templateInstanceId);
+            }
+        }
+
         EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
                 .isConsumerDelegable(false)
                 .isClientAccessDelegable(false)
