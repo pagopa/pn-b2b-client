@@ -1010,3 +1010,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | PUBLISHED       | %null               | true                    |
       | SUSPENDED       | %null               | true                    |
       | DEPRECATED      | %null               | true                    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_8] Un utente con ruolo M2M, delegato all'erogazione, NON può effettuare una modifica parziale della delega di un e-service
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | stato      |
+      | PUBLISHED  |
+      | DEPRECATED |
+      | SUSPENDED  |
