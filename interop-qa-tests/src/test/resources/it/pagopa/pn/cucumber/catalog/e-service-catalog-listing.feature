@@ -36,7 +36,7 @@ Feature: Listing catalogo e-services
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 4 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo limitata ai primi 3 e-services
-    Then si ottiene status code 200 e la lista di 3 e-services
+    Then si ottiene status code 200 e la lista di 3 e-services dal catalogo
 
   @happy-path
   @nrt-minimal
@@ -45,7 +45,7 @@ Feature: Listing catalogo e-services
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo con offset 2
-    Then si ottiene status code 200 e la lista di 3 e-services
+    Then si ottiene status code 200 e la lista di 3 e-services dal catalogo
 
   @happy-path
   @nrt-minimal
@@ -55,7 +55,7 @@ Feature: Listing catalogo e-services
     Given "PA2" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     Given "GSP" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing degli e-services dell'erogatore "PA2"
-    Then si ottiene status code 200 e la lista di 2 e-services
+    Then si ottiene status code 200 e la lista di 2 e-services dal catalogo
 
   @happy-path
   @nrt-minimal
@@ -65,7 +65,7 @@ Feature: Listing catalogo e-services
     Given "PA2" ha già creato 3 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     And "PA1" ha un agreement attivo con un e-service di "PA2"
     When l'utente richiede la lista di e-services per i quali ha almeno un agreement attivo
-    Then si ottiene status code 200 e la lista di 1 e-service
+    Then si ottiene status code 200 e la lista di 1 e-service dal catalogo
 
   @happy-path
   @nrt-minimal
@@ -76,7 +76,7 @@ Feature: Listing catalogo e-services
     Given "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     Given "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
     When l'utente richiede una operazione di listing sul catalogo filtrando per la keyword "test"
-    Then si ottiene status code 200 e la lista di 1 e-service
+    Then si ottiene status code 200 e la lista di 1 e-service dal catalogo
 
   @happy-path
   @nrt-minimal
@@ -85,4 +85,4 @@ Feature: Listing catalogo e-services
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 10 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo filtrando per la keyword "unknown"
-    Then si ottiene status code 200 e la lista di 0 e-services
+    Then si ottiene status code 200 e la lista di 0 e-services dal catalogo
