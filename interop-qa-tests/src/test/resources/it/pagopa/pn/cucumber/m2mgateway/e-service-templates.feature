@@ -737,3 +737,16 @@ Feature: Test API M2M of e-service template
       | PUBLISHED               |
       | SUSPENDED               |
       | DEPRECATED              |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Disabilitando le flag di delega amministrativa di un e-service template instance, viene disabilitata in automatico anche la delega amministrativa
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT partire dal template e impostando delega amministrativa a "true" e delega tecnica a "true"
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "%null"
+    Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
+    And l'e-service è stato parzialmente modificato correttamente
