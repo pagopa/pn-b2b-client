@@ -29,7 +29,7 @@ public class PurposesSteps {
 
         Map<String, String> expectedData = table.asMap(String.class, String.class);
         int expectedRemainingDailyCallsPerConsumer = Integer.parseInt(expectedData.get("remainingDailyCallsPerConsumer"));
-        int expectedRemainingDailyCallsTotals = Integer.parseInt(expectedData.get("remainingDailyCallsTotals"));
+        int expectedRemainingDailyCallsTotals = Integer.parseInt(expectedData.get("remainingDailyCallsTotal"));
 
         UUID purposeId = this.purposesResolver.resolveOrParse(
                 ResolvableToken.ACTUAL.value(),

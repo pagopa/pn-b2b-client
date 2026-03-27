@@ -1,20 +1,14 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpStatus;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -130,7 +124,7 @@ public class DescriptorUpdateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorAttribute(eServiceId, descriptorId, attributeId);
+        Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, expectedDailyCallsPerConsumer);
 
         Assertions.assertTrue(certAttr.isPresent());
         Assertions.assertEquals(attributeId, certAttr.get().getId());
