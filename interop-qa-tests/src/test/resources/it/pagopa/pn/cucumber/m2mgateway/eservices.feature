@@ -1047,4 +1047,34 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
     And si ottiene lo status code 200
+    #Controlla che la richiesta sia in stato active
+    Then la richiesta di fruizione è passata in stato "ACTIVE"
+
+  @eservice_published_delegation
+  @happy-path
+  Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] Un accordo di fruizione in delega già attivo resta attivo dopo la disabilitazione della delega amministrativa sull'e-service
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
+    And l'ente delegante "PA2"
+    And l'ente delegato "GSP"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un m2m-admin dell'ente delegante
+    And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
+    And si ottiene lo status code 200
+    And la delega è stata inoltrata correttamente
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione con successo
+    And si ottiene lo status code 200
+    And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    And l'utente è un "admin" dell'ente delegato
+    And l'utente inoltra quella richiesta di fruizione
+    And si ottiene lo status code 200
+    And la richiesta di fruizione è passata in stato "ACTIVE"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
+    And si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
+    And l'e-service è stato parzialmente modificato correttamente
+    And l'utente è un "admin" dell'ente delegato
+    #Controlla che la richiesta sia in stato active
     Then la richiesta di fruizione è passata in stato "ACTIVE"
