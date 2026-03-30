@@ -660,25 +660,25 @@ Feature: Test API M2M of e-service template
     And l'e-service è stato parzialmente modificato correttamente
     Examples:
       | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
-#      | PUBLISHED               | true                | true                    |
-#      | PUBLISHED               | false               | false                   |
-#      | PUBLISHED               | true                | false                   |
-#      | PUBLISHED               | true                | %null                   |
-#      | PUBLISHED               | false               | %null                   |
-#      | PUBLISHED               | %null               | false                   |
+      | PUBLISHED               | true                | true                    |
+      | PUBLISHED               | false               | false                   |
+      | PUBLISHED               | true                | false                   |
+      | PUBLISHED               | true                | %null                   |
+      | PUBLISHED               | false               | %null                   |
+      | PUBLISHED               | %null               | false                   |
 
-#      | SUSPENDED               | true                | true                    |
-#      | SUSPENDED               | false               | false                   |
-#      | SUSPENDED               | true                | false                   |
-#      | SUSPENDED               | true                | %null                   |
-#      | SUSPENDED               | false               | %null                   |
-#      | SUSPENDED               | %null               | false                   |
+      | SUSPENDED               | true                | true                    |
+      | SUSPENDED               | false               | false                   |
+      | SUSPENDED               | true                | false                   |
+      | SUSPENDED               | true                | %null                   |
+      | SUSPENDED               | false               | %null                   |
+      | SUSPENDED               | %null               | false                   |
 
       | DEPRECATED              | true                | true                    |
-#      | DEPRECATED              | false               | false                   |
-#      | DEPRECATED              | true                | false                   |
-#      | DEPRECATED              | true                | %null                   |
-#      | DEPRECATED              | false               | %null                   |
+      | DEPRECATED              | false               | false                   |
+      | DEPRECATED              | true                | false                   |
+      | DEPRECATED              | true                | %null                   |
+      | DEPRECATED              | false               | %null                   |
       | DEPRECATED              | %null               | false                   |
 
   @eservice_published_delegation
