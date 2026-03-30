@@ -93,6 +93,15 @@ public class NotificationConfigSteps {
 
     @When("si attivano tutte le notifiche InApp per l'utente corrente")
     public void enableAllInAppNotificationsForCurrentUser() {
+        triggerAllInAppNotificationsForCurrentUser(true);
+    }
+
+    @When("si disabilitano tutte le notifiche InApp per l'utente corrente")
+    public void disableAllInAppNotificationsForCurrentUser() {
+        triggerAllInAppNotificationsForCurrentUser(false);
+    }
+
+    private void triggerAllInAppNotificationsForCurrentUser(boolean isActive) {
         UserNotificationConfig currentConfig = null;
 
         try {
@@ -106,27 +115,27 @@ public class NotificationConfigSteps {
                 .isNotNull();
 
         NotificationConfig inAppConfig = new NotificationConfig()
-                .agreementSuspendedUnsuspendedToProducer(true)
-                .agreementManagementToProducer(true)
-                .clientAddedRemovedToProducer(true)
-                .purposeStatusChangedToProducer(true)
-                .templateStatusChangedToProducer(true)
-                .agreementSuspendedUnsuspendedToConsumer(true)
-                .eserviceStateChangedToConsumer(true)
-                .agreementActivatedRejectedToConsumer(true)
-                .purposeActivatedRejectedToConsumer(true)
-                .purposeSuspendedUnsuspendedToConsumer(true)
-                .newEserviceTemplateVersionToInstantiator(true)
-                .eserviceTemplateNameChangedToInstantiator(true)
-                .eserviceTemplateStatusChangedToInstantiator(true)
-                .delegationApprovedRejectedToDelegator(true)
-                .eserviceNewVersionSubmittedToDelegator(true)
-                .eserviceNewVersionApprovedRejectedToDelegate(true)
-                .delegationSubmittedRevokedToDelegate(true)
-                .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
-                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
-                .purposeQuotaAdjustmentRequestToProducer(true)
-                .purposeOverQuotaStateToConsumer(true);
+                .agreementSuspendedUnsuspendedToProducer(isActive)
+                .agreementManagementToProducer(isActive)
+                .clientAddedRemovedToProducer(isActive)
+                .purposeStatusChangedToProducer(isActive)
+                .templateStatusChangedToProducer(isActive)
+                .agreementSuspendedUnsuspendedToConsumer(isActive)
+                .eserviceStateChangedToConsumer(isActive)
+                .agreementActivatedRejectedToConsumer(isActive)
+                .purposeActivatedRejectedToConsumer(isActive)
+                .purposeSuspendedUnsuspendedToConsumer(isActive)
+                .newEserviceTemplateVersionToInstantiator(isActive)
+                .eserviceTemplateNameChangedToInstantiator(isActive)
+                .eserviceTemplateStatusChangedToInstantiator(isActive)
+                .delegationApprovedRejectedToDelegator(isActive)
+                .eserviceNewVersionSubmittedToDelegator(isActive)
+                .eserviceNewVersionApprovedRejectedToDelegate(isActive)
+                .delegationSubmittedRevokedToDelegate(isActive)
+                .certifiedVerifiedAttributeAssignedRevokedToAssignee(isActive)
+                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(isActive)
+                .purposeQuotaAdjustmentRequestToProducer(isActive)
+                .purposeOverQuotaStateToConsumer(isActive);
 
         UserNotificationConfigUpdateSeed seed = new UserNotificationConfigUpdateSeed();
         seed.setInAppNotificationPreference(true);
