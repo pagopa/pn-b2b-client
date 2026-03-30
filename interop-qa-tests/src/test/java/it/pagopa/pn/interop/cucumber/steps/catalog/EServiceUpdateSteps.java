@@ -71,32 +71,10 @@ public class EServiceUpdateSteps {
         }
     }
 
-    @When("l'utente imposta la delega amministrativa come {string} e la delega tecnica come {string} per la fruizione dell'e-service {string}")
-    public void updateEServiceDelegationAvailability(String consumerDelegationAction, String clientAccessDelegationAction, String eServiceId) {
-
-        Boolean isConsumerDelegable = nullableBoolean(consumerDelegationAction);
-        Boolean isClientAccessDelegable = nullableBoolean(clientAccessDelegationAction);
-
-        UUID eServiceUuid = catalogResolver.resolveEServiceId(eServiceId);
-
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateEServiceDelegationFlags(
-                        eServiceUuid,
-                        new EServiceDelegationFlagsUpdateSeed()
-                                .isConsumerDelegable(isConsumerDelegable)
-                                .isClientAccessDelegable(isClientAccessDelegable)
-                )
-        );
-
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceUuid);
-        sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(isConsumerDelegable);
-        sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(isClientAccessDelegable);
-    }
-
-    @When("la delega amministrativa è {string} e la delega tecnica è {string} per la fruizione dell'e-service")
-    public void checkEServiceDelegationAvailability(String consumerDelegationAction, String clientAccessDelegationAction) {
-        Boolean isConsumerDelegable = nullableBoolean(consumerDelegationAction);
-        Boolean isClientAccessDelegable = nullableBoolean(clientAccessDelegationAction);
+    @And("le flag di delega dell'e-service sono state modificate correttamente")
+    public void checkEServiceDelegationAvailabilitySuccess() {
+        Boolean isConsumerDelegable = sharedStepsContext.getEServicesCommonContext().getIsConsumerDelegable();
+        Boolean isClientAccessDelegable = sharedStepsContext.getEServicesCommonContext().getIsClientAccessDelegable();
 
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         httpCallExecutor.snapshot();
