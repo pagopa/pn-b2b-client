@@ -1,10 +1,8 @@
 package it.pagopa.interop.config.springconfig.springconfig;
 
-import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Getter;
 
-@Value
-@AllArgsConstructor(staticName = "of")
+@Getter
 public class ApiProfile {
     public enum ApiMode { BEST_FIT, RIGHT_FIT }
     public enum ApiM2MVersion { V2, V3 }
@@ -22,6 +20,13 @@ public class ApiProfile {
         ApiBFFVersion bffVersion = ApiBFFVersion.valueOf(apiBFFVersion);
         ApiSet set = ApiSet.valueOf(apiSet);
 
-        return ApiProfile.of(mode, m2MVersion, bffVersion, set);
+        return new ApiProfile(mode, m2MVersion, bffVersion, set);
+    }
+
+    public ApiProfile(ApiMode apiMode, ApiM2MVersion apiM2MVersion, ApiBFFVersion apiBFFVersion, ApiSet apiSet) {
+        this.apiMode = apiMode;
+        this.apiM2MVersion = apiM2MVersion;
+        this.apiBFFVersion = apiBFFVersion;
+        this.apiSet = apiSet;
     }
 }
