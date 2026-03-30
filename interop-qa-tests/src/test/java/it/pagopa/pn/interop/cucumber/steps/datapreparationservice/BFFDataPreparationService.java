@@ -509,6 +509,18 @@ public class BFFDataPreparationService {
         UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
 
         pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDetails(sharedStepsContext.getEServicesCommonContext().getEserviceId())),
+                res -> {
+                    ProducerEServiceDetails eServiceDetails = (ProducerEServiceDetails) httpCallExecutor.getResponse();
+                    return eServiceDetails.getIsConsumerDelegable() != null && eServiceDetails.getIsConsumerDelegable().equals(isConsumerDelegable) &&
+                            eServiceDetails.getIsClientAccessDelegable() != null && eServiceDetails.getIsClientAccessDelegable().equals(isClientAccessDelegable);
+                },
+                "Impossibile aggiornare i flag di delega dell'e-service"
+        );
+        sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(isConsumerDelegable);
+        sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(isClientAccessDelegable);
+
+        pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
