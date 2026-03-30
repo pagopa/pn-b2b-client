@@ -4,8 +4,8 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
   Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_1] Eliminazione di un client di tipo consumer per un utente m2m-admin
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
-      | name   | description   | members   |
-      | <name> | <description> | <members> |
+      | name    | description | members   |
+      | %random | %random     | <members> |
     And si ottiene response status code 200
     And l'oggetto ProducerKeychain restituito rispetta quanto atteso
     Then l'utente tenta l'eliminazione del portachiavi erogatore con id "%actual"
@@ -13,13 +13,13 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
 
     # Happy path
     Examples:
-      | name    | description | members                                            |
-      | %random | %random     | []                                                 |
-      | %random | %blank      | [%admin]                                           |
-      | %random | %null       | [%api,security]                                    |
-      | %random | %random     | [%security]                                        |
-      | %random | %random     | [%api]                                             |
-      | %random | %random     | [%admin, %api,security, %security, %api, %support] |
+      | members                                       |
+      | []                                            |
+      | [admin]                                       |
+      | [api,security]                                |
+      | [security]                                    |
+      | [api]                                         |
+      | [admin, api,security, security, api, support] |
 
   Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_2] Eliminazione di un client di tipo consumer con id invalido e/o ruolo non autorizzato
     Given l'utente è un "admin" di "PA1" con ruolo M2M <role>
@@ -29,14 +29,14 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
     Examples:
       | keychainId | role      | statusCode |
     # Random id
-      | %random  | m2m-admin | 404        |
+      | %random    | m2m-admin | 404        |
 
     # Invalid id
-      | %null    | m2m-admin | 400        |
+      | %null      | m2m-admin | 400        |
 
     # Role not authorized
-      | %random  | m2m       | 403        |
-      | %null    | m2m       | 403        |
+      | %random    | m2m       | 403        |
+      | %null      | m2m       | 403        |
 
   Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_3] Non è possibile eliminare un client consumer se nella request non è presente l'header Authentication
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
