@@ -61,11 +61,12 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
   Scenario: [B2B_ASYNC_3_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC in stato “NOTIFICATION_CANCELLED“
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-      | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                          |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | feePolicy             | DELIVERY_MODE               |
+      | pagoPaIntMode         | ASYNC                       |
+      | paFee                 | 10                          |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
@@ -86,11 +87,12 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-      | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                          |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | feePolicy             | DELIVERY_MODE               |
+      | pagoPaIntMode         | ASYNC                       |
+      | paFee                 | 10                          |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
@@ -115,10 +117,11 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
   Scenario: [B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Cucumber" con Piva "80048790176"
     Given viene generata una nuova notifica
-      | subject       | invio notifica con cucumber |
-      | feePolicy     | DELIVERY_MODE               |
-      | pagoPaIntMode | ASYNC                       |
-      | paFee         | 10                          |
+      | subject               | invio notifica con cucumber |
+      | feePolicy             | DELIVERY_MODE               |
+      | pagoPaIntMode         | ASYNC                       |
+      | paFee                 | 10                          |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@FAIL-Irreperibile_AR_SLOW |
