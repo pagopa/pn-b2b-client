@@ -145,10 +145,13 @@ Feature: avanzamento notifiche analogico AR persona giuridica
   @workflowAnalogico @mockNR
   Scenario: [B2B_TIMELINE_PG_ANALOG_RIR_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
@@ -157,10 +160,13 @@ Feature: avanzamento notifiche analogico AR persona giuridica
   @workflowAnalogico @mockNR
   Scenario: [B2B_TIMELINE_PG_ANALOG_RIR_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di milano                |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di milano                |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL         |
+      | physicalAddress_State   | MESSICO      |
+      | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"

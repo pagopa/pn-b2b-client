@@ -65,7 +65,7 @@ public class CatalogCommonSteps {
     private void createEServiceWithDescriptorInState(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         createEServiceWithDescriptor(descriptorState, dataPreparationService,
-            sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getEServicesCommonContext());
     }
 
     @Given("{string} porta il descrittore dell'e-service in stato {string}")
@@ -74,22 +74,22 @@ public class CatalogCommonSteps {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         dataPreparationService.bringDescriptorToGivenState(
-            eserviceId,
-            descriptorId,
-            EServiceDescriptorState.valueOf(state),
-            false);
+                eserviceId,
+                descriptorId,
+                EServiceDescriptorState.valueOf(state),
+                false);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
     public static void createEServiceWithDescriptor(
-        String descriptorState,
-        BFFDataPreparationService dataPreparationService,
-        EServicesCommonContext eServiceContext
+            String descriptorState,
+            BFFDataPreparationService dataPreparationService,
+            EServicesCommonContext eServiceContext
     ) {
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
-                descriptorState), false);
+                        descriptorState), false);
         eServiceContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServiceContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
@@ -104,18 +104,18 @@ public class CatalogCommonSteps {
         String documentNamePrefix = "Document QA test name";
         String documentPrettyNamePrefix = "Document QA test pretty name";
         createEServiceWithDescriptorAndDocuments(tenantType, descriptorState, documents, documentNamePrefix,
-            documentPrettyNamePrefix);
+                documentPrettyNamePrefix);
     }
 
     private void createEServiceWithDescriptorAndDocuments(String tenantType, String descriptorState, int documents,
-        String documentNamePrefix, String documentPrettyNamePrefix) {
+                                                          String documentNamePrefix, String documentPrettyNamePrefix) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(
-            eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
-            EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
-            documentPrettyNamePrefix);
+                eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+                EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
+                documentPrettyNamePrefix);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
@@ -124,5 +124,15 @@ public class CatalogCommonSteps {
         // necessari per mantenere compatibilità con test scritti secondo un assetto antecedente
         eServicesCommonContext.setDocumentId(result.getDocumentId(0));
         eServicesCommonContext.setDocumentId2(result.getDocumentId(1));
+    }
+
+
+    @Then("il nome del nuovo e-service non supera i {int} caratteri")
+    public void verifyEServiceNameLengthLessThanOrEqualTo(int maxLength) {
+        String eServiceName = sharedStepsContext.getEServicesCommonContext().getName();
+
+        org.assertj.core.api.Assertions.assertThat(eServiceName.length())
+                .as("Il nome del nuovo e-service supera i %d caratteri", maxLength)
+                .isLessThanOrEqualTo(maxLength);
     }
 }

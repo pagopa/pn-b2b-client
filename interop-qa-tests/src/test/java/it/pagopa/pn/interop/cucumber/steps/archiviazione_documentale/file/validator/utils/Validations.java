@@ -1,12 +1,15 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.utils;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.ArchivingUtils.TS_FORMAT;
 
 public final class Validations {
+    private static final DateTimeFormatter DD_MM_YYYY_HH_MM_SS_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     /**
      * Valida un timestamp nei formati supportati:
@@ -17,7 +20,7 @@ public final class Validations {
      * </ul>
      */
     public static boolean isValidTimestamp(String value) {
-        return isCompactTimestamp(value) || isIsoTimestamp(value);
+          return isCompactTimestamp(value) || isIsoTimestamp(value);
     }
 
     /**
@@ -46,6 +49,22 @@ public final class Validations {
 
         try {
             OffsetDateTime.parse(value);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Valida un timestamp nel formato dd/MM/yyyy HH:mm:ss.
+     */
+    public static boolean isDdMmYyyyHhMmSsTimestamp(String value) {
+        if (value == null) {
+            return false;
+        }
+
+        try {
+            LocalDateTime.parse(value, DD_MM_YYYY_HH_MM_SS_FORMAT);
             return true;
         } catch (DateTimeParseException e) {
             return false;
