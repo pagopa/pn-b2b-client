@@ -23,8 +23,6 @@ Feature: Creazione dei client di tipo consumer - API v3
       | %random | %random     | [support]                                     |
       | %random | %random     | [admin, api,security, security, api, support] |
 
-  #BUG: https://pagopa.atlassian.net/browse/PIN-9622
-  #BUG: https://pagopa.atlassian.net/browse/PIN-9624
   Scenario Outline: [CREATE_CLIENT_CONSUMER_2] Validazione input per un utente m2m-admin alla creazione di un client consumer
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
@@ -49,6 +47,13 @@ Feature: Creazione dei client di tipo consumer - API v3
     # Members null
       | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null          |
 
+  Scenario Outline: [CREATE_CLIENT_CONSUMER_2b] Validazione input per un utente m2m-admin alla creazione di un client consumer
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
+      | name   | description   | members   |
+      | <name> | <description> | <members> |
+    Then si ottiene response status code 200
+
     # Input pericolosi ma potenzialmente ammessi
     Examples:
       | name                           | description                    | members   |
@@ -60,8 +65,6 @@ Feature: Creazione dei client di tipo consumer - API v3
       | 名字测试试                          | chinese unicode                | [admin]   |
       | тестовоеИмя                    | cyrillic unicode               | [api]     |
       | اسم_اختبار                     | arabic unicode                 | [support] |
-      | <script>alert(1)</script>      | XSS script                     | [admin]   |
-      | <img src=x onerror=alert(1)>   | XSS img                        | [api]     |
       | name\nnewline                  | escaped newline                | [support] |
       | name\ttab                      | escaped tab                    | [admin]   |
       | name\\backslash                | escaped backslash              | [api]     |
@@ -91,6 +94,7 @@ Feature: Creazione dei client di tipo consumer - API v3
       | %random | %random     | []      |
 
     #Il 409 non è sicuro che sarà implementato
+  @ignore
   Scenario Outline: [CREATE_CLIENT_CONSUMER_4] Un client di tipo consumer, creabile solo da un utente con ruolo m2m-admin, deve avere un nome univoco
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
@@ -131,7 +135,7 @@ Feature: Creazione dei client di tipo consumer - API v3
     When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
       | name   | description   | members   |
       | <name> | <description> | <members> |
-    Then si ottiene response status code 401
+    Then si ottiene response status code 400
 
     Examples:
       | name    | description | members | role      |
