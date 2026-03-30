@@ -3,7 +3,7 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import lombok.Getter;
 
 @Getter
-public enum LollipopHeaders {
+public enum LollipopHeader {
 
     LOLLIPOP_ORIGINAL_URL("xPagopaLollipopOriginalUrl"),
     LOLLIPOP_ORIGINAL_METHOD("xPagopaLollipopOriginalMethod"),
@@ -17,7 +17,7 @@ public enum LollipopHeaders {
 
     private final String headerName;
 
-    LollipopHeaders(String headerName) {
+    LollipopHeader(String headerName) {
         this.headerName = headerName;
     }
 }

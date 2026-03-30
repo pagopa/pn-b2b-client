@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -24,7 +25,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
-import it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeaders;
+import it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeader;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -32,6 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -40,7 +46,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.Map;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeaders.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeader.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @Slf4j
@@ -58,6 +64,10 @@ public class DelegheTemporaneeSteps {
     private final CieGeneratorTool cieGeneratorTool;
 
     private final String bucketS3;
+
+    private final String appIoApiKey;
+
+    private final String lollipopUserId;
 
     private String qrCode;
 
@@ -80,13 +90,17 @@ public class DelegheTemporaneeSteps {
                                   PnMandateAppIoClientImpl mandateAppIoClient,
                                   IPnAppIOB2bClient appIOB2bClient,
                                   CieGeneratorTool cieGeneratorTool,
-                                  @Value("${pn-deleghe-temporanee-bucket-s3}") String bucketS3) {
+                                  @Value("${pn-deleghe-temporanee-bucket-s3}") String bucketS3,
+                                  @Value("${pn.external.appio.api-key}") String appIoApiKey,
+                                  @Value("${pn-lollipop-user-id}") String lollipopUserId) {
         this.sharedSteps = sharedSteps;
         this.mandateAppIoClient = mandateAppIoClient;
         this.ricezioneNotificheWebDelegheSteps = ricezioneNotificheWebDelegheSteps;
         this.appIOB2bClient = appIOB2bClient;
         this.cieGeneratorTool = cieGeneratorTool;
         this.bucketS3 = bucketS3;
+        this.appIoApiKey = appIoApiKey;
+        this.lollipopUserId = lollipopUserId;
     }
 
     //metodo di background
@@ -360,7 +374,7 @@ public class DelegheTemporaneeSteps {
 
     //delegator superfluo come parametro, ma aiuta ai fini della leggibilità dello scenario
     @When("{string} viene temporaneamente delegato da {string} passando headers lollipop {lollipopHeadersError}")
-    public void creaDelegaTemporaneaWithHeaders(String cfDelegato, String delegator, LollipopHeaders lollipopHeaderWithError) {
+    public void creaDelegaTemporaneaWithHeaders(String cfDelegato, String delegator, LollipopHeader lollipopHeaderWithError) {
         qrCode = getQRPathEnvironmentBased() + "?aar=" +
                 (sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0));
 
@@ -369,7 +383,7 @@ public class DelegheTemporaneeSteps {
 
         String taxId = cfDelegato;
 
-        Map<LollipopHeaders, String> lollipopHeaders = getLollipopHeaders(lollipopHeaderWithError);
+        Map<LollipopHeader, String> lollipopHeaders = getMandateLollipopHeadersValues(lollipopHeaderWithError);
         String xPagopaLollipopOriginalUrl = lollipopHeaders.get(LOLLIPOP_ORIGINAL_URL);
         String xPagopaLollipopOriginalMethod = lollipopHeaders.get(LOLLIPOP_ORIGINAL_METHOD);
         String xPagopaLollipopPublicKey = lollipopHeaders.get(LOLLIPOP_PUBLIC_KEY);
@@ -379,7 +393,7 @@ public class DelegheTemporaneeSteps {
         String xPagoPaLollipopUserId = lollipopHeaders.get(LOLLIPOP_USER_ID);
         String signatureInput = lollipopHeaders.get(LOLLIPOP_SIGNATURE_INPUT);
         String signature = lollipopHeaders.get(LOLLIPOP_SIGNATURE);
-        if (!lollipopHeaderWithError.equals(LOLLIPOP_USER_ID)) {
+        if (lollipopHeaderWithError == null || !lollipopHeaderWithError.equals(LOLLIPOP_USER_ID)) {
             xPagoPaLollipopUserId = cfDelegato;
         }
 
@@ -403,16 +417,103 @@ public class DelegheTemporaneeSteps {
         }
     }
 
-    private Map<LollipopHeaders, String> getLollipopHeaders(LollipopHeaders lollipopHeaderWithError) {
-        Map<LollipopHeaders, String> headersLollipop = new HashMap<>();
-        headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "mandate");
+    @Given("viene invocata l'api per testare la lambda authorizer di lollipop con metodo {string} passando headers {lollipopHeadersError}")
+    public void todo(String method, LollipopHeader lollipopHeaderWithError) throws IOException, InterruptedException {
+        log.info("Tipo header lollipop: {}", lollipopHeaderWithError == null ? "tutti validi" : lollipopHeaderWithError + " errato");
+        HttpClient client = HttpClient.newHttpClient();
+        Map<LollipopHeader, String> lollipopHeadersMap = getPlaygroundLollipopHeadersValues(method, lollipopHeaderWithError);
+        String requestBody = """
+                {
+                    "jsonBodyRequest": "testQA"
+                }
+                """;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api-io.uat.notifichedigitali.it/io-playground/lollipop-test"))
+                .header("Content-Type", "application/json")
+                .header("x-pagopa-lollipop-original-url", lollipopHeadersMap.get(LOLLIPOP_ORIGINAL_URL))
+                .header("x-pagopa-lollipop-original-method", lollipopHeadersMap.get(LOLLIPOP_ORIGINAL_METHOD))
+                .header("x-pagopa-lollipop-public-key", lollipopHeadersMap.get(LOLLIPOP_PUBLIC_KEY))
+                .header("x-pagopa-lollipop-assertion-ref", lollipopHeadersMap.get(LOLLIPOP_ASSERTION_REF))
+                .header("x-pagopa-lollipop-assertion-type", lollipopHeadersMap.get(LOLLIPOP_ASSERTION_TYPE))
+                .header("x-pagopa-lollipop-auth-jwt", lollipopHeadersMap.get(LOLLIPOP_AUTH_JWT))//Vale per un anno circa
+                .header("x-pagopa-lollipop-user-id", lollipopHeadersMap.get(LOLLIPOP_USER_ID))
+                .header("signature", lollipopHeadersMap.get(LOLLIPOP_SIGNATURE))
+                .header("signature-input", lollipopHeadersMap.get(LOLLIPOP_SIGNATURE_INPUT))
+                .header("x-pagopa-cx-taxid", lollipopUserId)
+                .header("x-api-key", appIoApiKey)
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        log.info("Request per lambda authorizer test: {}", request);
+        log.info("Body per lambda authorizer test:\n{}", requestBody);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        B2bUtils.logPrettyResponse(response.body());
+
+        if (response.statusCode() == 200) {
+            String resultCode = JsonPath.read(response.body(), "$.data.authorizerContext.resultCode");
+            log.info("Lollipop ResultCode recuperato: {}", resultCode);
+            if (lollipopHeaderWithError == null) {
+                assertThat(resultCode).as("Il result code dev'essere VERIFICATION_SUCCESS_CODE").isEqualToIgnoringCase("VERIFICATION_SUCCESS_CODE");
+            } else {
+                switch (lollipopHeaderWithError) {
+                    case LOLLIPOP_ORIGINAL_URL -> assertThat(resultCode).as("").contains("TODO 1");
+                    case LOLLIPOP_ORIGINAL_METHOD -> assertThat(resultCode).as("").contains("TOD0 2");
+                    case LOLLIPOP_PUBLIC_KEY -> assertThat(resultCode).as("").contains("TODO 3");
+                    case LOLLIPOP_ASSERTION_REF -> assertThat(resultCode).as("").contains("TODO 4");
+                    case LOLLIPOP_ASSERTION_TYPE -> assertThat(resultCode).as("").contains("TODO 5");
+                    case LOLLIPOP_AUTH_JWT -> assertThat(resultCode).as("").contains("TODO 6");
+                    case LOLLIPOP_USER_ID -> assertThat(resultCode).as("").contains("TODO 7");
+                    case LOLLIPOP_SIGNATURE -> assertThat(resultCode).as("").contains("TODO 8");
+                    case LOLLIPOP_SIGNATURE_INPUT -> assertThat(resultCode).as("").contains("TODO 9");
+                }
+            }
+        } else {
+            log.info("Errore in fase di chiamata: statusCode = {}", response.statusCode());
+        }
+    }
+
+    private Map<LollipopHeader, String> getPlaygroundLollipopHeadersValues(String method, LollipopHeader lollipopHeaderWithError) {
+        Map<LollipopHeader, String> headersLollipop = new HashMap<>();
+        headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "https://api-app.io.pagopa.it/api/com/v1/send/lollipop-check/test?isTest=true");
+        headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, method);
+        headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "eyJ4IjoiQU9LVXhvUDlUdDdEL084WjlYWCtNaFJGaURKYVg3b1FlYmwvZEx5c3dRR20iLCJjcnYiOiJQLTI1NiIsInkiOiJFWldLNFI4TWx3TWxHcFVOcXBrU2krczhlUVBFOHgzN3lBWjI3ZHI2U0lNPSIsImt0eSI6IkVDIn0");
+        headersLollipop.put(LOLLIPOP_ASSERTION_REF, "sha256-BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ");
+        headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "SAML");
+        headersLollipop.put(LOLLIPOP_AUTH_JWT, method.equals("GET") ?
+                "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3NlcnRpb25SZWYiOiJzaGEyNTYtQmpEN0JrWlJBWkl0U1c5SktMLUUtUG9wUkVCbTBWZTVxNXJTNk0tY19ZUSIsIm9wZXJhdGlvbklkIjoiN2QwOWMzMGItZWI4NS00ZjVjLTk5YTAtMTc1OGU5MDdmMmM2IiwiaWF0IjoxNzc0ODY4MzI1LCJleHAiOjE3NzQ4NjkyMjUsImlzcyI6ImFwaS5pby5wYWdvcGEuaXQiLCJqdGkiOiIwMUtNWjZBUzQ1VkozUUszWlg3RkUzQjZSMiJ9.WXBp7dVZ5xdHn_7IgnFLQicKrVAXMItQ_GXAwtfC8IWBuuB-PUzWBLa9JiHuotpqre-Qx6YD9tioFb1KxAtx8kTeUHhE80aQROL1C3TsNCQnxuO9v0Z1cYgIVWEuAKiTMz0GU2f1mBKA5N_oneUsDMjas0_32qtX45vr5r7RX1GuPGlVm0Ooqb6c3z0bccIcYD-b1-8JJN9NRvn5e0QBOddI_imZeBHoHXgAH4G2rkG4fgnaJwqS5h34n2lYxUkzhdZBCyy-agLfixnIrvNYnIGKkDehQ9gYqBcd8hwuo6FkTTqItsty79WQO5fXUm3RyesD_-ffHPwtITa9M4s0ww" :
+                "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3NlcnRpb25SZWYiOiJzaGEyNTYtQmpEN0JrWlJBWkl0U1c5SktMLUUtUG9wUkVCbTBWZTVxNXJTNk0tY19ZUSIsIm9wZXJhdGlvbklkIjoiN2QwOWMzMGItZWI4NS00ZjVjLTk5YTAtMTc1OGU5MDdmMmM2IiwiaWF0IjoxNzc0ODY4NDAyLCJleHAiOjE3NzQ4NjkzMDIsImlzcyI6ImFwaS5pby5wYWdvcGEuaXQiLCJqdGkiOiIwMUtNWjZENDhFUDJBOVY3S1M4VFZXWkNSRyJ9.qAb1j3dddT2kVUQBSUlgvxvQ84aMZGFK4IVBrgB0dyL8C3EQPW11AtXzUJtm3bdl54rcTGKOmhJs1BY2LzX5dsnerNWuyqPRWoqa-lPNr0_bCmVxiTFbSva2WwuUrVx5HE3hR2cbeRoK1ogyEFJT5vaq8hhMXVKN3GQ4QrpU8wXsP_6hhfQ6GQxy6g-MET4vdt-BAU4qhWaSD0RLM2ldJo7xUKzEM8Ry7-fkQhYtZRfIZWomUNQKEBGasTk_YrcEKXDDyHtbMjbJzj5e8MXtraoP5WrDT3yvmj2UnjfXvNE26Z_2JWX3on2-44n3QrX1BRdbZaUPToT1L7St1coEHA");
+        headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "sig1=(\"x-pagopa-lollipop-original-method\" \"x-pagopa-lollipop-original-url\");created=1774868324;nonce=\"7d09c30b-eb85-4f5c-99a0-1758e907f2c6\";alg=\"ecdsa-p256-sha256\";keyid=\"BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ\"");
+        headersLollipop.put(LOLLIPOP_SIGNATURE, "sig1=:MEYCIQDYnlQGASeDnE9uaKuDe2HXyXAzsL7LxHhrscWbYLTOSAIhAI1YT9st0hu5G9G7L95JKP/IvUYg3zc3rRZtgGunJBoH:");
+        headersLollipop.put(LOLLIPOP_USER_ID, lollipopUserId);
+        if (lollipopHeaderWithError != null) {
+            switch (lollipopHeaderWithError) {
+                case LOLLIPOP_ORIGINAL_URL -> headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "TODO_ERROR");
+                case LOLLIPOP_ORIGINAL_METHOD -> headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, "DELETE");
+                case LOLLIPOP_PUBLIC_KEY -> headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "TODO_ERROR");
+                case LOLLIPOP_ASSERTION_REF -> headersLollipop.put(LOLLIPOP_ASSERTION_REF, "TODO_ERROR");
+                case LOLLIPOP_ASSERTION_TYPE -> headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "TODO_ERROR");
+                case LOLLIPOP_AUTH_JWT -> headersLollipop.put(LOLLIPOP_AUTH_JWT, "TODO_ERROR");
+                case LOLLIPOP_SIGNATURE_INPUT -> headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "TODO_ERROR");
+                case LOLLIPOP_SIGNATURE -> headersLollipop.put(LOLLIPOP_SIGNATURE, "TODO_ERROR");
+                case LOLLIPOP_USER_ID -> headersLollipop.put(LOLLIPOP_USER_ID, Costanti.GALILEO_GALILEI_TAX_ID);
+            }
+        }
+        return headersLollipop;
+    }
+
+    //TODO: sostituire con i valori necessari per mandate quando ci verranno forniti i valori corretti
+    private Map<LollipopHeader, String> getMandateLollipopHeadersValues(LollipopHeader lollipopHeaderWithError) {
+        Map<LollipopHeader, String> headersLollipop = new HashMap<>();
+        headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "https://api-app.io.pagopa.it/api/com/v1/send/lollipop-check/test?isTest=true");
         headersLollipop.put(LOLLIPOP_ORIGINAL_METHOD, "GET");
         headersLollipop.put(LOLLIPOP_PUBLIC_KEY, "eyJ4IjoiQU9LVXhvUDlUdDdEL084WjlYWCtNaFJGaURKYVg3b1FlYmwvZEx5c3dRR20iLCJjcnYiOiJQLTI1NiIsInkiOiJFWldLNFI4TWx3TWxHcFVOcXBrU2krczhlUVBFOHgzN3lBWjI3ZHI2U0lNPSIsImt0eSI6IkVDIn0");
         headersLollipop.put(LOLLIPOP_ASSERTION_REF, "sha256-BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ");
         headersLollipop.put(LOLLIPOP_ASSERTION_TYPE, "SAML");
-        headersLollipop.put(LOLLIPOP_AUTH_JWT, "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3NlcnRpb25SZWYiOiJzaGEyNTYtQmpEN0JrWlJBWkl0U1c5SktMLUUtUG9wUkVCbTBWZTVxNXJTNk0tY19ZUSIsIm9wZXJhdGlvbklkIjoiYjdmNWUwYjQtNzIzZC00MmMyLWIxZDctN2M4OTA1OTAwMjAzIiwiaWF0IjoxNzc0NDQ3NzM2LCJleHAiOjE3NzQ0NDg2MzYsImlzcyI6ImFwaS5pby5wYWdvcGEuaXQiLCJqdGkiOiIwMUtNSk43REpTNThTMDE0SzdEVE5CM0dBRyJ9.Eq14IePo2q-kAPjx4Uf-xuC3ulY-5tMJLLZpjx5Rq-rUtdbN1YZRn42SkKKDv1_UE1E5AkyqPc9umGg9O0-PuP9--QsVPT3Pinl9-bOSy6E8ojLTSf6NgB7Ka9nsGngCt-23u2tsRSMo-FooXd9gA00TZq5G8wUQicrx9US2jXoyfxBzic2UQ_wbbS52p7bYef-98Wt5GFJTVbrGgFnW6ck_-4wsRpX7a2hQ9zlnav9zx3wbOfjHS3VnIvKxLkroBpTeT4LvKiw6e7RT3GRW4A8SCkim1oHOfh1eor3kqvOiKueRXTlJVtvWoh5Szjr6DLXV_KRFtlMLfZad7q8YUQ");
-        headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "sig1=(\"x-pagopa-lollipop-original-method\" \"x-pagopa-lollipop-original-url\");created=1774447735;nonce=\"b7f5e0b4-723d-42c2-b1d7-7c8905900203\";alg=\"ecdsa-p256-sha256\";keyid=\"BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ\"");
+        headersLollipop.put(LOLLIPOP_AUTH_JWT, "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3NlcnRpb25SZWYiOiJzaGEyNTYtQmpEN0JrWlJBWkl0U1c5SktMLUUtUG9wUkVCbTBWZTVxNXJTNk0tY19ZUSIsIm9wZXJhdGlvbklkIjoiYjM1OTg3ZjYtYjgxYy00NWQyLTg1NTUtYjMxZTU5Njg0NjIyIiwiaWF0IjoxNzc0NjI1MTk2LCJleHAiOjE3NzQ2MjYwOTYsImlzcyI6ImFwaS5pby5wYWdvcGEuaXQiLCJqdGkiOiIwMUtNUVlGMksxUUJTRUNBNU5LRlhQWldXWSJ9.IQcugUl_6ry7zSfYCtOGMlHJ3xhMBK1oOZGRKAxT_XRO28xSF3xpw1nYLO5KheiuDI95RXei04kdo6HffH56jgS7VgV5IfFGXmaQLR08GdvJJ0AMkD9Z2mB6JQDkZOMj-z9jp3ZuTp9FpXJ_qR109Bd1IGnebYX9tOoPYhO5Q6OGZOiP75Xj4sYIne-ssFxMIjvumixw9hcOMmsTfKvWK3NoK3jRjfEvgGTfi87nBJRrCbzAbHhu809VoglJ8Oy0Pavx1pgG1pwOi23AwrP9_B9owpTcUz3_9e2yyjDrVFx0zGuKPQSwBzgKGyeD8TQkm7Rzd5BkFPxpGsUaDyhfsA");
+        headersLollipop.put(LOLLIPOP_SIGNATURE_INPUT, "sig1=(\"x-pagopa-lollipop-original-method\" \"x-pagopa-lollipop-original-url\");created=1774625195;nonce=\"b35987f6-b81c-45d2-8555-b31e59684622\";alg=\"ecdsa-p256-sha256\";keyid=\"BjD7BkZRAZItSW9JKL-E-PopREBm0Ve5q5rS6M-c_YQ\"");
         headersLollipop.put(LOLLIPOP_SIGNATURE, "sig1=:MEYCIQCnNETTQ1ZUb0ukBqBSl8+hORbMw0x1PCEejiqCucHzGQIhAOsoIH2I0hHmHLDkUYqsE+wr/YpMHOzJOaDPIx0RElrt:");
+        headersLollipop.put(LOLLIPOP_USER_ID, lollipopUserId);
         if (lollipopHeaderWithError != null) {
             switch (lollipopHeaderWithError) {
                 case LOLLIPOP_ORIGINAL_URL -> headersLollipop.put(LOLLIPOP_ORIGINAL_URL, "TODO_ERROR");

@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -553,5 +556,21 @@ public abstract class B2bUtils {
         String env = context.getEnvironment().getActiveProfiles()[0];
         log.info("Environment in use is: {}", env);
         return env;
+    }
+
+    /**
+     * Metodo statico di utility per formattare un json
+     */
+    public static String logPrettyResponse(String rawJson) {
+        try {
+            ObjectMapper objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+            Object jsonObject = objMapper.readValue(rawJson, Object.class);
+            String prettyJson = objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+            log.info("JSON formattato:\n{}", prettyJson);
+            return prettyJson;
+        } catch (Exception e) {
+            log.warn("Impossibile formattare il JSON, stampo l'originale: {}", rawJson);
+        }
+        return rawJson;
     }
 }

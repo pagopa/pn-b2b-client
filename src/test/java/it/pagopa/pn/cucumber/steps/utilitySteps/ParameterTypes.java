@@ -112,18 +112,18 @@ public class ParameterTypes {
             "|xPagopaLollipopUserId_errato" +
             "|signatureInput_errato" +
             "|signature_errato")
-    public static LollipopHeaders lollipopHeadersError(String value) {
+    public static LollipopHeader lollipopHeadersError(String value) {
         return switch (value) {
             case "tutti validi" -> null;
-            case "xPagopaLollipopOriginalUrl_errato" -> LollipopHeaders.LOLLIPOP_ORIGINAL_URL;
-            case "xPagopaLollipopOriginalMethod_errato" -> LollipopHeaders.LOLLIPOP_ORIGINAL_METHOD;
-            case "xPagopaLollipopPublicKey_errato" -> LollipopHeaders.LOLLIPOP_PUBLIC_KEY;
-            case "xPagopaLollipopAssertionRef_errato" -> LollipopHeaders.LOLLIPOP_ASSERTION_REF;
-            case "xPagopaLollipopAssertionType_errato" -> LollipopHeaders.LOLLIPOP_ASSERTION_TYPE;
-            case "xPagopaLollipopAuthJwt_errato" -> LollipopHeaders.LOLLIPOP_AUTH_JWT;
-            case "xPagopaLollipopUserId_errato" -> LollipopHeaders.LOLLIPOP_USER_ID;
-            case "signatureInput_errato" -> LollipopHeaders.LOLLIPOP_SIGNATURE_INPUT;
-            case "signature_errato" -> LollipopHeaders.LOLLIPOP_SIGNATURE;
+            case "xPagopaLollipopOriginalUrl_errato" -> LollipopHeader.LOLLIPOP_ORIGINAL_URL;
+            case "xPagopaLollipopOriginalMethod_errato" -> LollipopHeader.LOLLIPOP_ORIGINAL_METHOD;
+            case "xPagopaLollipopPublicKey_errato" -> LollipopHeader.LOLLIPOP_PUBLIC_KEY;
+            case "xPagopaLollipopAssertionRef_errato" -> LollipopHeader.LOLLIPOP_ASSERTION_REF;
+            case "xPagopaLollipopAssertionType_errato" -> LollipopHeader.LOLLIPOP_ASSERTION_TYPE;
+            case "xPagopaLollipopAuthJwt_errato" -> LollipopHeader.LOLLIPOP_AUTH_JWT;
+            case "xPagopaLollipopUserId_errato" -> LollipopHeader.LOLLIPOP_USER_ID;
+            case "signatureInput_errato" -> LollipopHeader.LOLLIPOP_SIGNATURE_INPUT;
+            case "signature_errato" -> LollipopHeader.LOLLIPOP_SIGNATURE;
             default ->
                     throw new IllegalArgumentException("Tipologia di errore header lollipop non riconosciuta. Valutare se inserirla nei ParameterTypes");
         };
