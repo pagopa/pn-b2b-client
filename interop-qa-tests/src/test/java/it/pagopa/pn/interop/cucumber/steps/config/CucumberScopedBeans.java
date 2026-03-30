@@ -1,13 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
 import it.pagopa.pn.interop.cucumber.ApiProfileConfig;
 import it.pagopa.pn.interop.cucumber.ApiProfileContext;
-import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
-import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
+import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
