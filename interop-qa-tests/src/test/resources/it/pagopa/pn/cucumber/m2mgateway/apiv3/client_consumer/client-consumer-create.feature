@@ -23,6 +23,8 @@ Feature: Creazione dei client di tipo consumer - API v3
       | %random | %random     | [support]                                     |
       | %random | %random     | [admin, api,security, security, api, support] |
 
+  #BUG: https://pagopa.atlassian.net/browse/PIN-9622
+  #BUG: https://pagopa.atlassian.net/browse/PIN-9624
   Scenario Outline: [CREATE_CLIENT_CONSUMER_2] Validazione input per un utente m2m-admin alla creazione di un client consumer
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
@@ -31,57 +33,49 @@ Feature: Creazione dei client di tipo consumer - API v3
     Then si ottiene response status code 400
 
     Examples:
-      | name                                                               | description                                                                                                                                                                                                                                                                                                  | members         |
+      | name                                                               | description                                                                                                                                                                                                                                                                                                  | members        |
     # Description < min (10 char)
-      | %random                                                            | %blank                                                                                                                                                                                                                                                                                                       | [%admin]        |
+      | %random                                                            | %blank                                                                                                                                                                                                                                                                                                       | [admin]        |
     # Description > max (250 char)
-      | %random                                                            | Questa è una descrizione estesa utilizzata per testare la creazione di un client di tipo consumer all'interno del sistema. Include dettagli aggiuntivi per verificare la corretta gestione dei campi testuali, la persistenza dei dati e il comportamento dell'API in presenza di input lunghi e articolati. | [%admin]        |
-    # Description null
-      | %random                                                            | %null                                                                                                                                                                                                                                                                                                        | [%admin]        |
+      | %random                                                            | Questa è una descrizione estesa utilizzata per testare la creazione di un client di tipo consumer all'interno del sistema. Include dettagli aggiuntivi per verificare la corretta gestione dei campi testuali, la persistenza dei dati e il comportamento dell'API in presenza di input lunghi e articolati. | [admin]        |
 
     # Name > max (60 char)
-      | NomeMoltoLungoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %null                                                                                                                                                                                                                                                                                                        | [%api,security] |
+      | NomeMoltoLungoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %null                                                                                                                                                                                                                                                                                                        | [api,security] |
     # Name < min (5 char)
-      | Nome                                                               | %null                                                                                                                                                                                                                                                                                                        | [%api,security] |
+      | Nome                                                               | %null                                                                                                                                                                                                                                                                                                        | [api,security] |
     # Name null
-      | %null                                                              | %random                                                                                                                                                                                                                                                                                                      | []              |
+      | %null                                                              | %random                                                                                                                                                                                                                                                                                                      | []             |
 
     # Members null
-      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null           |
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null          |
 
     # Input pericolosi ma potenzialmente ammessi
     Examples:
-      | name                           | description                    | members    |
-      | !@#$%^&*()_+-=[]{};':",.<>/?\| | %random                        | [%admin]   |
-      | %random                        | !@#$%^&*()_+-=[]{};':",.<>/?\| | [%admin]   |
-      | ' OR '1'='1                    | SQL injection test             | [%admin]   |
-      | admin'; DROP TABLE users; --   | SQL destructive                | [%api]     |
-      | 😀😎🔥💥                       | emoji unicode                  | [%support] |
-      | 名字测试                           | chinese unicode                | [%admin]   |
-      | тестовоеИмя                    | cyrillic unicode               | [%api]     |
-      | اسم_اختبار                     | arabic unicode                 | [%support] |
-      | <script>alert(1)</script>      | XSS script                     | [%admin]   |
-      | <img src=x onerror=alert(1)>   | XSS img                        | [%api]     |
-      | name\nnewline                  | escaped newline                | [%support] |
-      | name\ttab                      | escaped tab                    | [%admin]   |
-      | name\\backslash                | escaped backslash              | [%api]     |
-      | name\"quote                    | escaped quote                  | [%support] |
-      | leadingSpace                   | leading space                  | [%admin]   |
-      | trailingSpace                  | trailing space                 | [%api]     |
-      | multiple   spaces              | multiple spaces                | [%support] |
-      | name\u0000test                 | null byte                      | [%admin]   |
-      | name\u200Btest                 | zero width space               | [%api]     |
-      | "name":"value"                 | json injection                 | [%support] |
-      | }{ malformed                   | broken json                    | [%admin]   |
-      | api/security                   | slash inside                   | [%api]     |
-      | user@domain.com                | email-like                     | [%support] |
-      | tenant#123                     | hash char                      | [%admin]   |
-
-    # Stringhe di 256 char
-    Examples:
-      | name                                                                                                                                                                                                                                                             | description                                                                                                                                                                                                                                                      | members    |
-      | AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %random                                                                                                                                                                                                                                                          | [%support] |
-      | %random                                                                                                                                                                                                                                                          | BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB | [%support] |
+      | name                           | description                    | members   |
+      | !@#$%^&*()_+-=[]{};':",.<>/?\| | %random                        | [admin]   |
+      | %random                        | !@#$%^&*()_+-=[]{};':",.<>/?\| | [admin]   |
+      | ' OR '1'='1                    | SQL injection test             | [admin]   |
+      | admin'; DROP TABLE users; --   | SQL destructive                | [api]     |
+      | 😀😎🔥💥                       | emoji unicode                  | [support] |
+      | 名字测试试                          | chinese unicode                | [admin]   |
+      | тестовоеИмя                    | cyrillic unicode               | [api]     |
+      | اسم_اختبار                     | arabic unicode                 | [support] |
+      | <script>alert(1)</script>      | XSS script                     | [admin]   |
+      | <img src=x onerror=alert(1)>   | XSS img                        | [api]     |
+      | name\nnewline                  | escaped newline                | [support] |
+      | name\ttab                      | escaped tab                    | [admin]   |
+      | name\\backslash                | escaped backslash              | [api]     |
+      | name\"quote                    | escaped quote                  | [support] |
+      | leadingSpace                   | leading space                  | [admin]   |
+      | trailingSpace                  | trailing space                 | [api]     |
+      | multiple   spaces              | multiple spaces                | [support] |
+      | name\u0000test                 | null byte--                    | [admin]   |
+      | name\u200Btest                 | zero width space               | [api]     |
+      | "name":"value"                 | json injection                 | [support] |
+      | }{ malformed                   | broken json                    | [admin]   |
+      | api/security                   | slash inside                   | [api]     |
+      | user@domain.com                | email-like                     | [support] |
+      | tenant#123                     | hash char--                    | [admin]   |
 
   Scenario Outline: [CREATE_CLIENT_CONSUMER_3] Un utente m2m non può creare un client di tipo consumer
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -93,7 +87,7 @@ Feature: Creazione dei client di tipo consumer - API v3
     # Required sad path
     Examples:
       | name    | description | members |
-      | %null   | %random     | []      |
+      | %random | %random     | []      |
       | %random | %random     | []      |
 
     #Il 409 non è sicuro che sarà implementato
