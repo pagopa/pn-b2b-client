@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -86,6 +87,10 @@ public class EServiceUpdateSteps {
                                 .isClientAccessDelegable(isClientAccessDelegable)
                 )
         );
+
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceUuid);
+        sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(isConsumerDelegable);
+        sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(isClientAccessDelegable);
     }
 
     @When("la delega amministrativa è {string} e la delega tecnica è {string} per la fruizione dell'e-service")
