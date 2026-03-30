@@ -1129,7 +1129,6 @@ Feature: annullamento notifiche b2b
     And destinatario Mario Gherkin e:
       | payment | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
-    And imposto lo iun di SharedSteps a "LYUJ-WGWT-EXGQ-202603-P-1" e la pa a "Comune_Multi"
     And la notifica non può essere annullata dal sistema tramite codice IUN
     And si verifica che l'annullamento della notifica abbia prodotto una risposta con i seguenti dati
       | status | OK                   |
