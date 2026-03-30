@@ -5,6 +5,7 @@ import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IM2MV3ClientsClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -42,10 +43,16 @@ public class ClientConsumerSteps {
         resolver = new ClientConsumerResolver(sharedStepsContext, clientConsumerContext);
     }
 
-    @Given("l'utente tenta di creare un client di tipo CONSUMER per il tenant {string} con:")
+    @When("l'utente tenta di creare un client di tipo CONSUMER per il tenant {string} con:")
     public void createClient(String tenant, DataTable dataTable) {
 
-        Map<String, String> clientSeedMap = dataTable.asMap();
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        if (rows.isEmpty()) {
+            throw new IllegalArgumentException("La DataTable è vuota");
+        }
+
+        Map<String, String> clientSeedMap = rows.get(0);
 
         final String resolvedName = resolver.resolveClientName(clientSeedMap.get("name"));
         final String resolvedDescription = resolver.resolveDescription(clientSeedMap.get("description"));
@@ -66,6 +73,7 @@ public class ClientConsumerSteps {
             clientConsumerContext.setActualClientId(client.getId());
             clientConsumerContext.setActualName(client.getName());
             clientConsumerContext.setActualDescription(client.getDescription());
+
         } catch (IllegalStateException e) {
             log.warn(httpCallExecutor.getErrorMessage());
         }
