@@ -520,28 +520,22 @@ public class BFFDataPreparationService {
 
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
+
+        DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
+        descriptorAttributesSeed.setCertified(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getCertified())
+        );
+        descriptorAttributesSeed.setCertified(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getCertified())
+        );
+        descriptorAttributesSeed.setVerified(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getVerified())
+        );
+
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy())
                 .attributes(
-                        new DescriptorAttributesSeed()
-                                .addCertifiedItem(descriptor.getAttributes().getCertified().stream()
-                                        .flatMap(List::stream).
-                                        map(attr -> new DescriptorAttributeSeed()
-                                                .id(attr.getId())
-                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
-                                        .toList())
-                                .addDeclaredItem(descriptor.getAttributes().getDeclared().stream()
-                                        .flatMap(List::stream).
-                                        map(attr -> new DescriptorAttributeSeed()
-                                                .id(attr.getId())
-                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
-                                        .toList())
-                                .addVerifiedItem(descriptor.getAttributes().getVerified().stream()
-                                        .flatMap(List::stream).
-                                        map(attr -> new DescriptorAttributeSeed()
-                                                .id(attr.getId())
-                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
-                                        .toList())
+                        descriptorAttributesSeed
                 )
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
