@@ -13,6 +13,7 @@ import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +34,7 @@ public class M2MAuthSteps {
     private final IdentityService identityService;
     private final ApiProfile apiProfile;
 
+    @Autowired
     public M2MAuthSteps(
             ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext,
