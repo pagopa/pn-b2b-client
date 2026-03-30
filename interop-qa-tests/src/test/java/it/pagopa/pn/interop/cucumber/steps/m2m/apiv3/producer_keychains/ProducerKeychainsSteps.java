@@ -297,7 +297,13 @@ public class ProducerKeychainsSteps {
 
     @When("l'utente tenta di creare un portachiavi erogatore per il tenant {string} con:")
     public void createProducerKeychains(String tenant, DataTable dataTable) {
-        Map<String, String> producerKeychainSeedMap = dataTable.asMap();
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        if (rows.isEmpty()) {
+            throw new IllegalArgumentException("La DataTable è vuota");
+        }
+
+        Map<String, String> producerKeychainSeedMap = rows.get(0);
 
         final String resolvedName = resolver.resolveProducerKeychainName(producerKeychainSeedMap.get("name"));
         final String resolvedDescription = resolver.resolveDescription(producerKeychainSeedMap.get("description"));
@@ -321,7 +327,6 @@ public class ProducerKeychainsSteps {
         } catch (IllegalStateException e) {
             log.warn(httpCallExecutor.getErrorMessage());
         }
-
     }
 
     @And("l'oggetto ProducerKeychain restituito rispetta quanto atteso")

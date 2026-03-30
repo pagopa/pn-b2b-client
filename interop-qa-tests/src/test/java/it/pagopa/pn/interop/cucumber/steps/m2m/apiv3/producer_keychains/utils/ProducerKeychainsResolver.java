@@ -12,10 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,15 +57,18 @@ public class ProducerKeychainsResolver extends AbstractResolver {
         return resolveOrParse(
                 raw,
                 (input) -> {
-                    List<String> roles = new ArrayList<>();
+                    String cleaned = input
+                            .trim()
+                            .replaceAll("^\\[|]$", "");
 
-                    // Per gestire input di questo tipo [%admin, %api,security, %security, %api, %support]
-                    Pattern pattern = Pattern.compile("%?([^,\\[\\]]+(?:,[^,\\[\\]]+)?)");
-                    Matcher matcher = pattern.matcher(input);
-
-                    while (matcher.find()) {
-                        roles.add(matcher.group(1).trim());
+                    if (cleaned.isBlank()) {
+                        return Collections.emptyList();
                     }
+
+                    List<String> roles = Arrays.stream(cleaned.split(",\\s+"))
+                            .map(String::trim)
+                            .filter(s -> !s.isBlank())
+                            .toList();
 
                     return roles.stream()
                             .map(r -> identityService.getUserId(tenant, r))
