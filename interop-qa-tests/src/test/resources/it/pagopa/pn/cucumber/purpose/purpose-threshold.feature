@@ -173,10 +173,10 @@ Feature: Verifica soglie differenziate
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 100
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then si ottiene status code 200 e la finalità in stato "ACTIVE"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
-      | remainingDailyCallsPerConsumer | 10 |
-      | remainingDailyCallsTotal       | 1000 |
+      | remainingDailyCallsPerConsumer | 0 |
+      | remainingDailyCallsTotal       | 900 |
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_8] Per la creazione di una finalità con una soglia superiore a quelle impostate negli attributi certificati contenuti in gruppi differenti, se la richiesta contiene un limite di soglia superiore, il sistema imposta lo stato della finalità a WAITING_FOR_APPROVAL e la soglia a quella richiesta
