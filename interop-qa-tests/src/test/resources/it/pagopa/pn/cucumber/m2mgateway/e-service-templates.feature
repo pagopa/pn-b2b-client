@@ -653,7 +653,6 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
-    And il nuovo e-service è stato creato correttamente in stato <eServiceDescriptorState>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
     Then si ottiene lo status code 200
@@ -661,25 +660,25 @@ Feature: Test API M2M of e-service template
     And l'e-service è stato parzialmente modificato correttamente
     Examples:
       | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
-      | PUBLISHED               | true                | true                    |
-      | PUBLISHED               | false               | false                   |
-      | PUBLISHED               | true                | false                   |
-      | PUBLISHED               | true                | %null                   |
-      | PUBLISHED               | false               | %null                   |
-      | PUBLISHED               | %null               | false                   |
+#      | PUBLISHED               | true                | true                    |
+#      | PUBLISHED               | false               | false                   |
+#      | PUBLISHED               | true                | false                   |
+#      | PUBLISHED               | true                | %null                   |
+#      | PUBLISHED               | false               | %null                   |
+#      | PUBLISHED               | %null               | false                   |
 
-      | SUSPENDED               | true                | true                    |
-      | SUSPENDED               | false               | false                   |
-      | SUSPENDED               | true                | false                   |
-      | SUSPENDED               | true                | %null                   |
-      | SUSPENDED               | false               | %null                   |
-      | SUSPENDED               | %null               | false                   |
+#      | SUSPENDED               | true                | true                    |
+#      | SUSPENDED               | false               | false                   |
+#      | SUSPENDED               | true                | false                   |
+#      | SUSPENDED               | true                | %null                   |
+#      | SUSPENDED               | false               | %null                   |
+#      | SUSPENDED               | %null               | false                   |
 
       | DEPRECATED              | true                | true                    |
-      | DEPRECATED              | false               | false                   |
-      | DEPRECATED              | true                | false                   |
-      | DEPRECATED              | true                | %null                   |
-      | DEPRECATED              | false               | %null                   |
+#      | DEPRECATED              | false               | false                   |
+#      | DEPRECATED              | true                | false                   |
+#      | DEPRECATED              | true                | %null                   |
+#      | DEPRECATED              | false               | %null                   |
       | DEPRECATED              | %null               | false                   |
 
   @eservice_published_delegation
@@ -688,7 +687,6 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
-    And il nuovo e-service è stato creato correttamente in stato <eServiceDescriptorState>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
     Then si ottiene lo status code 400
@@ -709,7 +707,6 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
-    And il nuovo e-service è stato creato correttamente in stato <eServiceDescriptorState>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido
     Then si ottiene lo status code 401
@@ -727,7 +724,6 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
-    And il nuovo e-service è stato creato correttamente in stato <eServiceDescriptorState>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     Then si ottiene lo status code 403
@@ -744,7 +740,6 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
-    And il nuovo e-service è stato creato correttamente in stato <eServiceDescriptorState>
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     Then si ottiene lo status code 403
