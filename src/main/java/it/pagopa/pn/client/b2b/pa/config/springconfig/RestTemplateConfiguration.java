@@ -1,6 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
-
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -25,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -36,16 +35,17 @@ public class RestTemplateConfiguration {
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        interceptors.add(new RequestAndTraceIdInterceptor());
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setBufferRequestBody(false);
+        RestTemplate restTemplate = new RestTemplate(factory);
+        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
         return restTemplate;
     }
 
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(500);
+        pooling.setMaxTotal(400);
         pooling.setDefaultMaxPerRoute(50);
         return pooling;
     }
@@ -56,57 +56,48 @@ public class RestTemplateConfiguration {
             if (executionCount > 10) {
                 return false;
             }
-            if (exception instanceof ConnectionPoolTimeoutException) {
-                long backoffTime = (long) Math.pow(2, executionCount) * 1000;
-                try {
-                    Thread.sleep(backoffTime);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+            if (exception instanceof ConnectionPoolTimeoutException ||
+                    exception instanceof org.apache.http.NoHttpResponseException) {
+                backoffSleep(executionCount);
                 return true;
             }
             return false;
         };
     }
 
+    private void backoffSleep(int executionCount) {
+        long backoffTime = (long) Math.pow(2, executionCount) * 1000;
+        try {
+            Thread.sleep(backoffTime);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     @Bean
     public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, HttpRequestRetryHandler httpRequestRetryHandler) {
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(60000)
-                .setConnectTimeout(10000)
-                .setSocketTimeout(20000)
+                .setConnectionRequestTimeout(120_000)
+                .setConnectTimeout(10_000)
+                .setSocketTimeout(20_000)
                 .build();
-
         return HttpClients.custom()
                 .setConnectionManager(poolingHttpClientConnectionManager)
                 .setDefaultRequestConfig(requestConfig)
                 .setRetryHandler(httpRequestRetryHandler)
+                .evictIdleConnections(1, TimeUnit.MINUTES)
+                .evictExpiredConnections()
                 .build();
     }
 
-    @Bean(name = "defaultRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate defaultRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-
-        return restTemplate;
-    }
-
     public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
-
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
-
-        public final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
+        private final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
 
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-
             ClientHttpResponse response = execution.execute(request, body);
-
             doLog(request, response);
-
             return response;
         }
 
@@ -120,19 +111,8 @@ public class RestTemplateConfiguration {
         }
 
         private String getTraceIdFromHttpResponse(ClientHttpResponse response) {
-            HttpHeaders responseHeaders = response.getHeaders();
-            List<String> traceIdHeaderValues = responseHeaders.get(TRACE_ID_RESPONSE_HEADER_NAME);
-            return getFirstOrNull(traceIdHeaderValues);
-        }
-
-        private String getFirstOrNull(List<String> list) {
-            String result;
-            if (list != null && !list.isEmpty()) {
-                result = list.get(0);
-            } else {
-                result = null;
-            }
-            return result;
+            List<String> traceIdHeaderValues = response.getHeaders().get(TRACE_ID_RESPONSE_HEADER_NAME);
+            return (traceIdHeaderValues != null && !traceIdHeaderValues.isEmpty()) ? traceIdHeaderValues.get(0) : null;
         }
     }
 }

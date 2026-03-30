@@ -397,6 +397,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@FAIL-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_deliveryDetailCode | CON080   |
@@ -898,8 +899,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI2.2_18] Invio notifica con sequence @OK-WO-Giacenza_AR ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECRN010
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | OK-WO-Giacenza_AR     |
       | taxId                   | CLMCST42R12D969Z      |
@@ -978,8 +980,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @perfezionamentoAR @workflowAnalogico
   Scenario Outline: [B2B_PERFEZIONAMENTO_AR_2] Verifica che quando l'intervallo tra RECRN010 e l'expectedDeliveryDetailCode è inferiore a 10gg, venga generato un SEND_ANALOG_FEEDBACK con deliveryDetailCode = expectedFeedbackDeliveryDetailCode
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | userTest         |
       | taxId                   | CLMCST42R12D969Z |
