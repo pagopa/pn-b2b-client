@@ -289,36 +289,35 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che non ci siano errori per i trackingId richiesti
     And si verifica che non ci siano outputs per i trackingId richiesti
     Examples:
-      | sequence                      | physicalAddress                   |
-      | OK_AR                         | Via@ok_AR                         |
-      | OK-Retry_AR                   | Via@OK-Retry_AR                   |
-      | FAIL-Discovery_AR             | Via@fail-Discovery_AR             |
-      | FAIL_AR                       | Via@fail_AR                       |
-      | FAIL-Irreperibile_AR          | Via@FAIL-IRREPERIBILE_AR          |
-      | OK-Giacenza_AR                | Via@OK-Giacenza_AR                |
-      | FAIL-Giacenza_AR              | Via@FAIL-Giacenza_AR              |
-      | FAIL-CompiutaGiacenza_AR      | Via@FAIL-CompiutaGiacenza_AR      |
-      | OK-NonRendicontabile_AR       | Via@OK-NonRendicontabile_AR       |
-      | OK-CausaForzaMaggiore_AR      | Via@OK-CausaForzaMaggiore_AR      |
-      | OK_AR_NOT_ORDERED             | Via@OK_AR_NOT_ORDERED             |
-      | OK_GIACENZA_AR_2              | Via@OK_GIACENZA_AR_2              |
-      | OK_GIACENZA_AR_3              | Via@OK_GIACENZA_AR_3              |
-      | OK_GIACENZA_AR_4              | Via@OK_GIACENZA_AR_4              |
-      | OK_AR_BAD_EVENT               | Via@OK_AR_BAD_EVENT               |
-      | FAIL_IndirizzoInesistenteAR   | Via@FAIL_IndirizzoInesistenteAR   |
-      | FAIL-DiscoveryIrreperibile_AR | Via@FAIL-DiscoveryIrreperibile_AR |
-      | OK-WO-Giacenza_AR             | Via@OK-WO-Giacenza_AR             |
-      | FAIL-Irreperibile_AR_SLOW     | Via@FAIL-Irreperibile_AR_SLOW     |
-      | OK_AR-CON020-7Z1P             | Via@OK_AR-CON020-7Z1P             |
-      | OK_AR-CON020-ZIP1P            | Via@OK_AR-CON020-ZIP1P            |
-      | OK_AR-CON020-7Z2P             | Via@OK_AR-CON020-7Z2P             |
-      | OK_AR-CON020-ZIP2P            | Via@OK_AR-CON020-ZIP2P            |
-      | OK_AR-CON020-7Z3P             | Via@OK_AR-CON020-7Z3P             |
-      | OK_AR-CON020-ZIP3P            | Via@OK_AR-CON020-ZIP3P            |
-      | FAIL_CON996_PCRETRY_FURTO_AR  | Via@FAIL_CON996_PCRETRY_FURTO_AR  |
-      | OK_PCRETRY_CON996_AR          | Via@OK_PCRETRY_CON996_AR          |
-      | OK_AR_ALL_CON                 | Via@OK_AR_ALL_CON                 |
-      | OK-GiacenzaCorrected_AR       | Via@OK-GiacenzaCorrected_AR       |
+      | sequence                     | physicalAddress                  |
+      | OK_AR                        | Via@ok_AR                        |
+      | OK-Retry_AR                  | Via@OK-Retry_AR                  |
+      | FAIL-Discovery_AR            | Via@fail-Discovery_AR            |
+      | FAIL_AR                      | Via@fail_AR                      |
+      | FAIL-Irreperibile_AR         | Via@FAIL-IRREPERIBILE_AR         |
+      | OK-Giacenza_AR               | Via@OK-Giacenza_AR               |
+      | FAIL-Giacenza_AR             | Via@FAIL-Giacenza_AR             |
+      | FAIL-CompiutaGiacenza_AR     | Via@FAIL-CompiutaGiacenza_AR     |
+      | OK-NonRendicontabile_AR      | Via@OK-NonRendicontabile_AR      |
+      | OK-CausaForzaMaggiore_AR     | Via@OK-CausaForzaMaggiore_AR     |
+      | OK_AR_NOT_ORDERED            | Via@OK_AR_NOT_ORDERED            |
+      | OK_GIACENZA_AR_2             | Via@OK_GIACENZA_AR_2             |
+      | OK_GIACENZA_AR_3             | Via@OK_GIACENZA_AR_3             |
+      | OK_GIACENZA_AR_4             | Via@OK_GIACENZA_AR_4             |
+      | OK_AR_BAD_EVENT              | Via@OK_AR_BAD_EVENT              |
+      | FAIL_IndirizzoInesistenteAR  | Via@FAIL_IndirizzoInesistenteAR  |
+      | OK-WO-Giacenza_AR            | Via@OK-WO-Giacenza_AR            |
+      | FAIL-Irreperibile_AR_SLOW    | Via@FAIL-Irreperibile_AR_SLOW    |
+      | OK_AR-CON020-7Z1P            | Via@OK_AR-CON020-7Z1P            |
+      | OK_AR-CON020-ZIP1P           | Via@OK_AR-CON020-ZIP1P           |
+      | OK_AR-CON020-7Z2P            | Via@OK_AR-CON020-7Z2P            |
+      | OK_AR-CON020-ZIP2P           | Via@OK_AR-CON020-ZIP2P           |
+      | OK_AR-CON020-7Z3P            | Via@OK_AR-CON020-7Z3P            |
+      | OK_AR-CON020-ZIP3P           | Via@OK_AR-CON020-ZIP3P           |
+      | FAIL_CON996_PCRETRY_FURTO_AR | Via@FAIL_CON996_PCRETRY_FURTO_AR |
+      | OK_PCRETRY_CON996_AR         | Via@OK_PCRETRY_CON996_AR         |
+      | OK_AR_ALL_CON                | Via@OK_AR_ALL_CON                |
+      | OK-GiacenzaCorrected_AR      | Via@OK-GiacenzaCorrected_AR      |
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti per le sequence in cui non è previsto l'evento CON020
@@ -327,8 +326,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | <physicalAddress> |
-      | digitalDomicile         | NULL              |
+      | physicalAddress_address | Via@<sequence> |
+      | digitalDomicile         | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<waitUntil>"
     Then si controlla che non ci siano eventi duplicati
@@ -336,12 +335,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Examples:
-      | sequence                        | physicalAddress                     | waitUntil                          |
-      | OK-M_AR                         | Via@OK-M_AR                         | ANALOG_SUCCESS_WORKFLOW            |
-      | OK-Giacenza_AR_ZIP              | Via@OK-Giacenza_AR_ZIP              | ANALOG_SUCCESS_WORKFLOW            |
-      | FAIL_DECEDUTO_SLOW_AR           | Via@FAIL_DECEDUTO_SLOW_AR           | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
-      | FAIL_DECEDUTO_AR                | Via@FAIL_DECEDUTO_AR                | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
-      | FAIL-CON996_PCRETRY_DECEDUTO-AR | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
+      | sequence                        | waitUntil                          |
+      | OK-M_AR                         | ANALOG_SUCCESS_WORKFLOW            |
+      | OK-Giacenza_AR_ZIP              | ANALOG_SUCCESS_WORKFLOW            |
+      | FAIL_DECEDUTO_SLOW_AR           | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
+      | FAIL_DECEDUTO_AR                | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
+      | FAIL-CON996_PCRETRY_DECEDUTO-AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED |
+      | FAIL-DiscoveryIrreperibile_AR   | COMPLETELY_UNREACHABLE             |
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_RUN_RIR_1] Viene verificato che gli elementi di timeline sono presenti per le sequence RIR
@@ -350,10 +350,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | <physicalAddress> |
-      | digitalDomicile         | NULL              |
-      | physicalAddress_State   | MESSICO           |
-      | physicalAddress_zip     | ZONE_2            |
+      | physicalAddress_address | Via@<sequence> |
+      | digitalDomicile         | NULL           |
+      | physicalAddress_State   | MESSICO        |
+      | physicalAddress_zip     | ZONE_2         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si controlla che non ci siano eventi duplicati
@@ -363,13 +363,13 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che non ci siano errori per i trackingId richiesti
     And si verifica che non ci siano outputs per i trackingId richiesti
     Examples:
-      | sequence                      | physicalAddress                   |
-      | OK_RIR                        | Via@OK_RIR                        |
-      | FAIL_RIR                      | Via@FAIL_RIR                      |
-      | OK-Retry_RIR                  | Via@OK-Retry_RIR                  |
-      | OK_RIR_NOT_ORDERED            | Via@OK_RIR_NOT_ORDERED            |
-      | FAIL_CON996_PCRETRY_FURTO_RIR | Via@FAIL_CON996_PCRETRY_FURTO_RIR |
-      | OK_PCRETRY_CON996_RIR         | Via@OK_PCRETRY_CON996_RIR         |
+      | sequence                      |
+      | OK_RIR                        |
+      | FAIL_RIR                      |
+      | OK-Retry_RIR                  |
+      | OK_RIR_NOT_ORDERED            |
+      | FAIL_CON996_PCRETRY_FURTO_RIR |
+      | OK_PCRETRY_CON996_RIR         |
 
 
   @paperTrackerARRunMode
@@ -567,10 +567,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890        |
+      | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@FAIL_FailureCauseCorrected_890 |
-      | digitalDomicile         | NULL                         |
+      | digitalDomicile         | NULL                               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then si controlla che non ci siano eventi duplicati
