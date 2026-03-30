@@ -17,6 +17,9 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 10  |
+      | remainingDailyCallsTotal       | 100 |
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_2] Per la creazione di una finalità il sistema attribuisce la soglia maggiore degli attributi certificati
@@ -35,6 +38,9 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 0 |
+      | remainingDailyCallsTotal       | 0 |
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_3] Per la creazione di una finalità il sistema calcola correttamente il campo remainingDailyCallsPerConsumer, scalandolo per le purpose provenienti dallo stesso fruitore per lo stesso eservice e non scalandolo per le purpose provenienti da altri fruitori per lo stesso eservice, e remainingDailyCallsTotal scalandolo per ogni purpose attiva
@@ -48,27 +54,27 @@ Feature: Verifica soglie differenziate
     And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
+    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And si ottiene status code 200 e la finalità in stato "ACTIVE"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 5  |
       | remainingDailyCallsTotal       | 10 |
-    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
+    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And si ottiene status code 200 e la finalità in stato "ACTIVE"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 0 |
       | remainingDailyCallsTotal       | 5 |
-    Then l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
+    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
     And l'utente è un "admin" di "GSP"
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Then l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "ACTIVE"
@@ -91,6 +97,9 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 10   |
+      | remainingDailyCallsTotal       | 1000 |
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_5] Una finalità in stato ACTIVE è indifferente ai nuovi cambiamenti delle soglie associate agli attributi certificati posseduti per la fruizione di un certo eservice
@@ -102,11 +111,11 @@ Feature: Verifica soglie differenziate
     And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given l'utente è un "admin" di "PA2"
+    And l'utente è un "admin" di "PA2"
     And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And si ottiene status code 200 e la finalità in stato "ACTIVE"
     And l'utente è un "admin" di "PA2"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 5   |
@@ -164,8 +173,8 @@ Feature: Verifica soglie differenziate
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 100
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
-    Then i residui relativi alle dailyCalls associati alla finalità sono pari a:
+    Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 10 |
       | remainingDailyCallsTotal       | 1000 |
 
@@ -184,7 +193,7 @@ Feature: Verifica soglie differenziate
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 300
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
-    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 10  |
       | remainingDailyCallsTotal       | 1000 |
