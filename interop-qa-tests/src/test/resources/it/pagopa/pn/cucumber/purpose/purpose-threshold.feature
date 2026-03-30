@@ -232,21 +232,26 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     And si ottiene status code 200 e la finalità in stato "ACTIVE"
-    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m-admin
-    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
+    When l'utente è un "<role>" di "PA1" con ruolo M2M <m2mRole>
+    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
     Then si ottiene status code <statusCode>
 
     Examples:
-      | ruolo        | purposeId | statusCode |
-      | admin        | %actual   | 200        |
-      | api          | %actual   | 200        |
-      | security     | %actual   | 200        |
-      | support      | %actual   | 200        |
-      | api,security | %actual   | 200        |
+      | role         | m2mRole   | purposeId | statusCode |
+      | admin        | m2m-admin | %actual   | 200        |
+      | api          | m2m-admin | %actual   | 200        |
+      | security     | m2m-admin | %actual   | 200        |
+      | support      | m2m-admin | %actual   | 200        |
+      | api,security | m2m-admin | %actual   | 200        |
+      | admin        | m2m       | %actual   | 403        |
+      | api          | m2m       | %actual   | 403        |
+      | security     | m2m       | %actual   | 403        |
+      | support      | m2m       | %actual   | 403        |
+      | api,security | m2m       | %actual   | 403        |
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10] Una richiesta con API BFF per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
-    Given l'utente è un "admin" di "PA2"
+    Given l'utente è un "admin" di "PA1"
     When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
     Then si ottiene status code <statusCode>
 
@@ -257,7 +262,7 @@ Feature: Verifica soglie differenziate
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
-    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
     Then si ottiene status code <statusCode>
 
