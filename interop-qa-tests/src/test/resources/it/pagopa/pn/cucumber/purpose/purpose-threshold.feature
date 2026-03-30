@@ -124,11 +124,11 @@ Feature: Verifica soglie differenziate
     When l'utente tenta di aggiungere una soglia differenziata di 1 per l'attributo CERTIFIED 0-esimo creato
     And l'utente è un "admin" di "PA2"
     Then i residui relativi alle dailyCalls associati alla finalità sono pari a:
-      | remainingDailyCallsPerConsumer | 5   |
+      | remainingDailyCallsPerConsumer | 0   |
       | remainingDailyCallsTotal       | 995 |
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And i residui relativi alle dailyCalls associati alla finalità sono pari a per m2m:
-      | remainingDailyCallsPerConsumer | 5   |
+      | remainingDailyCallsPerConsumer | 0   |
       | remainingDailyCallsTotal       | 995 |
 
   @dailyCallsThreshold
