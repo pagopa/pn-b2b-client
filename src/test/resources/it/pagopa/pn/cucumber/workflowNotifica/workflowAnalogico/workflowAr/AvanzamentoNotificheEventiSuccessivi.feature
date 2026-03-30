@@ -48,7 +48,7 @@ Feature: Gestione Feedback Analogici Duplicati
       | physicalAddress_address | Via@FAIL_duplicate_final_event |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then viene verificato che per l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non ci siano duplicati
+    Then viene verificato che per l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non ci siano duplicati
 
   @workflowAnalogico
   Scenario: [B2B_FEEDBACK_ANALOG_5] Invio notifica Analogica mediante sequence con evento finale OK - Ricezione di blocco di eventi successivi (RECRN002D, RECRN002E, RECRN002F)

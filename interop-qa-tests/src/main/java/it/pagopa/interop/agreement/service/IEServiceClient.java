@@ -53,6 +53,8 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedEServiceDescriptor cloneEServiceByDescriptor(UUID eServiceId, UUID descriptorId);
 
+    void updateEServiceName(UUID eServiceId, EServiceNameUpdateSeed eserviceNameUpdateSeed);
+
     File getEServiceConsumers(UUID eServiceId);
 
     EServiceRiskAnalysis getEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);

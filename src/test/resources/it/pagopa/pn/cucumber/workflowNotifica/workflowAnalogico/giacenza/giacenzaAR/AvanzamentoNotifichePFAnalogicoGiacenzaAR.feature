@@ -7,8 +7,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_1] Invio Notifica Mono destinatario workflow cartaceo - Caso OK-Giacenza_AR- PN-5927
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL               |
       | physicalAddress_address | via@OK-Giacenza_AR |
@@ -35,8 +36,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_2] Invio Notifica Mono destinatario workflow cartaceo - Caso OK-Giacenza_AR PN-5927
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@FAIL-Giacenza_AR |
@@ -113,8 +115,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
   @dev @workflowAnalogico @paperTrackerRunMode
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_ERR_1] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR_ERR
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                             |
       | physicalAddress_address | Via@FAIL_CompiutaGiacenza_AR_ERR |
@@ -156,8 +159,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
   @dev @workflowAnalogico @paperTrackerRunMode
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_ERR_1] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR_ERR
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                               |
       | physicalAddress_address | Via@FAIL_CompiutaGiacenza_AR_ERR_2 |
@@ -301,4 +305,4 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | physicalAddress_address | Via@FAIL-CompiutaGiacenza_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN005C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
