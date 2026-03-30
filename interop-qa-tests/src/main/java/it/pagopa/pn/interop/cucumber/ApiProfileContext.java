@@ -12,7 +12,8 @@ public final class ApiProfileContext {
     public static ApiProfileConfig getRequired() {
         ApiProfileConfig config = CONTEXT.get();
         if (config == null) {
-            throw new IllegalStateException("ApiProfileConfig non impostato nel thread corrente");
+            // Default: V2, RIGHT_FIT, V1, M2M
+            return ApiProfileConfig.defaultConfig();
         }
         return config;
     }

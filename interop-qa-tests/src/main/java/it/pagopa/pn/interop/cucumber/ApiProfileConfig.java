@@ -18,6 +18,10 @@ public final class ApiProfileConfig {
         this.apiSet = Objects.requireNonNull(apiSet, "api.set is required");
     }
 
+    public static ApiProfileConfig defaultConfig() {
+        return new ApiProfileConfig("RIGHT_FIT", "V2", "V1", "M2M");
+    }
+
     @Override
     public String toString() {
         return "ApiProfileConfig{" +
@@ -28,4 +32,3 @@ public final class ApiProfileConfig {
                 '}';
     }
 }
-
