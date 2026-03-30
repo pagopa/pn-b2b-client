@@ -2,82 +2,41 @@ package it.pagopa.pn.interop.cucumber;
 
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SetApiProfilePropsPlugin implements ConcurrentEventListener {
+    private final ApiProfileConfig config;
 
-    private static final Set<String> ALLOWED_KEYS = Set.of(
-            "api.m2m.version",
-            "api.mode",
-            "api.set"
-    );
-
-    public SetApiProfilePropsPlugin(String config) {
-        Map<String, String> props = parseAndValidate(config);
-        props.forEach(System::setProperty);
-    }
-
-    private Map<String, String> parseAndValidate(String config) {
-
-        if (config == null || config.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Plugin configuration string is null or empty"
-            );
-        }
-
-        Map<String, String> result = new HashMap<>();
-
-        String[] pairs = config.split(";");
-        for (String pair : pairs) {
-
-            if (pair.isBlank()) continue;
-
-            String[] kv = pair.split("=", 2);
-
-            if (kv.length != 2) {
-                throw new IllegalArgumentException(
-                        "Invalid key=value pair: '" + pair + "'"
-                );
-            }
-
-            String key = kv[0].trim();
-            String value = kv[1].trim();
-
-            if (key.isEmpty() || value.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Empty key or value in pair: '" + pair + "'"
-                );
-            }
-
-            if (!ALLOWED_KEYS.contains(key)) {
-                throw new IllegalArgumentException(
-                        "Unsupported configuration key: '" + key + "'"
-                );
-            }
-
-            if (result.containsKey(key)) {
-                throw new IllegalArgumentException(
-                        "Duplicate configuration key: '" + key + "'"
-                );
-            }
-
-            result.put(key, value);
-        }
-
-        for (String required : ALLOWED_KEYS) {
-            if (!result.containsKey(required)) {
-                throw new IllegalArgumentException(
-                        "Missing required configuration key: '" + required + "'"
-                );
-            }
-        }
-
-        return result;
+    public SetApiProfilePropsPlugin(String configString) {
+        this.config = parseConfig(configString);
     }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        // niente
+        publisher.registerHandlerFor(TestCaseStarted.class, event -> ApiProfileContext.set(config));
+        publisher.registerHandlerFor(TestCaseFinished.class, event -> ApiProfileContext.clear());
+    }
+
+    private ApiProfileConfig parseConfig(String configString) {
+        Map<String, String> map = new HashMap<>();
+        for (String entry : configString.split(";")) {
+            String[] kv = entry.split("=", 2);
+            if (kv.length == 2) {
+                map.put(kv[0].trim(), kv[1].trim());
+            }
+        }
+        // Validazione chiavi supportate
+        String apiMode = map.get("api.mode");
+        String apiM2mVersion = map.get("api.m2m.version");
+        String apiBffVersion = map.get("api.bff.version");
+        String apiSet = map.get("api.set");
+        if (apiMode == null || apiM2mVersion == null || apiBffVersion == null || apiSet == null) {
+            throw new IllegalArgumentException("Tutte le chiavi api.mode, api.m2m.version, api.bff.version, api.set sono obbligatorie");
+        }
+        return new ApiProfileConfig(apiMode, apiM2mVersion, apiBffVersion, apiSet);
     }
 }
