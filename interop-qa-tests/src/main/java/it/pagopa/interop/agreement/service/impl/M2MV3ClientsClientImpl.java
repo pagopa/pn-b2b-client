@@ -107,9 +107,21 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
     }
 
     @Override
+    public Client getClient(UUID clientId) {
+        return performOperation(
+                () -> clientsApi.getClientWithHttpInfo(clientId)
+        ).orElseThrow(
+                () -> new IllegalStateException("Errore durante il recupero del client")
+        );
+    }
+
+    @Override
     public void deleteClient(UUID clientId) {
         performOperation(
                 () -> clientsApi.deleteClientWithHttpInfo(clientId)
         );
+
+        if(this.httpCallExecutor.getResponseStatus().isError())
+            throw new IllegalStateException("Errore durante l'eliminazione del client con id: " + clientId);
     }
 }

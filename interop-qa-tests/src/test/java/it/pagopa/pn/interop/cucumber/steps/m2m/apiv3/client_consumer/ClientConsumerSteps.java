@@ -93,13 +93,20 @@ public class ClientConsumerSteps {
     public void deleteClientConsumer(String rawClient) {
        final UUID resolvedClientId = resolver.resolveClientId(rawClient);
 
-       try{
+        try{
             clientsApi.deleteClient(resolvedClientId);
             httpCallExecutor.snapshot();
 
             PollingService.makePolling(
-                   () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(resolvedClientId)),
-                   res -> res.equals(HttpStatus.NOT_FOUND),
+                   () -> {
+                       try{
+                           return clientsApi.getClient(resolvedClientId);
+                       } catch (IllegalStateException e){
+                           log.warn(httpCallExecutor.getErrorMessage());
+                           return null;
+                       }
+                   },
+                   res -> httpCallExecutor.getResponseStatus().equals(HttpStatus.NOT_FOUND),
                    "Client non eliminato!",
                    5,
                    1000
