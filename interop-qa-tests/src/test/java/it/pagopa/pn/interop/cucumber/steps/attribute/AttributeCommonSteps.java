@@ -330,7 +330,7 @@ public class AttributeCommonSteps {
 
         UUID purposeIdAsUUID = this.purposesResolver.resolveOrParse(
                 purposeId,
-                null,
+                UUID::fromString,
                 () -> this.sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
                 null,
                 UUID::randomUUID,
