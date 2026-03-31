@@ -138,6 +138,7 @@ public class PurposeActivationStep {
 
     @Then("si ottiene status code {int} e la finalità in stato {string}")
     public void verifyStatusCodeAndPurposeState(int statusCode, String desiredState) {
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
         PurposeVersionState purposeVersionState = PurposeVersionState.fromValue(desiredState);
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(
@@ -157,6 +158,5 @@ public class PurposeActivationStep {
                 },
                 "Purpose with desired state not found!"
         );
-        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 }
