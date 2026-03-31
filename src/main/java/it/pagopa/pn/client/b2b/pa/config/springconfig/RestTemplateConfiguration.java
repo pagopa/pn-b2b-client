@@ -33,7 +33,8 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    @Bean
+    /*
+    @Bean(name = "customRestTemplate")
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate customRestTemplate(RestTemplateBuilder builder, CloseableHttpClient httpClient) {
@@ -42,8 +43,9 @@ public class RestTemplateConfiguration {
                 .interceptors(new RequestAndTraceIdInterceptor())
                 .build();
     }
-/*
-    @Bean
+    */
+
+    @Bean(name = "customRestTemplate")
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplateCustomizer myCustomizer(CloseableHttpClient httpClient) {
@@ -54,7 +56,7 @@ public class RestTemplateConfiguration {
             restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
         };
     }
-*/
+
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
