@@ -54,63 +54,112 @@ Feature: Aggiornamento di un e-service non pubblicato
       | ARCHIVED         |
 
   @eservice_published_delegation
-  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_01] Per un e-service precedentemente creato, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega
+  @happy-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_01] Per un e-service precedentemente creato,in stato NON DRAFT, è possibile modificare i flag di delega
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
+    Then si ottiene status code 200
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | eServiceId |
+      | PUBLISHED       | true                | true                    | %actual    |
+      | PUBLISHED       | false               | false                   | %actual    |
+      | PUBLISHED       | true                | false                   | %actual    |
+      | SUSPENDED       | true                | true                    | %actual    |
+      | SUSPENDED       | false               | false                   | %actual    |
+      | SUSPENDED       | true                | false                   | %actual    |
+      | DEPRECATED      | true                | true                    | %actual    |
+      | DEPRECATED      | false               | false                   | %actual    |
+      | DEPRECATED      | true                | false                   | %actual    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_02] Per un e-service precedentemente creato, in stato NON DRAFT, NON è possibile modificare i flag di delega nel caso di parametri obbligatori mancanti o errati
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
     When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
     Then si ottiene status code <statusCode>
-    And la delega amministrativa è "<expectedIsConsumerDelegable>" e la delega tecnica è "<expectedIsClientAccessDelegable>" per la fruizione dell'e-service
-
-    @happy-path
+    And le flag di delega dell'e-service non hanno subito modifiche
     Examples:
-      | descriptorState | isConsumerDelegable | isClientAccessDelegable | expectedIsConsumerDelegable | expectedIsClientAccessDelegable | statusCode | eServiceId |
-      | PUBLISHED       | true                | true                    | true                        | true                            | 200        | %actual    |
-      | PUBLISHED       | false               | false                   | false                       | false                           | 200        | %actual    |
-      | PUBLISHED       | true                | false                   | true                        | false                           | 200        | %actual    |
-      | SUSPENDED       | true                | true                    | true                        | true                            | 200        | %actual    |
-      | SUSPENDED       | false               | false                   | false                       | false                           | 200        | %actual    |
-      | SUSPENDED       | true                | false                   | true                        | false                           | 200        | %actual    |
-      | DEPRECATED      | true                | true                    | true                        | true                            | 200        | %actual    |
-      | DEPRECATED      | false               | false                   | false                       | false                           | 200        | %actual    |
-      | DEPRECATED      | true                | false                   | true                        | false                           | 200        | %actual    |
-
-    @sad-path
     #in tal caso persistono i valori assegnati alla creazione (consumerDelegableState=false, clientAccessDelegableState=false)
-    Examples:
-      | descriptorState | isConsumerDelegable | isClientAccessDelegable | expectedIsConsumerDelegable | expectedIsClientAccessDelegable | statusCode | eServiceId |
-    #casi in cui si tenta di violare l'invariante di dominio (consumerDelegableState=false, clientAccessDelegableState=true)
-      | PUBLISHED       | false               | true                    | false                       | false                           | 400        | %actual    |
-      | SUSPENDED       | false               | true                    | false                       | false                           | 400        | %actual    |
-      | DEPRECATED      | false               | true                    | false                       | false                           | 400        | %actual    |
-
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | statusCode | eServiceId |
     #parametri mancanti
-      | PUBLISHED       | true                | false                   | false                       | false                           | 400        | %null      |
-      | SUSPENDED       | true                | false                   | false                       | false                           | 400        | %null      |
-      | DEPRECATED      | true                | false                   | false                       | false                           | 400        | %null      |
-      | PUBLISHED       | %null               | false                   | false                       | false                           | 400        | %actual    |
-      | SUSPENDED       | %null               | false                   | false                       | false                           | 400        | %actual    |
-      | DEPRECATED      | %null               | false                   | false                       | false                           | 400        | %actual    |
-      | PUBLISHED       | true                | %null                   | false                       | false                           | 400        | %actual    |
-      | SUSPENDED       | true                | %null                   | false                       | false                           | 400        | %actual    |
-      | DEPRECATED      | true                | %null                   | false                       | false                           | 400        | %actual    |
+      | PUBLISHED       | %null               | false                   | 400        | %actual    |
+      | SUSPENDED       | %null               | false                   | 400        | %actual    |
+      | DEPRECATED      | %null               | false                   | 400        | %actual    |
+      | PUBLISHED       | true                | %null                   | 400        | %actual    |
+      | SUSPENDED       | true                | %null                   | 400        | %actual    |
+      | DEPRECATED      | true                | %null                   | 400        | %actual    |
+    #test cui chiamata al server non viene al momento effettuata
+      | PUBLISHED       | true                | false                   | 400        | %null      |
+      | SUSPENDED       | true                | false                   | 400        | %null      |
+      | DEPRECATED      | true                | false                   | 400        | %null      |
     #eServiceId casuale
-      | PUBLISHED       | true                | false                   | false                       | false                           | 404        | %random    |
-      | SUSPENDED       | true                | false                   | false                       | false                           | 404        | %random    |
-      | DEPRECATED      | true                | false                   | false                       | false                           | 404        | %random    |
-    #eService in stato DRAFT
-      | DRAFT           | true                | false                   | false                       | false                           | 409        | %actual    |
+      | PUBLISHED       | true                | false                   | 404        | %random    |
+      | SUSPENDED       | true                | false                   | 404        | %random    |
+      | DEPRECATED      | true                | false                   | 404        | %random    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_03] Per un e-service precedentemente creato, in stato NON DRAFT, NON è possibile modificare i flag di delega nella combinazione non permessa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
+    Then si ottiene status code 400
+    And le flag di delega dell'e-service non hanno subito modifiche
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | eServiceId |
+      #casi in cui si tenta di violare l'invariante di dominio (consumerDelegableState=false, clientAccessDelegableState=true)
+      | PUBLISHED       | false               | true                    | %actual    |
+      | SUSPENDED       | false               | true                    | %actual    |
+      | DEPRECATED      | false               | true                    | %actual    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_04] Per un e-service precedentemente creato, in stato DRAFT, NON è possibile modificare i flag di delega
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
+    Then si ottiene status code 409
+    And le flag di delega dell'e-service non hanno subito modifiche
 
   @sad-path
   @eservice_published_delegation
-  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_02] Per un e-service precedentemente creato con descrittore in stato NON DRAFT, la modifica dei flag di delega con token non valido restituisce errore
+  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_05] Per un e-service precedentemente creato con descrittore in stato NON DRAFT, la modifica dei flag di delega con token non valido restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And viene impostato per l'utente un token non valido
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 401
+    And le flag di delega dell'e-service non hanno subito modifiche
 
   @eservice_published_delegation
-  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_03] Per un e-service creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
+  @happy-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_06] Per un e-service creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
+    Then si ottiene status code 200
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | eServiceId |
+      | PUBLISHED       | true                | true                    | %actual    |
+      | PUBLISHED       | false               | false                   | %actual    |
+      | PUBLISHED       | true                | false                   | %actual    |
+      | SUSPENDED       | true                | true                    | %actual    |
+      | SUSPENDED       | false               | false                   | %actual    |
+      | SUSPENDED       | true                | false                   | %actual    |
+      | DEPRECATED      | true                | true                    | %actual    |
+      | DEPRECATED      | false               | false                   | %actual    |
+      | DEPRECATED      | true                | false                   | %actual    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_07] Per un e-service creato dall'ente delegante, in stato NON DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione nel caso di parametri obbligatori mancanti o errati
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
@@ -120,51 +169,66 @@ Feature: Aggiornamento di un e-service non pubblicato
     And l'utente è un "admin" di "PA2"
     When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
     Then si ottiene status code <statusCode>
-    And la delega amministrativa è "<expectedIsConsumerDelegable>" e la delega tecnica è "<expectedIsClientAccessDelegable>" per la fruizione dell'e-service
-
-    @happy-path
+    And le flag di delega dell'e-service non hanno subito modifiche
     Examples:
-      | descriptorState | isConsumerDelegable | isClientAccessDelegable | expectedIsConsumerDelegable | expectedIsClientAccessDelegable | statusCode | eServiceId |
-      | PUBLISHED       | true                | true                    | true                        | true                            | 200        | %actual    |
-      | PUBLISHED       | false               | false                   | false                       | false                           | 200        | %actual    |
-      | PUBLISHED       | true                | false                   | true                        | false                           | 200        | %actual    |
-      | SUSPENDED       | true                | true                    | true                        | true                            | 200        | %actual    |
-      | SUSPENDED       | false               | false                   | false                       | false                           | 200        | %actual    |
-      | SUSPENDED       | true                | false                   | true                        | false                           | 200        | %actual    |
-      | DEPRECATED      | true                | true                    | true                        | true                            | 200        | %actual    |
-      | DEPRECATED      | false               | false                   | false                       | false                           | 200        | %actual    |
-      | DEPRECATED      | true                | false                   | true                        | false                           | 200        | %actual    |
-
-    @sad-path
     #in tal caso persistono i valori assegnati alla creazione (consumerDelegableState=false, clientAccessDelegableState=false)
-    Examples:
-      | descriptorState | isConsumerDelegable | isClientAccessDelegable | expectedIsConsumerDelegable | expectedIsClientAccessDelegable | statusCode | eServiceId |
-    #casi in cui si tenta di violare l'invariante di dominio (consumerDelegableState=false, clientAccessDelegableState=true)
-      | PUBLISHED       | false               | true                    | false                       | false                           | 400        | %actual    |
-      | SUSPENDED       | false               | true                    | false                       | false                           | 400        | %actual    |
-      | DEPRECATED      | false               | true                    | false                       | false                           | 400        | %actual    |
-
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | statusCode | eServiceId |
     #parametri mancanti
-      | PUBLISHED       | true                | false                   | false                       | false                           | 400        | %null      |
-      | SUSPENDED       | true                | false                   | false                       | false                           | 400        | %null      |
-      | DEPRECATED      | true                | false                   | false                       | false                           | 400        | %null      |
-      | PUBLISHED       | %null               | false                   | false                       | false                           | 400        | %actual    |
-      | SUSPENDED       | %null               | false                   | false                       | false                           | 400        | %actual    |
-      | DEPRECATED      | %null               | false                   | false                       | false                           | 400        | %actual    |
-      | PUBLISHED       | true                | %null                   | false                       | false                           | 400        | %actual    |
-      | SUSPENDED       | true                | %null                   | false                       | false                           | 400        | %actual    |
-      | DEPRECATED      | true                | %null                   | false                       | false                           | 400        | %actual    |
+      | PUBLISHED       | %null               | false                   | 400        | %actual    |
+      | SUSPENDED       | %null               | false                   | 400        | %actual    |
+      | DEPRECATED      | %null               | false                   | 400        | %actual    |
+      | PUBLISHED       | true                | %null                   | 400        | %actual    |
+      | SUSPENDED       | true                | %null                   | 400        | %actual    |
+      | DEPRECATED      | true                | %null                   | 400        | %actual    |
+    #test cui chiamata al server non viene al momento effettuata
+      | PUBLISHED       | true                | false                   | 400        | %null      |
+      | SUSPENDED       | true                | false                   | 400        | %null      |
+      | DEPRECATED      | true                | false                   | 400        | %null      |
     #eServiceId casuale
-      | PUBLISHED       | true                | false                   | false                       | false                           | 404        | %random    |
-      | SUSPENDED       | true                | false                   | false                       | false                           | 404        | %random    |
-      | DEPRECATED      | true                | false                   | false                       | false                           | 404        | %random    |
-    #eService in stato DRAFT
-      | DRAFT           | true                | false                   | false                       | false                           | 409        | %actual    |
+      | PUBLISHED       | true                | false                   | 404        | %random    |
+      | SUSPENDED       | true                | false                   | 404        | %random    |
+      | DEPRECATED      | true                | false                   | 404        | %random    |
 
   @eservice_published_delegation
-  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_04] La modifica del flag di delega di un e-service non è possibile da parte di un ente che non sia il proprietario dell'e-service e non sia delegato all'erogazione
+  @sad-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_08] Per un e-service creato dall'ente delegante, in stato NON DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione nella combinazione non permessa
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
+    Then si ottiene status code 400
+    And le flag di delega dell'e-service non hanno subito modifiche
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable | eServiceId |
+    #casi in cui si tenta di violare l'invariante di dominio (consumerDelegableState=false, clientAccessDelegableState=true)
+      | PUBLISHED       | false               | true                    | %actual    |
+      | SUSPENDED       | false               | true                    | %actual    |
+      | DEPRECATED      | false               | true                    | %actual    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_09] Per un e-service creato dall'ente delegante, in stato DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
+    Then si ottiene status code 409
+    And le flag di delega dell'e-service non hanno subito modifiche
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] La modifica del flag di delega di un e-service non è possibile da parte di un ente che non sia il proprietario dell'e-service e non sia delegato all'erogazione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
     Then si ottiene lo status code 403
+    And le flag di delega dell'e-service non hanno subito modifiche

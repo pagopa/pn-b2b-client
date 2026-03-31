@@ -71,8 +71,48 @@ public class EServiceUpdateSteps {
         }
     }
 
-    @And("le flag di delega dell'e-service sono state modificate correttamente")
-    public void checkEServiceDelegationAvailabilitySuccess() {
+    @When("l'utente imposta la delega amministrativa come {string} e la delega tecnica come {string} per la fruizione dell'e-service {string}")
+    public void updateEServiceDelegationAvailability(String consumerDelegationAction, String clientAccessDelegationAction, String eServiceId) {
+
+        Boolean isConsumerDelegable = nullableBoolean(consumerDelegationAction);
+        Boolean isClientAccessDelegable = nullableBoolean(clientAccessDelegationAction);
+
+        UUID eServiceUuid = catalogResolver.resolveEServiceId(eServiceId);
+
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateEServiceDelegationFlags(
+                        eServiceUuid,
+                        new EServiceDelegationFlagsUpdateSeed()
+                                .isConsumerDelegable(isConsumerDelegable)
+                                .isClientAccessDelegable(isClientAccessDelegable)
+                )
+        );
+
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            httpCallExecutor.snapshot();
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> httpCallExecutor.performCall(
+                            () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
+                                    sharedStepsContext.getEServicesCommonContext().getEserviceId()
+                            )
+                    ),
+                    res -> {
+                        ProducerEServiceDetails eServiceDetails = (ProducerEServiceDetails) httpCallExecutor.getResponse();
+                        return eServiceDetails.getIsConsumerDelegable() != null && eServiceDetails.getIsConsumerDelegable().equals(isConsumerDelegable) &&
+                                eServiceDetails.getIsClientAccessDelegable() != null && eServiceDetails.getIsClientAccessDelegable().equals(isClientAccessDelegable);
+                    },
+                    "Impossibile aggiornare i flag di delega dell'e-service"
+            );
+            httpCallExecutor.resetFormSnapshot();
+
+            sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(isConsumerDelegable);
+            sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(isClientAccessDelegable);
+        }
+    }
+
+    @And("le flag di delega dell'e-service non hanno subito modifiche")
+    public void verifyEServiceDelegationFlagsUnchanged() {
         Boolean isConsumerDelegable = sharedStepsContext.getEServicesCommonContext().getIsConsumerDelegable();
         Boolean isClientAccessDelegable = sharedStepsContext.getEServicesCommonContext().getIsClientAccessDelegable();
 
