@@ -649,7 +649,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @happy-path
-  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service template instance in uno degli stati permessi
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato in uno degli stati permessi
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
@@ -683,7 +683,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @sad-path
-  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance nello stato non permesso
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance precedentemente creato nello stato non permesso
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
@@ -703,7 +703,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @sad-path
-  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_3] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance avendo un token non valido
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_3] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance precedentemente creato avendo un token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
@@ -736,7 +736,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @sad-path
-  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance che non gli appartiene e per cui non possiede la delega in erogazione
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato se non gli appartiene e per cui non possiede la delega in erogazione
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
@@ -749,3 +749,14 @@ Feature: Test API M2M of e-service template
       | PUBLISHED               |
       | SUSPENDED               |
       | DEPRECATED              |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato che si trova in stato DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 409
+    And l'e-service non ha subito modifiche
