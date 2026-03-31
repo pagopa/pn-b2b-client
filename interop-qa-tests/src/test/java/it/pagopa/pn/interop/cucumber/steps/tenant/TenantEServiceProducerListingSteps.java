@@ -57,10 +57,6 @@ public class TenantEServiceProducerListingSteps {
 
     @Then("si ottiene status code 200 e il giusto numero di erogatori in base all'offset richiesto")
     public void verifyStatusCodeAndConsumerNumberBasedOnOffset() {
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().getProducers(0, 20, null)
-        );
-        commonUtils.assertValidResponse();
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();

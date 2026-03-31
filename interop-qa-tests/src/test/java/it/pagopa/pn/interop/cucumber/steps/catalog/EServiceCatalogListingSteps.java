@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,20 +8,20 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EServiceCatalogListingSteps {
     private final BFFDataPreparationService dataPreparationService;
@@ -53,34 +51,26 @@ public class EServiceCatalogListingSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         int suspendedEServices = countEServices / 2;
         int publishedEServices = countEServices - suspendedEServices;
-        int draftEServices = countDraftEServices;
-        int totalEServices = countEServices + draftEServices;
 
+        List<EServiceDescriptor> publishedEServicesDes = createAndStoreEServices(publishedEServices, EServiceState.PUBLISHED);
+        List<EServiceDescriptor> suspendedEServicesDes = createAndStoreEServices(suspendedEServices, EServiceState.SUSPENDED);
+        List<EServiceDescriptor> draftEServicesDes = createAndStoreEServices(countDraftEServices, EServiceState.DRAFT);
+
+        eServicesCommonContext.setPublishedEservicesIds(publishedEServicesDes);
+        eServicesCommonContext.setSuspendedEservicesIds(suspendedEServicesDes);
+        eServicesCommonContext.setDraftEServicesIds(draftEServicesDes);
+    }
+
+    private List<EServiceDescriptor> createAndStoreEServices(int totalEServices, EServiceState state) {
         List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
-        // 1. Create the draft e-services with draft descriptors
-        for (int i=0; i<totalEServices; i++) {
-            EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                    new EServiceSeed().name(String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed())),
-                    new UpdateEServiceDescriptorSeed());
+        for (int i = 0; i< totalEServices; i++) {
+            EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceInState(
+                    new EServiceSeed().name(String.format("eservice-%s-%d-%d", state, i, sharedStepsContext.getTestSeed())),
+                    new UpdateEServiceDescriptorSeed(),
+                    state);
             eServiceDescriptors.add(eServiceDescriptor);
         }
-
-        // 2. Take only the ids of the e-services that needs to be published and suspended
-        List<EServiceDescriptor> idsToPublishAndSuspend = eServiceDescriptors.subList(0, suspendedEServices + publishedEServices);
-
-        // 3. For each draft descriptor, in order to publish it, add the document interface
-        idsToPublishAndSuspend.forEach(e -> dataPreparationService.addInterfaceToDescriptor(e.getEServiceId(), e.getDescriptorId()));
-
-        // 4. Publish the descriptors
-        idsToPublishAndSuspend.forEach(e -> dataPreparationService.publishDescriptor(e.getEServiceId(), e.getDescriptorId()));
-
-        // 5. Suspend the desired number of descriptors
-        List<EServiceDescriptor> idsToSuspend = idsToPublishAndSuspend.subList(0, suspendedEServices);
-        idsToSuspend.forEach(e -> dataPreparationService.suspendDescriptor(e.getEServiceId(), e.getDescriptorId()));
-
-        eServicesCommonContext.setPublishedEservicesIds(idsToPublishAndSuspend.subList(0, suspendedEServices));
-        eServicesCommonContext.setSuspendedEservicesIds(idsToSuspend);
-        eServicesCommonContext.setDraftEServicesIds(eServiceDescriptors.subList(0, suspendedEServices + publishedEServices));
+        return eServiceDescriptors;
     }
 
     @Given("{string} ha già creato {int} e-services in catalogo in stato PUBLISHED o SUSPENDED e {int} in stato DRAFT impostando il flagPersonalData a {string}")

@@ -1,4 +1,4 @@
-# @e-service-template
+@e-service-template
 @e-service-template-instances-suffix
 Feature: Test API of e-service template suffix
 

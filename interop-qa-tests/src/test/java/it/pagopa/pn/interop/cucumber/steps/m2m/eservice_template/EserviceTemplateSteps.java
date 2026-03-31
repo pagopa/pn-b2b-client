@@ -349,6 +349,27 @@ public class EserviceTemplateSteps {
         }
     }
 
+    @And("l'utente tenta di recuperare le versioni dell'e-service template")
+    public void getEServiceTemplateVersions() {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        getEServiceTemplateVersion(templateId);
+    }
+
+    @And("l'utente tenta di recuperare le versioni dell'e-service template indicando un template id inesistente")
+    public void getNonExistentEServiceTemplateVersions() {
+        UUID templateId = UUID.randomUUID();
+        getEServiceTemplateVersion(templateId);
+    }
+
+    private void getEServiceTemplateVersion(UUID templateId) {
+        delayService.delay();
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getEserviceTemplateVersions(
+                templateId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            this.newVersionsSnapshot = (EServiceTemplateVersions) httpCallExecutor.getResponse();
+        }
+    }
+
     @When("l'utente m2m tenta la creazione di una ulteriore versione nell'e-service template")
     public void createEServiceTemplateVersion() {
         EServiceTemplateVersionCreationRequest request = buildVersionCreationRequest();

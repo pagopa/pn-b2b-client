@@ -1,11 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +7,12 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -79,7 +79,9 @@ public class ClientCommonContext {
 
     public void addClient(DPoPTokenService.PreparedClient client){
         preparedClients.add(client);
-        addClient(client.clientId());
+        if (!this.clients.contains(client.clientId())) {
+            addClient(client.clientId());
+        }
     }
 
 }
