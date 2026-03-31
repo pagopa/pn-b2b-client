@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,17 +33,28 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    @Bean(name = "customRestTemplate")
+    @Bean
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        factory.setBufferRequestBody(false);
-        RestTemplate restTemplate = new RestTemplate(factory);
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-        return restTemplate;
+    public RestTemplate customRestTemplate(RestTemplateBuilder builder, CloseableHttpClient httpClient) {
+        return builder
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
+                .interceptors(new RequestAndTraceIdInterceptor())
+                .build();
     }
-
+/*
+    @Bean
+    @Primary
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public RestTemplateCustomizer myCustomizer(CloseableHttpClient httpClient) {
+        return restTemplate -> {
+            HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+            factory.setBufferRequestBody(false);
+            restTemplate.setRequestFactory(factory);
+            restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+        };
+    }
+*/
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
