@@ -508,17 +508,20 @@ public class BFFDataPreparationService {
         UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
 
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDetails(sharedStepsContext.getEServicesCommonContext().getEserviceId())),
-                res -> {
+        HttpStatus eServiceDetailsStatus = pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDetails(eserviceId)),
+                status -> {
                     ProducerEServiceDetails eServiceDetails = (ProducerEServiceDetails) httpCallExecutor.getResponse();
                     return eServiceDetails.getIsConsumerDelegable() != null && eServiceDetails.getIsConsumerDelegable().equals(isConsumerDelegable) &&
                             eServiceDetails.getIsClientAccessDelegable() != null && eServiceDetails.getIsClientAccessDelegable().equals(isClientAccessDelegable);
                 },
                 "Impossibile aggiornare i flag di delega dell'e-service"
         );
-        sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(isConsumerDelegable);
-        sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(isClientAccessDelegable);
+
+        if (eServiceDetailsStatus.is2xxSuccessful() && httpCallExecutor.getResponse() instanceof ProducerEServiceDetails eServiceDetails) {
+            sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(eServiceDetails.getIsConsumerDelegable());
+            sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(eServiceDetails.getIsClientAccessDelegable());
+        }
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
