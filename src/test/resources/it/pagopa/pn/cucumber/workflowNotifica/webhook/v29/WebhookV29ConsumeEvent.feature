@@ -45,7 +45,7 @@ Feature: avanzamento notifiche webhook b2b V29
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV29 @precondition @cleanWebhook @webhook1
+  @webhookV29 @precondition @cleanWebhook @webhook1 @TEST_TMP
   Scenario: [B2B-STREAM_ES1.3_127] Consumo di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -84,7 +84,7 @@ Feature: avanzamento notifiche webhook b2b V29
 
     #COMUNE 2
 
-  @webhookV29 @precondition @cleanWebhook @webhook3
+  @webhookV29 @precondition @cleanWebhook @webhook3 @TEST_TMP
   Scenario: [B2B-STREAM_ES1.3_128] Consumo di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -118,7 +118,7 @@ Feature: avanzamento notifiche webhook b2b V29
     And l'apiKey viene cancellata
 
 
-  @webhookV29 @precondition @cleanWebhook @webhook3
+  @webhookV29 @precondition @cleanWebhook @webhook3 @TEST_TMP
   Scenario: [B2B-STREAM_ES1.3_125_1] Consumo di uno stream notifica disabilitato senza gruppo, con eventType "STATUS"  utilizzando un apikey master (caso errato).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -138,7 +138,7 @@ Feature: avanzamento notifiche webhook b2b V29
     And l'apiKey viene cancellata
 
 
-  @webhookV29 @precondition @cleanWebhook @webhook3
+  @webhookV29 @precondition @cleanWebhook @webhook3 @TEST_TMP
   Scenario: [B2B-STREAM_ES1.2_124] Verifica corretta scrittura degli eventi di una notifica creata con un apikey master, dove l’evento stesso deve essere salvato solo negli stream senza gruppi.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -180,7 +180,7 @@ Feature: avanzamento notifiche webhook b2b V29
 
   #COMUNE MULTI
 
-  @webhookV29 @precondition @cleanWebhook @webhook2
+  @webhookV29 @precondition @cleanWebhook @webhook2 @TEST_TMP
   Scenario: [B2B-STREAM_ES1.3_50_1] Consumo di uno stream notifica analogica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master e verifica corrispondenza tra i detail del webhook e quelli della timeline.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

@@ -178,6 +178,8 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
 #  2. XVRLVC90A01H501P no address
 #  3. XVRGPL80A01L781A no municipality
 
+#  ANPR REALE Italiano / no address KRSJSM88S03H501A
+
   @workflowAnalogico @mockNR @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_1] AR-Validazione sulla deduplica al secondo tentativo con VIA non valorizzato-nazionale
     Given viene generata una nuova notifica
