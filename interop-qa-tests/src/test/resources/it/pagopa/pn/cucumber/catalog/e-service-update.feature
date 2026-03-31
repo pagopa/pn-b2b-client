@@ -56,8 +56,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @eservice_published_delegation
   @happy-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_01] Per un e-service precedentemente creato,in stato NON DRAFT, è possibile modificare i flag di delega
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
     Then si ottiene status code 200
     Examples:
@@ -75,8 +74,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @eservice_published_delegation
   @sad-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_02] Per un e-service precedentemente creato, in stato NON DRAFT, NON è possibile modificare i flag di delega nel caso di parametri obbligatori mancanti o errati
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
     Then si ottiene status code <statusCode>
     And le flag di delega dell'e-service non hanno subito modifiche
@@ -102,8 +100,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @eservice_published_delegation
   @sad-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_03] Per un e-service precedentemente creato, in stato NON DRAFT, NON è possibile modificare i flag di delega nella combinazione non permessa
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     When l'utente imposta la delega amministrativa come "<isConsumerDelegable>" e la delega tecnica come "<isClientAccessDelegable>" per la fruizione dell'e-service "<eServiceId>"
     Then si ottiene status code 400
     And le flag di delega dell'e-service non hanno subito modifiche
@@ -117,8 +114,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @eservice_published_delegation
   @sad-path
   Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_04] Per un e-service precedentemente creato, in stato DRAFT, NON è possibile modificare i flag di delega
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e impostando delega amministrativa a "false" e delega tecnica a "false"
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 409
     And le flag di delega dell'e-service non hanno subito modifiche
@@ -126,8 +122,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @sad-path
   @eservice_published_delegation
   Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_05] Per un e-service precedentemente creato con descrittore in stato NON DRAFT, la modifica dei flag di delega con token non valido restituisce errore
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And viene impostato per l'utente un token non valido
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 401
@@ -138,7 +133,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_06] Per un e-service creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -162,7 +157,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_07] Per un e-service creato dall'ente delegante, in stato NON DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione nel caso di parametri obbligatori mancanti o errati
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -194,7 +189,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_08] Per un e-service creato dall'ente delegante, in stato NON DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione nella combinazione non permessa
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -214,7 +209,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_09] Per un e-service creato dall'ente delegante, in stato DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
-    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -227,7 +222,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @sad-path
   Scenario: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] La modifica del flag di delega di un e-service non è possibile da parte di un ente che non sia il proprietario dell'e-service e non sia delegato all'erogazione
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "PA2"
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
     Then si ottiene lo status code 403
