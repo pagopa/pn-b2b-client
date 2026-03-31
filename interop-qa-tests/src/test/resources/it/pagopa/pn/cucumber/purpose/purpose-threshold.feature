@@ -195,7 +195,7 @@ Feature: Verifica soglie differenziate
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
-      | remainingDailyCallsPerConsumer | 10  |
+      | remainingDailyCallsPerConsumer | 100  |
       | remainingDailyCallsTotal       | 1000 |
     And si ottiene status code 200
 
