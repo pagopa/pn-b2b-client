@@ -1,13 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
-import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
-import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNullElse;
-import static org.apache.commons.collections4.IterableUtils.size;
-import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
@@ -18,51 +10,7 @@ import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
@@ -74,35 +22,10 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ArchiveAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementWithStateOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAndCheckAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.SubmitAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.SuspendAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreementState;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
-import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -112,6 +35,26 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNullElse;
+import static org.apache.commons.collections4.IterableUtils.size;
+import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -464,6 +407,21 @@ public class BFFDataPreparationService {
                         && attr.getRevokedBy().stream().noneMatch(tenantRevoker -> tenantRevoker.getId().equals(verifierId))),
                 String.format("Verified attribute with id: %s not found!", attributeId)
         );
+    }
+
+    public EServiceDescriptor createEServiceInState(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, @Nonnull EServiceState eServiceState) {
+        if(EServiceState.ARCHIVED.equals(eServiceState)) {
+            /* NOTE 09/03/2026: il passaggio dell'e-service (non di un suo descriptor, dell'intero e-service)
+             * in stato ARCHIVED non è al momento supportato (rif. https://pagopaspa.slack.com/archives/C06D24MANNN/p1772816415479329).
+             * Quando sarà supportato, si prevede di sostituire il lancio dell'eccezione con l'implementazione effettiva.  */
+            throw new UnsupportedOperationException("L'archiviazione di un e-service nella sua interezza non è al momento supportata dalla piattaforma Interop");
+        } else {
+            EServiceDescriptor eServiceDescriptor = this.createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed);
+            this.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+                    eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
+                            eServiceState.toString()), false);
+            return eServiceDescriptor;
+        }
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
@@ -1190,7 +1148,9 @@ public class BFFDataPreparationService {
     }
 
     public void addEmailToTenant(UUID tenantId, MailSeed mailSeed) {
-        httpCallExecutor.performCall(() -> tenantsApi.addTenantMail(tenantId, mailSeed.kind(MailKind.CONTACT_EMAIL)));
+        httpCallExecutor.performCall(
+                () -> tenantsApi.addTenantMailWithHttpInfo(tenantId, mailSeed.kind(MailKind.CONTACT_EMAIL)),
+                ResponseEntity::getStatusCode);
         assertValidResponse();
 
         pollingService.makePolling(

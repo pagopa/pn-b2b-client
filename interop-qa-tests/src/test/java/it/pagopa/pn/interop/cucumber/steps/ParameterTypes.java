@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -32,6 +33,11 @@ public class ParameterTypes {
         }
         Collections.addAll(out, split);
         return out;
+    }
+
+    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL")
+    public static EServiceState eServiceState(String value) {
+        return EServiceState.fromValue(value);
     }
 
     // 1. Definiamo i componenti base come stringhe letterali
