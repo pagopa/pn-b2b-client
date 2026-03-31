@@ -60,11 +60,16 @@ Feature: Aggiornamento di un descrittore in bozza
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
+    @happy-path
     Examples:
       | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
       | 100                   | 200        | 100                           |
-      | 0                     | 400        | %null                         |
       | 1000000000            | 200        | 1000000000                    |
+
+    @sad-path
+    Examples:
+      | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
+      | 0                     | 400        | %null                         |
       | 1000000001            | 400        | %null                         |
 
   @dailyCallsThreshold
@@ -106,10 +111,10 @@ Feature: Aggiornamento di un descrittore in bozza
     And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
     And si ottiene status code 200
     And "PA2" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
+    And l'utente carica un documento di interfaccia di tipo "yaml"
     And l'utente è un "admin" di "PA2"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo VERIFIED 0-esimo creato
     Then si ottiene status code 400
-    And l'utente carica un documento di interfaccia di tipo "yaml"
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
@@ -124,6 +129,7 @@ Feature: Aggiornamento di un descrittore in bozza
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo DECLARED 0-esimo creato
     Then si ottiene status code 400
     And l'utente carica un documento di interfaccia di tipo "yaml"
+    And l'utente richiede il documento
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 

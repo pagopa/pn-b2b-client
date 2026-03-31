@@ -218,9 +218,14 @@ Feature: Verifica soglie differenziate
     And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | ruolo        | purposeId | statusCode |
       | admin        | %actual   | 200        |
+
+    @sad-path
+    Examples:
+      | ruolo        | purposeId | statusCode |
       | api          | %actual   | 403        |
       | security     | %actual   | 403        |
       | support      | %actual   | 403        |
@@ -245,6 +250,7 @@ Feature: Verifica soglie differenziate
     And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
     Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
       | role         | m2mRole   | purposeId | statusCode |
       | admin        | m2m-admin | %actual   | 200        |
@@ -252,6 +258,10 @@ Feature: Verifica soglie differenziate
       | security     | m2m-admin | %actual   | 200        |
       | support      | m2m-admin | %actual   | 200        |
       | api,security | m2m-admin | %actual   | 200        |
+
+    @sad-path
+    Examples:
+      | role         | m2mRole   | purposeId | statusCode |
       | admin        | m2m       | %actual   | 403        |
       | api          | m2m       | %actual   | 403        |
       | security     | m2m       | %actual   | 403        |

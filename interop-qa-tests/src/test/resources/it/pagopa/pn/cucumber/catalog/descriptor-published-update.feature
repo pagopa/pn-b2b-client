@@ -57,11 +57,16 @@ Feature: Aggiornamento di un descrittore già pubblicato
     Then si ottiene status code <statusCode>
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "<expectedDailyCallsPerConsumer>"
 
+    @happy-path
     Examples:
       | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
       | 100                   | 200        | 100                           |
-      | 0                     | 400        | %null                         |
       | 1000000000            | 200        | 1000000000                    |
+
+    @sad-path
+    Examples:
+      | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
+      | 0                     | 400        | %null                         |
       | 1000000001            | 400        | %null                         |
 
   @dailyCallsThreshold
