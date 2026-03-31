@@ -354,6 +354,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
+                            <templateDirectory>${project.basedir}/openapi-templates/emd</templateDirectory>
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
