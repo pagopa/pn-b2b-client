@@ -17,6 +17,7 @@ import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
@@ -102,6 +103,12 @@ public class TracingSteps {
         } catch (Exception ex) {
             throw new AssertionFailedError("There was an error while retrieving the tracings: " + ex);
         }
+    }
+
+    @Then("viene chiamato tracing con un path contenente un carattere percent-encoded non valido")
+    public void callTracingPathWithNotValidPercentEncodedChar() {
+        ResponseEntity<Void> response = interopTracingClient.callTracingWithIllegalPercentEncodedCharInPath();
+        Assertions.assertEquals(404, response.getStatusCode());
     }
 
     @Then("la risposta contiene soltanto i tracing con stato {string}")

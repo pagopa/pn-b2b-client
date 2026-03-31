@@ -7,6 +7,7 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.mo
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.ReplaceTracingResponse;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface IInteropTracingClient extends SettableBearerToken {
     SubmitTracingResponse submitTracing(org.springframework.core.io.Resource _file, String date) throws RestClientException;
 
     void getHealthStatus() throws RestClientException;
+
+    ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath() throws RestClientException;
 }

@@ -12,6 +12,8 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.mo
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -67,6 +69,11 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
     @Override
     public void getHealthStatus() {
         healthApi.getStatus();
+    }
+
+    @Override
+    public ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath() throws RestClientException {
+        return tracingsApi.invokeAPI("/tracings/invalid%c0", HttpMethod.GET);
     }
 
     public BearerTokenType getBearerTokenSetted() {
