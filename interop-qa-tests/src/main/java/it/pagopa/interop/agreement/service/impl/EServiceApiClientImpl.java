@@ -7,37 +7,7 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceInstanceLabelUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServicePersonalDataFlagUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
-import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -189,6 +159,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     public CreatedEServiceDescriptor cloneEServiceByDescriptor(UUID eServiceId, UUID descriptorId) {
         return eservicesApi.cloneEServiceByDescriptor(eServiceId, descriptorId);
+    }
+
+    public void updateEServiceName(UUID eServiceId, EServiceNameUpdateSeed eserviceNameUpdateSeed) {
+        eservicesApi.updateEServiceName(eServiceId, eserviceNameUpdateSeed);
     }
 
     public File getEServiceConsumers(UUID eServiceId) {

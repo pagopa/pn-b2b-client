@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
@@ -309,6 +310,11 @@ public class SharedSteps {
     public static void before_all() {
         log.debug("SHARED_GLUE START");
         //only for class activation
+    }
+
+    @After
+    public void afterScenario() {
+        MDC.clear();
     }
 
     @Before

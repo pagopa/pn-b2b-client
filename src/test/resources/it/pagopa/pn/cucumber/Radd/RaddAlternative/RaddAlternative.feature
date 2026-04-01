@@ -798,10 +798,11 @@ Feature: Radd Alternative
   @raddAlt @authFleet
   Scenario: [RADD-ALT_AOR-64] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
-      | feePolicy          | DELIVERY_MODE                                |
-      | paFee              | 0                                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | feePolicy             | DELIVERY_MODE                                |
+      | paFee                 | 0                                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR      |
@@ -824,10 +825,11 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-67] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegati due o più Avvisi PagoPA e due o più F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
-      | feePolicy          | DELIVERY_MODE                                |
-      | paFee              | 0                                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | feePolicy             | DELIVERY_MODE                                |
+      | paFee                 | 0                                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -850,10 +852,11 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-65] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
-      | feePolicy          | DELIVERY_MODE                                |
-      | paFee              | 0                                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | feePolicy             | DELIVERY_MODE                                |
+      | paFee                 | 0                                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -876,10 +879,11 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-66] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato un Avviso PagoPA
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
-      | feePolicy          | DELIVERY_MODE                                |
-      | paFee              | 0                                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | feePolicy             | DELIVERY_MODE                                |
+      | paFee                 | 0                                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -920,8 +924,9 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-29] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di milano                             |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di milano                             |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -940,8 +945,9 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-92] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione 2 volte
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di milano                             |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di milano                             |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -959,8 +965,9 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-93] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, inibizione poi complete
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di milano                             |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di milano                             |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -1258,8 +1265,9 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-76] PF -  Start di una AOR transaction con stesso operationId da cxId diversi - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
@@ -1284,8 +1292,9 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-78] PF - Verifica restituzione al cittadino del documento Frontespizio (nome e cognome del destinatario) come primo documento del plico
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo                            |
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
     And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |

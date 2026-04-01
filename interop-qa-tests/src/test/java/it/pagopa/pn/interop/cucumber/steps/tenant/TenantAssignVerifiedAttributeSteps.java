@@ -7,6 +7,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class TenantAssignVerifiedAttributeSteps {
@@ -45,7 +46,7 @@ public class TenantAssignVerifiedAttributeSteps {
                         new VerifiedTenantAttributeSeed()
                                 .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
                                 .agreementId(sharedStepsContext.getAgreementId())
-                                .expirationDate(LocalDate.now().plusDays(7).toString())
+                                .expirationDate(OffsetDateTime.now().plusDays(7).toString())
                 )
         );
     }

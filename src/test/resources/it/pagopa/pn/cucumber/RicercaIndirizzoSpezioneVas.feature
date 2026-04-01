@@ -126,7 +126,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline           | true                                                                                       |
       | details                | NOT_NULL                                                                                   |
       | details_refusalReasons | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -215,7 +214,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                                                                                   |
       | details_refusalReasons     | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
       | details_numberOfRecipients | 2                                                                                          |
-#      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -314,7 +312,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas #rif srs 18-17
+  #@ricercaIndirizzoVas #rif srs 18-17 TEST COMMENTATO: al momento su ParameterStore il parametro PaActiveForPhysicalAddressLookup è impostato a [] (quando è vuoto le pa risultano tutte abilitate), pertanto il test fallirà sempre
   Scenario: [RICERCA_INDIRIZZO_MONO_PA_NON_ABILIT_KO] Creazione notifica PA NON abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -519,7 +517,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                                                                                                                                                                                                    |
       | details_numberOfRecipients | 3                                                                                                                                                                                                           |
       | details_refusalReasons     | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}, {"detail": "Address search for recipient index: 2, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                                                                                                                      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline       | false    |
       | details            | NOT_NULL |
@@ -552,7 +549,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline           | true                                                                                                              |
       | details                | NOT_NULL                                                                                                          |
       | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -578,7 +574,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline           | true                                                                                                              |
       | details                | NOT_NULL                                                                                                          |
       | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -610,7 +605,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                                                                                                                                                                                                                           |
       | details_numberOfRecipients | 2                                                                                                                                                                                                                                  |
       | details_refusalReasons     | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}, {"detail": "Address search for recipient index: 1, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                                                                                                                                             |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -644,7 +638,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                             |
       | details_refusalReasons     | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
       | details_numberOfRecipients | 2                                    |
-#      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2               |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -676,7 +669,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                                                                                                   |
       | details_refusalReasons     | [{"recIndex": 0, "errorCode": "ADDRESS_NOT_FOUND"}, {"recIndex": 2, "errorCode": "ADDRESS_SEARCH_FAILED"}] |
       | details_numberOfRecipients | 3                                                                                                          |
-#      | parametriCalcoloCostoNotifica | recipients:3,ko:1,ok:2                                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1,2]  |
@@ -704,7 +696,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                                                                                                       |
       | details_refusalReasons     | [{"recIndex": 0, "errorCode": "ADDRESS_SEARCH_FAILED"}, {"recIndex": 1, "errorCode": "ADDRESS_SEARCH_FAILED"}] |
       | details_numberOfRecipients | 2                                                                                                              |
-#      | parametriCalcoloCostoNotifica | recipients:2,ko:2,ok:0                                                                                         |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0,1]    |
@@ -724,7 +715,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline           | true                                                                                       |
       | details                | NOT_NULL                                                                                   |
       | details_refusalReasons | [{"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1                                                                     |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -746,7 +736,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline           | true                                                                                                              |
       | details                | NOT_NULL                                                                                                          |
       | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -768,7 +757,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | loadTimeline           | true                                                                                                              |
       | details                | NOT_NULL                                                                                                          |
       | details_refusalReasons | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
@@ -791,7 +779,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                    | NOT_NULL                                                                                                          |
       | details_numberOfRecipients | 1                                                                                                                 |
       | details_refusalReasons     | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-#      | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
