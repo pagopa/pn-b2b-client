@@ -237,7 +237,7 @@ public class EserviceTemplateSteps {
     public void patchEServiceTemplateVersionSubset() {
         UUID uuid = UUID.randomUUID();
         EServiceTemplateVersionPatchRequest request = EServiceTemplateVersionPatchRequest.builder()
-            .voucherLifespan(new Random().nextInt(10, 10000))
+            .voucherLifespan(new Random().nextInt(60, 10000))
             .description("some minimal patched description - " + uuid)
             .build();
         versionPatchAssistant.patchResource(request);
@@ -346,6 +346,27 @@ public class EserviceTemplateSteps {
             case VECCHIO -> this.oldVersionsSnapshot = eserviceTemplateVersions;
             case NUOVO -> this.newVersionsSnapshot = eserviceTemplateVersions;
             default -> throw new IllegalArgumentException("Non previsto un comportamento per il valore " + type);
+        }
+    }
+
+    @And("l'utente tenta di recuperare le versioni dell'e-service template")
+    public void getEServiceTemplateVersions() {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        getEServiceTemplateVersion(templateId);
+    }
+
+    @And("l'utente tenta di recuperare le versioni dell'e-service template indicando un template id inesistente")
+    public void getNonExistentEServiceTemplateVersions() {
+        UUID templateId = UUID.randomUUID();
+        getEServiceTemplateVersion(templateId);
+    }
+
+    private void getEServiceTemplateVersion(UUID templateId) {
+        delayService.delay();
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getEserviceTemplateVersions(
+                templateId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            this.newVersionsSnapshot = (EServiceTemplateVersions) httpCallExecutor.getResponse();
         }
     }
 

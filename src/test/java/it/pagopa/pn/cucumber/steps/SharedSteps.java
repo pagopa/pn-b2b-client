@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
@@ -13,6 +14,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
@@ -52,6 +55,8 @@ import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -69,6 +74,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,6 +149,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
+import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -252,6 +259,14 @@ public class SharedSteps {
     @Getter
     private String notificationIun;
 
+    /**
+     * Lo IUN delle notifiche che vengono create (nei rari casi di più notifiche create simultaneamente) viene salvato in questa variabile.
+     * Tramite essi è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B.
+     */
+    @Setter
+    @Getter
+    private List<String> notificationIunList = new ArrayList<>();
+
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
@@ -295,6 +310,11 @@ public class SharedSteps {
     public static void before_all() {
         log.debug("SHARED_GLUE START");
         //only for class activation
+    }
+
+    @After
+    public void afterScenario() {
+        MDC.clear();
     }
 
     @Before
@@ -365,6 +385,24 @@ public class SharedSteps {
     }
 
     /**
+     * Metodo a soli fine di debugging, da non essere utilizzato in nessuno scenario.
+     * Se si hanno già pronte più notifiche, anziché crearla da zero, aspettare che arrivino in ACCEPTED, etc
+     * si impostano gli IUN qua e la PA e si può procedere con il resto dei metodi.
+     */
+    @Given("imposto la pa a {string} e gli iun di SharedSteps")
+    public void setMultipleIunAndPAForTestPurposes(String paName, Map<String, String> iunMap) {
+        setPA(paName);
+        notificationIunList = iunMap.values().stream().toList();
+        /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
+        e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
+        notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
+        getNotificationStepInterface().prepareNotificationRequest(Map.of(
+                "subject", "MOCKED NOTIFICATION",
+                "senderDenomination", "Comune di Palermo"));
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+    }
+
+    /**
      * Effettua un controllo sulla versione che si sta utilizzando, per verificare se è pari o superiore
      * a quella in uso.
      * Sarebbe buona prassi iniziare tutti gli scenari futuri con questo step, in modo che se mai
@@ -420,7 +458,6 @@ public class SharedSteps {
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
     public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
-        List<String> iunlist = new ArrayList<>();
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
             prepareNotificationRequestWithVersion(MOST_RECENT, data);
@@ -428,11 +465,11 @@ public class SharedSteps {
             getNotificationStepInterface().addRecipientToNotification(destinatario, data);
             getNotificationStepInterface().uploadNotification(null);
             String iun = getNotificationIun();
-            iunlist.add(iun);
+            notificationIunList.add(iun);
             TimeUnit.SECONDS.sleep(1);
         }
         TimeUnit.MINUTES.sleep(5);
-        List<String> remainingIuns = new ArrayList<>(iunlist); // lista di quelli da processare
+        List<String> remainingIuns = new ArrayList<>(notificationIunList); // lista di quelli da processare
         List<String> failedIuns = new ArrayList<>();
 
         while (!remainingIuns.isEmpty()) {
@@ -445,17 +482,10 @@ public class SharedSteps {
                     failedIuns.add(iun);
                 }
             }
-
             // prepariamo la prossima iterazione solo con quelli che hanno fallito
             remainingIuns = new ArrayList<>(failedIuns);
         }
-
     }
-
-
-
-
-
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {
@@ -1343,4 +1373,75 @@ public class SharedSteps {
         return qrCode;
     }
 
+    @Given("vengono inviate {int} nuove notifiche tramite api b2b dal {string} con destinatario {destinatario} e si aspetta che raggiungano l'elemento di timeline {string}")
+    public void sendMultipleNotifications(int notificationNumber, String paName, Destinatario destinatario, String timelineElement, Map<String, String> data) throws IOException, InterruptedException {
+        if (notificationIunList.isEmpty()) {
+            for (int i = 0; i < notificationNumber; i++) {
+                prepareNotificationRequestWithVersion(MOST_RECENT, data);
+                setPaAndSenderTaxId(paName);
+                getNotificationStepInterface().addRecipientToNotification(destinatario, data);
+                getNotificationStepInterface().uploadNotification(null);
+                assertThat(notificationIun).as("Lo IUN della notifica inviata non dev'essere null").isNotNull();
+                notificationIunList.add(notificationIun);
+                threadWait(getWorkFlowWait());
+                log.info("Notifica {} inviata", i + 1);
+            }
+        }
+        log.info("Elenco IUN delle {} notifiche caricate: {}", notificationNumber, notificationIunList);
+        TimeUnit.MINUTES.sleep(5);
+
+        List<String> remainingIuns = new ArrayList<>(notificationIunList); // lista di quelli da processare
+        List<String> failedIuns = new ArrayList<>();
+
+        while (!remainingIuns.isEmpty()) {
+            failedIuns.clear();
+            for (String iun : remainingIuns) {
+                setNotificationIun(iun);
+                try {
+                    getNotificationStepInterface().waitForTimelineElement(timelineElement, 33);
+                } catch (HttpClientErrorException.NotFound e) {
+                    failedIuns.add(iun);
+                }
+            }
+
+            // prepariamo la prossima iterazione solo con quelli che hanno fallito
+            remainingIuns = new ArrayList<>(failedIuns);
+
+            // opzionale: piccolo ritardo tra i tentativi per non saturare il sistema
+            if (!remainingIuns.isEmpty()) {
+                try {
+                    TimeUnit.SECONDS.sleep(30);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
+     */
+    @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
+    public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
+        long upperLimit = limitA > limitB ? limitA : limitB;
+        long lowerLimit = limitB < limitA ? limitB : limitA;
+        setPA(paName);
+        String recipientTaxId = recipient.getTaxId();
+        OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
+        BffNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
+                todayDate.minusDays(upperLimit),
+                todayDate.minusDays(lowerLimit),
+                recipientTaxId, null, null, null, 50, null);
+        AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
+        AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
+        AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
+        NotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
+                        n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
+                .findFirst().orElse(null);
+        AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
+        FullSentNotificationV28 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
+        notificationIun = oldNotification.getIun();
+        notificationIunList.add(oldNotification.getIun());
+        log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
+        log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
 }

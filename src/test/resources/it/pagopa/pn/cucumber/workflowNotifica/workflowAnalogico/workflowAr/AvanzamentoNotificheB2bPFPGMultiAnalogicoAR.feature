@@ -283,11 +283,14 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_RIR_1] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_RIR |
+      | digitalDomicile         | NULL       |
+      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_zip     | ZONE_2     |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -298,10 +301,13 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_RIR_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL         |
+      | physicalAddress_State   | MESSICO      |
+      | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@fail_RIR |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

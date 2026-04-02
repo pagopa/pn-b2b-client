@@ -2,11 +2,10 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 public class ClientKeyUploadSteps {
@@ -33,9 +32,10 @@ public class ClientKeyUploadSteps {
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int}")
     public void userLoadsPublicKeyWithTypeAndSize(String keyType, int keyLength) {
+        String finalKeyType = "NON-RSA".equals(keyType) ? "EC" : keyType;
         httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
-                    KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength), KeyType.parse(keyType))));
+                    KeyPairGeneratorUtil.createBase64PublicKey(finalKeyType, keyLength), KeyType.parse(finalKeyType))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int} senza i delimitatori di inizio e fine")

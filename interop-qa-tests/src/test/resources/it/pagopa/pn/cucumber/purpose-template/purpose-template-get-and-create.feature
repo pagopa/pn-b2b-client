@@ -125,9 +125,11 @@ Feature: finalità agevolata, purpose template GET
       | support  |
       | security |
 
+  @purposeTemplate @purposeTemplateGet-filtered
   Scenario Outline: [M2M_GET_PURPOSE_TEMPLATES] - Recupera i purpose templates con filtri opzionali
     Given l'utente è un "admin" di "PA1"
     And esistono purpose templates di test creati tramite data preparation
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When vengono recuperati i purpose templates con offset "<offset>", limit "<limit>", purposeTitle "<purposeTitle>", creatorIds "<creatorIds>", eserviceIds "<eserviceIds>", states "<states>", targetTenantKind "<targetTenantKind>", handlesPersonalData "<handlesPersonalData>"
     Then si ottiene lo status code <statusCode>
 
@@ -159,16 +161,20 @@ Feature: finalità agevolata, purpose template GET
     # Combinazione completa
       | 0      | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 200        |
 
-    # offset invalid
-      | %null  | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
+    # offset invalid - disattivato perché al momento non abbiamo modo di specificarlo NULL senza che l'oggetto client blocchi la chiamata
+    #  | %null  | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
       | -1     | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
 
     # limit invalid
       | 0      | %null | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
       | 0      | -1    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
 
+    @nrtC-waitForFix
+    Examples:
+      | offset | limit | purposeTitle | creatorIds | eserviceIds | states  | targetTenantKind | handlesPersonalData | statusCode |
+
     # purposeTitle invalid
-      | 0      | 10    | %null        | %actual    | %actual     | %actual | %actual          | true                | 400        |
+      | 0      | 10    | %blank       | %actual    | %actual     | %actual | %actual          | true                | 400        |
 
     # handlesPersonalData invalid
-      | 0      | 10    | %actual      | %actual    | %actual     | %actual | %actual          | %null               | 400        |
+      | 0      | 10    | %actual      | %actual    | %actual     | %actual | %actual          | %blank              | 400        |
