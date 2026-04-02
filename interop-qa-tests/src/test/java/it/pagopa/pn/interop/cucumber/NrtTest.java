@@ -4,28 +4,7 @@ import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
-@Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("it/pagopa/pn/cucumber")
-@ConfigurationParameters({
-    @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-    @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
-        "html:target/cucumber-report.html"),
-    @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
-    @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
-})
-@ExcludeTags({"wait_for_fix"})
-@IncludeTags({
-    // BFF
-    "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
-    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "selfcare",
-    "app-edit-ff-on", "llgg", "e-service-template", "e-service-template-receive-bff", "purposeTemplate",
-
-    // M2M
-    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
-    "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
-    "m2m-parte2-ottobre", "m2mEservices", "e-service-template-receive-m2m"
-
-})
-public class NrtTest {
+@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
+@ConfigurationParameter(key = PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, value = "4")
+public class NrtTest extends AbstractNrtTest {
 }
