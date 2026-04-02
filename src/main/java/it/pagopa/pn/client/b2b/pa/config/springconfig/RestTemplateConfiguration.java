@@ -64,13 +64,21 @@ public class RestTemplateConfiguration {
         @Primary
         @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
         public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-            RestTemplateBuilder builder = new RestTemplateBuilder();
+            // 1. Configura la Factory di Apache
             HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+
+            // NOTA: Con PATCH e Interceptor, setBufferRequestBody(false) può causare problemi
+            // se il corpo della richiesta deve essere letto dall'interceptor.
+            // Prova a commentare questa riga se l'errore persiste.
             factory.setBufferRequestBody(false);
-            return builder
-                    .requestFactory(() -> factory)
-                    .interceptors(new RequestAndTraceIdInterceptor())
-                    .build();
+
+            // 2. Crea il RestTemplate passando esplicitamente la factory
+            RestTemplate restTemplate = new RestTemplate(factory);
+
+            // 3. Aggiungi gli interceptor manualmente
+            restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+
+            return restTemplate;
         }
 
     @Bean
