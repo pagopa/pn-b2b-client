@@ -69,8 +69,8 @@ public class RestTemplateConfiguration {
 
             // NOTA: Con PATCH e Interceptor, setBufferRequestBody(false) può causare problemi
             // se il corpo della richiesta deve essere letto dall'interceptor.
-            // Prova a commentare questa riga se l'errore persiste.
-            factory.setBufferRequestBody(false);
+            // Prova a commentare questa riga se l'errore persiste o impostarla a TRUE.
+            //factory.setBufferRequestBody(true);
 
             // 2. Crea il RestTemplate passando esplicitamente la factory
             RestTemplate restTemplate = new RestTemplate(factory);
