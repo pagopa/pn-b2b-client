@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @ToString
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MV3UsersClient extends AbstractDPoPClient implements IM2MV3UsersClient {
     private final UsersApi usersApi;
     private final String basePath;

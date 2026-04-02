@@ -1,3 +1,4 @@
+@archiviazione-documentale
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
   Scenario: [TRIGGER]

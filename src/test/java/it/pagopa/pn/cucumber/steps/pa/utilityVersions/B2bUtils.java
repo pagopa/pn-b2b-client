@@ -552,6 +552,12 @@ public abstract class B2bUtils {
         };
     }
 
+    public static String getEnvironment(ApplicationContext context) {
+        String env = context.getEnvironment().getActiveProfiles()[0];
+        log.info("Environment in use is: {}", env);
+        return env;
+    }
+
     /**
      * Metodo statico di utility per formattare un json
      */

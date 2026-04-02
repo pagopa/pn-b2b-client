@@ -11,12 +11,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationCon
 import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NotificationConfigClient extends AbstractClient implements INotificationConfigClient {
 
     private final NotificationConfigsApi configsApi;
