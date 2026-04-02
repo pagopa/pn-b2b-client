@@ -1,13 +1,13 @@
 package it.pagopa.pn.cucumber.steps.paperTracker.proxy;
 
-import it.pagopa.pn.cucumber.steps.paperTracker.EventsTimestampValidator;
-import it.pagopa.pn.cucumber.steps.paperTracker.OcrAttachmentsFinalValidator;
-import it.pagopa.pn.cucumber.steps.paperTracker.OcrRequestValidator;
-import it.pagopa.pn.cucumber.steps.paperTracker.SchemaValidator;
+import it.pagopa.pn.cucumber.steps.paperTracker.validator.response.EventsTimestampValidator;
+import it.pagopa.pn.cucumber.steps.paperTracker.validator.response.OcrAttachmentsFinalValidator;
+import it.pagopa.pn.cucumber.steps.paperTracker.validator.response.OcrRequestValidator;
+import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SchemaValidatorProxy {
+public class PaperTrackerSchemaValidatorProxy {
     private static final OcrAttachmentsFinalValidator OCR_ATTACHMENTS_VALIDATOR = new OcrAttachmentsFinalValidator();
     private static final OcrRequestValidator OCR_REQUEST_VALIDATOR = new OcrRequestValidator();
     private static final EventsTimestampValidator EVENTS_TIMESTAMP_VALIDATOR = new EventsTimestampValidator();

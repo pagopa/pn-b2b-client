@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.paperTracker;
+package it.pagopa.pn.cucumber.utils.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.networknt.schema.JsonSchema;
@@ -33,7 +33,7 @@ public class SchemaValidator {
             JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
             JsonSchema schema = factory.getSchema(schemaStream);
 
-            // Validate the JSON node
+            // Valida il JSON node
             Set<ValidationMessage> errors = new HashSet<>(schema.validate(jsonNode));
 
             for (CustomConditionalValidator customConditionalValidator : customValidators) {

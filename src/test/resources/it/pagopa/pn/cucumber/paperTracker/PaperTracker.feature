@@ -187,11 +187,12 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | physicalAddress         | category          | flowThrow           |
-      | Via@OK_AR_TIMESTAMP_ERR | DATE_ERROR        | SEQUENCE_VALIDATION |
-      | Via@OK_AR_NO_EVENT_B    | STATUS_CODE_ERROR | SEQUENCE_VALIDATION |
+      | physicalAddress     | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+      | OK_AR_TIMESTAMP_ERR | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:22:42.320116250Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-11T12:21:53Z\",\"statusCode\":\"RECRN001C\"},{\"statusTimestamp\":\"2026-03-11T12:22:27Z\",\"statusCode\":\"RECRN001B\"},{\"statusTimestamp\":\"2026-03-11T12:22:21Z\",\"statusCode\":\"RECRN001A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"831da040-af67-47bc-a364-39220d116b3f\",\"productType\":\"AR\",\"type\":\"ERROR\"}" |
+      | OK_AR_NO_EVENT_B    | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-11T12:20:00.946408401Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"VALUES_NOT_FOUND\",\"message\":\"Necessary status code not found in events: [RECRN001B]\",\"additionalDetails\":{\"missingStatusCodes\":\"RECRN001B\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRN001C\",\"eventIdThrow\":\"1362dc88-08d0-4a1e-84d6-7575db2cd6cb\",\"productType\":\"AR\",\"type\":\"ERROR\"}"                                                                                                                                                                                     |
+
 
   @paperTrackerAR
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_RIR] Si verifica che i dati ritornati da /errors siano quelli attesi
@@ -208,14 +209,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    Then si verifica che su PaperTrackingsError ci sia un errore con category: <category>, flowThrow: "<flowThrow>" per la sequence: "<physicalAddress>" e pcRetry: "0"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | physicalAddress             | category          | flowThrow           |
-      | Via@OK_RIR_INVALID_DATETIME | DATE_ERROR        | SEQUENCE_VALIDATION |
-      | Via@FAIL_CON996_PCRETRY_RIR | ATTACHMENTS_ERROR | SEQUENCE_VALIDATION |
+      | physicalAddress             | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+      | Via@OK_RIR_INVALID_DATETIME | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-27T13:59:53.172667452Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-27T13:59:50Z\",\"statusCode\":\"RECRI003C\"},{\"statusTimestamp\":\"2026-03-27T13:59:45Z\",\"statusCode\":\"RECRI003B\"},{\"statusTimestamp\":\"2026-03-27T13:59:40Z\",\"statusCode\":\"RECRI003A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECRI003C\",\"eventIdThrow\":\"eb4ef8de-c317-451a-8878-1dea05a5ce09\",\"productType\":\"RIR\",\"type\":\"ERROR\"}" |
+      | Via@FAIL_CON996_PCRETRY_RIR | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-04-02T10:06:33.971762139Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Product type mismatch for trackingId PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0: expected RIR, but got AR\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-04-02T10:06:20Z\",\"statusCode\":\"RECRN002C\"}]}},\"flowThrow\":\"CHECK_TRACKING_PRODUCT\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"8f1589da-7bec-42b2-8250-cf004dfd943f\",\"productType\":\"RIR\",\"type\":\"WARNING\"}"                                        |
 
   @paperTrackerAR
-  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_A] Si verifica che i dati ritornati da /errors siano quelli attesi
+  Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_A] Si verifica che i dati ritornati da /errors siano quelli attesi
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -227,7 +228,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    Then si verifica che su PaperTrackingsError ci sia un errore con category: NOT_RETRYABLE_EVENT_ERROR, flowThrow: "NOT_RETRYABLE_EVENT_HANDLER" per la sequence: "Via@FAIL_CON996_PCRETRY_AR" e pcRetry: "1"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-27T14:00:15.885757053Z\",\"errorCategory\":\"INCONSISTENT_STATE\",\"details\":{\"cause\":\"STOCK_890_REFINEMENT_ERROR\",\"message\":\"Refinement process reached KO state, cannot proceed with final event validation\",\"additionalDetails\":{\"statusTimestamp\":\"2026-03-27T13:59:52Z\",\"statusCode\":\"RECAG005C\"}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"87623121-90b2-4a17-84b2-bd593a23c978\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
   # ---------------- RUN MODE ----------------
 

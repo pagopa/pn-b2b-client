@@ -181,7 +181,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readEventUpToTimelineElement(String timelineEventCategory) {
-        log.info("Creata notifica con iun: " + sharedSteps.getNotificationIun() + " e sequence: " + timelineEventCategory);
         readEventsUpToTimelineElement(sharedSteps.getVersionUsed(), timelineEventCategory);
     }
 

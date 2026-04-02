@@ -1,10 +1,16 @@
-package it.pagopa.pn.cucumber.steps.paperTracker;
+package it.pagopa.pn.cucumber.steps.paperTracker.validator.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import it.pagopa.pn.cucumber.utils.validator.CustomConditionalValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * Paper-Tracker
+ * Validatore custom per verificare la presenza dei campi obbligatori
+ * in ciascun nodo di validationFlow.ocrRequests con responseStatus uguale a "OK".
+ */
 @Slf4j
 public class OcrRequestValidator implements CustomConditionalValidator {
     List<String> errors;

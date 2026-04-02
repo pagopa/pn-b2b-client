@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.paperTracker;
+package it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AffectedEventsValidator {
+public class AffectedEventsValidator implements AdditionalDetailsValidator {
 
     public void validate(JsonNode actualNode, JsonNode expectedNode) {
         JsonNode affectEventsNode = actualNode.get("affectedEvents");

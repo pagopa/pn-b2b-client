@@ -1,12 +1,19 @@
-package it.pagopa.pn.cucumber.steps.paperTracker;
+package it.pagopa.pn.cucumber.steps.paperTracker.validator.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import it.pagopa.pn.cucumber.utils.validator.CustomConditionalValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+
+/**
+ * Paper-Tracker
+ * Validatore custom per verificare la presenza di ocrRequests in validationFlow
+ * quando documentType in events.attachments è presente in validationConfig.sendOcrAttachmentsFinalValidation.
+ */
 @Slf4j
 public class OcrAttachmentsFinalValidator implements CustomConditionalValidator {
     List<String> errors;

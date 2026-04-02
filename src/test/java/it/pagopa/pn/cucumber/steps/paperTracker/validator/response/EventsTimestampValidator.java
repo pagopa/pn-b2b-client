@@ -1,6 +1,7 @@
-package it.pagopa.pn.cucumber.steps.paperTracker;
+package it.pagopa.pn.cucumber.steps.paperTracker.validator.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import it.pagopa.pn.cucumber.utils.validator.CustomConditionalValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -8,6 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Paper-Tracker
+ * Validatore custom per verificare che gli eventi finali A/B/C contengano lo stesso timestamp.
+ */
 @Slf4j
 public class EventsTimestampValidator implements CustomConditionalValidator {
     List<String> errors;

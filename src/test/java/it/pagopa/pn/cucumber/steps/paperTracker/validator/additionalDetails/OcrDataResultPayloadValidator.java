@@ -1,10 +1,10 @@
-package it.pagopa.pn.cucumber.steps.paperTracker;
+package it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OcrDataResultPayloadValidator {
+public class OcrDataResultPayloadValidator implements AdditionalDetailsValidator {
 
     public void validate(JsonNode actualNode, JsonNode expectedNode) {
         JsonNode actualOcrDataResultPayload = actualNode.get("ocrDataResultPayload");
