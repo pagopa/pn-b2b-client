@@ -144,6 +144,7 @@ Feature: Gestione dei clients attraverso APIs M2M V2
       | %actual | 10    | 0      | %blank      | %null                | 200        |
       | %actual | 10    | 0      | %null       | %blank               | 200        |
 
+  @m2m-purpose-client
   Scenario: [M2M_CLIENTS_PURPOSES_CATALOG_3] Consultazione finalità associate a un client (multi-filtro) con token invalido
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service

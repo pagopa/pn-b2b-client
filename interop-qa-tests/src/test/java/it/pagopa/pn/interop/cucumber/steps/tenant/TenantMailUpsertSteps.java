@@ -8,10 +8,9 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Mail;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Optional;
@@ -61,9 +60,7 @@ public class TenantMailUpsertSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         email = String.format("%d%d@pagopa.it", sharedStepsContext.getTestSeed(), new Random().nextInt());
         UUID tenantId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
-        httpCallExecutor.performCall(
-                () -> dataPreparationService.addEmailToTenant(tenantId, new MailSeed().kind(MailKind.CONTACT_EMAIL).address(email))
-        );
+        dataPreparationService.addEmailToTenant(tenantId, new MailSeed().kind(MailKind.CONTACT_EMAIL).address(email));
     }
 
     @When("l'utente richiede una operazione di aggiornamento della mail di contatto senza description")
