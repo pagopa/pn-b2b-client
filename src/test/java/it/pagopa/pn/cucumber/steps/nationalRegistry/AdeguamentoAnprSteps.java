@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -26,6 +30,77 @@ public class AdeguamentoAnprSteps {
     private String address;
     private String addressDetail;
     private static final String ASSERT_MSG_FORMAT = "Il campo %s calcolato con algoritmo %s per il taxId %s non coincide con quanto atteso";
+
+    @AllArgsConstructor
+    private static class ExpectedAnprOutput {
+        private String address;
+        private String addressDetails;
+    }
+
+    private static final Map<String, Map<String, ExpectedAnprOutput>> ANPR_ADDRESS_MAP = Map.ofEntries(
+            //CF per ambienti inferiori a UAT censiti sul Mock NR
+            entry("GNVGCM97E04L781N", Map.of(
+                    "OLD", new ExpectedAnprOutput("  ", "2"),
+                    "MINIMAL", new ExpectedAnprOutput("", "ROSSO Scala 2"),
+                    "FULL", new ExpectedAnprOutput("", "ROSSO Corte 1 Scala 2 Scala est. SCAL 2"))),
+            entry("JNOFBN86B05L781H", Map.of(
+                    "OLD", new ExpectedAnprOutput("", ""),
+                    "MINIMAL", new ExpectedAnprOutput("", ""),
+                    "FULL", new ExpectedAnprOutput("", ""))),
+            entry("BLLBBR95D46L781R", Map.of(
+                    "OLD", new ExpectedAnprOutput("", ""),
+                    "MINIMAL", new ExpectedAnprOutput("", ""),
+                    "FULL", new ExpectedAnprOutput("", ""))),
+            entry("PRZPLA89E02L781K", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A KM 50", ""),
+                    "FULL", new ExpectedAnprOutput("Via Elena da Persico KM 50", ""))),
+            entry("BRNBNN92S02L781R", Map.of(
+                    "OLD", new ExpectedAnprOutput(" Elena da Persico A", "5"),
+                    "MINIMAL", new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"),
+                    "FULL", new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"))),
+            entry("LNNLNZ02L27L781Z", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A CAD", ""))),
+            entry("QDRQMD99C20L781Y", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "BLU"),
+                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "BLU Interno 5 A"))),
+            entry("JRIJNN05A01L781M", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "Non res."),
+                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "Non res. Interno 42 D"))),
+            entry("RZORNZ95C11L781S", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "ROSSO"),
+                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "ROSSO Primo interno 5 A Secondo interno 42 D"))),
+            entry("RGHLVC01H09H501K", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A SNC", "Res."),
+                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A SNC", "Res. Isolato 33"))),
+            //CF per ambiente UAT censiti su Real NR
+            entry("VRDLSM78B02F839R", Map.of(
+                    "OLD", new ExpectedAnprOutput(" CAVOUR 1", ""),
+                    "MINIMAL", new ExpectedAnprOutput("CAVOUR 1 SNC", "ROSSO"),
+                    "FULL", new ExpectedAnprOutput("CAVOUR 1 SNC", "ROSSO Scala est. 3 Interno 4 Isolato 7"))),
+            entry("RSSMSM85E15H501L", Map.of(
+                    "OLD", new ExpectedAnprOutput("VIA Po A", "2"),
+                    "MINIMAL", new ExpectedAnprOutput("VIA Po KM 100", "BLU Scala 2"),
+                    "FULL", new ExpectedAnprOutput("VIA Po KM 100", "BLU Corte 1 Scala 2 Scala est. 3 Isolato 6"))),
+            entry("KPRSMP91H12F205O", Map.of(
+                    "OLD", new ExpectedAnprOutput("VIA Via Elena da Persico 12/A", "1"),
+                    "MINIMAL", new ExpectedAnprOutput("VIA Via Elena da Persico 12/A SNC", "Res. Scala 1"),
+                    "FULL", new ExpectedAnprOutput("VIA Via Elena da Persico 12/A SNC", "Res. Corte 1 Scala 1 Scala est. 1 1 D"))),
+            entry("KRSJSM88S03H501A", Map.of(
+                    "OLD", new ExpectedAnprOutput(" SOLO TOPONIMO ", ""),
+                    "MINIMAL", new ExpectedAnprOutput("SOLO TOPONIMO", ""),
+                    "FULL", new ExpectedAnprOutput("SOLO TOPONIMO", ""))),
+            entry("BSMGPR92R62F205X", Map.of(
+                    "OLD", new ExpectedAnprOutput("Via Fiume 1/A", ""),
+                    "MINIMAL", new ExpectedAnprOutput("Via Fiume 1/A SNC", "ROSSO"),
+                    "FULL", new ExpectedAnprOutput("Via Fiume 1/A SNC", "ROSSO Scala est. 3 Interno 4 Isolato 6")))
+    );
 
     @Autowired
     public AdeguamentoAnprSteps(@Value("${pn.delivery.base-url}") String deliveryBaseUrl) {
@@ -68,188 +143,11 @@ public class AdeguamentoAnprSteps {
     @Then("si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo {string}")
     public void checkAddress(String algoritmo) {
         assertThat(anprResponseBody).as("La response ottenuta da ANPR non dev'essere null").isNotNull();
-        switch (algoritmo.toUpperCase()) {
-            case "OLD" -> checkAddressAlgorithmOld();
-            case "MINIMAL" -> checkAddressAlgorithmMinimal();
-            case "FULL" -> checkAddressAlgorithmFull();
-            default -> throw new IllegalArgumentException("Invalid algorithm type: " + algoritmo);
-        }
-    }
 
-
-    private void checkAddressAlgorithmOld() {
-        String algorithm = "OLD";
-        switch (taxId) {
-            //CF per ambienti inferiori a UAT censiti sul Mock NR
-            case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("  ");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("2");
-            });
-            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "PRZPLA89E02L781K", "LNNLNZ02L27L781Z", "QDRQMD99C20L781Y", "JRIJNN05A01L781M", "RZORNZ95C11L781S", "RGHLVC01H09H501K" ->
-                    SoftAssertions.assertSoftly(softly -> {
-                        softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                        softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-                    });
-            case "BRNBNN92S02L781R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo(" Elena da Persico A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("5");
-            });
-            //CF per ambiente UAT censiti su Real NR
-            case "VRDLSM78B02F839R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo(" CAVOUR 1");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "RSSMSM85E15H501L" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Po A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("2");
-            });
-            case "KPRSMP91H12F205O" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("1");
-            });
-            case "KRSJSM88S03H501A" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo(" SOLO TOPONIMO ");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
-            });
-            case "BSMGPR92R62F205X" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Fiume 1/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
-        }
-    }
-
-    private void checkAddressAlgorithmMinimal() {
-        String algorithm = "MINIMAL";
-        switch (taxId) {
-            //CF per ambienti inferiori a UAT censiti sul Mock NR
-            case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Scala 2");
-            });
-            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "PRZPLA89E02L781K" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A KM 50");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "BRNBNN92S02L781R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Elena da Persico A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Scala 5");
-            });
-            case "LNNLNZ02L27L781Z" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "QDRQMD99C20L781Y" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU");
-            });
-            case "JRIJNN05A01L781M" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Non res.");
-            });
-            case "RZORNZ95C11L781S" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO");
-            });
-            case "RGHLVC01H09H501K" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res.");
-            });
-            //CF per ambiente UAT censiti su Real NR
-            case "VRDLSM78B02F839R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("CAVOUR 1 SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO");
-            });
-            case "RSSMSM85E15H501L" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Po KM 100");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Scala 2");
-            });
-            case "KPRSMP91H12F205O" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Via Elena da Persico 12/A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res. Scala 1");
-            });
-            case "KRSJSM88S03H501A" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("SOLO TOPONIMO");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", "FULL", taxId)).isEqualTo("");
-            });
-            case "BSMGPR92R62F205X" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Fiume 1/A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO");
-            });
-            default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
-        }
-    }
-
-    private void checkAddressAlgorithmFull() {
-        String algorithm = "FULL";
-        switch (taxId) {
-            //CF per ambienti inferiori a UAT censiti sul Mock NR
-            case "GNVGCM97E04L781N" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Corte 1 Scala 2 Scala est. SCAL 2");
-            });
-            case "JNOFBN86B05L781H", "BLLBBR95D46L781R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "PRZPLA89E02L781K" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico KM 50");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "BRNBNN92S02L781R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Elena da Persico A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Scala 5");
-            });
-            case "LNNLNZ02L27L781Z" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A CAD");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "QDRQMD99C20L781Y" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Interno 5 A");
-            });
-            case "JRIJNN05A01L781M" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Non res. Interno 42 D");
-            });
-            case "RZORNZ95C11L781S" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Primo interno 5 A Secondo interno 42 D");
-            });
-            case "RGHLVC01H09H501K" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Elena da Persico 12/A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res. Isolato 33");
-            });
-            //CF per ambiente UAT censiti su Real NR
-            case "VRDLSM78B02F839R" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("CAVOUR 1 SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Scala est. 3 Interno 4 Isolato 7");
-            });
-            case "RSSMSM85E15H501L" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Po KM 100");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("BLU Corte 1 Scala 2 Scala est. 3 Isolato 6");
-            });
-            case "KPRSMP91H12F205O" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("VIA Via Elena da Persico 12/A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("Res. Corte 1 Scala 1 Scala est. 1 1 D");
-            });
-            case "KRSJSM88S03H501A" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("SOLO TOPONIMO");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("");
-            });
-            case "BSMGPR92R62F205X" -> SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo("Via Fiume 1/A SNC");
-                softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo("ROSSO Scala est. 3 Interno 4 Isolato 6");
-            });
-            default -> throw new IllegalArgumentException("TaxId non riconosciuto: " + taxId);
-        }
+        ExpectedAnprOutput expectedOutput = ANPR_ADDRESS_MAP.get(taxId).get(algoritmo);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algoritmo, taxId)).isEqualTo(expectedOutput.address);
+            softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algoritmo, taxId)).isEqualTo(expectedOutput.addressDetails);
+        });
     }
 }
