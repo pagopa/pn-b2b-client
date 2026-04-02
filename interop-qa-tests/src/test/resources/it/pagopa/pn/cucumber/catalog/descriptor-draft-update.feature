@@ -46,11 +46,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario Outline: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_1] Per un e-service in stato DRAFT è possibile modificare dailyCallsPerConsumer all'interno degli attributi certificati
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 1000000000 e dailyCallsTotal uguale a 1000000000
     When l'utente tenta di aggiungere una soglia differenziata di <dailyCallsPerConsumer> per l'attributo CERTIFIED 0-esimo creato
     Then si ottiene status code <statusCode>
@@ -73,11 +70,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_2] Per un e-service in stato DRAFT non è possibile indicare soglie differenti per il medesimo attributo certificato
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di dichiarare due volte lo stesso attributo certificato ognuno con un dailyCallsPerConsumer differente
     Then si ottiene status code 400
@@ -87,11 +81,11 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_3] Per un e-service in stato DRAFT non è possibile indicare una soglia il cui limite è superiore al limite di chiamate totali giornaliero
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    # And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    # And si ottiene status code 200
+    # And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 0-esimo creato
     Then si ottiene status code 400
@@ -102,26 +96,20 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_4] Per un e-service in stato DRAFT non è possibile indicare una soglia associata ad un attributo verificato
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And PA2 ha già creato 1 attributo VERIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    And "PA2" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
-    And l'utente è un "admin" di "PA2"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And PA1 ha già creato 1 attributo VERIFIED
+    And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo VERIFIED 0-esimo creato
     Then si ottiene status code 400
-    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_5] Per un e-service in stato DRAFT non è possibile indicare una soglia associata ad un attributo dichiarato
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo DECLARED
-    And "PA2" ha creato un attributo dichiarato e lo ha assegnato a "PA1"
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo DECLARED
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo DECLARED 0-esimo creato
     Then si ottiene status code 400
@@ -131,11 +119,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_6] Per un e-service in stato DRAFT è possibile indicare N soglie la cui somma dei limiti è superiore al limite di chiamate totali giornaliero
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 3 attributo CERTIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 3 attributo CERTIFIED
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 20
     When l'utente tenta di aggiungere una soglia differenziata di 8 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
@@ -152,11 +137,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_7] Per un e-service in stato DRAFT non è possibile indicare N soglie di cui almeno una esplicita un limite superiore al limite di chiamate totali giornaliero
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 3 attributo CERTIFIED
-    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 3 attributo CERTIFIED
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
@@ -170,9 +152,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_8] Per un e-service in stato DRAFT non è possibile specificare due gruppi di attributi certificati dove in almeno uno è presente un valore invalido di dailyCallPerConsumer
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
     And si ottiene status code 200
@@ -186,9 +167,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_9] Per un e-service in stato DRAFT è possibile specificare due gruppi di attributi certificati dove in ognuno è presente un valore valido di dailyCallPerConsumer
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
     And si ottiene status code 200
@@ -200,9 +180,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_10] Per un e-service in stato DRAFT non è possibile specificare due gruppi di attributi certificati dove in almeno uno è presente un valore invalido di dailyCallPerConsumer
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
     And l'utente tenta di duplicare l'attributo CERTIFIED 0-esimo nel gruppo 0-esimo
@@ -213,9 +192,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_11] Per un e-service in stato DRAFT non è possibile avere due attributi certificati in due gruppi differenti di cui uno con un valore invalido di dailyCallPerConsumer
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 1 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
     And l'utente tenta di aggiungere una soglia differenziata di 0 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
@@ -225,22 +203,21 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene status code 200
 
   @dailyCallsThreshold
-  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_12] Per un e-service in stato DRAFT non è possibile avere lo stesso attributo certificato in due gruppi differenti con un valore valido di dailyCallPerConsumer
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
-    And l'utente è un "admin" di "PA1"
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_12] Per un e-service in stato DRAFT è possibile avere lo stesso attributo certificato in due gruppi differenti con un valore valido di dailyCallPerConsumer
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     And si ottiene status code 200
-    And l'utente tenta di duplicare l'attributo CERTIFIED 0-esimo contenuto nel gruppo 0-esimo nel gruppo 1-esimo
+    When l'utente tenta di duplicare l'attributo CERTIFIED 0-esimo contenuto nel gruppo 0-esimo nel gruppo 1-esimo
+    Then si ottiene status code 200
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_13] Per un e-service in stato DRAFT è possibile avere due attributi certificati in due gruppi differenti tutti e due con un valore valido di dailyCallPerConsumer
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
-    And l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 1 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
     And l'utente tenta di aggiungere una soglia differenziata di 2 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
