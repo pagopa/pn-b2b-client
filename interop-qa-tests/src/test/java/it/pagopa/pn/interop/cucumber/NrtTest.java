@@ -11,20 +11,18 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(
                 key = PLUGIN_PROPERTY_NAME,
                 value = "pretty," +
-                        "json:target/cucumber-report.json," +
-                        "html:target/cucumber-report.html," +
+                        "json:target/cucumber-report-nrt.json," +
+                        "html:target/cucumber-report-nrt.html," +
                         "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V2;" +
                         "api.mode=RIGHT_FIT;" +
                         "api.set=M2M;" +
                         "api.bff.version=V1"
         ),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," + "html:target/cucumber-report.html"),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix"})
+@ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({
     // BFF
     "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",

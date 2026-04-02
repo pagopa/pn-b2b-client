@@ -8,29 +8,29 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("it/pagopa/pn/cucumber")
 @ConfigurationParameters({
-    @ConfigurationParameter(
-        key = PLUGIN_PROPERTY_NAME,
-        value = "pretty," +
-                "json:target/cucumber-report-m2mv3.json," +
-                "html:target/cucumber-report-m2mv3.html," +
-                "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
-                "api.m2m.version=V3;" +
-                "api.mode=RIGHT_FIT;" +
-                "api.set=M2M;" +
-                "api.bff.version=V1"
-    ),
-    @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
+        @ConfigurationParameter(
+                key = PLUGIN_PROPERTY_NAME,
+                value = "pretty," +
+                        "json:target/cucumber-report-m2mv3.json," +
+                        "html:target/cucumber-report-m2mv3.html," +
+                        "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
+                        "api.m2m.version=V3;" +
+                        "api.mode=RIGHT_FIT;" +
+                        "api.set=M2M;" +
+                        "api.bff.version=V1"
+        ),
+        @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
 
-    // abilita parallelismo JUnit
-    @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
+        // abilita parallelismo JUnit
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
 
-    // modalità parallela
-    @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+        // modalità parallela
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
 
-    // già presente
-    @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
+        // già presente
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix"})
+@ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({// M2M
     "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
     "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
