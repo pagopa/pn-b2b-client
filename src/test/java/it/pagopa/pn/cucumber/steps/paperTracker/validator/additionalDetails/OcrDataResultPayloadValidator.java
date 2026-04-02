@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Paper-Tracker: Validatore per il campo ocrDataResultPayload presente in additionalDetails.
+ * Verifica che il campo ocrDataResultPayload sia presente e, se è un array, confronta ogni elemento con l'expected value.
+ */
 public class OcrDataResultPayloadValidator implements AdditionalDetailsValidator {
 
     public void validate(JsonNode actualNode, JsonNode expectedNode) {

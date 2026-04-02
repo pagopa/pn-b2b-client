@@ -164,7 +164,6 @@ public class PaperTrackerSteps {
                 .toList();
     }
 
-
     @Then("si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: {string}")
     public void checkPaperTrackerEventsNew(String sequenceName) {
         TrackingsRequest request = new TrackingsRequest();
@@ -447,9 +446,9 @@ public class PaperTrackerSteps {
         data.put("details_recIndex", "0");
         data.put("details", "NOT_NULL");
         data.put("details_deliveryDetailCode", deliveryDetailCode);
-        String eventCatetgory = trackingKeys.get(0).contains(PREPARE_SIMPLE_REGISTERED_LETTER) ? SEND_SIMPLE_REGISTERED_LETTER_PROGRESS
+        String eventCategory = trackingKeys.get(0).contains(PREPARE_SIMPLE_REGISTERED_LETTER) ? SEND_SIMPLE_REGISTERED_LETTER_PROGRESS
                 : TimelineSequence.isFeedback(deliveryDetailCode) ? SEND_ANALOG_FEEDBACK : SEND_ANALOG_PROGRESS;
-        data.put("eventCategory", eventCatetgory);
+        data.put("eventCategory", eventCategory);
         if (failureCause != null) {
             data.put("details_failureCause", failureCause);
         }

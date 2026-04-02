@@ -6,6 +6,10 @@ import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * AffectedEventsValidator: Validatore per il campo "affectedEvents" presente in additionalDetails.
+ * Verifica che ogni evento abbia un statusCode valido, un timestamp parsabile e, se presente negli expectedEvent, una deliveryFailureCause corrispondente.
+ */
 public class AffectedEventsValidator implements AdditionalDetailsValidator {
 
     public void validate(JsonNode actualNode, JsonNode expectedNode) {
