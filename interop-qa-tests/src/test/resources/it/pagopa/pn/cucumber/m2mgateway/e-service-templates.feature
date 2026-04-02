@@ -11,13 +11,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code 200
     And la versione corrente dell'e-service template è in stato PUBLISHED
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -29,13 +29,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code 403
     And la versione corrente dell'e-service template è in stato SUSPENDED
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -52,13 +52,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code 404
     And la versione corrente dell'e-service template è in stato SUSPENDED
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -74,13 +74,13 @@ Feature: Test API M2M of e-service template
     Then la versione corrente dell'e-service template è in stato SUSPENDED
 
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -92,17 +92,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code <code>
     And la versione corrente dell'e-service template è in stato <state>
     Examples:
-      | mode       | state      | code |
-      | erogazione | DRAFT      | 409  |
-      | erogazione | PUBLISHED  | 409  |
-      | erogazione | DEPRECATED | 409  |
+      | mode        | state       | code  |
+      | erogazione  | DRAFT       | 409   |
+      | erogazione  | PUBLISHED   | 409   |
+      | erogazione  | DEPRECATED  | 409   |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      | state      | code |
-      | ricezione | DRAFT      | 409  |
-      | ricezione | PUBLISHED  | 409  |
-      | ricezione | DEPRECATED | 409  |
+      | mode        | state       | code  |
+      | ricezione   | DRAFT       | 409   |
+      | ricezione   | PUBLISHED   | 409   |
+      | ricezione   | DEPRECATED  | 409   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -115,13 +115,13 @@ Feature: Test API M2M of e-service template
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then la versione corrente dell'e-service template è in stato SUSPENDED
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -139,13 +139,13 @@ Feature: Test API M2M of e-service template
     And l'e-service template restituito è coerente con le modifiche effettuate
     And l'e-service template è stato parzialmente modificato correttamente
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -158,13 +158,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'e-service template non ha subito modifiche
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -185,13 +185,13 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'e-service template non ha subito modifiche
     Examples:
-      | mode       |
-      | erogazione |
-
+      | mode        |
+      | erogazione  |
+    
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -204,17 +204,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 400
     And l'e-service template non ha subito modifiche
     Examples:
-      | stato      | mode       |
-      | PUBLISHED  | erogazione |
-      | DEPRECATED | erogazione |
-      | SUSPENDED  | erogazione |
+      | stato       | mode        |
+      | PUBLISHED   | erogazione  |
+      | DEPRECATED  | erogazione  |
+      | SUSPENDED   | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | stato      | mode      |
-      | PUBLISHED  | ricezione |
-      | DEPRECATED | ricezione |
-      | SUSPENDED  | ricezione |
+      | stato        | mode        |
+      | PUBLISHED   | ricezione   |
+      | DEPRECATED  | ricezione   |
+      | SUSPENDED   | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -228,13 +228,13 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'e-service template non ha subito modifiche
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -252,13 +252,13 @@ Feature: Test API M2M of e-service template
     And l'ultima versione dell'e-service template restituita è coerente con le modifiche effettuate
     And l'ultima versione dell'e-service template è stata parzialmente modificata correttamente
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -271,13 +271,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -298,13 +298,13 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -317,17 +317,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 400
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | stato      | mode       |
-      | PUBLISHED  | erogazione |
-      | DEPRECATED | erogazione |
-      | SUSPENDED  | erogazione |
+      | stato       | mode        |
+      | PUBLISHED   | erogazione  |
+      | DEPRECATED  | erogazione  |
+      | SUSPENDED   | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | stato      | mode      |
-      | PUBLISHED  | ricezione |
-      | DEPRECATED | ricezione |
-      | SUSPENDED  | ricezione |
+      | stato        | mode        |
+      | PUBLISHED   | ricezione   |
+      | DEPRECATED  | ricezione   |
+      | SUSPENDED   | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -357,15 +357,15 @@ Feature: Test API M2M of e-service template
     And l'ultima versione dell'e-service template restituita è coerente con le modifiche effettuate
     And l'ultima versione dell'e-service template è stata parzialmente modificata correttamente
     Examples:
-      | mode       | state     |
-      | erogazione | PUBLISHED |
-      | erogazione | SUSPENDED |
+      | mode        | state     |
+      | erogazione  | PUBLISHED |
+      | erogazione  | SUSPENDED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      | state     |
-      | ricezione | PUBLISHED |
-      | ricezione | SUSPENDED |
+      | mode        | state     |
+      | ricezione   | PUBLISHED |
+      | ricezione   | SUSPENDED |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -378,15 +378,15 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode       | state     |
-      | erogazione | PUBLISHED |
-      | erogazione | SUSPENDED |
+      | mode        | state     |
+      | erogazione  | PUBLISHED |
+      | erogazione  | SUSPENDED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      | state     |
-      | ricezione | PUBLISHED |
-      | ricezione | SUSPENDED |
+      | mode        | state     |
+      | ricezione   | PUBLISHED |
+      | ricezione   | SUSPENDED |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -407,15 +407,15 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode       | state     |
-      | erogazione | PUBLISHED |
-      | erogazione | SUSPENDED |
+      | mode        | state     |
+      | erogazione  | PUBLISHED |
+      | erogazione  | SUSPENDED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      | state     |
-      | ricezione | PUBLISHED |
-      | ricezione | SUSPENDED |
+      | mode        | state     |
+      | ricezione   | PUBLISHED |
+      | ricezione   | SUSPENDED |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -428,15 +428,15 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 400
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | stato      | mode       |
-      | DRAFT      | erogazione |
-      | DEPRECATED | erogazione |
+      | stato       | mode        |
+      | DRAFT       | erogazione  |
+      | DEPRECATED  | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | stato      | mode      |
-      | DRAFT      | ricezione |
-      | DEPRECATED | ricezione |
+      | stato        | mode        |
+      | DRAFT       | ricezione   |
+      | DEPRECATED  | ricezione   |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -466,13 +466,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 404
 
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      |
-      | ricezione |
+      | mode        |
+      | ricezione   |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -484,8 +484,8 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'e-service template esiste ancora
     Examples:
-      | mode       |
-      | erogazione |
+      | mode        |
+      | erogazione  |
 
     @e-service-template-receive-m2m
     Examples:
@@ -530,10 +530,10 @@ Feature: Test API M2M of e-service template
     # non si torna all'utente PA1 perché PA2 DEVE poter visualizzare il template di PA1
     And l'e-service template esiste ancora
     Examples:
-      | mode       | state      |
-      | erogazione | PUBLISHED  |
-      | erogazione | SUSPENDED  |
-      | erogazione | DEPRECATED |
+      | mode        | state       |
+      | erogazione  | PUBLISHED   |
+      | erogazione  | SUSPENDED   |
+      | erogazione  | DEPRECATED  |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -545,17 +545,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 409
     And l'e-service template esiste ancora
     Examples:
-      | mode       | state      |
-      | erogazione | PUBLISHED  |
-      | erogazione | SUSPENDED  |
-      | erogazione | DEPRECATED |
+      | mode        | state       |
+      | erogazione  | PUBLISHED   |
+      | erogazione  | SUSPENDED   |
+      | erogazione  | DEPRECATED  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode      | state      |
-      | ricezione | PUBLISHED  |
-      | ricezione | SUSPENDED  |
-      | ricezione | DEPRECATED |
+      | mode        | state       |
+      | ricezione   | PUBLISHED   |
+      | ricezione   | SUSPENDED   |
+      | ricezione   | DEPRECATED  |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
@@ -572,9 +572,9 @@ Feature: Test API M2M of e-service template
     And la versione 1 dell'e-service template non ha subito modifiche
     And le versioni dell'e-service template sono un totale di 2
     Examples:
-      | stato     |
-      | PUBLISHED |
-      | SUSPENDED |
+      | stato       |
+      | PUBLISHED   |
+      | SUSPENDED   |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
@@ -646,6 +646,41 @@ Feature: Test API M2M of e-service template
     And viene impostato per l'utente un token m2m non valido
     When l'utente m2m tenta la creazione di una ulteriore versione di un e-service template inesistente
     Then si ottiene response status code 401
+
+  @happy-path
+  @e-service-template-m2m-version-get
+  Scenario Outline: [M2MG_ESERVICETEMPLATES_1] Recupero corretto delle versioni di un template e-service con utente autorizzato (Scenario 17)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    When l'utente è un "admin" di "PA1" con ruolo M2M <role>
+    And l'utente tenta di recuperare le versioni dell'e-service template
+    Then si ottiene lo status code 200
+    And le versioni dell'e-service template sono un totale di 2
+    Examples:
+      | role      |
+      | m2m       |
+      | m2m-admin |
+
+  @sad-path
+  @e-service-template-m2m-version-get
+  Scenario: [M2MG_ESERVICETEMPLATES_4] Errore nel recupero delle versioni di un template e-service con templateId inesistente (Scenario 179)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di recuperare le versioni dell'e-service template indicando un template id inesistente
+    Then si ottiene lo status code 404
+
+  @sad-path
+  @e-service-template-m2m-version-get
+  Scenario: [M2MG_ESERVICETEMPLATES_5] Accesso negato al recupero delle versioni di un template e-service con token non valido (Scenario 180)
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    When viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di recuperare le versioni dell'e-service template indicando un template id inesistente
+    Then si ottiene lo status code 401
 
   @eservice_published_delegation
   @happy-path
