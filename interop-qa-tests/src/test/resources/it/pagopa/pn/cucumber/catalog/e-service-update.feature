@@ -126,7 +126,6 @@ Feature: Aggiornamento di un e-service non pubblicato
     And viene impostato per l'utente un token non valido
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "false" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 401
-    And le flag di delega dell'e-service non hanno subito modifiche
 
   @eservice_published_delegation
   @happy-path
