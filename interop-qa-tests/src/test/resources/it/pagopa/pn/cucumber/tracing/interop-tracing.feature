@@ -102,12 +102,12 @@ Feature: Interop Tracing feature
     And viene recuperato il file di tracing appena caricato e si verifica che lo stato sia "COMPLETED"
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-13] Path con caratteri percent-encoded non validi
+  Scenario: [INTEROP-TRACING-13-1] Path con caratteri percent-encoded non validi
     Given l'utenza "TENANT1" effettua le chiamate
     When viene chiamato tracing con un path contenente un carattere percent-encoded non valido
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-14] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing
+  Scenario: [INTEROP-TRACING-14-1] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing
     Given l'utenza "TENANT1" effettua le chiamate
     When viene sottomesso il file CSV "CORRETTO"
     Then si attende che il file di tracing caricato passi in stato "COMPLETED"
@@ -120,7 +120,7 @@ Feature: Interop Tracing feature
     And si attende che il file di tracing venga arricchito con altri dati
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-15] Verifica arricchimento dati per l'inserimento di un nuovo pesante file CSV di tracing
+  Scenario: [INTEROP-TRACING-14-2] Verifica arricchimento dati per l'inserimento di un nuovo pesante file CSV di tracing
     Given l'utenza "TENANT1" effettua le chiamate
     When viene sottomesso il file CSV "CORRETTO_PESANTE"
     Then si attende che il file di tracing caricato passi in stato "COMPLETED"
@@ -133,7 +133,7 @@ Feature: Interop Tracing feature
     And si attende che il file di tracing arricchito venga generato
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-16] Invio di un file CSV di tracing con header errato
+  Scenario: [INTEROP-TRACING-15-1] Invio di un file CSV di tracing con header errato
     Given l'utenza "TENANT1" effettua le chiamate
     When viene sottomesso il file CSV "ERRATO_CAMPO_MANCANTE"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
@@ -153,7 +153,7 @@ Feature: Interop Tracing feature
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-17] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing con alcuni record errati
+  Scenario: [INTEROP-TRACING-15-2] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing con alcuni record errati
     Given l'utenza "TENANT1" effettua le chiamate
     When viene sottomesso il file CSV "CORRETTO_CON_RECORD_ERRATI"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
@@ -166,7 +166,7 @@ Feature: Interop Tracing feature
     And si attende che i record errati vengano tracciati negli errori
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-18] Verifica il tracciamento dei WARNING per l'inserimento di un nuovo file CSV di tracing con purpose_id non conforme
+  Scenario: [INTEROP-TRACING-15-3] Verifica il tracciamento dei WARNING per l'inserimento di un nuovo file CSV di tracing con purpose_id non conforme
     Given l'utenza "TENANT1" effettua le chiamate
     When viene sottomesso il file CSV "CORRETTO_CON_PURPOSE_NON_CONFORMI"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
