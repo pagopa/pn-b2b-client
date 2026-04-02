@@ -33,29 +33,45 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    /*
-    @Bean(name = "customRestTemplate")
-    @Primary
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplate customRestTemplate(RestTemplateBuilder builder, CloseableHttpClient httpClient) {
-        return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(httpClient))
-                .interceptors(new RequestAndTraceIdInterceptor())
-                .build();
-    }
-    */
 
-    @Bean(name = "customRestTemplate")
-    @Primary
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public RestTemplateCustomizer myCustomizer(CloseableHttpClient httpClient) {
-        return restTemplate -> {
+    /*
+        @Bean(name = "customRestTemplate")
+        @Primary
+        @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+        public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
             HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
             factory.setBufferRequestBody(false);
-            restTemplate.setRequestFactory(factory);
-            restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-        };
-    }
+
+            RestTemplate restTemplate = new RestTemplate(factory);
+            restTemplate.setInterceptors(Collections.singletonList(new RequestAndTraceIdInterceptor()));
+
+            return restTemplate;
+        }
+
+
+            @Bean(name = "customRestTemplate")
+            @Primary
+            @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+            public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+                HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+                factory.setBufferRequestBody(false);
+                RestTemplate restTemplate = new RestTemplate(factory);
+                restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+                return restTemplate;
+            }
+     */
+        @Bean
+        @Primary
+        @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+        public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+            RestTemplateBuilder builder = new RestTemplateBuilder();
+            HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+            factory.setBufferRequestBody(false);
+            return builder
+                    .requestFactory(() -> factory)
+                    .interceptors(new RequestAndTraceIdInterceptor())
+                    .build();
+        }
 
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
