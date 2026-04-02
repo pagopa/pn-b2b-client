@@ -3,7 +3,7 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
   @AdeguamentoIndirizzoANPR_Old
   Scenario Outline: [DIRECT_CALL_TO_ANPR_OLD] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a OLD, verificare la correttezza dei dati
     When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
-    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "OLD"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo OLD
     Examples:
       | taxId            |
       #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
@@ -30,7 +30,7 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
   @AdeguamentoIndirizzoANPR_Minimal
   Scenario Outline: [DIRECT_CALL_TO_ANPR_MINIMAL] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a MINIMAL, verificare la correttezza dei dati
     When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
-    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "MINIMAL"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo MINIMAL
     Examples:
       | taxId            |
       #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
@@ -58,7 +58,7 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
   @AdeguamentoIndirizzoANPR_Full
   Scenario Outline: [DIRECT_CALL_TO_ANPR_FULL] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a FULL, verificare la correttezza dei dati
     When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
-    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "FULL"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo FULL
     Examples:
       | taxId            |
       #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
@@ -85,7 +85,7 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
   @AdeguamentoIndirizzoANPR_Old_UAT
   Scenario Outline: [DIRECT_CALL_TO_ANPR_OLD_UAT] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a OLD, verificare la correttezza dei dati
     When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
-    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "OLD"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo OLD
     Examples:
       | taxId            |
       #toponimo.denominazione=CAVOUR;toponimo.specie=null;numero=1;lettera=null;metrico=0;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno2=4;isolato=7
@@ -100,7 +100,7 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
   @AdeguamentoIndirizzoANPR_Minimal_UAT
   Scenario Outline: [DIRECT_CALL_TO_ANPR_MINIMAL_UAT] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a MINIMAL, verificare la correttezza dei dati
     When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
-    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "MINIMAL"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo MINIMAL
     Examples:
       | taxId            |
       #toponimo.denominazione=CAVOUR;toponimo.specie=null;numero=1;lettera=null;metrico=0;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno2=4;isolato=7
@@ -115,7 +115,7 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
   @AdeguamentoIndirizzoANPR_Full_UAT
   Scenario Outline: [DIRECT_CALL_TO_ANPR_FULL_UAT] Interrogando NationalRegistry quando l'algoritmo per il calcolo di address e addressDetail è impostato a FULL, verificare la correttezza dei dati
     When viene interrogato nationalRegistry per il codice fiscale "<taxId>"
-    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo "FULL"
+    Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo FULL
     Examples:
       | taxId            |
       #toponimo.denominazione=CAVOUR;toponimo.specie=null;numero=1;lettera=null;metrico=0;progSnc=10;scala=null;colore=1;scalaEsterna=3;interno2=4;isolato=7

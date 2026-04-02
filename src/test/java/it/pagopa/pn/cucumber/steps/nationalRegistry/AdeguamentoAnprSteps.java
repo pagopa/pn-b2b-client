@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.nationalRegistry;
 
 import com.jayway.jsonpath.JsonPath;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -31,75 +32,84 @@ public class AdeguamentoAnprSteps {
     private String addressDetail;
     private static final String ASSERT_MSG_FORMAT = "Il campo %s calcolato con algoritmo %s per il taxId %s non coincide con quanto atteso";
 
+    enum AnprAlgorithm {
+        OLD, MINIMAL, FULL
+    }
+
+    @ParameterType("OLD|MINIMAL|FULL")
+    public static AnprAlgorithm anprAlgorithm(String value) {
+        return AnprAlgorithm.valueOf(value);
+    }
+
     @AllArgsConstructor
     private static class ExpectedAnprOutput {
         private String address;
         private String addressDetails;
     }
 
-    private static final Map<String, Map<String, ExpectedAnprOutput>> ANPR_ADDRESS_MAP = Map.ofEntries(
+    private static final Map<String, Map<AnprAlgorithm, ExpectedAnprOutput>> ANPR_ADDRESS_MAP = Map.ofEntries(
             //CF per ambienti inferiori a UAT censiti sul Mock NR
             entry("GNVGCM97E04L781N", Map.of(
-                    "OLD", new ExpectedAnprOutput("  ", "2"),
-                    "MINIMAL", new ExpectedAnprOutput("", "ROSSO Scala 2"),
-                    "FULL", new ExpectedAnprOutput("", "ROSSO Corte 1 Scala 2 Scala est. SCAL 2"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("  ", "2"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("", "ROSSO Scala 2"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("", "ROSSO Corte 1 Scala 2 Scala est. SCAL 2"))),
             entry("JNOFBN86B05L781H", Map.of(
-                    "OLD", new ExpectedAnprOutput("", ""),
-                    "MINIMAL", new ExpectedAnprOutput("", ""),
-                    "FULL", new ExpectedAnprOutput("", ""))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("", ""),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("", ""))),
             entry("BLLBBR95D46L781R", Map.of(
-                    "OLD", new ExpectedAnprOutput("", ""),
-                    "MINIMAL", new ExpectedAnprOutput("", ""),
-                    "FULL", new ExpectedAnprOutput("", ""))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("", ""),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("", ""))),
             entry("PRZPLA89E02L781K", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A KM 50", ""),
-                    "FULL", new ExpectedAnprOutput("Via Elena da Persico KM 50", ""))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A KM 50", ""),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico KM 50", ""))),
             entry("BRNBNN92S02L781R", Map.of(
-                    "OLD", new ExpectedAnprOutput(" Elena da Persico A", "5"),
-                    "MINIMAL", new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"),
-                    "FULL", new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput(" Elena da Persico A", "5"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"))),
             entry("LNNLNZ02L27L781Z", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A CAD", ""))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico 12/A CAD", ""))),
             entry("QDRQMD99C20L781Y", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "BLU"),
-                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "BLU Interno 5 A"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A", "BLU"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico 12/A", "BLU Interno 5 A"))),
             entry("JRIJNN05A01L781M", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "Non res."),
-                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "Non res. Interno 42 D"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A", "Non res."),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico 12/A", "Non res. Interno 42 D"))),
             entry("RZORNZ95C11L781S", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "ROSSO"),
-                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A", "ROSSO Primo interno 5 A Secondo interno 42 D"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A", "ROSSO"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico 12/A", "ROSSO Primo interno 5 A Secondo interno 42 D"))),
             entry("RGHLVC01H09H501K", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Elena da Persico 12/A SNC", "Res."),
-                    "FULL", new ExpectedAnprOutput("Via Elena da Persico 12/A SNC", "Res. Isolato 33"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A SNC", "Res."),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico 12/A SNC", "Res. Isolato 33"))),
             //CF per ambiente UAT censiti su Real NR
             entry("VRDLSM78B02F839R", Map.of(
-                    "OLD", new ExpectedAnprOutput(" CAVOUR 1", ""),
-                    "MINIMAL", new ExpectedAnprOutput("CAVOUR 1 SNC", "ROSSO"),
-                    "FULL", new ExpectedAnprOutput("CAVOUR 1 SNC", "ROSSO Scala est. 3 Interno 4 Isolato 7"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput(" CAVOUR 1", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("CAVOUR 1 SNC", "ROSSO"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("CAVOUR 1 SNC", "ROSSO Scala est. 3 Interno 4 Isolato 7"))),
             entry("RSSMSM85E15H501L", Map.of(
-                    "OLD", new ExpectedAnprOutput("VIA Po A", "2"),
-                    "MINIMAL", new ExpectedAnprOutput("VIA Po KM 100", "BLU Scala 2"),
-                    "FULL", new ExpectedAnprOutput("VIA Po KM 100", "BLU Corte 1 Scala 2 Scala est. 3 Isolato 6"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("VIA Po A", "2"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("VIA Po KM 100", "BLU Scala 2"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("VIA Po KM 100", "BLU Corte 1 Scala 2 Scala est. 3 Isolato 6"))),
             entry("KPRSMP91H12F205O", Map.of(
-                    "OLD", new ExpectedAnprOutput("VIA Via Elena da Persico 12/A", "1"),
-                    "MINIMAL", new ExpectedAnprOutput("VIA Via Elena da Persico 12/A SNC", "Res. Scala 1"),
-                    "FULL", new ExpectedAnprOutput("VIA Via Elena da Persico 12/A SNC", "Res. Corte 1 Scala 1 Scala est. 1 1 D"))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("VIA Via Elena da Persico 12/A", "1"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("VIA Via Elena da Persico 12/A SNC", "Res. Scala 1"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("VIA Via Elena da Persico 12/A SNC", "Res. Corte 1 Scala 1 Scala est. 1 1 D"))),
             entry("KRSJSM88S03H501A", Map.of(
-                    "OLD", new ExpectedAnprOutput(" SOLO TOPONIMO ", ""),
-                    "MINIMAL", new ExpectedAnprOutput("SOLO TOPONIMO", ""),
-                    "FULL", new ExpectedAnprOutput("SOLO TOPONIMO", ""))),
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput(" SOLO TOPONIMO ", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("SOLO TOPONIMO", ""),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("SOLO TOPONIMO", ""))),
             entry("BSMGPR92R62F205X", Map.of(
-                    "OLD", new ExpectedAnprOutput("Via Fiume 1/A", ""),
-                    "MINIMAL", new ExpectedAnprOutput("Via Fiume 1/A SNC", "ROSSO"),
-                    "FULL", new ExpectedAnprOutput("Via Fiume 1/A SNC", "ROSSO Scala est. 3 Interno 4 Isolato 6")))
+                    AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Fiume 1/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Fiume 1/A SNC", "ROSSO"),
+                    AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Fiume 1/A SNC", "ROSSO Scala est. 3 Interno 4 Isolato 6")))
     );
 
     @Autowired
@@ -140,14 +150,14 @@ public class AdeguamentoAnprSteps {
         anprResponseBody = B2bUtils.logPrettyResponse(response.body());
     }
 
-    @Then("si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo {string}")
-    public void checkAddress(String algoritmo) {
+    @Then("si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo {anprAlgorithm}")
+    public void checkAddress(AnprAlgorithm algorithm) {
         assertThat(anprResponseBody).as("La response ottenuta da ANPR non dev'essere null").isNotNull();
 
-        ExpectedAnprOutput expectedOutput = ANPR_ADDRESS_MAP.get(taxId).get(algoritmo);
+        ExpectedAnprOutput expectedOutput = ANPR_ADDRESS_MAP.get(taxId).get(algorithm);
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algoritmo, taxId)).isEqualTo(expectedOutput.address);
-            softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algoritmo, taxId)).isEqualTo(expectedOutput.addressDetails);
+            softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo(expectedOutput.address);
+            softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo(expectedOutput.addressDetails);
         });
     }
 }
