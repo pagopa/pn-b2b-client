@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber;
+package it.pagopa.pn.interop.cucumber.plugins;
 
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;

@@ -13,7 +13,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 value = "pretty," +
                         "json:target/cucumber-report-nrt-bff-m2mv2.json," +
                         "html:target/cucumber-report-nrt-bff-m2mv2.html," +
-                        "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
+                        "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V2;" +
                         "api.mode=RIGHT_FIT;" +
                         "api.set=M2M;" +
