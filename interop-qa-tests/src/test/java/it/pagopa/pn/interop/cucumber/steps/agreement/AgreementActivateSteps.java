@@ -5,13 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
@@ -189,7 +183,6 @@ public class AgreementActivateSteps {
  */
         BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::assignCertifiedAttributeToTenant;
         createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction);
-
     }
 
     @Given("due gruppi di due attributi dichiarati, dei quali {string} ne possiede uno per gruppo")
@@ -222,8 +215,10 @@ public class AgreementActivateSteps {
             sharedStepsContext.getAttributeCommonContext().setRequiredVerifiedAttributes(requiredAttributes);
         else if (attributeKind == AttributeKind.CERTIFIED)
             sharedStepsContext.getAttributeCommonContext().setRequiredCertifiedAttributes(requiredAttributes);
-        else
+        else if (attributeKind == AttributeKind.DECLARED)
             sharedStepsContext.getAttributeCommonContext().setRequiredDeclaredAttributes(requiredAttributes);
+        else
+            throw new IllegalArgumentException("Unsupported AttributeKind: " + attributeKind);
     }
 
     @Given("{string} crea due gruppi di due attributi verificati")
