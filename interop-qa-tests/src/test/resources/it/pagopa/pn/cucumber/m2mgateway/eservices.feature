@@ -1066,20 +1066,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
     And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
-    And si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And si ottiene lo status code 200
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     When il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     And l'utente è un "admin" dell'ente delegato
-    And l'utente inoltra quella richiesta di fruizione
+    Then l'utente inoltra quella richiesta di fruizione
     And si ottiene lo status code 200
-    #Controlla che la richiesta sia in stato active
-    Then la richiesta di fruizione è passata in stato "ACTIVE"
+    And la richiesta di fruizione è passata in stato "ACTIVE"
 
   @eservice_published_delegation
   @happy-path
@@ -1091,23 +1088,16 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
     And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
-    And si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And si ottiene lo status code 200
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
-    And si ottiene lo status code 200
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     And l'utente è un "admin" dell'ente delegato
-    #Controlla che la richiesta sia in stato active
     Then la richiesta di fruizione è passata in stato "ACTIVE"
 
   @eservice_published_delegation
@@ -1120,26 +1110,19 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
     And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
-    And si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And si ottiene lo status code 200
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
-    And si ottiene lo status code 200
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     And il delegato ha già creato 1 client "CONSUMER"
-    And l'utente è un "admin" dell'ente delegato
-    When l'utente richiede l'associazione della finalità al client
-    Then si ottiene status code 200
+    When "PA1" associa la finalità al client creato con successo
+    Then si ottiene status code 204
 
   @eservice_published_delegation
   @sad-path
@@ -1151,23 +1134,17 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
     And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
-    And si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And si ottiene lo status code 200
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
-    And si ottiene lo status code 200
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And il delegato ha già creato 1 client "CONSUMER"
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
-    And il delegato ha già creato 1 client "CONSUMER"
     And l'utente è un "admin" dell'ente delegato
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
@@ -1178,8 +1155,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "GSP" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
     And l'ente delegato "PA1"
@@ -1187,21 +1162,16 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
     And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
-    And si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And si ottiene lo status code 200
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
-    And si ottiene lo status code 200
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    And l'utente è un "admin" dell'ente delegato
-    When l'utente richiede l'associazione della finalità al client
-    Then si ottiene status code 200
+    When "PA1" associa la finalità al client creato con successo
+    Then si ottiene status code 204
 
   @eservice_published_delegation
   @sad-path
@@ -1209,8 +1179,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     Given "GSP" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
-    And si ottiene lo status code 200
-    And l'e-service restituito è coerente con le modifiche effettuate
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
     And l'ente delegato "PA1"
@@ -1218,19 +1186,14 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
     And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
-    And si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And si ottiene lo status code 200
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
-    And si ottiene lo status code 200
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    And l'utente è un "admin" dell'ente delegato
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
 
@@ -1242,10 +1205,12 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo
+    And l'utente è un m2m-admin dell'ente delegante
+    And l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
+    And la delega è stata inoltrata correttamente
+    And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    And l'utente è un "admin" dell'ente delegato
     And l'utente inoltra quella richiesta di fruizione
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
