@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.config;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.interop.config.springconfig.ApiProfile;
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
 import it.pagopa.pn.interop.cucumber.ApiProfileConfig;
 import it.pagopa.pn.interop.cucumber.ApiProfileContext;
