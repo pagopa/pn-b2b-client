@@ -36,6 +36,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -135,7 +136,7 @@ public class PnExternalServiceClientImpl {
         return safeStoragePnServiceDeskInfoWithHttpInfo(fileKey).getBody();
     }
 
-    private RestTemplate createRestTemplateWithoutSSLVerification() {
+    /*private RestTemplate createRestTemplateWithoutSSLVerification() {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
@@ -160,6 +161,27 @@ public class PnExternalServiceClientImpl {
             return rt;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }*/
+
+    private RestTemplate createRestTemplateWithoutSSLVerification() {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() { return new java.security.cert.X509Certificate[0]; }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+            }}, new SecureRandom());
+
+            // HttpsURLConnection deve ignorare anche la verifica dell'hostname
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+
+            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+            requestFactory.setBufferRequestBody(false);
+            return new RestTemplate(requestFactory);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore nella creazione del RestTemplate insecure", e);
         }
     }
 

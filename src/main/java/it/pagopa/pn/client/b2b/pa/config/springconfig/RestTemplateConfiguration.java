@@ -31,42 +31,14 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-
-    /*
-        @Bean(name = "customRestTemplate")
-        @Primary
-        @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-        public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-            HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-            factory.setBufferRequestBody(false);
-
-            RestTemplate restTemplate = new RestTemplate(factory);
-            restTemplate.setInterceptors(Collections.singletonList(new RequestAndTraceIdInterceptor()));
-
-            return restTemplate;
-        }
-
-
-            @Bean(name = "customRestTemplate")
-            @Primary
-            @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-            public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-                HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-                factory.setBufferRequestBody(false);
-                RestTemplate restTemplate = new RestTemplate(factory);
-                restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-                return restTemplate;
-            }
-     */
-    @Bean
+    @Bean(name = "customRestTemplate")
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setBufferRequestBody(false);
-        restTemplate.setRequestFactory(factory);
-        restTemplate.setInterceptors(List.of(new RequestAndTraceIdInterceptor()));
+        RestTemplate restTemplate = new RestTemplate(factory);
+        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
         return restTemplate;
     }
 
