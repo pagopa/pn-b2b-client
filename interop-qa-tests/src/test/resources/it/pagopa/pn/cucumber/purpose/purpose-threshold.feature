@@ -166,8 +166,10 @@ Feature: Verifica soglie differenziate
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
     And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "100"
     And l'utente tenta di aggiungere una soglia differenziata di 1000 per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "1000"
     And l'utente è un "admin" di "PA2"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 100
@@ -187,8 +189,10 @@ Feature: Verifica soglie differenziate
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
     And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "100"
     And l'utente tenta di aggiungere una soglia differenziata di 200 per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "200"
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 300
     And si ottiene status code 200
