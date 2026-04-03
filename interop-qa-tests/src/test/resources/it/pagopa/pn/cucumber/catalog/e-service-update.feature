@@ -225,4 +225,5 @@ Feature: Aggiornamento di un e-service non pubblicato
     And l'utente è un "admin" di "PA2"
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
     Then si ottiene lo status code 403
+    And l'utente è un "admin" di "PA1"
     And le flag di delega dell'e-service non hanno subito modifiche
