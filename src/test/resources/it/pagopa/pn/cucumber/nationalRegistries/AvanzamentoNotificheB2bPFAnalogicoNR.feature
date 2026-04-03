@@ -54,11 +54,11 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details_responseStatus  | KO       |
       | details_physicalAddress | {}       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true     |
-      | details                 | NOT_NULL |
-      | details_recIndex        | 0        |
-      | details_sentAttemptMade | 1        |
-      | details_responseStatus  | OK       |
+      | loadTimeline            | true                                                                    |
+      | details                 | NOT_NULL                                                                |
+      | details_recIndex        | 0                                                                       |
+      | details_sentAttemptMade | 1                                                                       |
+      | details_responseStatus  | OK                                                                      |
       | details_physicalAddress | {"address": "Via Umbria 5 L", "municipality": "PADOVA", "zip": "35127"} |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
@@ -173,59 +173,68 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
 #  2. CF: XVRCSR87M15L781X  -> campo Città/Località non valorizzato;
 #  3. CF: XVRSFN76E31L781N  -> campi Via/Indirizzo e Città/Località non valorizzati.
 
-  @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_1] Validazione sulla deduplica al secondo tentativo con VIA non valorizzato
+#indirizzi esteri:
+#  1. XXIFBN99A01D612K no address e municipality
+#  2. XVRLVC90A01H501P no address
+#  3. XVRGPL80A01L781A no municipality
+
+#  ANPR REALE Italiano / no address KRSJSM88S03H501A
+
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_1] AR-Validazione sulla deduplica al secondo tentativo con VIA non valorizzato-nazionale
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi              |
-      | taxId                   | XVRPLN98S16L781X          |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+      | denomination            | Matteo Rossi             |
+      | taxId                   | XVRPLN98S16L781X         |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
 
-  @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_2] Validazione sulla deduplica al secondo tentativo con citta non valorizzato
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_2] AR-Validazione sulla deduplica al secondo tentativo con citta non valorizzato-nazionale
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi              |
+      | denomination            | Matteo Rossi             |
       | taxId                   | XVRCSR87M15L781X         |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
 
-  @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_3] Validazione sulla deduplica al secondo tentativo con citta e via non valorizzati
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_3] AR-Validazione sulla deduplica al secondo tentativo con citta e via non valorizzati-nazionale
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi              |
-      | taxId                   | XVRSFN76E31L781N          |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+      | denomination    | Matteo Rossi     |
+      | taxId           | XVRSFN76E31L781N |
+      | recipientType   | PF               |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
 
-  @workflowAnalogico @mockNR
+  @workflowAnalogico @mockNR @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_B] Multidestinatario Validazione sulla deduplica al secondo tentativo con campo mancante
     Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Matteo Rossi              |
       | taxId                   | XVRPLN98S16L781X          |
@@ -241,18 +250,191 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
-  @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_C] AR -Validazione sulla deduplica al secondo tentativo con VIA non valorizzato
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_C] 890 - Validazione sulla deduplica al secondo tentativo con VIA non valorizzato
     Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | AR_REGISTERED_LETTER            |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Matteo Rossi              |
       | taxId                   | XVRPLN98S16L781X          |
       | recipientType           | PF                        |
       | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_5] Validazione sulla deduplica al secondo tentativo con VIA non valorizzato-estero
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | Matteo Rossi              |
+      | taxId                   | XXIFBN99A01D612K          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_6] Validazione sulla deduplica al secondo tentativo con citta non valorizzato-estero
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | Matteo Rossi              |
+      | taxId                   | XVRLVC90A01H501P          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+
+  @workflowAnalogico @mockNR @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_7] Validazione sulla deduplica al secondo tentativo con citta e via non valorizzati-estero
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | Matteo Rossi              |
+      | taxId                   | XVRGPL80A01L781A          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+
+
+  # seguono test sulla validazione normalizzatore batch -> NECESSARIO VAS ATTIVO
+
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_8] Validazione sulla deduplica VAS indirizzo nazionale
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF Censito campi-mancanti |
+      | taxId           | XVRPLN98S16L781X          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_9] Validazione sulla deduplica VAS indirizzo nazionale
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF Censito campi-mancanti |
+      | taxId           | XVRCSR87M15L781X          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_10] Validazione sulla deduplica VAS indirizzo nazionale
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF Censito campi-mancanti |
+      | taxId           | XVRSFN76E31L781N          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+  #@validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_11] Validazione sulla deduplica VAS indirizzo estero
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF Censito campi-mancanti |
+      | taxId           | XVRGPL80A01L781A          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+  #@validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_12] Validazione sulla deduplica VAS indirizzo estero
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF Censito campi-mancanti |
+      | taxId           | XVRLVC90A01H501P          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+  #@validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_13] Validazione sulla deduplica VAS indirizzo estero
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF Censito campi-mancanti |
+      | taxId           | XXIFBN99A01D612K          |
+      | digitalDomicile | NULL                      |
+      | physicalAddress | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+
+#  seguono test sulla deduplica su ANPR reale - solo ambiente UAT
+
+  @validazioneDeduplicaUAT @realNR
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_IT_NAD_UAT] Validazione sulla deduplica al secondo tentativo con citta non valorizzato-estero-ANPR reale
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | Matteo Rossi              |
+      | taxId                   | KRSJSM88S03H501A          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+
+
