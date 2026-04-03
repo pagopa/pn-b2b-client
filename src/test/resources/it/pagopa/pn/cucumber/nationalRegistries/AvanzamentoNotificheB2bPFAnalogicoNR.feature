@@ -54,11 +54,11 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details_responseStatus  | KO       |
       | details_physicalAddress | {}       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true     |
-      | details                 | NOT_NULL |
-      | details_recIndex        | 0        |
-      | details_sentAttemptMade | 1        |
-      | details_responseStatus  | OK       |
+      | loadTimeline            | true                                                                    |
+      | details                 | NOT_NULL                                                                |
+      | details_recIndex        | 0                                                                       |
+      | details_sentAttemptMade | 1                                                                       |
+      | details_responseStatus  | OK                                                                      |
       | details_physicalAddress | {"address": "Via Umbria 5 L", "municipality": "PADOVA", "zip": "35127"} |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
@@ -221,11 +221,10 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Matteo Rossi             |
-      | taxId                   | XVRSFN76E31L781N         |
-      | recipientType           | PF                       |
-      | digitalDomicile         | NULL                     |
-      #| physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | denomination    | Matteo Rossi     |
+      | taxId           | XVRSFN76E31L781N |
+      | recipientType   | PF               |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
