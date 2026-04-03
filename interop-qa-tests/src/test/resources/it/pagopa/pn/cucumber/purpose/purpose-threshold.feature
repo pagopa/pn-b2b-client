@@ -160,17 +160,16 @@ Feature: Verifica soglie differenziate
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_7] Per la creazione di una finalità in stato ACTIVE il sistema attribuisce la soglia maggiore degli attributi certificati definiti in gruppi differenti
-    Given l'utente è un "admin" di "PA2"
-    And due gruppi di due attributi certificati da "PA2", dei quali "PA1" ne possiede uno per gruppo
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
     And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
     And si ottiene status code 200
     And l'utente tenta di aggiungere una soglia differenziata di 1000 per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo
     And si ottiene status code 200
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 100
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
@@ -202,20 +201,20 @@ Feature: Verifica soglie differenziate
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_9] Una richiesta con API BFF per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And l'utente assegna a "PA1" gli attributi certificati precedentemente creati
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA2" gli attributi certificati precedentemente creati
     And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
     And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 1
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     And si ottiene status code 200 e la finalità in stato "ACTIVE"
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
     Then si ottiene status code <statusCode>
 
@@ -234,20 +233,20 @@ Feature: Verifica soglie differenziate
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_9b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
-    And l'utente assegna a "PA1" gli attributi certificati precedentemente creati
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA2" gli attributi certificati precedentemente creati
     And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
     And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 1
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     And si ottiene status code 200 e la finalità in stato "ACTIVE"
-    When l'utente è un "<role>" di "PA1" con ruolo M2M <m2mRole>
+    When l'utente è un "<role>" di "PA2" con ruolo M2M <m2mRole>
     And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
     Then si ottiene status code <statusCode>
 
