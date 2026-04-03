@@ -1,4 +1,4 @@
-package it.pagopa.interop.config.springconfig;
+package it.pagopa.interop.conf.api_profile;
 
 import lombok.Getter;
 
