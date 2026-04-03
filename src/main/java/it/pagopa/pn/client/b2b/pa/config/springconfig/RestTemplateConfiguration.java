@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -60,18 +58,17 @@ public class RestTemplateConfiguration {
                 return restTemplate;
             }
      */
-        @Bean
-        @Primary
-        @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-        public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
-            RestTemplateBuilder builder = new RestTemplateBuilder();
-            HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-            factory.setBufferRequestBody(false);
-            return builder
-                    .requestFactory(() -> factory)
-                    .interceptors(new RequestAndTraceIdInterceptor())
-                    .build();
-        }
+    @Bean
+    @Primary
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setBufferRequestBody(false);
+        restTemplate.setRequestFactory(factory);
+        restTemplate.setInterceptors(List.of(new RequestAndTraceIdInterceptor()));
+        return restTemplate;
+    }
 
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
