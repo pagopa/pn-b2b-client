@@ -70,8 +70,8 @@ public class DPoPSteps {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, DEFAULT_HTTP_METHOD, DEFAULT_OAUTH_SERVER_URL);
 
         try {
-            log.info("Attesa di 61 secondi per far scadere il campo 'iat' della DPoP proof...");
-            Thread.sleep(61000);
+            log.info("Attesa di 63 secondi per far scadere il campo 'iat' della DPoP proof...");
+            Thread.sleep(63000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
