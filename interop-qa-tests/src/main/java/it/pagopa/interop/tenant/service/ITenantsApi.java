@@ -14,6 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,5 +54,6 @@ public interface ITenantsApi extends SettableBearerToken {
 
     void addTenantMail(UUID tenantId, MailSeed mailSeed);
 
+    ResponseEntity<Void> addTenantMailWithHttpInfo(UUID tenantId, MailSeed mailSeed);
 
 }

@@ -230,11 +230,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_recIndex           | 0        |
       | details_deliveryDetailCode | CON080   |
       | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON020   |
-      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
@@ -247,6 +242,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG001B                 |
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG015[FAILCAUSE:C01].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
 
 

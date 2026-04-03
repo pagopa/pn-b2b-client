@@ -15,6 +15,7 @@ import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.purposetemplate.ParameterTypesInterop.ResourceState;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.PurposeTemplateResolver;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
@@ -32,6 +33,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.IterableUtils.isEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -186,22 +188,6 @@ public class PurposeTemplateSteps {
         return purposeTemplateCreationRequest;
     }
 
-    private PurposeTemplateSeed buildMandatoryPurposeTemplateSeed() {
-        PurposeTemplateSeed seed = new PurposeTemplateSeed();
-
-        seed.setTargetDescription("target-description-" + UUID.randomUUID());
-        seed.setTargetTenantKind(it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind.PA);
-
-        seed.setPurposeTitle("purpose-title-" + UUID.randomUUID());
-        seed.setPurposeDescription("purpose-description-" + UUID.randomUUID());
-
-        seed.setPurposeIsFreeOfCharge(Boolean.TRUE);
-        seed.setHandlesPersonalData(Boolean.FALSE);
-
-        return seed;
-    }
-
-
     private void invokeCreatePurposeTemplate() {
         httpCallExecutor.performCall(() -> purposeTemplateClient.createPurposeTemplate(purposeTemplateCreationRequest));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
@@ -269,6 +255,13 @@ public class PurposeTemplateSteps {
         getPurposeTemplateById(ptId, exists);
     }
 
+    @When("si effettua la get del purpose template")
+    public void getPurposeTemplate() {
+        boolean exists = createdPurposeTemplate.getId() != null;
+        UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId));
+    }
+
     @When("si effettua la get by creator di tutti i purpose template in stato {string}")
     public void getAllPurposeTemplatesByCreator(String status) {
         List<PurposeTemplateState> state;
@@ -301,28 +294,30 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @When("si aggiorna il purpose template {exists}")
-    public void updatePurposeTemplateRequest(boolean exists) {
+    @When("si aggiorna il purpose template {isVisible}")
+    public void updatePurposeTemplateRequest(ResourceState resourceState) {
         purposeTemplateCreationRequest.setPurposeTitle("updated_purposeTitle_" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("updated_purposeDescription_" + DateTime.now());
         purposeTemplateCreationRequest.setTargetDescription("updated_targetDescription_" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("updated_purposeFreeOfChargeReason_" + DateTime.now());
         purposeTemplateCreationRequest.setTargetTenantKind(TargetTenantKind.PA);
-        invokeUpdatePurposeTemplate(exists);
+        invokeUpdatePurposeTemplate(resourceState);
     }
 
     @When("si aggiorna il purpose template {exists} con errore di tipo {purposeTemplateError}")
     public void updatePurposeTemplateWithError(boolean exists, PurposeTemplateErrorTypes error) {
         insertErrorsOnPurpose(error);
-        invokeUpdatePurposeTemplate(exists);
+        invokeUpdatePurposeTemplate(ResourceState.VISIBLE);
     }
 
-    private void invokeUpdatePurposeTemplate(boolean exists) {
-        UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
+    private void invokeUpdatePurposeTemplate(ResourceState resourceState) {
+        UUID ptId = resourceState.equals(ResourceState.VISIBLE) || resourceState.equals(ResourceState.NOT_VISIBLE)
+                ? createdPurposeTemplate.getId()
+                : UUID.randomUUID();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(ptId, purposeTemplateCreationRequest)),
-                res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
-                "Failed to retrieve the client!"
+                res -> resourceState.equals(ResourceState.VISIBLE) ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
+                "Failed to retrieve the purpose template!"
         );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             purposeTemplate = (PurposeTemplate) httpCallExecutor.getResponse();
@@ -511,14 +506,20 @@ public class PurposeTemplateSteps {
     }
 
     private void waitUntilStateIn(@Nonnull PurposeTemplateState ptState) {
-        UUID purposeTemplateId = sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId();
+        waitUntilStateIn(null, ptState);
+    }
+
+    private void waitUntilStateIn(UUID purposeTemplateId, @Nonnull PurposeTemplateState ptState) {
+        UUID templateId = isNull(purposeTemplateId)
+                ? sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId()
+                : purposeTemplateId;
         pollingService.makePolling(
-            () -> purposeTemplateClient.getPurposeTemplateWithHttpInfo(purposeTemplateId),
-            response ->
-                response.getStatusCode().is2xxSuccessful()
-                    && nonNull(response.getBody())
-                    && ptState.equals(response.getBody().getState()),
-            "Non è stato possibile reperire il purpose template '%s' nello stato desiderato '%s'".formatted(purposeTemplateId, ptState)
+                () -> purposeTemplateClient.getPurposeTemplateWithHttpInfo(templateId),
+                response ->
+                        response.getStatusCode().is2xxSuccessful()
+                                && nonNull(response.getBody())
+                                && ptState.equals(response.getBody().getState()),
+                "Non è stato possibile reperire il purpose template '%s' nello stato desiderato '%s'".formatted(templateId, ptState)
         );
     }
 
@@ -613,16 +614,18 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @And("viene aggiunta un'annotazione con testo {isInRange} i {int} caratteri ad una risposta {exists} del purpose template")
-    public void createRiskAnalysisAnswerAnnotation(boolean inRange, int maxLimit, boolean answerExists) {
+    @And("viene aggiunta un'annotazione con testo {isInRange} i {int} caratteri ad una risposta {isVisible} del purpose template")
+    public void createRiskAnalysisAnswerAnnotation(boolean inRange, int maxLimit, ResourceState resourceState) {
         assertThat(createdPurposeTemplate).as("Il purpose template creato non dev'essere null").isNotNull();
         assertThat(riskAnalysis).as("La risposta di analisi del rischio non dev'essere null").isNotNull();
         UUID ptId = createdPurposeTemplate.getId();
-        UUID answerId = answerExists ? riskAnalysis.getId() : UUID.randomUUID();
+        UUID answerId = resourceState.equals(ResourceState.VISIBLE) || resourceState.equals(ResourceState.NOT_VISIBLE)
+                ? riskAnalysis.getId()
+                : UUID.randomUUID();
         RiskAnalysisTemplateAnswerAnnotationSeed annotationText = new RiskAnalysisTemplateAnswerAnnotationSeed();
         String text = inRange ? "Y".repeat(maxLimit) : "N".repeat(maxLimit + 1);
         annotationText.setText(text);
-        if (answerExists) {
+        if (resourceState.equals(ResourceState.VISIBLE)) {
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswerAnnotation(ptId, answerId, annotationText)),
                     res -> res != HttpStatus.NOT_FOUND,
@@ -654,17 +657,23 @@ public class PurposeTemplateSteps {
         }
     }
 
-    @Then("vengono caricati {int} documenti {string} associati all'annotazione {exists}")
-    public void uploadAnnotationDocument(int docNumber, String casistica, boolean exists) {
+    @Then("vengono caricati {int} documenti {string} associati all'annotazione {isVisible}")
+    public void uploadAnnotationDocument(int docNumber, String casistica, ResourceState resourceState) {
         UUID ptId = createdPurposeTemplate.getId();
-        UUID answerId = exists ? riskAnalysis.getId() : UUID.randomUUID();
+        UUID answerId;
+        // TODO migliorare con un enhanced switch o architettando meglio ad oggetti il meccanismo alla base di ResourceState
+        if(resourceState.equals(ResourceState.VISIBLE) || resourceState.equals(ResourceState.NOT_VISIBLE)) {
+            answerId = riskAnalysis.getId();
+        } else {
+            answerId = UUID.randomUUID();
+        }
 
         for (int i = 1; i <= docNumber; i++) {
             org.springframework.core.io.Resource doc = getDocument(casistica, i);
             String prettyName = getPrettyName(casistica, i);
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(ptId, answerId, prettyName, doc)),
-                    res -> exists ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
+                    res -> resourceState.equals(ResourceState.VISIBLE) ? res != HttpStatus.NOT_FOUND : res == HttpStatus.NOT_FOUND,
                     "Failed to retrieve the client!"
             );
             //supponiamo di voler caricare 3 documenti (dove il terzo genera errore), devo accertarmi che i primi due siano andati a buon fine
@@ -958,7 +967,7 @@ public class PurposeTemplateSteps {
         Boolean handlesPersonalDataValue = resolver.resolveHandlesPersonalData(handlesPersonalData);
 
         // 2) Seed con soli campi obbligatori popolati (valori validi di default)
-        PurposeTemplateSeed seed = buildMandatoryPurposeTemplateSeed();
+        PurposeTemplateSeed seed = prepareCreationRequest(handlesPersonalDataValue);
 
         // 3) Override SEMPRE dei campi parametrizzati (anche a null)
         seed.setPurposeTitle(purposeTitleValue);
@@ -978,6 +987,8 @@ public class PurposeTemplateSteps {
         Assertions.assertThat(created.getId()).as("Id creato non deve essere null").isNotNull();
 
         UUID purposeTemplateId = created.getId();
+
+        waitUntilStateIn(purposeTemplateId, PurposeTemplateState.DRAFT);
 
         // 5) Recupero template completo (così ho creatorId/state reali)
         PurposeTemplateWithCompactCreator pt = purposeTemplateClient.getPurposeTemplate(purposeTemplateId);
@@ -1019,19 +1030,28 @@ public class PurposeTemplateSteps {
                 // Non vedo metodi "backToDraft" nel client: quindi non posso forzare DRAFT.
                 // Se ti serve davvero, serve un endpoint o ricreare un template nuovo.
             }
-            case PUBLISHED -> purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+            case PUBLISHED -> {
+                purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+                waitUntilStateIn(purposeTemplateId, PurposeTemplateState.PUBLISHED);
+            }
 
             case SUSPENDED -> {
                 // tipicamente devi pubblicare prima di sospendere
                 purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+                waitUntilStateIn(purposeTemplateId, PurposeTemplateState.PUBLISHED);
+
                 purposeTemplateClient.suspendPurposeTemplate(purposeTemplateId);
+                waitUntilStateIn(purposeTemplateId, PurposeTemplateState.SUSPENDED);
             }
 
             case ARCHIVED -> {
                 // spesso si può archiviare da PUBLISHED (o anche da altri stati).
                 // Per sicurezza pubblica prima, poi archivia.
                 purposeTemplateClient.publishPurposeTemplate(purposeTemplateId);
+                waitUntilStateIn(purposeTemplateId, PurposeTemplateState.PUBLISHED);
+
                 purposeTemplateClient.archivePurposeTemplate(purposeTemplateId);
+                waitUntilStateIn(purposeTemplateId, PurposeTemplateState.ARCHIVED);
             }
 
             default -> throw new IllegalArgumentException("Stato non gestito: " + desired);
@@ -1118,7 +1138,7 @@ public class PurposeTemplateSteps {
 
         Boolean handlesPersonalDataValue = resolver.resolveHandlesPersonalData(handlesPersonalData);
 
-        PurposeTemplates response = purposeTemplateClient.getPurposeTemplates(
+        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplates(
                 offsetValue,
                 limitValue,
                 purposeTitleValue,
@@ -1127,65 +1147,66 @@ public class PurposeTemplateSteps {
                 statesValue,
                 targetTenantKindValue,
                 handlesPersonalDataValue
-        );
+        ));
 
-        Assertions.assertThat(response)
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            PurposeTemplates response = (PurposeTemplates) httpCallExecutor.getResponse();
+
+            Assertions.assertThat(response)
                 .as("La response contenente i purpose templates non deve essere null")
                 .isNotNull();
 
-        // === SOSTITUISCI getResults() col getter reale della lista ===
-        List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate> results =
-                response.getResults();
+            // === SOSTITUISCI getResults() col getter reale della lista ===
+            List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate> results =
+                    response.getResults();
 
-        Assertions.assertThat(results)
-                .as("La lista dei purpose templates non deve essere null")
-                .isNotNull();
+            Assertions.assertThat(results)
+                    .as("La lista dei purpose templates non deve essere null")
+                    .isNotNull();
 
-        for (var pt : results) {
-            // purposeTitle (match esatto)
-            if (purposeTitleValue != null) {
-                Assertions.assertThat(pt.getPurposeTitle())
-                        .as("purposeTitle deve rispettare il filtro")
-                        .isEqualTo(purposeTitleValue);
-            }
+            for (var pt : results) {
+                // purposeTitle (match esatto)
+                if (purposeTitleValue != null) {
+                    Assertions.assertThat(pt.getPurposeTitle())
+                            .as("purposeTitle deve rispettare il filtro")
+                            .isEqualTo(purposeTitleValue);
+                }
 
-            // creatorIds (IN)
-            if (creatorIdsValue != null && !creatorIdsValue.isEmpty()) {
-                Assertions.assertThat(pt.getCreatorId())
-                        .as("creatorId deve essere contenuto in creatorIds filter")
-                        .isIn(creatorIdsValue);
-            }
+                // creatorIds (IN)
+                if (creatorIdsValue != null && !creatorIdsValue.isEmpty()) {
+                    Assertions.assertThat(pt.getCreatorId())
+                            .as("creatorId deve essere contenuto in creatorIds filter")
+                            .isIn(creatorIdsValue);
+                }
 
-            // states (IN)
-            if (statesValue != null && !statesValue.isEmpty()) {
-                Assertions.assertThat(pt.getState())
-                        .as("state deve essere contenuto in states filter")
-                        .isIn(statesValue);
-            }
+                // states (IN)
+                if (statesValue != null && !statesValue.isEmpty()) {
+                    Assertions.assertThat(pt.getState())
+                            .as("state deve essere contenuto in states filter")
+                            .isIn(statesValue);
+                }
 
-            // targetTenantKind (match esatto)
-            if (targetTenantKindValue != null) {
-                Assertions.assertThat(pt.getTargetTenantKind())
-                        .as("targetTenantKind deve rispettare il filtro")
-                        .isEqualTo(targetTenantKindValue);
-            }
+                // targetTenantKind (match esatto)
+                if (targetTenantKindValue != null) {
+                    Assertions.assertThat(pt.getTargetTenantKind())
+                            .as("targetTenantKind deve rispettare il filtro")
+                            .isEqualTo(targetTenantKindValue);
+                }
 
-            // handlesPersonalData (match esatto)
-            if (handlesPersonalDataValue != null) {
-                Assertions.assertThat(pt.getHandlesPersonalData())
-                        .as("handlesPersonalData deve rispettare il filtro")
-                        .isEqualTo(handlesPersonalDataValue);
-            }
+                // handlesPersonalData (match esatto)
+                if (handlesPersonalDataValue != null) {
+                    Assertions.assertThat(pt.getHandlesPersonalData())
+                            .as("handlesPersonalData deve rispettare il filtro")
+                            .isEqualTo(handlesPersonalDataValue);
+                }
 
-            // eserviceIds: al momento nella response non trovo informazioni esplicite sugli ids
-            if (eserviceIdsValue != null && !eserviceIdsValue.isEmpty()) {
+                // eserviceIds: al momento nella response non trovo informazioni esplicite sugli ids
+                if (eserviceIdsValue != null && !eserviceIdsValue.isEmpty()) {
 
+                }
             }
         }
     }
-
-
-
 
     @When("l'utente tenta di effettuare la modifica parziale del purpose template")
     public void patchPurposeTemplate() {
@@ -1197,9 +1218,7 @@ public class PurposeTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")
     public void patchEService(String tenant, M2MRole m2mRole) {
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
-        String readToken = clientTokenConfigurator.getLastToken();
-        String patchToken = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        patchAssistant.patchResource(request, readToken, patchToken);
+        patchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale del purpose template specificando un sottoinsieme di informazioni")

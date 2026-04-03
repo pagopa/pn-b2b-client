@@ -26,8 +26,8 @@ Feature: Deleghe Temporanee 15755
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
-    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
+    And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"
     And l'operazione non ha prodotto alcun errore
     Then la notifica può essere correttamente letta tramite appIo dal delegato Mario Gherkin
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
@@ -338,7 +338,7 @@ Feature: Deleghe Temporanee 15755
   #37
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_ACCEPTATION_120_GIORNI] Accettazione senza successo di una delega temporanea che permette la visualizzazione di una notifica più vecchia di 120 giorni
-    Given "Comune_Multi" recupera lato web PA una notifica vecchia 120 o più giorni inviata a Mario Cucumber
+    Given "Comune_Multi" recupera lato web PA una notifica inviata tra 130 e 120 giorni fa con destinatario Mario Cucumber
     When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"

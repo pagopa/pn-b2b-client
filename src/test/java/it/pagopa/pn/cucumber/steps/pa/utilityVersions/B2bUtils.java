@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -78,7 +81,7 @@ public abstract class B2bUtils {
     public static final String APPLICATION_JSON = "application/json";
     public static final String APPLICATION_ZIP = "application/zip";
     public static final String TEXT_CSV = "text/csv";
-    public static final String ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL = "Attachment: resourceKey = {}, sha256 = {}, secret = {}, presignedUrl = {}";
+    public static final String ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL = "Attachment: resourceKey = {}, sha256 = {}, presignedUrl = {}";
     public static final String SHA_256_DIFFERS = "SHA256 differs ";
     public static final String NEW_NOTIFICATION_REQUEST = "New Notification Request {}";
     public static final String NEW_NOTIFICATION_RESPONSE = "New Notification Response {}";
@@ -221,7 +224,7 @@ public abstract class B2bUtils {
         String key = preLoadResponse.getKey();
         String secret = preLoadResponse.getSecret();
         String url = preLoadResponse.getUrl();
-        log.info("Attachment resourceKey={} sha256={} secret={} presignedUrl={}", resourceName, sha256, secret, url);
+        log.info("Attachment resourceKey={} sha256={} presignedUrl={}", resourceName, sha256, url);
 
         loadToPresigned(context, url, secret, sha256, resourceName, contentType);
         return new Pair<>(key, sha256);
@@ -248,7 +251,7 @@ public abstract class B2bUtils {
             log.info("Upload in catch, retry");
             try {
                 Thread.sleep(2000);
-                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}, secret: {}, sha256: {}, contentType: {}", Thread.currentThread().getId(), depth, url, secret, sha256, contentType);
+                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}, sha256: {}, contentType: {}", Thread.currentThread().getId(), depth, url, sha256, contentType);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(ex.getMessage());
@@ -291,7 +294,7 @@ public abstract class B2bUtils {
         String key = documentUploadResponse.getFileKey();
         String secret = documentUploadResponse.getSecret();
         String url = documentUploadResponse.getUrl();
-        log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
+        log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, url);
         if (usePresignedUrl) {
             loadToPresigned(context, url, secret, sha256, resourcePath, APPLICATION_PDF);
             log.info("UPLOAD RADD COMPLETE");
@@ -324,7 +327,7 @@ public abstract class B2bUtils {
         String key = documentUploadResponse.getFileKey();
         String secret = documentUploadResponse.getSecret();
         String url = documentUploadResponse.getUrl();
-        log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
+        log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, url);
         if (usePresignedUrl) {
             loadToPresigned(context, url, secret, sha256, resourcePath, APPLICATION_ZIP);
             log.info("UPLOAD RADD COMPLETE");
@@ -547,5 +550,27 @@ public abstract class B2bUtils {
             case NOTIFICATION_TIMELINE_REWORKED -> TimelineEventId.NOTIFICATION_TIMELINE_REWORKED.buildEventId(event);
             default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
+    }
+
+    /**
+     * Metodo statico di utility per formattare un json
+     */
+    public static String logPrettyResponse(String rawJson) {
+        try {
+            ObjectMapper objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+            Object jsonObject = objMapper.readValue(rawJson, Object.class);
+            String prettyJson = objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+            log.info("JSON formattato:\n{}", prettyJson);
+            return prettyJson;
+        } catch (Exception e) {
+            log.warn("Impossibile formattare il JSON, stampo l'originale: {}", rawJson);
+        }
+        return rawJson;
+    }
+
+    public static String getEnvironment(ApplicationContext context) {
+        String env = context.getEnvironment().getActiveProfiles()[0];
+        log.info("Environment in use is: {}", env);
+        return env;
     }
 }

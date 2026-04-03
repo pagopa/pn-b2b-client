@@ -2,7 +2,7 @@
 Feature: Generazione del voucher sulla creazione del client e sul caricamento della chiave
 
 @voucher_generation_client_and_keys1
-Scenario: La generazione del Voucher va a buon fine quando viene aggiunta una nuova chiave al client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_1] La generazione del Voucher va a buon fine quando viene aggiunta una nuova chiave al client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -16,7 +16,7 @@ Scenario: La generazione del Voucher va a buon fine quando viene aggiunta una nu
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys2
-Scenario: La generazione del Voucher va a buon fine quando viene rimossa una chiave dal client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_2] La generazione del Voucher va a buon fine quando viene rimossa una chiave dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -31,7 +31,7 @@ Scenario: La generazione del Voucher va a buon fine quando viene rimossa una chi
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys3
-Scenario: La generazione del Voucher va a buon fine quando viene aggiunta una nuova finalità al client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_3] La generazione del Voucher va a buon fine quando viene aggiunta una nuova finalità al client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -46,7 +46,7 @@ Scenario: La generazione del Voucher va a buon fine quando viene aggiunta una nu
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys4 @no-parallel
-Scenario: La generazione del Voucher va a buon fine quando viene rimossa una finalità dal client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_4] La generazione del Voucher va a buon fine quando viene rimossa una finalità dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -62,7 +62,7 @@ Scenario: La generazione del Voucher va a buon fine quando viene rimossa una fin
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys5
-Scenario: La generazione del Voucher va a buon fine quando la finalità viene aggiunta dopo la chiave
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_5] La generazione del Voucher va a buon fine quando la finalità viene aggiunta dopo la chiave
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -75,7 +75,7 @@ Scenario: La generazione del Voucher va a buon fine quando la finalità viene ag
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys6
-Scenario: La generazione del Voucher va a buon fine quando la finalità viene aggiunta prima della chiave
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_6] La generazione del Voucher va a buon fine quando la finalità viene aggiunta prima della chiave
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -88,7 +88,7 @@ Scenario: La generazione del Voucher va a buon fine quando la finalità viene ag
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys7
-Scenario: La generazione del Voucher va a buon fine quando l’unica finalità viene rimossa e una nuova finalità viene aggiunta
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_7] La generazione del Voucher va a buon fine quando l’unica finalità viene rimossa e una nuova finalità viene aggiunta
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -104,7 +104,7 @@ Scenario: La generazione del Voucher va a buon fine quando l’unica finalità v
     Then si ottiene la corretta generazione del voucher
 
 @voucher_generation_client_and_keys8
-Scenario: La generazione del Voucher fallisce quando l’unica chiave presente viene rimossa dal client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_8] La generazione del Voucher fallisce quando l’unica chiave presente viene rimossa dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -118,7 +118,7 @@ Scenario: La generazione del Voucher fallisce quando l’unica chiave presente v
     Then la richiesta di generazione del Voucher non va a buon fine
 
 @voucher_generation_client_and_keys9
-Scenario: La generazione del Voucher fallisce quando la chiave viene rimossa dal client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_9] La generazione del Voucher fallisce quando la chiave viene rimossa dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -133,7 +133,7 @@ Scenario: La generazione del Voucher fallisce quando la chiave viene rimossa dal
     Then la richiesta di generazione del Voucher non va a buon fine
 
 @voucher_generation_client_and_keys10
-Scenario: La generazione del Voucher fallisce quando l’unica finalità presente viene rimossa dal client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_10] La generazione del Voucher fallisce quando l’unica finalità presente viene rimossa dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -147,7 +147,7 @@ Scenario: La generazione del Voucher fallisce quando l’unica finalità present
     Then la richiesta di generazione del Voucher non va a buon fine
 
 @voucher_generation_client_and_keys11
-Scenario: La generazione del Voucher fallisce quando la finalità viene rimossa dal client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_11] La generazione del Voucher fallisce quando la finalità viene rimossa dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -163,7 +163,7 @@ Scenario: La generazione del Voucher fallisce quando la finalità viene rimossa 
     Then la richiesta di generazione del Voucher non va a buon fine
 
 @voucher_generation_client_and_keys12
-Scenario: La generazione del Voucher fallisce quando la chiave non è associata a un client
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_12] La generazione del Voucher fallisce quando la chiave non è associata a un client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -177,7 +177,7 @@ Scenario: La generazione del Voucher fallisce quando la chiave non è associata 
     Then la richiesta di generazione del Voucher non va a buon fine
 
 @voucher_generation_client_and_keys13
-Scenario: La generazione del Voucher fallisce quando la chiave non è associata al client richiesto
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_13] La generazione del Voucher fallisce quando la chiave non è associata al client richiesto
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -194,7 +194,7 @@ Scenario: La generazione del Voucher fallisce quando la chiave non è associata 
     Then la richiesta di generazione del Voucher non va a buon fine
 
 @voucher_generation_client_and_keys14
-Scenario: La generazione del Voucher fallisce quando il client viene cancellato
+Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_14] La generazione del Voucher fallisce quando il client viene cancellato
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

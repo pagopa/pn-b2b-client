@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplate
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 
 public class PurposeTemplateResolver extends AbstractResolver {
@@ -79,11 +80,14 @@ public class PurposeTemplateResolver extends AbstractResolver {
     }
 
     public TargetTenantKind resolveTargetTenantKind(String raw) {
+        Supplier<TargetTenantKind> tks = () -> sharedStepsContext.getTenantType().equalsIgnoreCase("Privato")
+                ? TargetTenantKind.PRIVATE
+                : TargetTenantKind.PA;
         return resolveOrParse(
                 raw,
                 TargetTenantKind::valueOf,
-                () -> TargetTenantKind.valueOf(sharedStepsContext.getTenantType()),
-                () -> TargetTenantKind.valueOf(sharedStepsContext.getTenantType()),
+                tks,
+                tks,
                 PurposeTemplateResolver::randomTargetTenantKind,
                 null
         );

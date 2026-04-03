@@ -1,16 +1,17 @@
 package it.pagopa.interop.authorization.service.identity;
 
-import static it.pagopa.interop.authorization.enums.M2MRole.fromValue;
-import static it.pagopa.interop.authorization.enums.M2MRole.isM2MRole;
-
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.M2MTokenService;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
+
+import static it.pagopa.interop.authorization.enums.M2MRole.fromValue;
+import static it.pagopa.interop.authorization.enums.M2MRole.isM2MRole;
 
 /* 29/05/2025 classe orchestratrice: se il token è di tipo m2m ripiega sul relativo servizio,
  * altrimenti segue il flusso di auth usuale */
@@ -50,6 +51,16 @@ public class IdentityServiceInteropImpl implements IdentityService {
     @Override
     public UUID getOrganizationId(String tenantType) {
         return defaultIdentityService.getOrganizationId(tenantType);
+    }
+
+    @Override
+    public String getTenantName(String tenantType) {
+        return defaultIdentityService.getTenantName(tenantType);
+    }
+
+    @Override
+    public String getTenant(UUID organizationId) {
+        return defaultIdentityService.getTenant(organizationId);
     }
 
     @Override

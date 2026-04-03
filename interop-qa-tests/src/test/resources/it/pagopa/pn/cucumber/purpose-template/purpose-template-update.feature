@@ -58,7 +58,7 @@ Feature: finalità agevolata, purpose template UPDATE
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     When l'utente è un "admin" di "GSP"
-    And si aggiorna il purpose template creato
+    And si aggiorna il purpose template invisibile
     Then si ottiene lo status code 404
 
   #15(KO)

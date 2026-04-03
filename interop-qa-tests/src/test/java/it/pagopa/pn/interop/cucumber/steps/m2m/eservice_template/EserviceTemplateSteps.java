@@ -1,8 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -17,11 +14,7 @@ import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceT
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionQuotasPatchRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
@@ -30,10 +23,15 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EService
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.http.HttpStatus;
+
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class EserviceTemplateSteps {
     public enum EServiceTemplateVersionsSnapshotType { VECCHIO, NUOVO }
@@ -183,16 +181,15 @@ public class EserviceTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'e-service template")
     public void patchEService(String tenant, M2MRole m2mRole) {
         EServiceTemplatePatchRequest request = this.patchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        patchAssistant.patchResource(request, token);
+        patchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service template specificando un sottoinsieme di informazioni")
     public void patchEServiceTemplateSubset() {
-        UUID uuid = UUID.randomUUID();
+        String id = RandomStringUtils.insecure().nextAlphanumeric(5);
         EServiceTemplatePatchRequest request = EServiceTemplatePatchRequest.builder()
-            .name("minimal patched name - " + uuid)
-            .description("minimal patched descr - " + uuid)
+            .name("minimal patched name - " + id)
+            .description("minimal patched descr - " + id)
             .technology(EServiceTechnology.REST)
             .build();
         patchAssistant.patchResource(request);
@@ -233,15 +230,14 @@ public class EserviceTemplateSteps {
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template")
     public void patchEServiceTemplateVersion(String tenant, M2MRole m2mRole) {
         EServiceTemplateVersionPatchRequest request = this.versionPatchAssistant.buildDefaultPatchRequest();
-        String token = sharedStepsContext.getIdentityService().getToken(tenant, m2mRole.toString());
-        versionPatchAssistant.patchResource(request, token);
+        versionPatchAssistant.patchResource(request, tenant, m2mRole);
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'ultima versione dell'e-service template specificando un sottoinsieme di informazioni")
     public void patchEServiceTemplateVersionSubset() {
         UUID uuid = UUID.randomUUID();
         EServiceTemplateVersionPatchRequest request = EServiceTemplateVersionPatchRequest.builder()
-            .voucherLifespan(new Random().nextInt(10, 10000))
+            .voucherLifespan(new Random().nextInt(60, 10000))
             .description("some minimal patched description - " + uuid)
             .build();
         versionPatchAssistant.patchResource(request);
@@ -350,6 +346,27 @@ public class EserviceTemplateSteps {
             case VECCHIO -> this.oldVersionsSnapshot = eserviceTemplateVersions;
             case NUOVO -> this.newVersionsSnapshot = eserviceTemplateVersions;
             default -> throw new IllegalArgumentException("Non previsto un comportamento per il valore " + type);
+        }
+    }
+
+    @And("l'utente tenta di recuperare le versioni dell'e-service template")
+    public void getEServiceTemplateVersions() {
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        getEServiceTemplateVersion(templateId);
+    }
+
+    @And("l'utente tenta di recuperare le versioni dell'e-service template indicando un template id inesistente")
+    public void getNonExistentEServiceTemplateVersions() {
+        UUID templateId = UUID.randomUUID();
+        getEServiceTemplateVersion(templateId);
+    }
+
+    private void getEServiceTemplateVersion(UUID templateId) {
+        delayService.delay();
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.getEserviceTemplateVersions(
+                templateId));
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            this.newVersionsSnapshot = (EServiceTemplateVersions) httpCallExecutor.getResponse();
         }
     }
 

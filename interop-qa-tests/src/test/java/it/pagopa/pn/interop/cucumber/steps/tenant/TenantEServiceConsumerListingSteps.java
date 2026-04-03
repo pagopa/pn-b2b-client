@@ -20,11 +20,10 @@ public class TenantEServiceConsumerListingSteps {
 
     public TenantEServiceConsumerListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                               SharedStepsContext sharedStepsContext,
-                                              IdentityService identityService,
                                               CommonUtils commonUtils) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = identityService;
+        this.identityService = this.sharedStepsContext.getIdentityService();
         this.commonUtils = commonUtils;
     }
 
@@ -72,15 +71,11 @@ public class TenantEServiceConsumerListingSteps {
 
     @Then("si ottiene status code 200 e il giusto numero di fruitori in base all'offset richiesto")
     public void verifyStatusCodeAndConsumerNumberBasedOnOffset() {
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().getConsumers(0, 20, null)
-        );
-        commonUtils.assertValidResponse();
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();
         Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
-        Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
+        Assertions.assertEquals(totalCount - this.offset, compactOrganizations.getResults().size());
     }
 
     @When("l'utente richiede una operazione di listing dei fruitori filtrando per nome aderente {string}")

@@ -2,6 +2,9 @@ package it.pagopa.pn.interop.cucumber.steps.config;
 
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
+import io.cucumber.spring.ScenarioScope;
+import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
+import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
@@ -16,5 +19,17 @@ public class CucumberScopedBeans {
     @Bean
     public FeatureLifecycleManager notificationFeatureLifecycleManager() {
         return new FeatureLifecycleManager();
+    }
+
+    @Bean
+    @ScenarioScope
+    public ProducerKeychainsContext producerKeychainsContext() {
+        return new ProducerKeychainsContext();
+    }
+
+    @Bean
+    @ScenarioScope
+    public TenantContext tenantContext() {
+        return new TenantContext();
     }
 }

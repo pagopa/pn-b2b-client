@@ -1,8 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
-import static org.apache.commons.lang3.ObjectUtils.allNull;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -16,11 +13,15 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.CatalogCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.catalog.DescriptorPublicationSteps;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.util.Objects;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.Objects;
+import java.util.UUID;
+
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
+import static org.apache.commons.lang3.ObjectUtils.allNull;
 
 @Slf4j
 public class DelegationCommonStep {
@@ -130,7 +131,7 @@ public class DelegationCommonStep {
             DelegationProxy.ofMainDelegation(sharedStepsContext.getDelegationCommonContext()),
             identityService,
             httpCallExecutor,
-            sharedStepsContext.getEServicesCommonContext(),
+            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
             pollingService,
             clientTokenConfigurator.getDelegationApiClient()
         );

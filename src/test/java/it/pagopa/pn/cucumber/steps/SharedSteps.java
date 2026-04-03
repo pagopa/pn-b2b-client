@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
@@ -13,16 +14,31 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -39,6 +55,8 @@ import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -49,27 +67,93 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.EXTENSION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_NOTFOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_PDF_INVALID_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_SHA_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_CANCELLED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ALLEGATO_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_NO_PRELOAD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_VALID_ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVERSIZE_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVER_15_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULING_DELTA_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SHA_256;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TAXID_NOT_VALID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAITING_GPD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_EXTRA_RAPID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
+import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -175,6 +259,14 @@ public class SharedSteps {
     @Getter
     private String notificationIun;
 
+    /**
+     * Lo IUN delle notifiche che vengono create (nei rari casi di più notifiche create simultaneamente) viene salvato in questa variabile.
+     * Tramite essi è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B.
+     */
+    @Setter
+    @Getter
+    private List<String> notificationIunList = new ArrayList<>();
+
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
@@ -218,6 +310,11 @@ public class SharedSteps {
     public static void before_all() {
         log.debug("SHARED_GLUE START");
         //only for class activation
+    }
+
+    @After
+    public void afterScenario() {
+        MDC.clear();
     }
 
     @Before
@@ -288,6 +385,24 @@ public class SharedSteps {
     }
 
     /**
+     * Metodo a soli fine di debugging, da non essere utilizzato in nessuno scenario.
+     * Se si hanno già pronte più notifiche, anziché crearla da zero, aspettare che arrivino in ACCEPTED, etc
+     * si impostano gli IUN qua e la PA e si può procedere con il resto dei metodi.
+     */
+    @Given("imposto la pa a {string} e gli iun di SharedSteps")
+    public void setMultipleIunAndPAForTestPurposes(String paName, Map<String, String> iunMap) {
+        setPA(paName);
+        notificationIunList = iunMap.values().stream().toList();
+        /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
+        e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
+        notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
+        getNotificationStepInterface().prepareNotificationRequest(Map.of(
+                "subject", "MOCKED NOTIFICATION",
+                "senderDenomination", "Comune di Palermo"));
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+    }
+
+    /**
      * Effettua un controllo sulla versione che si sta utilizzando, per verificare se è pari o superiore
      * a quella in uso.
      * Sarebbe buona prassi iniziare tutti gli scenari futuri con questo step, in modo che se mai
@@ -341,61 +456,35 @@ public class SharedSteps {
         getNotificationStepInterface().setIuvToRecipient(posizione, iuvGPD);
     }
 
-    /**
-     * Invio massivo di notifiche irreperibili utili per i test radd
-     * TODO -> test refattorizzato per poter essere eseguito con qualsiasi versione, ma comunque ampiamente migliorabile, magari anche riscrivendo gli step
-     */
-    @Given("vengono inviate {int} notifiche per l'utente {destinatario} con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
-    public void sendManyNotificationsForUserAndWaitUntilCompletelyUnreachable(int numberOfNotification, Destinatario destinatario, String paName) {
-
-        String taxId = destinatario.equals(Destinatario.DESTINATARIO_SIGNOR_CASUALE) ? generateCF(System.nanoTime()) : destinatario.getTaxId();
-
-        Map<String, String> notificationRequestMap = Map.ofEntries(
-                Map.entry(SUBJECT.key, "notificaAnalogica con Cucumber"),
-                Map.entry(SENDER_DENOMINATION.key, "Comune di Palermo"),
-                Map.entry(PHYSICAL_COMMUNICATION_TYPE.key, "AR_REGISTERED_LETTER"));
-
-        Map<String, String> notificationRecipientMap = Map.ofEntries(
-                Map.entry(DENOMINATION.key, destinatario.getDenomination()),
-                Map.entry(TAX_ID.key, taxId),
-                Map.entry(DIGITAL_DOMICILE.key, "NULL"),
-                Map.entry(PHYSICAL_ADDRESS_ADDRESS.key, "Via NationalRegistries @fail-Irreperibile_AR"));
-
+    @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
+    public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        notificationStepsInterface.prepareNotificationRequest(notificationRequestMap);
-        notificationStepsInterface.addRecipientToNotification(Destinatario.DESTINATARIO_SIGNOR_CASUALE, notificationRecipientMap);
-        setPaAndSenderTaxId(paName);
-
-        List<Thread> threadList = new LinkedList<>();
-        AtomicInteger notificationsCounter = new AtomicInteger();
-        for (int i = 0; i < numberOfNotification; i++) {
-            Thread t = new Thread(() -> {
-                notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-                notificationStepsInterface.waitForTimelineElement(COMPLETELY_UNREACHABLE, 33);
-                notificationsCounter.getAndIncrement();
-            });
-            threadList.add(t);
-            t.start();
+        for (int i = 0; i < notificationNumber; i++) {
+            prepareNotificationRequestWithVersion(MOST_RECENT, data);
+            setPaAndSenderTaxId(pa);
+            getNotificationStepInterface().addRecipientToNotification(destinatario, data);
+            getNotificationStepInterface().uploadNotification(null);
+            String iun = getNotificationIun();
+            notificationIunList.add(iun);
+            TimeUnit.SECONDS.sleep(1);
         }
+        TimeUnit.MINUTES.sleep(5);
+        List<String> remainingIuns = new ArrayList<>(notificationIunList); // lista di quelli da processare
+        List<String> failedIuns = new ArrayList<>();
 
-        int attempts = 0;
-        boolean completed = false;
-
-        while (attempts < 50) {
-            threadWait(getWorkFlowWait());
-            int counter = 0;
-            for (Thread thread : threadList) {
-                if (!thread.isAlive()) counter++;
+        while (!remainingIuns.isEmpty()) {
+            failedIuns.clear();
+            for (String iun : remainingIuns) {
+                setNotificationIun(iun);
+                try {
+                    notificationStepsInterface.waitForTimelineElement(timelineEvent, 30);
+                } catch (HttpClientErrorException.NotFound e) {
+                    failedIuns.add(iun);
+                }
             }
-            if (counter == threadList.size()) {
-                completed = true;
-                break;
-            } else {
-                attempts++;
-            }
+            // prepariamo la prossima iterazione solo con quelli che hanno fallito
+            remainingIuns = new ArrayList<>(failedIuns);
         }
-        Assertions.assertTrue(completed);
-        Assertions.assertEquals(numberOfNotification, notificationsCounter.get());
     }
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
@@ -1267,10 +1356,12 @@ public class SharedSteps {
 
     public static void threadWait(int wait) {
         try {
-            await().atMost(wait, TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS.sleep(wait);
         } catch (RuntimeException exception) {
             log.error("Await error exception");
             throw exception;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -1282,4 +1373,75 @@ public class SharedSteps {
         return qrCode;
     }
 
+    @Given("vengono inviate {int} nuove notifiche tramite api b2b dal {string} con destinatario {destinatario} e si aspetta che raggiungano l'elemento di timeline {string}")
+    public void sendMultipleNotifications(int notificationNumber, String paName, Destinatario destinatario, String timelineElement, Map<String, String> data) throws IOException, InterruptedException {
+        if (notificationIunList.isEmpty()) {
+            for (int i = 0; i < notificationNumber; i++) {
+                prepareNotificationRequestWithVersion(MOST_RECENT, data);
+                setPaAndSenderTaxId(paName);
+                getNotificationStepInterface().addRecipientToNotification(destinatario, data);
+                getNotificationStepInterface().uploadNotification(null);
+                assertThat(notificationIun).as("Lo IUN della notifica inviata non dev'essere null").isNotNull();
+                notificationIunList.add(notificationIun);
+                threadWait(getWorkFlowWait());
+                log.info("Notifica {} inviata", i + 1);
+            }
+        }
+        log.info("Elenco IUN delle {} notifiche caricate: {}", notificationNumber, notificationIunList);
+        TimeUnit.MINUTES.sleep(5);
+
+        List<String> remainingIuns = new ArrayList<>(notificationIunList); // lista di quelli da processare
+        List<String> failedIuns = new ArrayList<>();
+
+        while (!remainingIuns.isEmpty()) {
+            failedIuns.clear();
+            for (String iun : remainingIuns) {
+                setNotificationIun(iun);
+                try {
+                    getNotificationStepInterface().waitForTimelineElement(timelineElement, 33);
+                } catch (HttpClientErrorException.NotFound e) {
+                    failedIuns.add(iun);
+                }
+            }
+
+            // prepariamo la prossima iterazione solo con quelli che hanno fallito
+            remainingIuns = new ArrayList<>(failedIuns);
+
+            // opzionale: piccolo ritardo tra i tentativi per non saturare il sistema
+            if (!remainingIuns.isEmpty()) {
+                try {
+                    TimeUnit.SECONDS.sleep(30);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
+     */
+    @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
+    public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
+        long upperLimit = limitA > limitB ? limitA : limitB;
+        long lowerLimit = limitB < limitA ? limitB : limitA;
+        setPA(paName);
+        String recipientTaxId = recipient.getTaxId();
+        OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
+        BffNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
+                todayDate.minusDays(upperLimit),
+                todayDate.minusDays(lowerLimit),
+                recipientTaxId, null, null, null, 50, null);
+        AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
+        AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
+        AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
+        NotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
+                        n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
+                .findFirst().orElse(null);
+        AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
+        FullSentNotificationV28 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
+        notificationIun = oldNotification.getIun();
+        notificationIunList.add(oldNotification.getIun());
+        log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
+        log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
 }
