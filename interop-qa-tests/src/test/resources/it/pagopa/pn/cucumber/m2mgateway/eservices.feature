@@ -394,18 +394,21 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | PUBLISHED       | true                | %null                   |
       | PUBLISHED       | false               | %null                   |
       | PUBLISHED       | %null               | false                   |
+      | PUBLISHED       | %null               | %null                   |
 
       | SUSPENDED       | true                | true                    |
       | SUSPENDED       | true                | false                   |
       | SUSPENDED       | true                | %null                   |
       | SUSPENDED       | false               | %null                   |
       | SUSPENDED       | %null               | false                   |
+      | SUSPENDED       | %null               | %null                   |
 
       | DEPRECATED      | true                | true                    |
       | DEPRECATED      | true                | false                   |
       | DEPRECATED      | true                | %null                   |
       | DEPRECATED      | false               | %null                   |
       | DEPRECATED      | %null               | false                   |
+      | DEPRECATED      | %null               | %null                   |
 
   #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
