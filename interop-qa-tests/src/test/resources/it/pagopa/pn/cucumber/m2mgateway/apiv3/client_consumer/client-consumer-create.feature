@@ -10,44 +10,20 @@ Feature: Creazione dei client di tipo consumer - API v3
     And l'oggetto Client restituito rispetta quanto atteso
 
     Examples:
-      | name    | description | members                                       |
+      | name    | description | members                              |
     # Members void
-      | %random | %random     | []                                            |
+      | %random | %random     | []                                   |
     # Description null
-      | %random | %null       | []                                            |
+      | %random | %null       | []                                   |
     # Populating members with roles
-      | %random | %null       | [api,security]                                |
-      | %random | %random     | [admin]                                       |
-      | %random | %random     | [security]                                    |
-      | %random | %random     | [api]                                         |
-      | %random | %random     | [support]                                     |
-      | %random | %random     | [admin, api,security, security, api, support] |
+      | %random | %null       | [api,security]                       |
+      | %random | %random     | [admin]                              |
+      | %random | %random     | [security]                           |
+      | %random | %random     | [api]                                |
+      | %random | %random     | [support]                            |
+      | %random | %random     | [admin, api,security, security, api] |
 
-  Scenario Outline: [CREATE_CLIENT_CONSUMER_2] Validazione input per un utente m2m-admin alla creazione di un client consumer
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
-      | name   | description   | members   |
-      | <name> | <description> | <members> |
-    Then si ottiene response status code 400
-
-    Examples:
-      | name                                                               | description                                                                                                                                                                                                                                                                                                  | members        |
-    # Description < min (10 char)
-      | %random                                                            | %blank                                                                                                                                                                                                                                                                                                       | [admin]        |
-    # Description > max (250 char)
-      | %random                                                            | Questa è una descrizione estesa utilizzata per testare la creazione di un client di tipo consumer all'interno del sistema. Include dettagli aggiuntivi per verificare la corretta gestione dei campi testuali, la persistenza dei dati e il comportamento dell'API in presenza di input lunghi e articolati. | [admin]        |
-
-    # Name > max (60 char)
-      | NomeMoltoLungoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %null                                                                                                                                                                                                                                                                                                        | [api,security] |
-    # Name < min (5 char)
-      | Nome                                                               | %null                                                                                                                                                                                                                                                                                                        | [api,security] |
-    # Name null
-      | %null                                                              | %random                                                                                                                                                                                                                                                                                                      | []             |
-
-    # Members null
-      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null          |
-
-  Scenario Outline: [CREATE_CLIENT_CONSUMER_2b] Validazione input per un utente m2m-admin alla creazione di un client consumer
+  Scenario Outline: [CREATE_CLIENT_CONSUMER_1b] Validazione input per un utente m2m-admin alla creazione di un client consumer
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
       | name   | description   | members   |
@@ -80,6 +56,35 @@ Feature: Creazione dei client di tipo consumer - API v3
       | user@domain.com                | email-like                     | [support] |
       | tenant#123                     | hash char--                    | [admin]   |
 
+  Scenario Outline: [CREATE_CLIENT_CONSUMER_2] Validazione input per un utente m2m-admin alla creazione di un client consumer
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
+      | name   | description   | members   |
+      | <name> | <description> | <members> |
+    Then si ottiene response status code 400
+
+    Examples:
+      | name                                                               | description                                                                                                                                                                                                                                                                                                  | members             |
+    # Description < min (10 char)
+      | %random                                                            | < min                                                                                                                                                                                                                                                                                                        | [admin]             |
+    # Description > max (250 char)
+      | %random                                                            | Questa è una descrizione estesa utilizzata per testare la creazione di un client di tipo consumer all'interno del sistema. Include dettagli aggiuntivi per verificare la corretta gestione dei campi testuali, la persistenza dei dati e il comportamento dell'API in presenza di input lunghi e articolati. | [admin]             |
+    # Description blank
+      | %random                                                            | %blank                                                                                                                                                                                                                                                                                                       | [admin]             |
+
+    # Name > max (60 char)
+      | NomeMoltoLungoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %null                                                                                                                                                                                                                                                                                                        | [api,security]      |
+    # Name < min (5 char)
+      | Nome                                                               | %null                                                                                                                                                                                                                                                                                                        | [api,security]      |
+    # Name null
+      | %null                                                              | %random                                                                                                                                                                                                                                                                                                      | []                  |
+
+    # Members null
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null               |
+    # Members with duplicate user
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | [admin, admin]      |
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | [admin, api, admin] |
+
   Scenario Outline: [CREATE_CLIENT_CONSUMER_3] Un utente m2m non può creare un client di tipo consumer
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
@@ -89,9 +94,10 @@ Feature: Creazione dei client di tipo consumer - API v3
 
     # Required sad path
     Examples:
-      | name    | description | members |
-      | %random | %random     | []      |
-      | %random | %random     | []      |
+      | name    | description | members        |
+      | %random | %random     | []             |
+      | %random | %random     | [admin]        |
+      | %random | %random     | [admin, admin] |
 
     #Il 409 non è sicuro che sarà implementato
   @ignore

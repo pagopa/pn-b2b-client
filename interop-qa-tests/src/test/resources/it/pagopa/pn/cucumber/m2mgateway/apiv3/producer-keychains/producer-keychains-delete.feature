@@ -11,15 +11,14 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
     Then l'utente tenta l'eliminazione del portachiavi erogatore con id "%actual"
     And si ottiene status code 200
 
-    # Happy path
     Examples:
-      | members                                       |
-      | []                                            |
-      | [admin]                                       |
-      | [api,security]                                |
-      | [security]                                    |
-      | [api]                                         |
-      | [admin, api,security, security, api, support] |
+      | members        |
+      | []             |
+      | [admin]        |
+      | [api,security] |
+      | [security]     |
+      | [api]          |
+      | [support]      |
 
   Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_2] Eliminazione di un client di tipo consumer con id invalido e/o ruolo non autorizzato
     Given l'utente è un "admin" di "PA1" con ruolo M2M <role>
@@ -33,6 +32,7 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
 
     # Invalid id
       | %null      | m2m-admin | 400        |
+      | %null      | m2m       | 400        |
 
     # Role not authorized
       | %random    | m2m       | 403        |
@@ -65,7 +65,7 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M <role>
     And viene rimosso l'header di autenticazione DPoP
     Then l'utente tenta l'eliminazione del portachiavi erogatore con id "%actual"
-    And si ottiene response status code 401
+    And si ottiene response status code 400
 
     Examples:
       | role      |

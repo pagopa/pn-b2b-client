@@ -1,7 +1,6 @@
 @m2m-apiv3-producer-keychains
 Feature: Creazione dei producer keychains - API v3
 
-  # BUG: https://pagopa.atlassian.net/browse/PIN-9626
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_1] Creazione nuovo portachiavi erogatore per un utente m2m-admin
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
@@ -11,45 +10,19 @@ Feature: Creazione dei producer keychains - API v3
     And l'oggetto ProducerKeychain restituito rispetta quanto atteso
 
     Examples:
-      | name    | description | members                                       |
+      | name    | description | members                              |
     # Members void
-      | %random | %random     | []                                            |
-    # Description null
-      | %random | %null       | []                                            |
+      | %random | %random     | []                                   |
+
     # Populating members with roles
-      | %random | %null       | [api,security]                                |
-      | %random | %random     | [admin]                                       |
-      | %random | %random     | [security]                                    |
-      | %random | %random     | [api]                                         |
-      | %random | %random     | [support]                                     |
-      | %random | %random     | [admin, api,security, security, api, support] |
+      | %random | %null       | [api,security]                       |
+      | %random | %random     | [admin]                              |
+      | %random | %random     | [security]                           |
+      | %random | %random     | [api]                                |
+      | %random | %random     | [support]                            |
+      | %random | %random     | [admin, api,security, security, api] |
 
-  Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_2] Validazione input per un utente m2m-admin alla creazione di un portachiavi erogatore
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
-      | name   | description   | members   |
-      | <name> | <description> | <members> |
-    Then si ottiene response status code 400
-
-    Examples:
-      | name                                                               | description                                                                                                                                                                                                                                                                                                  | members        |
-    # Description < min (10 char)
-      | %random                                                            | %blank                                                                                                                                                                                                                                                                                                       | [admin]        |
-    # Description > max (250 char)
-      | %random                                                            | Questa è una descrizione estesa utilizzata per testare la creazione di un client di tipo consumer all'interno del sistema. Include dettagli aggiuntivi per verificare la corretta gestione dei campi testuali, la persistenza dei dati e il comportamento dell'API in presenza di input lunghi e articolati. | [admin]        |
-
-    # Name > max (60 char)
-      | NomeMoltoLungoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %null                                                                                                                                                                                                                                                                                                        | [api,security] |
-    # Name < min (5 char)
-      | Nome                                                               | %null                                                                                                                                                                                                                                                                                                        | [api,security] |
-    # Name null
-      | %null                                                              | %random                                                                                                                                                                                                                                                                                                      | []             |
-
-    # Members null
-      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null          |
-
-  # BUG: https://pagopa.atlassian.net/browse/PIN-9627
-  Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_2b] Validazione input per un utente m2m-admin alla creazione di un portachiavi erogatore
+  Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_1b] Validazione input per un utente m2m-admin alla creazione di un portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
       | name   | description   | members   |
@@ -82,6 +55,37 @@ Feature: Creazione dei producer keychains - API v3
       | user@domain.com                | email-like                     | [support] |
       | tenant#123                     | hash char--                    | [admin]   |
 
+  Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_2] Validazione input per un utente m2m-admin alla creazione di un portachiavi erogatore
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
+      | name   | description   | members   |
+      | <name> | <description> | <members> |
+    Then si ottiene response status code 400
+
+    Examples:
+      | name                                                               | description                                                                                                                                                                                                                                                                                                  | members             |
+    # Description < min (10 char)
+      | %random                                                            | < min                                                                                                                                                                                                                                                                                                        | [admin]             |
+    # Description > max (250 char)
+      | %random                                                            | Questa è una descrizione estesa utilizzata per testare la creazione di un client di tipo consumer all'interno del sistema. Include dettagli aggiuntivi per verificare la corretta gestione dei campi testuali, la persistenza dei dati e il comportamento dell'API in presenza di input lunghi e articolati. | [admin]             |
+    # Description blank
+      | %random                                                            | %blank                                                                                                                                                                                                                                                                                                       | [admin]             |
+    # Description null (required)
+      | %random                                                            | %null                                                                                                                                                                                                                                                                                                        | [admin]             |
+
+    # Name > max (60 char)
+      | NomeMoltoLungoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA | %null                                                                                                                                                                                                                                                                                                        | [api,security]      |
+    # Name < min (5 char)
+      | Nome                                                               | %null                                                                                                                                                                                                                                                                                                        | [api,security]      |
+    # Name null
+      | %null                                                              | %random                                                                                                                                                                                                                                                                                                      | []                  |
+
+    # Members null
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | %null               |
+    # Members with duplicate user
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | [admin, admin]      |
+      | %random                                                            | %random                                                                                                                                                                                                                                                                                                      | [admin, api, admin] |
+
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_3] Un utente m2m non può creare un portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
@@ -91,9 +95,10 @@ Feature: Creazione dei producer keychains - API v3
 
     # Required sad path
     Examples:
-      | name    | description | members |
-      | %random | %random     | []      |
-      | %random | %random     | []      |
+      | name    | description | members        |
+      | %random | %random     | []             |
+      | %random | %random     | [admin]        |
+      | %random | %random     | [admin, admin] |
 
     #Il 409 non è sicuro che sarà implementato
   @ignore

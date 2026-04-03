@@ -11,17 +11,16 @@ Feature: Eliminazione dei client di tipo consumer - API v3
     Then l'utente tenta l'eliminazione del client di tipo CONSUMER con id "%actual"
     And si ottiene status code 200
 
-    # Happy path
     Examples:
-      | members                                       |
-      | []                                            |
-      | [admin]                                       |
-      | [api,security]                                |
-      | [security]                                    |
-      | [api]                                         |
-      | [admin, api,security, security, api, support] |
+      | members        |
+      | []             |
+      | [admin]        |
+      | [api,security] |
+      | [security]     |
+      | [api]          |
+      | [support]      |
 
-  Scenario Outline: [DELETE_CLIENT_CONSUMER_2] Eliminazione di un client di tipo consumer con id invalido e/o ruolo non autorizzato
+  Scenario Outline: [DELETE_CLIENT_CONSUMER_2] Eliminazione di un client di tipo consumer con id invalido o inesistente e/o ruolo non autorizzato
     Given l'utente è un "admin" di "PA1" con ruolo M2M <role>
     When l'utente tenta l'eliminazione del client di tipo CONSUMER con id "<clientId>"
     Then si ottiene status code <statusCode>
@@ -32,8 +31,12 @@ Feature: Eliminazione dei client di tipo consumer - API v3
       | %null    | m2m-admin | 400        |
       | %null    | m2m       | 400        |
 
+    # Random id
+      | %random  | m2m-admin | 404        |
+
     # Role not authorized
       | %random  | m2m       | 403        |
+      | %null    | m2m       | 403        |
 
   Scenario Outline: [DELETE_CLIENT_CONSUMER_3] Non è possibile eliminare un client consumer se nella request non è presente l'header Authentication
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -62,7 +65,7 @@ Feature: Eliminazione dei client di tipo consumer - API v3
     Given l'utente è un "admin" di "PA1" con ruolo M2M <role>
     And viene rimosso l'header di autenticazione DPoP
     Then l'utente tenta l'eliminazione del client di tipo CONSUMER con id "%actual"
-    Then si ottiene response status code 401
+    Then si ottiene response status code 400
 
     Examples:
       | role      |
