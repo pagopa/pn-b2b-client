@@ -887,7 +887,9 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'e-service descriptor non ha subito modifiche
 
+  #test cui richiesta dal client non viene effettuata poichè parametro obbligatorio settato a null
   @eservice_published_delegation
+  @sad-path
   Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service se non specifica l'id dell'e-service
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
