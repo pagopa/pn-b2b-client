@@ -20,6 +20,12 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                         "api.bff.version=V1"
         ),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
+
+        // abilita parallelismo JUnit
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+
+        // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
