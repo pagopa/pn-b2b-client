@@ -59,6 +59,7 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR CON996           |
       | taxId                   | CLMCST42R12D969Z         |
