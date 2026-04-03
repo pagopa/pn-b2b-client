@@ -507,6 +507,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
       | DEPRECATED      |
       | SUSPENDED       |
 
+  #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
   @happy-path
   @m2m-parte2-agosto-rilascio2
