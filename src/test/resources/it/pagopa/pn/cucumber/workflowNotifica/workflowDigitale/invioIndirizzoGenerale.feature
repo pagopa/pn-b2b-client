@@ -21,7 +21,7 @@ Feature: avanzamento b2b notifica digitale con indirizzo generale con chiamata a
       | senderDenomination | Comune di milano            |
     And destinatario
       | digitalDomicile_address | test@fail.it    |
-      | taxId                   | TRVVCN73H02L259 |
+      | taxId                   | TRVVCN73H02L259I |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
 
