@@ -1,10 +1,12 @@
 package it.pagopa.interop.conf.api_profile;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Getter
+@ToString
 public final class ApiProfileConfig {
     private final String apiMode;
     private final String apiM2mVersion;
@@ -22,13 +24,4 @@ public final class ApiProfileConfig {
         return new ApiProfileConfig("RIGHT_FIT", "V2", "V1", "M2M");
     }
 
-    @Override
-    public String toString() {
-        return "ApiProfileConfig{" +
-                "apiMode='" + apiMode + '\'' +
-                ", apiM2mVersion='" + apiM2mVersion + '\'' +
-                ", apiBffVersion='" + apiBffVersion + '\'' +
-                ", apiSet='" + apiSet + '\'' +
-                '}';
-    }
 }
