@@ -5,6 +5,7 @@ import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import it.pagopa.interop.conf.api_profile.ApiProfileConfig;
+import it.pagopa.interop.conf.api_profile.ApiProfileContext;
 
 import java.util.HashMap;
 import java.util.Map;
