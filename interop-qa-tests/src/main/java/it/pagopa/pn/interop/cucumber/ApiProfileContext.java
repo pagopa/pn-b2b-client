@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber;
 
+import it.pagopa.interop.conf.api_profile.ApiProfileConfig;
+
 public final class ApiProfileContext {
     private static final ThreadLocal<ApiProfileConfig> CONTEXT = new ThreadLocal<>();
 

@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber;
+package it.pagopa.interop.conf.api_profile;
 
 import lombok.Getter;
 

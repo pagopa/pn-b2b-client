@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.config;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
-import it.pagopa.pn.interop.cucumber.ApiProfileConfig;
+import it.pagopa.interop.conf.api_profile.ApiProfileConfig;
 import it.pagopa.pn.interop.cucumber.ApiProfileContext;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
