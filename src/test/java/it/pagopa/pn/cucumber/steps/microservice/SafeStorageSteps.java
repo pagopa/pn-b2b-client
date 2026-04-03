@@ -680,15 +680,21 @@ public class SafeStorageSteps {
                 assert tagMap != null;
                 Assertions.assertEquals(expectedTags.size(), tagMap.size());
 
-                expectedTags.forEach(tag -> {
-                    String[] splittedTags = tag.split(":");
-                    String tagName = splittedTags[0];
-                    List<String> tagValues = Arrays.stream(splittedTags[1].split(",")).toList();
+                if (expectedTags.contains("tagWithDate")) {
+                    assert tagMap != null;
+                    Assertions.assertTrue(tagMap.containsKey("lc_start_date"));
+                    Assertions.assertTrue(tagMap.get("lc_start_date").contains("2026-02-26T10:00:03Z"));
+                } else {
+                    expectedTags.forEach(tag -> {
+                        String[] splittedTags = tag.split(":");
+                        String tagName = splittedTags[0];
+                        List<String> tagValues = Arrays.stream(splittedTags[1].split(",")).toList();
 
-                    Assertions.assertTrue(tagMap.containsKey(tagName));
-                    Assertions.assertEquals(tagValues.size(), tagMap.get(tagName).size());
-                    tagValues.forEach(t -> Assertions.assertTrue(tagMap.get(tagName).contains(t)));
-                });
+                        Assertions.assertTrue(tagMap.containsKey(tagName));
+                        Assertions.assertEquals(tagValues.size(), tagMap.get(tagName).size());
+                        tagValues.forEach(t -> Assertions.assertTrue(tagMap.get(tagName).contains(t)));
+                    });
+                }
             } catch (HttpClientErrorException httpExc) {
                 safeStorageStepsPojo.setHttpException(httpExc);
             }
