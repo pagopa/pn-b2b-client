@@ -16,6 +16,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.model.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCsv.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -49,7 +50,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     private final ImportApi apiCaricamentoCsv;
     private final RegistryApi apiAnagraficaCRUD;
 
-    public PnRaddAlternativeClientImpl(RestTemplate restTemplate,
+    public PnRaddAlternativeClientImpl(@Qualifier("customRestTemplate") RestTemplate restTemplate,
                                        @Value("${pn.radd.alt.external.base-url}") String basePath,
                                        @Value("${pn.external.bearer-token-radd-1}") String raddista1,
                                        @Value("${pn.external.bearer-token-radd-2}") String raddista2,
