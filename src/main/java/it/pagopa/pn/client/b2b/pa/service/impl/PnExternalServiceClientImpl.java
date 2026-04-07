@@ -136,34 +136,6 @@ public class PnExternalServiceClientImpl {
         return safeStoragePnServiceDeskInfoWithHttpInfo(fileKey).getBody();
     }
 
-    /*private RestTemplate createRestTemplateWithoutSSLVerification() {
-        try {
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[0];
-                        }
-                        public void checkClientTrusted(
-                                java.security.cert.X509Certificate[] certs, String authType) {
-                        }
-                        public void checkServerTrusted(
-                                java.security.cert.X509Certificate[] certs, String authType) {
-                        }
-                    }
-            };
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-
-            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-            requestFactory.setBufferRequestBody(false);
-
-            RestTemplate rt = new RestTemplate(requestFactory);
-            return rt;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }*/
-
     private RestTemplate createRestTemplateWithoutSSLVerification() {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");

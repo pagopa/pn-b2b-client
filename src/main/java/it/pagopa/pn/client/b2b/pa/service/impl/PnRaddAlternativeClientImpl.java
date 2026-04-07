@@ -50,7 +50,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     private final ImportApi apiCaricamentoCsv;
     private final RegistryApi apiAnagraficaCRUD;
 
-    public PnRaddAlternativeClientImpl(@Qualifier("customRestTemplate") RestTemplate restTemplate,
+    public PnRaddAlternativeClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.radd.alt.external.base-url}") String basePath,
                                        @Value("${pn.external.bearer-token-radd-1}") String raddista1,
                                        @Value("${pn.external.bearer-token-radd-2}") String raddista2,
