@@ -107,12 +107,9 @@ Feature: Aggiornamento di un descrittore in bozza
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_5] Per un e-service in stato DRAFT non è possibile indicare una soglia associata ad un attributo dichiarato
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo DECLARED
-    # TODO Critique
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo DECLARED 0-esimo creato
     Then si ottiene status code 400
-    # TODO Critique
-    # And l'utente carica un documento di interfaccia di tipo "yaml"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200
@@ -172,8 +169,10 @@ Feature: Aggiornamento di un descrittore in bozza
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
     And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 1-esimo creato
     Then si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo è uguale a "10"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200
@@ -183,8 +182,9 @@ Feature: Aggiornamento di un descrittore in bozza
     Given l'utente è un "admin" di "PA1"
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
-    When l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
-    And l'utente tenta di duplicare l'attributo CERTIFIED 0-esimo nel gruppo 0-esimo
+    And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo e il gruppo 0-esimo creato
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
+    When l'utente tenta di duplicare l'attributo CERTIFIED 0-esimo nel gruppo 0-esimo
     Then si ottiene status code 400
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
@@ -195,9 +195,11 @@ Feature: Aggiornamento di un descrittore in bozza
     Given l'utente è un "admin" di "PA1"
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
-    When l'utente tenta di aggiungere una soglia differenziata di 1 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
-    And l'utente tenta di aggiungere una soglia differenziata di 0 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
+    And l'utente tenta di aggiungere una soglia differenziata di 1 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "1"
+    When l'utente tenta di aggiungere una soglia differenziata di 0 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
     Then si ottiene status code 400
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo è uguale a "%null"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200
@@ -220,8 +222,10 @@ Feature: Aggiornamento di un descrittore in bozza
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 1 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "1"
     And l'utente tenta di aggiungere una soglia differenziata di 2 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
     Then si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo è uguale a "2"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200

@@ -138,7 +138,10 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 0-esimo creato
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "11"
     And l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 1-esimo creato
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "11"
     Then l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 2-esimo creato
     And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 2-esimo creato nel gruppo 0-esimo è uguale a "11"
