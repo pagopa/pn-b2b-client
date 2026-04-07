@@ -1,0 +1,63 @@
+package it.pagopa.pn.cucumber.steps.paperTracker.validator.response;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import it.pagopa.pn.cucumber.utils.validator.CustomConditionalValidator;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+/**
+ * Paper-Tracker
+ * Validatore custom per verificare la presenza dei campi obbligatori
+ * in ciascun nodo di validationFlow.ocrRequests con responseStatus uguale a "OK".
+ */
+@Slf4j
+public class OcrRequestValidator implements CustomConditionalValidator {
+    List<String> errors;
+
+    /**
+     * Valida la regola cross-field relativa agli OCR.
+     *
+     * <p>Se la lista {@code validationFlow.ocrRequests} contiene dei nodi
+     * con {@code responseStatus} uguale a "OK", allora ciascuno di questi nodi deve contenere i campi
+     * obbligatori {@code uri}, {@code responseTimestamp}, {@code requestTimestamp}, {@code attachmentEventId}, {@code finalEventId} e {@code documentType}.</p>
+     *
+     * @param trackingNode the tracking object da validare
+     * @return una lista di errori, vuota se la validazione è passata senza problemi
+     */
+    public List<String> validate(JsonNode trackingNode) {
+        errors = new java.util.ArrayList<>();
+        trackingNode = trackingNode.get("trackings").get(0);
+
+        JsonNode validationFlow = trackingNode.get("validationFlow");
+        if (validationFlow == null || validationFlow.get("ocrRequests") == null) {
+            return errors;
+        }
+
+        JsonNode ocrRequests = validationFlow.get("ocrRequests");
+        if (!ocrRequests.isArray()) {
+            errors.add("validationFlow.ocrRequests non è un array.");
+            return errors;
+        } else {
+            for (JsonNode ocrRequest : ocrRequests) {
+                validateOcrRequest(ocrRequest);
+            }
+        }
+        return errors;
+    }
+
+    private void validateOcrRequest(JsonNode ocrRequest) {
+        JsonNode responseStatus = ocrRequest.get("responseStatus");
+        if (responseStatus != null && responseStatus.asText().equals("OK")) {
+            JsonNode uri = ocrRequest.get("uri");
+            JsonNode responseTimestamp = ocrRequest.get("responseTimestamp");
+            JsonNode requestTimestamp = ocrRequest.get("requestTimestamp");
+            JsonNode attachmentEventId = ocrRequest.get("attachmentEventId");
+            JsonNode finalEventId = ocrRequest.get("finalEventId");
+            JsonNode documentType = ocrRequest.get("documentType");
+            if (uri == null || responseTimestamp == null || requestTimestamp == null || attachmentEventId == null || finalEventId == null || documentType == null) {
+                errors.add("Un ocrRequest con responseStatus OK è privo di uno o più campi obbligatori (uri, responseTimestamp, requestTimestamp, attachmentEventId, finalEventId, documentType).");
+            }
+        }
+    }
+}
