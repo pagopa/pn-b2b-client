@@ -83,9 +83,6 @@ Feature: Aggiornamento di un descrittore in bozza
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_3] Per un e-service in stato DRAFT non è possibile indicare una soglia il cui limite è superiore al limite di chiamate totali giornaliero
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED
-    # And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    # And si ottiene status code 200
-    # And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 0-esimo creato
     Then si ottiene status code 400
@@ -110,9 +107,12 @@ Feature: Aggiornamento di un descrittore in bozza
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_5] Per un e-service in stato DRAFT non è possibile indicare una soglia associata ad un attributo dichiarato
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo DECLARED
+    # TODO Critique
     And "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo DECLARED 0-esimo creato
     Then si ottiene status code 400
+    # TODO Critique
+    # And l'utente carica un documento di interfaccia di tipo "yaml"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente pubblica l'e-service
     And si ottiene status code 200
