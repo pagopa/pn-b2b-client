@@ -3,6 +3,11 @@ package it.pagopa.pn.cucumber.steps.tracciamentoEventi;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -10,12 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -24,11 +32,18 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Slf4j
 public class TracciamentoEventiPeoSteps {
 
+    private final SharedSteps sharedSteps;
+    private final IPnSafeStoragePrivateClient safeStorageClient;
     private final String safeStorageBaseUrl;
     private String requestId;
+    private static final String EICAR = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
 
     @Autowired
-    public TracciamentoEventiPeoSteps(@Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
+    public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
+                                      IPnSafeStoragePrivateClient safeStorageClient,
+                                      @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
+        this.sharedSteps = sharedSteps;
+        this.safeStorageClient = safeStorageClient;
         this.safeStorageBaseUrl = safeStorageBaseUrl;
     }
 
@@ -78,7 +93,7 @@ public class TracciamentoEventiPeoSteps {
             }
             case "virus" -> {
                 log.info("Allegato malevolo (EICAR) richiesto.");
-                return "[\"https://www.eicar.org/download/eicar.com.txt\"]";
+                return String.format("[\"%s\"]", uploadEicarVirusFile());
             }
             default -> throw new IllegalArgumentException("Invalid attachment: " + attachmentType);
         }
@@ -124,5 +139,29 @@ public class TracciamentoEventiPeoSteps {
         } catch (InterruptedException e) {
             throw new RuntimeException("Error while pausing the Thread");
         }
+    }
+
+    private String uploadEicarVirusFile() {
+        byte[] byteArray = EICAR.getBytes(StandardCharsets.US_ASCII);
+        String sha256 = B2bUtils.computeSha256(new ByteArrayInputStream(byteArray));
+
+        FileCreationRequest request = new FileCreationRequest();
+        request.setStatus("SAVED");
+        request.setContentType("text/plain");
+        request.setDocumentType("PN_NOTIFICATION_ATTACHMENTS");
+
+        // Chiamata a Safe Storage per registrare il file e ottenere la presigned url di upload
+        ResponseEntity<FileCreationResponse> responseEntity = safeStorageClient.createFileWithHttpInfo("pn-test", sha256, "SHA256", request);
+        assertThat(responseEntity).as("La responseEntity non dev'essere null").isNotNull();
+        FileCreationResponse fileCreationResponse = responseEntity.getBody();
+        assertThat(fileCreationResponse).as("La FileCreationResponse non dev'essere null").isNotNull();
+
+        String fileKey = fileCreationResponse.getKey();
+        String secret = fileCreationResponse.getSecret();
+        String url = fileCreationResponse.getUploadUrl();
+
+        B2bUtils.loadToPresignedFromByteArray(sharedSteps.getContext(), url, secret, sha256, byteArray, "text/plain");
+        return "safestorage://" + fileKey;
+
     }
 }

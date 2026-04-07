@@ -260,6 +260,40 @@ public abstract class B2bUtils {
         }
     }
 
+    /**
+     * Consente di fare l'upload di un file passando un byte[] anzichè la risorsa (utile in caso si voglia simulare l'upload di un file malevolo, ad esempio un virus EICAR,
+     * che non è possibile salvare nelle risorse, ma dev'essere invece creato a runtime).
+     */
+    public static void loadToPresignedFromByteArray(ApplicationContext context, String url, String secret, String sha256, byte[] byteArray, String contentType) {
+        loadToPresignedFromByteArrayWithDepth(context, url, secret, sha256, byteArray, contentType, 0);
+    }
+
+    private static void loadToPresignedFromByteArrayWithDepth(ApplicationContext context, String url, String secret, String sha256, byte[] byteArray, String contentType, int depth) {
+        try {
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Content-type", contentType);
+            headers.add("x-amz-checksum-sha256", sha256);
+            headers.add("x-amz-meta-secret", secret);
+            log.info("headers: {}", headers);
+            HttpEntity<byte[]> req = new HttpEntity<>(byteArray, headers);
+            RestTemplate restTemplate = getDefaultRestTemplate();
+            restTemplate.exchange(URI.create(url), HttpMethod.PUT, req, Object.class);
+        } catch (Exception e) {
+            if (depth >= 5) {
+                throw e;
+            }
+            log.info("Upload in catch, retry");
+            try {
+                Thread.sleep(2000);
+                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}, sha256: {}, contentType: {}", Thread.currentThread().getId(), depth, url, sha256, contentType);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new PnB2bException(ex.getMessage());
+            }
+            loadToPresignedFromByteArrayWithDepth(context, url, secret, sha256, byteArray, contentType, depth + 1);
+        }
+    }
+
     private static PreLoadResponse getPreLoadResponse(IPnPaB2bClient b2bClient, String sha256, String contentType) {
         PreLoadRequest preLoadRequest = new PreLoadRequest()
                 .preloadIdx("0")

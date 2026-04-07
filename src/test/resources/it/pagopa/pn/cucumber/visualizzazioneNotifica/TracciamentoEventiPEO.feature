@@ -10,4 +10,4 @@ Feature: irrobustimento tracciamento eventi PEO PostaElettronicaOrdinaria (SRS: 
       | bounce@simulator.amazonses.com          | null       | M005       | bounced   |
       | suppressionlist@simulator.amazonses.com | null       | M005       | bounced   |
       | complaint@simulator.amazonses.com       | null       | M006       | spam      |
-#      | matteo.sperati@dgsspa.com | virus      | M009       | rejected |
+      | matteo.sperati@dgsspa.com               | virus      | M009       | rejected  |
