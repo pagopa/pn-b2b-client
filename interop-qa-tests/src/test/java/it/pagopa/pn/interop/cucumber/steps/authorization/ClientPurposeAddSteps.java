@@ -58,6 +58,17 @@ public class ClientPurposeAddSteps {
         );
     }
 
+    @And("l'associazione tra finalita e client non è presente")
+    public void checkPurposeClientAssociationNotPresent() {
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        pollingService.makePolling(
+                () -> authorizationClient.getClient(clientId),
+                client -> client.getPurposes().stream().noneMatch(purpose -> purpose.getPurposeId().equals(purposeId)),
+                "La finalita risulta ancora associata al client, ma non dovrebbe esserlo."
+        );
+    }
+
     private void userRetrievesFinalization(UUID clientId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
