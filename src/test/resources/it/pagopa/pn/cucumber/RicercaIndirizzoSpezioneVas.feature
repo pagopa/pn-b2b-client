@@ -901,7 +901,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And destinatario
       | denomination    | PG Censito  |
       | recipientType   | PG          |
-      | taxId           | 01113570442 |
+      | taxId           | 38868390881 |
       | digitalDomicile | NULL        |
       | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -984,3 +984,19 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_numberOfRecipients    | 1                      |
       | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
       | details_recIndex              | 0                      |
+
+
+  @ricercaIndirizzoVas @ignoreUat  #Bug validation PN-18591 solo test/dev
+  Scenario: [RICERCA_INDIRIZZO_VAS_MONO_REFUSED] Invio notifica vas per CI con municipality assente sui registri e atteso stato refused
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario
+      | denomination    | PG Censito  |
+      | recipientType   | PG          |
+      | taxId           | 38868390881 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"

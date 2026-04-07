@@ -78,6 +78,14 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_CREATE_WITH_DATE] Create - SUCCESS (tag contenente data)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | tagWithDate |
+    Then Il documento 1 è associato alla seguente lista di tag
+      | tagWithDate |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_2] Create - ERROR Trasformazione
     Given Viene caricato un nuovo documento di tipo "PN_LEGAL_FACTS_ST" con tag associati
       | global_multivalue:test1 |
