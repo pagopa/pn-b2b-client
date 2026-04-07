@@ -441,7 +441,6 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio2
   Scenario Outline: [M2MG_ESERVICES_40] Un utente NON può effettuare una modifica parziale della delega di un e-service indicando un token non valido (Parte2#Scenario intorno a 89)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
-#    And viene impostato per l'utente un token m2m non valido
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido
     Then si ottiene lo status code 401
@@ -1162,6 +1161,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And l'utente è un "admin" dell'ente delegato
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
+    And l'associazione tra finalita e client non è presente
 
   @eservice_published_delegation
   @happy-path
@@ -1210,6 +1210,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And il delegato ha già creato 1 client "CONSUMER"
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
+    And l'associazione tra finalita e client non è presente
 
   @eservice_published_delegation
   @happy-path
@@ -1229,7 +1230,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    And l'utente richiede l'associazione della finalità al client
+    And "PA1" associa la finalità al client creato con successo
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
