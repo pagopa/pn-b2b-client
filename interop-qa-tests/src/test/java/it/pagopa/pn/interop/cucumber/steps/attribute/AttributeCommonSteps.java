@@ -15,6 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
+import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
@@ -31,10 +32,12 @@ public class AttributeCommonSteps {
     private final IdentityService identityService;
     private final EServiceDescriptorUtils eServiceDescriptorUtils;
     private final BaseResolver purposesResolver;
+    private final DelayService delayService;
 
     public AttributeCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        BFFDataPreparationService dataPreparationService)
+        BFFDataPreparationService dataPreparationService,
+        DelayService delayService)
     {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -47,6 +50,7 @@ public class AttributeCommonSteps {
             this.sharedStepsContext
         );
         this.purposesResolver = new BaseResolver(sharedStepsContext);
+        this.delayService = delayService;
     }
 
     @Given("{tenantType} ha già creato {int} attribut(i)(o) {attributeKind}")
@@ -315,7 +319,7 @@ public class AttributeCommonSteps {
 
         // Sleep richiesto poiché l'aggiornamento è asincrono e attendiamo che i dati siano stabili.
         // Il polling non è utilizzabile in quanto non è possibile definire una condizione di uscita affidabile.
-        Thread.sleep(2000);
+        this.delayService.delay();
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeId)
         );
