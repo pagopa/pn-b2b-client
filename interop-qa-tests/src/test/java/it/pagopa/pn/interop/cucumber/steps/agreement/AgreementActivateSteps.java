@@ -53,10 +53,9 @@ public class AgreementActivateSteps {
         dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
-
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy) {
-        tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, null, null);
+        tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, 50, 100);
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int}")
@@ -79,14 +78,9 @@ public class AgreementActivateSteps {
 
         UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .attributes(descriptorAttributesSeed)
-                .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy));
-
-        if (dailyCallsPerConsumer != null) {
-            updateEServiceDescriptorSeed.dailyCallsPerConsumer(dailyCallsPerConsumer);
-        }
-        if (dailyCallsTotal != null) {
-            updateEServiceDescriptorSeed.dailyCallsTotal(dailyCallsTotal);
-        }
+                .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
 
         EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
                 new EServiceSeed(), updateEServiceDescriptorSeed
