@@ -13,7 +13,9 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectFile("target/failed.txt")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty,json:target/cucumber-report.json,html:target/cucumber-report.html," +
-        "it.pagopa.pn.cucumber.steps.RerunGuardPlugin")
+@ConfigurationParameter(
+        key = PLUGIN_PROPERTY_NAME,
+        value = "pretty,json:target/cucumber-report-rerun.json,html:target/cucumber-report-rerun.html,it.pagopa.pn.cucumber.steps.RerunGuardPlugin"
+)
 public class RerunFailedTestSuite {
 }
