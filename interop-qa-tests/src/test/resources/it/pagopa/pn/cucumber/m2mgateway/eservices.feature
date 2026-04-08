@@ -1,5 +1,5 @@
 ﻿@m2mEservices
-Feature: Gestione degli eServices attraverso APIs M2M V2
+Feature: Gestione degli eServices attraverso APIs M2M
 
   @happy-path
   Scenario Outline: [M2MG_ESERVICES_1] RED - La lista degli eServices può essere visionata da un utente con ruolo M2M o M2M-ADMIN (Scenario 4)
