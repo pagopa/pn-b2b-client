@@ -772,7 +772,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @sad-path
-  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M NON può modificare le flag di delega di un e-service template instance
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M NON può modificare le flag di delega di un e-service template instance precedentemente creato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"

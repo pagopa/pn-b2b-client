@@ -174,10 +174,6 @@ Feature: Aggiornamento di un e-service non pubblicato
       | PUBLISHED       | true                | %null                   | 400        | %actual    |
       | SUSPENDED       | true                | %null                   | 400        | %actual    |
       | DEPRECATED      | true                | %null                   | 400        | %actual    |
-    #test cui chiamata al server non viene al momento effettuata
-      | PUBLISHED       | true                | false                   | 400        | %null      |
-      | SUSPENDED       | true                | false                   | 400        | %null      |
-      | DEPRECATED      | true                | false                   | 400        | %null      |
     #eServiceId casuale
       | PUBLISHED       | true                | false                   | 404        | %random    |
       | SUSPENDED       | true                | false                   | 404        | %random    |
