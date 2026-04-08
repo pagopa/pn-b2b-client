@@ -31,6 +31,8 @@ public interface NotificationStepsInterface {
 
     void setSenderTaxId(String senderTaxId);
 
+    String getSenderTaxId();
+
     String getNotificationRequestGroup();
 
     void setNotificationRequestGroup(String group);
