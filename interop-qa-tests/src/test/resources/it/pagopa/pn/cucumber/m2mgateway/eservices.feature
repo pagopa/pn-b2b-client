@@ -1095,7 +1095,7 @@ Feature: Gestione degli eServices attraverso APIs M2M V2
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'utente è un "admin" dell'ente delegato
-    Then la richiesta di fruizione è passata in stato "ACTIVE"
+    Then la richiesta di fruizione è in stato "ACTIVE"
 
   @eservice_published_delegation
   @sad-path
