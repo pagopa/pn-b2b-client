@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.report;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -192,6 +192,7 @@ public class CucumberReportProcessor {
         Map<String, Object> feature = new LinkedHashMap<>();
         feature.put(URI_KEY, uri);
         feature.put(ELEMENTS_KEY, elements);
+        feature.put(NAME_KEY, uri.replace("classpath:", ""));
         return feature;
     }
 

@@ -307,7 +307,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -320,7 +319,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>it.pagopa.pn.cucumber.steps.CucumberReportProcessorLauncher</mainClass>
+                            <mainClass>it.pagopa.pn.cucumber.report.CucumberReportProcessorLauncher</mainClass>
                             <classpathScope>test</classpathScope>
                         </configuration>
                     </execution>

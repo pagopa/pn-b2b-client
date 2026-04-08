@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.report;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ public class CucumberCsvReportGenerator {
     private static final Pattern TEST_ID_PATTERN = Pattern.compile("\\[([^\\]]+)\\]");
 
     private static final String INPUT_FILE = "target/cucumber-report-merged.json";
-    private static final String OUTPUT_FILE = "target/cucumber-report.csv";
+    private static final String OUTPUT_FILE = "target/failure-table.csv";
 
     private static final String[] CSV_HEADERS = {
             "#", "ID TEST", "ERROR LOG", "KEYS", "COMPONENTS", "RESULT", "PROCEDURE", "BUG SUITE", "BUG PRODOTTO"
