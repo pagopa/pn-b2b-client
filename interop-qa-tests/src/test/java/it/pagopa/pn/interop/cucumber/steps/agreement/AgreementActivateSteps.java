@@ -176,7 +176,15 @@ public class AgreementActivateSteps {
         sharedStepsContext.getAttributeCommonContext().setRequiredCertifiedAttributes(requiredCertifiedAttributes);
  */
         BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::assignCertifiedAttributeToTenant;
-        createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction);
+        createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction, true);
+    }
+
+    @Given("due gruppi di due attributi certificati da {string}, dei quali {string} li possiede tutti")
+    public void tenantHasAllCertifiedAttributeGroups(String certifier, String consumer) {
+        UUID consumerId = identityService.getOrganizationId(consumer);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+        BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::assignCertifiedAttributeToTenant;
+        createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction, false);
     }
 
     @Given("due gruppi di due attributi dichiarati, dei quali {string} ne possiede uno per gruppo")
@@ -185,10 +193,10 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::declareDeclaredAttribute;
-        createTwoSpecificAttributeKind(AttributeKind.DECLARED, tenantId, consumerFunction);
+        createTwoSpecificAttributeKind(AttributeKind.DECLARED, tenantId, consumerFunction, true);
     }
 
-    private void createTwoSpecificAttributeKind(AttributeKind attributeKind, UUID tenantId, BiConsumer<UUID, UUID> consumerFunction) {
+    private void createTwoSpecificAttributeKind(AttributeKind attributeKind, UUID tenantId, BiConsumer<UUID, UUID> consumerFunction, boolean assignOnlyFirstAttribute) {
         List<List<UUID>> requiredAttributes = new ArrayList<>();
 
         for (int groupIdx = 0; groupIdx < 2; groupIdx++) {
@@ -196,13 +204,13 @@ public class AgreementActivateSteps {
 
             for (int attrIdx = 0; attrIdx < 2; attrIdx++) {
                 UUID attributeId = dataPreparationService.createAttribute(attributeKind, null).getId();
+                attributeGroup.add(attributeId);
 
-                if (attrIdx % 2 == 0) {
+                if (attrIdx == 0 || !assignOnlyFirstAttribute) {
                     consumerFunction.accept(tenantId, attributeId);
                 }
-
-                attributeGroup.add(attributeId);
             }
+
             requiredAttributes.add(attributeGroup);
         }
         if (attributeKind == AttributeKind.VERIFIED)
