@@ -122,7 +122,6 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     And si ottiene status code 200 e la finalità in stato "ACTIVE"
-    And l'utente è un "admin" di "PA2"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 5   |
       | remainingDailyCallsTotal       | 995 |
@@ -138,8 +137,9 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsPerConsumer | 0   |
       | remainingDailyCallsTotal       | 995 |
 
+  @sad-path
   @dailyCallsThreshold
-  Scenario: [PURPOSE_THRESHOLD_6] Una finalità in stato ACTIVE è alla revoca di un attributo certificato non essenziale per la fruizione ma associato ad una certa soglia
+  Scenario: [PURPOSE_THRESHOLD_6] Dopo la revoca di un attributo certificato per cui il fruitore non può più usufruire dell'e-service per cui aveva una finalità attiva, non è possibile recuperare le soglie rimanenti
     Given l'utente è un "admin" di "PA1"
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
     And si ottiene status code 200
@@ -147,8 +147,8 @@ Feature: Verifica soglie differenziate
     And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
     And si ottiene status code 200
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo è uguale a "100"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
@@ -158,13 +158,37 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsTotal       | 989 |
     And l'utente è un "admin" di "PA1"
     And l'utente revoca l'attributo certificato 0-esimo nel gruppo 1-esimo precedentemente creato e assegnato a "PA2"
-    And si ottiene status code 200
-    And l'utente è un "admin" di "PA1"
     Then si ottiene status code 200 e la finalità in stato "ACTIVE"
     And l'utente è un "admin" di "PA2"
+    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "%actual" e si ottiene uno status code 400
+
+  @happy-path
+  @dailyCallsThreshold
+  Scenario: [PURPOSE_THRESHOLD_6b] Dopo la revoca di un attributo certificato per cui il fruitore non può più usufruire dell'e-service per cui aveva una finalità attiva, non è possibile recuperare le soglie rimanenti
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" li possiede tutti
+    And si ottiene status code 200
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
+    And si ottiene status code 200
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo è uguale a "100"
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
+    And si ottiene status code 200
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "ACTIVE"
     And i residui relativi alle dailyCalls associati alla finalità sono pari a:
       | remainingDailyCallsPerConsumer | 89  |
       | remainingDailyCallsTotal       | 989 |
+    And l'utente è un "admin" di "PA1"
+    And l'utente revoca l'attributo certificato 0-esimo nel gruppo 1-esimo precedentemente creato e assegnato a "PA2"
+    Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And l'utente è un "admin" di "PA2"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | 0  |
+      | remainingDailyCallsTotal       | 989 |
+    And si ottiene status code 200
 
   @dailyCallsThreshold
   Scenario: [PURPOSE_THRESHOLD_7] Per la creazione di una finalità in stato ACTIVE il sistema attribuisce la soglia maggiore degli attributi certificati definiti in gruppi differenti
@@ -228,8 +252,7 @@ Feature: Verifica soglie differenziate
     And l'utente tenta di attivare la finalità
     And si ottiene status code 200 e la finalità in stato "ACTIVE"
     When l'utente è un "<ruolo>" di "PA2"
-    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
-    Then si ottiene status code <statusCode>
+    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" e si ottiene uno status code <statusCode>
 
     @happy-path
     Examples:
@@ -261,8 +284,7 @@ Feature: Verifica soglie differenziate
     And l'utente tenta di attivare la finalità
     And si ottiene status code 200 e la finalità in stato "ACTIVE"
     When l'utente è un "<role>" di "PA2" con ruolo M2M <m2mRole>
-    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
-    Then si ottiene status code <statusCode>
+    And l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m e si ottiene uno status code <statusCode>
 
     @happy-path
     Examples:
@@ -285,8 +307,7 @@ Feature: Verifica soglie differenziate
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10] Una richiesta con API BFF per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
     Given l'utente è un "admin" di "PA1"
-    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>"
-    Then si ottiene status code <statusCode>
+    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" e si ottiene uno status code <statusCode>
 
     Examples:
       | purposeId | statusCode |
@@ -296,8 +317,7 @@ Feature: Verifica soglie differenziate
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m
-    Then si ottiene status code <statusCode>
+    When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m e si ottiene uno status code <statusCode>
 
     Examples:
       | purposeId | statusCode |
