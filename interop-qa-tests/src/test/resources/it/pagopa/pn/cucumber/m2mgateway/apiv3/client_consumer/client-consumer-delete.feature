@@ -36,7 +36,8 @@ Feature: Eliminazione dei client di tipo consumer - API v3
 
     # Role not authorized
       | %random  | m2m       | 403        |
-      | %null    | m2m       | 403        |
+    # Test non eseguibile per via del controllo implicito sul nullble di keychainId nel client openapi generato
+    #  | %null      | m2m       | 403        |
 
   Scenario Outline: [DELETE_CLIENT_CONSUMER_3] Non è possibile eliminare un client consumer se nella request non è presente l'header Authentication
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
