@@ -812,3 +812,18 @@ Feature: Test API M2M of e-service template
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_8] Un utente con ruolo M2M-ADMIN ed appartenente ad un ente NON PA NON può modificare le flag di delega di un e-service template instance
+    Given l'utente è un "admin" di "<tenant>"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 403
+    #And l'e-service non ha subito modifiche
+    Examples:
+      | tenant  |
+      | GSP     |
+      | PRIVATE |
