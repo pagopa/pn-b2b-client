@@ -4,7 +4,42 @@ import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
-@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
-@ConfigurationParameter(key = PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, value = "4")
-public class NrtTest extends AbstractNrtTest {
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("it/pagopa/pn/cucumber")
+@ConfigurationParameters({
+        @ConfigurationParameter(
+                key = PLUGIN_PROPERTY_NAME,
+                value = "pretty," +
+                        "json:target/cucumber-report-nrt-bff-m2mv2.json," +
+                        "html:target/cucumber-report-nrt-bff-m2mv2.html," +
+                        "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
+                        "api.m2m.version=V2;" +
+                        "api.mode=RIGHT_FIT;" +
+                        "api.set=M2M;" +
+                        "api.bff.version=V1"
+        ),
+        @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
+
+        // abilita parallelismo JUnit
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+
+        // abilita parallelismo Cucumber
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
+})
+@ExcludeTags({"wait_for_fix", "ignore"})
+@IncludeTags({
+    // BFF
+    "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
+    "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "selfcare",
+    "app-edit-ff-on", "llgg", "e-service-template", "e-service-template-receive-bff", "purposeTemplate",
+
+    // M2M
+    "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
+    "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
+    "m2m-parte2-ottobre", "m2mEservices", "e-service-template-receive-m2m"
+
+})
+public class NrtTest {
 }

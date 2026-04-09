@@ -6,7 +6,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
