@@ -28,7 +28,7 @@ public class EventTimelineParser {
                 for (String part : options.split(";")) {
                     if (part.startsWith("DOC:")) {
                         String value = part.substring(4).trim();
-                        if (value.equalsIgnoreCase("7ZIP")) tags.add("safestorage://PN_PRINTED");
+                        if (List.of("7ZIP", "ZIP").contains(value)) tags.add("safestorage://PN_PRINTED");
                         else if (List.of("Plico", "Indagine", "AR", "ARCAD", "23L").contains(value))
                             tags.add("safestorage://PN_EXTERNAL_LEGAL_FACTS-");
                     }

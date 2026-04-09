@@ -1,0 +1,295 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["trackings"],
+  "properties": {
+    "trackings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "trackingId",
+          "attemptId",
+          "pcRetry",
+          "events",
+          "validationFlow",
+          "validationConfig",
+          "productType",
+          "paperStatus",
+          "unifiedDeliveryDriver",
+          "state",
+          "businessState",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "trackingId": { "type": "string" },
+          "attemptId": { "type": "string" },
+          "pcRetry": { "type": "string" },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "statusCode",
+                "statusTimestamp",
+                "attachments",
+                "createdAt",
+                "dryRun"
+              ],
+              "properties": {
+
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-fA-F-]{36}$"
+                },
+
+                "requestTimestamp": {
+                  "type": ["string", "null"],
+                  "format": "date-time"
+                },
+
+                "statusCode": { "type": "string" },
+
+                "statusTimestamp": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+
+                "statusDescription": {
+                  "type": ["string", "null"]
+                },
+
+                "iun": {
+                  "type": ["string", "null"]
+                },
+
+                "productType": { "type": ["string", "null"] },
+
+                "deliveryFailureCause": {
+                  "type": ["string", "null"]
+                },
+
+                "anonymizedDiscoveredAddressId": {
+                  "type": ["string", "null"]
+                },
+
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["id", "documentType", "uri", "date", "sha256"],
+                    "properties": {
+                      "id": { "type": "string" },
+                      "documentType": { "type": "string" },
+                      "uri": { "type": "string" },
+                      "date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "sha256": { "type": "string" }
+                    }
+                  }
+                },
+
+                "registeredLetterCode": {
+                  "type": ["string", "null"]
+                },
+
+                "notificationReworkId": {
+                  "type": ["string", "null"]
+                },
+
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+
+                "dryRun": { "type": "boolean" }
+              },
+
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "statusCode": { "const": "P000" }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "requestTimestamp": {
+                        "type": ["string", "null"],
+                        "format": "date-time"
+                      },
+                      "iun": {
+                        "type": ["string", "null"]
+                      },
+                      "statusDescription": {
+                        "type": ["string", "null"]
+                      }
+                    }
+                  },
+                  "else": {
+                    "required": ["requestTimestamp", "iun", "statusDescription"],
+                    "properties": {
+                      "requestTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "iun": { "type": "string" },
+                      "statusDescription": { "type": "string" }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "validationConfig": {
+            "type": "object",
+            "required": [
+              "ocrEnabled",
+              "ocrFileTypes",
+              "ocrFilterTemporal",
+              "ocrFilterUnifiedDeliveryDriver",
+              "requiredAttachmentsRefinementStock890",
+              "sendOcrAttachmentsFinalValidation",
+              "sendOcrAttachmentsFinalValidationStock890",
+              "sendOcrAttachmentsRefinementStock890",
+
+              "strictFinalValidationStock890"
+            ],
+            "properties": {
+              "ocrEnabled": {
+                "type": "string",
+                "enum": ["RUN", "DRY", "DISABLED"]
+              },
+              "ocrFileTypes": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "ocrFilterTemporal": { "type": "string" },
+              "ocrFilterUnifiedDeliveryDriver": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "requiredAttachmentsRefinementStock890": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "sendOcrAttachmentsFinalValidation": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "sendOcrAttachmentsFinalValidationStock890": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "sendOcrAttachmentsRefinementStock890": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "strictDeliveryFailureCause": { "type": "boolean" },
+              "strictFinalValidationStock890": { "type": "boolean" }
+            }
+          },
+
+          "validationFlow": {
+            "type": "object",
+            "required": ["ocrRequests"],
+            "properties": {
+
+              "sequencesValidationTimestamp": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+
+              "ocrRequests": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "attachmentEventId",
+                    "documentType",
+                    "finalEventId",
+                    "requestTimestamp"
+                  ],
+                  "properties": {
+                    "attachmentEventId": { "type": "string" },
+                    "documentType": { "type": "string" },
+                    "finalEventId": { "type": "string" },
+                    "requestTimestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "responseStatus": {
+                      "type": ["string", "null"],
+                      "enum": ["OK", "KO", "PENDING"]
+                    },
+                    "responseTimestamp": {
+                      "type": ["string", "null"],
+                      "format": "date-time"
+                    },
+                    "uri": {
+                      "type": ["string", "null"],
+                      "format": "string"
+                    }
+                  }
+                }
+              },
+
+              "finalEventDematValidationTimestamp": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+
+              "refinementDematValidationTimestamp": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+
+              "finalEventBuilderTimestamp": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              },
+
+              "recag012StatusTimestamp": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              }
+            }
+          },
+
+          "productType": { "type": "string" },
+
+          "state": {
+            "type": "string",
+            "enum": ["AWAITING_REFINEMENT", "AWAITING_REWORK_EVENTS", "AWAITING_OCR", "DONE", "KO", "AWAITING_FINAL_STATUS_CODE"]
+          },
+
+          "businessState": {
+            "type": "string",
+            "enum": ["AWAITING_FINAL_STATUS_CODE", "AWAITING_REFINEMENT_OCR", "AWAITING_REWORK_EVENTS", "AWAITING_OCR", "DONE", "KO"]
+          },
+
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+
+          "processingMode": {
+            "type": ["string", "null"],
+            "enum": ["RUN", "DRY", null]
+          }
+        }
+      }
+    }
+  }
+}
