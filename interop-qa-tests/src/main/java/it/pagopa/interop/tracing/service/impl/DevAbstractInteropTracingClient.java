@@ -20,17 +20,7 @@ public class DevAbstractInteropTracingClient extends AbstractInteropTracingClien
 
     @Override
     public void setBearerToken(String bearerToken) {
-        switch (bearerToken) {
-            case "TENANT_1" -> {
-                this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), getTracingClientConfigs().getBearerToken1()));
-                this.bearerTokenSetted = BearerTokenType.TENANT_1;
-            }
-            case "TENANT_2" -> {
-                this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), getTracingClientConfigs().getBearerToken2()));
-                this.bearerTokenSetted = BearerTokenType.TENANT_2;
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
-        }
+        this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), bearerToken));
     }
 
     public BearerTokenType getBearerTokenSetted() {
