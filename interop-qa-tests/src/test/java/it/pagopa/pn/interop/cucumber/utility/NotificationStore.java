@@ -42,13 +42,11 @@ public class NotificationStore {
 
     public NotificationStore(
         ConfigFileReader configFileReader,
-        SharedStepsContext sharedStepsContext,
-        //@Qualifier("interopIdentityService") IdentityService identityService,
+        @Qualifier("interopIdentityService") IdentityService identityService,
         ClientTokenConfigurator clientTokenConfigurator
     ) {
         this.configFileReader = configFileReader;
-        //this.identityService = identityService;
-        this.identityService = sharedStepsContext.getIdentityService();
+        this.identityService = identityService;
         this.clientTokenConfigurator = clientTokenConfigurator;
     }
 
