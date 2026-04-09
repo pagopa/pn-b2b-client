@@ -230,6 +230,7 @@ Feature: Aggiornamento di un e-service non pubblicato
     Given "<tenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 403
+    #And le flag di delega dell'e-service non hanno subito modifiche
     Examples:
       | tenant  |
       | GSP     |
