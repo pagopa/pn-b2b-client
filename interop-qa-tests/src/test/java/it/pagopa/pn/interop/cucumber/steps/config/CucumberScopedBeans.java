@@ -18,12 +18,7 @@ public class CucumberScopedBeans {
     @ScenarioScope
     public ApiProfile apiProfile() {
         ApiProfileConfig config = ApiProfileContext.getRequired();
-        return ApiProfile.from(
-                config.getApiMode(),
-                config.getApiM2mVersion(),
-                config.getApiBffVersion(),
-                config.getApiSet()
-        );
+        return ApiProfile.from(config);
     }
 
     @Bean

@@ -16,11 +16,11 @@ public class ApiProfile {
     private final ApiBFFVersion apiBFFVersion;
     private final ApiSet apiSet;
 
-    public static ApiProfile from(String apiMode, String apiM2MVersion, String apiBFFVersion, String apiSet) {
-        ApiMode mode = ApiMode.valueOf(apiMode);
-        ApiM2MVersion m2MVersion = ApiM2MVersion.valueOf(apiM2MVersion);
-        ApiBFFVersion bffVersion = ApiBFFVersion.valueOf(apiBFFVersion);
-        ApiSet set = ApiSet.valueOf(apiSet);
+    public static ApiProfile from(ApiProfileConfig config) {
+        ApiMode mode = ApiMode.valueOf(config.getApiMode());
+        ApiM2MVersion m2MVersion = ApiM2MVersion.valueOf(config.getApiM2mVersion());
+        ApiBFFVersion bffVersion = ApiBFFVersion.valueOf(config.getApiBffVersion());
+        ApiSet set = ApiSet.valueOf(config.getApiSet());
 
         return new ApiProfile(mode, m2MVersion, bffVersion, set);
     }
