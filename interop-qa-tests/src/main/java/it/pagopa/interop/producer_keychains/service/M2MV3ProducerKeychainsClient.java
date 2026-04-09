@@ -65,6 +65,8 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
                 () -> producerKeychainsApi
                         .deleteProducerKeychainWithHttpInfo(producerKeychainId)
         );
+        if(httpCallExecutor.getResponseStatus().isError())
+            throw new IllegalStateException("Errore nell'eliminazione del portachiavi erogatore (response non 2xx o body nullo)");
     }
 
     @Override

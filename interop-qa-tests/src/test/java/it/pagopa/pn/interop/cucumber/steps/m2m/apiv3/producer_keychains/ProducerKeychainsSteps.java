@@ -348,8 +348,15 @@ public class ProducerKeychainsSteps {
             httpCallExecutor.snapshot();
 
             PollingService.makePolling(
-                    () -> producerKeychainsClient.getProducerKeychains(resolvedKeychainId),
-                    res -> httpCallExecutor.getResponseStatus().equals(HttpStatus.NOT_FOUND),
+                    () -> {
+                        try{
+                            producerKeychainsClient.getProducerKeychains(resolvedKeychainId);
+                        } catch (IllegalStateException e){
+                            log.warn(httpCallExecutor.getErrorMessage());
+                        }
+                        return httpCallExecutor.getResponseStatus();
+                    },
+                    res -> res.equals(HttpStatus.NOT_FOUND),
                     "Producer keychain non eliminato!",
                     5,
                     1000

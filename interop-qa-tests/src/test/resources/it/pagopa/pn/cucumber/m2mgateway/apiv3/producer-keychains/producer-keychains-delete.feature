@@ -36,9 +36,10 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
 
     # Role not authorized
       | %random    | m2m       | 403        |
-      | %null      | m2m       | 403        |
+    # Test non eseguibile per via del controllo implicito sul nullble di keychainId nel client openapi generato
+    #  | %null      | m2m       | 403        |
 
-  Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_3] Non è possibile eliminare un client consumer se nella request non è presente l'header Authentication
+  Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_3] Non è possibile eliminare un client consumer se nella request è presente un header Authentication invalido
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
       | name    | description | members |
@@ -55,7 +56,7 @@ Feature: Eliminazione di un portachiavi erogatore - API v3
       | m2m       |
       | m2m-admin |
 
-  Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_4] Non è possibile eliminare un client consumer se nella request non è presente l'header Authentication
+  Scenario Outline: [DELETE_PRODUCER_KEYCHAINS_4] Non è possibile eliminare un client consumer se nella request non è presente l'header DPoP
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
       | name    | description | members |
