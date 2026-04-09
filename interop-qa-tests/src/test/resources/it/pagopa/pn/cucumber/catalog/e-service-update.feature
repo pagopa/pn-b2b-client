@@ -223,3 +223,14 @@ Feature: Aggiornamento di un e-service non pubblicato
     Then si ottiene lo status code 403
     And l'utente è un "admin" di "PA1"
     And le flag di delega dell'e-service non hanno subito modifiche
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_11] Per un e-service precedentemente creato, in stato NON DRAFT, NON è possibile modificare i flag di delega da parte di enti di tipo differente da PA
+    Given "<tenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
+    Then si ottiene status code 403
+    Examples:
+      | tenant  |
+      | GSP     |
+      | PRIVATE |
