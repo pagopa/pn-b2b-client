@@ -12,6 +12,7 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.mo
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponseResultsInner;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
+import it.pagopa.interop.tracing.client.TracingS3Client;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
@@ -20,8 +21,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.time.LocalDate;
+import java.util.stream.Collectors;
 import java.util.List;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -31,6 +34,7 @@ public class TracingSteps {
     private final IInteropTracingClient interopTracingClient;
     private final TracingFileUtils tracingFileUtils;
     private final PollingService pollingService;
+    private final TracingS3Client s3Client;
 
     private SubmitTracingResponse submitTracingResponse;
     private GetTracingsResponse getTracingsResponse;
@@ -49,6 +53,7 @@ public class TracingSteps {
         this.interopTracingClient = interopTracingClient;
         this.tracingFileUtils = tracingFileUtils;
         this.pollingService = pollingService;
+        this.s3Client = new TracingS3Client();
     }
 
     @Given("l'utenza {string} effettua le chiamate")
@@ -126,6 +131,18 @@ public class TracingSteps {
     @Then("la chiamata fallisce con status code: {int}")
     public void checkStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, httpStatusCodeException.getStatusCode().value());
+    }
+
+    @Then("il file CSV di tracing viene rifiutato perché già esistente")
+    public void verifyRejectionOfCsvFileAlreadyPresent() {
+        // TODO Non posso lanciare il teste devo capire come arriva e come recuperare errors.code (descrittivo)
+        Assertions.assertTrue(submitTracingResponse.toString().contains("TRACING_ALREADY_EXISTS"));
+        Assertions.assertEquals(400, httpStatusCodeException.getStatusCode().value());
+    }
+
+    @Then("la chiamata fallisce perché la risorsa non viene trovata")
+    public void verifyRejectionDueToNotAvailableResource() {
+        Assertions.assertEquals(404, httpStatusCodeException.getStatusCode().value());
     }
 
     @When("viene recuperato il dettaglio del tracing con errori")
@@ -272,7 +289,6 @@ public class TracingSteps {
         }
     }
 
-
     private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
         GetTracingErrorsResponseResultsInner tracingErrorsResponse = new GetTracingErrorsResponseResultsInner();
         tracingErrorsResponse.setErrorCode(errorCode);
@@ -280,5 +296,114 @@ public class TracingSteps {
         tracingErrorsResponse.setPurposeId(purposeId);
         tracingErrorsResponse.setRowNumber(rowNumber);
         return tracingErrorsResponse;
+    }
+
+    private TracingS3Client.PollingSpecification getS3PollingSpecification() {
+        return TracingS3Client.PollingSpecification.builder()
+                .centerTimestamp(Instant.now().toString())
+                .timeoutMs(600_000)
+                .pollIntervalMs(30_000)
+                .deltaSeconds(300)
+                //.fileInfo(InteropFile.?)
+                //.bucketRole(BucketRole.valueOf("?"))
+                .build();
+    }
+
+    private boolean isCsvTracingFilePresent(TracingS3Client.PollingSpecification pollingSpec, String bucketName, String fileName) {
+        return s3Client.isFileExistingInS3Bucket(pollingSpec, bucketName, fileName);
+    }
+
+    private String getCurrentUploadedTracingFileName() {
+        // TODO: devo conoscere il criterio con cui i file di tracing inviati ricevono un nome
+        return "tracing_file_2026_04_02.csv";
+    }
+
+    private String getCurrentTracingErrorsFileName() {
+        // TODO: devo conoscere il criterio con cui i file che tracciano gli errori dentro un csv di tracing
+        // ricevono un nome
+        return "tracing_errors_file_2026_04_02.csv";
+    }
+
+    private String getCurrentEnrichedFileName() {
+        // TODO: devo conoscere il criterio con cui i file di tracing arricchiti ricevono un nome
+        return "enriched_file_2026_04_02.csv";
+    }
+
+    @Then("nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati")
+    public void verifyNoNewCsvTracingGeneratedAtAll() {
+        Assertions.assertFalse(isCsvTracingFilePresent(
+                getS3PollingSpecification(), "tracing-store", getCurrentUploadedTracingFileName()
+        ));
+        Assertions.assertFalse(isCsvTracingFilePresent(
+                getS3PollingSpecification(), "tracing-errors", getCurrentTracingErrorsFileName()
+        ));
+        Assertions.assertFalse(isCsvTracingFilePresent(
+                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedFileName()
+        ));
+    }
+
+    @Then("si attende che il file di tracing arricchito venga generato")
+    public void verifyEnrichedCsvTracingFileIsGenerated() {
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedFileName()
+        ));
+    }
+
+    @Then("si attende che il file di tracing venga arricchito con altri dati")
+    public void verifyCsvUploadedFileIsEnriched() {
+        String bucketName = "tracing-enriched-files";
+        TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
+
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                pollingSpec, bucketName, getCurrentEnrichedFileName()
+        ));
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentEnrichedFileName());
+
+        List<String[]> rows = csvContent.lines()
+                .map(line -> line.split(","))
+                .collect(Collectors.toList());
+
+        // TODO non conosco ancora i campi che vengono aggiornati
+//        public static final List<String> expectedFields = List.of(
+//                "Elemento1", "Elemento2", "Elemento3", "Elemento4", "Elemento5",
+//                "Elemento6", "Elemento7", "Elemento8", "Elemento9", "Elemento10",
+//                "Elemento11", "Elemento12", "Elemento13", "Elemento14", "Elemento15",
+//                "Elemento16", "Elemento17"
+//        );
+        // tracingId,submitterId,date,purposeId,purposeName,status,token_id,requestsCount,eserviceId,consumerId,consumerOrigin,consumerName,consumerExternalId,producerId,producerName,producerOrigin,producerExternalId
+    }
+
+    @Then("si attende che i record errati vengano tracciati negli errori")
+    public void verifyWrongCsvRecordsAreTrackedInTracingErrors() {
+        String bucketName = "tracing-errors";
+        TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
+
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                pollingSpec, bucketName, getCurrentEnrichedFileName()
+        ));
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentTracingErrorsFileName());
+
+        List<String[]> rows = csvContent.lines()
+                .map(line -> line.split(","))
+                .collect(Collectors.toList());
+
+        // TODO non conosco ancora come viene esattamente scritto il file di errore
+    }
+
+    @Then("si attende che i record con purpose non conformi vengano tracciati con warning")
+    public void verifyWarningCsvRecordsAreTrackedInTracingErrors() {
+        String bucketName = "tracing-errors";
+        TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
+
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                pollingSpec, bucketName, getCurrentEnrichedFileName()
+        ));
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentTracingErrorsFileName());
+
+        List<String[]> rows = csvContent.lines()
+                .map(line -> line.split(","))
+                .collect(Collectors.toList());
+
+        // TODO non conosco ancora come viene esattamente segnato il WARNING nel file di errore
     }
 }
