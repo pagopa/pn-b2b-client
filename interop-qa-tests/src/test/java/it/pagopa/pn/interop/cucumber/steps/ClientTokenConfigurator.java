@@ -22,6 +22,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.*;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +79,7 @@ public class ClientTokenConfigurator {
     private final IPurposeTemplateClient purposeTemplateClient;
     private final INotificationClient notificationClient;
     private final INotificationConfigClient notificationConfigClient;
+    private final IInteropTracingClient tracingClient;
     private final ProducerKeychainClient producerKeychainClient;
 
     // Clients M2M API v3
@@ -218,6 +220,7 @@ public class ClientTokenConfigurator {
         m2mPurposeTemplateClient.setBearerToken(token);
         notificationClient.setBearerToken(token);
         notificationConfigClient.setBearerToken(token);
+        tracingClient.setBearerToken(token);
         producerKeychainClient.setBearerToken(token);
     }
 
