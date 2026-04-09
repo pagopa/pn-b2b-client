@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
+
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +42,13 @@ public class NotificationStore {
 
     public NotificationStore(
         ConfigFileReader configFileReader,
-        @Qualifier("interopIdentityService") IdentityService identityService,
+        SharedStepsContext sharedStepsContext,
+        //@Qualifier("interopIdentityService") IdentityService identityService,
         ClientTokenConfigurator clientTokenConfigurator
     ) {
         this.configFileReader = configFileReader;
-        this.identityService = identityService;
+        //this.identityService = identityService;
+        this.identityService = sharedStepsContext.getIdentityService();
         this.clientTokenConfigurator = clientTokenConfigurator;
     }
 
