@@ -4,23 +4,25 @@ Feature: Creazione dei producer keychains - API v3
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_1] Creazione nuovo portachiavi erogatore per un utente m2m-admin
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
-      | name   | description   | members   |
-      | <name> | <description> | <members> |
+      | name    | description | members   |
+      | %random | %random     | <members> |
     Then si ottiene response status code 200
     And l'oggetto ProducerKeychain restituito rispetta quanto atteso
 
     Examples:
-      | name    | description | members                              |
+      | members                              |
     # Members void
-      | %random | %random     | []                                   |
+      | []                                   |
 
     # Populating members with roles
-      | %random | %null       | [api,security]                       |
-      | %random | %random     | [admin]                              |
-      | %random | %random     | [security]                           |
-      | %random | %random     | [api]                                |
-      | %random | %random     | [support]                            |
-      | %random | %random     | [admin, api,security, security, api] |
+      | [api,security]                       |
+      | [admin]                              |
+      | [security]                           |
+      | [api]                                |
+      | [support]                            |
+      | [admin, api,security, security, api] |
+    # Il ruolo support non è stato inserito poichè in config ha lo stesso id di api,security e nell'array devono essere univoci
+    # | %random | %random     | [admin, api,security, security, api, support] |
 
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_1b] Validazione input per un utente m2m-admin alla creazione di un portachiavi erogatore
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
