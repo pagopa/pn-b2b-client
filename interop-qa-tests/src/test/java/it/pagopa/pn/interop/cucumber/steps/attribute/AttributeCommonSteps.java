@@ -329,8 +329,8 @@ public class AttributeCommonSteps {
         Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
     }
 
-    @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string}")
-    public void getRemainingDailyCalls(String purposeId) {
+    @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string} e si ottiene uno status code {int}")
+    public void getRemainingDailyCalls(String purposeId, Integer statusCode) {
 
         UUID purposeIdAsUUID = this.purposesResolver.resolveOrParse(
                 purposeId,
@@ -341,8 +341,12 @@ public class AttributeCommonSteps {
                 null
         );
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeIdAsUUID)
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getRemainingDailyCalls(purposeIdAsUUID)
+                ),
+                res -> statusCode == null || res.value() == statusCode,
+                "Unexpected status code for getRemainingDailyCalls"
         );
     }
 

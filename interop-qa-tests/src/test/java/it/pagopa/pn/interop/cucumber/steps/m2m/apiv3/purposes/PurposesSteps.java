@@ -49,8 +49,8 @@ public class PurposesSteps {
         Assertions.assertEquals(expectedRemainingDailyCallsTotals, response.getRemainingDailyCallsTotal());
     }
 
-    @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string} per m2m")
-    public void getRemainingDailyCallsM2M(String purposeId) {
+    @Given("l'utente cerca di recuperare le soglie rimanenti per la finalità con ID {string} per m2m e si ottiene uno status code {int}")
+    public void getRemainingDailyCallsM2M(String purposeId, Integer statusCode) {
 
         UUID purposeIdAsUUID = this.purposesResolver.resolveOrParse(
                 purposeId,
@@ -61,8 +61,12 @@ public class PurposesSteps {
                 null
         );
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> this.purposeClient.getRemainingDailyCalls(purposeIdAsUUID)
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> this.purposeClient.getRemainingDailyCalls(purposeIdAsUUID)
+                ),
+                res -> statusCode == null || res.value() == statusCode,
+                "Unexpected status code for getRemainingDailyCalls"
         );
     }
 }
