@@ -186,7 +186,7 @@ public class AttributeCommonSteps {
             } ,
             String.format("Errore durante la verifica dell'associazione dell'attributo %s all'e-service %s", attributeType, eServiceId),
             5,
-            2
+            2_000
         );
     }
 
