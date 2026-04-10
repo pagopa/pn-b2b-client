@@ -170,6 +170,7 @@ Feature: Creazione di una delega in erogazione
 
   #TC-12: L'API di disponibilità NON puà essere invocata da un utente admin di un tenant NON PA
   @sad-path
+  @hotfix2170
   Scenario: [TC_CAPOFILA_PRIVATO] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "Privato"
@@ -199,6 +200,7 @@ Feature: Creazione di una delega in erogazione
       | support      |        403 |
 
   @sad-path @deleghe2
+  @hotfix2170
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
     Given l'utente è un "admin" di "PA1"
     Given l'ente "GSP" rimuove la disponibilità a ricevere deleghe
@@ -305,3 +307,4 @@ Feature: Creazione di una delega in erogazione
     When l'utente sospende quel descrittore
     Then si ottiene lo status code 403
     And l'e-service è in stato "PUBLISHED"
+
