@@ -9,7 +9,7 @@ Feature: Gestione delle deleghe attraverso APIs M2M V2
   @m2m-incaricato
   @hotfix2170
   Scenario: [M2M_DELEGATIONS_CONSUMER_1] Una delega in fruizione può essere creata da un utente con ruolo M2M-ADMIN (Scenario 37)
-    Given "GSP" ha già creato e pubblicato 1 e-services delegabile in fruizione
+    Given "PA3" ha già creato e pubblicato 1 e-services delegabile in fruizione
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
