@@ -36,7 +36,7 @@ public class RerunGuardPlugin implements ConcurrentEventListener {
             int failedTests = lines.size();
             // recupero soglia
             int maxAllowed = Integer.parseInt(
-                    System.getenv().getOrDefault("RERUN_MAX", "10")
+                    System.getenv().getOrDefault("RERUN_MAX", "30")
             );
             if (failedTests > maxAllowed) {
                 stopExecution("troppi test falliti (" + failedTests + ")");
