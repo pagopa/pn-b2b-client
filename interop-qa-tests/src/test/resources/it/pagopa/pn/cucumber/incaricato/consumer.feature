@@ -317,6 +317,7 @@ Feature: Test API Availability in Use of E-Service
     # Processo di produzione di una delega tra due enti diversi da delegante e delegato
     And l'utente è un "admin" di "PA4"
     And l'ente "PA4" concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" di "PA3"
     And l'ente "PA3" ha inoltrato una richiesta di delega in fruizione all'ente terzo "PA4"
     And l'utente è un "admin" dell'ente delegato
 
