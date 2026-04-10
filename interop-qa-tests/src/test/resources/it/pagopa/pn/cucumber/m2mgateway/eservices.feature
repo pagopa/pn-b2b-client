@@ -1041,15 +1041,19 @@ Feature: Gestione degli eServices attraverso APIs M2M
   @eservice_published_delegation
   @sad-path
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_9] Un utente con ruolo M2M-ADMIN ed appartenente ad un ente NON PA NON può modificare le flag di delega di un e-service
-    Given "<tenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given "<tenant>" ha già creato un e-service con un descrittore in stato "<descriptorState>"
     And l'utente è un "admin" di "<tenant>" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     Then si ottiene lo status code 403
     #And l'e-service non ha subito modifiche
     Examples:
-      | tenant  |
-      | GSP     |
-      | PRIVATE |
+      | tenant  | descriptorState |
+      | GSP     | PUBLISHED       |
+      | GSP     | SUSPENDED       |
+      | GSP     | DEPRECATED      |
+      | PRIVATE | PUBLISHED       |
+      | PRIVATE | SUSPENDED       |
+      | PRIVATE | DEPRECATED      |
 
   @eservice_published_delegation
   @sad-path

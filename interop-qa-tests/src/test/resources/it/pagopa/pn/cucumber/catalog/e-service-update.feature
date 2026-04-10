@@ -227,11 +227,15 @@ Feature: Aggiornamento di un e-service non pubblicato
   @eservice_published_delegation
   @sad-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_11] Per un e-service precedentemente creato, in stato NON DRAFT, NON è possibile modificare i flag di delega da parte di enti di tipo differente da PA
-    Given "<tenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given "<tenant>" ha già creato un e-service con un descrittore in stato "<descriptorState>"
     When l'utente imposta la delega amministrativa come "true" e la delega tecnica come "true" per la fruizione dell'e-service "%actual"
     Then si ottiene status code 403
-    #And le flag di delega dell'e-service non hanno subito modifiche
+    And le flag di delega dell'e-service non hanno subito modifiche
     Examples:
-      | tenant  |
-      | GSP     |
-      | PRIVATE |
+      | tenant  | descriptorState |
+      | GSP     | PUBLISHED       |
+      | GSP     | SUSPENDED       |
+      | GSP     | DEPRECATED      |
+      | PRIVATE | PUBLISHED       |
+      | PRIVATE | SUSPENDED       |
+      | PRIVATE | DEPRECATED      |
