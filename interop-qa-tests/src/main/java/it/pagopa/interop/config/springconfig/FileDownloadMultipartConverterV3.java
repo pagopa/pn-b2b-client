@@ -1,4 +1,4 @@
-package it.pagopa.interop.config.springconfig.springconfig;
+package it.pagopa.interop.config.springconfig;
 
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.FileDownloadMultipart;
