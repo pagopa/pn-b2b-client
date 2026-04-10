@@ -40,11 +40,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.Map;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.LollipopHeader.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -528,6 +524,85 @@ public class DelegheTemporaneeSteps {
             }
         }
         return headersLollipop;
+    }
+
+    @Given("genero la curl a partire dai log lambdaAuthorizer")
+    public void generateCurl() {
+        String logString = """
+                {
+                {
+                                                      type: 'REQUEST',
+                                                      methodArn: 'arn:aws:execute-api:eu-south-1:644374009812:k6tj47klpa/unique/POST/notifications/received/check-qr-code',
+                                                      resource: '/notifications/received/check-qr-code',
+                                                      path: '/delivery/notifications/received/check-qr-code',
+                                                      httpMethod: 'POST',
+                                                      headers: {
+                                                        accept: '*/*',
+                                                        'accept-encoding': 'br, gzip, deflate',
+                                                        'accept-language': '*',
+                                                        'content-digest': 'sha-256=:wje4k645j+rmj5rVXLkuYgOevU6q/XUQ/z0496F0Aos=:',
+                                                        'Content-Length': '208',
+                                                        'content-type': 'application/json',
+                                                        Host: 'api-io.uat.notifichedigitali.it',
+                                                        'sec-fetch-mode': 'cors',
+                                                        signature: 'sig1=:MEYCIQDJ1QoqRDPZcotJZ+hk3Z88cBaBOhhk9NuuCy64FHUrOwIhAPC4CjaiIxXpvjOblsN0dfzoOhW27Ap1naP7B3L1B1gz:',
+                                                        'signature-input': 'sig1=("x-pagopa-lollipop-original-method" "x-pagopa-lollipop-original-url");created=1775642225;nonce="f870855f-29b8-4495-8544-b2ef7c2ced12";alg="ecdsa-p256-sha256";keyid="ojT1fpcnQ6AGIPVLAEUIzTrNt19w5mM6zD1YPFmSCvY"',
+                                                        'user-agent': 'node',
+                                                        'X-Amzn-Trace-Id': 'Root=1-69d62671-6e74b4d521dd0cec32059f9e',
+                                                        'x-api-key': 'q6XSeFPKh0a90ezR8BIeT8BdvsjNZnBBTaBQoN3b',
+                                                        'X-Forwarded-For': '4.232.9.45',
+                                                        'X-Forwarded-Port': '443',
+                                                        'X-Forwarded-Proto': 'https',
+                                                        'x-pagopa-cx-taxid': 'NNCMRC80H27A509T',
+                                                        'x-pagopa-lollipop-assertion-ref': 'sha256-ojT1fpcnQ6AGIPVLAEUIzTrNt19w5mM6zD1YPFmSCvY',
+                                                        'x-pagopa-lollipop-assertion-type': 'SAML',
+                                                        'x-pagopa-lollipop-auth-jwt': 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhc3NlcnRpb25SZWYiOiJzaGEyNTYtb2pUMWZwY25RNkFHSVBWTEFFVUl6VHJOdDE5dzVtTTZ6RDFZUEZtU0N2WSIsIm9wZXJhdGlvbklkIjoiZjg3MDg1NWYtMjliOC00NDk1LTg1NDQtYjJlZjdjMmNlZDEyIiwiaWF0IjoxNzc1NjQyMjI1LCJleHAiOjE3NzU2NDMxMjUsImlzcyI6ImFwaS5pby5wYWdvcGEuaXQiLCJqdGkiOiIwMUtOUDhDQU03VDdUMFAwVFZBMTJQNkdDVCJ9.Z3MQHkL-vhLqiPHwNVXcRzM1hJXfrwZMyugCV1VuQ9HFFGNFnGEUha7YG7MN93hEebRVMeFTXdtCldeITVr9EM_zlJ8VkIXRURhi5kdAwbzS04pROijIh5zyhlpZvPfVF0AVOol1LUJaEbP03_dDkX2m0Z7-9pr0JAviQJmhtL7-AlMVhyytsASKz9uo7_oU-n5RcZnmXVMlWgJcPOFmKUBsW1NaMYeb7VNwvebuLyJvG2bJUHERrgqv_rmGkgWIYQVYsoX9vqFYL7BWy8lM4YYdwbg9mYhnteaTeZLsYyfcl_aBheC0pgCzPS9yNV0BvhymHDIYXxKvmSnd-O0KDg',
+                                                        'x-pagopa-lollipop-original-method': 'POST',
+                                                        'x-pagopa-lollipop-original-url': 'https://api-app.io.pagopa.it/api/com/v1/send/aar/qr-code-check?isTest=true',
+                                                        'x-pagopa-lollipop-public-key': 'eyJ5IjoiMHoyUHJvSDJDTk9vTGZ5eXdPRTc3aTZBNnhOSGhBMVVxWTVQVVU2UjV4MD0iLCJrdHkiOiJFQyIsImNydiI6IlAtMjU2IiwieCI6InBsQ3YxWnF6aDU2TTBJbHo1VkE2WjltZE5XVml4VGhBTG1uZUdpeFJ3NkU9In0',
+                                                        'x-pagopa-lollipop-user-id': 'NNCMRC80H27A509T'
+                                                      }
+                """;
+
+        String[] keysToFind = {
+                "x-pagopa-cx-taxid",
+                "x-pagopa-lollipop-assertion-ref",
+                "x-pagopa-lollipop-assertion-type",
+                "x-pagopa-lollipop-auth-jwt",
+                "x-pagopa-lollipop-original-method",
+                "x-pagopa-lollipop-original-url",
+                "x-pagopa-lollipop-public-key",
+                "x-pagopa-lollipop-user-id",
+                "x-api-key",
+                "signature",
+                "signature-input"
+        };
+
+        StringBuilder curl = new StringBuilder();
+        curl.append("curl --location 'https://api-io.uat.notifichedigitali.it/mandate/api/v1/io/mandate' \\\n");
+        curl.append("--header 'Content-Type: application/json' \\\n");
+
+        String[] lines = logString.split("\n");
+        for (String key : keysToFind) {
+            for (String line : lines) {
+                if (line.contains(key + ":") || line.contains("'" + key + "':")) {
+                    int duePuntiIndex = line.indexOf(":");
+                    String valueHeader = line.substring(duePuntiIndex + 3, line.length() - 1);
+                    if (valueHeader.endsWith(",")) {
+                        valueHeader = valueHeader.substring(0, valueHeader.length() - 1);
+                    }
+                    if (valueHeader.endsWith("'")) {
+                        valueHeader = valueHeader.substring(0, valueHeader.length() - 1);
+                    }
+                    curl.append("--header '").append(key).append(": ").append(valueHeader).append("' \\\n");
+                }
+            }
+        }
+
+        String body = "{\"aarQrCodeValue\":\"https://cittadini.uat.notifichedigitali.it/io/?aar=TFJLUC1WTUpZLVdOWFktMjAyNjAxLUgtMV9QRi1hNTJlNzAxOS0yZTJiLTRlYmUtYTMyYy1iYzAwY2UzYTNjODdfOGYwYzcwYzktODEwMS00Mjc0LTlhYTctYzE0MjAwYzAzNWU3\"}";
+        curl.append("--data '").append(body).append("'");
+
+        log.info("\n" + curl);
     }
 
     private String getQRPathEnvironmentBased() {

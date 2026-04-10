@@ -96,3 +96,6 @@ Feature: 15371 Refactoring Lollipop
       | xPagopaLollipopUserId_errato         |
       | signatureInput_errato                |
       | signature_errato                     |
+
+  Scenario: TOOL HEADER
+    Given genero la curl a partire dai log lambdaAuthorizer
