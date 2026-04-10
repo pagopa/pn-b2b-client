@@ -14,7 +14,7 @@ Feature: Test API Availability in Use of E-Service
     # TODO 07/02/2025: considerare di generalizzare così da resettare TUTTI gli enti automaticamente
     Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA1" rimuove la disponibilità a ricevere deleghe in fruizione
-    And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe in fruizione
+    And l'ente "PA4" rimuove la disponibilità a ricevere deleghe in fruizione
 
   @deleghe1
   Scenario Outline: [TC_INCARICATO_45] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service possa essere compiuto da un utente di tipo amministratore
@@ -293,10 +293,10 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     # Processo di produzione di una delega tra il delegante e un terzo ente
-    And l'utente è un "admin" di "GSP2"
-    And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" di "PA4"
+    And l'ente "PA4" concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un "admin" dell'ente delegante
-    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente terzo "PA4"
     Then si ottiene status code 409
 
 
@@ -315,10 +315,9 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     # Processo di produzione di una delega tra due enti diversi da delegante e delegato
-    And l'utente è un "admin" di "GSP2"
-    And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
-    And l'utente è un "admin" di "GSP"
-    And l'ente "PA3" ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    And l'utente è un "admin" di "PA4"
+    And l'ente "PA4" concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente "PA3" ha inoltrato una richiesta di delega in fruizione all'ente terzo "PA4"
     And l'utente è un "admin" dell'ente delegato
 
     When l'utente ha già creato una richiesta di fruizione indicando la delega dell'ente terzo
