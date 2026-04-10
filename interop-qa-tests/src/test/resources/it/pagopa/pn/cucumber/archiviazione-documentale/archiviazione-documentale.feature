@@ -1,6 +1,7 @@
 @archiviazione-documentale
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
+  @hotfix2170
   Scenario: [TRIGGER]
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -84,6 +85,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
+  @hotfix2170
   Scenario: [DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -123,6 +125,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
+  @hotfix2170
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
