@@ -19,6 +19,7 @@ jobs:
         id: pr_check
         uses: actions/github-script@v7
         with:
+          result-encoding: string
           script: |
             const prs = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -28,20 +29,40 @@ jobs:
             });
             if (prs.data.length === 0) {
               core.setOutput('has_pr', 'false');
+              return '';
             } else {
               core.setOutput('has_pr', 'true');
+              return prs.data[0].number;
             }
 
-      - name: Detect changes in interop-qa-tests
-        id: changes
+      - name: Get changed modules in PR
+        id: changed_modules
         if: steps.pr_check.outputs.has_pr == 'true'
-        run: |
-          git fetch origin ${{ github.event.before }}
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^interop-qa-tests/'; then
-            echo "run_in_qa_tests=true" >> $GITHUB_OUTPUT
-          else
-            echo "run_in_qa_tests=false" >> $GITHUB_OUTPUT
-          fi
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const prNumber = Number(steps.pr_check.outputs.result);
+            if (!prNumber) return '';
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              per_page: 100
+            });
+            // Trova tutte le directory di primo livello che contengono un pom.xml
+            const fs = require('fs');
+            const modules = new Set();
+            for (const file of files) {
+              const parts = file.filename.split('/');
+              if (parts.length > 1) {
+                const moduleDir = parts[0];
+                if (fs.existsSync(`${moduleDir}/pom.xml`)) {
+                  modules.add(moduleDir);
+                }
+              }
+            }
+            return Array.from(modules).join(' ');
 
       - name: Set up Java and Maven
         if: steps.pr_check.outputs.has_pr == 'true'
@@ -51,12 +72,14 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Build interop-qa-tests module
-        if: steps.pr_check.outputs.has_pr == 'true' && steps.changes.outputs.run_in_qa_tests == 'true'
+      - name: Build all changed modules
+        if: steps.pr_check.outputs.has_pr == 'true' && steps.changed_modules.outputs.result != ''
         run: |
-          cd interop-qa-tests
-          mvn clean install -DskipTests -Dgithub.token=${{ secrets.GH_TOKEN }}
+          for module in ${{ steps.changed_modules.outputs.result }}; do
+            echo "Building $module"
+            (cd $module && mvn clean install -DskipTests -Dgithub.token=${{ secrets.GH_TOKEN }})
+          done
 
       - name: Build root project
-        if: steps.pr_check.outputs.has_pr == 'true' && steps.changes.outputs.run_in_qa_tests == 'false'
+        if: steps.pr_check.outputs.has_pr == 'true' && steps.changed_modules.outputs.result == ''
         run: mvn clean install -DskipTests -Dgithub.token=${{ secrets.GH_TOKEN }}
