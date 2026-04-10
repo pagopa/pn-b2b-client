@@ -29,9 +29,11 @@ jobs:
             });
             if (prs.data.length === 0) {
               core.setOutput('has_pr', 'false');
+              core.setOutput('pr_number', '');
               return '';
             } else {
               core.setOutput('has_pr', 'true');
+              core.setOutput('pr_number', prs.data[0].number);
               return prs.data[0].number;
             }
 
@@ -42,7 +44,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const prNumber = Number(steps.pr_check.outputs.result);
+            const prNumber = Number(process.env.PR_NUMBER);
             if (!prNumber) return '';
             const files = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
@@ -50,7 +52,6 @@ jobs:
               pull_number: prNumber,
               per_page: 100
             });
-            // Trova tutte le directory di primo livello che contengono un pom.xml
             const fs = require('fs');
             const modules = new Set();
             for (const file of files) {
@@ -63,6 +64,8 @@ jobs:
               }
             }
             return Array.from(modules).join(' ');
+          env:
+            PR_NUMBER: ${{ steps.pr_check.outputs.pr_number }}
 
       - name: Set up Java and Maven
         if: steps.pr_check.outputs.has_pr == 'true'
