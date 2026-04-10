@@ -4,7 +4,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-01] Inserimento di un nuovo file CSV di tracing giornaliero
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "CORRETTO"
+    When viene inviato il file CSV "CORRETTO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     # SCENARIO 15
     When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO"
@@ -17,16 +17,16 @@ Feature: Interop Tracing feature
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
     # PRIMO CARICAMENTO
-    When viene sottomesso il file CSV "CORRETTO"
+    When viene inviato il file CSV "CORRETTO"
     # SECONDO CARICAMENTO
-    When viene sottomesso il file CSV "CORRETTO"
+    When viene inviato il file CSV "CORRETTO"
     Then il file CSV di tracing viene rifiutato perché già esistente
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-03] Inserimento di un nuovo file CSV di tracing giornaliero
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "ERRATO"
+    When viene inviato il file CSV "ERRATO"
     And si attende che il file di tracing caricato passi in stato "ERROR"
     # SCENARIO 9
     When viene recuperato il dettaglio del tracing con errori
@@ -69,7 +69,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-07] Invio del file CSV tracing contenente errori utilizzando l'identificativo del file di tracing già in errore
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "ERRATO"
+    When viene inviato il file CSV "ERRATO"
     And si attende che il file di tracing caricato passi in stato "ERROR"
     And gli errori riscontrati vengono corretti passando il csv "ERRATO"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
@@ -84,7 +84,7 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-09] Invio del file CSV tracing, per una stessa data e già in stato completato, in sostituzione a quello già presente, il quale però contiene errori
     Given l'utente è un "admin" di "PA1"
-    When viene sottomesso il file CSV "CORRETTO"
+    When viene inviato il file CSV "CORRETTO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     When viene sovrascritto il tracing aggiunto in precedenza con il csv: "ERRATO"
     And si attende che il file di tracing caricato passi in stato "ERROR"
@@ -117,7 +117,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-14-1] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "CORRETTO"
+    When viene inviato il file CSV "CORRETTO"
     Then si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing venga arricchito con altri dati
 
@@ -131,7 +131,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-14-2] Verifica arricchimento dati per l'inserimento di un nuovo pesante file CSV di tracing
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "CORRETTO_PESANTE"
+    When viene inviato il file CSV "CORRETTO_PESANTE"
     Then si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
 
@@ -145,15 +145,15 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-15-1] Invio di un file CSV di tracing con header errato
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "ERRATO_CAMPO_MANCANTE"
+    When viene inviato il file CSV "ERRATO_CAMPO_MANCANTE"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 
-    When viene sottomesso il file CSV "ERRATO_NOME_CAMPO"
+    When viene inviato il file CSV "ERRATO_NOME_CAMPO"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 
-    When viene sottomesso il file CSV "ERRATO_DOPPIA_VIRGOLA"
+    When viene inviato il file CSV "ERRATO_DOPPIA_VIRGOLA"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 
@@ -161,7 +161,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-15-2] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing con alcuni record errati
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "CORRETTO_CON_RECORD_ERRATI"
+    When viene inviato il file CSV "CORRETTO_CON_RECORD_ERRATI"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
     And si attende che i record errati vengano tracciati negli errori
@@ -175,7 +175,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-15-3] Verifica il tracciamento dei WARNING per l'inserimento di un nuovo file CSV di tracing con purpose_id non conforme
     Given l'utente è un "admin" di "PA1"
     And viene aggiornato il file CSV con la prima data disponibile
-    When viene sottomesso il file CSV "CORRETTO_CON_PURPOSE_NON_CONFORMI"
+    When viene inviato il file CSV "CORRETTO_CON_PURPOSE_NON_CONFORMI"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
     And si attende che i record con purpose non conformi vengano tracciati con warning

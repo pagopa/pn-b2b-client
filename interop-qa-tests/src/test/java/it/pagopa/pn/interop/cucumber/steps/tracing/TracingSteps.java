@@ -77,7 +77,7 @@ public class TracingSteps {
         tracingFileUtils.updateCsv(submissionDate);
     }
 
-    @When("viene sottomesso il file CSV {string}")
+    @When("viene inviato il file CSV {string}")
     public void uploadCsv(String fileType) {
         try {
             submitTracingResponse = interopTracingClient.submitTracing(tracingFileUtils.getCsvFile(fileType), submissionDate.toString());
