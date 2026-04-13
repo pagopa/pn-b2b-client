@@ -12,15 +12,22 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.mo
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponseResultsInner;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.tracing.client.TracingS3Client;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.time.Instant;
@@ -29,63 +36,87 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TracingSteps {
+
+    @Getter
+    @Setter
+    private class Tracing {
+        String tracingId;
+        String tenantId;
+        String correlationId;
+        LocalDate referenceDate;
+        int version = 1;
+
+        String getFormattedDate() {
+            return referenceDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+    }
+
     private static final int OFFSET_VALUE = 0;
     private static final int LIMIT_VALUE = 50;
     private final IInteropTracingClient interopTracingClient;
     private final TracingFileUtils tracingFileUtils;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final TracingS3Client s3Client;
 
-    private SubmitTracingResponse submitTracingResponse;
-    private GetTracingsResponse getTracingsResponse;
-    private GetTracingErrorsResponse getTracingErrorsResponse;
-    private HttpStatusCodeException httpStatusCodeException;
-    private LocalDate submissionDate;
+    private String currentTenant;
+    private Tracing currentTracing;
 
     /**
      * Dependency injection
      * @param interopTracingClient {@link IInteropTracingClient}
      * @param tracingFileUtils {@link TracingFileUtils}
-     * @param pollingService {@link PollingService}
+     * @param sharedStepsContext {@link SharedStepsContext}
      */
     public TracingSteps(IInteropTracingClient interopTracingClient,
-                        TracingFileUtils tracingFileUtils, PollingService pollingService) {
+                        TracingFileUtils tracingFileUtils, SharedStepsContext sharedStepsContext) {
         this.interopTracingClient = interopTracingClient;
         this.tracingFileUtils = tracingFileUtils;
-        this.pollingService = pollingService;
+        this.pollingService = sharedStepsContext.getPollingService();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.s3Client = new TracingS3Client();
+        this.currentTracing = new Tracing();
     }
 
     @Given("l'utenza {string} effettua le chiamate")
     public void selectOperator(String operator) {
-        switch (operator.trim().toLowerCase()) {
+        currentTenant = operator.trim().toLowerCase();
+        currentTracing.setTenantId(currentTenant);
+        switch (currentTenant) {
             case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
             case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2.toString());
             default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
         }
     }
 
-    @Given("viene aggiornato il file CSV con la prima data disponibile")
-    public void updateCsv() {
-        selectOperator("tenant1");
-        GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null);
-        submissionDate = tracingsResponse.getResults().stream()
+    @Given("viene recuperata la prima data disponibile per un invio del file CSV")
+    public LocalDate getFirstAvailableDate() {
+        selectOperator(currentTenant);
+        httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null));
+
+        LocalDate submissionDate = ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().stream()
                 .map(GetTracingsResponseResultsInner::getDate)
                 .min(LocalDate::compareTo)
                 .map(date -> date.minusDays(1))
                 .orElseGet(() -> LocalDate.now().minusDays(1));
-        tracingFileUtils.updateCsv(submissionDate);
+        currentTracing.setReferenceDate(submissionDate);
+        return submissionDate;
+    }
+
+    @Given("viene aggiornato il file CSV con la prima data disponibile")
+    public void updateCsv() {
+        // To repeat the operation we need a day with a missing tracing CSV file
+        // so it searches the oldest day without an uploaded tracing CSV file
+        tracingFileUtils.updateCsv(getFirstAvailableDate());
     }
 
     @When("viene inviato il file CSV {string}")
     public void uploadCsv(String fileType) {
-        try {
-            submitTracingResponse = interopTracingClient.submitTracing(tracingFileUtils.getCsvFile(fileType), submissionDate.toString());
-        } catch (HttpStatusCodeException statusCodeException) {
-            httpStatusCodeException = statusCodeException;
-        } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while submitting the tracing csv: " + ex);
-        }
+        // TODO BUG Lorenzo sta indagando sul perché in DEV restano in PENDING gli invii
+        httpCallExecutor.performCall(() -> {
+            SubmitTracingResponse response = interopTracingClient.submitTracing(tracingFileUtils.getCsvFile(fileType), currentTracing.getFormattedDate());
+            currentTracing.setTracingId(response.getTracingId().toString());
+        });
     }
 
     @When("viene recuperata la lista di tracing con uno stato tra i seguenti$")
@@ -97,57 +128,46 @@ public class TracingSteps {
     @When("viene recuperata la lista di tracing con stato {string}")
     public void retrieveTracingByStatus(String status) {
         retrieveTracing(List.of(TracingState.fromValue(status)));
-        Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), String.format("No Tracings were retrieved for the desired status: %s", status));
+        Assertions.assertFalse(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().isEmpty(), String.format("No Tracings were retrieved for the desired status: %s", status));
     }
 
     public void retrieveTracing(List<TracingState> statusList) {
-        try {
-            getTracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, statusList);
-        } catch (HttpStatusCodeException statusCodeException) {
-            httpStatusCodeException = statusCodeException;
-        } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while retrieving the tracings: " + ex);
-        }
+        httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, statusList));
     }
 
     @Then("viene chiamato tracing con un path contenente un carattere percent-encoded non valido")
     public void callTracingPathWithNotValidPercentEncodedChar() {
-        ResponseEntity<Void> response = interopTracingClient.callTracingWithIllegalPercentEncodedCharInPath();
-        Assertions.assertEquals(404, response.getStatusCode());
+        // TODO il path viene riscritto %c0 -> %25c0 fixare!
+        httpCallExecutor.performCall(interopTracingClient::callTracingWithIllegalPercentEncodedCharInPath);
+        Assertions.assertEquals(400, httpCallExecutor.getResponseStatus().value());
     }
 
     @Then("la risposta contiene soltanto i tracing con stato {string}")
     public void verififyGetTracingResponse(String status) {
-        Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the getTracing response!");
-        Assertions.assertFalse(getTracingsResponse.getResults().stream().anyMatch(x -> !Objects.equals(x.getState(), status)));
+        Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the getTracing response!");
+        Assertions.assertFalse(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().stream().anyMatch(x -> !Objects.equals(x.getState(), status)));
     }
 
     @Then("non viene trovato nessun tracing caricato")
     public void verifyGetTracingResponse() {
-        Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the getTracing response!");
-        Assertions.assertTrue(getTracingsResponse.getResults().isEmpty());
-    }
-
-    @Then("la chiamata fallisce con status code: {int}")
-    public void checkStatusCode(int statusCode) {
-        Assertions.assertEquals(statusCode, httpStatusCodeException.getStatusCode().value());
+        Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the getTracing response!");
+        Assertions.assertTrue(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().isEmpty());
     }
 
     @Then("il file CSV di tracing viene rifiutato perché già esistente")
     public void verifyRejectionOfCsvFileAlreadyPresent() {
-        // TODO Non posso lanciare il teste devo capire come arriva e come recuperare errors.code (descrittivo)
-        Assertions.assertTrue(submitTracingResponse.toString().contains("TRACING_ALREADY_EXISTS"));
-        Assertions.assertEquals(400, httpStatusCodeException.getStatusCode().value());
+        Assertions.assertTrue(httpCallExecutor.getResponse().toString().contains("TRACING_ALREADY_EXISTS"));
+        Assertions.assertEquals(400, httpCallExecutor.getResponseStatus().value());
     }
 
     @Then("la chiamata fallisce perché la risorsa non viene trovata")
     public void verifyRejectionDueToNotAvailableResource() {
-        Assertions.assertEquals(404, httpStatusCodeException.getStatusCode().value());
+        Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
     }
 
     @When("viene recuperato il dettaglio del tracing con errori")
     public void retrieveTracingError() {
-        getTracingErrors(submitTracingResponse.getTracingId());
+        getTracingErrors(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId());
     }
 
     @Then("viene recuperato il dettaglio degli errori per il tracing {string}")
@@ -156,34 +176,28 @@ public class TracingSteps {
     }
 
     private void getTracingErrors(UUID tracingId) {
-        try {
-            getTracingErrorsResponse = interopTracingClient.getTracingErrors(tracingId, OFFSET_VALUE, LIMIT_VALUE);
-        } catch (HttpStatusCodeException statusCodeException) {
-            httpStatusCodeException = statusCodeException;
-        } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while retrieving the tracing error: " + ex);
-        }
+        httpCallExecutor.performCall(() -> interopTracingClient.getTracingErrors(tracingId, OFFSET_VALUE, LIMIT_VALUE));
     }
 
     @Then("il dettaglio ritorna gli errori aspettati")
     public void verifyGetTracingErrorResponse() {
-        Assertions.assertNotNull(getTracingErrorsResponse, "There was an error while retrieving the tracing error!");
-        Assertions.assertNotNull(getTracingErrorsResponse.getResults());
+        Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing error!");
+        Assertions.assertNotNull(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults());
         List<GetTracingErrorsResponseResultsInner> expectedResult = List.of(
                 createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
                 createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
                 createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 2),
-                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2)
         );
-        org.assertj.core.api.Assertions.assertThat(getTracingErrorsResponse.getResults()).containsAll(expectedResult);
+        org.assertj.core.api.Assertions.assertThat(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults()).containsAll(expectedResult);
     }
 
     @When("gli errori riscontrati vengono corretti passando il csv {string}")
     public void sanitizeErrors(String file) {
-        Assertions.assertNotNull(submitTracingResponse, "There was an error while retrieving the tracing response!");
-        Assertions.assertNotNull(submitTracingResponse.getTracingId());
-        recoverError(submitTracingResponse.getTracingId().toString(), tracingFileUtils.getCsvFile(file));
+        Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing response!");
+        Assertions.assertNotNull(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId());
+        recoverError(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString(), tracingFileUtils.getCsvFile(file));
     }
 
     @When("vengono corretti gli errori riscontrati per il tracingId {string}")
@@ -192,36 +206,24 @@ public class TracingSteps {
     }
 
     private void recoverError(String tracingId, Resource resource) {
-        try {
-            interopTracingClient.recoverTracing(UUID.fromString(tracingId), resource);
-        } catch (HttpStatusCodeException statusCodeException) {
-            httpStatusCodeException = statusCodeException;
-        } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while recovering the tracing: " + ex);
-        }
+        httpCallExecutor.performCall(() -> interopTracingClient.recoverTracing(UUID.fromString(tracingId), resource));
     }
 
     @And("si verifica che il tracing sia presente tra quelli ritornati")
     public void checkReturnedTracingId() {
-        Assertions.assertTrue(getTracingsResponse.getResults()
+        Assertions.assertTrue(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults()
                 .stream()
                 .map(GetTracingsResponseResultsInner::getTracingId)
-                .anyMatch(tracingId -> tracingId.equals(submitTracingResponse.getTracingId().toString())));
+                .anyMatch(tracingId -> tracingId.equals(currentTracing.getTracingId())));
     }
 
     @Given("viene sovrascritto il tracing aggiunto in precedenza con il csv: {string}")
     public void replaceTracing(String file) {
-        replaceTracing(submitTracingResponse.getTracingId(), tracingFileUtils.getCsvFile(file));
+        replaceTracing(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId(), tracingFileUtils.getCsvFile(file));
     }
 
     private void replaceTracing(UUID tracingId, Resource resource) {
-        try {
-            interopTracingClient.replaceTracing(tracingId, resource);
-        } catch (HttpStatusCodeException statusCodeException) {
-            httpStatusCodeException = statusCodeException;
-        } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while replacing the tracing data: " + ex);
-        }
+        httpCallExecutor.performCall(() -> interopTracingClient.replaceTracing(tracingId, resource));
     }
 
     @When("viene sovrascritto il tracing con id: {string}")
@@ -236,23 +238,23 @@ public class TracingSteps {
 
     @When("viene inviato il csv {string} per la data mancante")
     public void recoverMissingCsvForDate(String fileType) {
-        Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the tracing with MISSING status!");
-        Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), "No tracing with MISSING status found!");
-        GetTracingsResponseResultsInner tracingsResponseResults = getTracingsResponse.getResults().get(0);
+        Assertions.assertNotNull(((GetTracingsResponse)httpCallExecutor.getResponse()), "There was an error while retrieving the tracing with MISSING status!");
+        Assertions.assertFalse(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().isEmpty(), "No tracing with MISSING status found!");
+        GetTracingsResponseResultsInner tracingsResponseResults = ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().get(0);
         tracingFileUtils.updateCsv(tracingsResponseResults.getDate());
-        submissionDate = tracingsResponseResults.getDate();
+        currentTracing.setReferenceDate(tracingsResponseResults.getDate());
         uploadCsv(fileType);
     }
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
     public void waitForStatus(String state) {
         pollingService.makePolling(
-                () -> interopTracingClient.getTracings(0, 50, List.of(TracingState.fromValue(state))),
-                res -> res.getResults().stream()
-                        .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
+                () -> (httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, List.of(TracingState.fromValue(state))))),
+                res -> ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().stream()
+                        .filter(x -> x.getTracingId().equals(currentTracing.getTracingId()))
                         .map(GetTracingsResponseResultsInner::getState)
                         .anyMatch(tracingState -> tracingState.equals(state)),
-                String.format("The TracingId: %s did not reach the desired status: %s", submitTracingResponse.getTracingId().toString(), state)
+                String.format("The TracingId: %s did not reach the desired status: %s", currentTracing.getTracingId(), state)
         );
     }
 
@@ -266,7 +268,7 @@ public class TracingSteps {
                 GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(attempt, LIMIT_VALUE, List.of());
                 totalPages = tracingsResponse.getTotalCount().intValue();
                 result = tracingsResponse.getResults().stream()
-                        .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
+                        .filter(x -> x.getTracingId().equals(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString()))
                         .findFirst()
                         .orElse(null);
 
@@ -274,8 +276,8 @@ public class TracingSteps {
                     int finalAttempt = attempt;
                     pollingService.makePolling(
                             () -> interopTracingClient.getTracings(finalAttempt, LIMIT_VALUE, List.of()),
-                            res -> res.getResults().stream().anyMatch(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()) && x.getState().equals(state)),
-                            String.format("The TracingId: %s did not reach the desired status: %s", submitTracingResponse.getTracingId().toString(), state)
+                            res -> res.getResults().stream().anyMatch(x -> x.getTracingId().equals(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString()) && x.getState().equals(state)),
+                            String.format("The TracingId: %s did not reach the desired status: %s", ((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString(), state)
                     );
                     break;
                 } else attempt++;
@@ -304,73 +306,80 @@ public class TracingSteps {
                 .timeoutMs(600_000)
                 .pollIntervalMs(30_000)
                 .deltaSeconds(300)
-                //.fileInfo(InteropFile.?)
-                //.bucketRole(BucketRole.valueOf("?"))
                 .build();
     }
 
-    private boolean isCsvTracingFilePresent(TracingS3Client.PollingSpecification pollingSpec, String bucketName, String fileName) {
-        return s3Client.isFileExistingInS3Bucket(pollingSpec, bucketName, fileName);
+    private boolean isCsvTracingFilePresent(TracingS3Client.PollingSpecification pollingSpec, String bucketName, String s3PathKey) {
+        return s3Client.isFileExistingInS3Bucket(pollingSpec, bucketName, s3PathKey);
     }
 
-    private String getCurrentUploadedTracingFileName() {
+    private String getCurrentUploadedTracingS3Key() {
         // TODO: devo conoscere il criterio con cui i file di tracing inviati ricevono un nome
         return "tracing_file_2026_04_02.csv";
     }
 
-    private String getCurrentTracingErrorsFileName() {
+    private String getCurrentTracingErrorsS3Key() {
+        // String tenantId, LocalDate date, String tracingId, String version, String correlationId
         // TODO: devo conoscere il criterio con cui i file che tracciano gli errori dentro un csv di tracing
         // ricevono un nome
+        // tenantId=${tenantId}/date=${formattedDate}/tracingId=${tracingId}/version=${version}/correlationId=${correlationId}/
         return "tracing_errors_file_2026_04_02.csv";
     }
 
-    private String getCurrentEnrichedFileName() {
-        // TODO: devo conoscere il criterio con cui i file di tracing arricchiti ricevono un nome
-        return "enriched_file_2026_04_02.csv";
+    private String getCurrentEnrichedS3Key(Tracing tracing) {
+        return String.format(
+                "interop-tracing-bucket/tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
+                tracing.getTenantId(),
+                tracing.getFormattedDate(),
+                tracing.getTracingId(),
+                tracing.getVersion(),
+                tracing.getCorrelationId(),
+                tracing.getTracingId()
+        );
     }
 
     @Then("nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati")
     public void verifyNoNewCsvTracingGeneratedAtAll() {
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-store", getCurrentUploadedTracingFileName()
+                getS3PollingSpecification(), "tracing-store", getCurrentUploadedTracingS3Key()
         ));
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-errors", getCurrentTracingErrorsFileName()
+                getS3PollingSpecification(), "tracing-errors", getCurrentTracingErrorsS3Key()
         ));
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedFileName()
+                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedS3Key(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing arricchito venga generato")
     public void verifyEnrichedCsvTracingFileIsGenerated() {
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedFileName()
+                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedS3Key(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga arricchito con altri dati")
     public void verifyCsvUploadedFileIsEnriched() {
         String bucketName = "tracing-enriched-files";
+        String s3Key = getCurrentEnrichedS3Key(currentTracing);
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
-        Assertions.assertTrue(isCsvTracingFilePresent(
-                pollingSpec, bucketName, getCurrentEnrichedFileName()
-        ));
-        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentEnrichedFileName());
+        Assertions.assertTrue(isCsvTracingFilePresent(pollingSpec, bucketName, s3Key));
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, s3Key);
 
-        List<String[]> rows = csvContent.lines()
-                .map(line -> line.split(","))
-                .collect(Collectors.toList());
-
-        // TODO non conosco ancora i campi che vengono aggiornati
-//        public static final List<String> expectedFields = List.of(
-//                "Elemento1", "Elemento2", "Elemento3", "Elemento4", "Elemento5",
-//                "Elemento6", "Elemento7", "Elemento8", "Elemento9", "Elemento10",
-//                "Elemento11", "Elemento12", "Elemento13", "Elemento14", "Elemento15",
-//                "Elemento16", "Elemento17"
-//        );
-        // tracingId,submitterId,date,purposeId,purposeName,status,token_id,requestsCount,eserviceId,consumerId,consumerOrigin,consumerName,consumerExternalId,producerId,producerName,producerOrigin,producerExternalId
+        List<String> actualFields = Arrays.asList(
+                csvContent.lines()
+                        .findFirst()
+                        .orElse("")
+                        .split(",")
+        );
+        final List<String> expectedFields = List.of(
+                "tracingId", "submitterId", "date", "purposeId", "purposeName",
+                "status", "token_id", "requestsCount", "eserviceId", "consumerId",
+                "consumerOrigin", "consumerName", "consumerExternalId", "producerId", "producerName",
+                "producerOrigin", "producerExternalId"
+        );
+        Assertions.assertTrue(actualFields.containsAll(expectedFields));
     }
 
     @Then("si attende che i record errati vengano tracciati negli errori")
@@ -379,9 +388,9 @@ public class TracingSteps {
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
-                pollingSpec, bucketName, getCurrentEnrichedFileName()
+                pollingSpec, bucketName, getCurrentEnrichedS3Key(currentTracing)
         ));
-        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentTracingErrorsFileName());
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentTracingErrorsS3Key());
 
         List<String[]> rows = csvContent.lines()
                 .map(line -> line.split(","))
@@ -396,9 +405,9 @@ public class TracingSteps {
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
-                pollingSpec, bucketName, getCurrentEnrichedFileName()
+                pollingSpec, bucketName, getCurrentEnrichedS3Key(currentTracing)
         ));
-        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentTracingErrorsFileName());
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(pollingSpec, bucketName, getCurrentTracingErrorsS3Key());
 
         List<String[]> rows = csvContent.lines()
                 .map(line -> line.split(","))
