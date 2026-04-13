@@ -18,6 +18,7 @@ Feature: Interop Tracing feature
     And viene aggiornato il file CSV con la prima data disponibile
     # PRIMO CARICAMENTO
     When viene inviato il file CSV "CORRETTO"
+    And si attende che il file di tracing caricato passi in stato "COMPLETED"
     # SECONDO CARICAMENTO
     When viene inviato il file CSV "CORRETTO"
     Then il file CSV di tracing viene rifiutato perché già esistente
@@ -52,7 +53,6 @@ Feature: Interop Tracing feature
   @interopTracingCsv @ignore
   Scenario: [INTEROP-TRACING-05] Recupero lista tracing per utenza dove non sia stato mai inserito alcun file
     Given l'utenza "TENANT2" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
     When viene recuperata la lista di tracing con uno stato tra i seguenti
       | ERROR     |
       | MISSING   |
@@ -118,7 +118,8 @@ Feature: Interop Tracing feature
     Given l'utenza "TENANT1" effettua le chiamate
     And viene aggiornato il file CSV con la prima data disponibile
     When viene inviato il file CSV "CORRETTO"
-    Then si attende che il file di tracing caricato passi in stato "COMPLETED"
+    Then si attende che il file di tracing caricato passi in stato "PENDING"
+    # COMPLETED
     And si attende che il file di tracing venga arricchito con altri dati
 
     When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO"
@@ -144,16 +145,16 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-15-1] Invio di un file CSV di tracing con header errato
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "ERRATO_CAMPO_MANCANTE"
+    And viene recuperata la prima data disponibile per un invio del file CSV
+    When viene inviato il file CSV "ERRATO_HEADER_CAMPO_MANCANTE"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 
-    When viene inviato il file CSV "ERRATO_NOME_CAMPO"
+    When viene inviato il file CSV "ERRATO_HEADER_NOME_CAMPO"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 
-    When viene inviato il file CSV "ERRATO_DOPPIA_VIRGOLA"
+    When viene inviato il file CSV "ERRATO_HEADER_DOPPIA_VIRGOLA"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
     And nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati
 

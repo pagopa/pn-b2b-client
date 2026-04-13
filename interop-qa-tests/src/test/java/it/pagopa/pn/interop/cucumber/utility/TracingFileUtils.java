@@ -17,8 +17,10 @@ import java.util.List;
 @Component
 public class TracingFileUtils {
     @Value("${tracing.success.csv.filepath}")
-    private String tracingOkCsvPath;
+    private String tracingOkCsvFilePath;
     @Value("${tracing.error.csv.filepath}")
+    private String tracingErrorCsvFilePath;
+    @Value("${tracing.csv.errors.path}")
     private String tracingErrorCsvPath;
     private final ResourceLoader resourceLoader;
 
@@ -29,7 +31,7 @@ public class TracingFileUtils {
     public void updateCsv(LocalDate date) {
         try {
             // Read the csv file before overriding it with the correct date.
-            FileReader fileReader = new FileReader(tracingOkCsvPath);
+            FileReader fileReader = new FileReader(tracingOkCsvFilePath);
             CSVReader csvReader = new CSVReader(fileReader);
             // Read the header (first row) of the CSV file
             String[] header = csvReader.readNext();
@@ -37,7 +39,7 @@ public class TracingFileUtils {
             List<String[]> allRows = csvReader.readAll();
             csvReader.close();
 
-            FileWriter fileWriter = new FileWriter(tracingOkCsvPath);
+            FileWriter fileWriter = new FileWriter(tracingOkCsvFilePath);
             CSVWriter csvWriter = new CSVWriter(fileWriter);
             // Write the header back to the CSV file
             csvWriter.writeNext(header);
@@ -55,8 +57,11 @@ public class TracingFileUtils {
 
     public Resource getCsvFile(String file) {
         return switch (file.trim().toLowerCase()) {
-            case "corretto" -> resourceLoader.getResource("file:" + tracingOkCsvPath);
-            case "errato" -> resourceLoader.getResource("file:" + tracingErrorCsvPath);
+            case "corretto" -> resourceLoader.getResource("file:" + tracingOkCsvFilePath);
+            case "errato" -> resourceLoader.getResource("file:" + tracingErrorCsvFilePath);
+            case "errato_header_campo_mancante" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-missing-field.csv");
+            case "errato_header_nome_campo" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-wrong-field.csv");
+            case "errato_header_doppia_virgola" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-consecutive-commas.csv");
             default -> throw new IllegalStateException("Unexpected value: " + file.trim().toLowerCase());
         };
     }
