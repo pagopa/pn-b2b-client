@@ -24,8 +24,8 @@ public class TracingS3Client {
     @Builder
     public static class PollingSpecification {
 
-        @NonNull
-        private FileInfo fileInfo;
+        //@NonNull
+        //private FileInfo fileInfo;
 
         @Builder.Default
         private BucketRole bucketRole = BucketRole.STANDARD;
