@@ -1090,6 +1090,24 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @sad-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_11] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" ottenendo lo stato non permesso
+    #isConsumerDelegable=false e isClientAccessDelegable=false
+    Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "<descriptorState>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED       | false               | true                    |
+      | SUSPENDED       | false               | true                    |
+      | DEPRECATED      | false               | true                    |
+      | PUBLISHED       | %null               | true                    |
+      | SUSPENDED       | %null               | true                    |
+      | DEPRECATED      | %null               | true                    |
+
+  @eservice_published_delegation
+  @sad-path
   Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_1] Un utente NON può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
