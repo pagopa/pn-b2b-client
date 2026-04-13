@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils;
 
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -35,7 +36,8 @@ public class TokenResolver {
                     Map.entry(":purposeVersionId", ctx -> ctx.getPurposeCommonContext().getCurrentVersionId()),
                     Map.entry(":riskAnalysisId", ctx -> ctx.getRiskAnalysisCommonContext().getRiskAnalysisId().toString()),
                     Map.entry(":riskAnalysisDailyCalls", ctx -> ctx.getRiskAnalysisCommonContext().getDailyCalls().toString()),
-                    Map.entry(":eServiceName", ctx -> ctx.getEServicesCommonContext().getName())
+                    Map.entry(":eServiceName", ctx -> ctx.getEServicesCommonContext().getName()),
+                    Map.entry(":purposeTemplateId", ctx -> ctx.getPurposeTemplateContext().getPurposeTemplateId().toString())
             );
 
 
@@ -43,6 +45,15 @@ public class TokenResolver {
 
     public String resolve(String value) {
         if (value == null) return null;
+
+        var resolvable = ResolvableToken.from(value);
+        if (resolvable != null) {
+            return switch (resolvable) {
+                case BLANK -> "";
+                case NULL -> null;
+                default -> throw new IllegalArgumentException("Token non gestito: " + resolvable);
+            };
+        }
 
         // Caso 1: key=:token
         if (value.contains("=")) {
