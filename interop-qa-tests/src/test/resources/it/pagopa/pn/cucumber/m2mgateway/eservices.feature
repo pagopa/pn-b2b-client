@@ -1056,6 +1056,39 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | PRIVATE | DEPRECATED      |
 
   @eservice_published_delegation
+  @happy-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" in uno degli stati permessi
+    #isConsumerDelegable=false e isClientAccessDelegable=false
+    Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "<descriptorState>"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
+    And l'e-service è stato parzialmente modificato correttamente
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED       | true                | true                    |
+      | PUBLISHED       | true                | false                   |
+      | PUBLISHED       | true                | %null                   |
+      | PUBLISHED       | false               | %null                   |
+      | PUBLISHED       | %null               | false                   |
+      | PUBLISHED       | %null               | %null                   |
+
+      | SUSPENDED       | true                | true                    |
+      | SUSPENDED       | true                | false                   |
+      | SUSPENDED       | true                | %null                   |
+      | SUSPENDED       | false               | %null                   |
+      | SUSPENDED       | %null               | false                   |
+      | SUSPENDED       | %null               | %null                   |
+
+      | DEPRECATED      | true                | true                    |
+      | DEPRECATED      | true                | false                   |
+      | DEPRECATED      | true                | %null                   |
+      | DEPRECATED      | false               | %null                   |
+      | DEPRECATED      | %null               | false                   |
+      | DEPRECATED      | %null               | %null                   |
+
+  @eservice_published_delegation
   @sad-path
   Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_1] Un utente NON può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
