@@ -15,9 +15,8 @@ import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfileConfiguration;
-import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
-import it.pagopa.interop.config.springconfig.springconfig.JwtTokenServiceConfiguration;
+import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
+import it.pagopa.interop.config.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.*;
 import it.pagopa.interop.e_service_template.impl.*;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
@@ -187,7 +186,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationStore.class,
         ProducerKeychainClientImpl.class,
         PurposeTemplateMapperImpl.class,
-        ApiProfileConfiguration.class,
         M2MVersionsMapper.class,
         M2MVersionsMapperImpl.class,
         M2MV3EventMapperImpl.class,

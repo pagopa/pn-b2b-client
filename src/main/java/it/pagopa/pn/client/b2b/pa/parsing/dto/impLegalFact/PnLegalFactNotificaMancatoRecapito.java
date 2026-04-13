@@ -2,11 +2,13 @@ package it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact;
 
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserRecord;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioDigitale;
-import static it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
 import java.util.Objects;
+
+import static it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact.LegalFactField;
 
 
 @Getter

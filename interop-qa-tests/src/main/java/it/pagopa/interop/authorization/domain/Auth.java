@@ -1,7 +1,10 @@
 package it.pagopa.interop.authorization.domain;
 
 import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.security.KeyPair;
 

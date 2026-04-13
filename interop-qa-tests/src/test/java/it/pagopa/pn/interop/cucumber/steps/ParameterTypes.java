@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 
 import java.util.*;
