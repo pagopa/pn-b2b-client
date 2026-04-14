@@ -4,6 +4,4 @@ import java.util.Optional;
 
 public interface IEventQueue<Event> {
     Optional<Event> find(Event filter);
-    Optional<Event> peek();
-    boolean canHandle(Object filter);
 }
