@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static it.pagopa.interop.event.enums.InteropEvent.Family;
 
@@ -370,6 +371,14 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     public Optional<M2MEvent> findEvent(M2MEventRequest request, EventPredicate filter) {
         M2MEvents events = getEvents(request);
         return Optional.ofNullable(events.filter(filter));
+    }
+
+    @Override
+    public M2MEvents findEvents(M2MEventRequest request, EventPredicate filter) {
+        M2MEvents events = getEvents(request);
+        var filtered = events.getEvents().stream().filter(filter).collect(Collectors.toCollection(ArrayList::new));
+        events.setEvents(filtered);
+        return events;
     }
 
     @Override

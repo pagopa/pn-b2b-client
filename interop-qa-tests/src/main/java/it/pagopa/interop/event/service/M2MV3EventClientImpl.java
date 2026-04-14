@@ -19,6 +19,7 @@ import it.pagopa.interop.utils.ApiClientUtils;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -359,6 +360,14 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
     public Optional<M2MEvent> findEvent(M2MEventRequest request, EventPredicate filter) {
         M2MEvents events = getEvents(request);
         return Optional.ofNullable(events.filter(filter));
+    }
+
+    @Override
+    public M2MEvents findEvents(M2MEventRequest request, EventPredicate filter) {
+        M2MEvents events = getEvents(request);
+        var filtered = events.getEvents().stream().filter(filter).collect(Collectors.toCollection(ArrayList::new));
+        events.setEvents(filtered);
+        return events;
     }
 
     @Override
