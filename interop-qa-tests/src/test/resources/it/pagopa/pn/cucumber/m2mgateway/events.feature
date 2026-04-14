@@ -12,35 +12,38 @@ Feature: Eventi M2M
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
 
     When "PA1" ha già creato e pubblicato 1 e-services
-    And "PA1" visualizza correttamente l'evento EServiceAdded
-    And "PA1" visualizza correttamente l'evento EServiceDescriptorPublished
-    And "PA2" non ha visibilità dell'evento EServiceAdded
-    And "PA2" visualizza correttamente l'evento EServiceDescriptorPublished
+    And "PA1" visualizza l'evento EServiceAdded con:
+      | eserviceId | :eserviceId |
+    And "PA2" non visualizza l'evento EServiceAdded appena trovato
+    And "PA1" visualizza l'evento EServiceDescriptorPublished con:
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
+    And "PA2" visualizza l'evento EServiceDescriptorPublished appena trovato
 
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
-    And "PA1" visualizza ancora l'evento EServiceAdded precedente
-    And "PA1" visualizza ancora l'evento EServiceDescriptorPublished precedente
-    And "PA2" non ha visibilità dell'evento EServiceAdded
-    And "PA2" visualizza ancora l'evento EServiceDescriptorPublished precedente
+    And "PA1" visualizza l'evento EServiceAdded precedente
+    And "PA1" visualizza l'evento EServiceDescriptorPublished precedente
+    And "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
     When l'ente "PA2" rifiuta la delega in erogazione con successo
-    And "PA1" visualizza ancora l'evento EServiceAdded precedente
-    And "PA1" visualizza ancora l'evento EServiceDescriptorPublished precedente
-    And "PA2" non ha visibilità dell'evento EServiceAdded
-    And "PA2" visualizza ancora l'evento EServiceDescriptorPublished precedente
+    And "PA1" visualizza l'evento EServiceAdded precedente
+    And "PA1" visualizza l'evento EServiceDescriptorPublished precedente
+    And "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And "PA1" visualizza ancora l'evento EServiceAdded precedente
-    And "PA1" visualizza ancora l'evento EServiceDescriptorPublished precedente
-    And "PA2" non ha visibilità dell'evento EServiceAdded
-    And "PA2" visualizza ancora l'evento EServiceDescriptorPublished precedente
+    And "PA1" visualizza l'evento EServiceAdded precedente
+    And "PA1" visualizza l'evento EServiceDescriptorPublished precedente
+    And "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
     Then l'ente "PA1" revoca la delega in erogazione con successo
-    And "PA1" visualizza ancora l'evento EServiceAdded precedente
-    And "PA1" visualizza ancora l'evento EServiceDescriptorPublished precedente
-    And "PA2" non ha visibilità dell'evento EServiceAdded
-    And "PA2" visualizza ancora l'evento EServiceDescriptorPublished precedente
+    And "PA1" visualizza l'evento EServiceAdded precedente
+    And "PA1" visualizza l'evento EServiceDescriptorPublished precedente
+    And "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_02] In caso di delega in erogazione attiva, l'ente delegato deve
@@ -53,15 +56,15 @@ Feature: Eventi M2M
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     When "PA2" aggiorna quell'e-service
-    Then "PA1" visualizza correttamente l'evento DraftEServiceUpdated con:
+    Then "PA1" visualizza l'evento DraftEServiceUpdated con:
       | eserviceId           | :eserviceId           |
       | producerDelegationId | :producerDelegationId |
-    And "PA2" visualizza correttamente l'evento DraftEServiceUpdated appena trovato
+    And "PA2" visualizza l'evento DraftEServiceUpdated appena trovato
     When l'ente "PA1" revoca la delega in erogazione con successo
-    Then "PA1" visualizza correttamente l'evento DraftEServiceUpdated con:
+    Then "PA1" visualizza l'evento DraftEServiceUpdated con:
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
-    And "PA2" non ha visibilità dell'evento DraftEServiceUpdated appena trovato
+    And "PA2" non visualizza l'evento DraftEServiceUpdated appena trovato
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_03] In caso di delega in erogazione non attiva,
@@ -71,8 +74,8 @@ Feature: Eventi M2M
     And "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     When "PA1" aggiorna quell'e-service
-    Then "PA1" visualizza correttamente l'evento DraftEServiceUpdated con:
+    Then "PA1" visualizza l'evento DraftEServiceUpdated con:
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
-    And "PA2" non ha visibilità dell'evento DraftEServiceUpdated
+    And "PA2" non visualizza l'evento DraftEServiceUpdated appena trovato
 
