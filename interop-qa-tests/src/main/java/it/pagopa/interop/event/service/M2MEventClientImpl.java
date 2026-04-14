@@ -2,9 +2,13 @@ package it.pagopa.interop.event.service;
 
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.event.domain.M2MEvent;
-import it.pagopa.interop.event.domain.M2MEventRequest;
-import it.pagopa.interop.event.domain.M2MEvents;
+import it.pagopa.interop.event.domain.dto.M2MEvent;
+import it.pagopa.interop.event.domain.dto.events.*;
+import it.pagopa.interop.event.domain.request.M2MAgreementEventRequest;
+import it.pagopa.interop.event.domain.request.M2MEserviceEventRequest;
+import it.pagopa.interop.event.domain.request.M2MEventRequest;
+import it.pagopa.interop.event.domain.request.M2MPurposeEventRequest;
+import it.pagopa.interop.event.filter.EventPredicate;
 import it.pagopa.interop.event.mapper.M2MEventMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EventsApi;
@@ -15,8 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static it.pagopa.interop.event.enums.InteropEvent.Family;
@@ -47,7 +50,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     @Override
-    public M2MEvents getEServicesEvents(M2MEventRequest request) {
+    public M2MEServiceEvents getEServicesEvents(M2MEserviceEventRequest request) {
         return performOperation(
                     () -> eventsApi.getEServicesEventsWithHttpInfo(
                             request.getLimit(),
@@ -59,35 +62,61 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     @Override
-    public M2MEvents getEServiceTemplateEvents(M2MEventRequest request) throws RestClientException {
+    public M2MEServiceEvents getAllEServicesEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MEServiceEvents) getAllCached(request, this::getEServicesEvents);
+    }
+
+    @Override
+    public M2MEServiceTemplateEvents getEServiceTemplateEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getEServiceTemplateEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getConsumerDelegationEvents(M2MEventRequest request) throws RestClientException {
+    public M2MEServiceTemplateEvents getAllEServiceTemplateEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MEServiceTemplateEvents) getAllCached(request, this::getEServiceTemplateEvents);
+    }
+
+    @Override
+    public M2MConsumerDelegationEvents getConsumerDelegationEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getConsumerDelegationEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getClientEvents(M2MEventRequest request) throws RestClientException {
+    public M2MConsumerDelegationEvents getAllConsumerDelegationEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MConsumerDelegationEvents) getAllCached(request, this::getConsumerDelegationEvents);
+    }
+
+    @Override
+    public M2MClientEvents getClientEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getClientEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getAttributesEvents(M2MEventRequest request) throws RestClientException {
+    public M2MClientEvents getAllClientEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MClientEvents) getAllCached(request, this::getClientEvents);
+    }
+
+    @Override
+    public M2MAttributeEvents getAttributesEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getAttributesEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getAgreementsEvents(M2MEventRequest request) throws RestClientException {
+    public M2MAttributeEvents getAllAttributesEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MAttributeEvents) getAllCached(request, this::getAttributesEvents);
+    }
+
+
+    @Override
+    public M2MAgreementEvents getAgreementsEvents(M2MAgreementEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getAgreementsEvents(
                 request.getLimit(),
                 request.getLastEventId(),
@@ -95,35 +124,60 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     @Override
-    public M2MEvents getKeyEvents(M2MEventRequest request) throws RestClientException {
+    public M2MAgreementEvents getAllAgreementsEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MAgreementEvents) getAllCached(request, this::getAgreementsEvents);
+    }
+
+    @Override
+    public M2MKeyEvents getKeyEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getKeyEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getProducerDelegationEvents(M2MEventRequest request) throws RestClientException {
+    public M2MKeyEvents getAllKeyEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MKeyEvents) getAllCached(request, this::getKeyEvents);
+    }
+
+    @Override
+    public M2MProducerDelegationEvents getProducerDelegationEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getProducerDelegationEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getProducerKeyEvents(M2MEventRequest request) throws RestClientException {
+    public M2MProducerDelegationEvents getAllProducerDelegationEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MProducerDelegationEvents) getAllCached(request, this::getProducerDelegationEvents);
+    }
+
+    @Override
+    public M2MProducerKeyEvents getProducerKeyEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getProducerKeyEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getProducerKeychainEvents(M2MEventRequest request) throws RestClientException {
+    public M2MProducerKeyEvents getAllProducerKeyEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MProducerKeyEvents) getAllCached(request, this::getProducerKeyEvents);
+    }
+
+    @Override
+    public M2MProducerKeychainEvents getProducerKeychainEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getProducerKeychainEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getPurposeEvents(M2MEventRequest request) throws RestClientException {
+    public M2MProducerKeychainEvents getAllProducerKeychainEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MProducerKeychainEvents) getAllCached(request, this::getProducerKeychainEvents);
+    }
+
+    @Override
+    public M2MPurposeEvents getPurposeEvents(M2MPurposeEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getPurposeEvents(
                 request.getLimit(),
                 request.getLastEventId(),
@@ -131,15 +185,30 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     @Override
-    public M2MEvents getTenantEvents(M2MEventRequest request) throws RestClientException {
+    public M2MPurposeEvents getAllPurposeEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MPurposeEvents) getAllCached(request, this::getPurposeEvents);
+    }
+
+    @Override
+    public M2MTenantEvents getTenantEvents(M2MEventRequest request) throws RestClientException {
         return mapper.map(eventsApi.getTenantEvents(
                 request.getLimit(),
                 request.getLastEventId()));
     }
 
     @Override
-    public M2MEvents getPurposeTemplateEvents(M2MEventRequest request) throws RestClientException {
+    public M2MTenantEvents getAllTenantEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MTenantEvents) getAllCached(request, this::getTenantEvents);
+    }
+
+    @Override
+    public M2MPurposeTemplateEvents getPurposeTemplateEvents(M2MEventRequest request) throws RestClientException {
         throw new UnsupportedOperationException("Purpose Template events are not supported by M2MEventClient");
+    }
+
+    @Override
+    public M2MPurposeTemplateEvents getAllPurposeTemplateEvents(M2MEventRequest request) throws RestClientException {
+        return (M2MPurposeTemplateEvents) getAllCached(request, this::getPurposeTemplateEvents);
     }
 
     @Override
@@ -147,37 +216,90 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         this.eventsApi.setApiClient(createApiClient(bearerToken));
     }
 
-    private M2MEvents getEvents(M2MEventRequest request) throws RestClientException {
+    @Override
+    public Optional<M2MEvent> findEvent(M2MEventRequest request, EventPredicate filter) {
+        M2MEvents events = getEvents(request);
+        return Optional.ofNullable(events.filter(filter));
+    }
+
+    @Override
+    public M2MEvents getEvents(M2MEventRequest request) throws RestClientException {
         return switch (request.getEventFamily()) {
-            case PURPOSE_TEMPLATE -> getAllCached(request.getTenantType(), Family.PURPOSE_TEMPLATE, this::getPurposeTemplateEvents);
-            case ESERVICE -> getAllCached(request.getTenantType(), Family.ESERVICE, this::getEServicesEvents);
-            case ESERVICE_TEMPLATE -> getAllCached(request.getTenantType(), Family.ESERVICE_TEMPLATE, this::getEServiceTemplateEvents);
-            case CONSUMER_DELEGATION -> getAllCached(request.getTenantType(), Family.CONSUMER_DELEGATION, this::getConsumerDelegationEvents);
-            case CLIENT -> getAllCached(request.getTenantType(), Family.CLIENT, this::getClientEvents);
-            case ATTRIBUTE -> getAllCached(request.getTenantType(), Family.ATTRIBUTE, this::getAttributesEvents);
-            case AGREEMENT -> getAllCached(request.getTenantType(), Family.AGREEMENT, this::getAgreementsEvents);
-            case KEY -> getAllCached(request.getTenantType(), Family.KEY, this::getKeyEvents);
-            case PRODUCER_DELEGATION -> getAllCached(request.getTenantType(), Family.PRODUCER_DELEGATION, this::getProducerDelegationEvents);
-            case PRODUCER_KEY -> getAllCached(request.getTenantType(), Family.PRODUCER_KEY, this::getProducerKeyEvents);
-            case PRODUCER_KEYCHAIN -> getAllCached(request.getTenantType(), Family.PRODUCER_KEYCHAIN, this::getProducerKeychainEvents);
-            case PURPOSE -> getAllCached(request.getTenantType(), Family.PURPOSE, this::getPurposeEvents);
-            case TENANT -> getAllCached(request.getTenantType(), Family.TENANT, this::getTenantEvents);
+            case PURPOSE_TEMPLATE -> getAllPurposeTemplateEvents(request);
+            case ESERVICE -> getAllEServicesEvents(request);
+            case ESERVICE_TEMPLATE -> getAllEServiceTemplateEvents(request);
+            case CONSUMER_DELEGATION -> getAllConsumerDelegationEvents(request);
+            case CLIENT -> getAllClientEvents(request);
+            case ATTRIBUTE -> getAllAttributesEvents(request);
+            case AGREEMENT -> getAllAgreementsEvents(request);
+            case KEY -> getAllKeyEvents(request);
+            case PRODUCER_DELEGATION -> getAllProducerDelegationEvents(request);
+            case PRODUCER_KEY -> getAllProducerKeyEvents(request);
+            case PRODUCER_KEYCHAIN -> getAllProducerKeychainEvents(request);
+            case PURPOSE -> getAllPurposeEvents(request);
+            case TENANT -> getAllTenantEvents(request);
         };
     }
 
-   private M2MEvents getAllCached(String currentTenant, Family eventFamily, Function<M2MEventRequest, M2MEvents> funz) throws RestClientException {
-        Map<Family, M2MEvents> cache = tenantEventCache.get(currentTenant);
-        M2MEvent lastEvent = cache.get(eventFamily).getLastEvent();
-        M2MEvents result;
+    @SuppressWarnings("unchecked")
+    private <Request extends M2MEventRequest> M2MEvents getAllCached(M2MEventRequest request, Function<Request, M2MEvents> fetchPage) throws RestClientException {
+        Objects.requireNonNull(request, "request cannot be null");
+        Objects.requireNonNull(fetchPage, "fetchPage cannot be null");
 
-        do {
-            result = funz.apply(M2MEventRequest.of(lastEvent.getId()));
-            if (!result.getEvents().isEmpty()) {
-                cache.get(eventFamily).addEvents(result);
-                lastEvent = cache.get(eventFamily).getLastEvent();
+        if (request.getTenantType() == null) {
+            throw new IllegalArgumentException("request.tenantType cannot be null");
+        }
+        if (request.getEventFamily() == null) {
+            throw new IllegalArgumentException("request.eventFamily cannot be null");
+        }
+
+        Map<Family, M2MEvents> tenantCache =
+                tenantEventCache.computeIfAbsent(request.getTenantType(), t -> new HashMap<>());
+
+        M2MEvents cachedEvents =
+                tenantCache.computeIfAbsent(request.getEventFamily(), this::createEmptyEvents);
+
+        UUID lastEventId = cachedEvents.getLastEvent() != null
+                ? cachedEvents.getLastEvent().getId()
+                : request.getLastEventId();
+
+        request.setLastEventId(lastEventId);
+
+        while (true) {
+            M2MEvents page = fetchPage.apply((Request) request);
+            if (!hasEvents(page)) {
+                return cachedEvents;
             }
-        } while (result.getEvents().isEmpty());
 
-        return cache.get(eventFamily);
+            cachedEvents.addEvents(page);
+            UUID nextLastEventId = page.getLastEvent() != null ? page.getLastEvent().getId() : null;
+            if (nextLastEventId == null) {
+                return cachedEvents;
+            }
+            request.setLastEventId(nextLastEventId);
+        }
     }
+
+    private M2MEvents createEmptyEvents(Family family) {
+        return switch (family) {
+            case PURPOSE_TEMPLATE -> new M2MPurposeTemplateEvents();
+            case ESERVICE -> new M2MEServiceEvents();
+            case ESERVICE_TEMPLATE -> new M2MEServiceTemplateEvents();
+            case CONSUMER_DELEGATION -> new M2MConsumerDelegationEvents();
+            case CLIENT -> new M2MClientEvents();
+            case ATTRIBUTE -> new M2MAttributeEvents();
+            case AGREEMENT -> new M2MAgreementEvents();
+            case KEY -> new M2MKeyEvents();
+            case PRODUCER_DELEGATION -> new M2MProducerDelegationEvents();
+            case PRODUCER_KEY -> new M2MProducerKeyEvents();
+            case PRODUCER_KEYCHAIN -> new M2MProducerKeychainEvents();
+            case PURPOSE -> new M2MPurposeEvents();
+            case TENANT -> new M2MTenantEvents();
+        };
+    }
+
+    private boolean hasEvents(M2MEvents events) {
+        return events != null && events.getEvents() != null && !events.getEvents().isEmpty();
+    }
+
 }
