@@ -1,7 +1,6 @@
 package it.pagopa.interop.event.domain.dto.events;
 
 import it.pagopa.interop.event.domain.dto.M2MEvent;
-import it.pagopa.interop.event.filter.EventFilter;
 import it.pagopa.interop.event.filter.EventPredicate;
 import lombok.AllArgsConstructor;
 import lombok.Data;

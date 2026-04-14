@@ -5,12 +5,13 @@ import it.pagopa.interop.event.enums.InteropEvent;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @Setter
 public class EventContext {
-    private Map<InteropEvent, M2MEvent> lastEvents;
+    private final Map<InteropEvent, M2MEvent> lastEvents = new HashMap<>();
 
     public M2MEvent getLastEventMatched(InteropEvent interopEvent) {
         return lastEvents.get(interopEvent);

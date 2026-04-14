@@ -10,12 +10,15 @@ Feature: Eventi M2M
   In caso di attivazione a posteriori di una delega in erogazione, la visibilità e la struttura
   degli eventi precedentemente generati non deve subire mutamenti.
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
-
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato e pubblicato 1 e-services
+
     And "PA1" visualizza l'evento EServiceAdded con:
+      | field      | value       |
       | eserviceId | :eserviceId |
     And "PA2" non visualizza l'evento EServiceAdded appena trovato
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
+      | field        | value         |
       | eserviceId   | :eserviceId   |
       | descriptorId | :descriptorId |
     And "PA2" visualizza l'evento EServiceDescriptorPublished appena trovato
@@ -52,16 +55,19 @@ Feature: Eventi M2M
   Se la delega viene revocata, la visibilità acquisita deve andare persa e suddetto campo non
   essere più visibile.
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     When "PA2" aggiorna quell'e-service
-    Then "PA1" visualizza l'evento DraftEServiceUpdated con:
+    Then "PA2" visualizza l'evento DraftEServiceUpdated con:
+      | field                | value                 |
       | eserviceId           | :eserviceId           |
       | producerDelegationId | :producerDelegationId |
-    And "PA2" visualizza l'evento DraftEServiceUpdated appena trovato
+    And "PA1" visualizza l'evento DraftEServiceUpdated appena trovato
     When l'ente "PA1" revoca la delega in erogazione con successo
     Then "PA1" visualizza l'evento DraftEServiceUpdated con:
+      | field                | value       |
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
     And "PA2" non visualizza l'evento DraftEServiceUpdated appena trovato
@@ -71,10 +77,12 @@ Feature: Eventi M2M
   l'ente delegato non deve aver visibilità sugli eventi inerenti l'e-service tipicamente visibili
   a un delegato con delega attiva; inoltre, il campo producerDelegationId non deve essere valorizzato.
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     When "PA1" aggiorna quell'e-service
     Then "PA1" visualizza l'evento DraftEServiceUpdated con:
+      | field                | value       |
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
     And "PA2" non visualizza l'evento DraftEServiceUpdated appena trovato
