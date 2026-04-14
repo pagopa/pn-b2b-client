@@ -149,23 +149,23 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
 
     private M2MEvents getEvents(M2MEventRequest request) throws RestClientException {
         return switch (request.getEventFamily()) {
-            case PURPOSE_TEMPLATE -> getAllAfter(request.getTenantType(), Family.PURPOSE_TEMPLATE, this::getPurposeTemplateEvents);
-            case ESERVICE -> getAllAfter(request.getTenantType(), Family.ESERVICE, this::getEServicesEvents);
-            case ESERVICE_TEMPLATE -> getAllAfter(request.getTenantType(), Family.ESERVICE_TEMPLATE, this::getEServiceTemplateEvents);
-            case CONSUMER_DELEGATION -> getAllAfter(request.getTenantType(), Family.CONSUMER_DELEGATION, this::getConsumerDelegationEvents);
-            case CLIENT -> getAllAfter(request.getTenantType(), Family.CLIENT, this::getClientEvents);
-            case ATTRIBUTE -> getAllAfter(request.getTenantType(), Family.ATTRIBUTE, this::getAttributesEvents);
-            case AGREEMENT -> getAllAfter(request.getTenantType(), Family.AGREEMENT, this::getAgreementsEvents);
-            case KEY -> getAllAfter(request.getTenantType(), Family.KEY, this::getKeyEvents);
-            case PRODUCER_DELEGATION -> getAllAfter(request.getTenantType(), Family.PRODUCER_DELEGATION, this::getProducerDelegationEvents);
-            case PRODUCER_KEY -> getAllAfter(request.getTenantType(), Family.PRODUCER_KEY, this::getProducerKeyEvents);
-            case PRODUCER_KEYCHAIN -> getAllAfter(request.getTenantType(), Family.PRODUCER_KEYCHAIN, this::getProducerKeychainEvents);
-            case PURPOSE -> getAllAfter(request.getTenantType(), Family.PURPOSE, this::getPurposeEvents);
-            case TENANT -> getAllAfter(request.getTenantType(), Family.TENANT, this::getTenantEvents);
+            case PURPOSE_TEMPLATE -> getAllCached(request.getTenantType(), Family.PURPOSE_TEMPLATE, this::getPurposeTemplateEvents);
+            case ESERVICE -> getAllCached(request.getTenantType(), Family.ESERVICE, this::getEServicesEvents);
+            case ESERVICE_TEMPLATE -> getAllCached(request.getTenantType(), Family.ESERVICE_TEMPLATE, this::getEServiceTemplateEvents);
+            case CONSUMER_DELEGATION -> getAllCached(request.getTenantType(), Family.CONSUMER_DELEGATION, this::getConsumerDelegationEvents);
+            case CLIENT -> getAllCached(request.getTenantType(), Family.CLIENT, this::getClientEvents);
+            case ATTRIBUTE -> getAllCached(request.getTenantType(), Family.ATTRIBUTE, this::getAttributesEvents);
+            case AGREEMENT -> getAllCached(request.getTenantType(), Family.AGREEMENT, this::getAgreementsEvents);
+            case KEY -> getAllCached(request.getTenantType(), Family.KEY, this::getKeyEvents);
+            case PRODUCER_DELEGATION -> getAllCached(request.getTenantType(), Family.PRODUCER_DELEGATION, this::getProducerDelegationEvents);
+            case PRODUCER_KEY -> getAllCached(request.getTenantType(), Family.PRODUCER_KEY, this::getProducerKeyEvents);
+            case PRODUCER_KEYCHAIN -> getAllCached(request.getTenantType(), Family.PRODUCER_KEYCHAIN, this::getProducerKeychainEvents);
+            case PURPOSE -> getAllCached(request.getTenantType(), Family.PURPOSE, this::getPurposeEvents);
+            case TENANT -> getAllCached(request.getTenantType(), Family.TENANT, this::getTenantEvents);
         };
     }
 
-   private M2MEvents getAllAfter(String currentTenant, Family eventFamily, Function<M2MEventRequest, M2MEvents> funz) throws RestClientException {
+   private M2MEvents getAllCached(String currentTenant, Family eventFamily, Function<M2MEventRequest, M2MEvents> funz) throws RestClientException {
         Map<Family, M2MEvents> cache = tenantEventCache.get(currentTenant);
         M2MEvent lastEvent = cache.get(eventFamily).getLastEvent();
         M2MEvents result;
