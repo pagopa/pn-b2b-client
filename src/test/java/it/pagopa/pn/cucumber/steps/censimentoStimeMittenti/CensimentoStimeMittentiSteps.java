@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -106,18 +105,29 @@ public class CensimentoStimeMittentiSteps {
     Then si verifica che i risultati siano coerenti con quelli attesi
      */
 
-    @Given ("ricavo il presigned url e carico lo zip")
-    public void uploadZipFile() {
+    @Given("vengono caricate le stime di tutto l'anno dei mittenti che hanno spedito alla regione {string}")
+    public void uploadZipFile(String region) {
+        String fileName = "todo";
+        //TODO: verificare che il file contenga effettivamente i dati degli ultimi 12 mesi
 
     }
 
-    @Then("verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema")
-    public void verifyProcessingAndGetCalculatedWeeklyProvincialEstimates() {
+    @When("viene recuperata la stima della settimana intera del primo mese che inizia di lunedì")
+    public void getStimeMittentiCalcolateSettimanaIntera() {
 
     }
 
-    @And("effettuo il calcolo delle stime settimanali provinciali attese")
-    public void calculateExpectedWeeklyProvincialEstimates() {
+    @When("viene recuperata la stima della settimana a cavallo del primo mese che non inizia di lunedì")
+    public void getStimeMittentiCalcolateSettimanaCavallo() {
+
+    }
+
+    @Then("si verifica che la stima recupera corrisponda alla stima attesa")
+    public void verifyResultsAreConsistentWithExpected() {
+        calculateExpectedWeeklyProvincialEstimates();
+    }
+
+    private void calculateExpectedWeeklyProvincialEstimates() {
         YearMonth yearMonth = YearMonth.of(2025, 7); // luglio 2025
         int monthlyRegionalEstimate = 1000;
 
@@ -142,12 +152,6 @@ public class CensimentoStimeMittentiSteps {
             );
         }
     }
-
-    @Then("si verifica che i risultati siano coerenti con quelli attesi")
-    public void verifyResultsAreConsistentWithExpected() {
-
-    }
-
 
 
     private void calculateProvinceWeeklyEstimates(

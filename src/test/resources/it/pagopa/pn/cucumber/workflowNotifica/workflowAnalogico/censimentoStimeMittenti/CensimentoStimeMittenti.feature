@@ -25,8 +25,9 @@ Feature: Censimento stime mittenti
       | classpath:/t1_tc_modulo_commessa_febbraio_25.json |
     Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
-  Scenario: [SM_02] Calcolo stima settimanale provinciale a partire da stima mensile regionale
-    Given ricavo il presigned url e carico lo zip
-    Then verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema
-    And effettuo il calcolo delle stime settimanali provinciali attese
-    Then si verifica che i risultati siano coerenti con quelli attesi
+  Scenario: [SM_02] Verifica il calcolo delle stime settimanali provinciali a partire dai dati delle stime mensili regionali
+    Given vengono caricate le stime di tutto l'anno dei mittenti che hanno spedito alla regione "LAZIO"
+    When viene recuperata la stima della settimana intera del primo mese che inizia di lunedì
+    Then si verifica che la stima recupera corrisponda alla stima attesa
+    When viene recuperata la stima della settimana a cavallo del primo mese che non inizia di lunedì
+    Then si verifica che la stima recupera corrisponda alla stima attesa
