@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.event;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.enums.M2MRole;
-import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.event.domain.dto.M2MEvent;
@@ -16,12 +15,12 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.M2MAuthSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.event.model.EventContext;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public class M2MEventsSteps {
@@ -88,5 +87,41 @@ public class M2MEventsSteps {
         EventPredicate filter = EventFilter.builder().like(lastEvent).build();
 
         checkEventPresence(tenantType, isVisible, event, Collections.singletonList(filter));
+    }
+
+    @When("{string} vede {int} volte l'evento {interopEvent} con:")
+    public void checkEventQuantity(String tenantType, int limit, InteropEvent event, List<EventPredicate> predicates){
+        m2mAuthSteps.authenticateM2MUser("admin", tenantType, M2MRole.M2M_ADMIN);
+        EventPredicate combined = EventPredicate.andAll(predicates);
+
+        long startTime = System.currentTimeMillis();
+        long minWait = 5000;
+
+        M2MEventRequest eventRequest = M2MEventRequest.builder()
+                .tenantType(tenantType)
+                .event(event)
+                .build();
+
+        AtomicReference<Integer> currentSize = new AtomicReference<>(0);
+
+        PollingService.makePolling(
+                () -> m2mEventClient.findEvents(eventRequest, combined),
+                events -> {
+                    int size = events.getEvents().size();
+                    currentSize.set(events.getEvents().size());
+
+                    // deve essere stabile almeno minWait ms
+                    long elapsed = System.currentTimeMillis() - startTime;
+
+                    if (size > limit) {
+                        throw new AssertionError("L'evento " + event + " doveva essere presente " + limit + "volte ma è presente " + size);
+                    }
+
+                    return elapsed >= minWait;
+                },
+                "L'evento " + event + " doveva essere presente " + limit + "volte ma è presente " + currentSize.get(),
+                10,
+                30000
+        );
     }
 }
