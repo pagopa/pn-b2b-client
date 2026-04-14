@@ -26,6 +26,7 @@ public enum InteropEvent {
     CLIENT_KEY_ADDED("ClientKeyAdded", Family.KEY),
     RISK_ANALYSIS_TEMPLATE_DOCUMENT_GENERATED("RiskAnalysisTemplateDocumentGenerated", Family.PURPOSE_TEMPLATE),
     PURPOSE_TEMPLATE_SUSPENDED("PurposeTemplateSuspended", Family.PURPOSE_TEMPLATE),
+    PURPOSE_TEMPLATE_ADDED("PurposeTemplateAdded", Family.PURPOSE_TEMPLATE),
     PURPOSE_TEMPLATE_UNSUSPENDED("PurposeTemplateUnsuspended", Family.PURPOSE_TEMPLATE),
     PURPOSE_TEMPLATE_ARCHIVED("PurposeTemplateArchived", Family.PURPOSE_TEMPLATE),
     PURPOSE_TEMPLATE_PUBLISHED("PurposeTemplatePublished", Family.PURPOSE_TEMPLATE);
