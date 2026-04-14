@@ -15,4 +15,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class M2MEserviceEventRequest extends M2MEventRequest{
     protected UUID delegationId;
+
+    public static M2MEserviceEventRequest from(M2MEventRequest request){
+        M2MEserviceEventRequest newRequest = new M2MEserviceEventRequest();
+        newRequest.setTenantType(request.getTenantType());
+        newRequest.setLimit(request.getLimit());
+        newRequest.setEvent(request.getEvent());
+        return newRequest;
+    }
 }

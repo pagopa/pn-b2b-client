@@ -15,4 +15,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class M2MAgreementEventRequest extends M2MEventRequest{
     protected UUID delegationId;
+
+    public static M2MAgreementEventRequest from(M2MEventRequest request){
+        M2MAgreementEventRequest newRequest = new M2MAgreementEventRequest();
+        newRequest.setTenantType(request.getTenantType());
+        newRequest.setLimit(request.getLimit());
+        newRequest.setEvent(request.getEvent());
+        return newRequest;
+    }
 }

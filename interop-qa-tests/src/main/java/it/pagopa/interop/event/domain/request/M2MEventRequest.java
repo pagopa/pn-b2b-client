@@ -14,7 +14,7 @@ import java.util.UUID;
 public class M2MEventRequest {
     public static final int EVENTS_MAX_LIMIT = 500;
     protected UUID lastEventId;
-    protected InteropEvent.Family eventFamily;
+    protected InteropEvent event;
     protected String tenantType;
     protected Integer limit;
 
