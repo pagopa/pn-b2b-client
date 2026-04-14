@@ -1040,7 +1040,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @happy-path
-  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" in uno degli stati permessi
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_9] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" in uno degli stati permessi
     #isConsumerDelegable=false e isClientAccessDelegable=false
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "<descriptorState>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -1073,7 +1073,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @sad-path
-  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_11] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" ottenendo lo stato non permesso
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" ottenendo lo stato non permesso
     #isConsumerDelegable=false e isClientAccessDelegable=false
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "<descriptorState>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
