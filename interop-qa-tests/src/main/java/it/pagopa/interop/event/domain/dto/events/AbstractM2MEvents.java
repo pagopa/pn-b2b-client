@@ -24,6 +24,13 @@ public abstract class AbstractM2MEvents<Event extends M2MEvent> implements M2MEv
         return isEmpty(events) ? null : events.get(events.size() - 1);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setEvents(List<? extends M2MEvent> events) {
+        this.events.clear();
+        this.events.addAll((Collection<? extends Event>) events);
+    }
+
     public M2MEvent filter(EventPredicate filter) {
         if(filter == null) throw new IllegalArgumentException("filter cannot be null");
 
