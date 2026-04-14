@@ -1,6 +1,7 @@
 package it.pagopa.interop.event.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.common.SettableHttpCallExecutor;
 import it.pagopa.interop.event.domain.dto.M2MEvent;
 import it.pagopa.interop.event.domain.dto.events.*;
 import it.pagopa.interop.event.domain.request.M2MAgreementEventRequest;
@@ -12,9 +13,9 @@ import it.pagopa.interop.event.filter.EventPredicate;
 
 import java.util.Optional;
 
-public interface IM2MEventClient extends SettableBearerToken {
+public interface IM2MEventClient extends SettableBearerToken, SettableHttpCallExecutor {
     M2MEServiceEvents getEServicesEvents(M2MEserviceEventRequest request);
-    M2MEServiceEvents getAllEServicesEvents(M2MEventRequest request);
+    M2MEServiceEvents getAllEServicesEvents(M2MEserviceEventRequest request);
 
     M2MEServiceTemplateEvents getEServiceTemplateEvents(M2MEventRequest request);
     M2MEServiceTemplateEvents getAllEServiceTemplateEvents(M2MEventRequest request);
@@ -29,7 +30,7 @@ public interface IM2MEventClient extends SettableBearerToken {
     M2MAttributeEvents getAllAttributesEvents(M2MEventRequest request);
 
     M2MAgreementEvents getAgreementsEvents(M2MAgreementEventRequest request);
-    M2MAgreementEvents getAllAgreementsEvents(M2MEventRequest request);
+    M2MAgreementEvents getAllAgreementsEvents(M2MAgreementEventRequest request);
 
     M2MKeyEvents getKeyEvents(M2MEventRequest request);
     M2MKeyEvents getAllKeyEvents(M2MEventRequest request);
@@ -44,7 +45,7 @@ public interface IM2MEventClient extends SettableBearerToken {
     M2MProducerKeychainEvents getAllProducerKeychainEvents(M2MEventRequest request);
 
     M2MPurposeEvents getPurposeEvents(M2MPurposeEventRequest request);
-    M2MPurposeEvents getAllPurposeEvents(M2MEventRequest request);
+    M2MPurposeEvents getAllPurposeEvents(M2MPurposeEventRequest request);
 
     M2MTenantEvents getTenantEvents(M2MEventRequest request);
     M2MTenantEvents getAllTenantEvents(M2MEventRequest request);
