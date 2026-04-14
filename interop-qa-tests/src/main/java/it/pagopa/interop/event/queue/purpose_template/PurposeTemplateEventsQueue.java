@@ -8,5 +8,4 @@ public class PurposeTemplateEventsQueue extends AbstractEventQueue<PurposeTempla
     public PurposeTemplateEventsQueue(IM2MEventClient eventsClient) {
         super(eventsClient, PurposeTemplateM2MEvent.class);
     }
-
 }
