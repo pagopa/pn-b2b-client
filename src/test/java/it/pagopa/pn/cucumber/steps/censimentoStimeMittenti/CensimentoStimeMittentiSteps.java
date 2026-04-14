@@ -1,7 +1,9 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
@@ -18,10 +20,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
@@ -32,6 +37,7 @@ public class CensimentoStimeMittentiSteps {
 
     private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
+    private Map<LocalDate, Integer> expectedWeeklyEstimates;
 
     @Autowired
     public CensimentoStimeMittentiSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
@@ -93,4 +99,94 @@ public class CensimentoStimeMittentiSteps {
         context.applyCommesseInExpected(provincia, commesse.toArray(new ModuloCommessa[0]));
     }
 
+    /*
+    Given ricavo il presigned url e carico lo zip
+    Then verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema
+    And effettuo il calcolo delle stime settimanali provinciali attese
+    Then si verifica che i risultati siano coerenti con quelli attesi
+     */
+
+    @Given ("ricavo il presigned url e carico lo zip")
+    public void uploadZipFile() {
+
+    }
+
+    @Then("verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema")
+    public void verifyProcessingAndGetCalculatedWeeklyProvincialEstimates() {
+
+    }
+
+    @And("effettuo il calcolo delle stime settimanali provinciali attese")
+    public void calculateExpectedWeeklyProvincialEstimates() {
+        YearMonth yearMonth = YearMonth.of(2025, 7); // luglio 2025
+        int monthlyRegionalEstimate = 1000;
+
+        // Province e percentuali (es. Perugia 100%, Terni 100%)
+        Map<String, Integer> provincePercentages = Map.of(
+                "PE", 100
+                // , "TR", 100
+        );
+
+        expectedWeeklyEstimates = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : provincePercentages.entrySet()) {
+            String province = entry.getKey();
+            int percentage = entry.getValue();
+
+            calculateProvinceWeeklyEstimates(
+                    yearMonth,
+                    monthlyRegionalEstimate,
+                    province,
+                    percentage,
+                    expectedWeeklyEstimates
+            );
+        }
+    }
+
+    @Then("si verifica che i risultati siano coerenti con quelli attesi")
+    public void verifyResultsAreConsistentWithExpected() {
+
+    }
+
+
+
+    private void calculateProvinceWeeklyEstimates(
+            YearMonth yearMonth,
+            int regionalMonthlyEstimate,
+            String province,
+            int percentage,
+            Map<LocalDate, Integer> result
+    ) {
+        int daysInMonth = yearMonth.lengthOfMonth();
+
+        // a) stima provinciale mensile
+        double provincialMonthlyEstimate =
+                regionalMonthlyEstimate * (percentage / 100.0);
+
+        // b) stima provinciale giornaliera
+        double dailyEstimate = provincialMonthlyEstimate / daysInMonth;
+
+        LocalDate firstDayOfMonth = yearMonth.atDay(1);
+        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
+
+        // c+d) settimane che iniziano di lunedì
+        LocalDate firstMonday = firstDayOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate currentMonday = firstMonday;
+
+        while (!currentMonday.isAfter(lastDayOfMonth)) {
+            LocalDate weekEnd = currentMonday.plusDays(6);
+
+            long daysInCurrentMonth = Stream.iterate(currentMonday, d -> d.plusDays(1))
+                    .limit(7)
+                    .filter(d -> !d.isBefore(firstDayOfMonth) && !d.isAfter(lastDayOfMonth))
+                    .count();
+
+            if (daysInCurrentMonth > 0) {
+                int weeklyEstimate = (int) Math.round(dailyEstimate * daysInCurrentMonth);
+                result.merge(currentMonday, weeklyEstimate, Integer::sum);
+            }
+
+            currentMonday = currentMonday.plusWeeks(1);
+        }
+    }
 }
