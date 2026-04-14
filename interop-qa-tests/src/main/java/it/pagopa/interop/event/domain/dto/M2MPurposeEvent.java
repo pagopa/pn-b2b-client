@@ -1,10 +1,6 @@
 package it.pagopa.interop.event.domain.dto;
 
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeEvent;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
@@ -14,10 +10,11 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class M2MPurposeEvent extends M2MEvent {
     protected UUID purposeId;
     protected UUID purposeVersionId;
     protected UUID consumerDelegationId;
     protected UUID producerDelegationId;
-    protected PurposeEvent.EventTypeEnum eventType;
 }

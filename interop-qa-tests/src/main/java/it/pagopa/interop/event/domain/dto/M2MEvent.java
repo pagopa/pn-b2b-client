@@ -10,7 +10,10 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode
 public class M2MEvent {
-    private UUID id;
-    private String eventTimestamp;
+    protected UUID id;
+    protected String eventTimestamp;
+    protected String eventType;
 }

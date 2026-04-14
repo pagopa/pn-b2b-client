@@ -1,10 +1,6 @@
 package it.pagopa.interop.event.domain.dto;
 
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.KeyEvent;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
@@ -14,8 +10,9 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class M2MKeyEvent extends M2MEvent {
     protected UUID kid;
     protected UUID clientId;
-    protected KeyEvent.EventTypeEnum eventType;
 }
