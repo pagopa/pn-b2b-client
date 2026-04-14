@@ -42,4 +42,13 @@ public class M2MEvents {
             .filter(eventTypeConsistent.and(resourceIdConsistent).and(subResourceIdConsistent))
             .toList());
     }
+
+    public void addEvents(List<M2MEvent> events) {
+        this.events.addAll(events);
+    }
+
+    public void addEvents(M2MEvents events) {
+        if(events == null) return;
+        addEvents(events.getEvents());
+    }
 }
