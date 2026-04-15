@@ -97,4 +97,7 @@ public class PaperChannelSteps {
         assertNotNull("La risposta InformalPrepareResponse è nulla", this.informalPrepareResponse);
     }
 
+
+
+
 }
