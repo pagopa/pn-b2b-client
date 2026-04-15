@@ -305,3 +305,16 @@ Feature: Creazione di una delega in erogazione
     When l'utente sospende quel descrittore
     Then si ottiene lo status code 403
     And l'e-service è in stato "PUBLISHED"
+
+  @deleghe1
+  @hotfix_QA-13870
+  Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA] Verificare che il richiamo dell’API di disponibilità di delega in erogazione di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
+    Given l'utente è un "admin" di "<ente>"
+    When l'ente "<ente>" tenta di concedere la disponibilità a ricevere deleghe in erogazione
+    Then si ottiene status code 409
+
+    @happy-path
+    Examples:
+      | ente      |
+      | GSP       |
+      | Privato   |

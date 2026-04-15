@@ -12,9 +12,9 @@ Feature: Test API Availability in Use of E-Service
 
   Background:
     # TODO 07/02/2025: considerare di generalizzare così da resettare TUTTI gli enti automaticamente
-    Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe in fruizione
-    And l'ente "PA1" rimuove la disponibilità a ricevere deleghe in fruizione
-    And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe in fruizione
+    Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe
+    And l'ente "PA1" rimuove la disponibilità a ricevere deleghe
+    And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe
 
   @deleghe1
   Scenario Outline: [TC_INCARICATO_45] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service possa essere compiuto da un utente di tipo amministratore
@@ -34,6 +34,7 @@ Feature: Test API Availability in Use of E-Service
       | security    |        403 |
       | api,security|        403 |
       | support     |        403 |
+
 
   @happy-path @deleghe2
   Scenario: [TC_INCARICATO_46] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, possa essere effettuato nuovamente
@@ -844,3 +845,55 @@ Feature: Test API Availability in Use of E-Service
       | ente  |
       | PA1   |
       | GSP   |
+
+  @deleghe1
+  @hotfix_QA-13870
+  Scenario Outline: [TC_INCARICATO_45_B_1] Verificare che il richiamo dell’API di disponibilità di delega in fruizione di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
+    Given l'utente è un "admin" di "<ente>"
+    When l'ente "<ente>" tenta di concedere la disponibilità a ricevere deleghe in fruizione
+    Then si ottiene status code 409
+
+    @happy-path
+    Examples:
+      | ente      |
+      | GSP       |
+      | Privato   |
+
+  @deleghe1
+  @hotfix_QA-13870
+  Scenario Outline: [TC_INCARICATO_CAPOFILA_1] Verificare che il richiamo dell’API di indisponibilità di delega di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
+    Given l'utente è un "admin" di "<ente>"
+    When l'ente "<ente>" tenta di rimuovere la disponibilità a ricevere deleghe
+    Then si ottiene status code 409
+
+    @happy-path
+    Examples:
+      | ente      |
+      | GSP       |
+      | Privato   |
+
+  # TODO 15/04/2026: al momento non del tutto certo che NON sia consentita la pubblicazione (come previsto da questo test), o che lo sia la creazione ma non la pubblicazione
+  @hotfix_QA-13870
+  Scenario Outline: [TC_INCARICATO_ESERVICE_1] Un ente della piattaforma che non è una Pubblica Amministrazione può creare un e-service delegabile in fruizione, sia al livello amministrativo che tecnico
+    Given l'utente è un "admin" di "<ente>"
+    When l'utente tenta di creare un e-service delegabile in fruizione con client del delegato utilizzabile
+    Then si ottiene status code 200
+
+    @happy-path
+    Examples:
+      | ente      |
+      | GSP       |
+      | Privato   |
+
+  @hotfix_QA-13870
+  Scenario Outline: [TC_INCARICATO_ESERVICE_2] Un ente della piattaforma che non è una Pubblica Amministrazione non può delegare un e-service delegabile in fruizione
+    Given "<ente_creatore>" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
+    And l'ente delegante "<ente_delegante>"
+    And l'ente delegato "PA1"
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    Then si ottiene status code 409
+
+    Examples:
+      | ente_creatore | ente_delegante |
+      | GSP           | Privato        |
+      | Privato       | GSP            |
