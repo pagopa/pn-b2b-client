@@ -13,55 +13,259 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+import java.util.random.RandomGenerator;
 
 @Component
 public class TracingFileUtils {
-    @Value("${tracing.success.csv.filepath}")
-    private String tracingOkCsvFilePath;
-    @Value("${tracing.error.csv.filepath}")
-    private String tracingErrorCsvFilePath;
+    @Value("${tracing.csv.example.filepath}")
+    private String tracingExampleCsvFilePath;
+    @Value("${tracing.csv.tmp.path}")
+    private String tracingTemporaryCsvPath;
     @Value("${tracing.csv.errors.path}")
     private String tracingErrorCsvPath;
+
     private final ResourceLoader resourceLoader;
+    private final int randomRequestCountFrom = 1;
+    private final int randomRequestCountTo = 50;
 
     public TracingFileUtils(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    public void updateCsv(LocalDate date) {
-        try {
-            // Read the csv file before overriding it with the correct date.
-            FileReader fileReader = new FileReader(tracingOkCsvFilePath);
-            CSVReader csvReader = new CSVReader(fileReader);
-            // Read the header (first row) of the CSV file
-            String[] header = csvReader.readNext();
-            // Read all the rows (excluding the header)
-            List<String[]> allRows = csvReader.readAll();
-            csvReader.close();
+    private void createTemporaryTracingFolder() {
+        new java.io.File(tracingTemporaryCsvPath).mkdir();
+    }
 
-            FileWriter fileWriter = new FileWriter(tracingOkCsvFilePath);
-            CSVWriter csvWriter = new CSVWriter(fileWriter);
-            // Write the header back to the CSV file
-            csvWriter.writeNext(header);
-            // Write all the rows back and update the first column with the provided date
-            for (String[] nextLine : allRows) {
-                nextLine[0] = date.toString();
-                csvWriter.writeNext(nextLine);
-            }
-            csvWriter.close();
+    private String getTemporaryTracingFilePath() {
+        return tracingTemporaryCsvPath + "/tracing.csv";
+    }
+
+    private List<String[]> readCsvRows(String filepath) {
+        try {
+            // Read the valid example csv file to have real data for the new generation
+            FileReader fileReader = new FileReader(filepath);
+            CSVReader csvReader = new CSVReader(fileReader);
+            // Read all the rows (including the header)
+            List<String[]> csvRows = csvReader.readAll();
+            csvReader.close();
+            return csvRows;
 
         } catch (CsvException | IOException ex) {
             throw new RuntimeException("There was an error while generating the csv file: " + ex);
         }
     }
 
+    public void generateValidAndMinimalTemporaryCsv(LocalDate date) {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.get(0));
+
+            // Write just one valid record using the provided date
+            String[] firstRecord = csvRows.get(1);
+            // date: an available date to upload the CSV file
+            firstRecord[0] = date.toString();
+            // purpose_id has to be taken from the valid example provided
+            // token_id: a random UUID is accepted
+            firstRecord[2] = UUID.randomUUID().toString();
+            // status: an HTTP response code, it can be taken from the example
+            // requests_count: how many requests have been tracked
+            firstRecord[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
+                    randomRequestCountFrom, randomRequestCountTo + 1)
+            );
+            csvWriter.writeNext(firstRecord);
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
+    public void generateTemporaryCsvWithEmptyPurposeId(LocalDate date) {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.get(0));
+
+            // Write just one valid record using the provided date
+            String[] firstRecord = csvRows.get(1);
+            // date: an available date to upload the CSV file
+            firstRecord[0] = date.toString();
+            // purpose_id: empty in this error case
+            firstRecord[1] = "";
+            // token_id: a random UUID is accepted
+            firstRecord[2] = UUID.randomUUID().toString();
+            // status: an HTTP response code, it can be taken from the example
+            // requests_count: how many requests have been tracked
+            firstRecord[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
+                    randomRequestCountFrom, randomRequestCountTo + 1)
+            );
+            csvWriter.writeNext(firstRecord);
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
+    public void generateValidTemporaryCsvWithNotCompliantPurposeId(LocalDate date) {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+            boolean notCompliantPurposeIdPresent = false;
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.remove(0));
+
+            for (String[] nextLine : csvRows) {
+                // date: an available date to upload the CSV file
+                nextLine[0] = date.toString();
+                // purpose_id has to be taken from the valid example provided
+                if (!notCompliantPurposeIdPresent) {
+                    nextLine[1] = UUID.randomUUID().toString();
+                    notCompliantPurposeIdPresent = true;
+                }
+                // token_id: a random UUID is accepted
+                nextLine[2] = UUID.randomUUID().toString();
+                // status: an HTTP response code, it can be taken from the example
+                // requests_count: how many requests have been tracked
+                nextLine[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
+                        randomRequestCountFrom, randomRequestCountTo + 1)
+                );
+                csvWriter.writeNext(nextLine);
+            }
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
+    public void generateValidTemporaryCsvWithSomeWrongRecords(LocalDate date) {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.remove(0));
+
+            for (int i = 0; i < csvRows.size(); i++) {
+                String[] nextLine = csvRows.get(i);
+                // date: an available date to upload the CSV file
+                if (i == 3) {
+                    // A record with an invalid date
+                    nextLine[0] = "3000-99-99";
+                } else {
+                    nextLine[0] = date.toString();
+                }
+                // purpose_id has to be taken from the valid example provided
+                // token_id: a random UUID is accepted
+                nextLine[2] = UUID.randomUUID().toString();
+                // status: an HTTP response code, it can be taken from the example
+                if (i == 5) {
+                    // A record with a not existing HTTP response code
+                    nextLine[3] = "600";
+                }
+                // requests_count: how many requests have been tracked
+                if (i == 4) {
+                    // A record with 0 requests count, but if it is tracked, it is not consistent
+                    nextLine[4] = "0";
+                } else {
+                    nextLine[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
+                            randomRequestCountFrom, randomRequestCountTo + 1)
+                    );
+                }
+                csvWriter.writeNext(nextLine);
+            }
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
+    public void emptyFirstPurposeIdFieldOfTheTemporaryCsv() {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.get(0));
+
+            // Write just one valid record using the provided date
+            String[] firstRecord = csvRows.get(1);
+            // purpose_id: empty in this error case
+            firstRecord[1] = "";
+            // All the other fields are unchanged
+            csvWriter.writeNext(firstRecord);
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
+    public void generateValidTemporaryCsvOfSize(LocalDate date, int megabyte) {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.remove(0));
+
+            // Estimated and target file size are in bytes. The header is 57 bytes and a record is often 102.
+            // The formula to estimate the size is: 57 + lineCount * 102 bytes.
+            int estimatedFileSize = 57;
+            int targetFileSize = megabyte * 1024 * 1024;
+            int lineCount = 0;
+
+            while (estimatedFileSize <= targetFileSize) {
+                for (String[] nextLine : csvRows) {
+                    // date: an available date to upload the CSV file
+                    nextLine[0] = date.toString();
+                    // purpose_id has to be taken from the valid example provided
+                    // token_id: a random UUID is accepted
+                    nextLine[2] = UUID.randomUUID().toString();
+                    // status: an HTTP response code, it can be taken from the example
+                    // requests_count: how many requests have been tracked
+                    nextLine[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
+                            randomRequestCountFrom, randomRequestCountTo + 1)
+                    );
+                    csvWriter.writeNext(nextLine);
+                    lineCount++;
+                }
+                estimatedFileSize = 57 + lineCount * 102;
+            }
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
     public Resource getCsvFile(String file) {
         return switch (file.trim().toLowerCase()) {
-            case "corretto" -> resourceLoader.getResource("file:" + tracingOkCsvFilePath);
-            case "errato" -> resourceLoader.getResource("file:" + tracingErrorCsvFilePath);
             case "errato_header_campo_mancante" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-missing-field.csv");
             case "errato_header_nome_campo" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-wrong-field.csv");
             case "errato_header_doppia_virgola" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-consecutive-commas.csv");
+            case "preparato" -> resourceLoader.getResource("file:" + tracingTemporaryCsvPath + "/tracing.csv");
             default -> throw new IllegalStateException("Unexpected value: " + file.trim().toLowerCase());
         };
     }

@@ -20,11 +20,7 @@ import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.core.io.Resource;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -91,6 +87,9 @@ public class TracingSteps {
 
     @Given("viene recuperata la prima data disponibile per un invio del file CSV")
     public LocalDate getFirstAvailableDate() {
+        // To submit a tracing CSV file, it needs a day with a missing tracing CSV file
+        // so it searches the oldest day without an uploaded tracing CSV file
+
         selectOperator(currentTenant);
         httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null));
 
@@ -99,27 +98,60 @@ public class TracingSteps {
                 .min(LocalDate::compareTo)
                 .map(date -> date.minusDays(1))
                 .orElseGet(() -> LocalDate.now().minusDays(1));
+
         currentTracing.setReferenceDate(submissionDate);
         return submissionDate;
     }
 
-    @Given("viene aggiornato il file CSV con la prima data disponibile")
-    public void updateCsv() {
-        // To repeat the operation we need a day with a missing tracing CSV file
-        // so it searches the oldest day without an uploaded tracing CSV file
-        tracingFileUtils.updateCsv(getFirstAvailableDate());
+    @When("viene preparato un file CSV valido e minimale per una data disponibile")
+    public void generateValidAndMinimalCsv() {
+        tracingFileUtils.generateValidAndMinimalTemporaryCsv(getFirstAvailableDate());
+    }
+
+    @When("viene preparato un file CSV valido da {int} MB per una data disponibile")
+    public void generateValidCsvOfSize(int megabyte) {
+        tracingFileUtils.generateValidTemporaryCsvOfSize(getFirstAvailableDate(), megabyte);
+    }
+
+    @When("viene preparato un file CSV con un purpose ID vuoto per una data disponibile")
+    public void generateCsvWithEmptyPurposeId() {
+        tracingFileUtils.generateTemporaryCsvWithEmptyPurposeId(getFirstAvailableDate());
+    }
+
+    @When("viene preparato un file CSV valido con un purpose ID non conforme per una data disponibile")
+    public void generateValidCsvWithNotCompliantPurposeId() {
+        tracingFileUtils.generateValidTemporaryCsvWithNotCompliantPurposeId(getFirstAvailableDate());
+    }
+
+    @When("viene preparato un file CSV valido con qualche record errato per una data disponibile")
+    public void generateValidCsvWithSomeWrongRecords() {
+        tracingFileUtils.generateValidTemporaryCsvWithSomeWrongRecords(getFirstAvailableDate());
+    }
+
+    @When("viene preparato un file CSV valido e minimale per un giorno in stato {string}")
+    public void generateValidAndMinimalCsvForADayWithMissingState(String status) {
+        retrieveTracing(List.of(TracingState.fromValue(status)));
+        Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing with MISSING status!");
+        Assertions.assertFalse(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().isEmpty(), "No tracing with MISSING status found!");
+        GetTracingsResponseResultsInner tracingsResponseResults = ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().get(0);
+        tracingFileUtils.generateValidAndMinimalTemporaryCsv(tracingsResponseResults.getDate());
+        currentTracing.setReferenceDate(tracingsResponseResults.getDate());
+    }
+
+    @When("viene svuotato il purpose ID del primo record del file CSV preparato")
+    public void emptyFirstPurposeIdFieldOfThePreparedCsv() {
+        tracingFileUtils.emptyFirstPurposeIdFieldOfTheTemporaryCsv();
     }
 
     @When("viene inviato il file CSV {string}")
     public void uploadCsv(String fileType) {
-        // TODO BUG Lorenzo sta indagando sul perché in DEV restano in PENDING gli invii
         httpCallExecutor.performCall(() -> {
             SubmitTracingResponse response = interopTracingClient.submitTracing(tracingFileUtils.getCsvFile(fileType), currentTracing.getFormattedDate());
             currentTracing.setTracingId(response.getTracingId().toString());
         });
     }
 
-    @When("viene recuperata la lista di tracing con uno stato tra i seguenti$")
+    @When("viene recuperata la lista di tracing con uno stato tra i seguenti")
     public void retrieveTracingByStatusList(List<String> statusList) {
         List<TracingState> tracingStates = statusList.stream().map(TracingState::fromValue).toList();
         retrieveTracing(tracingStates);
@@ -137,9 +169,8 @@ public class TracingSteps {
 
     @Then("viene chiamato tracing con un path contenente un carattere percent-encoded non valido")
     public void callTracingPathWithNotValidPercentEncodedChar() {
-        // TODO il path viene riscritto %c0 -> %25c0 fixare!
         httpCallExecutor.performCall(interopTracingClient::callTracingWithIllegalPercentEncodedCharInPath);
-        Assertions.assertEquals(400, httpCallExecutor.getResponseStatus().value());
+        Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
     }
 
     @Then("la risposta contiene soltanto i tracing con stato {string}")
@@ -228,22 +259,12 @@ public class TracingSteps {
 
     @When("viene sovrascritto il tracing con id: {string}")
     public void replaceTracingById(String tracingId) {
-        replaceTracing(UUID.fromString(tracingId), tracingFileUtils.getCsvFile("corretto"));
+        replaceTracing(UUID.fromString(tracingId), tracingFileUtils.getCsvFile("preparato"));
     }
 
     @When("viene invocato l'endpoint di health con successo")
     public void getHealthStatus() {
         Assertions.assertDoesNotThrow(interopTracingClient::getHealthStatus);
-    }
-
-    @When("viene inviato il csv {string} per la data mancante")
-    public void recoverMissingCsvForDate(String fileType) {
-        Assertions.assertNotNull(((GetTracingsResponse)httpCallExecutor.getResponse()), "There was an error while retrieving the tracing with MISSING status!");
-        Assertions.assertFalse(((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().isEmpty(), "No tracing with MISSING status found!");
-        GetTracingsResponseResultsInner tracingsResponseResults = ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().get(0);
-        tracingFileUtils.updateCsv(tracingsResponseResults.getDate());
-        currentTracing.setReferenceDate(tracingsResponseResults.getDate());
-        uploadCsv(fileType);
     }
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
