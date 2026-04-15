@@ -1,13 +1,13 @@
-Feature: Interop Tracing feature
+Feature: Interop Tracing
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-01] Inserimento di un nuovo file CSV di tracing giornaliero
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "CORRETTO"
+    And viene preparato un file CSV valido e minimale per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     # SCENARIO 15
-    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO"
+    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And viene recuperata la lista di tracing con stato "COMPLETED"
     And si verifica che il tracing sia presente tra quelli ritornati
@@ -15,31 +15,31 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-02] Inserimento di un file CSV di tracing giornaliero per una data già presente
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
+    And viene preparato un file CSV valido e minimale per una data disponibile
     # PRIMO CARICAMENTO
-    When viene inviato il file CSV "CORRETTO"
+    When viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     # SECONDO CARICAMENTO
-    When viene inviato il file CSV "CORRETTO"
+    When viene inviato il file CSV "PREPARATO"
     Then il file CSV di tracing viene rifiutato perché già esistente
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-03] Inserimento di un nuovo file CSV di tracing giornaliero
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "ERRATO"
+    And viene preparato un file CSV con un purpose ID vuoto per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "ERROR"
     # SCENARIO 9
     When viene recuperato il dettaglio del tracing con errori
     Then il dettaglio ritorna gli errori aspettati
     # SCENARIO 11
-    When gli errori riscontrati vengono corretti passando il csv "CORRETTO"
-    And si attende che il file di tracing caricato passi in stato "COMPLETED"
+    When viene preparato un file CSV valido e minimale per una data disponibile
+    And gli errori riscontrati vengono corretti passando il csv "PREPARATO"
+    Then si attende che il file di tracing caricato passi in stato "COMPLETED"
 
   @interopTracingCsv
   Scenario Outline: [INTEROP-TRACING-04] Recupero lista tracing con filtro stato
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
     When viene recuperata la lista di tracing con stato "<status>"
     Then la risposta contiene soltanto i tracing con stato "<status>"
     Examples:
@@ -61,38 +61,38 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-06] Recupero dettaglio errori presenti nel file tracing con identificativo non esistente
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
     When viene recuperato il dettaglio degli errori per il tracing "bb09726e-5783-4713-aebf-7b5b688bcccc"
     Then la chiamata fallisce perché la risorsa non viene trovata
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-07] Invio del file CSV tracing contenente errori utilizzando l'identificativo del file di tracing già in errore
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "ERRATO"
+    And viene preparato un file CSV con un purpose ID vuoto per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "ERROR"
-    And gli errori riscontrati vengono corretti passando il csv "ERRATO"
+    And gli errori riscontrati vengono corretti passando il csv "PREPARATO"
     Then si attende che il file di tracing caricato passi in stato "ERROR"
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-08] Invio del file CSV tracing corretto utilizzando l'identificativo del file di tracing non esistente
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
     And vengono corretti gli errori riscontrati per il tracingId "bb09726e-5783-4713-aebf-7b5b688bcccc"
     Then la chiamata fallisce perché la risorsa non viene trovata
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-09] Invio del file CSV tracing, per una stessa data e già in stato completato, in sostituzione a quello già presente, il quale però contiene errori
     Given l'utenza "TENANT1" effettua le chiamate
-    When viene inviato il file CSV "CORRETTO"
+    And viene preparato un file CSV valido e minimale per una data disponibile
+    And viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
-    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "ERRATO"
+    When viene svuotato il purpose ID del primo record del file CSV preparato
+    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "ERROR"
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-10] Invio del file CSV tracing per una stessa data e già in stato completato, in sostituzione a quello già presente
     Given l'utenza "TENANT1" effettua le chiamate
-    #And viene aggiornato il file CSV con la prima data disponibile
+    And viene preparato un file CSV valido e minimale per una data disponibile
     When viene sovrascritto il tracing con id: "bb09726e-5783-4713-aebf-7b5b688bcccc"
     Then la chiamata fallisce perché la risorsa non viene trovata
 
@@ -103,9 +103,8 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-12] Invio del file CSV tracing mancante utilizzando l'identificativo del file di tracing non inserito per una determinata data
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    And viene recuperata la lista di tracing con stato "MISSING"
-    When viene inviato il csv "CORRETTO" per la data mancante
+    And viene preparato un file CSV valido e minimale per un giorno in stato "MISSING"
+    When viene inviato il file CSV "PREPARATO"
     And viene recuperato il file di tracing appena caricato e si verifica che lo stato sia "COMPLETED"
 
   @interopTracingCsv
@@ -116,13 +115,12 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-14-1] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "CORRETTO"
-    Then si attende che il file di tracing caricato passi in stato "PENDING"
-    # COMPLETED
+    And viene preparato un file CSV valido e minimale per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
+    Then si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing venga arricchito con altri dati
 
-    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO"
+    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And viene recuperata la lista di tracing con stato "COMPLETED"
     Then si verifica che il tracing sia presente tra quelli ritornati
@@ -131,12 +129,12 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-14-2] Verifica arricchimento dati per l'inserimento di un nuovo pesante file CSV di tracing
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "CORRETTO_PESANTE"
+    And viene preparato un file CSV valido da 70 MB per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
     Then si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
 
-    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO_PESANTE"
+    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And viene recuperata la lista di tracing con stato "COMPLETED"
     Then si verifica che il tracing sia presente tra quelli ritornati
@@ -161,13 +159,13 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-15-2] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing con alcuni record errati
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "CORRETTO_CON_RECORD_ERRATI"
+    And viene preparato un file CSV valido con qualche record errato per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
     And si attende che i record errati vengano tracciati negli errori
 
-    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO_CON_RECORD_ERRATI"
+    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
     And si attende che i record errati vengano tracciati negli errori
@@ -175,13 +173,13 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-15-3] Verifica il tracciamento dei WARNING per l'inserimento di un nuovo file CSV di tracing con purpose_id non conforme
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene aggiornato il file CSV con la prima data disponibile
-    When viene inviato il file CSV "CORRETTO_CON_PURPOSE_NON_CONFORMI"
+    And viene preparato un file CSV valido con un purpose ID non conforme per una data disponibile
+    When viene inviato il file CSV "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
     And si attende che i record con purpose non conformi vengano tracciati con warning
 
-    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO_CON_PURPOSE_NON_CONFORMI"
+    When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
     And si attende che il file di tracing caricato passi in stato "COMPLETED"
     And si attende che il file di tracing arricchito venga generato
     And si attende che i record con purpose non conformi vengano tracciati con warning
