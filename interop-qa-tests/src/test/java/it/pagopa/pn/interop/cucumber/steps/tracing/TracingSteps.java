@@ -439,7 +439,7 @@ public class TracingSteps {
     }
 
     @AfterAll
-    public static void after_all() {
+    public static void removeTracingTemporaryCsvFolder() {
         TracingFileUtils.removeTemporaryFolder();
     }
 }
