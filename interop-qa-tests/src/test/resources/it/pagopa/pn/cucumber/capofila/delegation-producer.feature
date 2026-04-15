@@ -308,7 +308,7 @@ Feature: Creazione di una delega in erogazione
 
   @deleghe1
   @hotfix_QA-13870
-  Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA] Verificare che il richiamo dell’API di disponibilità di delega in erogazione di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
+  Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA_1] Verificare che il richiamo dell’API di disponibilità di delega in erogazione di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
     Given l'utente è un "admin" di "<ente>"
     When l'ente "<ente>" tenta di concedere la disponibilità a ricevere deleghe in erogazione
     Then si ottiene status code 409
@@ -318,3 +318,16 @@ Feature: Creazione di una delega in erogazione
       | ente      |
       | GSP       |
       | Privato   |
+
+  @hotfix_QA-13870
+  Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA_2] Un ente che non sia una Pubblica Amministrazione non può fungere da delegante in erogazione per un proprio e-service
+    Given l'utente è un "admin" di "<delegante>"
+    And "<delegante>" ha già creato e pubblicato 1 e-service
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega in erogazione per l'ente "PA1"
+    Then si ottiene lo status code 409
+
+    Examples:
+      | delegante |
+      | Privato   |
+      | GSP       |

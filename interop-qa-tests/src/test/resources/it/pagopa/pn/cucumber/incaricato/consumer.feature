@@ -886,14 +886,16 @@ Feature: Test API Availability in Use of E-Service
       | Privato   |
 
   @hotfix_QA-13870
-  Scenario Outline: [TC_INCARICATO_ESERVICE_2] Un ente della piattaforma che non è una Pubblica Amministrazione non può delegare un e-service delegabile in fruizione
+  Scenario Outline: [TC_INCARICATO_ESERVICE_2] Un ente della piattaforma può delegare un e-service delegabile in fruizione solo se questo è una Pubblica amministrazione
     Given "<ente_creatore>" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
     And l'ente delegante "<ente_delegante>"
     And l'ente delegato "PA1"
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    Then si ottiene status code 409
+    Then si ottiene status code <status_code>
 
     Examples:
-      | ente_creatore | ente_delegante |
-      | GSP           | Privato        |
-      | Privato       | GSP            |
+      | ente_creatore | ente_delegante | status_code  |
+      | GSP           | Privato        | 409          |
+      | Privato       | GSP            | 409          |
+      | GSP           | PA2            | 200          |
+      | Privato       | PA2            | 200          |

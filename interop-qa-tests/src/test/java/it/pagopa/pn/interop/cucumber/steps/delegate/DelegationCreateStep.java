@@ -320,6 +320,7 @@ public class DelegationCreateStep {
     }
 
     @And("l'utente richiede la creazione di una delega per l'ente {string}")
+    @And("l'utente richiede la creazione di una delega in erogazione per l'ente {string}")
     public void userRequestDelegationCreation(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String delegatorTenant = sharedStepsContext.getTenantType();
