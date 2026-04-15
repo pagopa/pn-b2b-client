@@ -16,7 +16,6 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.model.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCsv.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

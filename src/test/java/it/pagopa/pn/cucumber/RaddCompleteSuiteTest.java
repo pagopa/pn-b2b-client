@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber;
 
 import org.junit.platform.suite.api.*;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
