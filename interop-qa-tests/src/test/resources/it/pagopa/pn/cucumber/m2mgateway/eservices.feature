@@ -1226,9 +1226,9 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @sad-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_1] Un utente NON può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_1] Un utente NON può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
@@ -1238,11 +1238,16 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And l'utente è un m2m-admin dell'ente delegante
     When l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
     Then si ottiene lo status code 400
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @happy-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_2] Un utente con delega in fruizione preesistente alla disabilitazione del flag di delega amministrativa può creare una richiesta di fruizione in delega
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_2] Un utente con delega in fruizione preesistente alla disabilitazione del flag di delega amministrativa può creare una richiesta di fruizione in delega
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
     And l'ente delegante "PA2"
     And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
@@ -1252,7 +1257,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And la delega è stata inoltrata correttamente
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione con successo
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     When il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
@@ -1260,11 +1265,16 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And l'utente inoltra quella richiesta di fruizione
     Then si ottiene lo status code 200
     And la richiesta di fruizione è passata in stato "ACTIVE"
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @happy-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_3] Un accordo di fruizione in delega preesistente alla disabilitazione del flag di delega amministrativa resta attivo
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_3] Un accordo di fruizione in delega preesistente alla disabilitazione del flag di delega amministrativa resta attivo
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
     And l'ente delegante "PA2"
     And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
@@ -1277,18 +1287,23 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And il delegato ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     And l'utente inoltra quella richiesta di fruizione
     And la richiesta di fruizione è passata in stato "ACTIVE"
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'utente è un "admin" dell'ente delegato
     Then la richiesta di fruizione è in stato "ACTIVE"
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @sad-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_4] Un utente delegato in fruizione NON può associare un proprio client a una finalità in delega se la delega tecnica su un e-service in stato PUBLISHED viene disabilitata dopo la creazione della delega in fruizione
-    Given "PA3" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_4] Un utente delegato in fruizione NON può associare un proprio client a una finalità in delega se la delega tecnica su un e-service in stato PUBLISHED viene disabilitata dopo la creazione della delega in fruizione
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'ente delegante "PA2"
-    And l'ente delegato "PA1"
+    And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
@@ -1301,23 +1316,28 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'utente è un "admin" dell'ente delegato
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
     And l'associazione tra finalita e client non è presente
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @sad-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_5] Un utente delegato in fruizione NON può associare un proprio client a una finalità in delega quando la delega tecnica viene disabilitata su un e-service in stato PUBLISHED
-    Given "PA3" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_5] Un utente delegato in fruizione NON può associare un proprio client a una finalità in delega quando la delega tecnica viene disabilitata su un e-service in stato PUBLISHED
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
-    And l'ente delegato "PA1"
+    And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
@@ -1333,13 +1353,18 @@ Feature: Gestione degli eServices attraverso APIs M2M
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 400
     And l'associazione tra finalita e client non è presente
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @happy-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_6] Un'associazione client-finalità preesistente alla disabilitazione del flag di delega tecnica rimane attiva
-    Given "PA3" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_6] Un'associazione client-finalità preesistente alla disabilitazione del flag di delega tecnica rimane attiva
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'ente delegante "PA2"
-    And l'ente delegato "PA1"
+    And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
@@ -1352,18 +1377,23 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    And "PA1" associa la finalità al client creato con successo
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    And "PA3" associa la finalità al client creato con successo
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'utente è un "admin" dell'ente delegato
     Then l'associazione tra finalita e client è presente
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @happy-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_1] Un utente può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene abilitata dopo la pubblicazione dell'e-service
-    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_1] Un utente può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene abilitata dopo la pubblicazione dell'e-service
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "false"
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
@@ -1374,16 +1404,21 @@ Feature: Gestione degli eServices attraverso APIs M2M
     When l'ente delegante tenta di inoltrare una richiesta m2m di delega in fruizione all'ente delegato
     Then si ottiene lo status code 200
     And la delega è stata inoltrata correttamente
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @happy-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_2] Un utente delegato in fruizione può associare un proprio client a una finalità in delega quando la delega tecnica viene abilitata su un e-service in stato PUBLISHED
-    Given "PA3" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_2] Un utente delegato in fruizione può associare un proprio client a una finalità in delega quando la delega tecnica viene abilitata su un e-service in stato PUBLISHED
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     And l'e-service è stato parzialmente modificato correttamente
     And l'ente delegante "PA2"
-    And l'ente delegato "PA1"
+    And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
@@ -1396,15 +1431,20 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    When "PA1" associa la finalità al client creato con successo
+    When "PA3" associa la finalità al client creato con successo
     Then si ottiene status code 204
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
 
   @eservice_published_delegation
   @happy-path
-  Scenario: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_3] Un utente delegato in fruizione può associare un proprio client a una finalità creata in delega se la delega tecnica su un e-service in stato PUBLISHED viene abilitata dopo la creazione della delega in fruizione
-    Given "PA3" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_3] Un utente delegato in fruizione può associare un proprio client a una finalità creata in delega se la delega tecnica su un e-service in stato PUBLISHED viene abilitata dopo la creazione della delega in fruizione
+    Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
     And l'ente delegante "PA2"
-    And l'ente delegato "PA1"
+    And l'ente delegato "PA3"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un m2m-admin dell'ente delegante
@@ -1417,9 +1457,13 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And la richiesta di fruizione è passata in stato "ACTIVE"
     And per conto del delegante, il delegato ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il delegato ha già creato 1 client "CONSUMER"
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     And l'e-service è stato parzialmente modificato correttamente
-    When "PA1" associa la finalità al client creato con successo
+    When "PA3" associa la finalità al client creato con successo
     Then si ottiene status code 204
-
+    Examples:
+      | producerTenant |
+      | PA1            |
+      | GSP            |
+      | Privato        |
