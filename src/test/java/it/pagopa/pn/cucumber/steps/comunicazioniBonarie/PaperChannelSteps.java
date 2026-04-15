@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 public class PaperChannelSteps {
@@ -48,10 +48,24 @@ public class PaperChannelSteps {
                 .proposalProductType(InformalProposalProductTypeEnum.RS);
     }
 
+    @Given("inizializzata una comunicazione bonaria con parametro required mancante:")
+    public void newPaperChannelInformalRequestRequiredMissing(DataTable dataTable) {
+        Map<String, String> data = dataTable.asMaps().get(0);
+        informalPrepareRequest = new InformalPrepareRequest()
+                .iun(data.get("iun"))
+                .requestId(data.get("requestId"))
+                .receiverType(data.get("receiverType"))
+                .printType(data.get("printType"))
+                //.attachmentUrls(null)
+                .proposalProductType(InformalProposalProductTypeEnum.RS);
+    }
+
     @When("si richiede la prepare della comunicazione bonaria")
     public void callPaperChannelInformal(String xClientId) {
         try {
             this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, xClientId);
+            this.httpStatusCode = HttpStatus.OK; // O un valore che indichi "Successo 2xx"
+
         } catch (HttpStatusCodeException ex) {
             httpStatusCode = ex.getStatusCode();
         } catch (RestClientException e) {
@@ -70,5 +84,17 @@ public class PaperChannelSteps {
         //assertTrue(encounteredException instanceof RestClientException);
     }
 
+    @Then("si riceve un codice di stato di successo")
+    public void verificaStatoSuccesso() {
+        // Verifica che non ci siano eccezioni generiche
+        assertNull(encounteredException, "Errore durante la chiamata: " + encounteredException);
+
+        // Verifica che lo stato sia 200 o 201
+        assertTrue(httpStatusCode.is2xxSuccessful(),
+                "Atteso 200 o 201, ma ricevuto: " + httpStatusCode);
+
+        // Verifica che l'oggetto risposta sia popolato
+        assertNotNull("La risposta InformalPrepareResponse è nulla", this.informalPrepareResponse);
+    }
 
 }
