@@ -46,7 +46,10 @@ public class M2MClientsClientImpl extends AbstractClient implements IM2MClientsC
 
     @Override
     public Client getClient(UUID clientId) {
-        return clientsApi.getClient(clientId);
+        return performOperation(() -> clientsApi.getClientWithHttpInfo(clientId)
+        ).orElseThrow(() -> new IllegalStateException(
+                "Errore nel recupero dei client (response non 2xx o body nullo)"
+        ));
     }
 
     @Override
