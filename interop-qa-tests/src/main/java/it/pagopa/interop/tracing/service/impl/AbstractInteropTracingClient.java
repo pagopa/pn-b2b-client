@@ -1,5 +1,6 @@
 package it.pagopa.interop.tracing.service.impl;
 
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.ApiClient;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.HealthApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.TracingsApi;
@@ -12,11 +13,14 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.mo
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,7 +77,19 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
 
     @Override
     public ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath() throws RestClientException {
-        return tracingsApi.invokeAPI("/tracings/invalid%c0", HttpMethod.GET);
+        final RestTemplate restTemplate = new RestTemplate();
+        String url = tracingsApi.getApiClient().getBasePath() + "/tracings/invalid%c0";
+        URI uri = URI.create(url);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + SettableBearerToken.BearerTokenType.TENANT_1);
+        headers.set("Content-Type", "application/json");
+        headers.set("Accept", "application/json");
+        headers.set("User-Agent", "OpenAPI-Generator/1.0.0/java");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // The expected behavior for this call will raise an exception due to 404 error
+        return restTemplate.exchange(uri, HttpMethod.GET, entity, Void.class);
     }
 
     public BearerTokenType getBearerTokenSetted() {
