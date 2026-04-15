@@ -25,6 +25,13 @@ public class TracingFileUtils {
     @Value("${tracing.csv.errors.path}")
     private String tracingErrorCsvPath;
 
+    private static String temporaryPath;
+
+    @Value("${tracing.csv.tmp.path}")
+    public void setTemporaryPath(String path) {
+        TracingFileUtils.temporaryPath = tracingTemporaryCsvPath;
+    }
+
     private final ResourceLoader resourceLoader;
     private final int randomRequestCountFrom = 1;
     private final int randomRequestCountTo = 50;
@@ -35,6 +42,15 @@ public class TracingFileUtils {
 
     private void createTemporaryTracingFolder() {
         new java.io.File(tracingTemporaryCsvPath).mkdir();
+    }
+
+    public static void removeTemporaryFolder() {
+        java.io.File file = new java.io.File(TracingFileUtils.temporaryPath, "tracing.csv");
+        java.io.File metafile = new java.io.File(TracingFileUtils.temporaryPath, ".DS_Store");
+        java.io.File folder = new java.io.File(TracingFileUtils.temporaryPath, "/");
+        if (file.exists()) file.delete();
+        if (metafile.exists()) metafile.delete();
+        if (folder.exists()) folder.delete();
     }
 
     private String getTemporaryTracingFilePath() {

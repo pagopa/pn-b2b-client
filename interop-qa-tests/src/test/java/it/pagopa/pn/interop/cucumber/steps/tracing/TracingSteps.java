@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.tracing;
 
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -435,5 +436,10 @@ public class TracingSteps {
                 .collect(Collectors.toList());
 
         // TODO non conosco ancora come viene esattamente segnato il WARNING nel file di errore
+    }
+
+    @AfterAll
+    public static void after_all() {
+        TracingFileUtils.removeTemporaryFolder();
     }
 }
