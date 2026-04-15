@@ -13,8 +13,6 @@ import it.pagopa.interop.event.filter.EventPredicate;
 import it.pagopa.interop.event.mapper.M2MEventMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EventsApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceEvent;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceEvents;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -25,8 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static it.pagopa.interop.event.enums.InteropEvent.Family;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -358,13 +354,13 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     @Override
-    public M2MPurposeTemplateEvents getPurposeTemplateEvents(M2MEventRequest request) throws RestClientException {
-        throw new UnsupportedOperationException("Purpose Template events are not supported by M2MEventClient");
+    public M2MPurposeTemplateEvents getPurposeTemplateEvents(M2MEventRequest request) {
+        throw new RestClientException("Gli eventi PurposeTemplate non sono gestite dal gateway M2M V2");
     }
 
     @Override
-    public M2MPurposeTemplateEvents getAllPurposeTemplateEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MPurposeTemplateEvents) getAllCached(request, this::getPurposeTemplateEvents);
+    public M2MPurposeTemplateEvents getAllPurposeTemplateEvents(M2MEventRequest request) {
+        throw new RestClientException("Gli eventi PurposeTemplate non sono gestite dal gateway M2M V2");
     }
 
     @Override
@@ -384,7 +380,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     @Override
     public M2MEvents getEvents(M2MEventRequest request) throws RestClientException {
         return switch (request.getEvent().getFamily()) {
-            case PURPOSE_TEMPLATE -> getAllPurposeTemplateEvents(request);
+            case PURPOSE_TEMPLATE -> throw new RestClientException("Gli eventi PurposeTemplate non sono gestite dal gateway M2M V2");
             case ESERVICE -> getAllEServicesEvents(M2MEserviceEventRequest.from(request));
             case ESERVICE_TEMPLATE -> getAllEServiceTemplateEvents(request);
             case CONSUMER_DELEGATION -> getAllConsumerDelegationEvents(request);
