@@ -123,16 +123,16 @@ public class CensimentoStimeMittentiSteps {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
             Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
             String uploadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", uploadParams);
-            String preloadUrlUpload = extractUrlFromPresignedUrlResponse(uploadResponse, "preloadUrl");
+            String preloadUrlUpload = extractUrlFromPresignedUrlResponse(uploadResponse, "uploadUrl");
             // viene caricato il file zip su S3 tramite il presigned url ottenuto
-            B2bUtils.loadToPresigned(applicationContext, preloadUrlUpload, null, sha256, String.format("classpath:/%s", fileName), "application/zip");
+            B2bUtils.loadToPresigned(applicationContext, preloadUrlUpload, null, null, String.format("classpath:/%s", fileName), "application/zip");
             Map<String,String> downloadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "DOWNLOAD");
             // viene ottenuto il presigned url per il download del file elaborato
             String downloadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", downloadParams);
-            String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "preloadUrl");
+            String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "downloadUrl");
 
             // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
-            lambdaClient.invoke("pn-portfat-eventFileReady-lambda");
+//            lambdaClient.invoke("pn-portfat-eventFileReady-lambda");
 
         } catch (Exception e) {
             throw new RuntimeException(e);
