@@ -119,10 +119,15 @@ public class CensimentoStimeMittentiSteps {
         String fileName = "portfatt_modulo_commessa_primo_trimestre_26.zip";
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            String response = lambdaClient.invoke("GET_PRESIGNED_URL", fileName, sha256, "UPLOAD");
+            Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
+            String response = lambdaClient.invoke("GET_PRESIGNED_URL", uploadParams);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        //TODO put per caricamento file
+        //TODO getpresignedurl in download
+        //TODO lambda file-ready event
 
     }
 
@@ -140,6 +145,22 @@ public class CensimentoStimeMittentiSteps {
     public void verifyResultsAreConsistentWithExpected() {
         calculateExpectedWeeklyProvincialEstimates();
     }
+
+
+    private Map<String, String> prepareParametersForGetPresignedUrl(
+            String fileName,
+            String checksumSha256B64,
+            String presignedUrlType
+    ) {
+        return Map.of(
+                "fileName", fileName,
+                "checksumSha256B64", checksumSha256B64,
+                "presignedUrlType", presignedUrlType
+        );
+    }
+
+
+
 
     private void calculateExpectedWeeklyProvincialEstimates() {
         YearMonth yearMonth = YearMonth.of(2025, 7); // luglio 2025
@@ -207,4 +228,6 @@ public class CensimentoStimeMittentiSteps {
             currentMonday = currentMonday.plusWeeks(1);
         }
     }
+
+
 }

@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.delayer.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
 import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
@@ -30,6 +31,13 @@ public class DelayerLambdaClient {
     }
 
     public String invoke(String operationType, String... parameters) throws Exception {
+        String payload = buildPayload(operationType, parameters);
+        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+        checkLambdaResponse(rawResult, operationType);
+        return rawResult;
+    }
+
+    public String invoke(String operationType, Map<String, String> parameters) throws Exception {
         String payload = buildPayload(operationType, parameters);
         String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
         checkLambdaResponse(rawResult, operationType);
@@ -307,6 +315,24 @@ public class DelayerLambdaClient {
         sb.append("] }");
         return sb.toString();
     }
+
+
+    private String buildPayload(String operationType, Map<String, String> parameters) {
+        try {
+            ObjectNode root = objectMapper.createObjectNode();
+            root.put("operationType", operationType);
+
+            ObjectNode paramsNode = objectMapper.createObjectNode();
+            parameters.forEach(paramsNode::put);
+
+            root.set("parameters", paramsNode);
+
+            return objectMapper.writeValueAsString(root);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build JSON payload", e);
+        }
+    }
+
 
     private void checkLambdaResponse(String rawJson, String operationType) throws Exception {
         if (rawJson == null) {
