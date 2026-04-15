@@ -237,9 +237,9 @@ public abstract class B2bUtils {
     private static void loadToPresignedWithDepth(ApplicationContext context, String url, String secret, String sha256, String resource, String contentType, int depth) {
         try {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Content-type", contentType);
-            headers.add("x-amz-checksum-sha256", sha256);
-            headers.add("x-amz-meta-secret", secret);
+            if (contentType != null) headers.add("Content-type", contentType);
+            if (sha256 != null) headers.add("x-amz-checksum-sha256", sha256);
+            if (secret != null) headers.add("x-amz-meta-secret", secret);
             log.info("headers: {}", headers);
             HttpEntity<Resource> req = new HttpEntity<>(context.getResource(resource), headers);
             RestTemplate restTemplate = getDefaultRestTemplate();

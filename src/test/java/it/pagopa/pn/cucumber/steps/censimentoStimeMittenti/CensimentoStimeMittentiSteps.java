@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -120,7 +122,17 @@ public class CensimentoStimeMittentiSteps {
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
             Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
-            String response = lambdaClient.invoke("GET_PRESIGNED_URL", uploadParams);
+            String uploadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", uploadParams);
+            String preloadUrlUpload = extractUrlFromPresignedUrlResponse(uploadResponse, "preloadUrl");
+            // viene caricato il file zip su S3 tramite il presigned url ottenuto
+            B2bUtils.loadToPresigned(applicationContext, preloadUrlUpload, null, sha256, String.format("classpath:/%s", fileName), "application/zip");
+            Map<String,String> downloadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "DOWNLOAD");
+            // viene ottenuto il presigned url per il download del file elaborato
+            String downloadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", downloadParams);
+            String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "preloadUrl");
+
+            // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
+            lambdaClient.invoke("pn-portfat-eventFileReady-lambda");
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -129,6 +141,12 @@ public class CensimentoStimeMittentiSteps {
         //TODO getpresignedurl in download
         //TODO lambda file-ready event
 
+    }
+
+    private String extractUrlFromPresignedUrlResponse(String response, String fieldName) throws Exception {
+        JsonNode root = new ObjectMapper().readTree(response);
+        JsonNode body = new ObjectMapper().readTree(root.get("body").asText());
+        return body.get(fieldName).asText();
     }
 
     @When("viene recuperata la stima della settimana intera del primo mese che inizia di lunedì")
