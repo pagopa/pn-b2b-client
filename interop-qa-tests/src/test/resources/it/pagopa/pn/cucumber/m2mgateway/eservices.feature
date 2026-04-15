@@ -966,9 +966,45 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @sad-path
-  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3] Un utente con ruolo M2M-ADMIN NON può modificare la flag di delega tecnica di un e-service ottenendo uno stato non permesso
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3A] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo PA NON può modificare la flag di delega tecnica di un e-service ottenendo uno stato non permesso
     Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED       | false               | true                    |
+      | SUSPENDED       | false               | true                    |
+      | DEPRECATED      | false               | true                    |
+      #considerando che lo stato delle flag alla creazione dell'e-service è isConsumerDelegable=false e isClientAccessDelegable=false
+      | PUBLISHED       | %null               | true                    |
+      | SUSPENDED       | %null               | true                    |
+      | DEPRECATED      | %null               | true                    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3B] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo GSP NON può modificare la flag di delega tecnica di un e-service ottenendo uno stato non permesso
+    Given "GSP" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | descriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED       | false               | true                    |
+      | SUSPENDED       | false               | true                    |
+      | DEPRECATED      | false               | true                    |
+      #considerando che lo stato delle flag alla creazione dell'e-service è isConsumerDelegable=false e isClientAccessDelegable=false
+      | PUBLISHED       | %null               | true                    |
+      | SUSPENDED       | %null               | true                    |
+      | DEPRECATED      | %null               | true                    |
+
+  @eservice_published_delegation
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3C] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo PRIVATE NON può modificare la flag di delega tecnica di un e-service ottenendo uno stato non permesso
+    Given "Privato" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "Privato" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
     Then si ottiene lo status code 400
     And l'e-service non ha subito modifiche
