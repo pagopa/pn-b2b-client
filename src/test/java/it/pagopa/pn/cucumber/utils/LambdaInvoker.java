@@ -2,7 +2,6 @@ package it.pagopa.pn.cucumber.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -47,8 +46,8 @@ public class LambdaInvoker {
                     .overrideConfiguration(c -> c
                             .apiCallAttemptTimeout(Duration.ofSeconds(180))
                             .apiCallTimeout(Duration.ofMinutes(6)))
-//                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
-                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
+                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
+//                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
@@ -57,6 +56,14 @@ public class LambdaInvoker {
 
 
     public String invokeMyLambda(String functionName, String payload) {
+//        payload = "{\n" +
+//                "  \"operationType\": \"GET_PRESIGNED_URL\",\n" +
+//                "  \"parameters\": {\n" +
+//                "    \"fileName\": \"example.csv\",\n" +
+//                "    \"checksumSha256B64\": \"abcd1234efgh5678ijkl9012mnop3456\",\n" +
+//                "    \"presignedUrlType\": \"UPLOAD\"\n" +
+//                "  }\n" +
+//                "}";
         InvokeRequest request = InvokeRequest.builder()
                 .functionName(functionName)
                 .payload(SdkBytes.fromString(payload, StandardCharsets.UTF_8))

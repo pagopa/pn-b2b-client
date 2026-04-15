@@ -9,6 +9,7 @@ import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiCo
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import java.time.DayOfWeek;
@@ -24,7 +26,12 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -37,11 +44,13 @@ public class CensimentoStimeMittentiSteps {
     private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
     private Map<LocalDate, Integer> expectedWeeklyEstimates;
+    private ApplicationContext applicationContext;
 
     @Autowired
-    public CensimentoStimeMittentiSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
+    public CensimentoStimeMittentiSteps(ApplicationContext applicationContext, LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
         this.context = new StimeMittentiContext();
         this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
+        this.applicationContext = applicationContext;
     }
 
     @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia {string}")
@@ -107,8 +116,13 @@ public class CensimentoStimeMittentiSteps {
 
     @Given("vengono caricate le stime di tutto l'anno dei mittenti che hanno spedito alla regione {string}")
     public void uploadZipFile(String region) {
-        String fileName = "todo";
-        //TODO: verificare che il file contenga effettivamente i dati degli ultimi 12 mesi
+        String fileName = "portfatt_modulo_commessa_primo_trimestre_26.zip";
+        try {
+            String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
+            String response = lambdaClient.invoke("GET_PRESIGNED_URL", fileName, sha256, "UPLOAD");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
