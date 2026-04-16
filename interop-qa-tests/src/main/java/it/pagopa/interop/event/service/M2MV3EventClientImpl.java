@@ -17,6 +17,7 @@ import it.pagopa.interop.event.mapper.M2MV3EventMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EventsApi;
 import it.pagopa.interop.utils.ApiClientUtils;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,12 +35,14 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
     private final EventsApi eventsApi;
     private final String basePath;
     private final M2MV3EventMapper mapper;
+    private final Instant eventStartTime;
 
     public M2MV3EventClientImpl(DpopRestTemplate restTemplate, InteropClientConfigs interopClientConfigs, M2MV3EventMapper mapper) {
         super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.eventsApi = new EventsApi(ApiClientUtils.createApiClient(restTemplate, basePath, Collections.emptyMap()));
         this.mapper = mapper;
+        this.eventStartTime = Instant.now();
     }
 
     @Override
@@ -51,21 +54,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MEserviceEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MEServiceEvents getAllEServicesEvents(M2MEserviceEventRequest request) throws RestClientException {
-        return (M2MEServiceEvents) getAllCached(request, this::getEServicesEvents);
+        return (M2MEServiceEvents) getM2MEvents(request, this::getEServicesEvents);
     }
 
     @Override
@@ -76,21 +70,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MEServiceTemplateEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MEServiceTemplateEvents getAllEServiceTemplateEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MEServiceTemplateEvents) getAllCached(request, this::getEServiceTemplateEvents);
+        return (M2MEServiceTemplateEvents) getM2MEvents(request, this::getEServiceTemplateEvents);
     }
 
     @Override
@@ -101,21 +86,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MConsumerDelegationEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MConsumerDelegationEvents getAllConsumerDelegationEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MConsumerDelegationEvents) getAllCached(request, this::getConsumerDelegationEvents);
+        return (M2MConsumerDelegationEvents) getM2MEvents(request, this::getConsumerDelegationEvents);
     }
 
     @Override
@@ -126,21 +102,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MClientEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MClientEvents getAllClientEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MClientEvents) getAllCached(request, this::getClientEvents);
+        return (M2MClientEvents) getM2MEvents(request, this::getClientEvents);
     }
 
     @Override
@@ -151,21 +118,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MAttributeEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MAttributeEvents getAllAttributesEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MAttributeEvents) getAllCached(request, this::getAttributesEvents);
+        return (M2MAttributeEvents) getM2MEvents(request, this::getAttributesEvents);
     }
 
 
@@ -178,21 +136,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getDelegationId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MAgreementEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MAgreementEvents getAllAgreementsEvents(M2MAgreementEventRequest request) throws RestClientException {
-        return (M2MAgreementEvents) getAllCached(request, this::getAgreementsEvents);
+        return (M2MAgreementEvents) getM2MEvents(request, this::getAgreementsEvents);
     }
 
     @Override
@@ -203,21 +152,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MKeyEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MKeyEvents getAllKeyEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MKeyEvents) getAllCached(request, this::getKeyEvents);
+        return (M2MKeyEvents) getM2MEvents(request, this::getKeyEvents);
     }
 
     @Override
@@ -228,21 +168,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MProducerDelegationEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MProducerDelegationEvents getAllProducerDelegationEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MProducerDelegationEvents) getAllCached(request, this::getProducerDelegationEvents);
+        return (M2MProducerDelegationEvents) getM2MEvents(request, this::getProducerDelegationEvents);
     }
 
     @Override
@@ -253,21 +184,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MProducerKeyEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MProducerKeyEvents getAllProducerKeyEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MProducerKeyEvents) getAllCached(request, this::getProducerKeyEvents);
+        return (M2MProducerKeyEvents) getM2MEvents(request, this::getProducerKeyEvents);
     }
 
     @Override
@@ -278,21 +200,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MProducerKeychainEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MProducerKeychainEvents getAllProducerKeychainEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MProducerKeychainEvents) getAllCached(request, this::getProducerKeychainEvents);
+        return (M2MProducerKeychainEvents) getM2MEvents(request, this::getProducerKeychainEvents);
     }
 
     @Override
@@ -304,21 +217,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getDelegationId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MPurposeEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MPurposeEvents getAllPurposeEvents(M2MPurposeEventRequest request) throws RestClientException {
-        return (M2MPurposeEvents) getAllCached(request, this::getPurposeEvents);
+        return (M2MPurposeEvents) getM2MEvents(request, this::getPurposeEvents);
     }
 
     @Override
@@ -329,21 +233,12 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
                         request.getLastEventId()
                 ))
                 .map(mapper::map)
-                .map(events -> {
-                    List<M2MTenantEvent> filtered = events.getEvents().stream()
-                            .filter(event -> request.getEvent() != null &&
-                                    event.getEventType().equals(request.getEvent().name()))
-                            .toList();
-
-                    events.setEvents(filtered);
-                    return events;
-                })
                 .orElseThrow(() -> new IllegalStateException(httpCallExecutor.getErrorMessage()));
     }
 
     @Override
     public M2MTenantEvents getAllTenantEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MTenantEvents) getAllCached(request, this::getTenantEvents);
+        return (M2MTenantEvents) getM2MEvents(request, this::getTenantEvents);
     }
 
     @Override
@@ -353,7 +248,7 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
 
     @Override
     public M2MPurposeTemplateEvents getAllPurposeTemplateEvents(M2MEventRequest request) throws RestClientException {
-        return (M2MPurposeTemplateEvents) getAllCached(request, this::getPurposeTemplateEvents);
+        return (M2MPurposeTemplateEvents) getM2MEvents(request, this::getPurposeTemplateEvents);
     }
 
     @Override
@@ -389,7 +284,7 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
         };
     }
 
-    private <Request extends M2MEventRequest> M2MEvents getAllCached(Request request, Function<Request, M2MEvents> fetchPage) throws RestClientException {
+    private <Request extends M2MEventRequest> M2MEvents getM2MEvents(Request request, Function<Request, M2MEvents> fetchPage) throws RestClientException {
         Objects.requireNonNull(request, "request cannot be null");
         Objects.requireNonNull(fetchPage, "fetchPage cannot be null");
 
@@ -400,19 +295,27 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
             throw new IllegalArgumentException("request.eventFamily cannot be null");
         }
 
+        return getAllCached(request, fetchPage);
+    }
+
+    private <Request extends M2MEventRequest> M2MEvents getAllCached(Request request, Function<Request, M2MEvents> fetchPage) {
+
+        Integer limit = request.getLimit() != null ?  request.getLimit() : M2MEventRequest.EVENTS_MAX_LIMIT;
+        request.setLimit(limit);
+
         Map<InteropEvent, M2MEvents> tenantCache =
                 tenantEventCache.computeIfAbsent(request.getTenantType(), t -> new HashMap<>());
 
         M2MEvents cachedEvents =
                 tenantCache.computeIfAbsent(request.getEvent(), this::createEmptyEvents);
 
-        UUID lastEventId = cachedEvents.getLastEvent() != null
-                ? cachedEvents.getLastEvent().getId()
-                : request.getLastEventId();
-        Integer limit = request.getLimit() != null ?  request.getLimit() : M2MEventRequest.EVENTS_MAX_LIMIT;
+        UUID lastEventId = request.getLastEventId() != null
+                ? request.getLastEventId()
+                : ((cachedEvents.getLastEvent() != null && cachedEvents.getLastEvent().getId() != null) ? cachedEvents.getLastEvent().getId() : getFirstEventIdAfterStart(request, fetchPage));
 
         request.setLastEventId(lastEventId);
-        request.setLimit(limit);
+
+
 
         while (true) {
             M2MEvents page = fetchPage.apply(request);
@@ -432,6 +335,27 @@ public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3Ev
 
             request.setLastEventId(nextLastEventId);
         }
+    }
+
+    private <Request extends M2MEventRequest> UUID getFirstEventIdAfterStart(Request request, Function<Request, M2MEvents> fetchPage) {
+        M2MEvents page;
+        UUID lastEventId;
+
+        do{
+            page = fetchPage.apply(request);
+            page.setEvents(
+                    page.getEvents()
+                            .stream()
+                            .filter(e -> e.getEventTimestamp().isAfter(eventStartTime))
+                            .collect(Collectors.toList())
+            );
+
+            lastEventId = page.getLastEvent() != null
+                    ? page.getLastEvent().getId()
+                    : null;
+        } while (hasEvents(page));
+
+        return lastEventId;
     }
 
     private M2MEvents createEmptyEvents(InteropEvent event) {
