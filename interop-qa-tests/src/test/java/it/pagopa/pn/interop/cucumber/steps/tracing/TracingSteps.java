@@ -21,6 +21,7 @@ import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
 import java.time.format.DateTimeFormatter;
@@ -33,6 +34,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TracingSteps {
+
+    @Value("${spring.profiles.active}")
+    private String envProfile;
 
     @Getter
     @Setter
@@ -168,10 +172,10 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, statusList));
     }
 
-    @Then("viene chiamato tracing con un path contenente un carattere percent-encoded non valido")
-    public void callTracingPathWithNotValidPercentEncodedChar() {
+    @Then("viene chiamato tracing con {method} e {subpath} contenente un carattere percent-encoded non valido")
+    public void callTracingPathWithNotValidPercentEncodedChar(String method, String subpath) {
         httpCallExecutor.performCall(() -> {
-            interopTracingClient.callTracingWithIllegalPercentEncodedCharInPath();
+            interopTracingClient.callTracingWithIllegalPercentEncodedCharInPath(method, subpath);
             Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
         });
     }
@@ -338,6 +342,7 @@ public class TracingSteps {
     }
 
     private String composeS3KeyWithPrefixAndTracing(String prefix, Tracing tracing) {
+        prefix += "-" + envProfile;
         return String.format(
                 "%s/tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
                 prefix,
@@ -351,15 +356,15 @@ public class TracingSteps {
     }
 
     private String getCurrentUploadedTracingS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("interop-tracing-bucket", tracing);
+        return composeS3KeyWithPrefixAndTracing("tracing-files" + envProfile, tracing);
     }
 
     private String getCurrentTracingErrorS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("interop-tracing-errors-bucket", tracing);
+        return composeS3KeyWithPrefixAndTracing("tracing-errors-files", tracing);
     }
 
     private String getCurrentEnrichedTracingS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("interop-tracing-enriched-bucket", tracing);
+        return composeS3KeyWithPrefixAndTracing("tracing-enriched-files", tracing);
     }
 
     @Then("nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati")
