@@ -111,11 +111,10 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
     }
 
     @Override
-    public Client createClient(ClientSeed clientSeed) {
+    public it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Client createClient(ClientSeed clientSeed) {
         return performOperation(
                 () -> clientsApi.createClientWithHttpInfo(clientSeed)
-        ).map(mapper::mapToV2)
-                .orElseThrow(
+        ).orElseThrow(
                 () -> new IllegalStateException("Errore durante la creazione del client")
         );
     }

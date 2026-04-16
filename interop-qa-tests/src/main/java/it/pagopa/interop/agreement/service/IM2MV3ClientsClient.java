@@ -8,9 +8,9 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import java.util.UUID;
 
 public interface IM2MV3ClientsClient extends IM2MClientsClient, SettableHeaders, Authenticable, SettableHttpCallExecutor {
+    // OPERAZIONI ESCLUSIVE DEL SET M2M V3
     Key createClientKey(UUID clientId, KeySeed keySeed);
     JWKs getClientKeys(UUID clientId, Integer offset, Integer limit);
     Client createClient(ClientSeed clientSeed);
-    Client getClient(UUID clietId);
     void deleteClient(UUID clientId);
 }
