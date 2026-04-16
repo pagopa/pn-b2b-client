@@ -170,8 +170,10 @@ public class TracingSteps {
 
     @Then("viene chiamato tracing con un path contenente un carattere percent-encoded non valido")
     public void callTracingPathWithNotValidPercentEncodedChar() {
-        httpCallExecutor.performCall(interopTracingClient::callTracingWithIllegalPercentEncodedCharInPath);
-        Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
+        httpCallExecutor.performCall(() -> {
+            interopTracingClient.callTracingWithIllegalPercentEncodedCharInPath();
+            Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
+        });
     }
 
     @Then("la risposta contiene soltanto i tracing con stato {string}")
