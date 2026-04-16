@@ -37,6 +37,13 @@ public class DelayerLambdaClient {
         return rawResult;
     }
 
+    public String invokePortfatLambda(String operationType, String downloadUrl) throws Exception {
+        String payload = buildFileReadyEventJson(downloadUrl);
+        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+        checkLambdaResponse(rawResult, operationType);
+        return rawResult;
+    }
+
     public String invoke(String operationType, Map<String, String> parameters) throws Exception {
         String payload = buildPayload(operationType, parameters);
         String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
@@ -314,6 +321,27 @@ public class DelayerLambdaClient {
 
         sb.append("] }");
         return sb.toString();
+    }
+
+    private String buildFileReadyEventJson(String downloadUrl) {
+        try {
+            // body node
+            ObjectNode bodyNode = objectMapper.createObjectNode();
+            bodyNode.put("downloadUrl", downloadUrl);
+            bodyNode.put("fileVersion", "1.0.0");
+
+            // root node
+            ObjectNode rootNode = objectMapper.createObjectNode();
+            rootNode.put("httpMethod", "POST");
+            rootNode.put("resource", "/file-ready-event");
+
+            // body must be a STRING containing JSON
+            rootNode.put("body", bodyNode.toString());
+
+            return rootNode.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build file-ready-event JSON", e);
+        }
     }
 
 

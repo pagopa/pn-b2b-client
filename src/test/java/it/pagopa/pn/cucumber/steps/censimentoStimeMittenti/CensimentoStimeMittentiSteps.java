@@ -132,7 +132,7 @@ public class CensimentoStimeMittentiSteps {
             String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "downloadUrl");
 
             // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
-//            lambdaClient.invoke("pn-portfat-eventFileReady-lambda");
+            lambdaClient.invokePortfatLambda("pn-portfat-eventFileReady-lambda", preloadUrlDownload);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
