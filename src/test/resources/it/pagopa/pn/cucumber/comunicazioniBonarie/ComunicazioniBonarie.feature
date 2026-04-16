@@ -126,7 +126,7 @@ Feature: comunicazioni bonarie
   Scenario : [PREPARE-TC9-KO] Validazione nuovo service api prepare con parametro (required) proposalProductType null
     Given inizializzata una comunicazione bonaria con i parametri:
       | iun                     | requestId                         | receiverType | printType       | attachmentUrls      | proposalProductType
-      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try1 | PF           | BN_FRONTE_RETRO | [<url-da-inserire>] | RS
+      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try1 | PF           | BN_FRONTE_RETRO | [<url-da-inserire>] | null
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
@@ -141,6 +141,42 @@ Feature: comunicazioni bonarie
   Scenario : [PREPARE-TC11-KO] Validazione nuovo service api prepare con formato data invalido nel parametro notificationSentAt
     Given inizializzata una comunicazione bonaria con i parametri:
       | iun                     | requestId                         | receiverType | printType       | attachmentUrls      | proposalProductType | notificationSentAt
-      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try1 | PF           | BN_FRONTE_RETRO | [<url-da-inserire>] | AR                  | 2022-07----27T12:22:33.444Z
+      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try1 | PF           | BN_FRONTE_RETRO | [<url-da-inserire>] | RS                  | 2022-07----27T12:22:33.444Z
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 500
+
+
+  Scenario : [PREPARE-TC12-OK] Validazione nuovo service api prepare con url non valido nel parametro attachmentUrls
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | iun                     | requestId                         | receiverType | printType       | attachmentUrls      | proposalProductType | notificationSentAt
+      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try2 | PF           | BN_FRONTE_RETRO | [<url-non-valido>]  | RS                  | 2022-07-27T12:22:33.444Z
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo
+
+  Scenario : [PREPARE-TC13-OK] Validazione nuovo service api prepare con molteplici url nel parametro attachmentUrls
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | iun                     | requestId                         | receiverType | printType       | attachmentUrls                         | proposalProductType | notificationSentAt
+      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try3 | PF           | BN_FRONTE_RETRO | [<url-da-inserire>,<url-da-inserire>]  | RS                  | 2022-07-27T12:22:33.444Z
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo
+
+  Scenario : [PREPARE-TC14-OK] Validazione nuovo service api prepare con valore non censito nel parametro printType
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | iun                     | requestId                         | receiverType | printType       | attachmentUrls       | proposalProductType | notificationSentAt
+      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try4 | PF           | BN_NON_CENSITO  | [<url-da-inserire>]  | RS                  | 2022-07-27T12:22:33.444Z
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo
+
+  Scenario : [PREPARE-TC15-OK] Validazione nuovo service api prepare con valore non censito nel parametro receiverType
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | iun                     | requestId                         | receiverType | printType       | attachmentUrls       | proposalProductType | notificationSentAt
+      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try5 | AA           | BN_FRONTE_RETRO | [<url-da-inserire>]  | RS                  | 2022-07-27T12:22:33.444Z
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo
+
+  Scenario : [PREPARE-TC16-OK] Validazione nuovo service api prepare con requestId che non contiene il prefisso dello iun fornito
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | iun                     | requestId                         | receiverType | printType       | attachmentUrls       | proposalProductType | notificationSentAt
+      | ABCD-HILM-YKWX-202202-1 | UVXZ-HILM-YKWX-202202-1_rec0_try6 | PF           | BN_FRONTE_RETRO | [<url-da-inserire>]  | RS                  | 2022-07-27T12:22:33.444Z
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo
