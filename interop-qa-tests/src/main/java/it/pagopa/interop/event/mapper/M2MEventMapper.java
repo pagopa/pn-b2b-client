@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 @Mapper(componentModel = "spring")
@@ -105,10 +106,7 @@ public interface M2MEventMapper {
     M2MProducerDelegationEvents map(ProducerDelegationEvents event);
     M2MConsumerDelegationEvents map(ConsumerDelegationEvents event);
 
-    /* TODO 28/11/2025: questa logica di conversione compare identica altrove in più occasioni.
-        Andrebbe incapsulata in una utility condivisa. */
-    default OffsetDateTime map(String timestamp) {
-        return OffsetDateTime.parse(timestamp);
+    default Instant map(String timestamp) {
+        return Instant.parse(timestamp);
     }
-
 }
