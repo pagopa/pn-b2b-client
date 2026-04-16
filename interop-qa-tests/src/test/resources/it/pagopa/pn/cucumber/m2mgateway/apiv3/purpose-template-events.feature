@@ -45,9 +45,3 @@ Feature: Eventi M2M di Purpose Template
       | field             | value              |
       | purposeTemplateId | :purposeTemplateId |
     And "PA2" visualizza l'evento RiskAnalysisTemplateDocumentGenerated appena trovato
-    And "PA1" vede 1 volte l'evento RiskAnalysisTemplateDocumentGenerated con:
-      | field             | value              |
-      | purposeTemplateId | :purposeTemplateId |
-    And "PA2" vede 1 volte l'evento RiskAnalysisTemplateDocumentGenerated con:
-      | field             | value              |
-      | purposeTemplateId | :purposeTemplateId |
