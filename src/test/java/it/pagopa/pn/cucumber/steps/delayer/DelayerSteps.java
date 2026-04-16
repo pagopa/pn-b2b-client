@@ -24,16 +24,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.EVALUATE_PRINT_CAPACITY;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.SENT_TO_PREPARE_PHASE_2;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.valueOf;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.calculateLimitByComparativo;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getCurrentMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.hasSeedInRequestId;
 import static java.lang.Thread.sleep;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -281,6 +290,12 @@ public class DelayerSteps {
         planner.simulateAlgorithm2(context.expectedPianification);
     }
 
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
+    public void runFirstStepFunctionWithFixedDeliveryDate(String deliveryWeek) throws Exception {
+        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek).getExecutionArn();
+        waitUntilStepFunctionEnd();
+    }
+
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
     public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
         context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd)).getExecutionArn();
@@ -460,5 +475,33 @@ public class DelayerSteps {
     @And("imposto la deliveryWeek in avanti di {int} settimane")
     public void setDeliveryWeek(int nWeeks) {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
+    }
+
+    @And("vengono recuperate le somme delle stime mittenti per la deliveryDate: {string}")
+    public void fetchSenderLimits(String deliveryDate) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table", "pn-PaperDeliveryCounters");
+        params.put("counterType", "SUM_ESTIMATES");
+        params.put("deliveryDate", deliveryDate);
+        params.put("province", "P1");
+        params.put("productType", "890");
+        try {
+            String countersResponse = lambdaClient.invoke("GET_COUNTERS", params);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @And("viene recuperato il limite percentuale garantito per la deliveryDate: {string}")
+    public void fetchUsedSenderLimit(String deliveryDate) {
+        Map<String, String> params = new HashMap<>();
+        params.put("deliveryDate", deliveryDate);
+        params.put("pk", "paId~productType~province");
+        params.put("table", "pn-PaperDeliveryUsedSenderLimit");
+        try {
+            String countersResponse = lambdaClient.invoke("GET_USED_SENDER_LIMIT", params);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -84,7 +84,7 @@ public class CensimentoStimeMittentiSteps {
         int attempt = 18;
         int sleepMillis = 500;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-yyyy");
         YearMonth da = YearMonth.parse(meseAnnoDa, formatter);
         YearMonth a = YearMonth.parse(meseAnnoA, formatter);
         context.actual.senderLimits.clear();

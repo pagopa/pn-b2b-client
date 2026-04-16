@@ -4,13 +4,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
-import it.pagopa.pn.cucumber.steps.delayer.model.*;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
+import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
+import it.pagopa.pn.cucumber.steps.delayer.model.FirstStepFunctionResponseWrapper;
+import it.pagopa.pn.cucumber.steps.delayer.model.SecondStepFunctionResponseWrapper;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 public class DelayerLambdaClient {
@@ -18,6 +32,8 @@ public class DelayerLambdaClient {
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String lambdaName;
+    @Value("${pn.delayer.portfat.lambda.name}")
+    private String portfatLambdaName;
 
     @Data
     public static class SenderLimitResult {
@@ -39,7 +55,7 @@ public class DelayerLambdaClient {
 
     public String invokePortfatLambda(String operationType, String downloadUrl) throws Exception {
         String payload = buildFileReadyEventJson(downloadUrl);
-        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+        String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
         checkLambdaResponse(rawResult, operationType);
         return rawResult;
     }
@@ -245,11 +261,16 @@ public class DelayerLambdaClient {
 
     public SenderLimitResult getSenderLimit(String deliveryDate, String province, String lastEvaluatedKey) {
         try {
-            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
-                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
-                    : new String[]{deliveryDate, province};
+//            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
+//                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
+//                    : new String[]{deliveryDate, province};
 
-            String response = invoke("GET_SENDER_LIMIT", params);
+            Map<String, String> paramsMap = Map.of(
+                    "deliveryDate", deliveryDate,
+                    "province", province
+            );
+
+            String response = invoke("GET_SENDER_LIMIT", paramsMap);
             JsonNode body = extractBody(response);
 
             List<DelayerSenderLimit> items = new ArrayList<>();
