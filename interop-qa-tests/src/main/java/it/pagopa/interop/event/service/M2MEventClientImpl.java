@@ -2,7 +2,7 @@ package it.pagopa.interop.event.service;
 
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.event.domain.dto.*;
+import it.pagopa.interop.event.domain.dto.M2MEvent;
 import it.pagopa.interop.event.domain.dto.events.*;
 import it.pagopa.interop.event.domain.request.M2MAgreementEventRequest;
 import it.pagopa.interop.event.domain.request.M2MEserviceEventRequest;
@@ -13,7 +13,6 @@ import it.pagopa.interop.event.filter.EventPredicate;
 import it.pagopa.interop.event.mapper.M2MEventMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EventsApi;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
