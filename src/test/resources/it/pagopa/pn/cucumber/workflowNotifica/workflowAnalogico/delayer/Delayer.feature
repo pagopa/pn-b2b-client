@@ -938,3 +938,21 @@
         | unifiedDeliveryDriverId |
         | Poste~80125             |
 
+    @delayer14
+    Scenario Outline: [DELAYER-TC14] Verifica che la pulizia delle tabelle target rimuova completamente i dati di test
+      Given vengono puliti i dati dalle tabelle target
+      And il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
+        | seed          | quantita | deliveryWeek |
+        | tcZeroDriver_ | 15       | 2025-12-29   |
+      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      When vengono puliti i dati dalle tabelle target
+      Then non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate "2025-12-29"
+      And non deve esistere capacità usata per i seguenti driver alla deliveryDate "2025-12-29":
+        | unifiedDeliveryDriverId |
+        | zeroDriverP10~P10       |
+        | zeroDriverP10~CAP1_P10  |
+      And non devono esistere contatori per la deliveryDate "2025-12-29"
+      And non devono esistere limiti mittente per la deliveryDate "2025-12-29"
+      Examples:
+        | csv                | TOT |
+        | "tcZeroDriver.csv" | 15  |

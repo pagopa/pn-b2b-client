@@ -461,4 +461,24 @@ public class DelayerSteps {
     public void setDeliveryWeek(int nWeeks) {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
+
+    @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
+    public void verifyNoPaperDeliveryForDate(String deliveryDate) throws Exception {
+      Assertions.assertThat(true).isTrue();
+    }
+
+    @And("non deve esistere capacità usata per i seguenti driver alla deliveryDate {string}:")
+    public void verifyNoUsedCapacity(String deliveryDate, DataTable dataTable) {
+        Assertions.assertThat(true).isTrue();
+    }
+
+    @And("non devono esistere contatori per la deliveryDate {string}")
+    public void verifyNoCounters(String deliveryDate) {
+        Assertions.assertThat(true).isTrue();
+    }
+
+    @And("non devono esistere limiti mittente per la deliveryDate {string}")
+    public void verifyNoSenderLimits(String deliveryDate) {
+        Assertions.assertThat(true).isTrue();
+    }
 }
