@@ -108,9 +108,15 @@ Feature: Interop Tracing
     Then viene recuperato il file di tracing appena caricato e si verifica che lo stato sia "COMPLETED"
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-13-1] Path con caratteri percent-encoded non validi
+  Scenario Outline: [INTEROP-TRACING-13-1] Path con caratteri percent-encoded non validi
     Given l'utenza "TENANT1" effettua le chiamate
-    When viene chiamato tracing con un path contenente un carattere percent-encoded non valido
+    When viene chiamato tracing con <metodo> e <subpath> contenente un carattere percent-encoded non valido
+    Examples:
+    | metodo | subpath  |
+    | GET    | endpoint |
+    | GET    | id       |
+    | POST   | endpoint |
+    | POST   | id       |
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-14-1] Verifica arricchimento dati per l'inserimento di un nuovo file CSV di tracing
