@@ -16,31 +16,31 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.M2MAuthSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.event.model.EventContext;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 @Slf4j
 public class M2MEventsSteps {
+    private static final long MIN_INVISIBILITY_MILLIS = 5_000L;
+    private static final int POLLING_ATTEMPTS = 10;
+    private static final int POLLING_INTERVAL_SECONDS = 2_500;
+    
     private final M2MAuthSteps m2mAuthSteps;
     private final EventContext eventContext;
     private final IM2MEventClient m2mEventClient;
-    private final IHttpExecutor httpCallExecutor;
 
     public M2MEventsSteps(M2MAuthSteps m2mAuthSteps, EventContext eventContext, ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
         this.m2mAuthSteps = m2mAuthSteps;
         this.eventContext = eventContext;
         this.m2mEventClient = clientTokenConfigurator.getM2mEventClient();
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         m2mEventClient.setHttpCallExecutor(httpCallExecutor);
     }
 
     @When("{string} {visibilitaEvento} l'evento {interopEvent} con:")
     public void checkEventPresence(String tenantType, Boolean isVisible, InteropEvent event, List<EventPredicate> predicates) {
         m2mAuthSteps.authenticateM2MUser("admin", tenantType, M2MRole.M2M_ADMIN);
-
-        EventPredicate combined = EventPredicate.andAll(predicates);
+        EventPredicate eventPredicate = getPredicate(event, predicates);
 
         M2MEventRequest eventRequest = M2MEventRequest.builder()
                 .tenantType(tenantType)
@@ -48,11 +48,10 @@ public class M2MEventsSteps {
                 .build();
 
         long startTime = System.currentTimeMillis();
-        long minWait = 5000;
-
+        
         PollingService.makePolling(
                 () -> {
-                    Optional<M2MEvent> foundEvent = m2mEventClient.findEvent(eventRequest, combined);
+                    Optional<M2MEvent> foundEvent = m2mEventClient.findEvent(eventRequest, eventPredicate);
                     foundEvent.ifPresent(e -> {
                         log.info("Evento {} trovato: {}", event, e);
                         eventContext.setLastEventMatched(event, e);
@@ -70,13 +69,23 @@ public class M2MEventsSteps {
                             throw new AssertionError("Evento " + event + " non doveva comparire ma è stato trovato");
                         }
 
-                        return elapsed >= minWait;
+                        return elapsed >= MIN_INVISIBILITY_MILLIS;
                     }
                 },
                 "L'evento " + event + " doveva essere " + (isVisible ? "visibile" : "non visibile"),
-                10,
-                30000
+                POLLING_ATTEMPTS,
+                POLLING_INTERVAL_SECONDS
         );
+    }
+
+    @Nonnull
+    private static EventPredicate getPredicate(InteropEvent event, List<EventPredicate> predicates) {
+        List<EventPredicate> safePredicates = new ArrayList<>(predicates != null ? predicates : Collections.emptyList());
+
+        EventPredicate eventTypePredicate = new EventPredicate(e -> e.getEventType().equals(event.name()));
+        safePredicates.add(eventTypePredicate);
+
+        return EventPredicate.andAll(safePredicates);
     }
 
     @When("{string} {visibilitaEvento} l'evento {interopEvent} precedente")
@@ -85,6 +94,9 @@ public class M2MEventsSteps {
         M2MEvent lastEvent = Objects.requireNonNull(eventContext.getLastEventMatched(event), "Nessun evento precedente memorizzato");
         EventPredicate filter = EventFilter.builder().like(lastEvent).build();
 
-        checkEventPresence(tenantType, isVisible, event, Collections.singletonList(filter));
+        List<EventPredicate> predicates = new ArrayList<>();
+        predicates.add(filter);
+
+        checkEventPresence(tenantType, isVisible, event, predicates);
     }
 }
