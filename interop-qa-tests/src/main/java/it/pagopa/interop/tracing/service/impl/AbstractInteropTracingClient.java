@@ -76,10 +76,22 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
     }
 
     @Override
-    public ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath() throws RestClientException {
+    public ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath(String method, String subpath) throws RestClientException {
         final RestTemplate restTemplate = new RestTemplate();
-        String url = tracingsApi.getApiClient().getBasePath() + "/tracings/invalid%c0";
-        URI uri = URI.create(url);
+        String url = switch (method) {
+            case "GET" -> switch (subpath) {
+                case "endpoint" -> "/tracings/invalid%c0";
+                case "id"       -> "/tracings/123%c0/errors";
+                default         -> throw new IllegalArgumentException("Subpath name not supported: " + subpath);
+            };
+            case "POST" -> switch (subpath) {
+                case "endpoint" -> "/tracings/sub%c0mit";
+                case "id"       -> "/tracings/123%c0/recover";
+                default         -> throw new IllegalArgumentException("Subpath name not supported: " + subpath);
+            };
+            default -> throw new IllegalArgumentException("Method not supported: " + method);
+        };
+        URI uri = URI.create(tracingsApi.getApiClient().getBasePath() + url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + SettableBearerToken.BearerTokenType.TENANT_1);
@@ -89,7 +101,7 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // The expected behavior for this call will raise an exception due to 404 error
-        return restTemplate.exchange(uri, HttpMethod.GET, entity, Void.class);
+        return restTemplate.exchange(uri, HttpMethod.valueOf(method), entity, Void.class);
     }
 
     public BearerTokenType getBearerTokenSetted() {

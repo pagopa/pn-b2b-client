@@ -27,5 +27,5 @@ public interface IInteropTracingClient extends SettableBearerToken {
 
     void getHealthStatus() throws RestClientException;
 
-    ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath() throws RestClientException;
+    ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath(String method, String subpath) throws RestClientException;
 }
