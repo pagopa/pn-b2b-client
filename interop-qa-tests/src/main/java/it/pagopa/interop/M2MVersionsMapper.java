@@ -18,6 +18,7 @@ public interface M2MVersionsMapper {
     TenantVerifiedAttributeVerifiers mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantVerifiedAttributeVerifiers bean);
     TenantVerifiedAttributeRevokers mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantVerifiedAttributeRevokers bean);
 
+    Client mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Client bean);
     Purpose mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purpose bean);
     Purposes mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purposes bean);
     PurposeVersion mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeVersion bean);
