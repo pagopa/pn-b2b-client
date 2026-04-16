@@ -1,9 +1,14 @@
 package it.pagopa.pn.cucumber.steps.comunicazioniBonarie;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.AnalogAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
@@ -12,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,24 +34,64 @@ public class PaperChannelSteps {
 
     private InformalPrepareRequest informalPrepareRequest;
 
+    private AnalogAddress analogAddress;
+
     private HttpStatus httpStatusCode;
 
     private InformalPrepareResponse informalPrepareResponse;
-    private Exception encounteredException;
+    private String xClientId;
+
+    private static final String IUN = "ABCD-HILM-YKWX-202202-1";
+    private static final String REQUEST_ID = "ABCD-HILM-YKWX-202202-1_rec0_try100";
+    private static final String RECEIVER_TYPE = "PF";
+    private static final String PRINT_TYPE = "BN_FRONTE_RETRO";
+    private static final String NOTIFICATION_SENT_ID = "2022-07-27T12:22:33.444Z";
+    private static final String PROPOSAL_PRODUCT_TYPE = InformalProposalProductTypeEnum.RS.getValue();
+
+    private static final String ATTACHMENT_URLS = "https://TestServer/allegato1,https://TestServer/allegato2";
+
+    private static final String FULL_NAME = "Mario Rossi";
+
+    private static final String CITY = "Milano";
+
+    private static final String ADDRESS = "Via Roma";
+
+    private static final String X_CLIENT_ID = "pn-test";
+
     public PaperChannelSteps(IPnPaperChannelClientImpl paperChannelClient) {
         this.paperChannelClient = paperChannelClient;
     }
 
     @Given("inizializzata una comunicazione bonaria con i parametri:")
-    public void newPaperChannelInformalRequest(DataTable dataTable) {
+    public void newPaperChannelInformalRequest(DataTable dataTable) throws JsonProcessingException {
         Map<String, String> data = dataTable.asMaps().get(0);
+
+        // Recupera il valore dalla mappa usando la CHIAVE (stringa o costante)
+        String ppt = data.getOrDefault(data.get("proposalProductType"), PROPOSAL_PRODUCT_TYPE);
+        String urlsStr = data.getOrDefault(data.get("attachmentUrls"), ATTACHMENT_URLS);
+
+        this.xClientId = data.getOrDefault(data.get("xClientId"), X_CLIENT_ID);
+
+        analogAddress = new AnalogAddress()
+                .fullname(data.getOrDefault(data.get("fullname"), FULL_NAME))
+                .city(data.getOrDefault(data.get("city"), CITY))
+                .address(data.getOrDefault(data.get("address"), ADDRESS));
+
         informalPrepareRequest = new InformalPrepareRequest()
-                .iun(data.get("iun"))
-                .requestId(data.get("requestId"))
-                .receiverType(data.get("receiverType"))
-                .printType(data.get("printType"))
-                //.attachmentUrls(null)
-                .proposalProductType(InformalProposalProductTypeEnum.RS);
+                .iun(data.getOrDefault(data.get("iun"), IUN))
+                .requestId(data.getOrDefault(data.get("requestId"), REQUEST_ID))
+                .receiverType(data.getOrDefault(data.get("receiverType"), RECEIVER_TYPE))
+                .printType(data.getOrDefault(data.get("printType"), PRINT_TYPE))
+                .notificationSentAt(data.getOrDefault(data.get("notificationSentAt"), NOTIFICATION_SENT_ID))
+
+                .attachmentUrls(new ArrayList<>(Arrays.asList(urlsStr.split(","))))
+                .receiverAddress(analogAddress)
+                .proposalProductType(InformalProposalProductTypeEnum.valueOf(ppt));
+
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(informalPrepareRequest);
+        System.out.println(json);
+
     }
 
     @Given("inizializzata una comunicazione bonaria con parametro required mancante:")
@@ -61,14 +109,11 @@ public class PaperChannelSteps {
     @When("si richiede la prepare della comunicazione bonaria")
     public void callPaperChannelInformal() {
         try {
-            this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, "pn-test");
+            this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, this.xClientId);
             this.httpStatusCode = HttpStatus.OK; // O un valore che indichi "Successo 2xx"
 
         } catch (HttpStatusCodeException ex) {
             httpStatusCode = ex.getStatusCode();
-        } catch (RestClientException e) {
-            // Invece di fare il throw, salviamo l'errore per controllarlo dopo
-            this.encounteredException = e;
         }
     }
 
@@ -84,8 +129,6 @@ public class PaperChannelSteps {
 
     @Then("si riceve un codice di stato di successo")
     public void verificaStatoSuccesso() {
-        // Verifica che non ci siano eccezioni generiche
-        assertNull(encounteredException, "Errore durante la chiamata: " + encounteredException);
 
         // Verifica che lo stato sia 200 o 201
         assertTrue(httpStatusCode.is2xxSuccessful(),
