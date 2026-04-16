@@ -46,6 +46,7 @@ import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
@@ -69,13 +70,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
+import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsResponse;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1443,5 +1446,48 @@ public class SharedSteps {
         notificationIunList.add(oldNotification.getIun());
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
         log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
+
+    @Then("verifico su DynamoDB {isInTimeline} in timeline (dell'elemento)(di elementi) {string}")
+    public void checkTimelineFromDynamoDB(boolean isInTimeline, String timelineElement) {
+
+        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+        expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(notificationIun).build());
+        expressionAttributeValues.put(":v_category", AttributeValue.builder().s(timelineElement).build());
+
+        DynamoDbClient dbClient = AwsUtils.DYNAMO_DB_CLIENT;
+        QueryRequest queryRequest = AwsUtils.buildPnTimelinesCategoryRequest(expressionAttributeValues);
+        QueryResponse queryResponse = dbClient.query(queryRequest);
+
+        log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
+        if (isInTimeline) {
+            assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + timelineElement).isGreaterThan(0);
+
+            for (int i = 0; i < queryResponse.items().size(); i++) {
+                Map<String, AttributeValue> item = queryResponse.items().get(i);
+                log.info("--- ELEMENTO TIMELINE {} ---", i + 1);
+                item.forEach((key, value) -> {
+                    Object val = (value.s() != null) ? value.s() :
+                            (value.n() != null) ? value.n() :
+                                    (value.bool() != null) ? value.bool() : value.toString();
+                    log.info("{}: {}", key, val);
+                });
+            }
+        } else {
+            assertThat(queryResponse.items().size()).as("La response non deve contenere nessun elemento con category " + timelineElement).isEqualTo(0);
+        }
+    }
+
+    @And("verifico la presenza di audit log su {string} negli ultimi {int} minuti riportanti il messaggio {string}")
+    public void checkAuditLogFromAws(String microservice, int minutes, String msg) {
+        CloudWatchLogsClient cloudWatchLogsClient = AwsUtils.CLOUD_WATCH_LOGS_CLIENT;
+        FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, msg, minutes);
+        FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
+
+        logResponse.events().forEach(event -> {
+            log.info("Log trovato alle {}: {}",
+                    Instant.ofEpochMilli(event.timestamp()),
+                    event.message());
+        });
     }
 }
