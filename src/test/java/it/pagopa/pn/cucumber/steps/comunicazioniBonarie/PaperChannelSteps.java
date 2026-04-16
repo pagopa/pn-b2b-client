@@ -13,7 +13,9 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.mod
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
@@ -35,7 +37,7 @@ public class PaperChannelSteps {
 
     private HttpStatus httpStatusCode;
 
-    private InformalPrepareResponse informalPrepareResponse;
+    private ResponseEntity<InformalPrepareResponse> informalPrepareResponse;
     private String xClientId;
 
     private static final String IUN = "ABCD-HILM-YKWX-202202-1";
@@ -66,22 +68,22 @@ public class PaperChannelSteps {
         Map<String, String> data = dataTable.asMaps().get(0);
 
         // Recupera il valore dalla mappa usando la CHIAVE (stringa o costante)
-        String ppt = getFieldValue(data,data.get("proposalProductType"), PROPOSAL_PRODUCT_TYPE);
-        String urlsStr = getFieldValue(data,data.get("attachmentUrls"), ATTACHMENT_URLS);
+        String ppt = getFieldValue(data,"proposalProductType", PROPOSAL_PRODUCT_TYPE);
+        String urlsStr = getFieldValue(data,"attachmentUrls", ATTACHMENT_URLS);
 
-        this.xClientId = getFieldValue(data,data.get("xClientId"), X_CLIENT_ID);
+        this.xClientId = getFieldValue(data,"xClientId", X_CLIENT_ID);
 
         analogAddress = new AnalogAddress()
-                .fullname(data.getOrDefault(data.get("fullname"), FULL_NAME))
-                .city(data.getOrDefault(data.get("city"), CITY))
-                .address(data.getOrDefault(data.get("address"), ADDRESS));
+                .fullname(getFieldValue(data,"fullname", FULL_NAME))
+                .city(getFieldValue(data,"city", CITY))
+                .address(getFieldValue(data,"address", ADDRESS));
 
         informalPrepareRequest = new InformalPrepareRequest()
-                .iun(getFieldValue(data,data.get("iun"), IUN))
-                .requestId(getFieldValue(data,data.get("requestId"), REQUEST_ID))
-                .receiverType(getFieldValue(data,data.get("receiverType"), RECEIVER_TYPE))
-                .printType(getFieldValue(data,data.get("printType"), PRINT_TYPE))
-                .notificationSentAt(getFieldValue(data,data.get("notificationSentAt"), NOTIFICATION_SENT_ID))
+                .iun(getFieldValue(data,"iun", IUN))
+                .requestId(getFieldValue(data,"requestId", REQUEST_ID))
+                .receiverType(getFieldValue(data,"receiverType", RECEIVER_TYPE))
+                .printType(getFieldValue(data,"printType", PRINT_TYPE))
+                .notificationSentAt(getFieldValue(data,"notificationSentAt", NOTIFICATION_SENT_ID))
 
                 .attachmentUrls(new ArrayList<>(Arrays.asList(urlsStr.split(","))))
                 .receiverAddress(analogAddress)
@@ -109,8 +111,6 @@ public class PaperChannelSteps {
     public void callPaperChannelInformal() {
         try {
             this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, this.xClientId);
-            this.httpStatusCode = HttpStatus.OK; // O un valore che indichi "Successo 2xx"
-
         } catch (HttpStatusCodeException ex) {
             httpStatusCode = ex.getStatusCode();
         }
@@ -126,22 +126,39 @@ public class PaperChannelSteps {
         //assertTrue(encounteredException instanceof RestClientException);
     }
 
-    @Then("si riceve un codice di stato di successo")
-    public void verificaStatoSuccesso() {
-
-        // Verifica che lo stato sia 200 o 201
-        assertTrue(httpStatusCode.is2xxSuccessful(),
-                "Atteso 200 o 201, ma ricevuto: " + httpStatusCode);
+    @Then("si riceve una response con codice di stato {int}")
+    public void verificaStatoSuccesso(int expectedCode) {
 
         // Verifica che l'oggetto risposta sia popolato
         assertNotNull("La risposta InformalPrepareResponse è nulla", this.informalPrepareResponse);
+        assertNotNull("Il body della risposta è nullo", this.informalPrepareResponse.getBody());
+        assertNotNull("Il requestId è nullo", this.informalPrepareResponse.getBody().getRequestId());
+
+        // Verifica che lo stato sia 200 o 201
+        assertEquals(this.informalPrepareResponse.getStatusCode().value(),
+                expectedCode);
     }
 
 
     private String getFieldValue(Map<String, String> data, String field, String defVal) {
-        return Optional.ofNullable(data.get(field))
-                .map(s -> s.equalsIgnoreCase("[null]") ? null : s)
-                .orElse(defVal);
+        // 1. Recupera il valore o usa il default
+        String rawValue = data.getOrDefault(field, defVal);
+
+        // 2. Gestisci il caso in cui il valore sia fisicamente null (es. colonna mancante)
+        if (rawValue == null) {
+            return null;
+        }
+
+        // 3. Risolvi i placeholder tramite lo switch
+        return switch (rawValue) {
+            case "[NULL]" -> {
+                System.out.println("L'input è interpretato come null");
+                yield null;
+            }
+            case "[EMPTY]" -> "";
+            case "[SOLO_SPAZI]" -> "   ";
+            default -> rawValue; // Ritorna il testo originale (Rossi, Bianchi, ecc.)
+        };
     }
 
 

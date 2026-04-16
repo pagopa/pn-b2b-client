@@ -9,5 +9,5 @@ import org.springframework.web.client.RestClientException;
 
 public interface IPnPaperChannelClientImpl {
 
-    InformalPrepareResponse sendInformalPrepareRequest(InformalPrepareRequest informalPrepareRequest, String xClientId) throws RestClientException;
+    ResponseEntity<InformalPrepareResponse> sendInformalPrepareRequest(InformalPrepareRequest informalPrepareRequest, String xClientId) throws RestClientException;
 }

@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.mod
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +24,7 @@ public class PnPaperChannelClientImpl implements IPnPaperChannelClientImpl {
         return newApiClient;
     }
 
-    public InformalPrepareResponse sendInformalPrepareRequest(InformalPrepareRequest informalPrepareRequest, String xClientId) throws RestClientException {
-        return informalMessagesApi.sendInformalPrepareRequest(informalPrepareRequest, xClientId);
+    public ResponseEntity<InformalPrepareResponse> sendInformalPrepareRequest(InformalPrepareRequest informalPrepareRequest, String xClientId) throws RestClientException {
+        return informalMessagesApi.sendInformalPrepareRequestWithHttpInfo(informalPrepareRequest, xClientId);
     }
 }
