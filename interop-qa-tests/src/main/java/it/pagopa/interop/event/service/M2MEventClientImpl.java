@@ -35,7 +35,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MEventMapper mapper;
-    private Instant eventStartTime;
+    private final Instant eventStartTime;
 
     public M2MEventClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, M2MEventMapper mapper) {
         this.restTemplate = restTemplate;
