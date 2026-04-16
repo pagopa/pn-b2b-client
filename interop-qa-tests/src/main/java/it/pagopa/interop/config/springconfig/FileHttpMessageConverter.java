@@ -1,4 +1,4 @@
-package it.pagopa.interop.config.springconfig.springconfig;
+package it.pagopa.interop.config.springconfig;
 
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
