@@ -130,6 +130,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperChannelClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
@@ -315,6 +316,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPnLegalPersonVirtualKeyServiceClientImpl.class,
         IPnTosPrivacyClientImpl.class,
         TemplateEngineClientImpl.class,
+        PnPaperChannelClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,

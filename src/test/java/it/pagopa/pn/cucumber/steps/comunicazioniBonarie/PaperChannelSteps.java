@@ -7,18 +7,16 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddcoverage.model.CreateCoverageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 public class PaperChannelSteps {
@@ -61,9 +59,9 @@ public class PaperChannelSteps {
     }
 
     @When("si richiede la prepare della comunicazione bonaria")
-    public void callPaperChannelInformal(String xClientId) {
+    public void callPaperChannelInformal() {
         try {
-            this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, xClientId);
+            this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, "pn-test");
             this.httpStatusCode = HttpStatus.OK; // O un valore che indichi "Successo 2xx"
 
         } catch (HttpStatusCodeException ex) {
