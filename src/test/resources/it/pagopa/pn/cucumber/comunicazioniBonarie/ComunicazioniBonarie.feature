@@ -219,3 +219,17 @@ Feature: comunicazioni bonarie
       | questoclientidècambiato |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un codice di stato di successo
+
+  Scenario: [PREPARE-TC27-OK] Validazione nuovo service api prepare con length header X-Client-Id uguale a 1
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | xClientId |
+      | x         |
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo
+
+  Scenario: [PREPARE-TC28-OK] Validazione nuovo service api prepare con length header X-Client-Id mancante (valore NULL)
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | xClientId    |
+      | [NULL_VALUE] |
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un codice di stato di successo

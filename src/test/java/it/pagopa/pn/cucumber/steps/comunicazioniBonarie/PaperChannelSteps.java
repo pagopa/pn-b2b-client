@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -58,6 +55,8 @@ public class PaperChannelSteps {
 
     private static final String X_CLIENT_ID = "pn-test";
 
+    private static final String NULL_VALUE = "[NULL_VALUE]";
+
     public PaperChannelSteps(IPnPaperChannelClientImpl paperChannelClient) {
         this.paperChannelClient = paperChannelClient;
     }
@@ -67,10 +66,10 @@ public class PaperChannelSteps {
         Map<String, String> data = dataTable.asMaps().get(0);
 
         // Recupera il valore dalla mappa usando la CHIAVE (stringa o costante)
-        String ppt = data.getOrDefault(data.get("proposalProductType"), PROPOSAL_PRODUCT_TYPE);
-        String urlsStr = data.getOrDefault(data.get("attachmentUrls"), ATTACHMENT_URLS);
+        String ppt = getFieldValue(data,data.get("proposalProductType"), PROPOSAL_PRODUCT_TYPE);
+        String urlsStr = getFieldValue(data,data.get("attachmentUrls"), ATTACHMENT_URLS);
 
-        this.xClientId = data.getOrDefault(data.get("xClientId"), X_CLIENT_ID);
+        this.xClientId = getFieldValue(data,data.get("xClientId"), X_CLIENT_ID);
 
         analogAddress = new AnalogAddress()
                 .fullname(data.getOrDefault(data.get("fullname"), FULL_NAME))
@@ -78,11 +77,11 @@ public class PaperChannelSteps {
                 .address(data.getOrDefault(data.get("address"), ADDRESS));
 
         informalPrepareRequest = new InformalPrepareRequest()
-                .iun(data.getOrDefault(data.get("iun"), IUN))
-                .requestId(data.getOrDefault(data.get("requestId"), REQUEST_ID))
-                .receiverType(data.getOrDefault(data.get("receiverType"), RECEIVER_TYPE))
-                .printType(data.getOrDefault(data.get("printType"), PRINT_TYPE))
-                .notificationSentAt(data.getOrDefault(data.get("notificationSentAt"), NOTIFICATION_SENT_ID))
+                .iun(getFieldValue(data,data.get("iun"), IUN))
+                .requestId(getFieldValue(data,data.get("requestId"), REQUEST_ID))
+                .receiverType(getFieldValue(data,data.get("receiverType"), RECEIVER_TYPE))
+                .printType(getFieldValue(data,data.get("printType"), PRINT_TYPE))
+                .notificationSentAt(getFieldValue(data,data.get("notificationSentAt"), NOTIFICATION_SENT_ID))
 
                 .attachmentUrls(new ArrayList<>(Arrays.asList(urlsStr.split(","))))
                 .receiverAddress(analogAddress)
@@ -138,6 +137,12 @@ public class PaperChannelSteps {
         assertNotNull("La risposta InformalPrepareResponse è nulla", this.informalPrepareResponse);
     }
 
+
+    private String getFieldValue(Map<String, String> data, String field, String defVal) {
+        return Optional.ofNullable(data.get(field))
+                .map(s -> s.equalsIgnoreCase("[null]") ? null : s)
+                .orElse(defVal);
+    }
 
 
 
