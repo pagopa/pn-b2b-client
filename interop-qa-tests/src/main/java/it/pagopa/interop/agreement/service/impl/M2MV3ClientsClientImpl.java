@@ -5,10 +5,14 @@ import it.pagopa.interop.agreement.service.IM2MV3ClientsClient;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Client;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ClientsApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ClientSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.JWKs;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Key;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -42,6 +46,15 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
         this.clientsApi = new ClientsApi(ApiClientUtils.createApiClient(restTemplate, basePath,
             Collections.emptyMap()));
         this.mapper = mapper;
+    }
+
+    @Override
+    public Client getClient(UUID clientId) {
+        return performOperation(
+                () -> clientsApi.getClientWithHttpInfo(clientId)
+        ).map(mapper::mapToV2).orElseThrow(() -> new IllegalStateException(
+                "Errore nel recupero del client (response non 2xx o body nullo)"
+        ));
     }
 
     @Override
@@ -101,17 +114,9 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
     public Client createClient(ClientSeed clientSeed) {
         return performOperation(
                 () -> clientsApi.createClientWithHttpInfo(clientSeed)
-        ).orElseThrow(
+        ).map(mapper::mapToV2)
+                .orElseThrow(
                 () -> new IllegalStateException("Errore durante la creazione del client")
-        );
-    }
-
-    @Override
-    public Client getClient(UUID clientId) {
-        return performOperation(
-                () -> clientsApi.getClientWithHttpInfo(clientId)
-        ).orElseThrow(
-                () -> new IllegalStateException("Errore durante il recupero del client")
         );
     }
 
