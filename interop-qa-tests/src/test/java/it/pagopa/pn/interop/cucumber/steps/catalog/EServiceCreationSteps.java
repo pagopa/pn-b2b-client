@@ -52,11 +52,11 @@ public class EServiceCreationSteps {
 
     @When("l'utente crea un e-service")
     public void userCreatesEservice() {
-        userCreatesEserviceWithLongDescription(null);
+        userCreatesEservice(null);
     }
 
     @When("l'utente crea un e-service con una descrizione di {int} caratteri")
-    public void userCreatesEserviceWithLongDescription(Integer descriptionLength) {
+    public void userCreatesEservice(Integer descriptionLength) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
 
@@ -80,7 +80,7 @@ public class EServiceCreationSteps {
     }
 
     @When("l'e-service creato ha una descrizione di {int} caratteri")
-    public void eServiceCreatedHasLongDescription(Integer descriptionLength) {
+    public void eServiceCreatedWithDescription(Integer descriptionLength) {
 
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
 
