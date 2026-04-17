@@ -135,7 +135,7 @@ organizationId:
   qa: "951cc51a-1dba-42e0-a7d8-41f80bd045b9"
 userRoles:
   admin: [ "951cc51a-1dba-42e0-a7d8-41f80bd045b9" ]
-  api: [ "e3f51f86-3814-4f7f-96f6-552e086bae8d " ]
+  api: [ "e3f51f86-3814-4f7f-96f6-552e086bae8d" ]
   security: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
   "api,security": [ "b97b6897-9aa1-41ca-9390-86e8c430fdc9" ]
   support: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
