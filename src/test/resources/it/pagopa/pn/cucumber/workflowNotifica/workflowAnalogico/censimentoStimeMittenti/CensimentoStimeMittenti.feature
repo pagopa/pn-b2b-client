@@ -44,8 +44,11 @@ Feature: Censimento stime mittenti
 
   Scenario: [SM_04] Verifica del calcolo della percentuale garantita al mittente
 #    Given viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-01-05"
-#    And vengono recuperate le somme delle stime mittenti per la deliveryDate: "2026-01-05"
-    And viene recuperato il limite percentuale garantito per la deliveryDate: "2026-01-05"
+
+ #   And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "P1" e deliveryDate: "2026-01-05"
+  And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "CAP1_P2" e deliveryDate: "2026-01-26"
+    #TODO  capacità del recapitista (GET_DECLARED_CAPACITY)
+
 
 
 

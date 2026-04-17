@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -477,31 +480,141 @@ public class DelayerSteps {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
 
-    @And("vengono recuperate le somme delle stime mittenti per la deliveryDate: {string}")
-    public void fetchSenderLimits(String deliveryDate) {
+    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string} e deliveryDate: {string}")
+    public void checkSenderLimitForPA(String paId,String province,String deliveryDate){
+
+        String pk = new StringBuilder(paId).append("~")
+                .append("890").append("~")
+                .append("P1").toString();
+
+  //      int sumEstimate = fetchSumEstimate(deliveryDate, province);
+    //    int weeklyEstimate = fetchWeeklyEstimateForPA(pk, deliveryDate);
+      //  int sumDeclaredCapacity = fetchDeclaredCapacity(deliveryDate, province);
+
+ //       long senderLimitPercentage = Math.round(((double)weeklyEstimate/sumEstimate)*100);
+
+   //     long expectedSenderLimit = Math.round(sumDeclaredCapacity*((double)senderLimitPercentage/100));
+
+        int actualSenderLimit = fetchSenderLimit(pk, deliveryDate);
+
+    }
+
+    private int fetchSumEstimate(String deliveryDate, String province) {
         Map<String, String> params = new HashMap<>();
         params.put("table", "pn-PaperDeliveryCounters");
         params.put("counterType", "SUM_ESTIMATES");
         params.put("deliveryDate", deliveryDate);
-        params.put("province", "P1");
+        params.put("province", province);
         params.put("productType", "890");
         try {
             String countersResponse = lambdaClient.invoke("GET_COUNTERS", params);
+            return extractLatestNumberOfShipments(countersResponse);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @And("viene recuperato il limite percentuale garantito per la deliveryDate: {string}")
-    public void fetchUsedSenderLimit(String deliveryDate) {
-        Map<String, String> params = new HashMap<>();
-        params.put("deliveryDate", deliveryDate);
-        params.put("pk", "paId~productType~province");
-        params.put("table", "pn-PaperDeliveryUsedSenderLimit");
+    private int fetchDeclaredCapacity(String deliveryDate, String province){
         try {
-            String countersResponse = lambdaClient.invoke("GET_USED_SENDER_LIMIT", params);
+            String declaredCapacityResponse = lambdaClient.invoke("GET_DECLARED_CAPACITY",
+                    "pn-PaperDeliveryDriverCapacities",province, deliveryDate);
+         //   return extractSumDeclaredCapacity(declaredCapacityResponse);
+            return 0;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    private int fetchSenderLimit(String pk, String deliveryDate) {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("deliveryDate", deliveryDate);
+        params.put("pk", pk);
+        params.put("table", "pn-PaperDeliveryUsedSenderLimit");
+        try {
+            String countersResponse = lambdaClient.invoke("GET_USED_SENDER_LIMIT", params);
+      //      return extractSenderLimit();
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int fetchWeeklyEstimateForPA(String pk, String deliveryDate) {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("deliveryDate", deliveryDate);
+        params.put("pk", pk);
+        try {
+            String getSenderLimitResponse = lambdaClient.invoke("GET_SENDER_LIMIT", params);
+            return extractWeeklyEstimate(getSenderLimitResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int extractLatestNumberOfShipments(String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Parse outer JSON
+            JsonNode root = mapper.readTree(json);
+
+            // "body" is a JSON string → parse again
+            String body = root.path("body").asText();
+            JsonNode bodyNode = mapper.readTree(body);
+
+            JsonNode items = bodyNode.path("items");
+
+            Instant latestInstant = null;
+            int latestNumberOfShipments = 0;
+
+            for (JsonNode item : items) {
+                String sk = item.path("sk").asText();
+                int numberOfShipments = item.path("numberOfShipments").asInt();
+
+                // Extract timestamps from sk
+                for (String part : sk.split("~")) {
+                    try {
+                        Instant instant = Instant.parse(part);
+                        if (latestInstant == null || instant.isAfter(latestInstant)) {
+                            latestInstant = instant;
+                            latestNumberOfShipments = numberOfShipments;
+                        }
+                    } catch (Exception ignored) {
+                        // Not a timestamp → ignore
+                    }
+                }
+            }
+
+            return latestNumberOfShipments;
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON input", e);
+        }
+    }
+
+
+    private int extractWeeklyEstimate(String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Parse outer JSON
+            JsonNode root = mapper.readTree(json);
+
+            // "body" is a JSON string → parse again
+            String body = root.path("body").asText();
+            JsonNode bodyNode = mapper.readTree(body);
+
+            // Since items always contains exactly one element
+            JsonNode item = bodyNode.path("items").get(0);
+
+            return item.path("weeklyEstimate").asInt();
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON input", e);
+        }
+    }
+
+
 }
