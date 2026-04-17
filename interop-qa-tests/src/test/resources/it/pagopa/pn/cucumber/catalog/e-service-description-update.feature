@@ -53,6 +53,7 @@ Feature: Aggiornamento della descrizione di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente aggiorna la descrizione di quell'e-service con un valore di 400 caratteri
+    And si ottiene status code 200
     Then l'e-service creato ha una descrizione di 400 caratteri
 
   @eservice_description_max_length
