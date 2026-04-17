@@ -199,7 +199,7 @@ Feature: comunicazioni bonarie
       | iun                     | requestId                            |
       | ABCD-HILM-YKWX-202202-1 | UVXZ-HILM-YKWX-202202-1_rec0_try1021 |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve una response con codice di stato 400
+    Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC22-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.fullname mancante
     Given inizializzata una comunicazione bonaria con i parametri:
@@ -298,6 +298,13 @@ Feature: comunicazioni bonarie
       | UVXZ-HILM-YKWX-202202-1_rec0_try1028 | x         |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
+
+  Scenario: [PREPARE-TC29-KO] Validazione nuovo service api prepare con header X-Client-Id mancante (null)
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | requestId                            | xClientId |
+      | UVXZ-HILM-YKWX-202202-1_rec0_try1029 | [null]    |
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve una response con codice di stato 400
 
 
 
