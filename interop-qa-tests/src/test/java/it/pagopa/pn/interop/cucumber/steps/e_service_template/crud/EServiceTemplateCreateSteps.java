@@ -9,13 +9,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -147,13 +141,22 @@ public class EServiceTemplateCreateSteps {
     }
 
     @When("l'e-service template creato ha una descrizione di {int} caratteri")
-    public void eServiceTemplateCreatedHasLongDescription(Integer descriptionLength) {
-
+    public void checkLengthDescriptionOfEServiceTemplateCreated(Integer descriptionLength) {
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
                 .getLastTemplateManaged();
 
-        Assertions.assertNotNull(lastTemplateManaged.getEServiceDescription());
-        Assertions.assertEquals(lastTemplateManaged.getEServiceDescription().length(), descriptionLength);
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> eServiceTemplateClient.getEServiceTemplate(lastTemplateManaged.getId())
+                ),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service template"
+        );
+
+        String description = ((EServiceTemplateDetails) httpCallExecutor.getResponse()).getDescription();
+
+        Assertions.assertNotNull(description);
+        Assertions.assertEquals(description.length(), descriptionLength);
     }
 
     @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")
@@ -228,6 +231,7 @@ public class EServiceTemplateCreateSteps {
                 templateSeed.getName(),
                 templateSeed.getIntendedTarget(),
                 templateSeed.getDescription(),
+                templateSeed.getTechnology(),
                 templateSeed.getMode(),
                 creationResponse.getId(),
                 creationResponse.getVersionId(),
