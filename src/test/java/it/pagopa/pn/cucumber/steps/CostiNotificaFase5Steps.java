@@ -2,10 +2,10 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostPaymentResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostRecipientResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,12 +75,8 @@ public class CostiNotificaFase5Steps {
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
         expressionAttributeValues.put(":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build());
 
-        DynamoDbClient dbClient = AwsUtils.DYNAMO_DB_CLIENT;
-        QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(AwsUtils.PN_NOTIFICATION_DELIVERY_COST)
-                .keyConditionExpression("pk = :v_pk AND sk = :v_sk")
-                .expressionAttributeValues(expressionAttributeValues)
-                .build();
+        DynamoDbClient dbClient = sharedSteps.getAwsUtils().getDynamoDbClient();
+        QueryRequest queryRequest = AwsUtils.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
         assertThat(queryResponse.items().size())
@@ -130,12 +127,8 @@ public class CostiNotificaFase5Steps {
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(pk).build());
 
-        DynamoDbClient dbClient = AwsUtils.DYNAMO_DB_CLIENT;
-        QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(AwsUtils.PN_PAYMENT_INFO)
-                .keyConditionExpression("pk = :v_pk")
-                .expressionAttributeValues(expressionAttributeValues)
-                .build();
+        DynamoDbClient dbClient = sharedSteps.getAwsUtils().getDynamoDbClient();
+        QueryRequest queryRequest = AwsUtils.buildPnPaymentInfoRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
         assertThat(queryResponse.items().size())
@@ -154,5 +147,94 @@ public class CostiNotificaFase5Steps {
             });
         }
         return record;
+    }
+
+    @Then("verifico che l'API di recupero costi da Pn-PaymentInfo produca un errore quando viene richiamata passando {string}")
+    public void checkRobustezzaApiRecuperoCosti(String inputParameterType) {
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        fsn.getRecipients().forEach(rec -> rec.getPayments().forEach(payment -> {
+            if (payment.getPagoPa() != null) {
+                String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
+                String noticeCode = payment.getPagoPa().getNoticeCode();
+                try {
+                    switch (inputParameterType) {
+                        case "creditorTaxId errato" -> creditorTaxId = "invalid";
+                        case "noticeCode errato" -> noticeCode = "invalid";
+                        case "creditorTaxId inesistente" -> creditorTaxId = creditorTaxId.replaceFirst("7", "0");
+                        case "noticeCode inesistente" ->
+                                noticeCode = noticeCode.startsWith("0") ? "1" + noticeCode.substring(1) : "0" + noticeCode.substring(1);
+                    }
+                    log.info("Start invocazione API recupero costi con creditorTaxId=%s noticeCode=%s", creditorTaxId, noticeCode);
+                    NotificationCostPaymentResponse paymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
+                } catch (HttpStatusCodeException httpStatusCodeException) {
+                    log.info(httpStatusCodeException.getMessage());
+                    assertThat(httpStatusCodeException.getRawStatusCode()).as("L'invocazione dell'api di recupero costi con %s dovrebbe produrre un 404").isEqualTo(404);
+                }
+            }
+        }));
+    }
+
+    @Then("verifico il comportamento dell'API di inserimento costi passando in input {string}")
+    public void verificoIlComportamentoDellAPIDiInserimentoCostiPassandoInInput(String inputParamsType) {
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        String iun = fsn.getIun();
+        NewNotificationCostRequest request = initiNewNotificationCostRequest(fsn);
+
+        switch (inputParamsType) {
+            case "body null" -> request = null;
+            case "body vuoto" -> request = new NewNotificationCostRequest();
+            case "pagamenti vuoti" -> request.getCostRecipients().get(0).setPayments(new ArrayList<>());
+            case "recIndex null" -> request.getCostRecipients().get(0).setRecIndex(null);
+            case "iuv null" -> request.getCostRecipients().get(0).getPayments().get(0).setIuv(null);
+            case "applyCost null" -> request.getCostRecipients().get(0).getPayments().get(0).setApplyCost(null);
+            case "iun invalido" -> iun = "INVALID IUN";
+            case "iun null" -> iun = null;
+            case "iun inesistente" -> iun = "TEST-INEX-ISTE-123456-Z-1";
+        }
+        try {
+            notificationCostClient.initializeNotificationCost(iun, request);
+            assertThat(inputParamsType).as("").isEqualTo("iun inesistente");
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            assertThat(httpStatusCodeException.getRawStatusCode()).as("").isEqualTo(400);
+        }
+    }
+
+    @And("TODO_REMOVE invoco l'api di inizializzazione dati")
+    public void todo_removeInvocoLApiDiInizializzazioneDati() {
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        String iun = fsn.getIun();
+        NewNotificationCostRequest request = initiNewNotificationCostRequest(fsn);
+        String response = notificationCostClient.initializeNotificationCost(iun, request);
+    }
+
+    private NewNotificationCostRequest initiNewNotificationCostRequest(FullSentNotificationV28 fsn) {
+        NewNotificationCostRequest request = new NewNotificationCostRequest();
+        request.setVat(fsn.getVat());
+        request.setPaFee(fsn.getPaFee());
+        request.setNotificationFeePolicy(NotificationFeePolicy.valueOf(fsn.getNotificationFeePolicy().getValue()));
+        request.setPagoPaIntMode(PagoPaIntMode.valueOf(fsn.getPagoPaIntMode().getValue()));
+        request.setSenderTaxId(fsn.getSenderTaxId());
+        request.setSenderPaId(fsn.getSenderPaId());
+        request.setCostRecipients(new ArrayList<>());
+        for (int recIndex = 0; recIndex < fsn.getRecipients().size(); recIndex++) {
+            RecipientCostData costData = new RecipientCostData();
+            costData.setRecIndex(recIndex);
+            costData.setPayments(new ArrayList<>());
+            for (int paymentIndex = 0; paymentIndex < fsn.getRecipients().get(recIndex).getPayments().size(); paymentIndex++) {
+                PagoPaPayment pagoPaPayment = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa();
+                if (pagoPaPayment != null) {
+                    PaymentData paymentData = new PaymentData();
+                    paymentData.setApplyCost(fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getApplyCost());
+                    String creditorTaxId = pagoPaPayment.getCreditorTaxId();
+                    String noticeCode = pagoPaPayment.getNoticeCode();
+                    String iuv = creditorTaxId + "##" + noticeCode;
+                    paymentData.setIuv(iuv);
+                    costData.getPayments().add(paymentData);
+                }
+
+            }
+            request.getCostRecipients().add(costData);
+        }
+        return request;
     }
 }

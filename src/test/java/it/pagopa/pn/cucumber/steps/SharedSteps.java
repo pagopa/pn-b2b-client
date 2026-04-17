@@ -237,6 +237,9 @@ public class SharedSteps {
 
     private final ObjectMapper objMapper;
 
+    @Getter
+    private final AwsUtils awsUtils;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -290,7 +293,7 @@ public class SharedSteps {
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl,
                        IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl,
-                       PnB2bClientTimingConfigs timingConfigs) {
+                       PnB2bClientTimingConfigs timingConfigs, AwsUtils awsUtils) {
         this.context = context;
         this.b2bClient = b2bClient;
         this.pollingFactory = pollingFactory;
@@ -303,6 +306,7 @@ public class SharedSteps {
         this.pnPaymentInfoClientImpl = pnPaymentInfoClientImpl;
         this.iPnTosPrivacyClientImpl = iPnTosPrivacyClientImpl;
         this.timingConfigs = timingConfigs;
+        this.awsUtils = awsUtils;
         this.iuvGPD = new ArrayList<>();
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         this.secureRandom = new SecureRandom();
@@ -1455,7 +1459,7 @@ public class SharedSteps {
         expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(notificationIun).build());
         expressionAttributeValues.put(":v_category", AttributeValue.builder().s(timelineElement).build());
 
-        DynamoDbClient dbClient = AwsUtils.DYNAMO_DB_CLIENT;
+        DynamoDbClient dbClient = awsUtils.getDynamoDbClient();
         QueryRequest queryRequest = AwsUtils.buildPnTimelinesCategoryRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
@@ -1478,10 +1482,19 @@ public class SharedSteps {
         }
     }
 
-    @And("verifico la presenza di audit log su {string} negli ultimi {int} minuti riportanti il messaggio {string}")
-    public void checkAuditLogFromAws(String microservice, int minutes, String msg) {
-        CloudWatchLogsClient cloudWatchLogsClient = AwsUtils.CLOUD_WATCH_LOGS_CLIENT;
-        FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, msg, minutes);
+    @And("verifico la presenza di un audit log su {string} negli ultimi {int} minuti riportante i seguenti dati nel messaggio")
+    public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
+        StringBuilder sb = new StringBuilder();
+        queryFiltersMap.entrySet().forEach(entry -> {
+            if (entry.getKey().equalsIgnoreCase("IUN")) {
+                sb.append("\"").append(entry.getValue().equals("auto") ? notificationIun : entry.getValue()).append("\" ");
+            } else {
+                sb.append("\"").append(entry.getValue()).append("\" ");
+            }
+        });
+
+        CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
+        FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, sb.toString().trim(), minutes);
         FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
 
         logResponse.events().forEach(event -> {

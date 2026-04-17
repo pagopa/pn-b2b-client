@@ -1,6 +1,9 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
@@ -8,40 +11,38 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsReque
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.Map;
 
 @Slf4j
+@Component
 public class AwsUtils {
 
-    public final static DynamoDbClient DYNAMO_DB_CLIENT = getDynamoDbClient();
-
-    public final static CloudWatchLogsClient CLOUD_WATCH_LOGS_CLIENT = getCloudWatchLogsClient();
+    @Getter
+    private final DynamoDbClient dynamoDbClient;
+    @Getter
+    private final CloudWatchLogsClient cloudWatchLogsClient;
 
     //NOMI TABELLE INTERROGATE
     public static final String PN_TIMELINES = "pn-Timelines";
     public static final String PN_PAYMENT_INFO = "pn-PaymentInfo";
     public static final String PN_NOTIFICATION_DELIVERY_COST = "pn-NotificationDeliveryCost";
 
-    //NOMI MICRO-SERVIZI (PER CONTROLLARE AUDIT LOG SU CLOUDWATCH)
-    public static final String NOTIFICATION_COST_SERVICE = "pn-notification-cost-service";
-    public static final String MANDATE = "pn-mandate";
+    @Autowired
+    public AwsUtils() {
+        this.dynamoDbClient = initDynamoDbClient();
+        this.cloudWatchLogsClient = initCloudWatchLogsClient();
+    }
 
-
-    /**
-     * Creates a DynamoDB client and stores it as public final static field.
-     */
-    private static DynamoDbClient getDynamoDbClient() {
+    private DynamoDbClient initDynamoDbClient() {
         return DynamoDbClient.builder()
                 .region(Region.EU_SOUTH_1)
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 
-    /**
-     * Creates a CloudWatch client and stores it as public final static field.
-     */
-    private static CloudWatchLogsClient getCloudWatchLogsClient() {
+    private CloudWatchLogsClient initCloudWatchLogsClient() {
         return CloudWatchLogsClient.builder()
                 .region(Region.EU_SOUTH_1)
                 .credentialsProvider(DefaultCredentialsProvider.create())
@@ -60,9 +61,24 @@ public class AwsUtils {
                 .build();
     }
 
+    public static QueryRequest buildPnPaymentInfoRequest(Map<String, AttributeValue> expressionAttributeValues) {
+        return QueryRequest.builder()
+                .tableName(PN_PAYMENT_INFO)
+                .keyConditionExpression("pk = :v_pk")
+                .expressionAttributeValues(expressionAttributeValues)
+                .build();
+    }
+
+    public static QueryRequest buildPnNotificationDeliveryCostRequest(Map<String, AttributeValue> expressionAttributeValues) {
+        return QueryRequest.builder()
+                .tableName(PN_NOTIFICATION_DELIVERY_COST)
+                .keyConditionExpression("pk = :v_pk AND sk = :v_sk")
+                .expressionAttributeValues(expressionAttributeValues)
+                .build();
+    }
+
     public static FilterLogEventsRequest buildCloudWatchLogRequest(String microservice, String search, int minutes) {
         long startTime = System.currentTimeMillis() - (minutes * 60 * 1000);
-
         return FilterLogEventsRequest.builder()
                 .logGroupName(microservice)
                 .filterPattern(search)
