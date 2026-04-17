@@ -851,7 +851,7 @@ Feature: Test API Availability in Use of E-Service
   Scenario Outline: [TC_INCARICATO_45_B_1] Verificare che il richiamo dell’API di disponibilità di delega in fruizione di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
     Given l'utente è un "admin" di "<ente>"
     When l'ente "<ente>" tenta di concedere la disponibilità a ricevere deleghe in fruizione
-    Then si ottiene status code 409
+    Then si ottiene status code 403
 
     @happy-path
     Examples:
@@ -864,7 +864,7 @@ Feature: Test API Availability in Use of E-Service
   Scenario Outline: [TC_INCARICATO_CAPOFILA_1] Verificare che il richiamo dell’API di indisponibilità di delega di un e-service NON possa essere compiuto da un ente che non sia una pubblica amministrazione
     Given l'utente è un "admin" di "<ente>"
     When l'ente "<ente>" tenta di rimuovere la disponibilità a ricevere deleghe
-    Then si ottiene status code 409
+    Then si ottiene status code 403
 
     @happy-path
     Examples:
@@ -872,7 +872,6 @@ Feature: Test API Availability in Use of E-Service
       | GSP       |
       | Privato   |
 
-  # TODO 15/04/2026: al momento non del tutto certo che NON sia consentita la pubblicazione (come previsto da questo test), o che lo sia la creazione ma non la pubblicazione
   @hotfix_QA-13870
   Scenario Outline: [TC_INCARICATO_ESERVICE_1] Un ente della piattaforma che non è una Pubblica Amministrazione può creare un e-service delegabile in fruizione, sia al livello amministrativo che tecnico
     Given l'utente è un "admin" di "<ente>"
@@ -890,12 +889,16 @@ Feature: Test API Availability in Use of E-Service
     Given "<ente_creatore>" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
     And l'ente delegante "<ente_delegante>"
     And l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <status_code>
 
     Examples:
       | ente_creatore | ente_delegante | status_code  |
-      | GSP           | Privato        | 409          |
-      | Privato       | GSP            | 409          |
+      | GSP           | Privato        | 403          |
+      | Privato       | GSP            | 403          |
       | GSP           | PA2            | 200          |
       | Privato       | PA2            | 200          |
+      | PA3           | PA2            | 200          |
+      | PA3           | PA2            | 200          |

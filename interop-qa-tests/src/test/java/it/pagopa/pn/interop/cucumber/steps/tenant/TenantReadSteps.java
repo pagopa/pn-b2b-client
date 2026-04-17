@@ -3,8 +3,11 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -34,19 +37,31 @@ public class TenantReadSteps {
     public void isTenantDelegationsAllowed() {
         String tenantType = sharedStepsContext.getTenantType();
         UUID tenantId = identityService.getOrganizationId(tenantType);
-        Boolean tenantAllowedToDelegation = clientTokenConfigurator.getTenantsApi().isTenantAllowedToDelegation(tenantId);
+        ITenantsApi tenantsApi = clientTokenConfigurator.getTenantsApi();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+
+        httpCallExecutor.performCall(() -> tenantsApi.isTenantAllowedToDelegation(tenantId));
+        Boolean tenantAllowedToDelegation = null;
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            tenantAllowedToDelegation = (Boolean) httpCallExecutor.getResponse();
+        }
         sharedStepsContext.getTenantCommonContext().setIsTenantDelegationsAllowed(tenantAllowedToDelegation);
     }
 
     @Then("l'utente ottiene responso {booleanResponse} dal sistema sul poter partecipare a processi di delega")
-    public void checkDelegationsAllowed(Boolean response) {
+    public void checkDelegationsAllowed(Boolean expectedResponse) {
         Boolean isTenantDelegationsAllowed = sharedStepsContext.getTenantCommonContext().getIsTenantDelegationsAllowed();
+        HttpStatus responseStatus = sharedStepsContext.getHttpCallExecutor().getResponseStatus();
+
+        assertThat(responseStatus.is2xxSuccessful())
+                .as("Verifica la chiamata a API abbia avuto esito positivo")
+                .isTrue();
         assertThat(isTenantDelegationsAllowed)
-                .as("Verifica che, indipendentemente dall'esito, la risposta sia comunque valorizzata")
+                .as("Verifica che la risposta sia valorizzata")
                 .isNotNull();
         assertThat(isTenantDelegationsAllowed)
                 .as("Verifica che la possibilità di prendere parte a una delega sia coerente con quanto atteso")
-                .isEqualTo(response);
+                .isEqualTo(expectedResponse);
     }
 
 }
