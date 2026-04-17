@@ -201,13 +201,13 @@ Feature: Creazione di una delega in erogazione
   @sad-path @deleghe2
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
     Given l'utente è un "admin" di "PA1"
-    Given l'ente "GSP" rimuove la disponibilità a ricevere deleghe
+    Given l'ente "PA3" rimuove la disponibilità a ricevere deleghe
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     When l'utente richiede la creazione di una delega per l'ente "PA2"
     And l'ente "PA2" accetta la delega
-    And l'ente "GSP" concede la disponibilità a ricevere deleghe
-    When l'utente richiede la creazione di una delega per l'ente "GSP"
+    And l'ente "PA3" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega per l'ente "PA3"
     Then si ottiene lo status code 409
 
   @happy-path
