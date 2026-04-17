@@ -27,6 +27,7 @@ public class DelayerPaperDelivery {
     private String iun;
     private String unifiedDeliveryDriver;
     private String priority;
+    private boolean isInformalCommunication;
 
     public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
         if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -48,6 +49,7 @@ public class DelayerPaperDelivery {
         this.attempt = requireField(rowMap, "attempt");
         this.iun = requireField(rowMap, "iun");
         this.unifiedDeliveryDriver = requireField(rowMap, "unifiedDeliveryDriver");
+        this.isInformalCommunication = requireField(rowMap, "communicationType").equalsIgnoreCase("INFORMAL");
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -80,6 +82,7 @@ public class DelayerPaperDelivery {
         this.iun = source.iun;
         this.unifiedDeliveryDriver = source.unifiedDeliveryDriver;
         this.priority = source.priority;
+        this.isInformalCommunication = source.isInformalCommunication;
     }
 
     private String requireField(JsonNode node, String fieldName, boolean nullable) {

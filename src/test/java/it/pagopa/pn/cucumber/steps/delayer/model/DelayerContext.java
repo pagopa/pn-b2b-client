@@ -35,9 +35,10 @@ public class DelayerContext {
     public Map<String, String> failPianification = new HashMap<>();
 
     public Map<String, List<String>> priorityConfigMap = Map.of(
-            "1", List.of("PRODUCT_RS.ATTEMPT_0"),
-            "2", List.of("PRODUCT_AR.ATTEMPT_1", "PRODUCT_890.ATTEMPT_1"),
-            "3", List.of("PRODUCT_AR.ATTEMPT_0", "PRODUCT_890.ATTEMPT_0")
+            "1", List.of("PRODUCT_RS.ATTEMPT_0.LEGAL"),
+            "2", List.of("PRODUCT_AR.ATTEMPT_1.LEGAL", "PRODUCT_890.ATTEMPT_1.LEGAL"),
+            "3", List.of("PRODUCT_AR.ATTEMPT_0.LEGAL", "PRODUCT_890.ATTEMPT_0.LEGAL"),
+            "4", List.of("PRODUCT_RS.ATTEMPT_0.INFORMAL")
     );
 
     public List<DelayerPaperDelivery> getExpectedByWorkflowStep(WorkflowSteps  step) {
