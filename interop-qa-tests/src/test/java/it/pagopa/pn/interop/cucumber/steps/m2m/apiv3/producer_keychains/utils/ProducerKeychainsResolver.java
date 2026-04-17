@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains.utils;
 import com.nimbusds.jose.jwk.KeyType;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.domain.Role;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeyUse;
@@ -11,17 +12,73 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
 public class ProducerKeychainsResolver extends AbstractResolver {
 
     private final ProducerKeychainsContext context;
+    private final IdentityService identityService;
 
     public ProducerKeychainsResolver(ProducerKeychainsContext context, SharedStepsContext sharedStepsContext) {
         super(sharedStepsContext);
         this.context = context;
+        this.identityService = sharedStepsContext.getIdentityService();
+    }
+
+    public String resolveProducerKeychainName(String raw) {
+        return resolveOrParse(
+                raw,
+                (value) -> value,
+                context::getActualName,
+                context::getExpectedName,
+                () -> "producer_keychains_name_m2m_v3_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
+                () -> ""
+        );
+    }
+
+    public String resolveDescription(String raw) {
+        return resolveOrParse(
+                raw,
+                (value) -> value,
+                context::getActualDescription,
+                context::getExpectedDescription,
+                () -> "producer_keychains_name_m2m_v3_" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
+                () -> ""
+        );
+    }
+
+    public List<UUID> resolveMembers(String raw, String tenant) {
+
+        return resolveOrParse(
+                raw,
+                (input) -> {
+                    String cleaned = input
+                            .trim()
+                            .replaceAll("^\\[|]$", "");
+
+                    if (cleaned.isBlank()) {
+                        return Collections.emptyList();
+                    }
+
+                    List<String> roles = Arrays.stream(cleaned.split(",\\s+"))
+                            .map(String::trim)
+                            .filter(s -> !s.isBlank())
+                            .toList();
+
+                    return roles.stream()
+                            .map(r -> identityService.getUserId(tenant, r))
+                            .toList();
+                },
+                context::getActualMembers,
+                context::getExpectedMembers,
+                () -> Collections.singletonList(UUID.randomUUID()),
+                Collections::emptyList
+        );
     }
 
     public KeySeed resolveKeySeed(String keyType, String key, String name, String alg, String use) {
