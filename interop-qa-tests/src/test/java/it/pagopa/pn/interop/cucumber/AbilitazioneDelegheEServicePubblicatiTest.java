@@ -11,17 +11,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," + "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
-@ConfigurationParameter(
-        key = PLUGIN_PROPERTY_NAME,
-        value = "pretty," +
-                "json:target/cucumber-report.json," +
-                "html:target/cucumber-report.html," +
-                "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
-                "api.m2m.version=V3;" +
-                "api.mode=RIGHT_FIT;" +
-                "api.set=M2M"
-)
-@ExcludeTags({"wait_for_fix", "eservice"})
+@ExcludeTags({"wait_for_fix"})
 @IncludeTags({"eservice_published_delegation"})
 public class AbilitazioneDelegheEServicePubblicatiTest {
 }
