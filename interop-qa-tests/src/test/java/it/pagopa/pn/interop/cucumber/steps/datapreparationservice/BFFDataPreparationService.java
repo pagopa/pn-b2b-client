@@ -102,14 +102,13 @@ public class BFFDataPreparationService {
     }
 
     public BFFDataPreparationService(
-        ClientTokenConfigurator clientTokenConfigurator,
-        RiskAnalysisDataInitializer riskAnalysisDataInitializer,
-        SharedStepsContext sharedStepsContext,
-        BlobFileCreator blobFileCreator,
-        CommonUtils commonUtils,
-        it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService,
-        DelayService delayService)
-    {
+            ClientTokenConfigurator clientTokenConfigurator,
+            RiskAnalysisDataInitializer riskAnalysisDataInitializer,
+            SharedStepsContext sharedStepsContext,
+            BlobFileCreator blobFileCreator,
+            CommonUtils commonUtils,
+            it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService,
+            DelayService delayService) {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -129,9 +128,9 @@ public class BFFDataPreparationService {
         this.mainDataPrepService.setHttpCallExecutor(httpCallExecutor);
 
         this.template = new DataPreparationServiceTemplate(
-            this.httpCallExecutor,
-            this.pollingService,
-            this.commonUtils
+                this.httpCallExecutor,
+                this.pollingService,
+                this.commonUtils
         );
 
         this.delayService = delayService;
@@ -439,6 +438,47 @@ public class BFFDataPreparationService {
         assertValidResponse();
         UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
+                res -> res != HttpStatus.NOT_FOUND,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+
+        updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
+        return new EServiceDescriptor(eserviceId, descriptorId);
+    }
+
+    public EServiceDescriptor createEServiceAndDraftDescriptorSpecifyingConsumerDelegationFlags(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, Boolean isConsumerDelegable, Boolean isClientAccessDelegable) {
+        EServiceSeed defaultEserviceSeed = new EServiceSeed()
+                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .description("Descrizione e-service")
+                .technology(EServiceTechnology.REST)
+                .mode(EServiceMode.DELIVER)
+                .isConsumerDelegable(isConsumerDelegable)
+                .isClientAccessDelegable(isClientAccessDelegable)
+                .personalData(false);
+        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+
+        httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
+        assertValidResponse();
+        UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
+        UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
+
+        HttpStatus eServiceDetailsStatus = pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDetails(eserviceId)),
+                status -> {
+                    ProducerEServiceDetails eServiceDetails = (ProducerEServiceDetails) httpCallExecutor.getResponse();
+                    return eServiceDetails.getIsConsumerDelegable() != null && eServiceDetails.getIsConsumerDelegable().equals(isConsumerDelegable) &&
+                            eServiceDetails.getIsClientAccessDelegable() != null && eServiceDetails.getIsClientAccessDelegable().equals(isClientAccessDelegable);
+                },
+                "Impossibile aggiornare i flag di delega dell'e-service"
+        );
+
+        if (eServiceDetailsStatus.is2xxSuccessful() && httpCallExecutor.getResponse() instanceof ProducerEServiceDetails eServiceDetails) {
+            sharedStepsContext.getEServicesCommonContext().setIsConsumerDelegable(eServiceDetails.getIsConsumerDelegable());
+            sharedStepsContext.getEServicesCommonContext().setIsClientAccessDelegable(eServiceDetails.getIsClientAccessDelegable());
+        }
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
@@ -1124,6 +1164,7 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
+
     public void waitRiskAnalysisDocument() {
         pollingService.makePolling(
                 () -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
