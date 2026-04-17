@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
+import it.pagopa.interop.common.interceptor.dpop.utils.AgidJwtSignatureVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,8 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
     private static final String X_CORRELATION_ID_HEADER = "X-Correlation-Id";
     private static final String ALG_PREFIX = "SHA-256=";
 
+    private final AgidJwtSignatureVerifier agidJwtSignatureVerifier;
+
     private final boolean failOnMissingDigest;
     private final boolean failOnMissingAgidJwtSignature;
     private final boolean treatMissingResponseHeaderAsEmptyString;
@@ -39,12 +42,14 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
             boolean failOnMissingDigest,
             boolean failOnMissingAgidJwtSignature,
             boolean treatMissingResponseHeaderAsEmptyString,
-            Supplier<Auth> authSupplier
+            Supplier<Auth> authSupplier,
+            AgidJwtSignatureVerifier agidJwtSignatureVerifier
     ) {
         this.failOnMissingDigest = failOnMissingDigest;
         this.failOnMissingAgidJwtSignature = failOnMissingAgidJwtSignature;
         this.treatMissingResponseHeaderAsEmptyString = treatMissingResponseHeaderAsEmptyString;
         this.authSupplier = authSupplier;
+        this.agidJwtSignatureVerifier = agidJwtSignatureVerifier;
     }
 
     @Override
@@ -175,6 +180,8 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
             log.debug("Agid-JWT-Signature missing for {} {}", request.getMethod(), request.getURI());
             return;
         }
+
+        agidJwtSignatureVerifier.verify(agidJwt);
 
         String[] parts = agidJwt.split("\\.");
         if (parts.length != 3) {
