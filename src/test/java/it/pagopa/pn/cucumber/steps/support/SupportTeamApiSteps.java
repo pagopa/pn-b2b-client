@@ -4,16 +4,21 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestApiKeyStatus;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.info.BffAdditionalLanguages;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNewNotificationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -37,21 +42,21 @@ public class SupportTeamApiSteps {
     }
 
     private void populateMapStrategy() {
-        strategies.put("newSentNotification", (apiKeyClient, paClient) -> paClient.newSentNotificationV1(new BffNewNotificationRequest()));
-        strategies.put("changeAdditionalLanguage", (apiKeyClient, paClient) -> paClient.changeAdditionalLang(null));
-        strategies.put("notificationCancellation", (apiKeyClient, paClient) -> paClient.notificationCancellationV1("iun"));
-        strategies.put("getApiKeys", (apiKeyClient, paClient) -> apiKeyClient.getApiKeys(0, null, null, true));
-        strategies.put("newApiKey", (apiKeyClient, paClient) -> apiKeyClient.newApiKey(new BffRequestNewApiKey()));
-        strategies.put("changeStatusApiKey", (apiKeyClient, paClient) -> apiKeyClient.changeStatusApiKey("id", new BffRequestApiKeyStatus()));
-        strategies.put("deleteApiKeys", (apiKeyClient, paClient) -> apiKeyClient.deleteApiKeys("id"));
-        strategies.put("searchSentNotification", (apiKeyClient, paClient) -> searchSentNotification());
-        strategies.put("getSentNotification", (apiKeyClient, paClient) -> getSentNotification());
-        strategies.put("getSentNotificationDocument", (apiKeyClient, paClient) -> getSentNotificationDocument());
-        strategies.put("getSentNotificationPayment", (apiKeyClient, paClient) -> paClient.getSentNotificationPaymentV1("iun", null, null, null));
-        strategies.put("getDashboardData", (apiKeyClient, paClient) -> paClient.getDashboardDataV1(null, null, null, null));
+        strategies.put("INVIO_NUOVA_NOTIFICA", (apiKeyClient, paClient) -> paClient.newSentNotificationV1(new BffNewNotificationRequest()));
+        strategies.put("CAMBIO_LINGUA", (apiKeyClient, paClient) -> paClient.changeAdditionalLang(new BffAdditionalLanguages().addAdditionalLanguagesItem("italiano")));
+        strategies.put("CANCELLAZIONE_NOTIFICA", (apiKeyClient, paClient) -> paClient.notificationCancellationV1("iun"));
+        strategies.put("RECUPERA_API_KEYS", (apiKeyClient, paClient) -> apiKeyClient.getApiKeys(0, null, null, true));
+        strategies.put("CREA_API_KEY", (apiKeyClient, paClient) -> apiKeyClient.newApiKey(new BffRequestNewApiKey()));
+        strategies.put("CAMBIA_STATO_API_KEY", (apiKeyClient, paClient) -> apiKeyClient.changeStatusApiKey("id", new BffRequestApiKeyStatus()));
+        strategies.put("CANCELLA_API_KEY", (apiKeyClient, paClient) -> apiKeyClient.deleteApiKeys("id"));
+        strategies.put("RICERCA_TUTTE_LE_NOTIFICHE", (apiKeyClient, paClient) -> searchSentNotification());
+        strategies.put("DETTAGLIO_NOTIFICA", (apiKeyClient, paClient) -> getSentNotification());
+        strategies.put("RECUPERO_DOCUMENTI_NOTIFICA", (apiKeyClient, paClient) -> getSentNotificationDocument());
+        strategies.put("RECUPERO_ALLEGATI_PAGAMENTO", (apiKeyClient, paClient) -> getSentNotificationPayment());
+        strategies.put("VISUALIZZA_DASHBOARD", (apiKeyClient, paClient) -> getDashboardDataV1());
     }
 
-    @When("viene invocata la seguente API: {string} dal team supporto")
+    @When("Il team di supporto effettua l'operazione di: {string}")
     public void invokeApiAsSupportTeam(String api) {
         setUserRole();
         BiConsumer<PnApiKeyManagerExternalClientImpl, PnBffPaClientImpl> strategy = strategies.get(api);
@@ -107,7 +112,23 @@ public class SupportTeamApiSteps {
     }
 
     private void getSentNotificationPayment() {
-        bffPaClient.getSentNotificationPaymentV1("iun", null, null, null);
+        BffNotificationsResponse bffNotificationsResponse = searchSentNotification();
+        assert bffNotificationsResponse.getResultsPage() != null;
+        for (NotificationSearchRow notificationSearchRow : bffNotificationsResponse.getResultsPage()) {
+            BffFullNotificationV1 bffFullNotificationV1 = getSentNotification(notificationSearchRow.getIun());
+            if (!bffFullNotificationV1.getDocuments().isEmpty()) {
+                BffDocumentDownloadMetadataResponse response = bffPaClient.getSentNotificationPaymentV1(notificationSearchRow.getIun(), 0, "PAGOPA", 0);
+                Assertions.assertNotNull(response);
+                return;
+            } else {
+                log.warn("Nessun documento trovato per la notifica con IUN: {}", notificationSearchRow.getIun());
+            }
+        }
+        throw new RuntimeException("Nessun documento di pagamento trovato nelle notifiche recuperate");
+    }
+
+    private BffFullNotificationV1 getSentNotification(String iun) {
+        return bffPaClient.getSentNotificationV1(iun);
     }
 
     private BffFullNotificationV1 getSentNotification() {
@@ -121,5 +142,9 @@ public class SupportTeamApiSteps {
             throw new RuntimeException("Nessuna notifica trovata per eseguire il test");
         }
         return response.getResultsPage().get(0).getIun();
+    }
+
+    private void getDashboardDataV1() {
+        bffPaClient.getDashboardDataV1("BS", LocalDate.now().minusYears(1), LocalDate.now());
     }
 }

@@ -40,6 +40,7 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
     private final String bearerTokenGA;
     private final String bearerTokenSupport1;
     private BearerTokenType bearerTokenSetted;
+    private final String apiKeySupport;
 
 
     public PnBffPaClientImpl(RestTemplate restTemplate,
@@ -50,7 +51,8 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
                              @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
                              @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
                              @Value("${pn.external.bearer-token-pa-support-1}") String bearerTokenSupport1,
-                             @Value("${pn.webapi.external.user-agent}") String userAgent) {
+                             @Value("${pn.webapi.external.user-agent}") String userAgent,
+                             @Value("${pn.external.api-key-support}") String apiKeySupport) {
         this.bearerTokenCom1 = bearerTokenCom1;
         this.bearerTokenCom2 = bearerTokenCom2;
         this.bearerTokenSON = bearerTokenSON;
@@ -60,6 +62,7 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.userAgent = userAgent;
+        this.apiKeySupport = apiKeySupport;
         this.notificationSentApi = new NotificationSentApi(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
         this.infoPaApi = new InfoPaApi(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
         this.senderDashboardApi = new SenderDashboardApi(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
@@ -156,8 +159,8 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
         return this.notificationSentApi.getSentNotificationPaymentV1(iun, recipientIdx, attachmentName, attachmentIdx);
     }
 
-    public BffSenderDashboardDataResponse getDashboardDataV1(String cxType, String cxId, LocalDate startDate, LocalDate endDate) {
-        return this.senderDashboardApi.getDashboardDataV1(cxType, cxId, startDate, endDate);
+    public BffSenderDashboardDataResponse getDashboardDataV1(String cxType, LocalDate startDate, LocalDate endDate) {
+        return this.senderDashboardApi.getDashboardDataV1(cxType, apiKeySupport, startDate, endDate);
     }
 
 }
