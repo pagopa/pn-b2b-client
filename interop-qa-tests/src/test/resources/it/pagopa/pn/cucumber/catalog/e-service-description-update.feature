@@ -53,7 +53,7 @@ Feature: Aggiornamento della descrizione di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente aggiorna la descrizione di quell'e-service con un valore di 400 caratteri
-    Then l'e-service creato ha una descrizione di 250 caratteri
+    Then l'e-service creato ha una descrizione di 400 caratteri
 
   @eservice_description_max_length
   Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_2] L'aggiornamento dell'e-service non va a buon fine se viene superata la dimensione massima consentita per la descrizione
