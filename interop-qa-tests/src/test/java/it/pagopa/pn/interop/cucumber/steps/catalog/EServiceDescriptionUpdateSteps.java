@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescription
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 
 public class EServiceDescriptionUpdateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -20,11 +21,20 @@ public class EServiceDescriptionUpdateSteps {
 
     @When("l'utente aggiorna la descrizione di quell'e-service")
     public void userUpdateEServiceDescription() {
+        userUpdateEServiceDescription(null);
+    }
+
+    @When("l'utente aggiorna la descrizione di quell'e-service con un valore di {int} caratteri")
+    public void userUpdateEServiceDescription(Integer descriptionLength) {
+        String eServiceDescription = descriptionLength == null ?
+                String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed()) :
+                (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();;
+
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateEServiceDescription(
                         eServicesCommonContext.getEserviceId(),
-                        new EServiceDescriptionUpdateSeed().description(String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed()))
+                        new EServiceDescriptionUpdateSeed().description(eServiceDescription)
                 )
         );
     }
