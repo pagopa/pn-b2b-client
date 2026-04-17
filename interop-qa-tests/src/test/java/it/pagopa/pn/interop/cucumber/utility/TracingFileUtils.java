@@ -133,6 +133,30 @@ public class TracingFileUtils {
         }
     }
 
+    public void fixTemporaryCsvWithValidPurposeId() {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            List<String[]> preparedRows = readCsvRows(getTemporaryTracingFilePath());
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.remove(0));
+
+            // Write just one valid record using the provided date
+            String[] firstRecord = preparedRows.get(1);
+            // purpose_id: fix with a valid purpose ID
+            firstRecord[1] = csvRows.get(0)[1];
+            // All the other fields are unchanged
+            csvWriter.writeNext(firstRecord);
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
     public void generateValidTemporaryCsvWithNotCompliantPurposeId(LocalDate date) {
         try {
             List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
