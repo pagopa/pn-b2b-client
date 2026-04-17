@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Client;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ClientsApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.JWKs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Key;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
@@ -107,5 +108,24 @@ public class M2MV3ClientsClientImpl extends AbstractDPoPClient implements IM2MV3
         ).orElseThrow(
                 () -> new IllegalStateException("Errore durante il recupero delle chiavi")
         );
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Client createClient(ClientSeed clientSeed) {
+        return performOperation(
+                () -> clientsApi.createClientWithHttpInfo(clientSeed)
+        ).orElseThrow(
+                () -> new IllegalStateException("Errore durante la creazione del client")
+        );
+    }
+
+    @Override
+    public void deleteClient(UUID clientId) {
+        performOperation(
+                () -> clientsApi.deleteClientWithHttpInfo(clientId)
+        );
+
+        if(this.httpCallExecutor.getResponseStatus().isError())
+            throw new IllegalStateException("Errore durante l'eliminazione del client con id: " + clientId);
     }
 }

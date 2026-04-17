@@ -13,6 +13,6 @@ public interface IM2MClientsClient extends SettableBearerToken, SettableHttpCall
     Client getClient(UUID clientId);
     Purposes getClientPurposes(UUID clientId);
     Purposes getClientPurposes(UUID clientId, int offset, int limit);
-
     Purposes getClientPurposes(UUID clientId, Integer offset, Integer limit, List<UUID> eserviceIds, List<PurposeVersionState> states);
+
 }
