@@ -14,6 +14,14 @@ import java.util.*;
 @Slf4j
 public class DelayerLambdaClient {
 
+    public static final List<String> PAPER_DELIVERY_WORKFLOWSTEPS = List.of(
+            "EVALUATE_SENDER_LIMIT",
+            "EVALUATE_DRIVER_CAPACITY",
+            "EVALUATE_RESIDUAL_CAPACITY",
+            "EVALUATE_PRINT_CAPACITY",
+            "SENT_TO_PREPARE_PHASE_2");
+    public static final List<String> COUNTER_TYPES = List.of("PRINT", "SUM_ESTIMATES", "EXCLUDE");
+
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String lambdaName;
@@ -27,6 +35,13 @@ public class DelayerLambdaClient {
     public DelayerLambdaClient(LambdaInvoker lambdaInvoker, String lambdaName) {
         this.lambdaInvoker = lambdaInvoker;
         this.lambdaName = lambdaName;
+    }
+
+    public String invoke(String operationType, Map<String, String> parameters) throws Exception {
+        String payload = buildPayload(operationType, parameters);
+        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+        checkLambdaResponse(rawResult, operationType);
+        return rawResult;
     }
 
     public String invoke(String operationType, String... parameters) throws Exception {
@@ -44,6 +59,64 @@ public class DelayerLambdaClient {
             throw new RuntimeException("Errore durante GET_USED_CAPACITY per driver %s".formatted(driver), e);
         }
     }
+
+    public JsonNode getCounters(String counterType, String deliveryDate, String province, String productType, String lastEvaluatedKey) {
+        try {
+            if(Objects.isNull(counterType)) {
+                log.warn("counterType è mandatorio, stai testando un egde case?");
+            }
+            if(!Objects.isNull(counterType) && !COUNTER_TYPES.contains(counterType)) {
+                log.warn("counterType [{}] non valido, stai testando un egde case?", counterType);
+            }
+            if(Objects.isNull(deliveryDate)) {
+                log.warn("deliveryDate è mandatorio, stai testando un egde case?");
+            }
+            var paramMap = new HashMap<String, String>();
+            paramMap.put("table", "pn-PaperDeliveryCounters");
+            paramMap.put("counterType", counterType);
+            paramMap.put("deliveryDate", deliveryDate);
+            if(Objects.nonNull(province) && !province.isBlank()) {
+                paramMap.put("province", province);
+            }
+            if(Objects.nonNull(productType) && !productType.isBlank()) {
+                paramMap.put("productType", productType);
+            }
+            if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
+                paramMap.put("lastEvaluatedKey", lastEvaluatedKey);
+            }
+
+            String response = invoke("GET_COUNTERS", paramMap);
+            return extractBody(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante GET_COUNTERS", e);
+        }
+    }
+
+    public JsonNode getPaperDelivery(String deliveryDate, String workFlowStep, String lastEvaluatedKey) {
+        try {
+            if(Objects.isNull(deliveryDate)) {
+                log.warn("deliveryDate è mandatorio, stai testando un egde case?");
+            }
+            if(Objects.isNull(workFlowStep)) {
+                log.warn("workFlowStep è mandatorio, stai testando un egde case?");
+            }
+            if(!Objects.isNull(workFlowStep) && !PAPER_DELIVERY_WORKFLOWSTEPS.contains(workFlowStep)) {
+                log.warn("workFlowStep [{}] non valido, stai testando un egde case?", workFlowStep);
+            }
+            var paramArray = new String[]{"delayerPaperDeliveryTableName",deliveryDate,workFlowStep};
+            if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
+                paramArray = Arrays.copyOf(paramArray, paramArray.length + 1);
+                paramArray[paramArray.length - 1] = lastEvaluatedKey;
+            }
+
+            String response = invoke("GET_PAPER_DELIVERY", paramArray);
+            return extractBody(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante GET_PAPER_DELIVERY", e);
+        }
+    }
+
+
 
     public int getUsedCapacity(String driver, String provincia, String deliveryDate) {
         JsonNode body = getDriverCapacityNode(driver, provincia, deliveryDate);
@@ -230,11 +303,14 @@ public class DelayerLambdaClient {
 
     public SenderLimitResult getSenderLimit(String deliveryDate, String province, String lastEvaluatedKey) {
         try {
-            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
-                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
-                    : new String[]{deliveryDate, province};
+            var paramsMap = new HashMap<String, String>();
+            paramsMap.put("deliveryDate", deliveryDate);
+            paramsMap.put("province", province);
+            if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
+                paramsMap.put("lastEvaluatedKey", lastEvaluatedKey);
+            }
 
-            String response = invoke("GET_SENDER_LIMIT", params);
+            String response = invoke("GET_SENDER_LIMIT", paramsMap);
             JsonNode body = extractBody(response);
 
             List<DelayerSenderLimit> items = new ArrayList<>();
@@ -322,7 +398,7 @@ public class DelayerLambdaClient {
                     ? objectMapper.readTree(bodyText).path("message").asText("Errore sconosciuto")
                     : bodyText;
 
-            throw new RuntimeException("Lambda [%s] failed: %s".formatted(operationType, message));
+            throw new RuntimeException("Lambda [%s](%s) failed: %s".formatted(operationType, rawJson, message));
         }
     }
 
@@ -333,5 +409,13 @@ public class DelayerLambdaClient {
             return objectMapper.readTree(body.asText());
         }
         return body;
+    }
+
+    private String buildPayload(String operationType, Map<String, String> parameters) {
+        try {
+            return objectMapper.writeValueAsString(Map.of("operationType", operationType,"parameters", parameters ));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build JSON payload", e);
+        }
     }
 }

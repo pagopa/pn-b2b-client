@@ -434,6 +434,7 @@
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+#    TODO  And verifica che GET_RESIDUAL_PAPERS abbia 10 capacità
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -947,10 +948,7 @@
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       When vengono puliti i dati dalle tabelle target
       Then non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate "2025-12-29"
-      And non deve esistere capacità usata per i seguenti driver alla deliveryDate "2025-12-29":
-        | unifiedDeliveryDriverId |
-        | zeroDriverP10~P10       |
-        | zeroDriverP10~CAP1_P10  |
+      And non deve esistere capacità usata alla deliveryDate "2025-12-29"
       And non devono esistere contatori per la deliveryDate "2025-12-29"
       And non devono esistere limiti mittente per la deliveryDate "2025-12-29"
       Examples:

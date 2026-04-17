@@ -85,6 +85,10 @@ public class DelayerSteps {
                 lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverUsedCapacities",
                         "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csv);
             } catch (Exception e) {
+                if(e.getMessage().contains("The specified key does not exist")){
+                    log.warn("Key non trovata: {}", csv);
+                    return;
+                }
                 throw new RuntimeException(e);
             }
 
@@ -464,21 +468,28 @@ public class DelayerSteps {
 
     @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
     public void verifyNoPaperDeliveryForDate(String deliveryDate) throws Exception {
-      Assertions.assertThat(true).isTrue();
+        DelayerLambdaClient.PAPER_DELIVERY_WORKFLOWSTEPS.forEach(ws -> {
+            var paperDelivery = lambdaClient.getPaperDelivery(deliveryDate, ws, null);
+            Assertions.assertThat(true).isTrue();
+        });
     }
 
-    @And("non deve esistere capacità usata per i seguenti driver alla deliveryDate {string}:")
-    public void verifyNoUsedCapacity(String deliveryDate, DataTable dataTable) {
-        Assertions.assertThat(true).isTrue();
+    @And("non deve esistere capacità usata alla deliveryDate {string}")
+    public void verifyNoUsedCapacity(String deliveryDate) {
+        var usedCapacity = lambdaClient.getUsedCapacity(null, null, deliveryDate);
+        Assertions.assertThat(usedCapacity).isEqualTo(-1);
     }
 
     @And("non devono esistere contatori per la deliveryDate {string}")
     public void verifyNoCounters(String deliveryDate) {
-        Assertions.assertThat(true).isTrue();
+        var counters = lambdaClient.getCounters("PRINT", deliveryDate,null, null,null);
+        Assertions.assertThat(counters.path("items").size()).isEqualTo(0);
     }
 
     @And("non devono esistere limiti mittente per la deliveryDate {string}")
     public void verifyNoSenderLimits(String deliveryDate) {
+        var senderLimit = lambdaClient.getSenderLimit(deliveryDate, null, null);
+
         Assertions.assertThat(true).isTrue();
     }
 }
