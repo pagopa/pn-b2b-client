@@ -2,10 +2,15 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 import org.jeasy.random.randomizers.text.StringRandomizer;
+
+import java.util.Objects;
 
 public class EServiceDescriptionUpdateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -21,22 +26,43 @@ public class EServiceDescriptionUpdateSteps {
 
     @When("l'utente aggiorna la descrizione di quell'e-service")
     public void userUpdateEServiceDescription() {
-        userUpdateEServiceDescription(null);
+        userUpdateEServiceDescriptionInState(null, null);
     }
 
-    @When("l'utente aggiorna la descrizione di quell'e-service con un valore di {int} caratteri")
-    public void userUpdateEServiceDescription(Integer descriptionLength) {
+    @When("l'utente aggiorna la descrizione di quell'e-service in stato {string} con un valore di {int} caratteri")
+    public void userUpdateEServiceDescriptionInState(String eServiceState, Integer descriptionLength) {
+
         String eServiceDescription = descriptionLength == null ?
                 String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed()) :
                 (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();;
 
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getEServiceClient().updateEServiceDescription(
-                        eServicesCommonContext.getEserviceId(),
-                        new EServiceDescriptionUpdateSeed().description(eServiceDescription)
-                )
-        );
+
+        if (Objects.equals(eServiceState, EServiceState.PUBLISHED.name())) {
+            sharedStepsContext.getHttpCallExecutor().performCall(
+                    () -> clientTokenConfigurator.getEServiceClient().updateEServiceDescription(
+                            eServicesCommonContext.getEserviceId(),
+                            new EServiceDescriptionUpdateSeed().description(eServiceDescription)
+                    )
+            );
+        } else {
+
+            ProducerEServiceDetails createdEService = clientTokenConfigurator.getEServiceClient().getProducerEServiceDetailsWithHttpInfo(
+                    eServicesCommonContext.getEserviceId()
+            ).getBody();
+            UpdateEServiceSeed seed = new UpdateEServiceSeed()
+                    .description(eServiceDescription)
+                    .name(createdEService.getName())
+                    .mode(createdEService.getMode())
+                    .isClientAccessDelegable(createdEService.getIsClientAccessDelegable())
+                    .isConsumerDelegable(createdEService.getIsConsumerDelegable())
+                    .isSignalHubEnabled(createdEService.getIsSignalHubEnabled())
+                    .personalData(createdEService.getPersonalData())
+                    .technology(createdEService.getTechnology());
+            sharedStepsContext.getHttpCallExecutor().performCall(
+                    () -> clientTokenConfigurator.getEServiceClient().updateEServiceById(eServicesCommonContext.getEserviceId(), seed)
+            );
+        }
     }
 
     @When("l'utente {string} di {string} aggiorna la descrizione di quell'e-service")

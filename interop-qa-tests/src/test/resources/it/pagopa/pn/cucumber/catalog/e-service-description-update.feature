@@ -52,7 +52,7 @@ Feature: Aggiornamento della descrizione di un e-service
   Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_1]  Un utente aggiorna un e-service utilizzando la descrizione della lunghezza massima possibile
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    When l'utente aggiorna la descrizione di quell'e-service con un valore di 400 caratteri
+    When l'utente aggiorna la descrizione di quell'e-service in stato "PUBLISHED" con un valore di 400 caratteri
     And si ottiene status code 200
     Then l'e-service creato ha una descrizione di 400 caratteri
 
@@ -60,5 +60,20 @@ Feature: Aggiornamento della descrizione di un e-service
   Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_2] L'aggiornamento dell'e-service non va a buon fine se viene superata la dimensione massima consentita per la descrizione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    When l'utente aggiorna la descrizione di quell'e-service con un valore di 401 caratteri
+    When l'utente aggiorna la descrizione di quell'e-service in stato "PUBLISHED" con un valore di 401 caratteri
     Then si ottiene status code 400
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_3] Un utente aggiorna un e-service in DRAFT utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente aggiorna la descrizione di quell'e-service in stato "DRAFT" con un valore di 400 caratteri
+    And si ottiene status code 200
+    Then l'e-service creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_4] L'aggiornamento dell'e-service in DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente aggiorna la descrizione di quell'e-service in stato "DRAFT" con un valore di 401 caratteri
+    And si ottiene status code 400
