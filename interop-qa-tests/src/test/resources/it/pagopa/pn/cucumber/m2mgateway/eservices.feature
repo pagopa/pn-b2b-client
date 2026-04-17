@@ -1191,6 +1191,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | PUBLISHED       | false               | %null                   |
       | PUBLISHED       | %null               | false                   |
       | PUBLISHED       | %null               | %null                   |
+      | PUBLISHED       | false               | false                   |
 
       | SUSPENDED       | true                | true                    |
       | SUSPENDED       | true                | false                   |
@@ -1198,6 +1199,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | SUSPENDED       | false               | %null                   |
       | SUSPENDED       | %null               | false                   |
       | SUSPENDED       | %null               | %null                   |
+      | SUSPENDED       | false               | false                   |
 
       | DEPRECATED      | true                | true                    |
       | DEPRECATED      | true                | false                   |
@@ -1205,6 +1207,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | DEPRECATED      | false               | %null                   |
       | DEPRECATED      | %null               | false                   |
       | DEPRECATED      | %null               | %null                   |
+      | DEPRECATED      | false               | false                   |
 
   @eservice_published_delegation
   @sad-path
