@@ -60,13 +60,27 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
     }
 
     @Override
+    public ResponseEntity<RecoverTracingResponse> recoverTracingWithHttpInfo(UUID tracingId, Resource file) throws RestClientException {
+        return tracingsApi.recoverTracingWithHttpInfo(tracingId, file);
+    }
+    @Override
     public ReplaceTracingResponse replaceTracing(UUID tracingId, Resource file) throws RestClientException {
         return tracingsApi.replaceTracing(tracingId, file);
     }
 
     @Override
+    public ResponseEntity<ReplaceTracingResponse> replaceTracingWithHttpInfo(UUID tracingId, Resource file) throws RestClientException {
+        return tracingsApi.replaceTracingWithHttpInfo(tracingId, file);
+    }
+
+    @Override
     public SubmitTracingResponse submitTracing(Resource file, String date) throws RestClientException {
         return tracingsApi.submitTracing(file, date);
+    }
+
+    @Override
+    public ResponseEntity<SubmitTracingResponse> submitTracingWithHttpInfo(Resource file, String date) throws RestClientException {
+        return tracingsApi.submitTracingWithHttpInfo(file, date);
     }
 
     @Override
