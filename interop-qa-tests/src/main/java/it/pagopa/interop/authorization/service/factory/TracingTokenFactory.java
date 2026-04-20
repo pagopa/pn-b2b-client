@@ -14,10 +14,9 @@ import software.amazon.awssdk.services.kms.KmsClient;
 @Setter
 public class TracingTokenFactory extends SessionTokenFactory {
 
-    // Current working well-known DEV link:
-    private static final String WELLKNOWN_URL = "https://dev.interop.pagopa.it/.well-known/jwks.json";
-    // Old  not working well-known QA link:
-    //"https://tracing-qa-only-well-known-qa.s3.eu-south-1.amazonaws.com/.well-known/jwks.json";
+    // well-known DEV link:
+    // https://dev.interop.pagopa.it/.well-known/jwks.json
+    private static final String WELLKNOWN_URL = "https://tracing-qa-only-well-known-qa.s3.eu-south-1.amazonaws.com/.well-known/jwks.json";
 
     private Map<String, Map<String, List<String>>> cachedTokens = null;
 
