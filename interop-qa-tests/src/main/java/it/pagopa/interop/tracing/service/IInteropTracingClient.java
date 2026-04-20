@@ -1,5 +1,6 @@
 package it.pagopa.interop.tracing.service;
 
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponse;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
@@ -28,4 +29,6 @@ public interface IInteropTracingClient extends SettableBearerToken {
     void getHealthStatus() throws RestClientException;
 
     ResponseEntity<Void> callTracingWithIllegalPercentEncodedCharInPath(String method, String subpath) throws RestClientException;
+
+    IdentityService getIdentityService();
 }

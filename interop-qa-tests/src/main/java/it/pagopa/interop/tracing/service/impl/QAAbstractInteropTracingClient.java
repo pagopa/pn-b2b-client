@@ -36,4 +36,5 @@ public class QAAbstractInteropTracingClient extends AbstractInteropTracingClient
         }
     }
 
+    public IdentityService getIdentityService() { return this.identityService; }
 }
