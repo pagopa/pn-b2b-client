@@ -36,6 +36,7 @@ Feature: Lettura di una chiave pubblica contenuta in un client
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
     Given "<ente>" ha già inserito l'utente con ruolo "security" come membro di quel client
+    Given "<ente>" ha già inserito l'utente con ruolo "api,security" come membro di quel client
     Given "<ente>" ha già inserito l'utente con ruolo "admin" come membro di quel client
     Given un "admin" di "<ente>" ha caricato una chiave pubblica in quel client
     When l'utente richiede la lettura della chiave pubblica
@@ -47,9 +48,11 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | GSP  | admin        |        200 |
       | GSP  | support      |        200 |
       | GSP  | api,security |        200 |
+      | GSP  | security     |        200 |
       | PA1  | admin        |        200 |
       | PA1  | support      |        200 |
       | PA1  | api,security |        200 |
+      | PA1  | security     |        200 |
 
     @sad-path
     Examples:
