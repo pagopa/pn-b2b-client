@@ -50,7 +50,7 @@ public class TracingS3Client {
     public boolean isFileExistingInS3Bucket(PollingSpecification spec, String bucketName, String filePathKey) {
 
         AtomicReference<Boolean> foundFileInBucket = new AtomicReference<>();
-        foundFileInBucket.set(false);
+        foundFileInBucket.set(null);
 
         S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
 
