@@ -17,18 +17,18 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | ente | ruolo        | statusCode |
       | GSP  | admin        |        200 |
       | GSP  | support      |        200 |
-      | GSP  | security     |        200 |
-      | GSP  | api,security |        200 |
       | PA1  | admin        |        200 |
       | PA1  | support      |        200 |
-      | PA1  | api,security |        200 |
-      | PA1  | security     |        200 |
 
     @sad-path
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
+      | GSP  | security     |        403 |
+      | GSP  | api,security |        403 |
       | PA1  | api          |        403 |
+      | PA1  | api,security |        403 |
+      | PA1  | security     |        403 |
 
   @nrtC-waitForFix
   @nrt-minimal
