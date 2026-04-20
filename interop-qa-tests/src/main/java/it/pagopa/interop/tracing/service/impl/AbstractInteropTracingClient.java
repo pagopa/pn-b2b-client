@@ -1,6 +1,5 @@
 package it.pagopa.interop.tracing.service.impl;
 
-import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.ApiClient;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.HealthApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.TracingsApi;
@@ -52,7 +51,7 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
 
     @Override
     public GetTracingsResponse getTracings(Integer offset, Integer limit, List<TracingState> states) throws RestClientException {
-        return tracingsApi.getTracings(offset, limit, states);
+        return tracingsApi.getTracings(offset, limit, states, "INVALID");
     }
 
     @Override
@@ -94,13 +93,13 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
         URI uri = URI.create(tracingsApi.getApiClient().getBasePath() + url);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + SettableBearerToken.BearerTokenType.TENANT_1);
+        headers.set("Authorization", "Bearer " + getTracingClientConfigs().getBearerToken1());
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "application/json");
         headers.set("User-Agent", "OpenAPI-Generator/1.0.0/java");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // The expected behavior for this call will raise an exception due to 404 error
+        // The expected behavior for this call will raise an exception due to 400 error
         return restTemplate.exchange(uri, HttpMethod.valueOf(method), entity, Void.class);
     }
 
