@@ -33,7 +33,7 @@ Feature: Interop Tracing
     When viene recuperato il dettaglio del tracing con errori
     Then il dettaglio ritorna gli errori aspettati
     # SCENARIO 11
-    When viene preparato un file CSV valido e minimale per una data disponibile
+    When viene corretto il file CSV preparato con un purpose ID valido
     And gli errori riscontrati vengono corretti passando il csv "PREPARATO"
     Then si attende che il file di tracing caricato passi in stato "COMPLETED"
 
@@ -44,10 +44,11 @@ Feature: Interop Tracing
     Then la risposta contiene soltanto i tracing con stato "<status>"
     Examples:
       | status    |
-      | MISSING   |
+#      | MISSING   | Not present
       | COMPLETED |
-#      | PENDING   | Line commented since no pending tracings are present
+#      | PENDING   | Not present
       | ERROR     |
+      | WARNING   |
 
   # Questo test va eseguito usando un'utenza con cui non sono mai stati caricati file di tracing
   @interopTracingCsv @ignore
@@ -76,6 +77,7 @@ Feature: Interop Tracing
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-08] Invio del file CSV tracing corretto utilizzando l'identificativo del file di tracing non esistente
     Given l'utenza "TENANT1" effettua le chiamate
+    And viene preparato un file CSV valido e minimale per una data disponibile
     When vengono corretti gli errori riscontrati per il tracingId "bb09726e-5783-4713-aebf-7b5b688bcccc"
     Then la chiamata fallisce perché la risorsa non viene trovata
 
@@ -92,7 +94,7 @@ Feature: Interop Tracing
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-10] Invio del file CSV tracing per una stessa data e già in stato completato, in sostituzione a quello già presente
     Given l'utenza "TENANT1" effettua le chiamate
-    And viene preparato un file CSV valido e minimale per una data disponibile
+    And viene preparato un file CSV valido e minimale per una data già presente
     When viene sovrascritto il tracing con id: "bb09726e-5783-4713-aebf-7b5b688bcccc"
     Then la chiamata fallisce perché la risorsa non viene trovata
 
