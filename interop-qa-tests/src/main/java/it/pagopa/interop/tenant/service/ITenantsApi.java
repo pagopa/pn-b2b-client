@@ -56,4 +56,5 @@ public interface ITenantsApi extends SettableBearerToken {
 
     ResponseEntity<Void> addTenantMailWithHttpInfo(UUID tenantId, MailSeed mailSeed);
 
+    Boolean isTenantAllowedToDelegation(UUID tenantId);
 }
