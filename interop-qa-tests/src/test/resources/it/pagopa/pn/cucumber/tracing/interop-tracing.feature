@@ -179,9 +179,9 @@ Feature: Interop Tracing
     Given l'utenza "TENANT1" effettua le chiamate
     And viene preparato un file CSV valido con un purpose ID non conforme per una data disponibile
     When viene inviato il file CSV "PREPARATO"
-    And si attende che il file di tracing caricato passi in stato "COMPLETED"
+    And si attende che il file di tracing caricato passi in stato "WARNING"
     Then si attende che i record con purpose non conformi vengano tracciati con warning
 
     When viene sovrascritto il tracing aggiunto in precedenza con il csv: "PREPARATO"
-    And si attende che il file di tracing caricato passi in stato "COMPLETED"
+    And si attende che il file di tracing caricato passi in stato "WARNING"
     Then si attende che i record con purpose non conformi vengano tracciati con warning
